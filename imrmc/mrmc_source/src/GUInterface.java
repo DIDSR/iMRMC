@@ -1492,7 +1492,8 @@ public class GUInterface {
 				try {
 					usr = new inputFile(content, 1);
 				} catch (Exception except) {
-					System.out.println("caught it ****!!!!@@@@$$%%^&&");
+					except.printStackTrace();
+					System.out.println("caught it at OKListner ****!!!!@@@@$$%%^&&");
 					JOptionPane.showMessageDialog(lst.getFrame(),
 							"invalid input format", "Error",
 							JOptionPane.ERROR_MESSAGE);

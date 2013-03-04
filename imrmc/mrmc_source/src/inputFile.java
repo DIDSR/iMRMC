@@ -16,19 +16,20 @@ public class inputFile {
 	double[][] BDGbias = new double[4][8];
 	double[][] BDGcoeff = new double[4][8];
 	double[] aucMod = new double[2];
+	LinkedHashMap<Integer, HashMap<Integer, HashMap<Integer, Double>>> keyedData = new LinkedHashMap<Integer, HashMap<Integer, HashMap<Integer, Double>>>();
 
 	public boolean getFullyCrossedStatus() {
 		return isFullyCrossed;
 	}
-	
-	public boolean numsVerified(){
+
+	public boolean numsVerified() {
 		return verified;
 	}
 
-	public String showUnverified(){
+	public String showUnverified() {
 		return verifiedNums;
 	}
-	
+
 	public double[] getaucMod() {
 		return aucMod;
 	}
@@ -67,6 +68,28 @@ public class inputFile {
 
 	public double[][] getBDGbias() {
 		return BDGbias;
+	}
+
+	/*
+	 * shows missing data points for a given modality TODO use this in visual
+	 * graph
+	 */
+	public boolean[][] getDataHoles(int modality) {
+		boolean[][] holes = new boolean[Reader][Normal + Disease];
+		int i = 0, j = 0;
+		for (Integer r : keyedData.keySet()) {
+			j = 0;
+			for (Integer c : keyedData.get(r).keySet()) {
+				if (keyedData.get(r).get(c).get(modality) != null) {
+					holes[i][j] = true;
+				} else {
+					holes[i][j] = false;
+				}
+				j++;
+			}
+			i++;
+		}
+		return holes;
 	}
 
 	// this is the constructor for the stand alone application
@@ -201,74 +224,68 @@ public class inputFile {
 
 		String[] tempNumbers;
 		double[][] fData = new double[totalLine - (counter + 1)][4];
-		ArrayList<Double> readerIDs = new ArrayList<Double>();
-		ArrayList<Double> normalIDs = new ArrayList<Double>();
-		ArrayList<Double> diseaseIDs = new ArrayList<Double>();
-		ArrayList<Double> modalityIDs = new ArrayList<Double>();
+		ArrayList<Integer> readerIDs = new ArrayList<Integer>();
+		ArrayList<Integer> normalIDs = new ArrayList<Integer>();
+		ArrayList<Integer> diseaseIDs = new ArrayList<Integer>();
+		ArrayList<Integer> modalityIDs = new ArrayList<Integer>();
 
 		// parse each line of input into its separate fields (still ordered by
 		// line)
 		for (int i = 0; i < totalLine - (counter + 1); i++) {
-			tempNumbers = fileContent.get((counter + 1) + i).split("\t");
+			tempNumbers = fileContent.get((counter + 1) + i).split(",");
 			fData[i][0] = Integer.valueOf(tempNumbers[0]); // Reader
 			fData[i][1] = Integer.valueOf(tempNumbers[1]); // Case
 			fData[i][2] = Integer.valueOf(tempNumbers[2]); // Modality id
 			fData[i][3] = Double.valueOf(tempNumbers[3]); // Score
 		}
 
-		verifiedNums = verifyNums(fData, readerIDs, normalIDs,
-				diseaseIDs, modalityIDs);
+		verifiedNums = verifyNums(fData, readerIDs, normalIDs, diseaseIDs,
+				modalityIDs);
 
 		if (verifiedNums.isEmpty()) {
 			verified = true;
 		} else {
-			// TODO show user which numbers were incorrect
 			verified = false;
 		}
 
-		double[][][] rawData = new double[Reader][Normal + Disease][Modality + 1];
+		keyedData = new LinkedHashMap<Integer, HashMap<Integer, HashMap<Integer, Double>>>();
+		HashMap<Integer, Integer> truthVals = new HashMap<Integer, Integer>();
 
-		// convert fData into 3d matrix format
-		for (int i = 0; i < fData.length; i++) {
-			int readerId = (int) (fData[i][0] - 1);
-			int caseId = (int) (fData[i][1] - 1);
-			int modalityIndex = (int) fData[i][2];
-			double score = fData[i][3];
-			rawData[readerId][caseId][modalityIndex] = score;
+		for (Integer r : readerIDs) {
+			keyedData.put(r, new HashMap<Integer, HashMap<Integer, Double>>());
+			for (Integer n : normalIDs) {
+				keyedData.get(r).put(n, new HashMap<Integer, Double>());
+			}
+			for (Integer d : diseaseIDs) {
+				keyedData.get(r).put(d, new HashMap<Integer, Double>());
+			}
 		}
 
-		// TODO display modalityPresent in a visual graph
-		ArrayList<boolean[][]> modalityPresent = showDataHoles(rawData);
-		isFullyCrossed = checkFullyCrossed(modalityPresent);
+		for (int i = 0; i < fData.length; i++) {
+			int readerId = (int) (fData[i][0]);
+			int caseId = (int) (fData[i][1]);
+			int modalityIndex = (int) fData[i][2];
+			double score = fData[i][3];
+			if (readerId == -1) {
+				truthVals.put(caseId, (int) fData[i][3]);
+			} else {
+				keyedData.get(readerId).get(caseId).put(modalityIndex, score);
+			}
+		}
 
-		getT0T1s(rawData);
-	}
-
-	/*
-	 * For each modality, scans through raw input data structure and finds where
-	 * combinations (reader, case) for which a data point is not present Creates
-	 * a 2-d array for each modality with true/false specifying whether the data
-	 * is present
-	 */
-	private ArrayList<boolean[][]> showDataHoles(double[][][] rawData) {
-		ArrayList<boolean[][]> modalityPresent = new ArrayList<boolean[][]>();
-		for (int mod = 0; mod < Modality; mod++) {
-			boolean[][] currModality = new boolean[Reader][Normal + Disease];
-			for (int i = 0; i < Reader; i++) {
-				for (int j = 0; j < (Normal + Disease); j++) {
-					// since double arrays are initialized to 0.0 and
-					// modality scores can only be in range1-5 we know
-					// there is a hole in the data if it = 0.0
-					if (rawData[i][j][mod + 1] != 0.0) {
-						currModality[i][j] = true;
-					} else {
-						currModality[i][j] = false;
+		for (Integer m : modalityIDs) {
+			boolean[][] holes = getDataHoles(m);
+			for (int i = 0; i < holes.length; i++) {
+				for (int j = 0; j < holes[i].length; j++) {
+					if (!holes[i][j]) {
+						isFullyCrossed = false;
 					}
 				}
 			}
-			modalityPresent.add(mod, currModality);
 		}
-		return modalityPresent;
+
+		// TODO allow user to choose which modalities if more than 2
+		getT0T1s(1, 2, truthVals);
 	}
 
 	/*
@@ -277,27 +294,27 @@ public class inputFile {
 	 * this method is executed, the Reader, Normal, Disease, and Modality class
 	 * variables contain these actual values
 	 */
-	private String verifyNums(double[][] fData, ArrayList<Double> readerIDs,
-			ArrayList<Double> normalIDs, ArrayList<Double> diseaseIDs,
-			ArrayList<Double> modalityIDs) {
+	private String verifyNums(double[][] fData, ArrayList<Integer> readerIDs,
+			ArrayList<Integer> normalIDs, ArrayList<Integer> diseaseIDs,
+			ArrayList<Integer> modalityIDs) {
 		String toReturn = new String();
 
 		for (int i = 0; i < fData.length; i++) {
-			if (!readerIDs.contains(fData[i][0])) {
-				readerIDs.add(fData[i][0]);
+			if ((!readerIDs.contains((int) fData[i][0])) && (fData[i][0] != -1)) {
+				readerIDs.add((int) fData[i][0]);
 			}
 			if (fData[i][2] == 0 && fData[i][3] == 0) {
 				if (!normalIDs.contains(fData[i][1])) {
-					normalIDs.add(fData[i][1]);
+					normalIDs.add((int) fData[i][1]);
 				}
 			}
 			if (fData[i][2] == 0 && fData[i][3] == 1) {
 				if (!diseaseIDs.contains(fData[i][1])) {
-					diseaseIDs.add(fData[i][1]);
+					diseaseIDs.add((int) fData[i][1]);
 				}
 			}
-			if (!modalityIDs.contains(fData[i][2])) {
-				modalityIDs.add(fData[i][2]);
+			if (!modalityIDs.contains((int) fData[i][2]) && fData[i][2] != 0) {
+				modalityIDs.add((int) fData[i][2]);
 			}
 		}
 
@@ -316,10 +333,10 @@ public class inputFile {
 					+ diseaseIDs.size() + " \n";
 			Disease = diseaseIDs.size();
 		}
-		if (Modality != (modalityIDs.size() - 1)) {
+		if (Modality != (modalityIDs.size())) {
 			toReturn = toReturn + "NM Given = " + Modality + " NM Found = "
-					+ (modalityIDs.size() - 1);
-			Modality = modalityIDs.size() - 1;
+					+ (modalityIDs.size());
+			Modality = modalityIDs.size();
 		}
 		return toReturn;
 	}
@@ -351,56 +368,53 @@ public class inputFile {
 		return fData1;
 	}
 
-	/*
-	 * Do all readers read all cases? Based on old fData structure, cannot
-	 * handle more than 2 modalities
-	 */
-	@Deprecated
-	public int checkFullyCrossed(double[][] fData, double[] ReaderIDs) {
-		double[][] alldata = new double[Reader][Normal + Disease];
-		// store all the data IDs of Reader 1 into alldata[0][]
-		for (int k = 0; k < Reader; k++) {
-			int j = 0;
-			for (int i = 0; i < (Normal + Disease) * Reader; i++) {
-				if (fData[i][0] == ReaderIDs[k]) {
-					alldata[k][j] = fData[i][1];
-					j++;
+	/* this does not work if study is not fully crossed */
+	public void getT0T1s(int modality1, int modality2,
+			HashMap<Integer, Integer> truthVals) {
+		t0 = new double[Normal][Reader][2];
+		t1 = new double[Disease][Reader][2];
+		t01 = new double[Normal][Reader][2];
+		t11 = new double[Disease][Reader][2];
+		t02 = new double[Normal][Reader][2];
+		t12 = new double[Disease][Reader][2];
+		d0 = new int[Normal][Reader][2];
+		d1 = new int[Disease][Reader][2];
+		int m, n;
+		int k = 0;
+		for (Integer r : keyedData.keySet()) {
+			m = 0; // number of false cases
+			n = 0; // number of true cases
+			for (Integer c : keyedData.get(r).keySet()) {
+				if (truthVals.get(c) == 0) {
+					t0[m][k][0] = keyedData.get(r).get(c).get(modality1);
+					t0[m][k][1] = keyedData.get(r).get(c).get(modality2);
+					t01[m][k][0] = keyedData.get(r).get(c).get(modality1);
+					t01[m][k][1] = keyedData.get(r).get(c).get(modality1);
+					t02[m][k][0] = keyedData.get(r).get(c).get(modality2);
+					t02[m][k][1] = keyedData.get(r).get(c).get(modality2);
+					m++;
+				} else {
+					t1[n][k][0] = keyedData.get(r).get(c).get(modality1);
+					t1[n][k][1] = keyedData.get(r).get(c).get(modality2);
+					t11[n][k][0] = keyedData.get(r).get(c).get(modality1);
+					t11[n][k][1] = keyedData.get(r).get(c).get(modality1);
+					t12[n][k][0] = keyedData.get(r).get(c).get(modality2);
+					t12[n][k][1] = keyedData.get(r).get(c).get(modality2);
+					n++;
 				}
 			}
+			k++;
 		}
-		int flag = 0;
-		int flag2 = 1;
-		for (int i = 1; i < Reader; i++) {
-			for (int j = 0; j < (Normal + Disease); j++) {
-				flag = 0;
-				for (int k = 0; k < (Normal + Disease); k++) {
-					if (alldata[i][j] == alldata[0][k]) {
-						flag = 1;
-					}
-				}
-				if (flag == 0)
-					flag2 = 0;
+		for (int i = 0; i < Reader; i++) {
+			for (int j = 0; j < Disease; j++) {
+				d1[j][i][0] = 1;
+				d1[j][i][1] = 1;
+			}
+			for (int j = 0; j < Normal; j++) {
+				d0[j][i][0] = 1;
+				d0[j][i][1] = 1;
 			}
 		}
-		return flag2;
-	}
-
-	/*
-	 * If there is a data hole, then the data cannot be fully crossed, right?
-	 * TODO verify that this method works identically to deprecated version
-	 */
-	public boolean checkFullyCrossed(ArrayList<boolean[][]> modalityPresent) {
-		boolean flag = true;
-		for (int i = 0; i < modalityPresent.size(); i++) {
-			for (int j = 0; j < modalityPresent.get(i).length; j++) {
-				for (int k = 0; k < modalityPresent.get(i)[j].length; k++) {
-					if (!modalityPresent.get(i)[j][k]) {
-						flag = false;
-					}
-				}
-			}
-		}
-		return flag;
 	}
 
 	// TODO test that this operates identically to deprecated get T0T1s method
@@ -452,55 +466,6 @@ public class inputFile {
 			}
 		}
 
-	}
-
-	@Deprecated
-	public void getT0T1s(double[][] fData, double[] ReaderIDs) {
-		t0 = new double[Normal][Reader][2];
-		t1 = new double[Disease][Reader][2];
-		t01 = new double[Normal][Reader][2];
-		t11 = new double[Disease][Reader][2];
-		t02 = new double[Normal][Reader][2];
-		t12 = new double[Disease][Reader][2];
-		d0 = new int[Normal][Reader][2];
-		d1 = new int[Disease][Reader][2];
-		int m = 0, n = 0;
-		for (int i = 0; i < Reader; i++) {
-			m = 0;
-			n = 0;
-			double k = ReaderIDs[i];
-			for (int j = 0; j < Reader * (Normal + Disease); j++) {
-				if (fData[j][0] == k && fData[j][2] == 0) {
-					t0[m][i][0] = fData[j][3];
-					t0[m][i][1] = fData[j][4];
-					t01[m][i][0] = fData[j][3];
-					t01[m][i][1] = fData[j][3];
-					t02[m][i][0] = fData[j][4];
-					t02[m][i][1] = fData[j][4];
-					m++;
-				}
-				if (fData[j][0] == k && fData[j][2] > 0) {
-					t1[n][i][0] = fData[j][3];
-					t1[n][i][1] = fData[j][4];
-					t11[n][i][0] = fData[j][3];
-					t11[n][i][1] = fData[j][3];
-					t12[n][i][0] = fData[j][4];
-					t12[n][i][1] = fData[j][4];
-					n++;
-				}
-
-			}
-		}
-		for (int i = 0; i < Reader; i++) {
-			for (int j = 0; j < Disease; j++) {
-				d1[j][i][0] = 1;
-				d1[j][i][1] = 1;
-			}
-			for (int j = 0; j < Normal; j++) {
-				d0[j][i][0] = 1;
-				d0[j][i][1] = 1;
-			}
-		}
 	}
 
 	public ArrayList<String> readFile(InputStreamReader isr) {
