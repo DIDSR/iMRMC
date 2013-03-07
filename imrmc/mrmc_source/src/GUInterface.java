@@ -27,6 +27,9 @@ import javax.swing.border.*;
 import javax.swing.table.*;
 import java.text.DecimalFormat;
 import javax.swing.text.DefaultEditorKit;
+
+import org.jfree.ui.RefineryUtilities;
+
 import java.awt.datatransfer.*;
 
 public class GUInterface {
@@ -41,6 +44,7 @@ public class GUInterface {
 	String filename = "";
 	MRMC lst;
 	mrmcDB fdaDB;
+	inputFile usr;
 	dbRecord[] Records;
 	dbRecord usrFile;
 	JTable BDGtable1;
@@ -810,6 +814,7 @@ public class GUInterface {
 		MS2 = new ModSelect(pilotCard2, this);
 		JButton fmtHelpButton = new JButton("Format Info.");
 		JButton sampleButton = new JButton("Sample File");
+		JButton graphButton = new JButton("Input Statistics");
 
 		if (!lst.getIsApplet()) {
 			pilotFile = new JTextField(20);
@@ -817,6 +822,7 @@ public class GUInterface {
 			browseButton.addActionListener(new brwsButtonListner());
 			fmtHelpButton.addActionListener(new fmtHelpButtonListner());
 			sampleButton.addActionListener(new sampleButtonListner());
+			graphButton.addActionListener(new graphButtonListner());
 			layout.setHorizontalGroup(layout.createSequentialGroup().addGroup(
 					layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 							.addGroup(
@@ -825,7 +831,8 @@ public class GUInterface {
 											.addComponent(pilotFile)
 											.addComponent(browseButton)
 											.addComponent(fmtHelpButton)
-											.addComponent(sampleButton))
+											.addComponent(sampleButton)
+											.addComponent(graphButton))
 							.addGroup(
 									layout.createSequentialGroup()
 											.addComponent(pilotCard2))));
@@ -839,7 +846,8 @@ public class GUInterface {
 									.addComponent(pilotFile)
 									.addComponent(browseButton)
 									.addComponent(fmtHelpButton)
-									.addComponent(sampleButton))
+									.addComponent(sampleButton)
+									.addComponent(graphButton))
 					.addGroup(
 							layout.createParallelGroup(
 									GroupLayout.Alignment.LEADING)
@@ -849,6 +857,7 @@ public class GUInterface {
 			inputByHandButton.addActionListener(new InputByHandListner());
 			fmtHelpButton.addActionListener(new fmtHelpButtonListner());
 			sampleButton.addActionListener(new sampleButtonListner());
+			graphButton.addActionListener(new graphButtonListner());
 			layout.setHorizontalGroup(layout.createSequentialGroup().addGroup(
 					layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 							.addGroup(
@@ -856,7 +865,8 @@ public class GUInterface {
 											.addComponent(studyLabel)
 											.addComponent(inputByHandButton)
 											.addComponent(fmtHelpButton)
-											.addComponent(sampleButton))
+											.addComponent(sampleButton)
+											.addComponent(graphButton))
 							.addGroup(
 									layout.createSequentialGroup()
 											.addComponent(pilotCard2))));
@@ -869,7 +879,8 @@ public class GUInterface {
 									.addComponent(studyLabel)
 									.addComponent(inputByHandButton)
 									.addComponent(fmtHelpButton)
-									.addComponent(sampleButton))
+									.addComponent(sampleButton)
+									.addComponent(graphButton))
 					.addGroup(
 							layout.createParallelGroup(
 									GroupLayout.Alignment.LEADING)
@@ -1347,7 +1358,6 @@ public class GUInterface {
 			if (f != null) {
 				filename = f.getPath();
 				pilotFile.setText(filename);
-				inputFile usr;
 				// check the input format
 				try {
 					usr = new inputFile(filename);
@@ -1405,6 +1415,18 @@ public class GUInterface {
 			dataFormat fmt = new dataFormat();
 			JOptionPane.showMessageDialog(lst.getFrame(), Manual, "Download",
 					JOptionPane.INFORMATION_MESSAGE);
+		}
+	}
+	
+	class graphButtonListner implements ActionListener {
+		public void actionPerformed(ActionEvent e){
+			// TODO display graphs here
+			if (usr.isLoaded()){
+				final BarGraph demo = new BarGraph("Bar Chart Demo", usr.casesPerReader());
+		        demo.pack();
+		        RefineryUtilities.centerFrameOnScreen(demo);
+		        demo.setVisible(true);
+			}
 		}
 	}
 
@@ -1500,7 +1522,6 @@ public class GUInterface {
 			public void actionPerformed(ActionEvent e) {
 				String content = "";
 				content = pilot.getText();
-				inputFile usr;
 				try {
 					usr = new inputFile(content, 1);
 				} catch (Exception except) {
@@ -1535,8 +1556,6 @@ public class GUInterface {
 							"The study is not fully crossed", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
-
-				// TODO display panel with input stats here!
 
 				usrFile = new dbRecord(usr);
 				pilotFrame.setVisible(false);

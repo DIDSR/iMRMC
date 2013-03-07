@@ -11,12 +11,18 @@ public class inputFile {
 	int nmod = 2;
 	boolean isFullyCrossed = true;
 	boolean verified = false;
+	boolean isLoaded;
 	String verifiedNums = "";
 	double[][] BDG = new double[4][8];
 	double[][] BDGbias = new double[4][8];
 	double[][] BDGcoeff = new double[4][8];
 	double[] aucMod = new double[2];
 	TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Double>>> keyedData = new TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Double>>>();
+
+	/* returns whether this inputFile has processed all input data */
+	public boolean isLoaded() {
+		return isLoaded;
+	}
 
 	public boolean getFullyCrossedStatus() {
 		return isFullyCrossed;
@@ -68,6 +74,19 @@ public class inputFile {
 
 	public double[][] getBDGbias() {
 		return BDGbias;
+	}
+	
+	public HashMap<Integer, Integer> readersPerCase(){
+		
+		return null;
+	}
+	
+	public HashMap<Integer, Integer> casesPerReader(){
+		HashMap<Integer, Integer> cpr = new HashMap<Integer, Integer>();
+		for (Integer r : keyedData.keySet()){
+			cpr.put(r, keyedData.get(r).size());
+		}
+		return cpr;
 	}
 
 	/*
@@ -238,7 +257,7 @@ public class inputFile {
 			fData[i][2] = Integer.valueOf(tempNumbers[2]); // Modality id
 			fData[i][3] = Double.valueOf(tempNumbers[3]); // Score
 		}
-		
+
 		System.out.println("filled up fData");
 
 		verifiedNums = verifyNums(fData, readerIDs, normalIDs, diseaseIDs,
@@ -249,7 +268,7 @@ public class inputFile {
 		} else {
 			verified = false;
 		}
-		
+
 		System.out.println("verified nums");
 
 		keyedData = new TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Double>>>();
@@ -276,7 +295,7 @@ public class inputFile {
 				keyedData.get(readerId).get(caseId).put(modalityIndex, score);
 			}
 		}
-		
+
 		System.out.println("filled up keyedData");
 
 		for (Integer m : modalityIDs) {
@@ -289,12 +308,12 @@ public class inputFile {
 				}
 			}
 		}
-		
+
 		System.out.println("determined if fully crossed");
 
 		// TODO allow user to choose which modalities if more than 2
 		getT0T1s(1, 2, truthVals);
-		
+
 		System.out.println("got t0t1s");
 	}
 
@@ -395,7 +414,7 @@ public class inputFile {
 			m = 0; // number of false cases
 			n = 0; // number of true cases
 			for (Integer c : keyedData.get(r).keySet()) {
-				if (c == 270){
+				if (c == 270) {
 					int asd = 0;
 				}
 				if (truthVals.get(c) == 0) {
