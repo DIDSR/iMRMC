@@ -16,7 +16,7 @@ public class inputFile {
 	double[][] BDGbias = new double[4][8];
 	double[][] BDGcoeff = new double[4][8];
 	double[] aucMod = new double[2];
-	LinkedHashMap<Integer, HashMap<Integer, HashMap<Integer, Double>>> keyedData = new LinkedHashMap<Integer, HashMap<Integer, HashMap<Integer, Double>>>();
+	TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Double>>> keyedData = new TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Double>>>();
 
 	public boolean getFullyCrossedStatus() {
 		return isFullyCrossed;
@@ -238,6 +238,8 @@ public class inputFile {
 			fData[i][2] = Integer.valueOf(tempNumbers[2]); // Modality id
 			fData[i][3] = Double.valueOf(tempNumbers[3]); // Score
 		}
+		
+		System.out.println("filled up fData");
 
 		verifiedNums = verifyNums(fData, readerIDs, normalIDs, diseaseIDs,
 				modalityIDs);
@@ -247,17 +249,19 @@ public class inputFile {
 		} else {
 			verified = false;
 		}
+		
+		System.out.println("verified nums");
 
-		keyedData = new LinkedHashMap<Integer, HashMap<Integer, HashMap<Integer, Double>>>();
+		keyedData = new TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Double>>>();
 		HashMap<Integer, Integer> truthVals = new HashMap<Integer, Integer>();
 
 		for (Integer r : readerIDs) {
-			keyedData.put(r, new HashMap<Integer, HashMap<Integer, Double>>());
+			keyedData.put(r, new TreeMap<Integer, TreeMap<Integer, Double>>());
 			for (Integer n : normalIDs) {
-				keyedData.get(r).put(n, new HashMap<Integer, Double>());
+				keyedData.get(r).put(n, new TreeMap<Integer, Double>());
 			}
 			for (Integer d : diseaseIDs) {
-				keyedData.get(r).put(d, new HashMap<Integer, Double>());
+				keyedData.get(r).put(d, new TreeMap<Integer, Double>());
 			}
 		}
 
@@ -272,6 +276,8 @@ public class inputFile {
 				keyedData.get(readerId).get(caseId).put(modalityIndex, score);
 			}
 		}
+		
+		System.out.println("filled up keyedData");
 
 		for (Integer m : modalityIDs) {
 			boolean[][] holes = getDataHoles(m);
@@ -283,9 +289,13 @@ public class inputFile {
 				}
 			}
 		}
+		
+		System.out.println("determined if fully crossed");
 
 		// TODO allow user to choose which modalities if more than 2
 		getT0T1s(1, 2, truthVals);
+		
+		System.out.println("got t0t1s");
 	}
 
 	/*
@@ -385,6 +395,9 @@ public class inputFile {
 			m = 0; // number of false cases
 			n = 0; // number of true cases
 			for (Integer c : keyedData.get(r).keySet()) {
+				if (c == 270){
+					int asd = 0;
+				}
 				if (truthVals.get(c) == 0) {
 					t0[m][k][0] = keyedData.get(r).get(c).get(modality1);
 					t0[m][k][1] = keyedData.get(r).get(c).get(modality2);

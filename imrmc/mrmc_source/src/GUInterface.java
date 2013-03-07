@@ -1352,6 +1352,7 @@ public class GUInterface {
 				try {
 					usr = new inputFile(filename);
 				} catch (Exception except) {
+					except.printStackTrace();
 					JOptionPane.showMessageDialog(lst.getFrame(),
 							"invalid input format", "Error",
 							JOptionPane.ERROR_MESSAGE);
@@ -1359,9 +1360,20 @@ public class GUInterface {
 					return;
 				}
 				if (!usr.numsVerified()) {
-					JOptionPane.showMessageDialog(lst.getFrame(),
-							usr.showUnverified(), "Warning: Input Header Values Do Not Match Actual Values",
-							JOptionPane.WARNING_MESSAGE);
+					JOptionPane
+							.showMessageDialog(
+									lst.getFrame(),
+									usr.showUnverified(),
+									"Warning: Input Header Values Do Not Match Actual Values",
+									JOptionPane.WARNING_MESSAGE);
+				} else {
+					JOptionPane.showMessageDialog(
+							lst.getFrame(),
+							"NR = " + usr.getReader() + " N0 = "
+									+ usr.getNormal() + " N1 = "
+									+ usr.getDisease() + " NM = "
+									+ usr.getModality(), "Study Info",
+							JOptionPane.INFORMATION_MESSAGE);
 				}
 				if (!usr.getFullyCrossedStatus()) {
 					JOptionPane.showMessageDialog(lst.getFrame(),
@@ -1493,17 +1505,29 @@ public class GUInterface {
 					usr = new inputFile(content, 1);
 				} catch (Exception except) {
 					except.printStackTrace();
-					System.out.println("caught it at OKListner ****!!!!@@@@$$%%^&&");
+					System.out
+							.println("caught it at OKListner ****!!!!@@@@$$%%^&&");
 					JOptionPane.showMessageDialog(lst.getFrame(),
 							"invalid input format", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				
+
 				if (!usr.numsVerified()) {
-					JOptionPane.showMessageDialog(lst.getFrame(),
-							usr.showUnverified(), "Warning: Input Header Values Do Not Match Actual Values",
-							JOptionPane.WARNING_MESSAGE);
+					JOptionPane
+							.showMessageDialog(
+									lst.getFrame(),
+									usr.showUnverified(),
+									"Warning: Input Header Values Do Not Match Actual Values",
+									JOptionPane.WARNING_MESSAGE);
+				} else {
+					JOptionPane.showMessageDialog(
+							lst.getFrame(),
+							"NR = " + usr.getReader() + " N0 = "
+									+ usr.getNormal() + " N1 = "
+									+ usr.getDisease() + " NM = "
+									+ usr.getModality(), "Study Info",
+							JOptionPane.INFORMATION_MESSAGE);
 				}
 
 				if (!usr.getFullyCrossedStatus()) {
