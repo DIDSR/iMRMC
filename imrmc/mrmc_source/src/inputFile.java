@@ -18,6 +18,7 @@ public class inputFile {
 	double[][] BDGcoeff = new double[4][8];
 	double[] aucMod = new double[2];
 	TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Double>>> keyedData = new TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Double>>>();
+	HashMap<Integer, Integer> truthVals;
 
 	/* returns whether this inputFile has processed all input data */
 	public boolean isLoaded() {
@@ -140,8 +141,7 @@ public class inputFile {
 			System.err
 					.println("Error reading file" + filename + e.getMessage());
 		}
-		dotheWork(fileContent);
-
+		organizeData(fileContent);
 	}
 
 	// this is the constructor for Java Applet
@@ -152,13 +152,12 @@ public class inputFile {
 		String[] temp = content.split("\n");
 		for (int i = 0; i < temp.length; i++)
 			fileContent.add(temp[i]);
-		dotheWork(fileContent);
-	}
-
-	/* TODO: understand all parts of this method and what it does */
-	private void dotheWork(ArrayList<String> fileContent) {
-		matrix mx = new matrix();
 		organizeData(fileContent);
+	}
+	
+	public void dotheWork(int modality1, int modality2){
+		matrix mx = new matrix();
+		getT0T1s(modality1, modality2, truthVals);
 		covMRMC mod1 = new covMRMC(t01, d0, t11, d1, Reader, Normal, Disease);
 		covMRMC mod2 = new covMRMC(t02, d0, t12, d1, Reader, Normal, Disease);
 		covMRMC covMod12 = new covMRMC(t0, d0, t1, d1, Reader, Normal, Disease);
@@ -282,7 +281,7 @@ public class inputFile {
 		System.out.println("verified nums");
 
 		keyedData = new TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Double>>>();
-		HashMap<Integer, Integer> truthVals = new HashMap<Integer, Integer>();
+		truthVals = new HashMap<Integer, Integer>();
 
 		for (Integer r : readerIDs) {
 			keyedData.put(r, new TreeMap<Integer, TreeMap<Integer, Double>>());
@@ -322,9 +321,9 @@ public class inputFile {
 		System.out.println("determined if fully crossed");
 
 		// TODO allow user to choose which modalities if more than 2 before this
-		getT0T1s(1, 2, truthVals);
+		//getT0T1s(1, 2, truthVals);
 
-		System.out.println("got t0t1s");
+		//System.out.println("got t0t1s");
 	}
 
 	/*

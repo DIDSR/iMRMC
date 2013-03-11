@@ -1387,8 +1387,30 @@ public class GUInterface {
 				}
 				if (!usr.getFullyCrossedStatus()) {
 					JOptionPane.showMessageDialog(lst.getFrame(),
-							"The study is not fully crossed", "Error",
-							JOptionPane.ERROR_MESSAGE);
+							"The study is not fully crossed", "Warning",
+							JOptionPane.WARNING_MESSAGE);
+				}
+				if (usr.getModality() > 2) {
+					JComboBox<Integer> choose1 = new JComboBox<Integer>();
+					JComboBox<Integer> choose2 = new JComboBox<Integer>();
+					for (int i = 1; i <= usr.getModality(); i++) {
+						choose1.addItem(i);
+						choose2.addItem(i);
+					}
+					Object[] message = {
+							"There are "
+									+ usr.getModality()
+									+ " modalities. Which would you like to use?\n",
+							"Modality 1: ", choose1, "Modality 2: ", choose2 };
+					JOptionPane.showMessageDialog(lst.getFrame(), message,
+							"Choose Modalities",
+							JOptionPane.INFORMATION_MESSAGE, null);
+					System.out.println(choose1.getSelectedItem() + ","
+							+ choose2.getSelectedItem());
+					usr.dotheWork((Integer) choose1.getSelectedItem(),
+							(Integer) choose2.getSelectedItem());
+				} else {
+					usr.dotheWork(1, 2);
 				}
 
 				if (!lst.getIsApplet())
