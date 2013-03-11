@@ -815,6 +815,7 @@ public class GUInterface {
 		JButton fmtHelpButton = new JButton("Format Info.");
 		JButton sampleButton = new JButton("Sample File");
 		JButton graphButton = new JButton("Input Statistics Charts");
+		JButton holesButton = new JButton("Show Data Holes");
 
 		if (!lst.getIsApplet()) {
 			pilotFile = new JTextField(20);
@@ -823,6 +824,7 @@ public class GUInterface {
 			fmtHelpButton.addActionListener(new fmtHelpButtonListner());
 			sampleButton.addActionListener(new sampleButtonListner());
 			graphButton.addActionListener(new graphButtonListner());
+			holesButton.addActionListener(new holesButtonListner());
 			layout.setHorizontalGroup(layout.createSequentialGroup().addGroup(
 					layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 							.addGroup(
@@ -832,7 +834,8 @@ public class GUInterface {
 											.addComponent(browseButton)
 											.addComponent(fmtHelpButton)
 											.addComponent(sampleButton)
-											.addComponent(graphButton))
+											.addComponent(graphButton)
+											.addComponent(holesButton))
 							.addGroup(
 									layout.createSequentialGroup()
 											.addComponent(pilotCard2))));
@@ -847,7 +850,8 @@ public class GUInterface {
 									.addComponent(browseButton)
 									.addComponent(fmtHelpButton)
 									.addComponent(sampleButton)
-									.addComponent(graphButton))
+									.addComponent(graphButton)
+									.addComponent(holesButton))
 					.addGroup(
 							layout.createParallelGroup(
 									GroupLayout.Alignment.LEADING)
@@ -858,6 +862,7 @@ public class GUInterface {
 			fmtHelpButton.addActionListener(new fmtHelpButtonListner());
 			sampleButton.addActionListener(new sampleButtonListner());
 			graphButton.addActionListener(new graphButtonListner());
+			holesButton.addActionListener(new holesButtonListner());
 			layout.setHorizontalGroup(layout.createSequentialGroup().addGroup(
 					layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 							.addGroup(
@@ -866,7 +871,8 @@ public class GUInterface {
 											.addComponent(inputByHandButton)
 											.addComponent(fmtHelpButton)
 											.addComponent(sampleButton)
-											.addComponent(graphButton))
+											.addComponent(graphButton)
+											.addComponent(holesButton))
 							.addGroup(
 									layout.createSequentialGroup()
 											.addComponent(pilotCard2))));
@@ -1443,7 +1449,6 @@ public class GUInterface {
 	class graphButtonListner implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			System.out.println("graph button pressed");
-			// TODO display graphs here
 			if (usr != null && usr.isLoaded()) {
 				final BarGraph cpr = new BarGraph("Cases per Reader", "Cases",
 						"Readers", usr.casesPerReader());
@@ -1457,6 +1462,35 @@ public class GUInterface {
 				RefineryUtilities.centerFrameOnScreen(rpc);
 				RefineryUtilities.positionFrameOnScreen(rpc, 0.6, 0.6);
 				rpc.setVisible(true);
+			} else {
+				JOptionPane.showMessageDialog(lst.getFrame(),
+						"Pilot study data has not yet been input.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+
+	class holesButtonListner implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			System.out.println("holes button pressed");
+			if (usr != null && usr.isLoaded()) {
+				JComboBox<Integer> choose1 = new JComboBox<Integer>();
+				for (int i = 1; i <= usr.getModality(); i++) {
+					choose1.addItem(i);
+				}
+				Object[] message = { "Which modality would you like view?\n",
+						choose1 };
+				JOptionPane.showMessageDialog(lst.getFrame(), message,
+						"Choose Modality", JOptionPane.INFORMATION_MESSAGE,
+						null);
+				boolean[][] holes = usr.getDataHoles((Integer) choose1
+						.getSelectedItem());
+				final PresencePlot chart = new PresencePlot(
+						"Missing Data Points", "Cases", "Readers", holes);
+				chart.pack();
+				RefineryUtilities.centerFrameOnScreen(chart);
+				chart.setVisible(true);
+
 			} else {
 				JOptionPane.showMessageDialog(lst.getFrame(),
 						"Pilot study data has not yet been input.", "Error",

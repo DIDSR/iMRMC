@@ -11,7 +11,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 public class BarGraph extends JFrame {
 
-	public BarGraph(final String title, String yaxis, String xaxis, TreeMap<Integer, Integer> data) {
+	public BarGraph(final String title, String xaxis, String yaxis, TreeMap<Integer, Integer> data) {
 		super(title);
 		CategoryDataset dataset = createDataset(data, xaxis);
 		JFreeChart chart = createChart(dataset, title, yaxis, xaxis);
