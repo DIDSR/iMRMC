@@ -78,12 +78,12 @@ public class inputFile {
 
 	public TreeMap<Integer, Integer> readersPerCase() {
 		TreeMap<Integer, Integer> rpc = new TreeMap<Integer, Integer>();
-		for (Integer r : keyedData.keySet()){
-			for (Integer c : keyedData.get(r).keySet()){
-				if (rpc.get(c) == null){
+		for (Integer r : keyedData.keySet()) {
+			for (Integer c : keyedData.get(r).keySet()) {
+				if (rpc.get(c) == null) {
 					rpc.put(c, 1);
 				} else {
-					rpc.put(c, rpc.get(c)+1);
+					rpc.put(c, rpc.get(c) + 1);
 				}
 			}
 		}
@@ -238,8 +238,7 @@ public class inputFile {
 				int tmploc = tempstr.indexOf(":");
 				Reader = Integer.valueOf(tempstr.substring(tmploc + 1).trim());
 			}
-			// TODO update official file format to reflect that
-			// NM (Modality is written in)
+
 			loc = tempstr.indexOf("NM");
 			if (loc != -1) {
 				int tmploc = tempstr.indexOf(":");
@@ -322,7 +321,7 @@ public class inputFile {
 
 		System.out.println("determined if fully crossed");
 
-		// TODO allow user to choose which modalities if more than 2
+		// TODO allow user to choose which modalities if more than 2 before this
 		getT0T1s(1, 2, truthVals);
 
 		System.out.println("got t0t1s");
@@ -425,24 +424,38 @@ public class inputFile {
 			m = 0; // number of false cases
 			n = 0; // number of true cases
 			for (Integer c : keyedData.get(r).keySet()) {
-				if (c == 270) {
-					int asd = 0;
+				double currMod1;
+				double currMod2;
+				if (keyedData.get(r).containsKey(c)) {
+					if (keyedData.get(r).get(c).containsKey(modality1)) {
+						currMod1 = keyedData.get(r).get(c).get(modality1);
+					} else {
+						currMod1 = 0;
+					}
+					if (keyedData.get(r).get(c).containsKey(modality2)) {
+						currMod2 = keyedData.get(r).get(c).get(modality2);
+					} else {
+						currMod2 = 0;
+					}
+				} else {
+					currMod1 = 0;
+					currMod2 = 0;
 				}
 				if (truthVals.get(c) == 0) {
-					t0[m][k][0] = keyedData.get(r).get(c).get(modality1);
-					t0[m][k][1] = keyedData.get(r).get(c).get(modality2);
-					t01[m][k][0] = keyedData.get(r).get(c).get(modality1);
-					t01[m][k][1] = keyedData.get(r).get(c).get(modality1);
-					t02[m][k][0] = keyedData.get(r).get(c).get(modality2);
-					t02[m][k][1] = keyedData.get(r).get(c).get(modality2);
+					t0[m][k][0] = currMod1;
+					t0[m][k][1] = currMod2;
+					t01[m][k][0] = currMod1;
+					t01[m][k][1] = currMod1;
+					t02[m][k][0] = currMod2;
+					t02[m][k][1] = currMod2;
 					m++;
 				} else {
-					t1[n][k][0] = keyedData.get(r).get(c).get(modality1);
-					t1[n][k][1] = keyedData.get(r).get(c).get(modality2);
-					t11[n][k][0] = keyedData.get(r).get(c).get(modality1);
-					t11[n][k][1] = keyedData.get(r).get(c).get(modality1);
-					t12[n][k][0] = keyedData.get(r).get(c).get(modality2);
-					t12[n][k][1] = keyedData.get(r).get(c).get(modality2);
+					t1[n][k][0] = currMod1;
+					t1[n][k][1] = currMod2;
+					t11[n][k][0] = currMod1;
+					t11[n][k][1] = currMod1;
+					t12[n][k][0] = currMod2;
+					t12[n][k][1] = currMod2;
 					n++;
 				}
 			}
@@ -460,7 +473,6 @@ public class inputFile {
 		}
 	}
 
-	// TODO test that this operates identically to deprecated get T0T1s method
 	// TODO add support for t's with more than 2 modalities
 	public void getT0T1s(double[][][] rawData) {
 		t0 = new double[Normal][Reader][2];

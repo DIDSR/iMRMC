@@ -1423,19 +1423,22 @@ public class GUInterface {
 			System.out.println("graph button pressed");
 			// TODO display graphs here
 			if (usr != null && usr.isLoaded()) {
-				final BarGraph cpr = new BarGraph("Cases per Reader", "Cases", "Readers",
-						usr.casesPerReader());
+				final BarGraph cpr = new BarGraph("Cases per Reader", "Cases",
+						"Readers", usr.casesPerReader());
 				cpr.pack();
 				RefineryUtilities.centerFrameOnScreen(cpr);
 				cpr.setVisible(true);
-				
-				final BarGraph rpc = new BarGraph("Readers per Case", "Readers", "Cases", usr.readersPerCase());
+
+				final BarGraph rpc = new BarGraph("Readers per Case",
+						"Readers", "Cases", usr.readersPerCase());
 				rpc.pack();
 				RefineryUtilities.centerFrameOnScreen(rpc);
 				RefineryUtilities.positionFrameOnScreen(rpc, 0.6, 0.6);
 				rpc.setVisible(true);
 			} else {
-				JOptionPane.showMessageDialog(lst.getFrame(), "Pilot study data has not yet been input.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(lst.getFrame(),
+						"Pilot study data has not yet been input.", "Error",
+						JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
