@@ -1,48 +1,40 @@
-import java.util.HashMap;
-import java.util.Map;
+import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import javax.swing.JFrame;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.CategoryAxis;
-import org.jfree.chart.axis.CategoryLabelPositions;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.ui.ApplicationFrame;
-import org.jfree.ui.RefineryUtilities;
 
 public class BarGraph extends JFrame {
 
-	public BarGraph(final String title, HashMap<Integer, Integer> data) {
+	public BarGraph(final String title, String yaxis, String xaxis, TreeMap<Integer, Integer> data) {
 		super(title);
-		CategoryDataset dataset = createDataset(data);
-		JFreeChart chart = createChart(dataset, title);
+		CategoryDataset dataset = createDataset(data, xaxis);
+		JFreeChart chart = createChart(dataset, title, yaxis, xaxis);
 		ChartPanel chartPanel = new ChartPanel(chart);
 		chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
 		setContentPane(chartPanel);
 	}
 
-	private CategoryDataset createDataset(HashMap<Integer, Integer> data) {
+	private CategoryDataset createDataset(TreeMap<Integer, Integer> data, String xaxis) {
 		final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 		for (Entry<Integer, Integer> e : data.entrySet()) {
 			int key = e.getKey();
 			int value = e.getValue();
-			dataset.addValue(value, key + "", "Readers");
+			dataset.addValue(value, key + "", xaxis);
 		}
 
 		return dataset;
 	}
 
-	private JFreeChart createChart(final CategoryDataset dataset, String title) {
+	private JFreeChart createChart(final CategoryDataset dataset, String title, String yaxis, String xaxis) {
 
-		final JFreeChart chart = ChartFactory.createBarChart("Bar Chart",
-				"Category", "Value", dataset, PlotOrientation.VERTICAL, true,
+		final JFreeChart chart = ChartFactory.createBarChart(title,
+				xaxis, yaxis, dataset, PlotOrientation.VERTICAL, true,
 				true, false);
 		return chart;
 

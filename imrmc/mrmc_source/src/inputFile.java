@@ -75,15 +75,24 @@ public class inputFile {
 	public double[][] getBDGbias() {
 		return BDGbias;
 	}
-	
-	public HashMap<Integer, Integer> readersPerCase(){
-		
-		return null;
-	}
-	
-	public HashMap<Integer, Integer> casesPerReader(){
-		HashMap<Integer, Integer> cpr = new HashMap<Integer, Integer>();
+
+	public TreeMap<Integer, Integer> readersPerCase() {
+		TreeMap<Integer, Integer> rpc = new TreeMap<Integer, Integer>();
 		for (Integer r : keyedData.keySet()){
+			for (Integer c : keyedData.get(r).keySet()){
+				if (rpc.get(c) == null){
+					rpc.put(c, 1);
+				} else {
+					rpc.put(c, rpc.get(c)+1);
+				}
+			}
+		}
+		return rpc;
+	}
+
+	public TreeMap<Integer, Integer> casesPerReader() {
+		TreeMap<Integer, Integer> cpr = new TreeMap<Integer, Integer>();
+		for (Integer r : keyedData.keySet()) {
 			cpr.put(r, keyedData.get(r).size());
 		}
 		return cpr;
@@ -116,6 +125,7 @@ public class inputFile {
 
 	public inputFile(String file) {
 		filename = file;
+		isLoaded = false;
 		ArrayList<String> fileContent = new ArrayList<String>();
 		try {
 			InputStreamReader isr;
@@ -197,6 +207,7 @@ public class inputFile {
 		for (int i = 0; i < 8; i++)
 			System.out.println(BDGbias[3][i] + "\t");
 		System.out.println("\n");
+		isLoaded = true;
 	}
 
 	/*

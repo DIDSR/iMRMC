@@ -814,7 +814,7 @@ public class GUInterface {
 		MS2 = new ModSelect(pilotCard2, this);
 		JButton fmtHelpButton = new JButton("Format Info.");
 		JButton sampleButton = new JButton("Sample File");
-		JButton graphButton = new JButton("Input Statistics");
+		JButton graphButton = new JButton("Input Statistics Charts");
 
 		if (!lst.getIsApplet()) {
 			pilotFile = new JTextField(20);
@@ -1417,15 +1417,25 @@ public class GUInterface {
 					JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
-	
+
 	class graphButtonListner implements ActionListener {
-		public void actionPerformed(ActionEvent e){
+		public void actionPerformed(ActionEvent e) {
+			System.out.println("graph button pressed");
 			// TODO display graphs here
-			if (usr.isLoaded()){
-				final BarGraph demo = new BarGraph("Bar Chart Demo", usr.casesPerReader());
-		        demo.pack();
-		        RefineryUtilities.centerFrameOnScreen(demo);
-		        demo.setVisible(true);
+			if (usr != null && usr.isLoaded()) {
+				final BarGraph cpr = new BarGraph("Cases per Reader", "Cases", "Readers",
+						usr.casesPerReader());
+				cpr.pack();
+				RefineryUtilities.centerFrameOnScreen(cpr);
+				cpr.setVisible(true);
+				
+				final BarGraph rpc = new BarGraph("Readers per Case", "Readers", "Cases", usr.readersPerCase());
+				rpc.pack();
+				RefineryUtilities.centerFrameOnScreen(rpc);
+				RefineryUtilities.positionFrameOnScreen(rpc, 0.6, 0.6);
+				rpc.setVisible(true);
+			} else {
+				JOptionPane.showMessageDialog(lst.getFrame(), "Pilot study data has not yet been input.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
