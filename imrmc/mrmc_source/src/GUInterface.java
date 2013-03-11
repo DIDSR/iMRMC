@@ -813,18 +813,18 @@ public class GUInterface {
 		JPanel pilotCard2 = new JPanel();
 		MS2 = new ModSelect(pilotCard2, this);
 		JButton fmtHelpButton = new JButton("Format Info.");
-		JButton sampleButton = new JButton("Sample File");
 		JButton graphButton = new JButton("Input Statistics Charts");
 		JButton holesButton = new JButton("Show Data Holes");
+		JButton modsButton = new JButton("Select Modalities");
 
 		if (!lst.getIsApplet()) {
 			pilotFile = new JTextField(20);
 			JButton browseButton = new JButton("Browse...");
 			browseButton.addActionListener(new brwsButtonListner());
 			fmtHelpButton.addActionListener(new fmtHelpButtonListner());
-			sampleButton.addActionListener(new sampleButtonListner());
 			graphButton.addActionListener(new graphButtonListner());
 			holesButton.addActionListener(new holesButtonListner());
+			modsButton.addActionListener(new modsButtonListner());
 			layout.setHorizontalGroup(layout.createSequentialGroup().addGroup(
 					layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 							.addGroup(
@@ -833,9 +833,9 @@ public class GUInterface {
 											.addComponent(pilotFile)
 											.addComponent(browseButton)
 											.addComponent(fmtHelpButton)
-											.addComponent(sampleButton)
 											.addComponent(graphButton)
-											.addComponent(holesButton))
+											.addComponent(holesButton)
+											.addComponent(modsButton))
 							.addGroup(
 									layout.createSequentialGroup()
 											.addComponent(pilotCard2))));
@@ -849,9 +849,9 @@ public class GUInterface {
 									.addComponent(pilotFile)
 									.addComponent(browseButton)
 									.addComponent(fmtHelpButton)
-									.addComponent(sampleButton)
 									.addComponent(graphButton)
-									.addComponent(holesButton))
+									.addComponent(holesButton)
+									.addComponent(modsButton))
 					.addGroup(
 							layout.createParallelGroup(
 									GroupLayout.Alignment.LEADING)
@@ -860,9 +860,9 @@ public class GUInterface {
 			JButton inputByHandButton = new JButton("Input Pilot study Data");
 			inputByHandButton.addActionListener(new InputByHandListner());
 			fmtHelpButton.addActionListener(new fmtHelpButtonListner());
-			sampleButton.addActionListener(new sampleButtonListner());
 			graphButton.addActionListener(new graphButtonListner());
 			holesButton.addActionListener(new holesButtonListner());
+			modsButton.addActionListener(new modsButtonListner());
 			layout.setHorizontalGroup(layout.createSequentialGroup().addGroup(
 					layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 							.addGroup(
@@ -870,9 +870,9 @@ public class GUInterface {
 											.addComponent(studyLabel)
 											.addComponent(inputByHandButton)
 											.addComponent(fmtHelpButton)
-											.addComponent(sampleButton)
 											.addComponent(graphButton)
-											.addComponent(holesButton))
+											.addComponent(holesButton)
+											.addComponent(modsButton))
 							.addGroup(
 									layout.createSequentialGroup()
 											.addComponent(pilotCard2))));
@@ -885,7 +885,6 @@ public class GUInterface {
 									.addComponent(studyLabel)
 									.addComponent(inputByHandButton)
 									.addComponent(fmtHelpButton)
-									.addComponent(sampleButton)
 									.addComponent(graphButton))
 					.addGroup(
 							layout.createParallelGroup(
@@ -1435,17 +1434,6 @@ public class GUInterface {
 		}
 	}
 
-	/* button to open window displaying information on sample raw data input */
-	class sampleButtonListner implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			String Manual = "Dowload manual, sample file, source code and database at:\n"
-					+ "http://js.cx/~xin/download.html\n";
-			dataFormat fmt = new dataFormat();
-			JOptionPane.showMessageDialog(lst.getFrame(), Manual, "Download",
-					JOptionPane.INFORMATION_MESSAGE);
-		}
-	}
-
 	class graphButtonListner implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			System.out.println("graph button pressed");
@@ -1491,6 +1479,48 @@ public class GUInterface {
 				RefineryUtilities.centerFrameOnScreen(chart);
 				chart.setVisible(true);
 
+			} else {
+				JOptionPane.showMessageDialog(lst.getFrame(),
+						"Pilot study data has not yet been input.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+
+	class modsButtonListner implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			System.out.println("modality selection button pressed");
+			if (usr != null && usr.isLoaded()) {
+				if (usr.getModality() > 2) {
+					JComboBox<Integer> choose1 = new JComboBox<Integer>();
+					JComboBox<Integer> choose2 = new JComboBox<Integer>();
+					for (int i = 1; i <= usr.getModality(); i++) {
+						choose1.addItem(i);
+						choose2.addItem(i);
+					}
+					Object[] message = {
+							"There are "
+									+ usr.getModality()
+									+ " modalities. Which would you like to use?\n",
+							"Modality 1: ", choose1, "Modality 2: ", choose2 };
+					JOptionPane.showMessageDialog(lst.getFrame(), message,
+							"Choose Modalities",
+							JOptionPane.INFORMATION_MESSAGE, null);
+					System.out.println(choose1.getSelectedItem() + ","
+							+ choose2.getSelectedItem());
+					usr.dotheWork((Integer) choose1.getSelectedItem(),
+							(Integer) choose2.getSelectedItem());
+					if (!lst.getIsApplet()) {
+						usrFile = new dbRecord(usr);
+					}
+
+				} else {
+					JOptionPane
+							.showMessageDialog(
+									lst.getFrame(),
+									"The only available modalities have already been selected",
+									"Info", JOptionPane.INFORMATION_MESSAGE);
+				}
 			} else {
 				JOptionPane.showMessageDialog(lst.getFrame(),
 						"Pilot study data has not yet been input.", "Error",
