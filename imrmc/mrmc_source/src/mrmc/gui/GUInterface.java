@@ -750,7 +750,7 @@ public class GUInterface {
 		InputCBPane.setLayout(new FlowLayout());
 		JLabel inLabel = new JLabel("Select an input method: ");
 		String comboBoxItems[] = { DB, Pilot, Manual };
-		JComboBox cb = new JComboBox(comboBoxItems);
+		JComboBox<String> cb = new JComboBox<String>(comboBoxItems);
 		cb.setEditable(false);
 		cb.setSelectedIndex(0);
 		cb.addActionListener(new inputModListener());
@@ -778,7 +778,7 @@ public class GUInterface {
 		layout.setAutoCreateContainerGaps(true);
 
 		JLabel studyLabel = new JLabel("Database ");
-		JComboBox dbCB = new JComboBox(dbBoxItems);
+		JComboBox<String> dbCB = new JComboBox<String>(dbBoxItems);
 		dbCB.setEditable(false);
 		dbCB.addActionListener(new dbActionListener());
 		dbCB.setSelectedIndex(0);
@@ -1282,7 +1282,7 @@ public class GUInterface {
 	/* Drop down menu to select input method */
 	class inputModListener implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
-			JComboBox cb = (JComboBox) evt.getSource();
+			JComboBox<String> cb = (JComboBox<String>) evt.getSource();
 			CardLayout cl = (CardLayout) (inputCards.getLayout());
 			cl.show(inputCards, (String) cb.getSelectedItem());
 			selectedInput = cb.getSelectedIndex();
@@ -1325,12 +1325,11 @@ public class GUInterface {
 	/* drop down menu to choose a particular dataset from internal database */
 	class dbActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
-			JComboBox cb = (JComboBox) evt.getSource();
+			JComboBox<String> cb = (JComboBox<String>) evt.getSource();
 			selectedDB = (int) cb.getSelectedIndex();
 		}
 	}
 
-	/* TODO determine what feature this class is related to */
 	class fmtSelListner implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			String str;
@@ -1419,7 +1418,7 @@ public class GUInterface {
 				currMod1 = 1;
 				currMod2 = 2;
 				currentMod.setText("Modality A = " + currMod1
-						+ ", Modality B = " + currMod2);
+						+ "     Modality B = " + currMod2);
 				usr.dotheWork(1, 2);
 
 				if (!lst.getIsApplet())
@@ -1524,7 +1523,7 @@ public class GUInterface {
 					currMod1 = (Integer) choose1.getSelectedItem();
 					currMod2 = (Integer) choose2.getSelectedItem();
 					currentMod.setText("Modality A = " + currMod1
-							+ ", Modality B = " + currMod2);
+							+ "     Modality B = " + currMod2);
 					if (!lst.getIsApplet()) {
 						usrFile = new dbRecord(usr);
 					}

@@ -1,7 +1,5 @@
 package mrmc.core;
 
-
-
 public class covMRMC {
 	int Reader, Normal, Disease;
 	int nmod = 2;
@@ -69,7 +67,8 @@ public class covMRMC {
 			// ***************for the first modality******************
 			int[][] designA0 = matrix.extractFirstDimention(d0, ir, 0);
 			int[][] designA1 = matrix.extractFirstDimention(d1, ir, 0);
-			int[][] da = matrix.multiply(designA0, matrix.matrixTranspose(designA1));
+			int[][] da = matrix.multiply(designA0,
+					matrix.matrixTranspose(designA1));
 			int totalda = matrix.total(da);
 			double wa = w[ir][0];
 			double[][] ta0 = matrix.extractFirstDimention(t0, ir, 0);
@@ -77,8 +76,10 @@ public class covMRMC {
 			double[][] ta1 = matrix.extractFirstDimention(t1, ir, 0);
 			double[][] ta1temp = matrix.linearTrans(ta1, 0.0, 1.0);
 
-			double[][] sa0 = matrix.multiply(ta0, matrix.matrixTranspose(ta1temp));
-			double[][] sa1 = matrix.multiply(ta0temp, matrix.matrixTranspose(ta1));
+			double[][] sa0 = matrix.multiply(ta0,
+					matrix.matrixTranspose(ta1temp));
+			double[][] sa1 = matrix.multiply(ta0temp,
+					matrix.matrixTranspose(ta1));
 			double[][] sa = matrix.subtract(sa1, sa0);
 			for (int i = 0; i < Normal; i++)
 				for (int j = 0; j < Disease; j++) {
@@ -94,7 +95,8 @@ public class covMRMC {
 			// ***************for the second modality******************
 			int[][] designB0 = matrix.extractFirstDimention(d0, ir, 1);
 			int[][] designB1 = matrix.extractFirstDimention(d1, ir, 1);
-			int[][] db = matrix.multiply(designB0, matrix.matrixTranspose(designB1));
+			int[][] db = matrix.multiply(designB0,
+					matrix.matrixTranspose(designB1));
 			int totaldb = matrix.total(db);
 			double wb = w[ir][1];
 			double[][] tb0 = matrix.extractFirstDimention(t0, ir, 1);
@@ -102,8 +104,10 @@ public class covMRMC {
 			double[][] tb1 = matrix.extractFirstDimention(t1, ir, 1);
 			double[][] tb1temp = matrix.linearTrans(tb1, 0.0, 1.0);
 
-			double[][] sb0 = matrix.multiply(tb0, matrix.matrixTranspose(tb1temp));
-			double[][] sb1 = matrix.multiply(tb0temp, matrix.matrixTranspose(tb1));
+			double[][] sb0 = matrix.multiply(tb0,
+					matrix.matrixTranspose(tb1temp));
+			double[][] sb1 = matrix.multiply(tb0temp,
+					matrix.matrixTranspose(tb1));
 			double[][] sb = matrix.subtract(sb1, sb0);
 			for (int i = 0; i < Normal; i++)
 				for (int j = 0; j < Disease; j++) {
@@ -139,7 +143,8 @@ public class covMRMC {
 			double wbdbsb_sumij = matrix.total(wbdbsb);
 
 			// *********aggregate the sum over readers that will feed M1-M4
-			bdenom[1] = bdenom[1] + matrix.total(matrix.elementMultiply(wada, wbdb));
+			bdenom[1] = bdenom[1]
+					+ matrix.total(matrix.elementMultiply(wada, wbdb));
 			bdenom[2] = bdenom[2]
 					+ matrix.total(matrix.elementMultiply(wada_sumi, wbdb_sumi));
 			bdenom[3] = bdenom[3]
@@ -148,9 +153,11 @@ public class covMRMC {
 			bnumer[1] = bnumer[1]
 					+ matrix.total(matrix.elementMultiply(wadasa, wbdbsb));
 			bnumer[2] = bnumer[2]
-					+ matrix.total(matrix.elementMultiply(wadasa_sumi, wbdbsb_sumi));
+					+ matrix.total(matrix.elementMultiply(wadasa_sumi,
+							wbdbsb_sumi));
 			bnumer[3] = bnumer[3]
-					+ matrix.total(matrix.elementMultiply(wadasa_sumj, wbdbsb_sumj));
+					+ matrix.total(matrix.elementMultiply(wadasa_sumj,
+							wbdbsb_sumj));
 			bnumer[4] = bnumer[4] + wadasa_sumij * wbdbsb_sumij;
 
 			// *********aggregate the sum over readers that will feed M5-M8
@@ -193,9 +200,12 @@ public class covMRMC {
 		bdenom[6] = matrix.total(matrix.elementMultiply(wadaSumir, wbdbSumir));
 		bdenom[7] = matrix.total(matrix.elementMultiply(wadaSumjr, wbdbSumjr));
 		bdenom[8] = wadaSumijr * wbdbSumijr;
-		bnumer[5] = matrix.total(matrix.elementMultiply(wadasaSumr, wbdbsbSumr));
-		bnumer[6] = matrix.total(matrix.elementMultiply(wadasaSumir, wbdbsbSumir));
-		bnumer[7] = matrix.total(matrix.elementMultiply(wadasaSumjr, wbdbsbSumjr));
+		bnumer[5] = matrix
+				.total(matrix.elementMultiply(wadasaSumr, wbdbsbSumr));
+		bnumer[6] = matrix.total(matrix.elementMultiply(wadasaSumir,
+				wbdbsbSumir));
+		bnumer[7] = matrix.total(matrix.elementMultiply(wadasaSumjr,
+				wbdbsbSumjr));
 		bnumer[8] = wadasaSumijr * wbdbsbSumijr;
 
 		double[][] bias2unbias = new double[][] {
@@ -226,7 +236,8 @@ public class covMRMC {
 		}
 
 		// coefficients
-		double[] c = matrix.linearTrans(denom, 1.0 / (totalwada * totalwbdb), 0);
+		double[] c = matrix
+				.linearTrans(denom, 1.0 / (totalwada * totalwbdb), 0);
 		c[8] = c[8] - 1.0;
 
 		aucMod[0] = aucA / totalwada;

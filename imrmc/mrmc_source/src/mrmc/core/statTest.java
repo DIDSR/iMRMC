@@ -11,7 +11,6 @@ import umontreal.iro.lecuyer.probdist.NormalDist;
 //import umontreal.iro.lecuyer.probdist.StudentDist;
 import java.lang.Math;
 
-
 public class statTest {
 	int INFINITY = 500;
 	int PRECISION = 6;
@@ -194,9 +193,9 @@ public class statTest {
 		 * SigTR=SigTR; SigTC=SigTC*c; SigTRC=SigTRC; SigTRC=SigTRC*c;
 		 */
 
-//		SigTR = SigTR;
-//		SigTC = SigTC;
-//		SigTRC = SigTRC;
+		// SigTR = SigTR;
+		// SigTC = SigTC;
+		// SigTRC = SigTRC;
 
 		if (SigTR < 0) {
 			SigTR = 0;
@@ -249,8 +248,8 @@ public class statTest {
 	public double cdfNonCentralF(int df1, int df2, double delta, double x) {
 		double cdf = 0;
 		for (int j = 0; j < INFINITY; j++) {
-			double tempF = BetaDist.cdf(df1 / 2.0 + j, df2 / 2.0, PRECISION, df1
-					* x / (df2 + df1 * x));
+			double tempF = BetaDist.cdf(df1 / 2.0 + j, df2 / 2.0, PRECISION,
+					df1 * x / (df2 + df1 * x));
 			double sfactor = 1;
 			for (int k = j; k > 0; k--) {
 				sfactor = sfactor * (0.5 * delta) / (double) k;
@@ -282,9 +281,9 @@ public class statTest {
 		 * SigTR=SigTR; SigTC=SigTC*c; SigTRC=SigTRC; SigTRC=SigTRC*c;
 		 */
 
-//		SigTR = SigTR;
-//		SigTC = SigTC;
-//		SigTRC = SigTRC;
+		// SigTR = SigTR;
+		// SigTC = SigTC;
+		// SigTRC = SigTRC;
 
 		if (SigTR < 0) {
 			SigTR = 0;

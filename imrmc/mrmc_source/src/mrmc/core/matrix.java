@@ -165,7 +165,8 @@ public class matrix {
 		return result;
 	}
 
-	public static double[][] extractFirstDimention(double[][][] m, int d2, int d3) {
+	public static double[][] extractFirstDimention(double[][][] m, int d2,
+			int d3) {
 		double[][] result = new double[m.length][1];
 		for (int i = 0; i < m.length; i++) {
 			result[i][0] = m[i][d2][d3];

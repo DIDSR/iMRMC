@@ -1,6 +1,5 @@
 package mrmc.core;
 
-
 import java.util.*;
 import java.io.*;
 
@@ -99,9 +98,9 @@ public class inputFile {
 	public TreeMap<Integer, Integer> casesPerReader() {
 		TreeMap<Integer, Integer> cpr = new TreeMap<Integer, Integer>();
 		for (Integer r : keyedData.keySet()) {
-			for (Integer c : keyedData.get(r).keySet()){
-				if(!keyedData.get(r).get(c).isEmpty()){
-					if(cpr.get(r) == null){
+			for (Integer c : keyedData.get(r).keySet()) {
+				if (!keyedData.get(r).get(c).isEmpty()) {
+					if (cpr.get(r) == null) {
 						cpr.put(r, 1);
 					} else {
 						cpr.put(r, cpr.get(r) + 1);
@@ -331,11 +330,6 @@ public class inputFile {
 		}
 
 		System.out.println("determined if fully crossed");
-
-		// TODO allow user to choose which modalities if more than 2 before this
-		// getT0T1s(1, 2, truthVals);
-
-		// System.out.println("got t0t1s");
 	}
 
 	/*
@@ -484,7 +478,6 @@ public class inputFile {
 		}
 	}
 
-	// TODO add support for t's with more than 2 modalities
 	public void getT0T1s(double[][][] rawData) {
 		t0 = new double[Normal][Reader][2];
 		t1 = new double[Disease][Reader][2];
