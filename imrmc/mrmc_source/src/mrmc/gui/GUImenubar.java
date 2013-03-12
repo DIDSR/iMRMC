@@ -2,18 +2,8 @@ package mrmc.gui;
 
 
 import javax.swing.*;
-import javax.swing.event.*;
 import java.awt.event.*;
-import java.awt.*;
-import java.io.*;
-import java.util.*;
-import java.lang.Math;
-import javax.swing.border.*;
-
 import mrmc.core.MRMC;
-
-import java.applet.*;
-import java.net.*;
 
 public class GUImenubar {
 	MRMC lst;
@@ -116,7 +106,7 @@ public class GUImenubar {
 	}
 
 	private void createMenuBar() {
-		JMenu menu, submenu;
+		JMenu menu;
 		JMenuItem menuItem;
 		menu = new JMenu("Menu");
 		menuBar.add(menu);

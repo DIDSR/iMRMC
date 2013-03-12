@@ -2,20 +2,10 @@ package mrmc.gui;
 
 
 import javax.swing.*;
-import javax.swing.event.*;
 import java.awt.event.*;
-import java.awt.*;
-import java.io.*;
-import java.util.*;
-import java.lang.Math;
-import javax.swing.border.*;
-import javax.swing.table.*;
-
 import mrmc.core.MRMC;
 import mrmc.core.dbRecord;
 import mrmc.core.matrix;
-
-import java.text.DecimalFormat;
 
 public class ManualCard {
 	JPanel manual3; // the panel that shares different manual input compenents

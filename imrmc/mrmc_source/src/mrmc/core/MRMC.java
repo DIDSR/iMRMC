@@ -10,6 +10,10 @@ import mrmc.gui.GUInterface;
 import java.awt.*;
 
 public class MRMC extends JApplet {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private static JFrame mainFrame;
 	GUInterface gui;
 	GUImenubar menuBar;

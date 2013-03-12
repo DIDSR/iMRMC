@@ -139,7 +139,6 @@ public class inputFile {
 		try {
 			InputStreamReader isr;
 			DataInputStream din;
-			InputStream in;
 			FileInputStream fstream = new FileInputStream(filename);
 			din = new DataInputStream(fstream);
 			isr = new InputStreamReader(din);
@@ -537,7 +536,6 @@ public class inputFile {
 	}
 
 	public ArrayList<String> readFile(InputStreamReader isr) {
-		int j;
 		BufferedReader br = new BufferedReader(isr);
 		ArrayList<String> content = new ArrayList<String>();
 		String strtemp;
@@ -551,10 +549,5 @@ public class inputFile {
 		}
 		return content;
 
-	}
-
-	public static void main(String[] args) {
-
-		inputFile file = new inputFile("1992_Franken.txt");
 	}
 }

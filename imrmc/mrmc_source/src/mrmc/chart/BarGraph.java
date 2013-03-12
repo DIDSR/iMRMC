@@ -12,6 +12,11 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 public class BarGraph extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public BarGraph(final String title, String xaxis, String yaxis, TreeMap<Integer, Integer> data) {
 		super(title);
 		CategoryDataset dataset = createDataset(data, xaxis);

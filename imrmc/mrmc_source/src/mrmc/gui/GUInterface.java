@@ -20,17 +20,12 @@ package mrmc.gui;
  ************************************************************/
 
 import javax.swing.*;
-import javax.swing.event.*;
 import java.awt.event.*;
 import java.awt.*;
 import java.io.*;
-import java.util.*;
 import java.lang.Math;
-import javax.swing.border.*;
 import javax.swing.table.*;
 import java.text.DecimalFormat;
-import javax.swing.text.DefaultEditorKit;
-
 import mrmc.chart.BarGraph;
 import mrmc.chart.PresencePlot;
 import mrmc.core.MRMC;
@@ -1371,7 +1366,6 @@ public class GUInterface {
 	class brwsButtonListner implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			JFileChooser fc = new JFileChooser();
-			int returnVal = fc.showOpenDialog((Component) e.getSource());
 			File f = fc.getSelectedFile();
 			if (f != null) {
 				filename = f.getPath();

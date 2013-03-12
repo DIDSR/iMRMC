@@ -1,10 +1,6 @@
 package mrmc.chart;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Paint;
 import java.awt.Color;
-import java.awt.BasicStroke;
 import java.awt.Rectangle;
 
 import org.jfree.chart.JFreeChart;
@@ -16,9 +12,13 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.xy.DefaultXYDataset;
-import org.jfree.util.ShapeUtilities;
 
 public class PresencePlot extends JFrame {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	public PresencePlot(final String title, String xaxis, String yaxis,
 			boolean[][] data) {

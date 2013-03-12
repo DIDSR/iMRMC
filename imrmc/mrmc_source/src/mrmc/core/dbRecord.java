@@ -260,14 +260,12 @@ public class dbRecord {
 			String[] temp = str[i].split(",");
 			for (j = 0; j < 8; j++) {
 				BDG[i][j] = Double.valueOf(temp[j]);
-				int temp2 = j;
 			}
 		}
 		for (i = str.length / 2; i < str.length; i++) {
 			String[] temp = str[i].split(",");
 			for (j = 0; j < 8; j++) {
 				BDGbias[i - str.length / 2][j] = Double.valueOf(temp[j]);
-				int temp2 = j;
 			}
 		}
 
