@@ -1365,7 +1365,10 @@ public class GUInterface {
 	 */
 	class brwsButtonListner implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
+			System.out.println("browse pressed");
 			JFileChooser fc = new JFileChooser();
+			// Don't get rid of this despite being unused
+			int returnVal = fc.showOpenDialog((Component) e.getSource());
 			File f = fc.getSelectedFile();
 			if (f != null) {
 				filename = f.getPath();
