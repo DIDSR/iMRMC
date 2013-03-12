@@ -1,3 +1,5 @@
+package mrmc.gui;
+
 // Example from http://www.crionics.com/products/opensource/faq/swing_ex/SwingExamples.html
 /* (swing1.1beta3) */
 import java.awt.BorderLayout;

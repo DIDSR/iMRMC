@@ -1,3 +1,5 @@
+package mrmc.core;
+
 /*statistical tests. 
  * Hillis tests and Z test are implemented
  * Hillis tests require non-central F distribution. The formula is from
@@ -8,6 +10,7 @@ import umontreal.iro.lecuyer.probdist.BetaDist;
 import umontreal.iro.lecuyer.probdist.NormalDist;
 //import umontreal.iro.lecuyer.probdist.StudentDist;
 import java.lang.Math;
+
 
 public class statTest {
 	int INFINITY = 500;

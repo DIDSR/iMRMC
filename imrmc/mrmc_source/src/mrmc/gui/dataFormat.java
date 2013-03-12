@@ -1,3 +1,5 @@
+package mrmc.gui;
+
 public class dataFormat {
 
 	String fmtHelp;

@@ -1,5 +1,6 @@
-/* ***************mrmcDB.java*************** */
-/* creating a database using the files in the DB folder*/
+package mrmc.core;
+
+
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -9,6 +10,8 @@ import java.io.*;
 import java.util.*;
 import java.lang.Math;
 import javax.swing.border.*;
+
+
 import java.security.CodeSource;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

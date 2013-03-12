@@ -1,3 +1,5 @@
+package mrmc.gui;
+
 /* **************************************************
  * ****************GUInterface.java******************
  * **************************************************
@@ -16,6 +18,7 @@
  * 8. database summary panel
  ************************************************************
  ************************************************************/
+
 import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.event.*;
@@ -27,6 +30,14 @@ import javax.swing.border.*;
 import javax.swing.table.*;
 import java.text.DecimalFormat;
 import javax.swing.text.DefaultEditorKit;
+
+import mrmc.chart.BarGraph;
+import mrmc.chart.PresencePlot;
+import mrmc.core.MRMC;
+import mrmc.core.dbRecord;
+import mrmc.core.inputFile;
+import mrmc.core.mrmcDB;
+import mrmc.core.statTest;
 
 import org.jfree.ui.RefineryUtilities;
 
@@ -76,6 +87,8 @@ public class GUInterface {
 	int manualReader;
 	int manualNormal;
 	int manualDisease;
+	int currMod1;
+	int currMod2;
 
 	// JTextField sigLevel;
 	// JTextField effSize;
@@ -1395,28 +1408,9 @@ public class GUInterface {
 							"The study is not fully crossed", "Warning",
 							JOptionPane.WARNING_MESSAGE);
 				}
-				if (usr.getModality() > 2) {
-					JComboBox<Integer> choose1 = new JComboBox<Integer>();
-					JComboBox<Integer> choose2 = new JComboBox<Integer>();
-					for (int i = 1; i <= usr.getModality(); i++) {
-						choose1.addItem(i);
-						choose2.addItem(i);
-					}
-					Object[] message = {
-							"There are "
-									+ usr.getModality()
-									+ " modalities. Which would you like to use?\n",
-							"Modality 1: ", choose1, "Modality 2: ", choose2 };
-					JOptionPane.showMessageDialog(lst.getFrame(), message,
-							"Choose Modalities",
-							JOptionPane.INFORMATION_MESSAGE, null);
-					System.out.println(choose1.getSelectedItem() + ","
-							+ choose2.getSelectedItem());
-					usr.dotheWork((Integer) choose1.getSelectedItem(),
-							(Integer) choose2.getSelectedItem());
-				} else {
-					usr.dotheWork(1, 2);
-				}
+				currMod1 = 1;
+				currMod2 = 2;
+				usr.dotheWork(1, 2);
 
 				if (!lst.getIsApplet())
 					usrFile = new dbRecord(usr);
@@ -1438,14 +1432,14 @@ public class GUInterface {
 		public void actionPerformed(ActionEvent e) {
 			System.out.println("graph button pressed");
 			if (usr != null && usr.isLoaded()) {
-				final BarGraph cpr = new BarGraph("Cases per Reader", "Cases",
-						"Readers", usr.casesPerReader());
+				final BarGraph cpr = new BarGraph("Cases per Reader",
+						"Readers", "Cases", usr.casesPerReader());
 				cpr.pack();
 				RefineryUtilities.centerFrameOnScreen(cpr);
 				cpr.setVisible(true);
 
-				final BarGraph rpc = new BarGraph("Readers per Case",
-						"Readers", "Cases", usr.readersPerCase());
+				final BarGraph rpc = new BarGraph("Readers per Case", "Cases",
+						"Readers", usr.readersPerCase());
 				rpc.pack();
 				RefineryUtilities.centerFrameOnScreen(rpc);
 				RefineryUtilities.positionFrameOnScreen(rpc, 0.6, 0.6);
@@ -1459,6 +1453,8 @@ public class GUInterface {
 	}
 
 	class holesButtonListner implements ActionListener {
+		int holesMod1 = 1;
+
 		public void actionPerformed(ActionEvent e) {
 			System.out.println("holes button pressed");
 			if (usr != null && usr.isLoaded()) {
@@ -1466,6 +1462,7 @@ public class GUInterface {
 				for (int i = 1; i <= usr.getModality(); i++) {
 					choose1.addItem(i);
 				}
+				choose1.setSelectedItem((Integer) currMod1);
 				Object[] message = { "Which modality would you like view?\n",
 						choose1 };
 				JOptionPane.showMessageDialog(lst.getFrame(), message,
@@ -1473,8 +1470,10 @@ public class GUInterface {
 						null);
 				boolean[][] holes = usr.getDataHoles((Integer) choose1
 						.getSelectedItem());
+				holesMod1 = (Integer) choose1.getSelectedItem();
 				final PresencePlot chart = new PresencePlot(
-						"Missing Data Points", "Cases", "Readers", holes);
+						"Missing Data Points: Modality " + currMod1, "Case",
+						"Reader", holes);
 				chart.pack();
 				RefineryUtilities.centerFrameOnScreen(chart);
 				chart.setVisible(true);
@@ -1498,6 +1497,8 @@ public class GUInterface {
 						choose1.addItem(i);
 						choose2.addItem(i);
 					}
+					choose1.setSelectedItem((Integer) currMod1);
+					choose2.setSelectedItem((Integer) currMod2);
 					Object[] message = {
 							"There are "
 									+ usr.getModality()
@@ -1510,6 +1511,8 @@ public class GUInterface {
 							+ choose2.getSelectedItem());
 					usr.dotheWork((Integer) choose1.getSelectedItem(),
 							(Integer) choose2.getSelectedItem());
+					currMod1 = (Integer) choose1.getSelectedItem();
+					currMod2 = (Integer) choose2.getSelectedItem();
 					if (!lst.getIsApplet()) {
 						usrFile = new dbRecord(usr);
 					}

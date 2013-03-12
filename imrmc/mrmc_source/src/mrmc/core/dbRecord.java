@@ -1,3 +1,5 @@
+package mrmc.core;
+
 /* one entry in the database
  * This class includes all the information on one study.
  * it also includes all the formulas convert one type 
@@ -8,6 +10,7 @@
  * and other variance estimators�, Commun Stat A-Theory 38(15), 
  * 2586-2603 (2009).
  */
+
 import java.util.*;
 import java.text.DecimalFormat;
 

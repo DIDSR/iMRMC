@@ -1,3 +1,5 @@
+package mrmc.gui;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.event.*;
@@ -15,6 +17,7 @@ public class ModSelect {
 	JRadioButton mod1Button;
 	JRadioButton mod2Button;
 	JRadioButton modDButton;
+	JLabel currModalities;
 
 	public void setUseBiasM(int temp) {
 		if (temp == 1) {

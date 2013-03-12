@@ -1,7 +1,6 @@
-/* covMRMC.java*/
-/* this class packages methods for using one-shot methods.*/
-/* One-Shot Estimate of MRMC Variance: AUC, Brandon D. Gallas, 
- * Academic Radiology 13, pp. 353-362, 2006.*/
+package mrmc.core;
+
+
 
 public class covMRMC {
 	int Reader, Normal, Disease;

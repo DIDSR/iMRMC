@@ -1,14 +1,22 @@
+package mrmc.chart;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Paint;
 import java.awt.Color;
 import java.awt.BasicStroke;
+import java.awt.Rectangle;
+
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.xy.DefaultXYDataset;
+import org.jfree.util.ShapeUtilities;
 
 public class PresencePlot extends JFrame {
 
@@ -52,8 +60,8 @@ public class PresencePlot extends JFrame {
 				}
 			}
 		}
-		dataset.addSeries("false", falseVals);
-		dataset.addSeries("true", trueVals);
+		dataset.addSeries("Missing", falseVals);
+		dataset.addSeries("Present", trueVals);
 		return dataset;
 	}
 
@@ -61,6 +69,15 @@ public class PresencePlot extends JFrame {
 			String title, String xaxis, String yaxis) {
 		final JFreeChart chart = ChartFactory.createScatterPlot(title, xaxis,
 				yaxis, dataset, PlotOrientation.VERTICAL, true, true, false);
+		XYPlot xyplot = (XYPlot) chart.getPlot();
+		NumberAxis range = (NumberAxis) xyplot.getRangeAxis();
+		range.setTickUnit(new NumberTickUnit(1));
+		XYItemRenderer renderer = xyplot.getRenderer();
+		Rectangle square = new Rectangle(5,5);
+		renderer.setSeriesShape(0, square);
+		renderer.setSeriesShape(1, square);
+		renderer.setSeriesPaint(0, Color.white);
+		renderer.setSeriesPaint(1,Color.black);
 		return chart;
 
 	}

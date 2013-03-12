@@ -1,3 +1,5 @@
+package mrmc.core;
+
 import java.util.*;
 
 public class matrix {

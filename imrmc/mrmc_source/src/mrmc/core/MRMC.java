@@ -1,17 +1,12 @@
-/* ******************************************************
- * Webpage for sizing MRMC trials 
- * Author: Xin He
- * Date: August 29, 2011
- * Version:1.0 
- * Copyright: open source
- * 
- * This is the main class. It provides two entry points: the
- * program is excuted as a command line application or the 
- * program is loaded in a web browser.
- * ***********************************************************
- */
+package mrmc.core;
+
+
 
 import javax.swing.*;
+
+import mrmc.gui.GUImenubar;
+import mrmc.gui.GUInterface;
+
 import java.awt.*;
 
 public class MRMC extends JApplet {

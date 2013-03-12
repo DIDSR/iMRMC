@@ -1,3 +1,4 @@
+package mrmc.chart;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 

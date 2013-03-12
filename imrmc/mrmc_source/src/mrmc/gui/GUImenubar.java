@@ -1,3 +1,6 @@
+package mrmc.gui;
+
+
 import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.event.*;
@@ -6,6 +9,9 @@ import java.io.*;
 import java.util.*;
 import java.lang.Math;
 import javax.swing.border.*;
+
+import mrmc.core.MRMC;
+
 import java.applet.*;
 import java.net.*;
 

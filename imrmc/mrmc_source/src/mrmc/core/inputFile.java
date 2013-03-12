@@ -1,3 +1,6 @@
+package mrmc.core;
+
+
 import java.util.*;
 import java.io.*;
 
@@ -81,10 +84,12 @@ public class inputFile {
 		TreeMap<Integer, Integer> rpc = new TreeMap<Integer, Integer>();
 		for (Integer r : keyedData.keySet()) {
 			for (Integer c : keyedData.get(r).keySet()) {
-				if (rpc.get(c) == null) {
-					rpc.put(c, 1);
-				} else {
-					rpc.put(c, rpc.get(c) + 1);
+				if (!keyedData.get(r).get(c).isEmpty()) {
+					if (rpc.get(c) == null) {
+						rpc.put(c, 1);
+					} else {
+						rpc.put(c, rpc.get(c) + 1);
+					}
 				}
 			}
 		}
@@ -94,15 +99,19 @@ public class inputFile {
 	public TreeMap<Integer, Integer> casesPerReader() {
 		TreeMap<Integer, Integer> cpr = new TreeMap<Integer, Integer>();
 		for (Integer r : keyedData.keySet()) {
-			cpr.put(r, keyedData.get(r).size());
+			for (Integer c : keyedData.get(r).keySet()){
+				if(!keyedData.get(r).get(c).isEmpty()){
+					if(cpr.get(r) == null){
+						cpr.put(r, 1);
+					} else {
+						cpr.put(r, cpr.get(r) + 1);
+					}
+				}
+			}
 		}
 		return cpr;
 	}
 
-	/*
-	 * shows missing data points for a given modality TODO use this in visual
-	 * graph
-	 */
 	public boolean[][] getDataHoles(int modality) {
 		boolean[][] holes = new boolean[Reader][Normal + Disease];
 		int i = 0, j = 0;
@@ -123,7 +132,6 @@ public class inputFile {
 
 	// this is the constructor for the stand alone application
 	// reading a file locally
-
 	public inputFile(String file) {
 		filename = file;
 		isLoaded = false;
@@ -154,8 +162,8 @@ public class inputFile {
 			fileContent.add(temp[i]);
 		organizeData(fileContent);
 	}
-	
-	public void dotheWork(int modality1, int modality2){
+
+	public void dotheWork(int modality1, int modality2) {
 		matrix mx = new matrix();
 		getT0T1s(modality1, modality2, truthVals);
 		covMRMC mod1 = new covMRMC(t01, d0, t11, d1, Reader, Normal, Disease);
@@ -261,10 +269,16 @@ public class inputFile {
 		// line)
 		for (int i = 0; i < totalLine - (counter + 1); i++) {
 			tempNumbers = fileContent.get((counter + 1) + i).split(",");
-			fData[i][0] = Integer.valueOf(tempNumbers[0]); // Reader
-			fData[i][1] = Integer.valueOf(tempNumbers[1]); // Case
-			fData[i][2] = Integer.valueOf(tempNumbers[2]); // Modality id
-			fData[i][3] = Double.valueOf(tempNumbers[3]); // Score
+			try {
+				fData[i][0] = Integer.valueOf(tempNumbers[0]); // Reader
+				fData[i][1] = Integer.valueOf(tempNumbers[1]); // Case
+				fData[i][2] = Integer.valueOf(tempNumbers[2]); // Modality id
+				fData[i][3] = Double.valueOf(tempNumbers[3]); // Score
+			} catch (NumberFormatException e) {
+				System.out
+						.println("Input file cannot have any trailing newlines after data");
+				e.printStackTrace();
+			}
 		}
 
 		System.out.println("filled up fData");
@@ -321,9 +335,9 @@ public class inputFile {
 		System.out.println("determined if fully crossed");
 
 		// TODO allow user to choose which modalities if more than 2 before this
-		//getT0T1s(1, 2, truthVals);
+		// getT0T1s(1, 2, truthVals);
 
-		//System.out.println("got t0t1s");
+		// System.out.println("got t0t1s");
 	}
 
 	/*
@@ -406,7 +420,7 @@ public class inputFile {
 		return fData1;
 	}
 
-	/* this does not work if study is not fully crossed */
+	/* fills matrixes with 0s if data is not present */
 	public void getT0T1s(int modality1, int modality2,
 			HashMap<Integer, Integer> truthVals) {
 		t0 = new double[Normal][Reader][2];
