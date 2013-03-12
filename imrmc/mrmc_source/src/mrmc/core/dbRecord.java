@@ -181,7 +181,7 @@ public class dbRecord {
 		double[][] BDGTab1 = new double[3][8];
 		BDGTab1[0] = BDGtemp[i];
 		BDGTab1[1] = BDGc[i];
-		BDGTab1[2] = mx.dotProduct(BDGTab1[0], BDGTab1[1]);
+		BDGTab1[2] = matrix.dotProduct(BDGTab1[0], BDGTab1[1]);
 		return BDGTab1;
 	}
 
@@ -189,7 +189,7 @@ public class dbRecord {
 		double[][] BCKTab1 = new double[3][7];
 		BCKTab1[0] = BCKtemp[i];
 		BCKTab1[1] = BCKc[i];
-		BCKTab1[2] = mx.dotProduct(BCKTab1[0], BCKTab1[1]);
+		BCKTab1[2] = matrix.dotProduct(BCKTab1[0], BCKTab1[1]);
 		return BCKTab1;
 	}
 
@@ -197,7 +197,7 @@ public class dbRecord {
 		double[][] DBMTab1 = new double[3][6];
 		DBMTab1[0] = DBMtemp[i];
 		DBMTab1[1] = DBMc[i];
-		DBMTab1[2] = mx.dotProduct(DBMTab1[0], DBMTab1[1]);
+		DBMTab1[2] = matrix.dotProduct(DBMTab1[0], DBMTab1[1]);
 		return DBMTab1;
 	}
 
@@ -205,7 +205,7 @@ public class dbRecord {
 		double[][] ORTab1 = new double[3][6];
 		ORTab1[0] = ORtemp[i];
 		ORTab1[1] = ORc[i];
-		ORTab1[2] = mx.dotProduct(ORTab1[0], ORTab1[1]);
+		ORTab1[2] = matrix.dotProduct(ORTab1[0], ORTab1[1]);
 		return ORTab1;
 	}
 
@@ -213,7 +213,7 @@ public class dbRecord {
 		double[][] MSTab1 = new double[3][6];
 		MSTab1[0] = MStemp[i];
 		MSTab1[1] = MSc[i];
-		MSTab1[2] = mx.dotProduct(MSTab1[0], MSTab1[1]);
+		MSTab1[2] = matrix.dotProduct(MSTab1[0], MSTab1[1]);
 		return MSTab1;
 	}
 
@@ -301,7 +301,7 @@ public class dbRecord {
 		for (int i = 0; i < 4; i++)
 			for (int j = 0; j < 6; j++)
 				c[i][j] = 0;
-		c = mx.matrixTranspose(mx.multiply(BAlpha, mx.matrixTranspose(DBM)));
+		c = matrix.matrixTranspose(matrix.multiply(BAlpha, matrix.matrixTranspose(DBM)));
 		for (int i = 0; i < 2; i++)
 			for (int j = 0; j < 6; j++)
 				c[i][j] = c[i][j] / 2.0;
@@ -325,13 +325,13 @@ public class dbRecord {
 		c[6] = 1.0 / (N0 * N1 * N2);
 
 		for (int i = 0; i < 4; i++)
-			tmp[i] = mx.dotProduct(BCK[i], c);
+			tmp[i] = matrix.dotProduct(BCK[i], c);
 
 		double[][] alpha = new double[][] { { 0, 1, 0 }, { 0, 1, 0 },
 				{ 0, 1, 0 }, { N2, 0, 0 }, { 0, 0, N2 }, { 0, 0, N2 },
 				{ 0, 0, N2 } };
 
-		tmp1 = mx.multiply(tmp, alpha);
+		tmp1 = matrix.multiply(tmp, alpha);
 
 		for (int i = 0; i < 4; i++)
 			for (int j = 0; j < 6; j++)
@@ -584,8 +584,8 @@ public class dbRecord {
 		c[0][5] = 1.0 / N2 / (N0 + N1);
 
 		c[1] = c[0];
-		c[2] = mx.scaleVector(c[0], 0);
-		c[3] = mx.scaleVector(c[0], 2);
+		c[2] = matrix.scaleVector(c[0], 0);
+		c[3] = matrix.scaleVector(c[0], 2);
 		c[3][0] = 0;
 		c[3][1] = 0;
 		c[3][2] = 0;
@@ -609,7 +609,7 @@ public class dbRecord {
 		c[0][4] = -tmp;
 		c[0][5] = 0;
 		c[1] = c[0];
-		c[2] = mx.scaleVector(c[0], 0);
+		c[2] = matrix.scaleVector(c[0], 0);
 		c[3][0] = 0;
 		c[3][1] = 0;
 		c[3][2] = tmp * 2.0;
@@ -628,7 +628,7 @@ public class dbRecord {
 		c[0][4] = 0;
 		c[0][5] = 1.0 / N2;
 		c[1] = c[0];
-		c[2] = mx.scaleVector(c[0], 0);
+		c[2] = matrix.scaleVector(c[0], 0);
 		c[3][0] = 0;
 		c[3][1] = 2.0 / N2;
 		c[3][2] = -2.0 / N2;
@@ -648,7 +648,7 @@ public class dbRecord {
 		for (int i = 0; i < 4; i++)
 			for (int j = 0; j < 7; j++)
 				c[i][j] = 0;
-		c = mx.matrixTranspose(mx.multiply(BAlpha, mx.matrixTranspose(BDG)));
+		c = matrix.matrixTranspose(matrix.multiply(BAlpha, matrix.matrixTranspose(BDG)));
 
 		return c;
 
@@ -689,8 +689,8 @@ public class dbRecord {
 		for (int i = 0; i < 4; i++)
 			for (int j = 0; j < 3; j++)
 				c[i][j] = 0;
-		c = mx.matrixTranspose(mx.multiply(BTheta,
-				mx.multiply(Bms, mx.multiply(B, mx.matrixTranspose(BDG)))));
+		c = matrix.matrixTranspose(matrix.multiply(BTheta,
+				matrix.multiply(Bms, matrix.multiply(B, matrix.matrixTranspose(BDG)))));
 
 		return c;
 	}
@@ -743,8 +743,8 @@ public class dbRecord {
 		double[][] tempDBM = computeTempDBM(BDG, N2, N0, N1);
 		double[][] ThetaOR = new double[][] { { 1, 0, 0 }, { 0, 1, 0 },
 				{ 0, 1, 1 } };
-		double[][] tempOR = mx.matrixTranspose(mx.multiply(ThetaOR,
-				mx.matrixTranspose(tempDBM)));
+		double[][] tempOR = matrix.matrixTranspose(matrix.multiply(ThetaOR,
+				matrix.matrixTranspose(tempDBM)));
 		for (int i = 0; i < 4; i++)
 			for (int j = 0; j < 6; j++)
 				c[i][j] = 0;

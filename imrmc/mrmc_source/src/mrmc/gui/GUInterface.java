@@ -1735,6 +1735,10 @@ public class GUInterface {
 	 */
 	public JScrollPane genTable(JTable table, String[] names) {
 		ListModel lm = new AbstractListModel() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
 			String headers[] = rowhead;
 
 			public int getSize() {
@@ -1764,6 +1768,10 @@ public class GUInterface {
 
 	/* Table cell formater renderer */
 	static class DecimalFormatRenderer extends DefaultTableCellRenderer {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		private static final DecimalFormat formatter = new DecimalFormat(
 				"0.00000E0");
 

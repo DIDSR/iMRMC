@@ -65,7 +65,7 @@ public class matrix {
 		return result;
 	}
 
-	public double[] dotProduct(double[] m1, double[] m2) {
+	public static double[] dotProduct(double[] m1, double[] m2) {
 		double result[] = new double[m1.length];
 		if (m1.length != m2.length)
 			throw new IllegalArgumentException("vector length don't match : "
@@ -77,7 +77,7 @@ public class matrix {
 		return result;
 	}
 
-	public double[] scaleVector(double[] m1, double s) {
+	public static double[] scaleVector(double[] m1, double s) {
 		double[] result = new double[m1.length];
 		for (int i = 0; i < m1.length; i++) {
 			result[i] = m1[i] * s;
@@ -85,7 +85,7 @@ public class matrix {
 		return result;
 	}
 
-	public int total(int[][] m) {
+	public static int total(int[][] m) {
 		int rows = m.length;
 		int cols = m[0].length;
 		int T = 0;
@@ -95,7 +95,7 @@ public class matrix {
 		return T;
 	}
 
-	public double total(double[][] m) {
+	public static double total(double[][] m) {
 		int rows = m.length;
 		int cols = m[0].length;
 		double T = 0;
@@ -105,7 +105,7 @@ public class matrix {
 		return T;
 	}
 
-	public double total(double[] m) {
+	public static double total(double[] m) {
 		int rows = m.length;
 		double T = 0;
 		for (int i = 0; i < rows; i++)
@@ -113,7 +113,7 @@ public class matrix {
 		return T;
 	}
 
-	public double[][] matrixTranspose(double[][] m) {
+	public static double[][] matrixTranspose(double[][] m) {
 		double[][] result = new double[m[0].length][m.length];
 		for (int i = 0; i < m.length; i++) {
 			for (int j = 0; j < m[0].length; j++)
@@ -122,7 +122,7 @@ public class matrix {
 		return result;
 	}
 
-	public int[][] matrixTranspose(int[][] m) {
+	public static int[][] matrixTranspose(int[][] m) {
 		int[][] result = new int[m[0].length][m.length];
 		for (int i = 0; i < m.length; i++) {
 			for (int j = 0; j < m[0].length; j++)
@@ -131,7 +131,7 @@ public class matrix {
 		return result;
 	}
 
-	public void printMatrix(double[][] m) {
+	public static void printMatrix(double[][] m) {
 		int col = m[0].length;
 		int row = m.length;
 		for (int i = 0; i < row; i++) {
@@ -144,7 +144,7 @@ public class matrix {
 		}
 	}
 
-	public void printMatrix(int[][] m) {
+	public static void printMatrix(int[][] m) {
 		int col = m[0].length;
 		int row = m.length;
 		for (int i = 0; i < row; i++) {
@@ -157,7 +157,7 @@ public class matrix {
 		}
 	}
 
-	public int[][] extractFirstDimention(int[][][] m, int d2, int d3) {
+	public static int[][] extractFirstDimention(int[][][] m, int d2, int d3) {
 		int[][] result = new int[m.length][1];
 		for (int i = 0; i < m.length; i++) {
 			result[i][0] = m[i][d2][d3];
@@ -165,7 +165,7 @@ public class matrix {
 		return result;
 	}
 
-	public double[][] extractFirstDimention(double[][][] m, int d2, int d3) {
+	public static double[][] extractFirstDimention(double[][][] m, int d2, int d3) {
 		double[][] result = new double[m.length][1];
 		for (int i = 0; i < m.length; i++) {
 			result[i][0] = m[i][d2][d3];
@@ -173,7 +173,7 @@ public class matrix {
 		return result;
 	}
 
-	public double[][] linearTrans(double[][] m, double k, double d) {
+	public static double[][] linearTrans(double[][] m, double k, double d) {
 		double[][] result = new double[m.length][m[0].length];
 		for (int i = 0; i < m.length; i++)
 			for (int j = 0; j < m[0].length; j++)
@@ -181,14 +181,14 @@ public class matrix {
 		return result;
 	}
 
-	public double[] linearTrans(double[] m, double k, double d) {
+	public static double[] linearTrans(double[] m, double k, double d) {
 		double[] result = new double[m.length];
 		for (int i = 0; i < m.length; i++)
 			result[i] = m[i] * k + d;
 		return result;
 	}
 
-	public double[][] linearTrans(int[][] m, double k, double d) {
+	public static double[][] linearTrans(int[][] m, double k, double d) {
 		double[][] result = new double[m.length][m[0].length];
 		for (int i = 0; i < m.length; i++)
 			for (int j = 0; j < m[0].length; j++)
@@ -196,7 +196,7 @@ public class matrix {
 		return result;
 	}
 
-	public double[][] subtract(double[][] m1, double[][] m2) {
+	public static double[][] subtract(double[][] m1, double[][] m2) {
 		double[][] result = new double[m1.length][m1[0].length];
 		for (int i = 0; i < m1.length; i++)
 			for (int j = 0; j < m1[0].length; j++)
@@ -204,7 +204,7 @@ public class matrix {
 		return result;
 	}
 
-	public double[][] elementMultiply(double[][] m1, double[][] m2) {
+	public static double[][] elementMultiply(double[][] m1, double[][] m2) {
 		double[][] result = new double[m1.length][m1[0].length];
 		for (int i = 0; i < m1.length; i++)
 			for (int j = 0; j < m1[0].length; j++)
@@ -212,7 +212,7 @@ public class matrix {
 		return result;
 	}
 
-	public int[][] elementMultiply(int[][] m1, int[][] m2) {
+	public static int[][] elementMultiply(int[][] m1, int[][] m2) {
 		int[][] result = new int[m1.length][m1[0].length];
 		for (int i = 0; i < m1.length; i++)
 			for (int j = 0; j < m1[0].length; j++)
@@ -220,14 +220,14 @@ public class matrix {
 		return result;
 	}
 
-	public double[] matrixAdd(double[] m1, double[] m2) {
+	public static double[] matrixAdd(double[] m1, double[] m2) {
 		double[] result = new double[m1.length];
 		for (int i = 0; i < m1.length; i++)
 			result[i] = m1[i] + m2[i];
 		return result;
 	}
 
-	public double[][] matrixAdd(double[][] m1, double[][] m2) {
+	public static double[][] matrixAdd(double[][] m1, double[][] m2) {
 		double[][] result = new double[m1.length][m1[0].length];
 		for (int i = 0; i < m1.length; i++)
 			for (int j = 0; j < m1[0].length; j++)
@@ -235,14 +235,14 @@ public class matrix {
 		return result;
 	}
 
-	public double[] elementMultiply(double[] m1, double[] m2) {
+	public static double[] elementMultiply(double[] m1, double[] m2) {
 		double[] result = new double[m1.length];
 		for (int i = 0; i < m1.length; i++)
 			result[i] = m1[i] * m2[i];
 		return result;
 	}
 
-	public double[] rowSum(double[][] m) {
+	public static double[] rowSum(double[][] m) {
 		double[] result = new double[m.length];
 		for (int i = 0; i < m.length; i++) {
 			result[i] = 0;
@@ -253,7 +253,7 @@ public class matrix {
 		return result;
 	}
 
-	public double[] colSum(double[][] m) {
+	public static double[] colSum(double[][] m) {
 		double[] result = new double[m[0].length];
 		for (int j = 0; j < m[0].length; j++) {
 			result[j] = 0;
@@ -264,14 +264,14 @@ public class matrix {
 		return result;
 	}
 
-	public double[] setZero(int X) {
+	public static double[] setZero(int X) {
 		double[] result = new double[X];
 		for (int i = 0; i < X; i++)
 			result[i] = 0.0;
 		return result;
 	}
 
-	public double[][] setZero(int X, int Y) {
+	public static double[][] setZero(int X, int Y) {
 		double[][] result = new double[X][Y];
 		for (int i = 0; i < X; i++)
 			for (int j = 0; j < Y; j++)
@@ -279,7 +279,7 @@ public class matrix {
 		return result;
 	}
 
-	public double min(double[][] m) {
+	public static double min(double[][] m) {
 		double x = m[0][0];
 		for (int i = 0; i < m.length; i++)
 			for (int j = 0; j < m[0].length; j++) {

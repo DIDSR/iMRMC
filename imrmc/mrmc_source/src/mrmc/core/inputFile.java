@@ -163,7 +163,6 @@ public class inputFile {
 	}
 
 	public void dotheWork(int modality1, int modality2) {
-		matrix mx = new matrix();
 		getT0T1s(modality1, modality2, truthVals);
 		covMRMC mod1 = new covMRMC(t01, d0, t11, d1, Reader, Normal, Disease);
 		covMRMC mod2 = new covMRMC(t02, d0, t12, d1, Reader, Normal, Disease);
@@ -192,8 +191,8 @@ public class inputFile {
 		System.out.println("\n");
 
 		aucMod = covMod12.getaucMod();
-		BDG = mx.setZero(4, 8);
-		BDGcoeff = mx.setZero(4, 8);
+		BDG = matrix.setZero(4, 8);
+		BDGcoeff = matrix.setZero(4, 8);
 		for (int i = 0; i < 8; i++) {
 			BDG[0][i] = M1[i + 1];
 			BDG[1][i] = M2[i + 1];

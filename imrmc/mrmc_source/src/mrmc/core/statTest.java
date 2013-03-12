@@ -95,7 +95,6 @@ public class statTest {
 			int N0, int N1, double sig, double eff) {
 		double mst = 0, denom = 0, statT = 0, ddf = 0;
 		double[] aucs = { 0, 0 };
-		matrix mx = new matrix();
 		double[][] MS = curRecord.getMS(useBiasM);
 		double[][] coeff = curRecord.genBDGCoeff(N2, N0, N1);
 		double[][] BDG = curRecord.getBDG(useBiasM);
@@ -120,7 +119,7 @@ public class statTest {
 		double dnr = curRecord.getReader() * 1.0;
 		double dnc = dn0 + dn1;
 
-		double[] var = mx.dotProduct(BDG[selectedMod], coeff[selectedMod]);
+		double[] var = matrix.dotProduct(BDG[selectedMod], coeff[selectedMod]);
 		double var0 = 0;
 		for (int j = 0; j < 8; j++)
 			var0 = var0 + var[j];
@@ -153,7 +152,7 @@ public class statTest {
 		tStat = statT;
 		DOF = ddf;
 		FisherFDist fdist = new FisherFDist(1, (int) ddf);
-		pValF = fdist.cdf(1, (int) ddf, 5, statT * statT);
+		pValF = FisherFDist.cdf(1, (int) ddf, 5, statT * statT);
 		pValF = 1 - pValF;
 		double Fval = fdist.inverseF(1 - sig);
 
@@ -195,9 +194,9 @@ public class statTest {
 		 * SigTR=SigTR; SigTC=SigTC*c; SigTRC=SigTRC; SigTRC=SigTRC*c;
 		 */
 
-		SigTR = SigTR;
-		SigTC = SigTC;
-		SigTRC = SigTRC;
+//		SigTR = SigTR;
+//		SigTC = SigTC;
+//		SigTRC = SigTRC;
 
 		if (SigTR < 0) {
 			SigTR = 0;
@@ -249,10 +248,8 @@ public class statTest {
 
 	public double cdfNonCentralF(int df1, int df2, double delta, double x) {
 		double cdf = 0;
-		double cdf2 = 0;
 		for (int j = 0; j < INFINITY; j++) {
-			BetaDist bDist = new BetaDist(df1 / 2.0 + j, df2 / 2.0);
-			double tempF = bDist.cdf(df1 / 2.0 + j, df2 / 2.0, PRECISION, df1
+			double tempF = BetaDist.cdf(df1 / 2.0 + j, df2 / 2.0, PRECISION, df1
 					* x / (df2 + df1 * x));
 			double sfactor = 1;
 			for (int k = j; k > 0; k--) {
@@ -285,9 +282,9 @@ public class statTest {
 		 * SigTR=SigTR; SigTC=SigTC*c; SigTRC=SigTRC; SigTRC=SigTRC*c;
 		 */
 
-		SigTR = SigTR;
-		SigTC = SigTC;
-		SigTRC = SigTRC;
+//		SigTR = SigTR;
+//		SigTC = SigTC;
+//		SigTRC = SigTRC;
 
 		if (SigTR < 0) {
 			SigTR = 0;
@@ -301,10 +298,8 @@ public class statTest {
 		// double sigma=Math.sqrt(2*(SigTR/r+SigTC/c+SigTRC/(r*c)));
 		// double sigma=Math.sqrt((SigTR/r+SigTC/c+SigTRC/(r*c)));
 		double sigma = Math.sqrt(totalVar);
-		NormalDist centralN = new NormalDist(0, sigma);
-		double v = centralN.inverseF(0, sigma, 1 - sigLevel / 2.0);
-		NormalDist nonCentralN = new NormalDist(effSize, sigma);
-		powerZ = 1 - nonCentralN.cdf(effSize, sigma, v);
+		double v = NormalDist.inverseF(0, sigma, 1 - sigLevel / 2.0);
+		powerZ = 1 - NormalDist.cdf(effSize, sigma, v);
 		// pValZ = 1-centralN.cdf(0,sigma,v);
 
 		return powerZ;
