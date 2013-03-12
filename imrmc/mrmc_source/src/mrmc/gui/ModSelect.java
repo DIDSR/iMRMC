@@ -1,13 +1,7 @@
 package mrmc.gui;
 
 import javax.swing.*;
-import javax.swing.event.*;
 import java.awt.event.*;
-import java.awt.*;
-import java.io.*;
-import java.util.*;
-import java.lang.Math;
-import javax.swing.border.*;
 
 public class ModSelect {
 	GUInterface gui;
@@ -46,14 +40,14 @@ public class ModSelect {
 		cb = new JCheckBox(
 				"use MLE estimates of moments to avoid negatives          \t\t");
 		cb.setSelected(false);
-		cb.addItemListener(new allNagativeListner());
+		cb.addItemListener(new allNegativeListner());
 		// Create the radio buttons.
-		String str1 = "Modality1";
+		String str1 = "Modality A";
 		mod1Button = new JRadioButton(str1);
 		mod1Button.setActionCommand(str1);
 		mod1Button.setSelected(true);
 
-		String str2 = "Modality2";
+		String str2 = "Modality B";
 		mod2Button = new JRadioButton(str2);
 		mod2Button.setActionCommand(str2);
 
@@ -90,7 +84,7 @@ public class ModSelect {
 	 * checkbox to select whether to use MLE estimates of moments to avoid
 	 * negatives
 	 */
-	class allNagativeListner implements ItemListener {
+	class allNegativeListner implements ItemListener {
 		public void itemStateChanged(ItemEvent e) {
 			if (cb.isSelected()) {
 				useBiasM = 1;
@@ -108,10 +102,10 @@ public class ModSelect {
 			String str;
 			str = e.getActionCommand();
 			System.out.println(str + "radiobutton selected");
-			if (str == "Modality1") {
+			if (str == "Modality A") {
 				selectedMod = 0;
 			}
-			if (str == "Modality2") {
+			if (str == "Modality B") {
 				selectedMod = 1;
 			}
 			if (str == "Difference") {

@@ -82,8 +82,10 @@ public class GUInterface {
 	int manualReader;
 	int manualNormal;
 	int manualDisease;
+
 	int currMod1;
 	int currMod2;
+	JLabel currentMod;
 
 	// JTextField sigLevel;
 	// JTextField effSize;
@@ -824,6 +826,7 @@ public class GUInterface {
 		JButton graphButton = new JButton("Input Statistics Charts");
 		JButton holesButton = new JButton("Show Data Holes");
 		JButton modsButton = new JButton("Select Modalities");
+		currentMod = new JLabel("");
 
 		if (!lst.getIsApplet()) {
 			pilotFile = new JTextField(20);
@@ -846,7 +849,10 @@ public class GUInterface {
 											.addComponent(modsButton))
 							.addGroup(
 									layout.createSequentialGroup()
-											.addComponent(pilotCard2))));
+											.addComponent(pilotCard2))
+							.addGroup(
+									layout.createSequentialGroup()
+											.addComponent(currentMod))));
 
 			layout.setVerticalGroup(layout
 					.createSequentialGroup()
@@ -863,7 +869,11 @@ public class GUInterface {
 					.addGroup(
 							layout.createParallelGroup(
 									GroupLayout.Alignment.LEADING)
-									.addComponent(pilotCard2)));
+									.addComponent(pilotCard2))
+					.addGroup(
+							layout.createParallelGroup(
+									GroupLayout.Alignment.CENTER).addComponent(
+									currentMod)));
 		} else {
 			JButton inputByHandButton = new JButton("Input Pilot study Data");
 			inputByHandButton.addActionListener(new InputByHandListner());
@@ -880,7 +890,8 @@ public class GUInterface {
 											.addComponent(fmtHelpButton)
 											.addComponent(graphButton)
 											.addComponent(holesButton)
-											.addComponent(modsButton))
+											.addComponent(modsButton)
+											.addComponent(currentMod))
 							.addGroup(
 									layout.createSequentialGroup()
 											.addComponent(pilotCard2))));
@@ -1407,6 +1418,8 @@ public class GUInterface {
 				}
 				currMod1 = 1;
 				currMod2 = 2;
+				currentMod.setText("Modality A = " + currMod1
+						+ ", Modality B = " + currMod2);
 				usr.dotheWork(1, 2);
 
 				if (!lst.getIsApplet())
@@ -1500,7 +1513,7 @@ public class GUInterface {
 							"There are "
 									+ usr.getModality()
 									+ " modalities. Which would you like to use?\n",
-							"Modality 1: ", choose1, "Modality 2: ", choose2 };
+							"Modality A: ", choose1, "Modality B: ", choose2 };
 					JOptionPane.showMessageDialog(lst.getFrame(), message,
 							"Choose Modalities",
 							JOptionPane.INFORMATION_MESSAGE, null);
@@ -1510,6 +1523,8 @@ public class GUInterface {
 							(Integer) choose2.getSelectedItem());
 					currMod1 = (Integer) choose1.getSelectedItem();
 					currMod2 = (Integer) choose2.getSelectedItem();
+					currentMod.setText("Modality A = " + currMod1
+							+ ", Modality B = " + currMod2);
 					if (!lst.getIsApplet()) {
 						usrFile = new dbRecord(usr);
 					}
