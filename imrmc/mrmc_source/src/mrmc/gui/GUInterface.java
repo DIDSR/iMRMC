@@ -1471,7 +1471,7 @@ public class GUInterface {
 				for (int i = 1; i <= usr.getModality(); i++) {
 					choose1.addItem(i);
 				}
-				choose1.setSelectedItem((Integer) currMod1);
+				choose1.setSelectedItem((Integer) holesMod1);
 				Object[] message = { "Which modality would you like view?\n",
 						choose1 };
 				JOptionPane.showMessageDialog(lst.getFrame(), message,
@@ -1481,7 +1481,7 @@ public class GUInterface {
 						.getSelectedItem());
 				holesMod1 = (Integer) choose1.getSelectedItem();
 				final PresencePlot chart = new PresencePlot(
-						"Missing Data Points: Modality " + currMod1, "Case",
+						"Missing Data Points: Modality " + holesMod1, "Case",
 						"Reader", holes);
 				chart.pack();
 				RefineryUtilities.centerFrameOnScreen(chart);
