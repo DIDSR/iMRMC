@@ -4,23 +4,22 @@ import java.util.*;
 import java.io.*;
 
 public class inputFile {
-	String filename;
-	String desc = "";
-	String recordTitle = "";
-	int Reader, Normal, Disease, Modality;
-	double[][][] t0, t1, t01, t11, t02, t12;
-	int[][][] d0, d1;
-	int nmod = 2;
-	boolean isFullyCrossed = true;
-	boolean verified = false;
-	boolean isLoaded;
-	String verifiedNums = "";
-	double[][] BDG = new double[4][8];
-	double[][] BDGbias = new double[4][8];
-	double[][] BDGcoeff = new double[4][8];
-	double[] aucMod = new double[2];
-	TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Double>>> keyedData = new TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Double>>>();
-	HashMap<Integer, Integer> truthVals;
+	private String filename;
+	private String desc = "";
+	private String recordTitle = "";
+	private int Reader, Normal, Disease, Modality;
+	private double[][][] t0, t1, t01, t11, t02, t12;
+	private int[][][] d0, d1;
+	private boolean isFullyCrossed;
+	private boolean verified = false;
+	private boolean isLoaded = false;
+	private String verifiedNums = "";
+	private double[][] BDG = new double[4][8];
+	private double[][] BDGbias = new double[4][8];
+	private double[][] BDGcoeff = new double[4][8];
+	private double[] aucMod = new double[2];
+	private TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Double>>> keyedData = new TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Double>>>();
+	private HashMap<Integer, Integer> truthVals;
 
 	/* returns whether this inputFile has processed all input data */
 	public boolean isLoaded() {
@@ -111,29 +110,28 @@ public class inputFile {
 		return cpr;
 	}
 
-	public boolean[][] getDataHoles(int modality) {
-		boolean[][] holes = new boolean[Reader][Normal + Disease];
+	public boolean[][] getStudyDesign(int modality) {
+		boolean[][] design = new boolean[Reader][Normal + Disease];
 		int i = 0, j = 0;
 		for (Integer r : keyedData.keySet()) {
 			j = 0;
 			for (Integer c : keyedData.get(r).keySet()) {
 				if (keyedData.get(r).get(c).get(modality) != null) {
-					holes[i][j] = true;
+					design[i][j] = true;
 				} else {
-					holes[i][j] = false;
+					design[i][j] = false;
 				}
 				j++;
 			}
 			i++;
 		}
-		return holes;
+		return design;
 	}
 
 	// this is the constructor for the stand alone application
 	// reading a file locally
 	public inputFile(String file) {
 		filename = file;
-		isLoaded = false;
 		ArrayList<String> fileContent = new ArrayList<String>();
 		try {
 			InputStreamReader isr;
@@ -218,7 +216,7 @@ public class inputFile {
 	 * performs parsing of data from input file in fileContent, stores in local
 	 * variables
 	 */
-	public void organizeData(ArrayList<String> fileContent) {
+	private void organizeData(ArrayList<String> fileContent) {
 		recordTitle = fileContent.get(0);
 		int totalLine = fileContent.size();
 		String tempstr = fileContent.get(0).toUpperCase();
@@ -273,12 +271,10 @@ public class inputFile {
 				fData[i][3] = Double.valueOf(tempNumbers[3]); // Score
 			} catch (NumberFormatException e) {
 				System.out
-						.println("Input file cannot have any trailing newlines after data");
+						.println("Invalid input at line " + (i + counter));
 				e.printStackTrace();
 			}
 		}
-
-		System.out.println("filled up fData");
 
 		verifiedNums = verifyNums(fData, readerIDs, normalIDs, diseaseIDs,
 				modalityIDs);
@@ -288,8 +284,6 @@ public class inputFile {
 		} else {
 			verified = false;
 		}
-
-		System.out.println("verified nums");
 
 		keyedData = new TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Double>>>();
 		truthVals = new HashMap<Integer, Integer>();
@@ -316,20 +310,16 @@ public class inputFile {
 			}
 		}
 
-		System.out.println("filled up keyedData");
-
 		for (Integer m : modalityIDs) {
-			boolean[][] holes = getDataHoles(m);
-			for (int i = 0; i < holes.length; i++) {
-				for (int j = 0; j < holes[i].length; j++) {
-					if (!holes[i][j]) {
+			boolean[][] design = getStudyDesign(m);
+			for (int i = 0; i < design.length; i++) {
+				for (int j = 0; j < design[i].length; j++) {
+					if (!design[i][j]) {
 						isFullyCrossed = false;
 					}
 				}
 			}
 		}
-
-		System.out.println("determined if fully crossed");
 	}
 
 	/*
@@ -385,35 +375,8 @@ public class inputFile {
 		return toReturn;
 	}
 
-	public double[][] sortData(double[][] fData, double[] ReaderIDs) {
-		double[][] fData1 = new double[Reader * (Normal + Disease)][5];
-		// get case ids
-		double[] caseIDs = new double[Normal + Disease];
-		int i = 0;
-		for (int k = 0; k < Reader * (Normal + Disease); k++) {
-			if (fData[k][0] == ReaderIDs[0]) {
-				caseIDs[i] = fData[k][1];
-				i++;
-			}
-		}
-		int counter = 0;
-		for (int k = 0; k < Reader; k++) {
-			for (int j = 0; j < (Normal + Disease); j++) {
-				for (int t = 0; t < Reader * (Normal + Disease); t++) {
-					if (caseIDs[j] == fData[t][1]
-							&& ReaderIDs[k] == fData[t][0]) {
-						for (int ss = 0; ss < 5; ss++)
-							fData1[counter][ss] = fData[t][ss];
-						counter++;
-					}
-				}
-			}
-		}
-		return fData1;
-	}
-
 	/* fills matrixes with 0s if data is not present */
-	public void getT0T1s(int modality1, int modality2,
+	private void getT0T1s(int modality1, int modality2,
 			HashMap<Integer, Integer> truthVals) {
 		t0 = new double[Normal][Reader][2];
 		t1 = new double[Disease][Reader][2];
@@ -478,56 +441,7 @@ public class inputFile {
 		}
 	}
 
-	public void getT0T1s(double[][][] rawData) {
-		t0 = new double[Normal][Reader][2];
-		t1 = new double[Disease][Reader][2];
-		t01 = new double[Normal][Reader][2];
-		t11 = new double[Disease][Reader][2];
-		t02 = new double[Normal][Reader][2];
-		t12 = new double[Disease][Reader][2];
-		d0 = new int[Normal][Reader][2];
-		d1 = new int[Disease][Reader][2];
-		int m, n;
-		for (int i = 0; i < rawData.length; i++) {
-			// number of false cases
-			m = 0;
-			// number of true cases
-			n = 0;
-			for (int j = 0; j < rawData[i].length; j++) {
-				if (rawData[i][j][0] == 0) {
-					t0[m][i][0] = rawData[i][j][1];
-					t0[m][i][1] = rawData[i][j][2];
-					t01[m][i][0] = rawData[i][j][1];
-					t01[m][i][1] = rawData[i][j][1];
-					t02[m][i][0] = rawData[i][j][2];
-					t02[m][i][1] = rawData[i][j][2];
-					m++;
-				}
-				if (rawData[i][j][0] > 0) {
-					t1[n][i][0] = rawData[i][j][1];
-					t1[n][i][1] = rawData[i][j][2];
-					t11[n][i][0] = rawData[i][j][1];
-					t11[n][i][1] = rawData[i][j][1];
-					t12[n][i][0] = rawData[i][j][2];
-					t12[n][i][1] = rawData[i][j][2];
-					n++;
-				}
-			}
-		}
-		for (int i = 0; i < Reader; i++) {
-			for (int j = 0; j < Disease; j++) {
-				d1[j][i][0] = 1;
-				d1[j][i][1] = 1;
-			}
-			for (int j = 0; j < Normal; j++) {
-				d0[j][i][0] = 1;
-				d0[j][i][1] = 1;
-			}
-		}
-
-	}
-
-	public ArrayList<String> readFile(InputStreamReader isr) {
+	private ArrayList<String> readFile(InputStreamReader isr) {
 		BufferedReader br = new BufferedReader(isr);
 		ArrayList<String> content = new ArrayList<String>();
 		String strtemp;

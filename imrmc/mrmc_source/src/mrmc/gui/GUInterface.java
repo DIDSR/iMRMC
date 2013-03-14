@@ -750,7 +750,7 @@ public class GUInterface {
 		InputCBPane.setLayout(new FlowLayout());
 		JLabel inLabel = new JLabel("Select an input method: ");
 		String comboBoxItems[] = { DB, Pilot, Manual };
-		JComboBox<String> cb = new JComboBox<String>(comboBoxItems);
+		JComboBox cb = new JComboBox(comboBoxItems);
 		cb.setEditable(false);
 		cb.setSelectedIndex(0);
 		cb.addActionListener(new inputModListener());
@@ -778,7 +778,7 @@ public class GUInterface {
 		layout.setAutoCreateContainerGaps(true);
 
 		JLabel studyLabel = new JLabel("Database ");
-		JComboBox<String> dbCB = new JComboBox<String>(dbBoxItems);
+		JComboBox dbCB = new JComboBox(dbBoxItems);
 		dbCB.setEditable(false);
 		dbCB.addActionListener(new dbActionListener());
 		dbCB.setSelectedIndex(0);
@@ -824,7 +824,7 @@ public class GUInterface {
 		MS2 = new ModSelect(pilotCard2, this);
 		JButton fmtHelpButton = new JButton("Format Info.");
 		JButton graphButton = new JButton("Input Statistics Charts");
-		JButton holesButton = new JButton("Show Data Holes");
+		JButton designButton = new JButton("Show Study Design");
 		JButton modsButton = new JButton("Select Modalities");
 		currentMod = new JLabel("");
 
@@ -834,7 +834,7 @@ public class GUInterface {
 			browseButton.addActionListener(new brwsButtonListner());
 			fmtHelpButton.addActionListener(new fmtHelpButtonListner());
 			graphButton.addActionListener(new graphButtonListner());
-			holesButton.addActionListener(new holesButtonListner());
+			designButton.addActionListener(new designButtonListner());
 			modsButton.addActionListener(new modsButtonListner());
 			layout.setHorizontalGroup(layout.createSequentialGroup().addGroup(
 					layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -845,7 +845,7 @@ public class GUInterface {
 											.addComponent(browseButton)
 											.addComponent(fmtHelpButton)
 											.addComponent(graphButton)
-											.addComponent(holesButton)
+											.addComponent(designButton)
 											.addComponent(modsButton))
 							.addGroup(
 									layout.createSequentialGroup()
@@ -864,7 +864,7 @@ public class GUInterface {
 									.addComponent(browseButton)
 									.addComponent(fmtHelpButton)
 									.addComponent(graphButton)
-									.addComponent(holesButton)
+									.addComponent(designButton)
 									.addComponent(modsButton))
 					.addGroup(
 							layout.createParallelGroup(
@@ -879,7 +879,7 @@ public class GUInterface {
 			inputByHandButton.addActionListener(new InputByHandListner());
 			fmtHelpButton.addActionListener(new fmtHelpButtonListner());
 			graphButton.addActionListener(new graphButtonListner());
-			holesButton.addActionListener(new holesButtonListner());
+			designButton.addActionListener(new designButtonListner());
 			modsButton.addActionListener(new modsButtonListner());
 			layout.setHorizontalGroup(layout.createSequentialGroup().addGroup(
 					layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -889,7 +889,7 @@ public class GUInterface {
 											.addComponent(inputByHandButton)
 											.addComponent(fmtHelpButton)
 											.addComponent(graphButton)
-											.addComponent(holesButton)
+											.addComponent(designButton)
 											.addComponent(modsButton)
 											.addComponent(currentMod))
 							.addGroup(
@@ -1282,7 +1282,7 @@ public class GUInterface {
 	/* Drop down menu to select input method */
 	class inputModListener implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
-			JComboBox<String> cb = (JComboBox<String>) evt.getSource();
+			JComboBox cb = (JComboBox) evt.getSource();
 			CardLayout cl = (CardLayout) (inputCards.getLayout());
 			cl.show(inputCards, (String) cb.getSelectedItem());
 			selectedInput = cb.getSelectedIndex();
@@ -1325,7 +1325,7 @@ public class GUInterface {
 	/* drop down menu to choose a particular dataset from internal database */
 	class dbActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
-			JComboBox<String> cb = (JComboBox<String>) evt.getSource();
+			JComboBox cb = (JComboBox) evt.getSource();
 			selectedDB = (int) cb.getSelectedIndex();
 		}
 	}
@@ -1461,28 +1461,28 @@ public class GUInterface {
 		}
 	}
 
-	class holesButtonListner implements ActionListener {
-		int holesMod1 = 1;
+	class designButtonListner implements ActionListener {
+		int designMod1 = 1;
 
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("holes button pressed");
+			System.out.println("study design button pressed");
 			if (usr != null && usr.isLoaded()) {
-				JComboBox<Integer> choose1 = new JComboBox<Integer>();
+				JComboBox choose1 = new JComboBox();
 				for (int i = 1; i <= usr.getModality(); i++) {
 					choose1.addItem(i);
 				}
-				choose1.setSelectedItem((Integer) holesMod1);
+				choose1.setSelectedItem((Integer) designMod1);
 				Object[] message = { "Which modality would you like view?\n",
 						choose1 };
 				JOptionPane.showMessageDialog(lst.getFrame(), message,
 						"Choose Modality", JOptionPane.INFORMATION_MESSAGE,
 						null);
-				boolean[][] holes = usr.getDataHoles((Integer) choose1
+				boolean[][] design = usr.getStudyDesign((Integer) choose1
 						.getSelectedItem());
-				holesMod1 = (Integer) choose1.getSelectedItem();
+				designMod1 = (Integer) choose1.getSelectedItem();
 				final PresencePlot chart = new PresencePlot(
-						"Missing Data Points: Modality " + holesMod1, "Case",
-						"Reader", holes);
+						"Study Design: Modality " + designMod1, "Case",
+						"Reader", design);
 				chart.pack();
 				RefineryUtilities.centerFrameOnScreen(chart);
 				chart.setVisible(true);
@@ -1500,8 +1500,8 @@ public class GUInterface {
 			System.out.println("modality selection button pressed");
 			if (usr != null && usr.isLoaded()) {
 				if (usr.getModality() > 2) {
-					JComboBox<Integer> choose1 = new JComboBox<Integer>();
-					JComboBox<Integer> choose2 = new JComboBox<Integer>();
+					JComboBox choose1 = new JComboBox();
+					JComboBox choose2 = new JComboBox();
 					for (int i = 1; i <= usr.getModality(); i++) {
 						choose1.addItem(i);
 						choose2.addItem(i);
