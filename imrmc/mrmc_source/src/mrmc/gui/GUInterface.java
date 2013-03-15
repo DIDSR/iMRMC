@@ -85,7 +85,6 @@ public class GUInterface {
 
 	int currMod1;
 	int currMod2;
-	JLabel currentMod;
 
 	// JTextField sigLevel;
 	// JTextField effSize;
@@ -110,7 +109,8 @@ public class GUInterface {
 	int SummaryUseMLE = 0;
 
 	double totalStd = 0;
-	ModSelect MS, MS2;
+	ModSelect MS;
+	PilotModSelect MS2;
 	ManualCard MC;
 	JTabbedPane tabbedPane1, tabbedPane2;
 
@@ -236,7 +236,7 @@ public class GUInterface {
 		// Selections
 		setUseBiasM(0);
 		MS.setUseBiasM(0);
-		MS2.setUseBiasM(0);
+		MS2.setUseBiasM(false);
 		tabbedPane1.setTitleAt(0, "BDG");
 		tabbedPane1.setTitleAt(1, "BCK");
 		tabbedPane1.setTitleAt(2, "DBM");
@@ -821,12 +821,11 @@ public class GUInterface {
 		layout.setAutoCreateContainerGaps(true);
 		studyLabel = new JLabel("pilot study...");
 		JPanel pilotCard2 = new JPanel();
-		MS2 = new ModSelect(pilotCard2, this);
+		MS2 = new PilotModSelect(pilotCard2, this);
 		JButton fmtHelpButton = new JButton("Format Info.");
 		JButton graphButton = new JButton("Input Statistics Charts");
 		JButton designButton = new JButton("Show Study Design");
 		JButton modsButton = new JButton("Select Modalities");
-		currentMod = new JLabel("");
 
 		if (!lst.getIsApplet()) {
 			pilotFile = new JTextField(20);
@@ -835,7 +834,6 @@ public class GUInterface {
 			fmtHelpButton.addActionListener(new fmtHelpButtonListner());
 			graphButton.addActionListener(new graphButtonListner());
 			designButton.addActionListener(new designButtonListner());
-			modsButton.addActionListener(new modsButtonListner());
 			layout.setHorizontalGroup(layout.createSequentialGroup().addGroup(
 					layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 							.addGroup(
@@ -845,14 +843,11 @@ public class GUInterface {
 											.addComponent(browseButton)
 											.addComponent(fmtHelpButton)
 											.addComponent(graphButton)
-											.addComponent(designButton)
-											.addComponent(modsButton))
+											.addComponent(designButton))
 							.addGroup(
 									layout.createSequentialGroup()
 											.addComponent(pilotCard2))
-							.addGroup(
-									layout.createSequentialGroup()
-											.addComponent(currentMod))));
+							));
 
 			layout.setVerticalGroup(layout
 					.createSequentialGroup()
@@ -864,23 +859,18 @@ public class GUInterface {
 									.addComponent(browseButton)
 									.addComponent(fmtHelpButton)
 									.addComponent(graphButton)
-									.addComponent(designButton)
-									.addComponent(modsButton))
+									.addComponent(designButton))
 					.addGroup(
 							layout.createParallelGroup(
 									GroupLayout.Alignment.LEADING)
 									.addComponent(pilotCard2))
-					.addGroup(
-							layout.createParallelGroup(
-									GroupLayout.Alignment.CENTER).addComponent(
-									currentMod)));
+					);
 		} else {
 			JButton inputByHandButton = new JButton("Input Pilot study Data");
 			inputByHandButton.addActionListener(new InputByHandListner());
 			fmtHelpButton.addActionListener(new fmtHelpButtonListner());
 			graphButton.addActionListener(new graphButtonListner());
 			designButton.addActionListener(new designButtonListner());
-			modsButton.addActionListener(new modsButtonListner());
 			layout.setHorizontalGroup(layout.createSequentialGroup().addGroup(
 					layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 							.addGroup(
@@ -889,9 +879,7 @@ public class GUInterface {
 											.addComponent(inputByHandButton)
 											.addComponent(fmtHelpButton)
 											.addComponent(graphButton)
-											.addComponent(designButton)
-											.addComponent(modsButton)
-											.addComponent(currentMod))
+											.addComponent(designButton))
 							.addGroup(
 									layout.createSequentialGroup()
 											.addComponent(pilotCard2))));
@@ -1386,10 +1374,10 @@ public class GUInterface {
 				// check the input format
 				try {
 					usr = new inputFile(filename);
-				} catch (Exception except) {
+				} catch (IOException except){
 					except.printStackTrace();
 					JOptionPane.showMessageDialog(lst.getFrame(),
-							"invalid input format", "Error",
+							except.getMessage(), "Error",
 							JOptionPane.ERROR_MESSAGE);
 					pilotFile.setText("");
 					return;
@@ -1415,14 +1403,12 @@ public class GUInterface {
 							"The study is not fully crossed", "Warning",
 							JOptionPane.WARNING_MESSAGE);
 				}
-				currMod1 = 1;
-				currMod2 = 2;
-				currentMod.setText("Modality A = " + currMod1
-						+ "     Modality B = " + currMod2);
-				usr.dotheWork(1, 2);
+				currMod1 = -1;
+				currMod2 = -1;
+				MS2.updateModPanel();
 
-				if (!lst.getIsApplet())
-					usrFile = new dbRecord(usr);
+				//if (!lst.getIsApplet())
+					//usrFile = new dbRecord(usr);
 			}
 		}
 	}
@@ -1495,53 +1481,6 @@ public class GUInterface {
 		}
 	}
 
-	class modsButtonListner implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			System.out.println("modality selection button pressed");
-			if (usr != null && usr.isLoaded()) {
-				if (usr.getModality() > 2) {
-					JComboBox choose1 = new JComboBox();
-					JComboBox choose2 = new JComboBox();
-					for (int i = 1; i <= usr.getModality(); i++) {
-						choose1.addItem(i);
-						choose2.addItem(i);
-					}
-					choose1.setSelectedItem((Integer) currMod1);
-					choose2.setSelectedItem((Integer) currMod2);
-					Object[] message = {
-							"There are "
-									+ usr.getModality()
-									+ " modalities. Which would you like to use?\n",
-							"Modality A: ", choose1, "Modality B: ", choose2 };
-					JOptionPane.showMessageDialog(lst.getFrame(), message,
-							"Choose Modalities",
-							JOptionPane.INFORMATION_MESSAGE, null);
-					System.out.println(choose1.getSelectedItem() + ","
-							+ choose2.getSelectedItem());
-					usr.dotheWork((Integer) choose1.getSelectedItem(),
-							(Integer) choose2.getSelectedItem());
-					currMod1 = (Integer) choose1.getSelectedItem();
-					currMod2 = (Integer) choose2.getSelectedItem();
-					currentMod.setText("Modality A = " + currMod1
-							+ "     Modality B = " + currMod2);
-					if (!lst.getIsApplet()) {
-						usrFile = new dbRecord(usr);
-					}
-
-				} else {
-					JOptionPane
-							.showMessageDialog(
-									lst.getFrame(),
-									"The only available modalities have already been selected",
-									"Info", JOptionPane.INFORMATION_MESSAGE);
-				}
-			} else {
-				JOptionPane.showMessageDialog(lst.getFrame(),
-						"Pilot study data has not yet been input.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		}
-	}
 
 	/*
 	 * in case of applet, the user click "input pilot study" button, and a text
@@ -1686,6 +1625,12 @@ public class GUInterface {
 	/* check whether there is negative components */
 	public int checkNegative() {
 		hasNegative = 0;
+		
+		if (currMod1 == -1 && currMod2 == -1) {
+			JFrame frame = lst.getFrame();
+			JOptionPane.showMessageDialog(frame, "You must select at least one modality", "Error", JOptionPane.ERROR_MESSAGE);
+			return 0;
+		}
 		if (selectedInput == 1 && !lst.getIsApplet()) {
 			System.out.println("test" + lst.getIsApplet() + "input"
 					+ selectedInput);
@@ -1697,7 +1642,7 @@ public class GUInterface {
 				JOptionPane.showMessageDialog(frame, "invalid input", " Error",
 						JOptionPane.ERROR_MESSAGE);
 				return 0;
-			}
+			} 
 		}
 
 		dbRecord tempRecord = getCurrentRecord();
@@ -1716,11 +1661,11 @@ public class GUInterface {
 				System.out.println("cancel");
 			} else if (JOptionPane.YES_OPTION == result) {
 				MS.setUseBiasM(1);
-				MS2.setUseBiasM(1);
+				MS2.setUseBiasM(true);
 				useBiasM = 1;
 			} else if (JOptionPane.NO_OPTION == result) {
 				MS.setUseBiasM(0);
-				MS2.setUseBiasM(0);
+				MS2.setUseBiasM(false);
 				useBiasM = 0;
 			}
 

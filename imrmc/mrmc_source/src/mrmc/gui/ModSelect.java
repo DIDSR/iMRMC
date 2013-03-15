@@ -11,7 +11,6 @@ public class ModSelect {
 	JRadioButton mod1Button;
 	JRadioButton mod2Button;
 	JRadioButton modDButton;
-	JLabel currModalities;
 
 	public void setUseBiasM(int temp) {
 		if (temp == 1) {

@@ -130,7 +130,7 @@ public class inputFile {
 
 	// this is the constructor for the stand alone application
 	// reading a file locally
-	public inputFile(String file) {
+	public inputFile(String file) throws IOException {
 		filename = file;
 		ArrayList<String> fileContent = new ArrayList<String>();
 		try {
@@ -146,17 +146,19 @@ public class inputFile {
 					.println("Error reading file" + filename + e.getMessage());
 		}
 		organizeData(fileContent);
+		isLoaded = true;
 	}
 
 	// this is the constructor for Java Applet
 	// read data from the text field
 	// flag is simply there to enable method overloading
-	public inputFile(String content, int flag) {
+	public inputFile(String content, int flag) throws IOException {
 		ArrayList<String> fileContent = new ArrayList<String>();
 		String[] temp = content.split("\n");
 		for (int i = 0; i < temp.length; i++)
 			fileContent.add(temp[i]);
 		organizeData(fileContent);
+		isLoaded = true;
 	}
 
 	public void dotheWork(int modality1, int modality2) {
@@ -209,14 +211,13 @@ public class inputFile {
 		for (int i = 0; i < 8; i++)
 			System.out.println(BDGbias[3][i] + "\t");
 		System.out.println("\n");
-		isLoaded = true;
 	}
 
 	/*
 	 * performs parsing of data from input file in fileContent, stores in local
 	 * variables
 	 */
-	private void organizeData(ArrayList<String> fileContent) {
+	private void organizeData(ArrayList<String> fileContent) throws IOException {
 		recordTitle = fileContent.get(0);
 		int totalLine = fileContent.size();
 		String tempstr = fileContent.get(0).toUpperCase();
@@ -251,7 +252,7 @@ public class inputFile {
 			tempstr = fileContent.get(counter).toUpperCase();
 			dataloc = tempstr.indexOf("BEGIN DATA");
 		}
-		System.out.println("a total of " + counter);
+		System.out.println("a total of " + counter + " lines in header");
 
 		String[] tempNumbers;
 		double[][] fData = new double[totalLine - (counter + 1)][4];
@@ -269,10 +270,9 @@ public class inputFile {
 				fData[i][1] = Integer.valueOf(tempNumbers[1]); // Case
 				fData[i][2] = Integer.valueOf(tempNumbers[2]); // Modality id
 				fData[i][3] = Double.valueOf(tempNumbers[3]); // Score
-			} catch (NumberFormatException e) {
-				System.out
-						.println("Invalid input at line " + (i + counter));
-				e.printStackTrace();
+			} catch (Exception e) {
+				throw new IOException("Invalid input at line "
+						+ (i + counter + 2), e);
 			}
 		}
 
