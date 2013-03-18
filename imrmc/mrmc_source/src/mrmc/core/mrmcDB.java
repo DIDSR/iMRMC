@@ -1,7 +1,5 @@
 package mrmc.core;
 
-
-
 import java.io.*;
 import java.util.*;
 import java.io.FileInputStream;
@@ -156,20 +154,15 @@ public class mrmcDB {
 
 	/* constructor */
 	public mrmcDB(MRMC mrmc) {
-		isApplet = mrmc.getIsApplet();
-		if (!isApplet) {
-			FilenameFilter filefilter = new FilenameFilter() {
-				public boolean accept(File dir, String name) {
-					// if the file extension is .jdb return true, else false
-					return name.endsWith(".jdb");
-				}
-			};
+		FilenameFilter filefilter = new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				// if the file extension is .jdb return true, else false
+				return name.endsWith(".jdb");
+			}
+		};
 
-			dbFiles = new File("DB").listFiles(filefilter);
-			noOfItems = dbFiles.length;
-		} else {
-			noOfItems = countDBFilesInJar();
-		}
+		dbFiles = new File("DB").listFiles(filefilter);
+		noOfItems = dbFiles.length;
 		// System.out.println("a total of "+noOfItems+"files in DB");
 		Records = new dbRecord[noOfItems];
 		loadDB();

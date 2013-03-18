@@ -149,18 +149,6 @@ public class inputFile {
 		isLoaded = true;
 	}
 
-	// this is the constructor for Java Applet
-	// read data from the text field
-	// flag is simply there to enable method overloading
-	public inputFile(String content, int flag) throws IOException {
-		ArrayList<String> fileContent = new ArrayList<String>();
-		String[] temp = content.split("\n");
-		for (int i = 0; i < temp.length; i++)
-			fileContent.add(temp[i]);
-		organizeData(fileContent);
-		isLoaded = true;
-	}
-
 	public void dotheWork(int modality1, int modality2) {
 		getT0T1s(modality1, modality2, truthVals);
 		covMRMC mod1 = new covMRMC(t01, d0, t11, d1, Reader, Normal, Disease);

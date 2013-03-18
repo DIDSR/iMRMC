@@ -9,7 +9,7 @@ import mrmc.gui.GUInterface;
 
 import java.awt.*;
 
-public class MRMC extends JApplet {
+public class MRMC extends JApplet{
 	/**
 	 * 
 	 */
@@ -17,7 +17,6 @@ public class MRMC extends JApplet {
 	private static JFrame mainFrame;
 	GUInterface gui;
 	GUImenubar menuBar;
-	static boolean isApplet = true;
 	mrmcDB db;
 
 	public int getDBSize() {
@@ -32,11 +31,6 @@ public class MRMC extends JApplet {
 		return mainFrame;
 	}
 
-	public boolean getIsApplet() {
-		return isApplet;
-	}
-
-	/* The program enters here if it the user loads it using a web browser */
 	public void init() {
 
 		super.init();
@@ -63,8 +57,7 @@ public class MRMC extends JApplet {
 		 * that case. if it is a command line application, the program enters
 		 * here
 		 */
-		isApplet = false;
-		run(new MRMC(), 1000, 550);
+		 run(new MRMC(), 1000, 550);
 	}
 
 	public static void run(JApplet applet, int width, int height) {
@@ -77,4 +70,4 @@ public class MRMC extends JApplet {
 		applet.start();
 		mainFrame.setVisible(true);
 	}
-} // /
+} 
