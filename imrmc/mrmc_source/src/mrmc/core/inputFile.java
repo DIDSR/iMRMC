@@ -19,7 +19,7 @@ public class inputFile {
 	private double[][] BDGcoeff = new double[4][8];
 	private double[] aucMod = new double[2];
 	private TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Double>>> keyedData = new TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Double>>>();
-	private HashMap<Integer, Integer> truthVals;
+	private TreeMap<Integer, Integer> truthVals;
 
 	/* returns whether this inputFile has processed all input data */
 	public boolean isLoaded() {
@@ -77,14 +77,90 @@ public class inputFile {
 	public double[][] getBDGbias() {
 		return BDGbias;
 	}
+	
+	public double getMaxScore(int mod){
+		double max = Double.MIN_VALUE;
+		for (Integer r : keyedData.keySet()){
+			for (Integer c : keyedData.get(r).keySet()){
+				if (keyedData.get(r).get(c).get(mod) != null){
+					if (keyedData.get(r).get(c).get(mod) > max){
+						max = keyedData.get(r).get(c).get(mod);
+					}
+				}
+			}
+		}
+		return max;
+	}
+	
+	public double getMinScore(int mod){
+		double min = Double.MAX_VALUE;
+		for (Integer r : keyedData.keySet()){
+			for (Integer c : keyedData.get(r).keySet()){
+				if (keyedData.get(r).get(c).get(mod) != null){
+					if (keyedData.get(r).get(c).get(mod) < min){
+						min = keyedData.get(r).get(c).get(mod);
+					}
+				}
+			}
+		}
+		return min;
+	}
+	
+	public float[][] generateROCpoints(int mod){
+		float [][] rocPoints = new float[2][100];
+		int index = 0;
+		for (double thresh = getMinScore(mod); thresh < getMaxScore(mod); thresh += (getMaxScore(mod) - getMinScore(mod)) / 100){
+			float fp = 0;
+			float tp = 0;
+			for (Integer r : keyedData.keySet()){
+				for (Integer c : keyedData.get(r).keySet()){
+					if (keyedData.get(r).get(c).get(mod) > thresh && truthVals.get(c) == 0){
+						fp++;
+					}
+					if (keyedData.get(r).get(c).get(mod) > thresh && truthVals.get(c) == 1){
+						tp++;
+					}
+				}
+			}
+			float fpf = fp / (Normal * Reader);
+			float tpf = tp / (Disease * Reader);
+			System.out.println(fpf + ", " + tpf);
+			rocPoints[0][index] = fpf;
+			rocPoints[1][index] = tpf;
+		}
+		return rocPoints;
+	}
+	
+	public TreeMap<Integer, Double> getActualPosDist(int mod){
+		TreeMap<Integer, Double> apd = new TreeMap<Integer, Double>();
+		for(Integer c : truthVals.keySet()){
+			if (truthVals.get(c) == 1){
+				apd.put(c, 0.0);
+			}
+		}
+		for (Integer r : keyedData.keySet()){
+			for (Integer c : keyedData.get(r).keySet()){
+				if (!keyedData.get(r).get(c).isEmpty()){
+					if (apd.get(c) != null){
+						apd.put(c,  apd.get(c) + keyedData.get(r).get(c).get(mod));
+					}
+				}
+			}
+		}
+		
+		for (Integer c : apd.keySet()){
+			apd.put(c, apd.get(c) / Reader);
+		}
+		return apd;
+	}
 
-	public TreeMap<Integer, Integer> readersPerCase() {
-		TreeMap<Integer, Integer> rpc = new TreeMap<Integer, Integer>();
+	public TreeMap<Integer, Double> readersPerCase() {
+		TreeMap<Integer, Double> rpc = new TreeMap<Integer, Double>();
 		for (Integer r : keyedData.keySet()) {
 			for (Integer c : keyedData.get(r).keySet()) {
 				if (!keyedData.get(r).get(c).isEmpty()) {
 					if (rpc.get(c) == null) {
-						rpc.put(c, 1);
+						rpc.put(c, 1.0);
 					} else {
 						rpc.put(c, rpc.get(c) + 1);
 					}
@@ -94,13 +170,13 @@ public class inputFile {
 		return rpc;
 	}
 
-	public TreeMap<Integer, Integer> casesPerReader() {
-		TreeMap<Integer, Integer> cpr = new TreeMap<Integer, Integer>();
+	public TreeMap<Integer, Double> casesPerReader() {
+		TreeMap<Integer, Double> cpr = new TreeMap<Integer, Double>();
 		for (Integer r : keyedData.keySet()) {
 			for (Integer c : keyedData.get(r).keySet()) {
 				if (!keyedData.get(r).get(c).isEmpty()) {
 					if (cpr.get(r) == null) {
-						cpr.put(r, 1);
+						cpr.put(r, 1.0);
 					} else {
 						cpr.put(r, cpr.get(r) + 1);
 					}
@@ -274,7 +350,7 @@ public class inputFile {
 		}
 
 		keyedData = new TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Double>>>();
-		truthVals = new HashMap<Integer, Integer>();
+		truthVals = new TreeMap<Integer, Integer>();
 
 		for (Integer r : readerIDs) {
 			keyedData.put(r, new TreeMap<Integer, TreeMap<Integer, Double>>());
@@ -298,6 +374,7 @@ public class inputFile {
 			}
 		}
 
+		isFullyCrossed = true;
 		for (Integer m : modalityIDs) {
 			boolean[][] design = getStudyDesign(m);
 			for (int i = 0; i < design.length; i++) {
@@ -365,7 +442,7 @@ public class inputFile {
 
 	/* fills matrixes with 0s if data is not present */
 	private void getT0T1s(int modality1, int modality2,
-			HashMap<Integer, Integer> truthVals) {
+			TreeMap<Integer, Integer> truthVals) {
 		t0 = new double[Normal][Reader][2];
 		t1 = new double[Disease][Reader][2];
 		t01 = new double[Normal][Reader][2];

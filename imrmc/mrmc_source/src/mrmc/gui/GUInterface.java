@@ -28,6 +28,7 @@ import javax.swing.table.*;
 import java.text.DecimalFormat;
 import mrmc.chart.BarGraph;
 import mrmc.chart.PresencePlot;
+import mrmc.chart.ScatterPlot;
 import mrmc.core.MRMC;
 import mrmc.core.dbRecord;
 import mrmc.core.inputFile;
@@ -824,7 +825,7 @@ public class GUInterface {
 		JButton fmtHelpButton = new JButton("Format Info.");
 		JButton graphButton = new JButton("Input Statistics Charts");
 		JButton designButton = new JButton("Show Study Design");
-		JButton modsButton = new JButton("Select Modalities");
+		JButton ROCcurveButton = new JButton("Show ROC Curve");
 
 		pilotFile = new JTextField(20);
 		JButton browseButton = new JButton("Browse...");
@@ -832,6 +833,7 @@ public class GUInterface {
 		fmtHelpButton.addActionListener(new fmtHelpButtonListner());
 		graphButton.addActionListener(new graphButtonListner());
 		designButton.addActionListener(new designButtonListner());
+		ROCcurveButton.addActionListener(new ROCButtonListner());
 		layout.setHorizontalGroup(layout.createSequentialGroup().addGroup(
 				layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 						.addGroup(
@@ -841,7 +843,8 @@ public class GUInterface {
 										.addComponent(browseButton)
 										.addComponent(fmtHelpButton)
 										.addComponent(graphButton)
-										.addComponent(designButton))
+										.addComponent(designButton)
+										.addComponent(ROCcurveButton))
 						.addGroup(
 								layout.createSequentialGroup().addComponent(
 										pilotCard2))));
@@ -856,7 +859,8 @@ public class GUInterface {
 								.addComponent(browseButton)
 								.addComponent(fmtHelpButton)
 								.addComponent(graphButton)
-								.addComponent(designButton))
+								.addComponent(designButton)
+								.addComponent(ROCcurveButton))
 				.addGroup(
 						layout.createParallelGroup(
 								GroupLayout.Alignment.LEADING).addComponent(
@@ -1383,6 +1387,36 @@ public class GUInterface {
 			JOptionPane.showMessageDialog(lst.getFrame(),
 					fmt.getInfo() + fmt.getSample(), "Information",
 					JOptionPane.INFORMATION_MESSAGE);
+		}
+	}
+	
+	class ROCButtonListner implements ActionListener {
+		int rocMod = 1;
+		public void actionPerformed(ActionEvent e){
+			System.out.println("distribution button pressed");
+			if (usr != null && usr.isLoaded()) {
+				JComboBox choose1 = new JComboBox();
+				for (int i = 1; i <= usr.getModality(); i++) {
+					choose1.addItem(i);
+				}
+				choose1.setSelectedItem((Integer) rocMod);
+				Object[] message = { "Which modality would you like view?\n",
+						choose1 };
+				JOptionPane.showMessageDialog(lst.getFrame(), message,
+						"Choose Modality", JOptionPane.INFORMATION_MESSAGE,
+						null);
+				rocMod = (Integer) choose1.getSelectedItem();
+				final ScatterPlot roc = new ScatterPlot("ROC Curve: Modality " + rocMod,
+						"FPF", "TPF", usr.generateROCpoints(rocMod));
+				roc.pack();
+				RefineryUtilities.centerFrameOnScreen(roc);
+				roc.setVisible(true);
+
+			} else {
+				JOptionPane.showMessageDialog(lst.getFrame(),
+						"Pilot study data has not yet been input.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
 		}
 	}
 

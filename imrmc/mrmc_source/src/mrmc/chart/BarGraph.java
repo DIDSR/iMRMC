@@ -17,7 +17,7 @@ public class BarGraph extends JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public BarGraph(final String title, String xaxis, String yaxis, TreeMap<Integer, Integer> data) {
+	public BarGraph(final String title, String xaxis, String yaxis, TreeMap<Integer, Double> data) {
 		super(title);
 		CategoryDataset dataset = createDataset(data, xaxis);
 		JFreeChart chart = createChart(dataset, title, yaxis, xaxis);
@@ -26,11 +26,11 @@ public class BarGraph extends JFrame {
 		setContentPane(chartPanel);
 	}
 
-	private CategoryDataset createDataset(TreeMap<Integer, Integer> data, String xaxis) {
+	private CategoryDataset createDataset(TreeMap<Integer, Double> data, String xaxis) {
 		final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-		for (Entry<Integer, Integer> e : data.entrySet()) {
+		for (Entry<Integer, Double> e : data.entrySet()) {
 			int key = e.getKey();
-			int value = e.getValue();
+			double value = e.getValue();
 			dataset.addValue(value, key + "", xaxis);
 		}
 
