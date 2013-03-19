@@ -77,13 +77,13 @@ public class inputFile {
 	public double[][] getBDGbias() {
 		return BDGbias;
 	}
-	
-	public double getMaxScore(int mod){
+
+	public double getMaxScore(int mod) {
 		double max = Double.MIN_VALUE;
-		for (Integer r : keyedData.keySet()){
-			for (Integer c : keyedData.get(r).keySet()){
-				if (keyedData.get(r).get(c).get(mod) != null){
-					if (keyedData.get(r).get(c).get(mod) > max){
+		for (Integer r : keyedData.keySet()) {
+			for (Integer c : keyedData.get(r).keySet()) {
+				if (keyedData.get(r).get(c).get(mod) != null) {
+					if (keyedData.get(r).get(c).get(mod) > max) {
 						max = keyedData.get(r).get(c).get(mod);
 					}
 				}
@@ -91,13 +91,13 @@ public class inputFile {
 		}
 		return max;
 	}
-	
-	public double getMinScore(int mod){
+
+	public double getMinScore(int mod) {
 		double min = Double.MAX_VALUE;
-		for (Integer r : keyedData.keySet()){
-			for (Integer c : keyedData.get(r).keySet()){
-				if (keyedData.get(r).get(c).get(mod) != null){
-					if (keyedData.get(r).get(c).get(mod) < min){
+		for (Integer r : keyedData.keySet()) {
+			for (Integer c : keyedData.get(r).keySet()) {
+				if (keyedData.get(r).get(c).get(mod) != null) {
+					if (keyedData.get(r).get(c).get(mod) < min) {
 						min = keyedData.get(r).get(c).get(mod);
 					}
 				}
@@ -105,50 +105,57 @@ public class inputFile {
 		}
 		return min;
 	}
-	
-	public float[][] generateROCpoints(int mod){
-		float [][] rocPoints = new float[2][100];
-		int index = 0;
-		for (double thresh = getMinScore(mod); thresh < getMaxScore(mod); thresh += (getMaxScore(mod) - getMinScore(mod)) / 100){
-			float fp = 0;
-			float tp = 0;
-			for (Integer r : keyedData.keySet()){
-				for (Integer c : keyedData.get(r).keySet()){
-					if (keyedData.get(r).get(c).get(mod) > thresh && truthVals.get(c) == 0){
-						fp++;
-					}
-					if (keyedData.get(r).get(c).get(mod) > thresh && truthVals.get(c) == 1){
-						tp++;
+
+	public double[][][] generateROCpoints(int mod) {
+		double[][][] rocPoints = new double[Reader][100][2];
+		for (int r = 1; r <= Reader; r++) {
+			int index = 0;
+			for (double thresh = getMinScore(mod); thresh < getMaxScore(mod); thresh += ((getMaxScore(mod) - getMinScore(mod)) / 100)) {
+				int fp = 0;
+				int tp = 0;
+				for (Integer c : keyedData.get(r).keySet()) {
+					if (!keyedData.get(r).get(c).isEmpty()) {
+						double score = keyedData.get(r).get(c).get(mod);
+						int caseTruth = truthVals.get(c);
+						if (score > thresh) {
+							if (caseTruth == 0) {
+								fp++;
+							} else {
+								tp++;
+							}
+						}
 					}
 				}
+
+				float fpf = (float) fp / Normal;
+				float tpf = (float) tp / Disease;
+				rocPoints[r - 1][index][0] = fpf;
+				rocPoints[r - 1][index][1] = tpf;
+				index++;
 			}
-			float fpf = fp / (Normal * Reader);
-			float tpf = tp / (Disease * Reader);
-			System.out.println(fpf + ", " + tpf);
-			rocPoints[0][index] = fpf;
-			rocPoints[1][index] = tpf;
 		}
 		return rocPoints;
 	}
-	
-	public TreeMap<Integer, Double> getActualPosDist(int mod){
+
+	public TreeMap<Integer, Double> getActualPosDist(int mod) {
 		TreeMap<Integer, Double> apd = new TreeMap<Integer, Double>();
-		for(Integer c : truthVals.keySet()){
-			if (truthVals.get(c) == 1){
+		for (Integer c : truthVals.keySet()) {
+			if (truthVals.get(c) == 1) {
 				apd.put(c, 0.0);
 			}
 		}
-		for (Integer r : keyedData.keySet()){
-			for (Integer c : keyedData.get(r).keySet()){
-				if (!keyedData.get(r).get(c).isEmpty()){
-					if (apd.get(c) != null){
-						apd.put(c,  apd.get(c) + keyedData.get(r).get(c).get(mod));
+		for (Integer r : keyedData.keySet()) {
+			for (Integer c : keyedData.get(r).keySet()) {
+				if (!keyedData.get(r).get(c).isEmpty()) {
+					if (apd.get(c) != null) {
+						apd.put(c, apd.get(c)
+								+ keyedData.get(r).get(c).get(mod));
 					}
 				}
 			}
 		}
-		
-		for (Integer c : apd.keySet()){
+
+		for (Integer c : apd.keySet()) {
 			apd.put(c, apd.get(c) / Reader);
 		}
 		return apd;

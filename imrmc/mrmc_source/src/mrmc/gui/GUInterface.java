@@ -823,7 +823,7 @@ public class GUInterface {
 		JPanel pilotCard2 = new JPanel();
 		MS2 = new PilotModSelect(pilotCard2, this);
 		JButton fmtHelpButton = new JButton("Format Info.");
-		JButton graphButton = new JButton("Input Statistics Charts");
+		JButton readerCasesButton = new JButton("Input Statistics Charts");
 		JButton designButton = new JButton("Show Study Design");
 		JButton ROCcurveButton = new JButton("Show ROC Curve");
 
@@ -831,7 +831,7 @@ public class GUInterface {
 		JButton browseButton = new JButton("Browse...");
 		browseButton.addActionListener(new brwsButtonListner());
 		fmtHelpButton.addActionListener(new fmtHelpButtonListner());
-		graphButton.addActionListener(new graphButtonListner());
+		readerCasesButton.addActionListener(new ReadersCasesButtonListner());
 		designButton.addActionListener(new designButtonListner());
 		ROCcurveButton.addActionListener(new ROCButtonListner());
 		layout.setHorizontalGroup(layout.createSequentialGroup().addGroup(
@@ -842,7 +842,7 @@ public class GUInterface {
 										.addComponent(pilotFile)
 										.addComponent(browseButton)
 										.addComponent(fmtHelpButton)
-										.addComponent(graphButton)
+										.addComponent(readerCasesButton)
 										.addComponent(designButton)
 										.addComponent(ROCcurveButton))
 						.addGroup(
@@ -858,7 +858,7 @@ public class GUInterface {
 								.addComponent(pilotFile)
 								.addComponent(browseButton)
 								.addComponent(fmtHelpButton)
-								.addComponent(graphButton)
+								.addComponent(readerCasesButton)
 								.addComponent(designButton)
 								.addComponent(ROCcurveButton))
 				.addGroup(
@@ -1389,27 +1389,29 @@ public class GUInterface {
 					JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
-	
+
 	class ROCButtonListner implements ActionListener {
 		int rocMod = 1;
-		public void actionPerformed(ActionEvent e){
-			System.out.println("distribution button pressed");
+
+		public void actionPerformed(ActionEvent e) {
+			System.out.println("roc button pressed");
 			if (usr != null && usr.isLoaded()) {
-				JComboBox choose1 = new JComboBox();
+				JComboBox chooseMod = new JComboBox();
 				for (int i = 1; i <= usr.getModality(); i++) {
-					choose1.addItem(i);
+					chooseMod.addItem(i);
 				}
-				choose1.setSelectedItem((Integer) rocMod);
+				chooseMod.setSelectedItem((Integer) rocMod);
 				Object[] message = { "Which modality would you like view?\n",
-						choose1 };
+						chooseMod};
 				JOptionPane.showMessageDialog(lst.getFrame(), message,
-						"Choose Modality", JOptionPane.INFORMATION_MESSAGE,
+						"Choose Modality and Reader", JOptionPane.INFORMATION_MESSAGE,
 						null);
-				rocMod = (Integer) choose1.getSelectedItem();
-				final ScatterPlot roc = new ScatterPlot("ROC Curve: Modality " + rocMod,
-						"FPF", "TPF", usr.generateROCpoints(rocMod));
+				rocMod = (Integer) chooseMod.getSelectedItem();
+				final ScatterPlot roc = new ScatterPlot("ROC Curve: Modality "
+						+ rocMod, "FPF", "TPF", usr.generateROCpoints(rocMod));
 				roc.pack();
 				RefineryUtilities.centerFrameOnScreen(roc);
+
 				roc.setVisible(true);
 
 			} else {
@@ -1420,7 +1422,7 @@ public class GUInterface {
 		}
 	}
 
-	class graphButtonListner implements ActionListener {
+	class ReadersCasesButtonListner implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			System.out.println("graph button pressed");
 			if (usr != null && usr.isLoaded()) {
@@ -1482,141 +1484,141 @@ public class GUInterface {
 	 * in case of applet, the user click "input pilot study" button, and a text
 	 * editor shows up. The user may paste the raw data into the text editor
 	 */
-//	class InputByHandListner implements ActionListener {
-//		JTextArea pilot;
-//		JFrame pilotFrame;
-//
-//		public void actionPerformed(ActionEvent e) {
-//			System.out.println("Input by Hand");
-//
-//			pilotFrame = new JFrame("Please paste your raw data here...");
-//
-//			pilotFrame.getRootPane().setWindowDecorationStyle(
-//					JRootPane.PLAIN_DIALOG);
-//
-//			pilotFrame.getContentPane()
-//					.setLayout(
-//							new BoxLayout(pilotFrame.getContentPane(),
-//									BoxLayout.Y_AXIS));
-//			pilot = new JTextArea(30, 30);
-//			JScrollPane scrollPane = new JScrollPane(pilot,
-//					JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-//					JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-//			pilotFrame.getContentPane().add(scrollPane);
-//			JPanel btPanel = new JPanel();
-//
-//			final Clipboard clipboard;
-//
-//			try {
-//				clipboard = pilotFrame.getToolkit().getSystemClipboard();
-//			} catch (Exception except) {
-//				System.out.println("caught it ****$$%%^&&");
-//				JOptionPane
-//						.showMessageDialog(
-//								lst.getFrame(),
-//								"please copy file .java.policy to C:/Documents and Settings/{User},\n close your browser and try again\n"
-//										+ "For instructions, please go to \n"
-//										+ "https://www.member-data.com/rdc/help.aspx?topic=JavaClipboard#ptool",
-//								"Error", JOptionPane.ERROR_MESSAGE);
-//				return;
-//			}
-//
-//			JButton paste = new JButton("Paste");
-//			paste.addActionListener(new ActionListener() {
-//				public void actionPerformed(ActionEvent actionEvent) {
-//					Transferable clipData = clipboard.getContents(clipboard);
-//					try {
-//						if (clipData
-//								.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-//							String s = (String) (clipData
-//									.getTransferData(DataFlavor.stringFlavor));
-//							pilot.replaceSelection(s);
-//						}
-//					} catch (Exception ufe) {
-//					}
-//				}
-//			});
-//			btPanel.add(paste);
-//
-//			JButton okButton = new JButton("OK");
-//			okButton.addActionListener(new OKListner());
-//			btPanel.add(okButton);
-//			JButton clearButton = new JButton("Clear");
-//			clearButton.addActionListener(new clearListner());
-//			btPanel.add(clearButton);
-//			pilotFrame.getContentPane().add(btPanel);
-//			pilot.setLineWrap(true);
-//			pilot.setEditable(true);
-//			pilotFrame.pack();
-//			pilotFrame.setVisible(true);
-//		}
-//
-//		/*
-//		 * class TextUtilities { private TextUtilities() { }
-//		 * 
-//		 * public static Action findAction(Action actions[], String key) {
-//		 * Hashtable commands = new Hashtable(); for (int i = 0; i <
-//		 * actions.length; i++) { Action action = actions[i];
-//		 * commands.put(action.getValue(Action.NAME), action); } return (Action)
-//		 * commands.get(key); } }
-//		 */
-//
-//		class pasteListner implements ActionListener {
-//			public void actionPerformed(ActionEvent e) {
-//			}
-//		}
-//
-//		class OKListner implements ActionListener {
-//			public void actionPerformed(ActionEvent e) {
-//				String content = "";
-//				content = pilot.getText();
-//				try {
-//					usr = new inputFile(content, 1);
-//				} catch (Exception except) {
-//					except.printStackTrace();
-//					System.out
-//							.println("caught it at OKListner ****!!!!@@@@$$%%^&&");
-//					JOptionPane.showMessageDialog(lst.getFrame(),
-//							"invalid input format", "Error",
-//							JOptionPane.ERROR_MESSAGE);
-//					return;
-//				}
-//
-//				if (!usr.numsVerified()) {
-//					JOptionPane
-//							.showMessageDialog(
-//									lst.getFrame(),
-//									usr.showUnverified(),
-//									"Warning: Input Header Values Do Not Match Actual Values",
-//									JOptionPane.WARNING_MESSAGE);
-//				} else {
-//					JOptionPane.showMessageDialog(
-//							lst.getFrame(),
-//							"NR = " + usr.getReader() + " N0 = "
-//									+ usr.getNormal() + " N1 = "
-//									+ usr.getDisease() + " NM = "
-//									+ usr.getModality(), "Study Info",
-//							JOptionPane.INFORMATION_MESSAGE);
-//				}
-//
-//				if (!usr.getFullyCrossedStatus()) {
-//					JOptionPane.showMessageDialog(lst.getFrame(),
-//							"The study is not fully crossed", "Error",
-//							JOptionPane.ERROR_MESSAGE);
-//				}
-//
-//				usrFile = new dbRecord(usr);
-//				pilotFrame.setVisible(false);
-//			}
-//		}
-//
-//		class clearListner implements ActionListener {
-//			public void actionPerformed(ActionEvent e) {
-//				pilot.setText("");
-//			}
-//		}
-//
-//	}
+	// class InputByHandListner implements ActionListener {
+	// JTextArea pilot;
+	// JFrame pilotFrame;
+	//
+	// public void actionPerformed(ActionEvent e) {
+	// System.out.println("Input by Hand");
+	//
+	// pilotFrame = new JFrame("Please paste your raw data here...");
+	//
+	// pilotFrame.getRootPane().setWindowDecorationStyle(
+	// JRootPane.PLAIN_DIALOG);
+	//
+	// pilotFrame.getContentPane()
+	// .setLayout(
+	// new BoxLayout(pilotFrame.getContentPane(),
+	// BoxLayout.Y_AXIS));
+	// pilot = new JTextArea(30, 30);
+	// JScrollPane scrollPane = new JScrollPane(pilot,
+	// JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+	// JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+	// pilotFrame.getContentPane().add(scrollPane);
+	// JPanel btPanel = new JPanel();
+	//
+	// final Clipboard clipboard;
+	//
+	// try {
+	// clipboard = pilotFrame.getToolkit().getSystemClipboard();
+	// } catch (Exception except) {
+	// System.out.println("caught it ****$$%%^&&");
+	// JOptionPane
+	// .showMessageDialog(
+	// lst.getFrame(),
+	// "please copy file .java.policy to C:/Documents and Settings/{User},\n close your browser and try again\n"
+	// + "For instructions, please go to \n"
+	// + "https://www.member-data.com/rdc/help.aspx?topic=JavaClipboard#ptool",
+	// "Error", JOptionPane.ERROR_MESSAGE);
+	// return;
+	// }
+	//
+	// JButton paste = new JButton("Paste");
+	// paste.addActionListener(new ActionListener() {
+	// public void actionPerformed(ActionEvent actionEvent) {
+	// Transferable clipData = clipboard.getContents(clipboard);
+	// try {
+	// if (clipData
+	// .isDataFlavorSupported(DataFlavor.stringFlavor)) {
+	// String s = (String) (clipData
+	// .getTransferData(DataFlavor.stringFlavor));
+	// pilot.replaceSelection(s);
+	// }
+	// } catch (Exception ufe) {
+	// }
+	// }
+	// });
+	// btPanel.add(paste);
+	//
+	// JButton okButton = new JButton("OK");
+	// okButton.addActionListener(new OKListner());
+	// btPanel.add(okButton);
+	// JButton clearButton = new JButton("Clear");
+	// clearButton.addActionListener(new clearListner());
+	// btPanel.add(clearButton);
+	// pilotFrame.getContentPane().add(btPanel);
+	// pilot.setLineWrap(true);
+	// pilot.setEditable(true);
+	// pilotFrame.pack();
+	// pilotFrame.setVisible(true);
+	// }
+	//
+	// /*
+	// * class TextUtilities { private TextUtilities() { }
+	// *
+	// * public static Action findAction(Action actions[], String key) {
+	// * Hashtable commands = new Hashtable(); for (int i = 0; i <
+	// * actions.length; i++) { Action action = actions[i];
+	// * commands.put(action.getValue(Action.NAME), action); } return (Action)
+	// * commands.get(key); } }
+	// */
+	//
+	// class pasteListner implements ActionListener {
+	// public void actionPerformed(ActionEvent e) {
+	// }
+	// }
+	//
+	// class OKListner implements ActionListener {
+	// public void actionPerformed(ActionEvent e) {
+	// String content = "";
+	// content = pilot.getText();
+	// try {
+	// usr = new inputFile(content, 1);
+	// } catch (Exception except) {
+	// except.printStackTrace();
+	// System.out
+	// .println("caught it at OKListner ****!!!!@@@@$$%%^&&");
+	// JOptionPane.showMessageDialog(lst.getFrame(),
+	// "invalid input format", "Error",
+	// JOptionPane.ERROR_MESSAGE);
+	// return;
+	// }
+	//
+	// if (!usr.numsVerified()) {
+	// JOptionPane
+	// .showMessageDialog(
+	// lst.getFrame(),
+	// usr.showUnverified(),
+	// "Warning: Input Header Values Do Not Match Actual Values",
+	// JOptionPane.WARNING_MESSAGE);
+	// } else {
+	// JOptionPane.showMessageDialog(
+	// lst.getFrame(),
+	// "NR = " + usr.getReader() + " N0 = "
+	// + usr.getNormal() + " N1 = "
+	// + usr.getDisease() + " NM = "
+	// + usr.getModality(), "Study Info",
+	// JOptionPane.INFORMATION_MESSAGE);
+	// }
+	//
+	// if (!usr.getFullyCrossedStatus()) {
+	// JOptionPane.showMessageDialog(lst.getFrame(),
+	// "The study is not fully crossed", "Error",
+	// JOptionPane.ERROR_MESSAGE);
+	// }
+	//
+	// usrFile = new dbRecord(usr);
+	// pilotFrame.setVisible(false);
+	// }
+	// }
+	//
+	// class clearListner implements ActionListener {
+	// public void actionPerformed(ActionEvent e) {
+	// pilot.setText("");
+	// }
+	// }
+	//
+	// }
 
 	/* check whether there is negative components */
 	public int checkNegative() {
