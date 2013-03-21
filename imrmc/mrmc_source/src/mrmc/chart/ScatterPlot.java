@@ -31,12 +31,13 @@ import org.jfree.ui.RefineryUtilities;
 public class ScatterPlot extends JFrame {
 
 	private static final long serialVersionUID = 1L;
+	private XYLineAndShapeRenderer renderer;
 
 	public ScatterPlot(final String title, String xaxis, String yaxis,
 			double[][][] data) {
 		super(title);
 
-		final JFreeChart chart = ChartFactory.createScatterPlot(title, xaxis,
+		final JFreeChart chart = ChartFactory.createScatterPlot("\n", xaxis,
 				yaxis, createDataset(data), PlotOrientation.VERTICAL, true,
 				true, false);
 		XYPlot xyplot = (XYPlot) chart.getPlot();
@@ -48,10 +49,12 @@ public class ScatterPlot extends JFrame {
 		NumberAxis range = (NumberAxis) xyplot.getRangeAxis();
 		range.setRange(0.00, 1.00);
 		range.setTickUnit(new NumberTickUnit(0.1));
-		chart.getXYPlot().setRenderer(new XYLineAndShapeRenderer());
+		renderer = new XYLineAndShapeRenderer();
+		chart.getXYPlot().setRenderer(renderer);
 		ChartPanel chartPanel = new ChartPanel(chart);
 		for (int i = 1; i <= data.length; i++) {
 			JCheckBox aBox = new JCheckBox("" + i);
+			aBox.setSelected(true);
 			aBox.addItemListener(new readerSelectListner());
 			chartPanel.add(aBox);
 		}
@@ -78,9 +81,19 @@ public class ScatterPlot extends JFrame {
 	class readerSelectListner implements ItemListener {
 		public void itemStateChanged(ItemEvent e) {
 			if (e.getStateChange() == ItemEvent.DESELECTED) {
-				// TODO get reader from checkbox and set series visible/invisible
+				renderer.setSeriesLinesVisible(
+						(Integer.parseInt(((JCheckBox) e.getItem()).getText()) - 1),
+						false);
+				renderer.setSeriesShapesVisible(
+						(Integer.parseInt(((JCheckBox) e.getItem()).getText()) - 1),
+						false);
 			} else if (e.getStateChange() == ItemEvent.SELECTED) {
-
+				renderer.setSeriesLinesVisible(
+						(Integer.parseInt(((JCheckBox) e.getItem()).getText()) - 1),
+						true);
+				renderer.setSeriesShapesVisible(
+						(Integer.parseInt(((JCheckBox) e.getItem()).getText()) - 1),
+						true);
 			}
 		}
 	}

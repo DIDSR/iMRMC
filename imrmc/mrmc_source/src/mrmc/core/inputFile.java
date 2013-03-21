@@ -107,17 +107,21 @@ public class inputFile {
 	}
 
 	public double[][][] generateROCpoints(int mod) {
-		double[][][] rocPoints = new double[Reader][100][2];
+		int samples = 100;
+		double min = getMinScore(mod);
+		double max = getMaxScore(mod);
+		double inc = (max - min) / samples;
+		double[][][] rocPoints = new double[Reader][samples][2];
 		for (int r = 1; r <= Reader; r++) {
 			int index = 0;
-			for (double thresh = getMinScore(mod); thresh < getMaxScore(mod); thresh += ((getMaxScore(mod) - getMinScore(mod)) / 100)) {
+			for (double thresh = min; thresh <= max; thresh += inc) {
 				int fp = 0;
 				int tp = 0;
 				for (Integer c : keyedData.get(r).keySet()) {
 					if (!keyedData.get(r).get(c).isEmpty()) {
 						double score = keyedData.get(r).get(c).get(mod);
 						int caseTruth = truthVals.get(c);
-						if (score > thresh) {
+						if (score >= thresh) {
 							if (caseTruth == 0) {
 								fp++;
 							} else {
@@ -129,8 +133,10 @@ public class inputFile {
 
 				float fpf = (float) fp / Normal;
 				float tpf = (float) tp / Disease;
-				rocPoints[r - 1][index][0] = fpf;
-				rocPoints[r - 1][index][1] = tpf;
+				if (index < samples) {
+					rocPoints[r - 1][index][0] = fpf;
+					rocPoints[r - 1][index][1] = tpf;
+				}
 				index++;
 			}
 		}
