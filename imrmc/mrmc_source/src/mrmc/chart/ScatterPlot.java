@@ -71,8 +71,6 @@ public class ScatterPlot extends JFrame {
 			for (int i = 0; i < data[r].length; i++) {
 				series.add(data[r][i][0], data[r][i][1]);
 			}
-			series.add(0, 0);
-			series.add(1, 1);
 			result.addSeries(series);
 		}
 		return result;

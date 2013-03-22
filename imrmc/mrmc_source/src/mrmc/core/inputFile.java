@@ -111,29 +111,35 @@ public class inputFile {
 		double min = getMinScore(mod);
 		double max = getMaxScore(mod);
 		double inc = (max - min) / samples;
-		double[][][] rocPoints = new double[Reader][samples][2];
+		double[][][] rocPoints = new double[Reader][samples + 2][2];
 		for (int r = 1; r <= Reader; r++) {
 			int index = 0;
-			for (double thresh = min; thresh <= max; thresh += inc) {
+			for (double thresh = min - inc; thresh <= max + inc; thresh += inc) {
 				int fp = 0;
 				int tp = 0;
+				int normCount = 0;
+				int disCount = 0;
 				for (Integer c : keyedData.get(r).keySet()) {
 					if (!keyedData.get(r).get(c).isEmpty()) {
 						double score = keyedData.get(r).get(c).get(mod);
 						int caseTruth = truthVals.get(c);
-						if (score >= thresh) {
-							if (caseTruth == 0) {
+						if (caseTruth == 0) {
+							normCount++;
+							if (score > thresh) {
 								fp++;
-							} else {
+							}
+						} else {
+							disCount++;
+							if (score > thresh) {
 								tp++;
 							}
 						}
 					}
 				}
 
-				float fpf = (float) fp / Normal;
-				float tpf = (float) tp / Disease;
-				if (index < samples) {
+				float fpf = (float) fp / normCount;
+				float tpf = (float) tp / disCount;
+				if (index < (samples + 2)) {
 					rocPoints[r - 1][index][0] = fpf;
 					rocPoints[r - 1][index][1] = tpf;
 				}
@@ -239,7 +245,7 @@ public class inputFile {
 	}
 
 	public void dotheWork(int modality1, int modality2) {
-		getT0T1s(modality1, modality2, truthVals);
+		getT0T1s(modality1, modality2);
 		covMRMC mod1 = new covMRMC(t01, d0, t11, d1, Reader, Normal, Disease);
 		covMRMC mod2 = new covMRMC(t02, d0, t12, d1, Reader, Normal, Disease);
 		covMRMC covMod12 = new covMRMC(t0, d0, t1, d1, Reader, Normal, Disease);
@@ -454,8 +460,7 @@ public class inputFile {
 	}
 
 	/* fills matrixes with 0s if data is not present */
-	private void getT0T1s(int modality1, int modality2,
-			TreeMap<Integer, Integer> truthVals) {
+	private void getT0T1s(int modality1, int modality2) {
 		t0 = new double[Normal][Reader][2];
 		t1 = new double[Disease][Reader][2];
 		t01 = new double[Normal][Reader][2];
