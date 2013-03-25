@@ -124,7 +124,7 @@ public class PilotModSelect {
 
 	class varAnalysisListner implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("MRMC Variance analysis button clicked");
+			//System.out.println("MRMC Variance analysis button clicked");
 			int check = gui.checkNegative();
 			if (check == 1) {
 				gui.setTab1();

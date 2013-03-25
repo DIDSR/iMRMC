@@ -1,32 +1,25 @@
 package mrmc.chart;
 
 import java.awt.BorderLayout;
-import java.awt.RenderingHints;
+import java.awt.FlowLayout;
+import java.awt.PopupMenu;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.TreeMap;
-
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
-import org.jfree.chart.plot.FastScatterPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.SamplingXYLineRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.chart.renderer.xy.XYSplineRenderer;
-import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.ui.ApplicationFrame;
-import org.jfree.ui.RefineryUtilities;
 
 public class ScatterPlot extends JFrame {
 
@@ -37,7 +30,7 @@ public class ScatterPlot extends JFrame {
 			double[][][] data) {
 		super(title);
 
-		final JFreeChart chart = ChartFactory.createScatterPlot("\n", xaxis,
+		final JFreeChart chart = ChartFactory.createScatterPlot(title, xaxis,
 				yaxis, createDataset(data), PlotOrientation.VERTICAL, true,
 				true, false);
 		XYPlot xyplot = (XYPlot) chart.getPlot();
@@ -52,15 +45,18 @@ public class ScatterPlot extends JFrame {
 		renderer = new XYLineAndShapeRenderer();
 		chart.getXYPlot().setRenderer(renderer);
 		ChartPanel chartPanel = new ChartPanel(chart);
+
+		JPanel readerSelect = new JPanel(new FlowLayout());
 		for (int i = 1; i <= data.length; i++) {
 			JCheckBox aBox = new JCheckBox("" + i);
 			aBox.setSelected(true);
 			aBox.addItemListener(new readerSelectListner());
-			chartPanel.add(aBox);
+			readerSelect.add(aBox);
 		}
 		chartPanel.setPreferredSize(new java.awt.Dimension(500, 500));
 
-		setContentPane(chartPanel);
+		this.add(chartPanel);
+		this.add(readerSelect, BorderLayout.PAGE_END);
 
 	}
 

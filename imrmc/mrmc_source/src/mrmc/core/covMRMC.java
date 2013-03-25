@@ -240,8 +240,6 @@ public class covMRMC {
 				.linearTrans(denom, 1.0 / (totalwada * totalwbdb), 0);
 		c[8] = c[8] - 1.0;
 
-		// TODO I believe here is where auc is converted to >0.5 if necessary
-
 		aucMod[0] = aucA / totalwada;
 		aucMod[1] = aucB / totalwbdb;
 		// System.out.println("AUC1="+aucMod[0]+"  AUC2="+aucMod[1]);

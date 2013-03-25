@@ -37,8 +37,6 @@ import mrmc.core.statTest;
 
 import org.jfree.ui.RefineryUtilities;
 
-import java.awt.datatransfer.*;
-
 public class GUInterface {
 	JPanel inputCards; // the panel that uses CardLayout, there are three cards
 						// for three different input
@@ -913,7 +911,7 @@ public class GUInterface {
 		dm = new DefaultTableModel(3, 7);
 		BCKtable1 = new JTable(dm);
 		JScrollPane scroll2 = genTable(BCKtable1, BCKnames);
-		panelBCK1.add(scroll2);
+		// panelBCK1.add(scroll2);
 		height = BCKtable1.getRowHeight();
 		BCKtable1.setPreferredScrollableViewportSize(new Dimension(650,
 				height * 4));
@@ -926,7 +924,7 @@ public class GUInterface {
 		dm = new DefaultTableModel(3, 6);
 		DBMtable1 = new JTable(dm);
 		JScrollPane scroll3 = genTable(DBMtable1, DBMnames);
-		panelDBM1.add(scroll3);
+		// panelDBM1.add(scroll3);
 		height = DBMtable1.getRowHeight();
 		DBMtable1.setPreferredScrollableViewportSize(new Dimension(650,
 				height * 4));
@@ -939,7 +937,7 @@ public class GUInterface {
 		dm = new DefaultTableModel(3, 6);
 		ORtable1 = new JTable(dm);
 		JScrollPane scroll4 = genTable(ORtable1, ORnames);
-		panelOR1.add(scroll4);
+		// panelOR1.add(scroll4);
 		height = ORtable1.getRowHeight();
 		ORtable1.setPreferredScrollableViewportSize(new Dimension(650,
 				height * 4));
@@ -953,7 +951,7 @@ public class GUInterface {
 		dm = new DefaultTableModel(3, 6);
 		MStable1 = new JTable(dm);
 		JScrollPane scroll5 = genTable(MStable1, MSnames);
-		panelMS1.add(scroll5);
+		// panelMS1.add(scroll5);
 		height = MStable1.getRowHeight();
 		MStable1.setPreferredScrollableViewportSize(new Dimension(650,
 				height * 4));
@@ -1330,7 +1328,7 @@ public class GUInterface {
 	 */
 	class brwsButtonListner implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("browse pressed");
+			// System.out.println("browse pressed");
 			JFileChooser fc = new JFileChooser();
 			// Don't get rid of this despite being unused
 			int returnVal = fc.showOpenDialog((Component) e.getSource());
@@ -1394,7 +1392,7 @@ public class GUInterface {
 		int rocMod = 1;
 
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("roc button pressed");
+			// System.out.println("roc button pressed");
 			if (usr != null && usr.isLoaded()) {
 				JComboBox chooseMod = new JComboBox();
 				for (int i = 1; i <= usr.getModality(); i++) {
@@ -1402,16 +1400,17 @@ public class GUInterface {
 				}
 				chooseMod.setSelectedItem((Integer) rocMod);
 				Object[] message = { "Which modality would you like view?\n",
-						chooseMod};
+						chooseMod };
 				JOptionPane.showMessageDialog(lst.getFrame(), message,
-						"Choose Modality and Reader", JOptionPane.INFORMATION_MESSAGE,
-						null);
+						"Choose Modality and Reader",
+						JOptionPane.INFORMATION_MESSAGE, null);
 				rocMod = (Integer) chooseMod.getSelectedItem();
+				double[][][] data = usr.generateROCpoints(rocMod);
 				final ScatterPlot roc = new ScatterPlot("ROC Curve: Modality "
-						+ rocMod, "FPF", "TPF", usr.generateROCpoints(rocMod));
+						+ rocMod, "FPF", "TPF", data);
+
 				roc.pack();
 				RefineryUtilities.centerFrameOnScreen(roc);
-
 				roc.setVisible(true);
 
 			} else {
@@ -1424,7 +1423,7 @@ public class GUInterface {
 
 	class ReadersCasesButtonListner implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("graph button pressed");
+			// System.out.println("graph button pressed");
 			if (usr != null && usr.isLoaded()) {
 				final BarGraph cpr = new BarGraph("Cases per Reader",
 						"Readers", "Cases", usr.casesPerReader());
@@ -1450,7 +1449,7 @@ public class GUInterface {
 		int designMod1 = 1;
 
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("study design button pressed");
+			// System.out.println("study design button pressed");
 			if (usr != null && usr.isLoaded()) {
 				JComboBox choose1 = new JComboBox();
 				for (int i = 1; i <= usr.getModality(); i++) {

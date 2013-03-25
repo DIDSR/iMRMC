@@ -241,6 +241,8 @@ public class dbRecord {
 		String[] tempAUC = AUCstr.split(",");
 		AUC[0] = Double.valueOf(tempAUC[1]);
 		AUC[1] = Double.valueOf(tempAUC[2]);
+		
+		// TODO this is where AUC is flipped when storying into dbRecord
 		if (AUC[0] < 0.5) {
 			AUC[0] = 1.0 - AUC[0];
 		}
