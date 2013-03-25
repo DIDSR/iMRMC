@@ -241,14 +241,14 @@ public class dbRecord {
 		String[] tempAUC = AUCstr.split(",");
 		AUC[0] = Double.valueOf(tempAUC[1]);
 		AUC[1] = Double.valueOf(tempAUC[2]);
-		
-		// TODO this is where AUC is flipped when storying into dbRecord
-		if (AUC[0] < 0.5) {
-			AUC[0] = 1.0 - AUC[0];
-		}
-		if (AUC[1] < 0.5) {
-			AUC[1] = 1.0 - AUC[1];
-		}
+
+		// TODO this is where AUC is flipped when storing into dbRecord
+		// if (AUC[0] < 0.5) {
+		// AUC[0] = 1.0 - AUC[0];
+		// }
+		// if (AUC[1] < 0.5) {
+		// AUC[1] = 1.0 - AUC[1];
+		// }
 
 		nReader = Integer.valueOf(tempAUC[3]);
 		nNormal = Integer.valueOf(tempAUC[4]);
@@ -303,7 +303,8 @@ public class dbRecord {
 		for (int i = 0; i < 4; i++)
 			for (int j = 0; j < 6; j++)
 				c[i][j] = 0;
-		c = matrix.matrixTranspose(matrix.multiply(BAlpha, matrix.matrixTranspose(DBM)));
+		c = matrix.matrixTranspose(matrix.multiply(BAlpha,
+				matrix.matrixTranspose(DBM)));
 		for (int i = 0; i < 2; i++)
 			for (int j = 0; j < 6; j++)
 				c[i][j] = c[i][j] / 2.0;
@@ -485,12 +486,14 @@ public class dbRecord {
 		nDisease = input.getDisease();
 		flagCompleteRecord = 1;
 		AUC = input.getaucMod();
-		if (AUC[0] < 0.5) {
-			AUC[0] = 1.0 - AUC[0];
-		}
-		if (AUC[1] < 0.5) {
-			AUC[1] = 1.0 - AUC[1];
-		}
+		// TODO AUC is flipped over 0.5 line here
+		
+//		if (AUC[0] < 0.5) {
+//			AUC[0] = 1.0 - AUC[0];
+//		}
+//		if (AUC[1] < 0.5) {
+//			AUC[1] = 1.0 - AUC[1];
+//		}
 
 		String[] temp = recordDesp.split("\n");
 		System.out.println("temp" + "0" + "  =  " + temp[0]);
@@ -650,7 +653,8 @@ public class dbRecord {
 		for (int i = 0; i < 4; i++)
 			for (int j = 0; j < 7; j++)
 				c[i][j] = 0;
-		c = matrix.matrixTranspose(matrix.multiply(BAlpha, matrix.matrixTranspose(BDG)));
+		c = matrix.matrixTranspose(matrix.multiply(BAlpha,
+				matrix.matrixTranspose(BDG)));
 
 		return c;
 
@@ -691,8 +695,10 @@ public class dbRecord {
 		for (int i = 0; i < 4; i++)
 			for (int j = 0; j < 3; j++)
 				c[i][j] = 0;
-		c = matrix.matrixTranspose(matrix.multiply(BTheta,
-				matrix.multiply(Bms, matrix.multiply(B, matrix.matrixTranspose(BDG)))));
+		c = matrix.matrixTranspose(matrix.multiply(
+				BTheta,
+				matrix.multiply(Bms,
+						matrix.multiply(B, matrix.matrixTranspose(BDG)))));
 
 		return c;
 	}
