@@ -1408,7 +1408,7 @@ public class GUInterface {
 				double[][][] data = usr.generateROCpoints(rocMod);
 				final ScatterPlot roc = new ScatterPlot("ROC Curve: Modality "
 						+ rocMod, "FPF", "TPF", data);
-
+				roc.addData(usr.generatePooledROC(rocMod), "Pooled Average");
 				roc.pack();
 				RefineryUtilities.centerFrameOnScreen(roc);
 				roc.setVisible(true);

@@ -149,28 +149,49 @@ public class inputFile {
 		return rocPoints;
 	}
 
-	public TreeMap<Integer, Double> getActualPosDist(int mod) {
-		TreeMap<Integer, Double> apd = new TreeMap<Integer, Double>();
-		for (Integer c : truthVals.keySet()) {
-			if (truthVals.get(c) == 1) {
-				apd.put(c, 0.0);
-			}
-		}
-		for (Integer r : keyedData.keySet()) {
-			for (Integer c : keyedData.get(r).keySet()) {
-				if (!keyedData.get(r).get(c).isEmpty()) {
-					if (apd.get(c) != null) {
-						apd.put(c, apd.get(c)
-								+ keyedData.get(r).get(c).get(mod));
+	// TODO verify that this is the correct method to determined Pooled Average
+	// ROC points
+	public double[][] generatePooledROC(int mod) {
+		int samples = 100;
+		double min = getMinScore(mod);
+		double max = getMaxScore(mod);
+		double inc = (max - min) / samples;
+		double[][] pooledCurve = new double[samples + 2][2];
+		int index = 0;
+		for (double thresh = min - inc; thresh <= max + inc; thresh += inc) {
+			int fp = 0;
+			int tp = 0;
+			int normCount = 0;
+			int disCount = 0;
+			for (Integer r : keyedData.keySet()) {
+				for (Integer c : keyedData.get(r).keySet()) {
+					if (!keyedData.get(r).get(c).isEmpty()) {
+						double score = keyedData.get(r).get(c).get(mod);
+						int caseTruth = truthVals.get(c);
+						if (caseTruth == 0) {
+							normCount++;
+							if (score > thresh) {
+								fp++;
+							}
+						} else {
+							disCount++;
+							if (score > thresh) {
+								tp++;
+							}
+						}
 					}
 				}
 			}
+			float fpf = (float) fp / normCount;
+			float tpf = (float) tp / disCount;
+			if (index < (samples + 2)) {
+				pooledCurve[index][0] = fpf;
+				pooledCurve[index][1] = tpf;
+			}
+			index++;
 		}
 
-		for (Integer c : apd.keySet()) {
-			apd.put(c, apd.get(c) / Reader);
-		}
-		return apd;
+		return pooledCurve;
 	}
 
 	public TreeMap<Integer, Double> readersPerCase() {
@@ -406,59 +427,6 @@ public class inputFile {
 		}
 	}
 
-	/*
-	 * Verifies that the numbers of readers, cases, and modalities read in
-	 * header of file match the actual numbers of them within the file. After
-	 * this method is executed, the Reader, Normal, Disease, and Modality class
-	 * variables contain these actual values
-	 */
-	private String verifyNums(double[][] fData, ArrayList<Integer> readerIDs,
-			ArrayList<Integer> normalIDs, ArrayList<Integer> diseaseIDs,
-			ArrayList<Integer> modalityIDs) {
-		String toReturn = new String();
-
-		for (int i = 0; i < fData.length; i++) {
-			if ((!readerIDs.contains((int) fData[i][0])) && (fData[i][0] != -1)) {
-				readerIDs.add((int) fData[i][0]);
-			}
-			if (fData[i][2] == 0 && fData[i][3] == 0) {
-				if (!normalIDs.contains(fData[i][1])) {
-					normalIDs.add((int) fData[i][1]);
-				}
-			}
-			if (fData[i][2] == 0 && fData[i][3] == 1) {
-				if (!diseaseIDs.contains(fData[i][1])) {
-					diseaseIDs.add((int) fData[i][1]);
-				}
-			}
-			if (!modalityIDs.contains((int) fData[i][2]) && fData[i][2] != 0) {
-				modalityIDs.add((int) fData[i][2]);
-			}
-		}
-
-		if (Reader != readerIDs.size()) {
-			toReturn = toReturn + "NR Given = " + Reader + " NR Found = "
-					+ readerIDs.size() + " \n";
-			Reader = readerIDs.size();
-		}
-		if (Normal != normalIDs.size()) {
-			toReturn = toReturn + "N0 Given = " + Normal + " N0 Found = "
-					+ normalIDs.size() + " \n";
-			Normal = normalIDs.size();
-		}
-		if (Disease != diseaseIDs.size()) {
-			toReturn = toReturn + "N1 Given = " + Disease + " N1 Found = "
-					+ diseaseIDs.size() + " \n";
-			Disease = diseaseIDs.size();
-		}
-		if (Modality != (modalityIDs.size())) {
-			toReturn = toReturn + "NM Given = " + Modality + " NM Found = "
-					+ (modalityIDs.size());
-			Modality = modalityIDs.size();
-		}
-		return toReturn;
-	}
-
 	/* fills matrixes with 0s if data is not present */
 	private void getT0T1s(int modality1, int modality2) {
 		t0 = new double[Normal][Reader][2];
@@ -522,6 +490,59 @@ public class inputFile {
 				d0[j][i][1] = 1;
 			}
 		}
+	}
+
+	/*
+	 * Verifies that the numbers of readers, cases, and modalities read in
+	 * header of file match the actual numbers of them within the file. After
+	 * this method is executed, the Reader, Normal, Disease, and Modality class
+	 * variables contain these actual values
+	 */
+	private String verifyNums(double[][] fData, ArrayList<Integer> readerIDs,
+			ArrayList<Integer> normalIDs, ArrayList<Integer> diseaseIDs,
+			ArrayList<Integer> modalityIDs) {
+		String toReturn = new String();
+
+		for (int i = 0; i < fData.length; i++) {
+			if ((!readerIDs.contains((int) fData[i][0])) && (fData[i][0] != -1)) {
+				readerIDs.add((int) fData[i][0]);
+			}
+			if (fData[i][2] == 0 && fData[i][3] == 0) {
+				if (!normalIDs.contains(fData[i][1])) {
+					normalIDs.add((int) fData[i][1]);
+				}
+			}
+			if (fData[i][2] == 0 && fData[i][3] == 1) {
+				if (!diseaseIDs.contains(fData[i][1])) {
+					diseaseIDs.add((int) fData[i][1]);
+				}
+			}
+			if (!modalityIDs.contains((int) fData[i][2]) && fData[i][2] != 0) {
+				modalityIDs.add((int) fData[i][2]);
+			}
+		}
+
+		if (Reader != readerIDs.size()) {
+			toReturn = toReturn + "NR Given = " + Reader + " NR Found = "
+					+ readerIDs.size() + " \n";
+			Reader = readerIDs.size();
+		}
+		if (Normal != normalIDs.size()) {
+			toReturn = toReturn + "N0 Given = " + Normal + " N0 Found = "
+					+ normalIDs.size() + " \n";
+			Normal = normalIDs.size();
+		}
+		if (Disease != diseaseIDs.size()) {
+			toReturn = toReturn + "N1 Given = " + Disease + " N1 Found = "
+					+ diseaseIDs.size() + " \n";
+			Disease = diseaseIDs.size();
+		}
+		if (Modality != (modalityIDs.size())) {
+			toReturn = toReturn + "NM Given = " + Modality + " NM Found = "
+					+ (modalityIDs.size());
+			Modality = modalityIDs.size();
+		}
+		return toReturn;
 	}
 
 	private ArrayList<String> readFile(InputStreamReader isr) {
