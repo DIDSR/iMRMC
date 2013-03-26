@@ -5,6 +5,8 @@ import java.awt.FlowLayout;
 import java.awt.PopupMenu;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
+
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -26,11 +28,6 @@ public class ScatterPlot extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private XYLineAndShapeRenderer renderer;
 	private XYSeriesCollection seriesCollection;
-
-	private static final int POOLED = -1;
-	private static final int VERTICAL = -2;
-	private static final int HORIZONTAL = -3;
-	private static final int DIAGONAL = -4;
 
 	public ScatterPlot(final String title, String xaxis, String yaxis,
 			double[][][] data) {
@@ -57,29 +54,29 @@ public class ScatterPlot extends JFrame {
 		for (int i = 1; i <= data.length; i++) {
 			JCheckBox aBox = new JCheckBox("" + i);
 			aBox.setSelected(true);
-			aBox.addItemListener(new readerSelectListner());
+			aBox.addItemListener(new SeriesSelectListner());
 			readerSelect.add(aBox);
 		}
 
-		JCheckBox pooled = new JCheckBox("Pooled Average");
-		pooled.setSelected(true);
-		pooled.addItemListener(new avgSelectListner());
-		readerSelect.add(pooled);
-
 		JCheckBox vert = new JCheckBox("Vertical Average");
 		vert.setSelected(true);
-		vert.addItemListener(new avgSelectListner());
+		vert.addItemListener(new SeriesSelectListner());
 		readerSelect.add(vert);
 
 		JCheckBox horiz = new JCheckBox("Horizontal Average");
 		horiz.setSelected(true);
-		horiz.addItemListener(new avgSelectListner());
+		horiz.addItemListener(new SeriesSelectListner());
 		readerSelect.add(horiz);
 
 		JCheckBox diag = new JCheckBox("Diagonal Average");
 		diag.setSelected(true);
-		diag.addItemListener(new avgSelectListner());
+		diag.addItemListener(new SeriesSelectListner());
 		readerSelect.add(diag);
+
+		JCheckBox pooled = new JCheckBox("Pooled Average");
+		pooled.setSelected(true);
+		pooled.addItemListener(new SeriesSelectListner());
+		readerSelect.add(pooled);
 
 		chartPanel.setPreferredSize(new java.awt.Dimension(500, 500));
 
@@ -88,7 +85,7 @@ public class ScatterPlot extends JFrame {
 
 	}
 
-	private XYDataset createDataset(double[][][] data) {
+	private void createDataset(double[][][] data) {
 		seriesCollection = new XYSeriesCollection();
 
 		for (int r = 0; r < data.length; r++) {
@@ -99,7 +96,7 @@ public class ScatterPlot extends JFrame {
 			seriesCollection.addSeries(series);
 		}
 
-		XYSeries vertAvg = new XYSeries("Vertical Average");
+		XYSeries vertAvg = generateVerticalROC();
 		seriesCollection.addSeries(vertAvg);
 		XYSeries horizAvg = new XYSeries("Horizontal Average");
 		seriesCollection.addSeries(horizAvg);
@@ -107,8 +104,6 @@ public class ScatterPlot extends JFrame {
 		seriesCollection.addSeries(diagAvg);
 		XYSeries pooledAvg = new XYSeries("Pooled Average");
 		seriesCollection.addSeries(pooledAvg);
-
-		return seriesCollection;
 	}
 
 	public void addData(double[][] newData, String type) {
@@ -117,94 +112,47 @@ public class ScatterPlot extends JFrame {
 		}
 	}
 
-	class readerSelectListner implements ItemListener {
-		public void itemStateChanged(ItemEvent e) {
-			if (e.getStateChange() == ItemEvent.DESELECTED) {
-				renderer.setSeriesLinesVisible((seriesCollection
-						.getSeriesIndex(((JCheckBox) e.getItem()).getText())),
-						false);
-				renderer.setSeriesShapesVisible((seriesCollection
-						.getSeriesIndex(((JCheckBox) e.getItem()).getText())),
-						false);
-			} else if (e.getStateChange() == ItemEvent.SELECTED) {
-				renderer.setSeriesLinesVisible((seriesCollection
-						.getSeriesIndex(((JCheckBox) e.getItem()).getText())),
-						true);
-				renderer.setSeriesShapesVisible((seriesCollection
-						.getSeriesIndex(((JCheckBox) e.getItem()).getText())),
-						true);
-			}
+	private XYSeries generateVerticalROC() {
+		XYSeries vertAvg = new XYSeries("Vertical Average");
+		ArrayList<XYSeries> allSeries = new ArrayList<XYSeries>(
+				seriesCollection.getSeries());
+		ArrayList<JointedLine> allLines = new ArrayList<JointedLine>();
+		for (XYSeries series : allSeries) {
+			allLines.add(new JointedLine(series));
 		}
+		for (double i = 0; i <= 1; i += 0.01) {
+			double avg = 0;
+			for (JointedLine line : allLines) {
+				avg += line.getYat(i);
+			}
+			vertAvg.add(i, avg / allLines.size());
+		}
+		vertAvg.add(1, 1);
+		return vertAvg;
 	}
 
-	class avgSelectListner implements ItemListener {
+	class SeriesSelectListner implements ItemListener {
 		public void itemStateChanged(ItemEvent e) {
 			if (e.getStateChange() == ItemEvent.DESELECTED) {
-				switch (((JCheckBox) e.getItem()).getText()) {
-				case "Pooled Average":
-					renderer.setSeriesLinesVisible(
-							seriesCollection.getSeriesIndex("Pooled Average"),
-							false);
-					renderer.setSeriesShapesVisible(
-							seriesCollection.getSeriesIndex("Pooled Average"),
-							false);
-					break;
-				case "Vertical Average":
-					renderer.setSeriesLinesVisible(
-							seriesCollection.getSeriesIndex("Vertical Average"),
-							false);
-					renderer.setSeriesShapesVisible(
-							seriesCollection.getSeriesIndex("Vertical Average"),
-							false);
-					break;
-				case "Horizontal Average":
-					renderer.setSeriesLinesVisible(seriesCollection
-							.getSeriesIndex("Horizontal Average"), false);
-					renderer.setSeriesShapesVisible(seriesCollection
-							.getSeriesIndex("Horizontal Average"), false);
-					break;
-				case "Diagonal Average":
-					renderer.setSeriesLinesVisible(
-							seriesCollection.getSeriesIndex("Diagonal Average"),
-							false);
-					renderer.setSeriesShapesVisible(
-							seriesCollection.getSeriesIndex("Diagonal Average"),
-							false);
-					break;
-				}
+				renderer.setSeriesLinesVisible((seriesCollection
+						.getSeriesIndex(((JCheckBox) e.getItem()).getText())),
+						false);
+				renderer.setSeriesShapesVisible((seriesCollection
+						.getSeriesIndex(((JCheckBox) e.getItem()).getText())),
+						false);
+				renderer.setSeriesVisibleInLegend((seriesCollection
+						.getSeriesIndex(((JCheckBox) e.getItem()).getText())),
+						false);
 			} else if (e.getStateChange() == ItemEvent.SELECTED) {
-				switch (((JCheckBox) e.getItem()).getText()) {
-				case "Pooled Average":
-					renderer.setSeriesLinesVisible(
-							seriesCollection.getSeriesIndex("Pooled Average"),
-							true);
-					renderer.setSeriesShapesVisible(
-							seriesCollection.getSeriesIndex("Pooled Average"),
-							true);
-					break;
-				case "Vertical Average":
-					renderer.setSeriesLinesVisible(
-							seriesCollection.getSeriesIndex("Vertical Average"),
-							true);
-					renderer.setSeriesShapesVisible(
-							seriesCollection.getSeriesIndex("Vertical Average"),
-							true);
-					break;
-				case "Horizontal Average":
-					renderer.setSeriesLinesVisible(seriesCollection
-							.getSeriesIndex("Horizontal Average"), true);
-					renderer.setSeriesShapesVisible(seriesCollection
-							.getSeriesIndex("Horizontal Average"), true);
-					break;
-				case "Diagonal Average":
-					renderer.setSeriesLinesVisible(
-							seriesCollection.getSeriesIndex("Diagonal Average"),
-							true);
-					renderer.setSeriesShapesVisible(
-							seriesCollection.getSeriesIndex("Diagonal Average"),
-							true);
-					break;
-				}
+				renderer.setSeriesLinesVisible((seriesCollection
+						.getSeriesIndex(((JCheckBox) e.getItem()).getText())),
+						true);
+				renderer.setSeriesShapesVisible((seriesCollection
+						.getSeriesIndex(((JCheckBox) e.getItem()).getText())),
+						true);
+				renderer.setSeriesVisibleInLegend((seriesCollection
+						.getSeriesIndex(((JCheckBox) e.getItem()).getText())),
+						true);
 			}
 		}
 	}

@@ -193,6 +193,17 @@ public class inputFile {
 
 		return pooledCurve;
 	}
+	
+	public double[][] generateVerticalROC(int mod){
+		int samples = 100;
+		double min = getMinScore(mod);
+		double max = getMaxScore(mod);
+		double inc = (max - min) / samples;
+		double[][] verticalCurve = new double[samples + 2][2];
+		int index = 0;
+		
+		return verticalCurve;
+	}
 
 	public TreeMap<Integer, Double> readersPerCase() {
 		TreeMap<Integer, Double> rpc = new TreeMap<Integer, Double>();
