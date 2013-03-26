@@ -27,8 +27,8 @@ import java.lang.Math;
 import javax.swing.table.*;
 import java.text.DecimalFormat;
 import mrmc.chart.BarGraph;
-import mrmc.chart.PresencePlot;
-import mrmc.chart.ScatterPlot;
+import mrmc.chart.StudyDesignPlot;
+import mrmc.chart.ROCCurvePlot;
 import mrmc.core.MRMC;
 import mrmc.core.dbRecord;
 import mrmc.core.inputFile;
@@ -1406,7 +1406,7 @@ public class GUInterface {
 						JOptionPane.INFORMATION_MESSAGE, null);
 				rocMod = (Integer) chooseMod.getSelectedItem();
 				double[][][] data = usr.generateROCpoints(rocMod);
-				final ScatterPlot roc = new ScatterPlot("ROC Curve: Modality "
+				final ROCCurvePlot roc = new ROCCurvePlot("ROC Curve: Modality "
 						+ rocMod, "FPF", "TPF", data);
 				roc.addData(usr.generatePooledROC(rocMod), "Pooled Average");
 				roc.pack();
@@ -1464,7 +1464,7 @@ public class GUInterface {
 				boolean[][] design = usr.getStudyDesign((Integer) choose1
 						.getSelectedItem());
 				designMod1 = (Integer) choose1.getSelectedItem();
-				final PresencePlot chart = new PresencePlot(
+				final StudyDesignPlot chart = new StudyDesignPlot(
 						"Study Design: Modality " + designMod1, "Case",
 						"Reader", design);
 				chart.pack();

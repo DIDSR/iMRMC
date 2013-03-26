@@ -23,13 +23,13 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-public class ScatterPlot extends JFrame {
+public class ROCCurvePlot extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private XYLineAndShapeRenderer renderer;
 	private XYSeriesCollection seriesCollection;
 
-	public ScatterPlot(final String title, String xaxis, String yaxis,
+	public ROCCurvePlot(final String title, String xaxis, String yaxis,
 			double[][][] data) {
 		super(title);
 

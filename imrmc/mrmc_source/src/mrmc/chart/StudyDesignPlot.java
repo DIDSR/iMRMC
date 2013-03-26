@@ -13,14 +13,14 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.xy.DefaultXYDataset;
 
-public class PresencePlot extends JFrame {
+public class StudyDesignPlot extends JFrame {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public PresencePlot(final String title, String xaxis, String yaxis,
+	public StudyDesignPlot(final String title, String xaxis, String yaxis,
 			boolean[][] data) {
 		super(title);
 		DefaultXYDataset dataset = createDataset(data);
