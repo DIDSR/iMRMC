@@ -54,8 +54,16 @@ public class ROCCurvePlot extends JFrame {
 		JPanel readerSelect = new JPanel(new FlowLayout());
 		for (int i = 1; i <= data.length; i++) {
 			JCheckBox aBox = new JCheckBox("" + i);
-			aBox.setSelected(true);
+			aBox.setSelected(false);
 			aBox.addItemListener(new SeriesSelectListner());
+
+			renderer.setSeriesLinesVisible(
+					(seriesCollection.getSeriesIndex("" + i)), false);
+			renderer.setSeriesShapesVisible(
+					(seriesCollection.getSeriesIndex("" + i)), false);
+			renderer.setSeriesVisibleInLegend(
+					(seriesCollection.getSeriesIndex("" + i)), false);
+
 			readerSelect.add(aBox);
 		}
 
@@ -90,7 +98,7 @@ public class ROCCurvePlot extends JFrame {
 		seriesCollection = new XYSeriesCollection();
 
 		for (int r = 0; r < data.length; r++) {
-			XYSeries series = new XYSeries("" + (r + 1));
+			XYSeries series = new XYSeries("" + (r + 1), false);
 			for (int i = 0; i < data[r].length; i++) {
 				series.add(data[r][i][0], data[r][i][1]);
 			}
@@ -106,11 +114,11 @@ public class ROCCurvePlot extends JFrame {
 
 		XYSeries vertAvg = generateVerticalROC();
 		seriesCollection.addSeries(vertAvg);
-		XYSeries horizAvg = generateHorizontalROC();
-		seriesCollection.addSeries(horizAvg);
-		XYSeries diagAvg = new XYSeries("Diagonal Average");
+//		XYSeries horizAvg = generateHorizontalROC();
+//		seriesCollection.addSeries(horizAvg);
+		XYSeries diagAvg = new XYSeries("Diagonal Average", false);
 		seriesCollection.addSeries(diagAvg);
-		XYSeries pooledAvg = new XYSeries("Pooled Average");
+		XYSeries pooledAvg = new XYSeries("Pooled Average", false);
 		seriesCollection.addSeries(pooledAvg);
 	}
 
@@ -121,8 +129,8 @@ public class ROCCurvePlot extends JFrame {
 	}
 
 	private XYSeries generateHorizontalROC() {
-		XYSeries horizAvg = new XYSeries("Horizontal Average");
-		for (double i = 0; i <= 1; i += 0.01) {
+		XYSeries horizAvg = new XYSeries("Horizontal Average", false);
+		for (double i = 0; i <= 1.01; i += 0.01) {
 			double avg = 0;
 			int counter = 0;
 			for (JointedLine line : allLines) {
@@ -131,20 +139,22 @@ public class ROCCurvePlot extends JFrame {
 			}
 			horizAvg.add(avg / counter, i);
 		}
-		horizAvg.add(0, 0);
+		// horizAvg.add(0, 0);
 		return horizAvg;
 	}
 
 	private XYSeries generateVerticalROC() {
-		XYSeries vertAvg = new XYSeries("Vertical Average");
-		for (double i = 0; i <= 1; i += 0.01) {
+		XYSeries vertAvg = new XYSeries("Vertical Average", false);
+		for (double i = 0; i <= 1.01; i += 0.01) {
 			double avg = 0;
+			int counter = 0;
 			for (JointedLine line : allLines) {
 				avg += line.getYat(i);
+				counter++;
 			}
-			vertAvg.add(i, avg / allLines.size());
+			vertAvg.add(i, avg / counter);
 		}
-		vertAvg.add(1, 1);
+		// vertAvg.add(1, 1);
 		return vertAvg;
 	}
 

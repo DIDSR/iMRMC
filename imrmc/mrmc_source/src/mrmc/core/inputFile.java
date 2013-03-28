@@ -142,6 +142,7 @@ public class inputFile {
 				if (index < (samples + 2)) {
 					rocPoints[r - 1][index][0] = fpf;
 					rocPoints[r - 1][index][1] = tpf;
+					System.out.println(r + ": " + fpf+ ", " + tpf + " : " + thresh);
 				}
 				index++;
 			}
