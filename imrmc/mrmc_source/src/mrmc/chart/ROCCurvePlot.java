@@ -6,6 +6,8 @@ import java.awt.PopupMenu;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -31,7 +33,7 @@ public class ROCCurvePlot extends JFrame {
 	private ArrayList<JointedLine> allLines;
 
 	public ROCCurvePlot(final String title, String xaxis, String yaxis,
-			double[][][] data) {
+			TreeMap<Integer, TreeSet<XYPair>> data) {
 		super(title);
 
 		createDataset(data);
@@ -52,17 +54,18 @@ public class ROCCurvePlot extends JFrame {
 		ChartPanel chartPanel = new ChartPanel(chart);
 
 		JPanel readerSelect = new JPanel(new FlowLayout());
-		for (int i = 1; i <= data.length; i++) {
-			JCheckBox aBox = new JCheckBox("" + i);
+
+		for (Integer r : data.keySet()) {
+			JCheckBox aBox = new JCheckBox("" + r);
 			aBox.setSelected(false);
 			aBox.addItemListener(new SeriesSelectListner());
 
 			renderer.setSeriesLinesVisible(
-					(seriesCollection.getSeriesIndex("" + i)), false);
+					(seriesCollection.getSeriesIndex("" + r)), false);
 			renderer.setSeriesShapesVisible(
-					(seriesCollection.getSeriesIndex("" + i)), false);
+					(seriesCollection.getSeriesIndex("" + r)), false);
 			renderer.setSeriesVisibleInLegend(
-					(seriesCollection.getSeriesIndex("" + i)), false);
+					(seriesCollection.getSeriesIndex("" + r)), false);
 
 			readerSelect.add(aBox);
 		}
@@ -94,37 +97,43 @@ public class ROCCurvePlot extends JFrame {
 
 	}
 
-	private void createDataset(double[][][] data) {
+	private void createDataset(TreeMap<Integer, TreeSet<XYPair>> data) {
 		seriesCollection = new XYSeriesCollection();
 
-		for (int r = 0; r < data.length; r++) {
-			XYSeries series = new XYSeries("" + (r + 1), false);
-			for (int i = 0; i < data[r].length; i++) {
-				series.add(data[r][i][0], data[r][i][1]);
+		for (Integer r : data.keySet()) {
+			XYSeries series = new XYSeries("" + r, false);
+			for (XYPair point : data.get(r)) {
+				series.add(point.x, point.y);
 			}
 			seriesCollection.addSeries(series);
 		}
 
-		ArrayList<XYSeries> allSeries = new ArrayList<XYSeries>(
-				seriesCollection.getSeries());
+		// ArrayList<XYSeries> allSeries = new ArrayList<XYSeries>(
+		// seriesCollection.getSeries());
+
 		allLines = new ArrayList<JointedLine>();
-		for (XYSeries series : allSeries) {
-			allLines.add(new JointedLine(series));
+		for (Integer r : data.keySet()) {
+			allLines.add(new JointedLine(data.get(r)));
 		}
+
+		// allLines = new ArrayList<JointedLine>();
+		// for (XYSeries series : allSeries) {
+		// allLines.add(new JointedLine(series));
+		// }
 
 		XYSeries vertAvg = generateVerticalROC();
 		seriesCollection.addSeries(vertAvg);
-//		XYSeries horizAvg = generateHorizontalROC();
-//		seriesCollection.addSeries(horizAvg);
+		 XYSeries horizAvg = generateHorizontalROC();
+		 seriesCollection.addSeries(horizAvg);
 		XYSeries diagAvg = new XYSeries("Diagonal Average", false);
 		seriesCollection.addSeries(diagAvg);
 		XYSeries pooledAvg = new XYSeries("Pooled Average", false);
 		seriesCollection.addSeries(pooledAvg);
 	}
 
-	public void addData(double[][] newData, String type) {
-		for (int i = 0; i < newData.length; i++) {
-			seriesCollection.getSeries(type).add(newData[i][0], newData[i][1]);
+	public void addData(TreeSet<XYPair> newData, String type) {
+		for (XYPair point : newData) {
+			seriesCollection.getSeries(type).add(point.x, point.y);
 		}
 	}
 
@@ -137,7 +146,7 @@ public class ROCCurvePlot extends JFrame {
 				avg += line.getXat(i);
 				counter++;
 			}
-			horizAvg.add(avg / counter, i);
+			horizAvg.add(avg / (double) counter, i);
 		}
 		// horizAvg.add(0, 0);
 		return horizAvg;
@@ -152,7 +161,7 @@ public class ROCCurvePlot extends JFrame {
 				avg += line.getYat(i);
 				counter++;
 			}
-			vertAvg.add(i, avg / counter);
+			vertAvg.add(i, avg / (double) counter);
 		}
 		// vertAvg.add(1, 1);
 		return vertAvg;

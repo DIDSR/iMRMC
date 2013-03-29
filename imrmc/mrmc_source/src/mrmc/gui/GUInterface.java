@@ -1405,9 +1405,9 @@ public class GUInterface {
 						"Choose Modality and Reader",
 						JOptionPane.INFORMATION_MESSAGE, null);
 				rocMod = (Integer) chooseMod.getSelectedItem();
-				double[][][] data = usr.generateROCpoints(rocMod);
-				final ROCCurvePlot roc = new ROCCurvePlot("ROC Curve: Modality "
-						+ rocMod, "FPF", "TPF", data);
+				final ROCCurvePlot roc = new ROCCurvePlot(
+						"ROC Curve: Modality " + rocMod, "FPF", "TPF",
+						usr.generateROCpoints(rocMod));
 				roc.addData(usr.generatePooledROC(rocMod), "Pooled Average");
 				roc.pack();
 				RefineryUtilities.centerFrameOnScreen(roc);

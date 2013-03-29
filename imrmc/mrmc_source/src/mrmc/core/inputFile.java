@@ -3,6 +3,8 @@ package mrmc.core;
 import java.util.*;
 import java.io.*;
 
+import mrmc.chart.XYPair;
+
 public class inputFile {
 	private String filename;
 	private String desc = "";
@@ -106,14 +108,13 @@ public class inputFile {
 		return min;
 	}
 
-	public double[][][] generateROCpoints(int mod) {
+	public TreeMap<Integer, TreeSet<XYPair>> generateROCpoints(int mod) {
 		int samples = 100;
 		double min = getMinScore(mod);
 		double max = getMaxScore(mod);
 		double inc = (max - min) / samples;
-		double[][][] rocPoints = new double[Reader][samples + 2][2];
+		TreeMap<Integer, TreeSet<XYPair>> rocPoints = new TreeMap<Integer, TreeSet<XYPair>>();
 		for (int r = 1; r <= Reader; r++) {
-			int index = 0;
 			for (double thresh = min - inc; thresh <= max + inc; thresh += inc) {
 				int fp = 0;
 				int tp = 0;
@@ -137,14 +138,17 @@ public class inputFile {
 					}
 				}
 
-				float fpf = (float) fp / normCount;
-				float tpf = (float) tp / disCount;
-				if (index < (samples + 2)) {
-					rocPoints[r - 1][index][0] = fpf;
-					rocPoints[r - 1][index][1] = tpf;
-					System.out.println(r + ": " + fpf+ ", " + tpf + " : " + thresh);
+				double fpf = (double) fp / normCount;
+				double tpf = (double) tp / disCount;
+				if (rocPoints.containsKey(r)) {
+					rocPoints.get(r).add(new XYPair(fpf, tpf));
+				} else {
+					TreeSet<XYPair> temp = new TreeSet<XYPair>();
+					temp.add(new XYPair(fpf, tpf));
+					rocPoints.put(r, temp);
 				}
-				index++;
+				System.out
+						.println(r + ": " + fpf + ", " + tpf + " : " + thresh);
 			}
 		}
 		return rocPoints;
@@ -152,13 +156,12 @@ public class inputFile {
 
 	// TODO verify that this is the correct method to determined Pooled Average
 	// ROC points
-	public double[][] generatePooledROC(int mod) {
+	public TreeSet<XYPair> generatePooledROC(int mod) {
 		int samples = 100;
 		double min = getMinScore(mod);
 		double max = getMaxScore(mod);
 		double inc = (max - min) / samples;
-		double[][] pooledCurve = new double[samples + 2][2];
-		int index = 0;
+		TreeSet<XYPair> pooledCurve = new TreeSet<XYPair>();
 		for (double thresh = min - inc; thresh <= max + inc; thresh += inc) {
 			int fp = 0;
 			int tp = 0;
@@ -183,27 +186,12 @@ public class inputFile {
 					}
 				}
 			}
-			float fpf = (float) fp / normCount;
-			float tpf = (float) tp / disCount;
-			if (index < (samples + 2)) {
-				pooledCurve[index][0] = fpf;
-				pooledCurve[index][1] = tpf;
-			}
-			index++;
+			double fpf = (double) fp / normCount;
+			double tpf = (double) tp / disCount;
+			pooledCurve.add(new XYPair(fpf, tpf));
 		}
 
 		return pooledCurve;
-	}
-	
-	public double[][] generateVerticalROC(int mod){
-		int samples = 100;
-		double min = getMinScore(mod);
-		double max = getMaxScore(mod);
-		double inc = (max - min) / samples;
-		double[][] verticalCurve = new double[samples + 2][2];
-		int index = 0;
-		
-		return verticalCurve;
 	}
 
 	public TreeMap<Integer, Double> readersPerCase() {
