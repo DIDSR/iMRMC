@@ -1406,7 +1406,7 @@ public class GUInterface {
 						JOptionPane.INFORMATION_MESSAGE, null);
 				rocMod = (Integer) chooseMod.getSelectedItem();
 				final ROCCurvePlot roc = new ROCCurvePlot(
-						"ROC Curve: Modality " + rocMod, "FPF", "TPF",
+						"ROC Curve: Modality " + rocMod, "FPF (1 - Specificity)", "TPF (Sensitivity)",
 						usr.generateROCpoints(rocMod));
 				roc.addData(usr.generatePooledROC(rocMod), "Pooled Average");
 				roc.pack();
