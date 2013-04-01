@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import javax.swing.AbstractButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -31,6 +32,12 @@ public class ROCCurvePlot extends JFrame {
 	private XYLineAndShapeRenderer renderer;
 	private XYSeriesCollection seriesCollection;
 	private ArrayList<JointedLine> allLines;
+	private ArrayList<String> readerSeriesTitles;
+	private ArrayList<JCheckBox> readerSeriesBoxes;
+	private JCheckBox vert;
+	private JCheckBox horiz;
+	private JCheckBox diag;
+	private JCheckBox pooled;
 
 	public ROCCurvePlot(final String title, String xaxis, String yaxis,
 			TreeMap<Integer, TreeSet<XYPair>> data) {
@@ -54,41 +61,42 @@ public class ROCCurvePlot extends JFrame {
 		ChartPanel chartPanel = new ChartPanel(chart);
 
 		JPanel readerSelect = new JPanel(new FlowLayout());
+		readerSeriesBoxes = new ArrayList<JCheckBox>();
 
 		for (Integer r : data.keySet()) {
 			JCheckBox aBox = new JCheckBox("" + r);
 			aBox.setSelected(false);
 			aBox.addItemListener(new SeriesSelectListner());
-
-			renderer.setSeriesLinesVisible(
-					(seriesCollection.getSeriesIndex("" + r)), false);
-			renderer.setSeriesShapesVisible(
-					(seriesCollection.getSeriesIndex("" + r)), false);
-			renderer.setSeriesVisibleInLegend(
-					(seriesCollection.getSeriesIndex("" + r)), false);
-
+			hideSeries("" + r);
+			readerSeriesBoxes.add(aBox);
 			readerSelect.add(aBox);
 		}
 
-		JCheckBox vert = new JCheckBox("Vertical Average");
+		vert = new JCheckBox("Vertical Average");
 		vert.setSelected(true);
 		vert.addItemListener(new SeriesSelectListner());
 		readerSelect.add(vert);
-
-		JCheckBox horiz = new JCheckBox("Horizontal Average");
+		horiz = new JCheckBox("Horizontal Average");
 		horiz.setSelected(true);
 		horiz.addItemListener(new SeriesSelectListner());
 		readerSelect.add(horiz);
-
-		JCheckBox diag = new JCheckBox("Diagonal Average");
+		diag = new JCheckBox("Diagonal Average");
 		diag.setSelected(true);
 		diag.addItemListener(new SeriesSelectListner());
 		readerSelect.add(diag);
-
-		JCheckBox pooled = new JCheckBox("Pooled Average");
+		pooled = new JCheckBox("Pooled Average");
 		pooled.setSelected(true);
 		pooled.addItemListener(new SeriesSelectListner());
 		readerSelect.add(pooled);
+
+		JCheckBox allReaders = new JCheckBox("Show Readers");
+		allReaders.setSelected(false);
+		allReaders.addItemListener(new ReadersSelectListner());
+		readerSelect.add(allReaders);
+		JCheckBox allAverages = new JCheckBox("Show Averages");
+		allAverages.setSelected(true);
+		allAverages.addItemListener(new AverageSelectListner());
+		readerSelect.add(allAverages);
 
 		chartPanel.setPreferredSize(new java.awt.Dimension(500, 500));
 
@@ -99,9 +107,11 @@ public class ROCCurvePlot extends JFrame {
 
 	private void createDataset(TreeMap<Integer, TreeSet<XYPair>> data) {
 		seriesCollection = new XYSeriesCollection();
+		readerSeriesTitles = new ArrayList<String>();
 
 		for (Integer r : data.keySet()) {
 			XYSeries series = new XYSeries("" + r, false);
+			readerSeriesTitles.add("" + r);
 			for (XYPair point : data.get(r)) {
 				series.add(point.x, point.y);
 			}
@@ -123,8 +133,8 @@ public class ROCCurvePlot extends JFrame {
 
 		XYSeries vertAvg = generateVerticalROC();
 		seriesCollection.addSeries(vertAvg);
-		 XYSeries horizAvg = generateHorizontalROC();
-		 seriesCollection.addSeries(horizAvg);
+		XYSeries horizAvg = generateHorizontalROC();
+		seriesCollection.addSeries(horizAvg);
 		XYSeries diagAvg = new XYSeries("Diagonal Average", false);
 		seriesCollection.addSeries(diagAvg);
 		XYSeries pooledAvg = new XYSeries("Pooled Average", false);
@@ -147,6 +157,9 @@ public class ROCCurvePlot extends JFrame {
 				counter++;
 			}
 			horizAvg.add(avg / (double) counter, i);
+			// System.out.println("Point: " + "avg " + avg + " counter " +
+			// counter
+			// + ", " + i);
 		}
 		// horizAvg.add(0, 0);
 		return horizAvg;
@@ -167,28 +180,75 @@ public class ROCCurvePlot extends JFrame {
 		return vertAvg;
 	}
 
+	private void hideSeries(String series) {
+		renderer.setSeriesLinesVisible(
+				(seriesCollection.getSeriesIndex(series)), false);
+		renderer.setSeriesShapesVisible(
+				(seriesCollection.getSeriesIndex(series)), false);
+		renderer.setSeriesVisibleInLegend(
+				(seriesCollection.getSeriesIndex(series)), false);
+	}
+
+	private void showSeries(String series) {
+		renderer.setSeriesLinesVisible(
+				(seriesCollection.getSeriesIndex(series)), true);
+		renderer.setSeriesShapesVisible(
+				(seriesCollection.getSeriesIndex(series)), true);
+		renderer.setSeriesVisibleInLegend(
+				(seriesCollection.getSeriesIndex(series)), true);
+	}
+
+	class ReadersSelectListner implements ItemListener {
+		public void itemStateChanged(ItemEvent e) {
+			if (e.getStateChange() == ItemEvent.DESELECTED) {
+				for (JCheckBox readerBox : readerSeriesBoxes) {
+					readerBox.setSelected(false);
+				}
+				for (String title : readerSeriesTitles) {
+					hideSeries(title);
+				}
+			} else if (e.getStateChange() == ItemEvent.SELECTED) {
+				for (JCheckBox readerBox : readerSeriesBoxes) {
+					readerBox.setSelected(true);
+				}
+				for (String title : readerSeriesTitles) {
+					showSeries(title);
+				}
+			}
+		}
+	}
+
+	class AverageSelectListner implements ItemListener {
+		public void itemStateChanged(ItemEvent e) {
+			if (e.getStateChange() == ItemEvent.DESELECTED) {
+				vert.setSelected(false);
+				horiz.setSelected(false);
+				diag.setSelected(false);
+				pooled.setSelected(false);
+				hideSeries("Vertical Average");
+				hideSeries("Horizontal Average");
+				hideSeries("Diagonal Average");
+				hideSeries("Pooled Average");
+			} else if (e.getStateChange() == ItemEvent.SELECTED) {
+				vert.setSelected(true);
+				horiz.setSelected(true);
+				diag.setSelected(true);
+				pooled.setSelected(true);
+				showSeries("Vertical Average");
+				showSeries("Horizontal Average");
+				showSeries("Diagonal Average");
+				showSeries("Pooled Average");
+			}
+
+		}
+	}
+
 	class SeriesSelectListner implements ItemListener {
 		public void itemStateChanged(ItemEvent e) {
 			if (e.getStateChange() == ItemEvent.DESELECTED) {
-				renderer.setSeriesLinesVisible((seriesCollection
-						.getSeriesIndex(((JCheckBox) e.getItem()).getText())),
-						false);
-				renderer.setSeriesShapesVisible((seriesCollection
-						.getSeriesIndex(((JCheckBox) e.getItem()).getText())),
-						false);
-				renderer.setSeriesVisibleInLegend((seriesCollection
-						.getSeriesIndex(((JCheckBox) e.getItem()).getText())),
-						false);
+				hideSeries(((JCheckBox) e.getItem()).getText());
 			} else if (e.getStateChange() == ItemEvent.SELECTED) {
-				renderer.setSeriesLinesVisible((seriesCollection
-						.getSeriesIndex(((JCheckBox) e.getItem()).getText())),
-						true);
-				renderer.setSeriesShapesVisible((seriesCollection
-						.getSeriesIndex(((JCheckBox) e.getItem()).getText())),
-						true);
-				renderer.setSeriesVisibleInLegend((seriesCollection
-						.getSeriesIndex(((JCheckBox) e.getItem()).getText())),
-						true);
+				showSeries(((JCheckBox) e.getItem()).getText());
 			}
 		}
 	}

@@ -135,14 +135,16 @@ public class JointedLine {
 				prev = curr;
 			}
 			if (currCeiling == null) {
-				currCeiling = actualPoints.last();
+				currCeiling = actualPoints.higher(actualPoints.first());
 			}
-			System.out.println(y + " : " + currCeiling.toString());
 			double m = allLineEqs.get(currCeiling)[0];
 			double b = allLineEqs.get(currCeiling)[1];
 			double returnX = (y - b) / m;
 			if (returnX > 1) {
 				return 1;
+			}
+			if (returnX < 0){
+				return 0;
 			}
 			return returnX;
 
