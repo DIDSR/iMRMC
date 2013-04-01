@@ -55,56 +55,19 @@ public class JointedLine {
 
 	}
 
-	// public JointedLine(XYSeries series) {
-	// ArrayList<XYDataItem> allPoints = new ArrayList<XYDataItem>(
-	// series.getItems());
-	// // TODO: this treeSet is removing items with same x values (i.e.
-	// // vertical ROC), change structure, or use better pair than
-	// // XYDataItem (which only sorts on x)
-	//
-	// TreeMap<Double, TreeSet<Double>> pointsOnX = new TreeMap<Double,
-	// TreeSet<Double>>();
-	// for (XYDataItem point : allPoints) {
-	// if (!pointsOnX.containsKey(point.getXValue())) {
-	// TreeSet<Double> ts = new TreeSet<Double>();
-	// ts.add(point.getYValue());
-	// pointsOnX.put(point.getXValue(), ts);
-	// } else {
-	// TreeSet<Double> ts = pointsOnX.get(point.getXValue());
-	// ts.add(point.getYValue());
-	// pointsOnX.put(point.getXValue(), ts);
-	// }
-	// }
-	//
-	// actualPoints = new TreeSet<XYDataItem>();
-	//
-	// for (Double x : pointsOnX.keySet()) {
-	// double avgY = 0;
-	// int denom = 0;
-	// for (Double y : pointsOnX.get(x)) {
-	// avgY += y;
-	// denom++;
-	// }
-	// actualPoints.add(new XYDataItem(x.doubleValue(), avgY
-	// / (double) denom));
-	// }
-	//
-	// allLineEqs = new HashMap<Double, double[]>();
-	//
-	// Iterator<XYDataItem> iter = actualPoints.descendingIterator();
-	// XYDataItem prev = iter.next();
-	// while (iter.hasNext()) {
-	// XYDataItem curr = iter.next();
-	// double[] eq = new double[2];
-	// eq[0] = (prev.getYValue() - curr.getYValue())
-	// / (prev.getXValue() - curr.getXValue()); // m
-	// eq[1] = prev.getYValue() - (prev.getXValue() * eq[0]); // b
-	// allLineEqs.put(curr.getXValue(), eq);
-	// prev = curr;
-	// }
-	//
-	// }
-
+	public double getYatDiag(double x){
+		if (x > Math.sqrt(2)) {
+			return 0;
+		} else if (x <= 0) {
+			return 0;
+		} else {
+			XYPair currCeiling = actualPoints.ceiling(new XYPair(x, 0));
+			double m = allLineEqs.get(currCeiling)[0];
+			double b = allLineEqs.get(currCeiling)[1];
+			return (m * x) + b;
+		}
+	}
+	
 	public double getYat(double x) {
 		if (x > 1) {
 			return 1;

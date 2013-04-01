@@ -154,8 +154,6 @@ public class inputFile {
 		return rocPoints;
 	}
 
-	// TODO verify that this is the correct method to determined Pooled Average
-	// ROC points
 	public TreeSet<XYPair> generatePooledROC(int mod) {
 		int samples = 100;
 		double min = getMinScore(mod);

@@ -118,24 +118,16 @@ public class ROCCurvePlot extends JFrame {
 			seriesCollection.addSeries(series);
 		}
 
-		// ArrayList<XYSeries> allSeries = new ArrayList<XYSeries>(
-		// seriesCollection.getSeries());
-
 		allLines = new ArrayList<JointedLine>();
 		for (Integer r : data.keySet()) {
 			allLines.add(new JointedLine(data.get(r)));
 		}
 
-		// allLines = new ArrayList<JointedLine>();
-		// for (XYSeries series : allSeries) {
-		// allLines.add(new JointedLine(series));
-		// }
-
 		XYSeries vertAvg = generateVerticalROC();
 		seriesCollection.addSeries(vertAvg);
 		XYSeries horizAvg = generateHorizontalROC();
 		seriesCollection.addSeries(horizAvg);
-		XYSeries diagAvg = new XYSeries("Diagonal Average", false);
+		XYSeries diagAvg = generateDiagonalROC(data);
 		seriesCollection.addSeries(diagAvg);
 		XYSeries pooledAvg = new XYSeries("Pooled Average", false);
 		seriesCollection.addSeries(pooledAvg);
@@ -145,6 +137,50 @@ public class ROCCurvePlot extends JFrame {
 		for (XYPair point : newData) {
 			seriesCollection.getSeries(type).add(point.x, point.y);
 		}
+	}
+
+	// TODO verify that this generates correct curve
+	private XYSeries generateDiagonalROC(TreeMap<Integer, TreeSet<XYPair>> data) {
+		XYSeries diagAvg = new XYSeries("Diagonal Average", false);
+		TreeMap<Integer, TreeSet<XYPair>> rotatedData = new TreeMap<Integer, TreeSet<XYPair>>();
+
+		// rotate all points in data 45 degrees clockwise about origin
+		for (Integer r : data.keySet()) {
+			rotatedData.put(r, new TreeSet<XYPair>());
+			for (XYPair point : data.get(r)) {
+				double x2 = (point.x + point.y) / Math.sqrt(2.0);
+				double y2 = (point.y - point.x) / Math.sqrt(2.0);
+				rotatedData.get(r).add(new XYPair(x2, y2));
+			}
+		}
+
+		// generate interpolated lines with new points
+		ArrayList<JointedLine> rotatedLines = new ArrayList<JointedLine>();
+		for (Integer r : rotatedData.keySet()) {
+			rotatedLines.add(new JointedLine(rotatedData.get(r)));
+		}
+
+		// take vertical sample averages from x = 0 to x = 1
+		for (double i = 0; i <= Math.sqrt(2); i += 0.01) {
+			double avg = 0;
+			int counter = 0;
+			for (JointedLine line : rotatedLines) {
+				avg += line.getYatDiag(i);
+				counter++;
+			}
+
+			// rotate points back 45 degrees counterclockwise
+			double x1 = i;
+			double y1 = (avg / (double) counter);
+			double x2 = (x1 * Math.cos(Math.toRadians(45)))
+					- (y1 * Math.sin(Math.toRadians(45)));
+			double y2 = (x1 * Math.sin(Math.toRadians(45)))
+					+ (y1 * Math.cos(Math.toRadians(45)));
+			diagAvg.add(x2, y2);
+		}
+
+		diagAvg.add(1, 1);
+		return diagAvg;
 	}
 
 	private XYSeries generateHorizontalROC() {
@@ -157,11 +193,7 @@ public class ROCCurvePlot extends JFrame {
 				counter++;
 			}
 			horizAvg.add(avg / (double) counter, i);
-			// System.out.println("Point: " + "avg " + avg + " counter " +
-			// counter
-			// + ", " + i);
 		}
-		// horizAvg.add(0, 0);
 		return horizAvg;
 	}
 
@@ -176,7 +208,6 @@ public class ROCCurvePlot extends JFrame {
 			}
 			vertAvg.add(i, avg / (double) counter);
 		}
-		// vertAvg.add(1, 1);
 		return vertAvg;
 	}
 
