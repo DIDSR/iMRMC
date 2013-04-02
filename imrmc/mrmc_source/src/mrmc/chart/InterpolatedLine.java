@@ -1,3 +1,20 @@
+/*
+ * InterpolatedLine.java
+ * 
+ * v1.0
+ * 
+ * @Author Xin He, Phd, Brandon D. Gallas, PhD, Rohan Pathare
+ * 
+ * Copyright 2013 Food & Drug Administration, Division of Image Analysis & Mathematics
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ */
+
+
 package mrmc.chart;
 
 import java.util.ArrayList;
@@ -10,11 +27,11 @@ import java.util.HashMap;
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
 
-public class JointedLine {
+public class InterpolatedLine {
 	HashMap<XYPair, double[]> allLineEqs;
 	TreeSet<XYPair> actualPoints;
 
-	public JointedLine(TreeSet<XYPair> series) {
+	public InterpolatedLine(TreeSet<XYPair> series) {
 		TreeMap<Double, TreeSet<Double>> allDistinctXs = new TreeMap<Double, TreeSet<Double>>();
 		for (XYPair point : series) {
 			if (!allDistinctXs.containsKey(point.x)) {

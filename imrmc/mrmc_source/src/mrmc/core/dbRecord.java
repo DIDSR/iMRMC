@@ -1,6 +1,19 @@
-package mrmc.core;
-
-/* one entry in the database
+/*
+ * dbRecord.java
+ * 
+ * v1.0
+ * 
+ * @Author Xin He, Phd, Brandon D. Gallas, PhD, Rohan Pathare
+ * 
+ * Copyright 2013 Food & Drug Administration, Division of Image Analysis & Mathematics
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *     
+ * one entry in the database
  * This class includes all the information on one study.
  * it also includes all the formulas convert one type 
  * of components to the other.
@@ -10,6 +23,8 @@ package mrmc.core;
  * and other variance estimators�, Commun Stat A-Theory 38(15), 
  * 2586-2603 (2009).
  */
+
+package mrmc.core;
 
 import java.util.*;
 import java.text.DecimalFormat;
@@ -487,13 +502,13 @@ public class dbRecord {
 		flagCompleteRecord = 1;
 		AUC = input.getaucMod();
 		// TODO AUC is flipped over 0.5 line here
-		
-//		if (AUC[0] < 0.5) {
-//			AUC[0] = 1.0 - AUC[0];
-//		}
-//		if (AUC[1] < 0.5) {
-//			AUC[1] = 1.0 - AUC[1];
-//		}
+
+		// if (AUC[0] < 0.5) {
+		// AUC[0] = 1.0 - AUC[0];
+		// }
+		// if (AUC[1] < 0.5) {
+		// AUC[1] = 1.0 - AUC[1];
+		// }
 
 		String[] temp = recordDesp.split("\n");
 		System.out.println("temp" + "0" + "  =  " + temp[0]);

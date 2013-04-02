@@ -1,3 +1,24 @@
+/*
+ * statTest.java
+ * 
+ * v1.0
+ * 
+ * @Author Xin He, Phd, Brandon D. Gallas, PhD, Rohan Pathare
+ * 
+ * Copyright 2013 Food & Drug Administration, Division of Image Analysis & Mathematics
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *     
+ * statistical tests. 
+ * Hillis tests and Z test are implemented
+ * Hillis tests require non-central F distribution. The formula is from
+ * http://www.mathworks.com/help/toolbox/stats/brn2ivz-110.html 
+ */
+
 package mrmc.core;
 
 /*statistical tests. 

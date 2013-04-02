@@ -1,8 +1,24 @@
-package mrmc.gui;
-
-/* **************************************************
- * ****************GUInterface.java******************
- * **************************************************
+/*
+ * GUInterface.java
+ * 
+ * v1.0
+ * 
+ * @Author Xin He, Phd, Brandon D. Gallas, PhD, Rohan Pathare
+ * 
+ * Copyright 2013 Food & Drug Administration, Division of Image Analysis & Mathematics
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
  * This class describes the graphic interface. From top
  * to bottom, the GUI includes
  * 1. Menu bar
@@ -16,8 +32,10 @@ package mrmc.gui;
  * 6. a table with all components of variance for the resulting study
  * 7. a label of statistical analysis resutls 
  * 8. database summary panel
- ************************************************************
- ************************************************************/
+ * 
+ */
+
+package mrmc.gui;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -1406,7 +1424,8 @@ public class GUInterface {
 						JOptionPane.INFORMATION_MESSAGE, null);
 				rocMod = (Integer) chooseMod.getSelectedItem();
 				final ROCCurvePlot roc = new ROCCurvePlot(
-						"ROC Curve: Modality " + rocMod, "FPF (1 - Specificity)", "TPF (Sensitivity)",
+						"ROC Curve: Modality " + rocMod,
+						"FPF (1 - Specificity)", "TPF (Sensitivity)",
 						usr.generateROCpoints(rocMod));
 				roc.addData(usr.generatePooledROC(rocMod), "Pooled Average");
 				roc.pack();

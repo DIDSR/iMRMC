@@ -1,3 +1,19 @@
+/*
+ * ROCCurvePlot.java
+ * 
+ * v1.0
+ * 
+ * @Author Xin He, Phd, Brandon D. Gallas, PhD, Rohan Pathare
+ * 
+ * Copyright 2013 Food & Drug Administration, Division of Image Analysis & Mathematics
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ */
+
 package mrmc.chart;
 
 import java.awt.BorderLayout;
@@ -31,7 +47,7 @@ public class ROCCurvePlot extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private XYLineAndShapeRenderer renderer;
 	private XYSeriesCollection seriesCollection;
-	private ArrayList<JointedLine> allLines;
+	private ArrayList<InterpolatedLine> allLines;
 	private ArrayList<String> readerSeriesTitles;
 	private ArrayList<JCheckBox> readerSeriesBoxes;
 	private JCheckBox vert;
@@ -118,9 +134,9 @@ public class ROCCurvePlot extends JFrame {
 			seriesCollection.addSeries(series);
 		}
 
-		allLines = new ArrayList<JointedLine>();
+		allLines = new ArrayList<InterpolatedLine>();
 		for (Integer r : data.keySet()) {
-			allLines.add(new JointedLine(data.get(r)));
+			allLines.add(new InterpolatedLine(data.get(r)));
 		}
 
 		XYSeries vertAvg = generateVerticalROC();
@@ -155,16 +171,16 @@ public class ROCCurvePlot extends JFrame {
 		}
 
 		// generate linear interpolation with new points
-		ArrayList<JointedLine> rotatedLines = new ArrayList<JointedLine>();
+		ArrayList<InterpolatedLine> rotatedLines = new ArrayList<InterpolatedLine>();
 		for (Integer r : rotatedData.keySet()) {
-			rotatedLines.add(new JointedLine(rotatedData.get(r)));
+			rotatedLines.add(new InterpolatedLine(rotatedData.get(r)));
 		}
 
 		// take vertical sample averages from x = 0 to x = 1
 		for (double i = 0; i <= Math.sqrt(2); i += 0.01) {
 			double avg = 0;
 			int counter = 0;
-			for (JointedLine line : rotatedLines) {
+			for (InterpolatedLine line : rotatedLines) {
 				avg += line.getYatDiag(i);
 				counter++;
 			}
@@ -188,7 +204,7 @@ public class ROCCurvePlot extends JFrame {
 		for (double i = 0; i <= 1.01; i += 0.01) {
 			double avg = 0;
 			int counter = 0;
-			for (JointedLine line : allLines) {
+			for (InterpolatedLine line : allLines) {
 				avg += line.getXat(i);
 				counter++;
 			}
@@ -202,7 +218,7 @@ public class ROCCurvePlot extends JFrame {
 		for (double i = 0; i <= 1.01; i += 0.01) {
 			double avg = 0;
 			int counter = 0;
-			for (JointedLine line : allLines) {
+			for (InterpolatedLine line : allLines) {
 				avg += line.getYat(i);
 				counter++;
 			}
