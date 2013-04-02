@@ -154,7 +154,7 @@ public class ROCCurvePlot extends JFrame {
 			}
 		}
 
-		// generate interpolated lines with new points
+		// generate linear interpolation with new points
 		ArrayList<JointedLine> rotatedLines = new ArrayList<JointedLine>();
 		for (Integer r : rotatedData.keySet()) {
 			rotatedLines.add(new JointedLine(rotatedData.get(r)));

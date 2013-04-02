@@ -30,6 +30,7 @@ public class JointedLine {
 
 		actualPoints = new TreeSet<XYPair>();
 
+		// average together any points with the same x value
 		for (Double x : allDistinctXs.keySet()) {
 			double allY = 0;
 			int denom = 0;

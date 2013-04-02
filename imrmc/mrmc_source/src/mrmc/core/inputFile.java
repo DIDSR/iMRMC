@@ -121,7 +121,8 @@ public class inputFile {
 				int normCount = 0;
 				int disCount = 0;
 				for (Integer c : keyedData.get(r).keySet()) {
-					if (!keyedData.get(r).get(c).isEmpty()) {
+					if (!keyedData.get(r).get(c).isEmpty()
+							&& (keyedData.get(r).get(c).get(mod) != null)) {
 						double score = keyedData.get(r).get(c).get(mod);
 						int caseTruth = truthVals.get(c);
 						if (caseTruth == 0) {
@@ -167,7 +168,8 @@ public class inputFile {
 			int disCount = 0;
 			for (Integer r : keyedData.keySet()) {
 				for (Integer c : keyedData.get(r).keySet()) {
-					if (!keyedData.get(r).get(c).isEmpty()) {
+					if (!keyedData.get(r).get(c).isEmpty()
+							&& (keyedData.get(r).get(c).get(mod) != null)) {
 						double score = keyedData.get(r).get(c).get(mod);
 						int caseTruth = truthVals.get(c);
 						if (caseTruth == 0) {
