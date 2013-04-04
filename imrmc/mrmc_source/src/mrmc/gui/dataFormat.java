@@ -12,6 +12,8 @@
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
+ *     
+ *     Verbal description of the formatting necessary to input raw study data
  */
 
 package mrmc.gui;

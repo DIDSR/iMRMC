@@ -1,5 +1,5 @@
 /*
- * ModSelect.java
+ * DBModSelect.java
  * 
  * v1.0
  * 
@@ -12,6 +12,9 @@
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
+ *     
+ *     Panel for selecting modalities and performing MRMC variance analysis with data
+ *     from internal database
  */
 
 package mrmc.gui;
@@ -19,7 +22,7 @@ package mrmc.gui;
 import javax.swing.*;
 import java.awt.event.*;
 
-public class ModSelect {
+public class DBModSelect {
 	GUInterface gui;
 	int selectedMod = 0;
 	int useBiasM = 0;
@@ -49,7 +52,7 @@ public class ModSelect {
 		gui.setSelectedMod(selectedMod);
 	}
 
-	public ModSelect(JPanel mPanel, GUInterface guitemp) {
+	public DBModSelect(JPanel mPanel, GUInterface guitemp) {
 		gui = guitemp;
 		// create the checkbox for allowing negative components
 		cb = new JCheckBox(

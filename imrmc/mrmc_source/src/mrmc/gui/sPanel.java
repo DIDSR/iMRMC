@@ -12,6 +12,8 @@
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
+ *     
+ *     Panel for sizing new trials and generating reports for given input
  */
 
 package mrmc.gui;

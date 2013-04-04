@@ -12,6 +12,9 @@
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
+ *     
+ *     Handles input of a raw study data file. Parses all information from file, calculates 
+ *     various statistics about input data, including ROC information.
  */
 
 

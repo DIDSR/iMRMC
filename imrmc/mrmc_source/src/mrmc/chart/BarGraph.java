@@ -12,6 +12,9 @@
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
+ *     
+ *     Creates a chart displaying a bar graph for a particular dataset. Currently used
+ *     to display charts for readers per case and cases per reader.
  */
 
 package mrmc.chart;

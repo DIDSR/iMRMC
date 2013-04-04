@@ -12,6 +12,9 @@
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
+ *     
+ *     Handles accessing files/data from database folder. Generates textual summary
+ *     for a given database record.
  */
 
 package mrmc.core;
@@ -132,9 +135,7 @@ public class mrmcDB {
 	}
 
 	/*
-	 * load the database. Depending on whether the user is running the program
-	 * as a stand alone application or a web-based applet, this function calls
-	 * different routines to read the record
+	 * load the database.
 	 */
 	public void loadDB() {
 
@@ -145,21 +146,14 @@ public class mrmcDB {
 				InputStreamReader isr;
 				DataInputStream din;
 				InputStream in;
-				if (isApplet) {
-					filename = dbFilenamesInJar.get(i);
-					in = getClass().getResourceAsStream(filename);
-					isr = new InputStreamReader(in);
-					readRecord(filename, isr, i);
-					in.close();
-				} else {
-					filename = "DB/" + dbFiles[i].getName();
-					// System.out.println(filename);
-					FileInputStream fstream = new FileInputStream(filename);
-					din = new DataInputStream(fstream);
-					isr = new InputStreamReader(din);
-					readRecord(filename, isr, i);
-					din.close();
-				}
+				filename = "DB/" + dbFiles[i].getName();
+				// System.out.println(filename);
+				FileInputStream fstream = new FileInputStream(filename);
+				din = new DataInputStream(fstream);
+				isr = new InputStreamReader(din);
+				readRecord(filename, isr, i);
+				din.close();
+
 			} catch (Exception e) {
 				System.err.println("Load DB Error in mrmcDB.java"
 						+ e.getMessage());

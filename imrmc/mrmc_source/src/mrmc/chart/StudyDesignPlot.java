@@ -12,6 +12,9 @@
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
+ *     
+ *     Creates chart displaying presence of score data for a particular case/reader 
+ *     combination at a given modality
  */
 
 package mrmc.chart;

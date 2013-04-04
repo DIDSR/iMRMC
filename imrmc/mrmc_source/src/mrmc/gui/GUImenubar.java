@@ -12,6 +12,8 @@
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
+ *     
+ *     Top menu bar with drop-down menu button displaying information about application.
  */
 
 package mrmc.gui;

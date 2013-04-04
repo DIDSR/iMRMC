@@ -12,6 +12,12 @@
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
+ *     
+ *     Creates a chart displaying ROC curves for each reader of a particular modality.
+ *     Reader curves are then averaged in direction of sensitivity (vertically), 
+ *     specificity (horizontally), and sensitivity + specificity (diagonally). 
+ *     Additionally all reader scores are placed in one set and a curve is determined, 
+ *     creating a "pooled average"
  */
 
 package mrmc.chart;

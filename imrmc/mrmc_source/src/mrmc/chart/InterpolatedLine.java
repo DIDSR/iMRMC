@@ -12,6 +12,10 @@
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
+ *     
+ *     Given a set of XY coordinates, creates a set of linear equations describing lines
+ *     between said coordinates. Allows one to determine a linearly interpolated point for
+ *     a given x or y position. 
  */
 
 
@@ -73,6 +77,11 @@ public class InterpolatedLine {
 
 	}
 
+	/* 
+	 * When determining a diagonally averaged ROC curve, the points are rotated
+	 * such that they lie along the x axis. Since they will be rotated back to 
+	 * the diagonal (x = y) direction, x values go up to sqrt(2) rather than 1. 
+	 */
 	public double getYatDiag(double x){
 		if (x > Math.sqrt(2)) {
 			return 0;

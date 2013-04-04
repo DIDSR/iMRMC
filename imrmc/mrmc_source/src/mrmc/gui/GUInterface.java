@@ -126,7 +126,7 @@ public class GUInterface {
 	int SummaryUseMLE = 0;
 
 	double totalStd = 0;
-	ModSelect MS;
+	DBModSelect MS;
 	PilotModSelect MS2;
 	ManualCard MC;
 	JTabbedPane tabbedPane1, tabbedPane2;
@@ -801,7 +801,7 @@ public class GUInterface {
 		JButton descButton = new JButton("Record Description");
 		descButton.addActionListener(new descButtonListner());
 		JPanel modSelPanel = new JPanel();
-		MS = new ModSelect(modSelPanel, this);
+		MS = new DBModSelect(modSelPanel, this);
 
 		layout.setHorizontalGroup(layout.createSequentialGroup().addGroup(
 				layout.createParallelGroup(GroupLayout.Alignment.LEADING)

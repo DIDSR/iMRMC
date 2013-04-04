@@ -1,5 +1,5 @@
 /*
- * InterpolatedLine.java
+ * XYPair.java
  * 
  * v1.0
  * 
@@ -12,6 +12,10 @@
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
+ *     
+ *     Helper class to contain XY coordinate data within a single object. Coordinates are
+ *     comparable such that one coordinate is greater than another if it's x value is greater 
+ *     than the other. If the x coordinates are equal, comparison is determined by the y value. 
  */
 
 package mrmc.chart;

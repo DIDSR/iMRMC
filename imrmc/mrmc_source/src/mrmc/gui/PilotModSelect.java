@@ -12,6 +12,9 @@
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
+ *     
+ *     Panel for selecting modalities, displaying charts of data statistics, and performing
+ *     MRMC variance analysis with data from pilot study raw data files.
  */
 
 package mrmc.gui;
