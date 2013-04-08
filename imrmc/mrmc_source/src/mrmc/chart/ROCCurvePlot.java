@@ -24,6 +24,7 @@ package mrmc.chart;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.LayoutManager;
 import java.awt.PopupMenu;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -82,7 +83,7 @@ public class ROCCurvePlot extends JFrame {
 		chart.getXYPlot().setRenderer(renderer);
 		ChartPanel chartPanel = new ChartPanel(chart);
 
-		JPanel readerSelect = new JPanel(new FlowLayout());
+		JPanel readerSelect = new JPanel(new WrapLayout());
 		readerSeriesBoxes = new ArrayList<JCheckBox>();
 
 		for (Integer r : data.keySet()) {
@@ -139,8 +140,7 @@ public class ROCCurvePlot extends JFrame {
 		allAverages.addItemListener(new AverageSelectListner());
 		readerSelect.add(allAverages);
 
-		chartPanel.setPreferredSize(new java.awt.Dimension(500, 500));
-
+		chartPanel.setPreferredSize(new java.awt.Dimension(700, 700));
 		this.add(chartPanel);
 		this.add(readerSelect, BorderLayout.PAGE_END);
 
