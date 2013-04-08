@@ -89,10 +89,29 @@ public class ROCCurvePlot extends JFrame {
 			JCheckBox aBox = new JCheckBox("" + r);
 			aBox.setSelected(false);
 			aBox.addItemListener(new SeriesSelectListner());
-			hideSeries("" + r);
+			hideSeries("" + r, true);
 			readerSeriesBoxes.add(aBox);
 			readerSelect.add(aBox);
 		}
+
+		renderer.setSeriesShapesVisible(
+				seriesCollection.getSeriesIndex("Vertical Average"), false);
+		renderer.setSeriesStroke(
+				seriesCollection.getSeriesIndex("Vertical Average"),
+				new java.awt.BasicStroke(3f));
+		renderer.setSeriesShapesVisible(
+				seriesCollection.getSeriesIndex("Horizontal Average"), false);
+		renderer.setSeriesStroke(
+				seriesCollection.getSeriesIndex("Horizontal Average"),
+				new java.awt.BasicStroke(3f));
+		renderer.setSeriesShapesVisible(
+				seriesCollection.getSeriesIndex("Diagonal Average"), false);
+		renderer.setSeriesStroke(
+				seriesCollection.getSeriesIndex("Diagonal Average"),
+				new java.awt.BasicStroke(3f));
+		renderer.setSeriesStroke(
+				seriesCollection.getSeriesIndex("Pooled Average"),
+				new java.awt.BasicStroke(3f));
 
 		vert = new JCheckBox("Vertical Average");
 		vert.setSelected(true);
@@ -153,6 +172,7 @@ public class ROCCurvePlot extends JFrame {
 		seriesCollection.addSeries(diagAvg);
 		XYSeries pooledAvg = new XYSeries("Pooled Average", false);
 		seriesCollection.addSeries(pooledAvg);
+
 	}
 
 	public void addData(TreeSet<XYPair> newData, String type) {
@@ -233,7 +253,7 @@ public class ROCCurvePlot extends JFrame {
 		return vertAvg;
 	}
 
-	private void hideSeries(String series) {
+	private void hideSeries(String series, boolean shapes) {
 		renderer.setSeriesLinesVisible(
 				(seriesCollection.getSeriesIndex(series)), false);
 		renderer.setSeriesShapesVisible(
@@ -242,11 +262,13 @@ public class ROCCurvePlot extends JFrame {
 				(seriesCollection.getSeriesIndex(series)), false);
 	}
 
-	private void showSeries(String series) {
+	private void showSeries(String series, boolean shapes) {
 		renderer.setSeriesLinesVisible(
 				(seriesCollection.getSeriesIndex(series)), true);
-		renderer.setSeriesShapesVisible(
-				(seriesCollection.getSeriesIndex(series)), true);
+		if (shapes) {
+			renderer.setSeriesShapesVisible(
+					(seriesCollection.getSeriesIndex(series)), true);
+		}
 		renderer.setSeriesVisibleInLegend(
 				(seriesCollection.getSeriesIndex(series)), true);
 	}
@@ -258,14 +280,14 @@ public class ROCCurvePlot extends JFrame {
 					readerBox.setSelected(false);
 				}
 				for (String title : readerSeriesTitles) {
-					hideSeries(title);
+					hideSeries(title, true);
 				}
 			} else if (e.getStateChange() == ItemEvent.SELECTED) {
 				for (JCheckBox readerBox : readerSeriesBoxes) {
 					readerBox.setSelected(true);
 				}
 				for (String title : readerSeriesTitles) {
-					showSeries(title);
+					showSeries(title, true);
 				}
 			}
 		}
@@ -278,19 +300,19 @@ public class ROCCurvePlot extends JFrame {
 				horiz.setSelected(false);
 				diag.setSelected(false);
 				pooled.setSelected(false);
-				hideSeries("Vertical Average");
-				hideSeries("Horizontal Average");
-				hideSeries("Diagonal Average");
-				hideSeries("Pooled Average");
+				hideSeries("Vertical Average", false);
+				hideSeries("Horizontal Average", false);
+				hideSeries("Diagonal Average", false);
+				hideSeries("Pooled Average", true);
 			} else if (e.getStateChange() == ItemEvent.SELECTED) {
 				vert.setSelected(true);
 				horiz.setSelected(true);
 				diag.setSelected(true);
 				pooled.setSelected(true);
-				showSeries("Vertical Average");
-				showSeries("Horizontal Average");
-				showSeries("Diagonal Average");
-				showSeries("Pooled Average");
+				showSeries("Vertical Average", false);
+				showSeries("Horizontal Average", false);
+				showSeries("Diagonal Average", false);
+				showSeries("Pooled Average", true);
 			}
 
 		}
@@ -299,9 +321,27 @@ public class ROCCurvePlot extends JFrame {
 	class SeriesSelectListner implements ItemListener {
 		public void itemStateChanged(ItemEvent e) {
 			if (e.getStateChange() == ItemEvent.DESELECTED) {
-				hideSeries(((JCheckBox) e.getItem()).getText());
+				if (((JCheckBox) e.getItem()).getText().equals(
+						"Vertical Average")
+						|| ((JCheckBox) e.getItem()).getText().equals(
+								"Horizontal Average")
+						|| ((JCheckBox) e.getItem()).getText().equals(
+								"Diagonal Average")) {
+					hideSeries(((JCheckBox) e.getItem()).getText(), false);
+				} else {
+					hideSeries(((JCheckBox) e.getItem()).getText(), true);
+				}
 			} else if (e.getStateChange() == ItemEvent.SELECTED) {
-				showSeries(((JCheckBox) e.getItem()).getText());
+				if (((JCheckBox) e.getItem()).getText().equals(
+						"Vertical Average")
+						|| ((JCheckBox) e.getItem()).getText().equals(
+								"Horizontal Average")
+						|| ((JCheckBox) e.getItem()).getText().equals(
+								"Diagonal Average")) {
+					showSeries(((JCheckBox) e.getItem()).getText(), false);
+				} else {
+					showSeries(((JCheckBox) e.getItem()).getText(), true);
+				}
 			}
 		}
 	}
