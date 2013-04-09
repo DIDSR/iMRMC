@@ -145,7 +145,6 @@ public class mrmcDB {
 			try {
 				InputStreamReader isr;
 				DataInputStream din;
-				InputStream in;
 
 				filename = "DB/" + dbFiles[i].getName();
 				// System.out.println(filename);

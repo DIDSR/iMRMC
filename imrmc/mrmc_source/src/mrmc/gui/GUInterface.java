@@ -42,6 +42,8 @@ import java.awt.event.*;
 import java.awt.*;
 import java.io.*;
 import java.lang.Math;
+
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.*;
 import java.text.DecimalFormat;
 import mrmc.chart.BarGraph;
@@ -1348,6 +1350,8 @@ public class GUInterface {
 		public void actionPerformed(ActionEvent e) {
 			// System.out.println("browse pressed");
 			JFileChooser fc = new JFileChooser();
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("iMRMC Input Files", "imrmc");
+			fc.setFileFilter(filter);
 			// Don't get rid of this despite being unused
 			int returnVal = fc.showOpenDialog((Component) e.getSource());
 			File f = fc.getSelectedFile();

@@ -33,7 +33,7 @@ public class dataFormat {
 
 	public dataFormat() {
 		fmtHelp = "The file format has two parts: the study description at the top followed by a list of the ROC ratings. The\n"
-				+ "study description can include any information as free text. It must include three lines corresponding to the\n"
+				+ "study description can include any information as free text. It must include four lines corresponding to the\n"
 				+ "size of the experiment and then conclude with a line stating \"BEGIN DATA\". We demonstrate the formatting of\n"
 				+ "these lines in an example. If the study has 9 readers, 55 diseased patients, and 75 nondiseased patients, \n"
 				+ "and 5 modalities, then a legitimate study description can be nothing more than the following lines.\n"

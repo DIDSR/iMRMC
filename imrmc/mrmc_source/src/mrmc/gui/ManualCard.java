@@ -111,7 +111,6 @@ public class ManualCard {
 		manualInNormal = new JTextField(5);
 		JLabel l4 = new JLabel("# Disease");
 		manualInDisease = new JTextField(5);
-		JPanel manual2 = new JPanel();
 		JLabel l5 = new JLabel("Which components are you using?");
 		// Create the radio buttons.
 		com1Button = new JRadioButton(com[0]);
