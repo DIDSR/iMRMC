@@ -3,7 +3,7 @@
  * 
  * v1.0
  * 
- * @Author Xin He, Phd, Brandon D. Gallas, PhD, Rohan Pathare
+ * @Author Brandon D. Gallas, PhD, Rohan Pathare
  * 
  * Copyright 2013 Food & Drug Administration, Division of Image Analysis & Mathematics
  *
@@ -21,15 +21,11 @@
 
 package mrmc.chart;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.HashMap;
 
-import org.jfree.data.xy.XYDataItem;
-import org.jfree.data.xy.XYSeries;
 
 public class InterpolatedLine {
 	HashMap<XYPair, double[]> allLineEqs;

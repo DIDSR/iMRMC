@@ -146,8 +146,13 @@ public class mrmcDB {
 				InputStreamReader isr;
 				DataInputStream din;
 				InputStream in;
+				// TODO access db files as resource instead of just by path
+
+//				InputStream stream = getClass().getResourceAsStream("DB/" + dbFiles[i].getName());
+//				din = new DataInputStream(stream);
+				
 				filename = "DB/" + dbFiles[i].getName();
-				// System.out.println(filename);
+				 System.out.println(filename);
 				FileInputStream fstream = new FileInputStream(filename);
 				din = new DataInputStream(fstream);
 				isr = new InputStreamReader(din);

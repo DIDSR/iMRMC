@@ -3,7 +3,7 @@
  * 
  * v1.0
  * 
- * @Author Xin He, Phd, Brandon D. Gallas, PhD, Rohan Pathare
+ * @Author Brandon D. Gallas, PhD, Rohan Pathare
  * 
  * Copyright 2013 Food & Drug Administration, Division of Image Analysis & Mathematics
  *
@@ -23,16 +23,12 @@
 package mrmc.chart;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.LayoutManager;
-import java.awt.PopupMenu;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import javax.swing.AbstractButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -45,7 +41,6 @@ import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 

@@ -1412,7 +1412,7 @@ public class GUInterface {
 		public void actionPerformed(ActionEvent e) {
 			// System.out.println("roc button pressed");
 			if (usr != null && usr.isLoaded()) {
-				JComboBox chooseMod = new JComboBox();
+				JComboBox<Integer> chooseMod = new JComboBox<Integer>();
 				for (int i = 1; i <= usr.getModality(); i++) {
 					chooseMod.addItem(i);
 				}
@@ -1470,7 +1470,7 @@ public class GUInterface {
 		public void actionPerformed(ActionEvent e) {
 			// System.out.println("study design button pressed");
 			if (usr != null && usr.isLoaded()) {
-				JComboBox choose1 = new JComboBox();
+				JComboBox<Integer> choose1 = new JComboBox<Integer>();
 				for (int i = 1; i <= usr.getModality(); i++) {
 					choose1.addItem(i);
 				}

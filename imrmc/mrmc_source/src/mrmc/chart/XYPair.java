@@ -3,7 +3,7 @@
  * 
  * v1.0
  * 
- * @Author Xin He, Phd, Brandon D. Gallas, PhD, Rohan Pathare
+ * @Author Brandon D. Gallas, PhD, Rohan Pathare
  * 
  * Copyright 2013 Food & Drug Administration, Division of Image Analysis & Mathematics
  *
