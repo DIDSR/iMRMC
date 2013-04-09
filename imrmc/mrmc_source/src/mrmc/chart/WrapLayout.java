@@ -21,7 +21,7 @@ public class WrapLayout extends FlowLayout {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private Dimension preferredLayoutSize;
+	//private Dimension preferredLayoutSize;
 
 	/**
 	 * Constructs a new <code>WrapLayout</code> with a left alignment and a

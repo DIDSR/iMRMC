@@ -942,7 +942,7 @@ public class GUInterface {
 		dm = new DefaultTableModel(3, 6);
 		DBMtable1 = new JTable(dm);
 		JScrollPane scroll3 = genTable(DBMtable1, DBMnames);
-		// panelDBM1.add(scroll3);
+		panelDBM1.add(scroll3);
 		height = DBMtable1.getRowHeight();
 		DBMtable1.setPreferredScrollableViewportSize(new Dimension(650,
 				height * 4));
@@ -955,7 +955,7 @@ public class GUInterface {
 		dm = new DefaultTableModel(3, 6);
 		ORtable1 = new JTable(dm);
 		JScrollPane scroll4 = genTable(ORtable1, ORnames);
-		// panelOR1.add(scroll4);
+		panelOR1.add(scroll4);
 		height = ORtable1.getRowHeight();
 		ORtable1.setPreferredScrollableViewportSize(new Dimension(650,
 				height * 4));
@@ -969,7 +969,7 @@ public class GUInterface {
 		dm = new DefaultTableModel(3, 6);
 		MStable1 = new JTable(dm);
 		JScrollPane scroll5 = genTable(MStable1, MSnames);
-		// panelMS1.add(scroll5);
+		panelMS1.add(scroll5);
 		height = MStable1.getRowHeight();
 		MStable1.setPreferredScrollableViewportSize(new Dimension(650,
 				height * 4));

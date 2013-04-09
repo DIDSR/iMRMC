@@ -146,13 +146,9 @@ public class mrmcDB {
 				InputStreamReader isr;
 				DataInputStream din;
 				InputStream in;
-				// TODO access db files as resource instead of just by path
 
-//				InputStream stream = getClass().getResourceAsStream("DB/" + dbFiles[i].getName());
-//				din = new DataInputStream(stream);
-				
 				filename = "DB/" + dbFiles[i].getName();
-				 System.out.println(filename);
+				// System.out.println(filename);
 				FileInputStream fstream = new FileInputStream(filename);
 				din = new DataInputStream(fstream);
 				isr = new InputStreamReader(din);
@@ -194,13 +190,23 @@ public class mrmcDB {
 	 */
 	public int countDBFilesInJar() {
 		int i = 0;
-		/*
-		 * JarFile jf ; try{ jf = new JarFile("List.jar"); Enumeration<JarEntry>
-		 * e = jf.entries(); while(e.hasMoreElements()) { JarEntry je =
-		 * e.nextElement(); String nam = je.getName(); if( nam.endsWith(".jdb")
-		 * ) { dbFilenamesInJar.add(nam); i++; } } }catch (IOException ioe)
-		 * {System.out.println("danger...");}
-		 */
+
+		// JarFile jf;
+		// try {
+		// jf = new JarFile("List.jar");
+		// Enumeration<JarEntry> e = jf.entries();
+		// while (e.hasMoreElements()) {
+		// JarEntry je = e.nextElement();
+		// String nam = je.getName();
+		// if (nam.endsWith(".jdb")) {
+		// dbFilenamesInJar.add(nam);
+		// i++;
+		// }
+		// }
+		// } catch (IOException ioe) {
+		// System.out.println("danger...");
+		// }
+
 		String tablefile = "DB/TableOfContent.txt";
 		String strtemp;
 		try {

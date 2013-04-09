@@ -257,14 +257,6 @@ public class dbRecord {
 		AUC[0] = Double.valueOf(tempAUC[1]);
 		AUC[1] = Double.valueOf(tempAUC[2]);
 
-		// TODO this is where AUC is flipped when storing into dbRecord
-		// if (AUC[0] < 0.5) {
-		// AUC[0] = 1.0 - AUC[0];
-		// }
-		// if (AUC[1] < 0.5) {
-		// AUC[1] = 1.0 - AUC[1];
-		// }
-
 		nReader = Integer.valueOf(tempAUC[3]);
 		nNormal = Integer.valueOf(tempAUC[4]);
 		nDisease = Integer.valueOf(tempAUC[5]);
@@ -501,14 +493,6 @@ public class dbRecord {
 		nDisease = input.getDisease();
 		flagCompleteRecord = 1;
 		AUC = input.getaucMod();
-		// TODO AUC is flipped over 0.5 line here
-
-		// if (AUC[0] < 0.5) {
-		// AUC[0] = 1.0 - AUC[0];
-		// }
-		// if (AUC[1] < 0.5) {
-		// AUC[1] = 1.0 - AUC[1];
-		// }
 
 		String[] temp = recordDesp.split("\n");
 		System.out.println("temp" + "0" + "  =  " + temp[0]);
