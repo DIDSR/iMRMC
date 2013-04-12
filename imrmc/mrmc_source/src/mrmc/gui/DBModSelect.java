@@ -60,12 +60,12 @@ public class DBModSelect {
 		cb.setSelected(false);
 		cb.addItemListener(new allNegativeListner());
 		// Create the radio buttons.
-		String str1 = "Modality A";
+		String str1 = "Modality 1";
 		mod1Button = new JRadioButton(str1);
 		mod1Button.setActionCommand(str1);
 		mod1Button.setSelected(true);
 
-		String str2 = "Modality B";
+		String str2 = "Modality 2";
 		mod2Button = new JRadioButton(str2);
 		mod2Button.setActionCommand(str2);
 

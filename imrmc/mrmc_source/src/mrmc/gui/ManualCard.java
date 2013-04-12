@@ -149,7 +149,7 @@ public class ManualCard {
 		SingleMod.addActionListener(modListener);
 		DiffMod.addActionListener(modListener);
 
-		JButton comOKBtn = new JButton("OK");
+		JButton comOKBtn = new JButton("MRMC Variance Analysis");
 		comOKBtn.addActionListener(new comOKListner());
 
 		JLabel aucLabel1 = new JLabel("AUC1 ");
