@@ -1,7 +1,7 @@
 /*
  * InterpolatedLine.java
  * 
- * v1.0
+ * v2.0b
  * 
  * @Author Brandon D. Gallas, PhD, Rohan Pathare
  * 

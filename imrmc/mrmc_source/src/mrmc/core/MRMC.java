@@ -1,7 +1,7 @@
 /*
  * MRMC.java
  * 
- * v1.0
+ * v2.0b
  * 
  * @Author Xin He, Phd, Brandon D. Gallas, PhD, Rohan Pathare
  * 
@@ -77,7 +77,7 @@ public class MRMC extends JApplet{
 	}
 
 	public static void run(JApplet applet, int width, int height) {
-		mainFrame = new JFrame("iMRMC 1.0");
+		mainFrame = new JFrame("iMRMC 2.0b");
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainFrame.getContentPane().add(applet);
 		mainFrame.pack();

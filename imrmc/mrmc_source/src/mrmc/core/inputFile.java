@@ -1,7 +1,7 @@
 /*
  * inputFile.java
  * 
- * v1.0
+ * v2.0b
  * 
  * @Author Xin He, Phd, Brandon D. Gallas, PhD, Rohan Pathare
  * 
