@@ -931,7 +931,7 @@ public class GUInterface {
 		dm = new DefaultTableModel(3, 7);
 		BCKtable1 = new JTable(dm);
 		JScrollPane scroll2 = genTable(BCKtable1, BCKnames);
-		// panelBCK1.add(scroll2);
+		panelBCK1.add(scroll2);
 		height = BCKtable1.getRowHeight();
 		BCKtable1.setPreferredScrollableViewportSize(new Dimension(650,
 				height * 4));
