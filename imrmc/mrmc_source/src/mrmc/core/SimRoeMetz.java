@@ -34,15 +34,26 @@ public class SimRoeMetz {
 
 	public static void main(String[] args) {
 		double[] u = { 1.5, 3 };
-		double[] var_t = { (double) 2 / 6, (double) 1 / 6, (double) 1 / 6,
-				(double) 3 / 6, (double) 1 / 6, (double) 5 / 6 };
-		int[] n = { 175, 200, 20 };
+		double[] var_t = { 0.836205, 6.06649, 0.076157, 0.0645917, 0.30713,
+				0.0529776 };
+		int[] n = { 259, 51, 15 };
 
 		doSim(u, var_t, n);
 	}
 
 	public static void doSim(double[] u, double[] var_t, int[] n) {
-		// TODO perform size checks
+		if (u.length != 2) {
+			System.out.println("input u is of incorrect size");
+			return;
+		}
+		if (var_t.length != 6) {
+			System.out.println("input var_t is of incorrect size");
+			return;
+		}
+		if (n.length != 3) {
+			System.out.println("input n is of incorrect size");
+			return;
+		}
 
 		double mu_0 = u[0];
 		double mu_1 = u[1];
@@ -56,8 +67,8 @@ public class SimRoeMetz {
 		int n1 = n[1];
 		int nr = n[2];
 
-		double snr_0 = mu_0 / matrix.total(var_t);
-		double snr_1 = mu_1 / matrix.total(var_t);
+		// double snr_0 = mu_0 / matrix.total(var_t);
+		// double snr_1 = mu_1 / matrix.total(var_t);
 		// auc_0 = snrtoauc(auc_0);
 		// auc_1 = snrtoauc(auc_1);
 		// double[] auc = new double[] { auc_0, auc_1, auc_0 - auc_1 };

@@ -22,7 +22,6 @@
  *     various statistics about input data, including ROC information.
  */
 
-
 package mrmc.core;
 
 import java.util.*;
