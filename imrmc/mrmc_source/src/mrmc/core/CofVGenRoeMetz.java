@@ -61,4 +61,35 @@ public class CofVGenRoeMetz {
 		return matrix.total(toTotal);
 	}
 
+	public static double prodMoment(double[] u, double[] scale, int n) {
+		double scale1 = scale[0];
+		double scale20 = scale[1];
+		double scale21 = scale[2];
+		double scale30 = scale[3];
+		double scale31 = scale[4];
+
+		double lx = 10.0 * Math.sqrt(scale1);
+		double dx = lx / (double) n;
+		double[] x = new double[n];
+		for (int i = 0; i < n; i++) {
+			x[i] = ((double) i * dx) - (0.5 * lx);
+		}
+
+		double ly0 = 10.0 * Math.sqrt(scale20);
+		double dy0 = ly0 / (double) n;
+		double[] y0 = new double[n];
+		for (int i = 0; i < n; i++) {
+			y0[i] = ((double) i * dy0) - (0.5 * ly0);
+		}
+
+		double ly1 = 10.0 * Math.sqrt(scale21);
+		double dy1 = ly1 / (double) n;
+		double[] y1 = new double[n];
+		for (int i = 0; i < n; i++) {
+			y1[i] = ((double) i * dy1) - (0.5 * ly1);
+		}
+
+		return n;
+	}
+
 }
