@@ -67,10 +67,10 @@ public class SimRoeMetz {
 		int n1 = n[1];
 		int nr = n[2];
 
-		// double snr_0 = mu_0 / matrix.total(var_t);
-		// double snr_1 = mu_1 / matrix.total(var_t);
-		// auc_0 = snrtoauc(auc_0);
-		// auc_1 = snrtoauc(auc_1);
+		double snr_0 = mu_0 / matrix.total(var_t);
+		double snr_1 = mu_1 / matrix.total(var_t);
+		// auc_0 = snrToAUC(snr_0);
+		// auc_1 = snrToAUC(snr_1);
 		// double[] auc = new double[] { auc_0, auc_1, auc_0 - auc_1 };
 
 		Random rand = new Random(); // uses currentTimeMillis() as seed by
@@ -239,6 +239,13 @@ public class SimRoeMetz {
 			e.printStackTrace();
 		}
 
+	}
+
+	public static double snrToAUC(double snr) {
+		// TODO define error function
+		double toReturn = 0;
+		// toReturn = 0.5 + (0.5 * errorf(0.5*snr));
+		return toReturn;
 	}
 
 	public static double[] fillGaussian(double scalar, Random rand, int x) {
