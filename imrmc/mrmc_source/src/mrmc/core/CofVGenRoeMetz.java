@@ -26,12 +26,39 @@ package mrmc.core;
 
 public class CofVGenRoeMetz {
 
+	// TODO verify correctness
 	public static double prodMoment1(double[] u, double[] scale, int n) {
 		double scale1 = scale[0];
 		double scale20 = scale[1];
 		double scale21 = scale[2];
 
 		double lx = 10 * Math.sqrt(scale1);
-		return lx;
+		double dx = lx / (double) n;
+		double[] x = new double[n];
+		for (int i = 0; i < n; i++) {
+			x[i] = ((double) i * 10.0) - (0.5 * lx);
+		}
+
+		double f[] = new double[n];
+		for (int i = 0; i < n; i++) {
+			f[i] = (-(x[i] * x[i])) / 2.0 / scale1;
+		}
+
+		for (int i = 0; i < n; i++) {
+			f[i] = f[i] / Math.sqrt(Math.PI * 2.0 * scale1);
+		}
+
+		double[] phi = new double[n];
+		for (int i = 0; i < n; i++) {
+			phi[i] = Gaussian.Phi((u[0] + x[i]) / Math.sqrt(scale20))
+					* Gaussian.Phi((u[1] + x[i]) / Math.sqrt(scale21));
+		}
+
+		double[] toTotal = new double[n];
+		for (int i = 0; i < n; i++) {
+			toTotal[i] = dx * f[i] * phi[i];
+		}
+		return matrix.total(toTotal);
 	}
+
 }
