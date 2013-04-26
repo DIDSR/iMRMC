@@ -95,10 +95,10 @@ public class SimRoeMetz {
 		double[][] RC10 = fillGaussian(stdDevs[5], rand, n1, nr);
 		double[][] RC11 = fillGaussian(stdDevs[5], rand, n1, nr);
 
-		double[][] t00 = matrix.setZero(n0, nr);
-		double[][] t01 = matrix.setZero(n0, nr);
-		double[][] t10 = matrix.setZero(n1, nr);
-		double[][] t11 = matrix.setZero(n1, nr);
+		double[][] t00 = new double[n0][nr];
+		double[][] t01 = new double[n0][nr];
+		double[][] t10 = new double[n1][nr];
+		double[][] t11 = new double[n1][nr];
 
 		for (int i = 0; i < n1; i++) {
 			Arrays.fill(t10[i], mu_0);

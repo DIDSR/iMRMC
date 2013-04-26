@@ -71,25 +71,275 @@ public class CofVGenRoeMetz {
 		double lx = 10.0 * Math.sqrt(scale1);
 		double dx = lx / (double) n;
 		double[] x = new double[n];
-		for (int i = 0; i < n; i++) {
-			x[i] = ((double) i * dx) - (0.5 * lx);
-		}
 
 		double ly0 = 10.0 * Math.sqrt(scale20);
 		double dy0 = ly0 / (double) n;
 		double[] y0 = new double[n];
-		for (int i = 0; i < n; i++) {
-			y0[i] = ((double) i * dy0) - (0.5 * ly0);
-		}
 
 		double ly1 = 10.0 * Math.sqrt(scale21);
 		double dy1 = ly1 / (double) n;
 		double[] y1 = new double[n];
+
 		for (int i = 0; i < n; i++) {
+			x[i] = ((double) i * dx) - (0.5 * lx);
+			y0[i] = ((double) i * dy0) - (0.5 * ly0);
 			y1[i] = ((double) i * dy1) - (0.5 * ly1);
 		}
 
-		return n;
+		double[] f0 = new double[n];
+		double[] f1 = new double[n];
+
+		double[] dy0xf0 = new double[n];
+		double[] dy1xf1 = new double[n];
+
+		for (int i = 0; i < n; i++) {
+			f0[i] = Math.exp(-(y0[i] * y0[i]) / 2.0 / scale20)
+					/ Math.sqrt(Math.PI * 2.0 * scale20);
+			dy0xf0[i] = dy0 * f0[i];
+			f1[i] = Math.exp(-(y1[i] * y1[i]) / 2.0 / scale21)
+					/ Math.sqrt(Math.PI * 2.0 * scale21);
+			dy1xf1[i] = dy1 * f1[i];
+		}
+
+		double[] ff = new double[n];
+		for (int i = 0; i < n; i++) {
+			double[] phi0 = new double[n];
+			double[] phi1 = new double[n];
+			double[] dy0xf0xphi0 = new double[n];
+			double[] dy1xf1xphi1 = new double[n];
+
+			for (int j = 0; j < n; j++) {
+				phi0[j] = Gaussian.Phi((u[0] + x[j] + y0[i])
+						/ Math.sqrt(scale30));
+				dy0xf0xphi0[j] = dy0xf0[j] * phi0[j];
+				phi1[j] = Gaussian.Phi((u[1] + x[j] + y1[i])
+						/ Math.sqrt(scale31));
+				dy1xf1xphi1[j] = dy1xf1[j] * phi1[j];
+			}
+			ff[i] = matrix.total(dy0xf0xphi0) * matrix.total(dy1xf1xphi1);
+		}
+
+		double[] f = new double[n];
+		double[] toTotal = new double[n];
+		for (int i = 0; i < n; i++) {
+			f[i] = Math.exp(-(x[i] * x[i]) / 2.0 / scale1)
+					/ Math.sqrt(Math.PI * 2.0 * scale1);
+			toTotal[i] = dx * f[i] * ff[i];
+		}
+
+		return matrix.total(toTotal);
 	}
 
+	public static void genRoeMetz(double[] u, int n, double[] var_t) {
+		if (var_t.length != 18) {
+			System.out
+					.println("var_t should contain 18 components of variance");
+			return;
+		}
+
+		double v00r = var_t[0];
+		double v00c = var_t[1];
+		double v00rc = var_t[2];
+		double v10r = var_t[3];
+		double v10c = var_t[4];
+		double v10rc = var_t[5];
+		double v01r = var_t[6];
+		double v01c = var_t[7];
+		double v01rc = var_t[8];
+		double v11r = var_t[9];
+		double v11c = var_t[10];
+		double v11rc = var_t[11];
+		double v0r = var_t[12];
+		double v0c = var_t[13];
+		double v0rc = var_t[14];
+		double v1r = var_t[15];
+		double v1c = var_t[16];
+		double v1rc = var_t[17];
+
+		// default value of n could be 256
+		double[][][] m = new double[9][2][2];
+
+		// AUC
+		double scale1 = v0r + v0c + v0rc + v1r + v1c + v1rc;
+		double scale20 = v00r + v00c + v00rc + v10r + v10c + v10rc;
+		double scale21 = v01r + v01c + v01rc + v11r + v11c + v11rc;
+		m[0][0][0] = Gaussian.Phi(u[0] / Math.sqrt(scale1 + scale20));
+		m[0][1][1] = Gaussian.Phi(u[1] / Math.sqrt(scale1 + scale21));
+		m[0][0][1] = m[0][0][0] - m[0][1][1];
+		m[0][1][0] = -m[0][0][1];
+
+		// M1
+		double[] scaleM1 = { scale1, scale20, scale21 };
+		m[1][0][0] = m[0][0][0];
+		m[1][1][1] = m[0][1][1];
+		m[1][0][1] = prodMoment1(u, scaleM1, n);
+		m[1][1][0] = m[1][0][1];
+
+		// M2
+		double scale30 = v0c + v0rc + v00c + v00rc;
+		double scale31 = v0c + v0rc + v01c + v01rc;
+		scale20 = v10r + v10c + v10rc + v00r;
+		scale21 = v11r + v11c + v11rc + v01r;
+		scale1 = v1r + v1c + v1rc + v0r;
+
+		scaleM1[0] = scale1 + scale20;
+		scaleM1[1] = scale30;
+		scaleM1[2] = scale30;
+		m[2][0][0] = prodMoment1(new double[] { u[0], u[0] }, scaleM1, n);
+
+		scaleM1[0] = scale1 + scale21;
+		scaleM1[1] = scale31;
+		scaleM1[2] = scale31;
+		m[2][1][1] = prodMoment1(new double[] { u[1], u[1] }, scaleM1, n);
+
+		double[] scaleM = { scale1, scale20, scale21, scale30, scale31 };
+		m[2][0][1] = prodMoment(new double[] { u[0], u[1] }, scaleM, n);
+		m[2][1][0] = m[2][0][1];
+
+		// M3
+		scale30 = v1c + v1rc + v10c + v10rc;
+		scale31 = v1c + v1rc + v11c + v11rc;
+		scale20 = v10r + v00r + v00c + v00rc;
+		scale21 = v11r + v01r + v01c + v01rc;
+		scale1 = v1r + v0r + v0c + v0rc;
+
+		scaleM1[0] = scale1 + scale20;
+		scaleM1[1] = scale30;
+		scaleM1[2] = scale30;
+		m[3][0][0] = prodMoment1(new double[] { u[0], u[0] }, scaleM1, n);
+
+		scaleM1[0] = scale1 + scale21;
+		scaleM1[1] = scale31;
+		scaleM1[2] = scale31;
+		m[3][1][1] = prodMoment1(new double[] { u[1], u[1] }, scaleM1, n);
+
+		scaleM[0] = scale1;
+		scaleM[1] = scale20;
+		scaleM[2] = scale21;
+		scaleM[3] = scale30;
+		scaleM[4] = scale31;
+		m[3][0][1] = prodMoment(new double[] { u[0], u[1] }, scaleM, n);
+		m[3][1][0] = m[3][0][1];
+
+		// M4
+		scale30 = v1c + v1rc + v10c + v10rc + v0c + v0rc + v00c + v00rc;
+		scale31 = v1c + v1rc + v11c + v11rc + v0c + v0rc + v01c + v01rc;
+		scale20 = v10r + v00r;
+		scale21 = v11r + v01r;
+		scale1 = v1r + v0r;
+
+		scaleM1[0] = scale1 + scale20;
+		scaleM1[1] = scale30;
+		scaleM1[2] = scale30;
+		m[4][0][0] = prodMoment1(new double[] { u[0], u[0] }, scaleM1, n);
+
+		scaleM1[0] = scale1 + scale21;
+		scaleM1[1] = scale31;
+		scaleM1[2] = scale31;
+		m[4][1][1] = prodMoment1(new double[] { u[1], u[1] }, scaleM1, n);
+
+		scaleM[0] = scale1;
+		scaleM[1] = scale20;
+		scaleM[2] = scale21;
+		scaleM[3] = scale30;
+		scaleM[4] = scale31;
+		m[4][0][1] = prodMoment(new double[] { u[0], u[1] }, scaleM, n);
+		m[4][1][0] = m[4][0][1];
+
+		// M5
+		scale30 = v0r + v1r + v0rc + v1rc + v00r + v10r + v00rc + v10rc;
+		scale31 = v0r + v1r + v0rc + v1rc + v01r + v11r + v01rc + v11rc;
+		scale20 = v00c + v10c;
+		scale21 = v01c + v11c;
+		scale1 = v1c + v0c;
+
+		scaleM1[0] = scale1 + scale20;
+		scaleM1[1] = scale30;
+		scaleM1[2] = scale30;
+		m[5][0][0] = prodMoment1(new double[] { u[0], u[0] }, scaleM1, n);
+
+		scaleM1[0] = scale1 + scale21;
+		scaleM1[1] = scale31;
+		scaleM1[2] = scale31;
+		m[5][1][1] = prodMoment1(new double[] { u[1], u[1] }, scaleM1, n);
+
+		scaleM[0] = scale1;
+		scaleM[1] = scale20;
+		scaleM[2] = scale21;
+		scaleM[3] = scale30;
+		scaleM[4] = scale31;
+		m[5][0][1] = prodMoment(new double[] { u[0], u[1] }, scaleM, n);
+		m[5][1][0] = m[5][0][1];
+
+		// M6
+		scale30 = v0r + v1r + v0c + v0rc + v1rc + v00r + v10r + v00c + v00rc
+				+ v10rc;
+		scale31 = v0r + v1r + v0c + v0rc + v1rc + v01r + v11r + v01c + v01rc
+				+ v11rc;
+		scale20 = v10c;
+		scale21 = v11c;
+		scale1 = v1c;
+
+		scaleM1[0] = scale1 + scale20;
+		scaleM1[1] = scale30;
+		scaleM1[2] = scale30;
+		m[6][0][0] = prodMoment1(new double[] { u[0], u[0] }, scaleM1, n);
+
+		scaleM1[0] = scale1 + scale21;
+		scaleM1[1] = scale31;
+		scaleM1[2] = scale31;
+		m[6][1][1] = prodMoment1(new double[] { u[1], u[1] }, scaleM1, n);
+
+		scaleM[0] = scale1;
+		scaleM[1] = scale20;
+		scaleM[2] = scale21;
+		scaleM[3] = scale30;
+		scaleM[4] = scale31;
+		m[6][0][1] = prodMoment(new double[] { u[0], u[1] }, scaleM, n);
+		m[6][1][0] = m[6][0][1];
+
+		// M7
+		scale30 = v0r + v1r + v1c + v0rc + v1rc + v00r + v10r + v10c + v00rc
+				+ v10rc;
+		scale31 = v0r + v1r + v1c + v0rc + v1rc + v01r + v11r + v11c + v01rc
+				+ v11rc;
+		scale20 = v00c;
+		scale21 = v01c;
+		scale1 = v0c;
+
+		scaleM1[0] = scale1 + scale20;
+		scaleM1[1] = scale30;
+		scaleM1[2] = scale30;
+		m[7][0][0] = prodMoment1(new double[] { u[0], u[0] }, scaleM1, n);
+
+		scaleM1[0] = scale1 + scale21;
+		scaleM1[1] = scale31;
+		scaleM1[2] = scale31;
+		m[7][1][1] = prodMoment1(new double[] { u[1], u[1] }, scaleM1, n);
+
+		scaleM[0] = scale1;
+		scaleM[1] = scale20;
+		scaleM[2] = scale21;
+		scaleM[3] = scale30;
+		scaleM[4] = scale31;
+		m[7][0][1] = prodMoment(new double[] { u[0], u[1] }, scaleM, n);
+		m[7][1][0] = m[7][0][1];
+
+		//
+
+		m[8][0][0] = m[0][0][0] * m[0][0][0];
+		m[8][1][1] = m[0][1][1] * m[0][1][1];
+		m[8][0][1] = m[0][0][0] * m[0][1][1];
+		m[8][1][0] = m[8][0][1];
+
+		double[][] Bauc = { 
+				{ 0, 0, 0, 0, 0, 0, 1, -1 },
+				{ 0, 0, 0, 0, 0, 1, 0, -1 }, 
+				{ 0, 0, 0, 0, 1, -1, -1, 1 },
+				{ 0, 0, 0, 1, 0, 0, 0, -1 }, 
+				{ 0, 0, 1, -1, 0, 0, -1, 1 },
+				{ 0, 1, 0, -1, 0, -1, 0, 1 }, 
+				{ 1, -1, -1, 1, -1, 1, 1, -1 } };
+
+	}
 }
