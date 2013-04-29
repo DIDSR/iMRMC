@@ -24,9 +24,18 @@
 
 package mrmc.core;
 
-import java.util.Arrays;
-
 public class CofVGenRoeMetz {
+
+	public static void main(String[] args) {
+		double[] u = { 1.5, 1.0 };
+		double[] var_t = { 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0,
+				1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0,
+				1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0,
+				1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0 };
+		int n = 256;
+		genRoeMetz(u, n, var_t);
+
+	}
 
 	// TODO verify correctness
 	public static double prodMoment1(double[] u, double[] scale, int n) {
@@ -396,29 +405,17 @@ public class CofVGenRoeMetz {
 			cofv_pc[0][1][i] = cofv_pc[1][0][i];
 		}
 
-	}
-
-	public static void main(String[] args) {
-		double[][][] m = { { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 } },
-				{ { 10, 11, 12 }, { 13, 14, 15 }, { 16, 17, 18 } },
-				{ { 19, 20, 21 }, { 22, 23, 24 }, { 25, 26, 27 } } };
-
-		double[][] Bauc = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, -1.0 },
-				{ 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, -1.0 },
-				{ 0.0, 0.0, 0.0, 0.0, 1.0, -1.0, -1.0, 1.0 },
-				{ 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, -1.0 },
-				{ 0.0, 0.0, 1.0, -1.0, 0.0, 0.0, -1.0, 1.0 },
-				{ 0.0, 1.0, 0.0, -1.0, 0.0, -1.0, 0.0, 1.0 },
-				{ 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0 } };
-
-		double[][] y = { { 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0 },
-				{ 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0 } };
-
-		double[] yDim1 = new double[y[0].length];
-		for (int i = 0; i < y[0].length; i++) {
-			yDim1[i] = y[0][i];
+		
+		System.out.println("cofv_auc:");
+		for (int i = 0; i < cofv_auc.length; i++) {
+			matrix.printMatrix(cofv_auc[i]);
 		}
-		System.out.println(Arrays.toString(matrix.get1Dimension(1, m, "0", "0",
-				"*")));
+		System.out.println();
+		System.out.println("cofv_pc:");
+		for (int i = 0; i < cofv_pc.length; i++) {
+			matrix.printMatrix(cofv_pc[i]);
+		}
+
 	}
+
 }

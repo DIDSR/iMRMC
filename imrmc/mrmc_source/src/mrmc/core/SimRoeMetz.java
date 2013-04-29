@@ -33,10 +33,14 @@ import java.util.Random;
 public class SimRoeMetz {
 
 	public static void main(String[] args) {
-		double[] u = { 1.5, 3 };
-		double[] var_t = { 0.836205, 6.06649, 0.076157, 0.0645917, 0.30713,
-				0.0529776 };
-		int[] n = { 259, 51, 15 };
+		// double[] u = { 1.5, 3 };
+		// double[] var_t = { 0.836205, 6.06649, 0.076157, 0.0645917, 0.30713,
+		// 0.0529776 };
+		// int[] n = { 259, 51, 15 };
+		double[] u = { 1.5, 1.0 };
+		double[] var_t = { 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0,
+				1.0 / 6.0, 1.0 / 6.0 };
+		int[] n = {200, 200, 20};
 
 		doSim(u, var_t, n);
 	}
@@ -156,68 +160,68 @@ public class SimRoeMetz {
 			toOut.write("AUC:\n");
 			toOut.write(Arrays.toString(auc) + "\n");
 
-			toOut.write("R0:\n");
-			toOut.write(Arrays.toString(R0) + "\n");
-			toOut.newLine();
-			toOut.write("C0:\n");
-			toOut.write(Arrays.toString(C0) + "\n");
-			toOut.newLine();
-			toOut.write("RC0:\n");
-			for (int i = 0; i < RC0.length; i++) {
-				toOut.write(Arrays.toString(RC0[i]) + "\n");
-			}
-			toOut.newLine();
-			toOut.write("R00:\n");
-			toOut.write(Arrays.toString(R00) + "\n");
-			toOut.newLine();
-			toOut.write("C00:\n");
-			toOut.write(Arrays.toString(C00) + "\n");
-			toOut.newLine();
-			toOut.write("RC00:\n");
-			for (int i = 0; i < RC00.length; i++) {
-				toOut.write(Arrays.toString(RC00[i]) + "\n");
-			}
-			toOut.newLine();
-			toOut.write("R1:\n");
-			toOut.write(Arrays.toString(R1) + "\n");
-			toOut.newLine();
-			toOut.write("C1:\n");
-			toOut.write(Arrays.toString(C1) + "\n");
-			toOut.newLine();
-			toOut.write("RC1:\n");
-			for (int i = 0; i < RC1.length; i++) {
-				toOut.write(Arrays.toString(RC1[i]) + "\n");
-			}
-			toOut.write("R10:\n");
-			toOut.write(Arrays.toString(R10) + "\n");
-			toOut.newLine();
-			toOut.write("C10:\n");
-			toOut.write(Arrays.toString(C10) + "\n");
-			toOut.newLine();
-			toOut.write("RC10:\n");
-			for (int i = 0; i < RC10.length; i++) {
-				toOut.write(Arrays.toString(RC10[i]) + "\n");
-			}
-			toOut.write("R01:\n");
-			toOut.write(Arrays.toString(R01) + "\n");
-			toOut.newLine();
-			toOut.write("C01:\n");
-			toOut.write(Arrays.toString(C01) + "\n");
-			toOut.newLine();
-			toOut.write("RC01:\n");
-			for (int i = 0; i < RC01.length; i++) {
-				toOut.write(Arrays.toString(RC01[i]) + "\n");
-			}
-			toOut.write("R11:\n");
-			toOut.write(Arrays.toString(R11) + "\n");
-			toOut.newLine();
-			toOut.write("C11:\n");
-			toOut.write(Arrays.toString(C11) + "\n");
-			toOut.newLine();
-			toOut.write("RC11:\n");
-			for (int i = 0; i < RC11.length; i++) {
-				toOut.write(Arrays.toString(RC11[i]) + "\n");
-			}
+			// toOut.write("R0:\n");
+			// toOut.write(Arrays.toString(R0) + "\n");
+			// toOut.newLine();
+			// toOut.write("C0:\n");
+			// toOut.write(Arrays.toString(C0) + "\n");
+			// toOut.newLine();
+			// toOut.write("RC0:\n");
+			// for (int i = 0; i < RC0.length; i++) {
+			// toOut.write(Arrays.toString(RC0[i]) + "\n");
+			// }
+			// toOut.newLine();
+			// toOut.write("R00:\n");
+			// toOut.write(Arrays.toString(R00) + "\n");
+			// toOut.newLine();
+			// toOut.write("C00:\n");
+			// toOut.write(Arrays.toString(C00) + "\n");
+			// toOut.newLine();
+			// toOut.write("RC00:\n");
+			// for (int i = 0; i < RC00.length; i++) {
+			// toOut.write(Arrays.toString(RC00[i]) + "\n");
+			// }
+			// toOut.newLine();
+			// toOut.write("R1:\n");
+			// toOut.write(Arrays.toString(R1) + "\n");
+			// toOut.newLine();
+			// toOut.write("C1:\n");
+			// toOut.write(Arrays.toString(C1) + "\n");
+			// toOut.newLine();
+			// toOut.write("RC1:\n");
+			// for (int i = 0; i < RC1.length; i++) {
+			// toOut.write(Arrays.toString(RC1[i]) + "\n");
+			// }
+			// toOut.write("R10:\n");
+			// toOut.write(Arrays.toString(R10) + "\n");
+			// toOut.newLine();
+			// toOut.write("C10:\n");
+			// toOut.write(Arrays.toString(C10) + "\n");
+			// toOut.newLine();
+			// toOut.write("RC10:\n");
+			// for (int i = 0; i < RC10.length; i++) {
+			// toOut.write(Arrays.toString(RC10[i]) + "\n");
+			// }
+			// toOut.write("R01:\n");
+			// toOut.write(Arrays.toString(R01) + "\n");
+			// toOut.newLine();
+			// toOut.write("C01:\n");
+			// toOut.write(Arrays.toString(C01) + "\n");
+			// toOut.newLine();
+			// toOut.write("RC01:\n");
+			// for (int i = 0; i < RC01.length; i++) {
+			// toOut.write(Arrays.toString(RC01[i]) + "\n");
+			// }
+			// toOut.write("R11:\n");
+			// toOut.write(Arrays.toString(R11) + "\n");
+			// toOut.newLine();
+			// toOut.write("C11:\n");
+			// toOut.write(Arrays.toString(C11) + "\n");
+			// toOut.newLine();
+			// toOut.write("RC11:\n");
+			// for (int i = 0; i < RC11.length; i++) {
+			// toOut.write(Arrays.toString(RC11[i]) + "\n");
+			// }
 
 			toOut.write("t00:\n");
 			for (int i = 0; i < t00.length; i++) {
@@ -238,6 +242,19 @@ public class SimRoeMetz {
 			for (int i = 0; i < t11.length; i++) {
 				toOut.write(Arrays.toString(t11[i]) + "\n");
 			}
+
+			System.out.println("t00:");
+			matrix.printMatrix(t00);
+			System.out.println();
+			System.out.println("t01:");
+			matrix.printMatrix(t01);
+			System.out.println();
+			System.out.println("t10:");
+			matrix.printMatrix(t10);
+			System.out.println();
+			System.out.println("t11:");
+			matrix.printMatrix(t11);
+
 			toOut.close();
 		} catch (IOException e) {
 			e.printStackTrace();
