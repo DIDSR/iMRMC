@@ -23,6 +23,8 @@
 
 package mrmc.core;
 
+import java.text.DecimalFormat;
+
 public class matrix {
 	public matrix() {
 		;
@@ -157,10 +159,11 @@ public class matrix {
 	public static void printMatrix(double[][] m) {
 		int col = m[0].length;
 		int row = m.length;
+		DecimalFormat df = new DecimalFormat("0.###E0");
 		for (int i = 0; i < row; i++) {
 			String temp = "";
 			for (int j = 0; j < col; j++) {
-				temp = temp + m[i][j] + "\t";
+				temp = temp + df.format(m[i][j]) + "\t";
 			}
 			temp = temp + "\n";
 			System.out.print(temp);

@@ -52,7 +52,7 @@ public class CofVGenRoeMetz {
 
 		double f[] = new double[n];
 		for (int i = 0; i < n; i++) {
-			f[i] = (-(x[i] * x[i])) / 2.0 / scale1;
+			f[i] = Math.exp((-(x[i] * x[i])) / 2.0 / scale1);
 		}
 
 		for (int i = 0; i < n; i++) {

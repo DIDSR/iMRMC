@@ -38,9 +38,12 @@ public class SimRoeMetz {
 		// 0.0529776 };
 		// int[] n = { 259, 51, 15 };
 		double[] u = { 1.5, 1.0 };
+		// TODO 18 different variance components
 		double[] var_t = { 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0,
-				1.0 / 6.0, 1.0 / 6.0 };
-		int[] n = {200, 200, 20};
+				1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0,
+				1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0,
+				1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0 };
+		int[] n = { 200, 200, 20 };
 
 		doSim(u, var_t, n);
 	}
@@ -51,7 +54,7 @@ public class SimRoeMetz {
 			System.out.println("input u is of incorrect size");
 			return;
 		}
-		if (var_t.length != 6) {
+		if (var_t.length != 18) {
 			System.out.println("input var_t is of incorrect size");
 			return;
 		}
@@ -80,25 +83,24 @@ public class SimRoeMetz {
 
 		Random rand = new Random(); // uses currentTimeMillis() as seed by
 									// default
-
-		double[] R0 = fillGaussian(stdDevs[0], rand, nr);
-		double[] C0 = fillGaussian(stdDevs[1], rand, n0);
-		double[][] RC0 = fillGaussian(stdDevs[2], rand, nr, n0);
-		double[] R00 = fillGaussian(stdDevs[3], rand, nr);
-		double[] R01 = fillGaussian(stdDevs[3], rand, nr);
-		double[] C00 = fillGaussian(stdDevs[4], rand, n0);
-		double[] C01 = fillGaussian(stdDevs[4], rand, n0);
-		double[][] RC00 = fillGaussian(stdDevs[5], rand, nr, n0);
-		double[][] RC01 = fillGaussian(stdDevs[5], rand, nr, n0);
-		double[] R1 = fillGaussian(stdDevs[0], rand, nr);
-		double[] C1 = fillGaussian(stdDevs[1], rand, n1);
-		double[][] RC1 = fillGaussian(stdDevs[2], rand, nr, n1);
+		double[] R00 = fillGaussian(stdDevs[0], rand, nr);
+		double[] C00 = fillGaussian(stdDevs[1], rand, n0);
+		double[][] RC00 = fillGaussian(stdDevs[2], rand, nr, n0);
 		double[] R10 = fillGaussian(stdDevs[3], rand, nr);
-		double[] R11 = fillGaussian(stdDevs[3], rand, nr);
 		double[] C10 = fillGaussian(stdDevs[4], rand, n1);
-		double[] C11 = fillGaussian(stdDevs[4], rand, n1);
 		double[][] RC10 = fillGaussian(stdDevs[5], rand, nr, n1);
-		double[][] RC11 = fillGaussian(stdDevs[5], rand, nr, n1);
+		double[] R01 = fillGaussian(stdDevs[6], rand, nr);
+		double[] C01 = fillGaussian(stdDevs[7], rand, n0);
+		double[][] RC01 = fillGaussian(stdDevs[8], rand, nr, n0);
+		double[] R11 = fillGaussian(stdDevs[9], rand, nr);
+		double[] C11 = fillGaussian(stdDevs[10], rand, n1);
+		double[][] RC11 = fillGaussian(stdDevs[11], rand, nr, n1);
+		double[] R0 = fillGaussian(stdDevs[12], rand, nr);
+		double[] C0 = fillGaussian(stdDevs[13], rand, n0);
+		double[][] RC0 = fillGaussian(stdDevs[14], rand, nr, n0);
+		double[] R1 = fillGaussian(stdDevs[15], rand, nr);
+		double[] C1 = fillGaussian(stdDevs[16], rand, n1);
+		double[][] RC1 = fillGaussian(stdDevs[17], rand, nr, n1);
 
 		double[][] t00 = new double[nr][n0];
 		double[][] t01 = new double[nr][n0];
@@ -116,29 +118,22 @@ public class SimRoeMetz {
 				t00[r][i] += R00[r];
 				t01[r][i] += R0[r];
 				t01[r][i] += R01[r];
-			}
-			for (int i = 0; i < n1; i++) {
-				t10[r][i] += R1[r];
-				t10[r][i] += R10[r];
-				t11[r][i] += R1[r];
-				t11[r][i] += R11[r];
-			}
-		}
-		for (int r = 0; r < nr; r++) {
-			for (int i = 0; i < n0; i++) {
+
 				t00[r][i] += C0[i];
 				t00[r][i] += C00[i];
 				t01[r][i] += C0[i];
 				t01[r][i] += C01[i];
 			}
+			for (int j = 0; j < n1; j++) {
+				t10[r][j] += R1[r];
+				t10[r][j] += R10[r];
+				t11[r][j] += R1[r];
+				t11[r][j] += R11[r];
 
-		}
-		for (int r = 0; r < nr; r++) {
-			for (int i = 0; i < n1; i++) {
-				t10[r][i] += C1[i];
-				t10[r][i] += C10[i];
-				t11[r][i] += C1[i];
-				t11[r][i] += C11[i];
+				t10[r][j] += C1[j];
+				t10[r][j] += C10[j];
+				t11[r][j] += C1[j];
+				t11[r][j] += C11[j];
 			}
 		}
 
