@@ -163,7 +163,7 @@ public class matrix {
 				temp = temp + m[i][j] + "\t";
 			}
 			temp = temp + "\n";
-			System.out.println(temp);
+			System.out.print(temp);
 		}
 	}
 
@@ -176,11 +176,45 @@ public class matrix {
 				temp = temp + m[i][j] + "\t";
 			}
 			temp = temp + "\n";
-			System.out.println(temp);
+			System.out.print(temp);
 		}
 	}
 
-	public static int[][] extractFirstDimention(int[][][] m, int d2, int d3) {
+	// extracts elements from 3d matrix like IDL syntax m[*, d2, d3]
+	public static double[] get1Dimension(int start, double[][][] m, String d1,
+			String d2, String d3) {
+		double[] result;
+		if (d1.equals("*")) {
+			result = new double[m.length - start];
+			int dim2 = Integer.parseInt(d2);
+			int dim3 = Integer.parseInt(d3);
+			for (int i = 0; i < m.length - start; i++) {
+				result[i] = m[i + start][dim2][dim3];
+			}
+
+		} else if (d2.equals("*")) {
+			result = new double[m[0].length - start];
+			int dim1 = Integer.parseInt(d1);
+			int dim3 = Integer.parseInt(d3);
+			for (int i = 0; i < m[0].length - start; i++) {
+				result[i] = m[dim1][i + start][dim3];
+			}
+		} else if (d3.equals("*")) {
+			result = new double[m[0][0].length - start];
+			int dim1 = Integer.parseInt(d1);
+			int dim2 = Integer.parseInt(d2);
+			for (int i = 0; i < m[0][0].length - start; i++) {
+				result[i] = m[dim1][dim2][i + start];
+			}
+		} else {
+			throw new NumberFormatException(
+					"Must indicate a dimension to iterate");
+		}
+
+		return result;
+	}
+
+	public static int[][] extractFirstDimension(int[][][] m, int d2, int d3) {
 		int[][] result = new int[m.length][1];
 		for (int i = 0; i < m.length; i++) {
 			result[i][0] = m[i][d2][d3];
@@ -188,7 +222,7 @@ public class matrix {
 		return result;
 	}
 
-	public static double[][] extractFirstDimention(double[][][] m, int d2,
+	public static double[][] extractFirstDimension(double[][][] m, int d2,
 			int d3) {
 		double[][] result = new double[m.length][1];
 		for (int i = 0; i < m.length; i++) {

@@ -24,6 +24,8 @@
 
 package mrmc.core;
 
+import java.util.Arrays;
+
 public class CofVGenRoeMetz {
 
 	// TODO verify correctness
@@ -130,6 +132,7 @@ public class CofVGenRoeMetz {
 		return matrix.total(toTotal);
 	}
 
+	// TODO verify correctness
 	public static void genRoeMetz(double[] u, int n, double[] var_t) {
 		if (var_t.length != 18) {
 			System.out
@@ -157,23 +160,26 @@ public class CofVGenRoeMetz {
 		double v1rc = var_t[17];
 
 		// default value of n could be 256
-		double[][][] m = new double[9][2][2];
+		if (n == 0) {
+			n = 256;
+		}
+		double[][][] m = new double[2][2][9];
 
 		// AUC
 		double scale1 = v0r + v0c + v0rc + v1r + v1c + v1rc;
 		double scale20 = v00r + v00c + v00rc + v10r + v10c + v10rc;
 		double scale21 = v01r + v01c + v01rc + v11r + v11c + v11rc;
 		m[0][0][0] = Gaussian.Phi(u[0] / Math.sqrt(scale1 + scale20));
-		m[0][1][1] = Gaussian.Phi(u[1] / Math.sqrt(scale1 + scale21));
-		m[0][0][1] = m[0][0][0] - m[0][1][1];
-		m[0][1][0] = -m[0][0][1];
+		m[1][1][0] = Gaussian.Phi(u[1] / Math.sqrt(scale1 + scale21));
+		m[1][0][0] = m[0][0][0] - m[1][1][0];
+		m[0][1][0] = -m[1][0][0];
 
 		// M1
 		double[] scaleM1 = { scale1, scale20, scale21 };
-		m[1][0][0] = m[0][0][0];
-		m[1][1][1] = m[0][1][1];
+		m[0][0][1] = m[0][0][0];
+		m[1][1][1] = m[1][1][0];
 		m[1][0][1] = prodMoment1(u, scaleM1, n);
-		m[1][1][0] = m[1][0][1];
+		m[0][1][1] = m[1][0][1];
 
 		// M2
 		double scale30 = v0c + v0rc + v00c + v00rc;
@@ -185,16 +191,16 @@ public class CofVGenRoeMetz {
 		scaleM1[0] = scale1 + scale20;
 		scaleM1[1] = scale30;
 		scaleM1[2] = scale30;
-		m[2][0][0] = prodMoment1(new double[] { u[0], u[0] }, scaleM1, n);
+		m[0][0][2] = prodMoment1(new double[] { u[0], u[0] }, scaleM1, n);
 
 		scaleM1[0] = scale1 + scale21;
 		scaleM1[1] = scale31;
 		scaleM1[2] = scale31;
-		m[2][1][1] = prodMoment1(new double[] { u[1], u[1] }, scaleM1, n);
+		m[1][1][2] = prodMoment1(new double[] { u[1], u[1] }, scaleM1, n);
 
 		double[] scaleM = { scale1, scale20, scale21, scale30, scale31 };
-		m[2][0][1] = prodMoment(new double[] { u[0], u[1] }, scaleM, n);
-		m[2][1][0] = m[2][0][1];
+		m[1][0][2] = prodMoment(new double[] { u[0], u[1] }, scaleM, n);
+		m[0][1][2] = m[1][0][2];
 
 		// M3
 		scale30 = v1c + v1rc + v10c + v10rc;
@@ -206,20 +212,20 @@ public class CofVGenRoeMetz {
 		scaleM1[0] = scale1 + scale20;
 		scaleM1[1] = scale30;
 		scaleM1[2] = scale30;
-		m[3][0][0] = prodMoment1(new double[] { u[0], u[0] }, scaleM1, n);
+		m[0][0][3] = prodMoment1(new double[] { u[0], u[0] }, scaleM1, n);
 
 		scaleM1[0] = scale1 + scale21;
 		scaleM1[1] = scale31;
 		scaleM1[2] = scale31;
-		m[3][1][1] = prodMoment1(new double[] { u[1], u[1] }, scaleM1, n);
+		m[1][1][3] = prodMoment1(new double[] { u[1], u[1] }, scaleM1, n);
 
 		scaleM[0] = scale1;
 		scaleM[1] = scale20;
 		scaleM[2] = scale21;
 		scaleM[3] = scale30;
 		scaleM[4] = scale31;
-		m[3][0][1] = prodMoment(new double[] { u[0], u[1] }, scaleM, n);
-		m[3][1][0] = m[3][0][1];
+		m[1][0][3] = prodMoment(new double[] { u[0], u[1] }, scaleM, n);
+		m[0][1][3] = m[1][0][3];
 
 		// M4
 		scale30 = v1c + v1rc + v10c + v10rc + v0c + v0rc + v00c + v00rc;
@@ -231,20 +237,20 @@ public class CofVGenRoeMetz {
 		scaleM1[0] = scale1 + scale20;
 		scaleM1[1] = scale30;
 		scaleM1[2] = scale30;
-		m[4][0][0] = prodMoment1(new double[] { u[0], u[0] }, scaleM1, n);
+		m[0][0][4] = prodMoment1(new double[] { u[0], u[0] }, scaleM1, n);
 
 		scaleM1[0] = scale1 + scale21;
 		scaleM1[1] = scale31;
 		scaleM1[2] = scale31;
-		m[4][1][1] = prodMoment1(new double[] { u[1], u[1] }, scaleM1, n);
+		m[1][1][4] = prodMoment1(new double[] { u[1], u[1] }, scaleM1, n);
 
 		scaleM[0] = scale1;
 		scaleM[1] = scale20;
 		scaleM[2] = scale21;
 		scaleM[3] = scale30;
 		scaleM[4] = scale31;
-		m[4][0][1] = prodMoment(new double[] { u[0], u[1] }, scaleM, n);
-		m[4][1][0] = m[4][0][1];
+		m[1][0][4] = prodMoment(new double[] { u[0], u[1] }, scaleM, n);
+		m[0][1][4] = m[1][0][4];
 
 		// M5
 		scale30 = v0r + v1r + v0rc + v1rc + v00r + v10r + v00rc + v10rc;
@@ -256,20 +262,20 @@ public class CofVGenRoeMetz {
 		scaleM1[0] = scale1 + scale20;
 		scaleM1[1] = scale30;
 		scaleM1[2] = scale30;
-		m[5][0][0] = prodMoment1(new double[] { u[0], u[0] }, scaleM1, n);
+		m[0][0][5] = prodMoment1(new double[] { u[0], u[0] }, scaleM1, n);
 
 		scaleM1[0] = scale1 + scale21;
 		scaleM1[1] = scale31;
 		scaleM1[2] = scale31;
-		m[5][1][1] = prodMoment1(new double[] { u[1], u[1] }, scaleM1, n);
+		m[1][1][5] = prodMoment1(new double[] { u[1], u[1] }, scaleM1, n);
 
 		scaleM[0] = scale1;
 		scaleM[1] = scale20;
 		scaleM[2] = scale21;
 		scaleM[3] = scale30;
 		scaleM[4] = scale31;
-		m[5][0][1] = prodMoment(new double[] { u[0], u[1] }, scaleM, n);
-		m[5][1][0] = m[5][0][1];
+		m[1][0][5] = prodMoment(new double[] { u[0], u[1] }, scaleM, n);
+		m[0][1][5] = m[1][0][5];
 
 		// M6
 		scale30 = v0r + v1r + v0c + v0rc + v1rc + v00r + v10r + v00c + v00rc
@@ -283,20 +289,20 @@ public class CofVGenRoeMetz {
 		scaleM1[0] = scale1 + scale20;
 		scaleM1[1] = scale30;
 		scaleM1[2] = scale30;
-		m[6][0][0] = prodMoment1(new double[] { u[0], u[0] }, scaleM1, n);
+		m[0][0][6] = prodMoment1(new double[] { u[0], u[0] }, scaleM1, n);
 
 		scaleM1[0] = scale1 + scale21;
 		scaleM1[1] = scale31;
 		scaleM1[2] = scale31;
-		m[6][1][1] = prodMoment1(new double[] { u[1], u[1] }, scaleM1, n);
+		m[1][1][6] = prodMoment1(new double[] { u[1], u[1] }, scaleM1, n);
 
 		scaleM[0] = scale1;
 		scaleM[1] = scale20;
 		scaleM[2] = scale21;
 		scaleM[3] = scale30;
 		scaleM[4] = scale31;
-		m[6][0][1] = prodMoment(new double[] { u[0], u[1] }, scaleM, n);
-		m[6][1][0] = m[6][0][1];
+		m[1][0][6] = prodMoment(new double[] { u[0], u[1] }, scaleM, n);
+		m[0][1][6] = m[1][0][6];
 
 		// M7
 		scale30 = v0r + v1r + v1c + v0rc + v1rc + v00r + v10r + v10c + v00rc
@@ -310,36 +316,109 @@ public class CofVGenRoeMetz {
 		scaleM1[0] = scale1 + scale20;
 		scaleM1[1] = scale30;
 		scaleM1[2] = scale30;
-		m[7][0][0] = prodMoment1(new double[] { u[0], u[0] }, scaleM1, n);
+		m[0][0][7] = prodMoment1(new double[] { u[0], u[0] }, scaleM1, n);
 
 		scaleM1[0] = scale1 + scale21;
 		scaleM1[1] = scale31;
 		scaleM1[2] = scale31;
-		m[7][1][1] = prodMoment1(new double[] { u[1], u[1] }, scaleM1, n);
+		m[1][1][7] = prodMoment1(new double[] { u[1], u[1] }, scaleM1, n);
 
 		scaleM[0] = scale1;
 		scaleM[1] = scale20;
 		scaleM[2] = scale21;
 		scaleM[3] = scale30;
 		scaleM[4] = scale31;
-		m[7][0][1] = prodMoment(new double[] { u[0], u[1] }, scaleM, n);
-		m[7][1][0] = m[7][0][1];
+		m[1][0][7] = prodMoment(new double[] { u[0], u[1] }, scaleM, n);
+		m[0][1][7] = m[1][0][7];
 
 		//
 
-		m[8][0][0] = m[0][0][0] * m[0][0][0];
-		m[8][1][1] = m[0][1][1] * m[0][1][1];
-		m[8][0][1] = m[0][0][0] * m[0][1][1];
-		m[8][1][0] = m[8][0][1];
+		m[0][0][8] = m[0][0][0] * m[0][0][0];
+		m[1][1][8] = m[1][1][0] * m[1][1][0];
+		m[1][0][8] = m[0][0][0] * m[1][1][0];
+		m[0][1][8] = m[1][0][8];
 
-		double[][] Bauc = { 
-				{ 0, 0, 0, 0, 0, 0, 1, -1 },
-				{ 0, 0, 0, 0, 0, 1, 0, -1 }, 
-				{ 0, 0, 0, 0, 1, -1, -1, 1 },
-				{ 0, 0, 0, 1, 0, 0, 0, -1 }, 
-				{ 0, 0, 1, -1, 0, 0, -1, 1 },
-				{ 0, 1, 0, -1, 0, -1, 0, 1 }, 
-				{ 1, -1, -1, 1, -1, 1, 1, -1 } };
+		double[][] Bauc = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, -1.0 },
+				{ 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, -1.0 },
+				{ 0.0, 0.0, 0.0, 0.0, 1.0, -1.0, -1.0, 1.0 },
+				{ 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, -1.0 },
+				{ 0.0, 0.0, 1.0, -1.0, 0.0, 0.0, -1.0, 1.0 },
+				{ 0.0, 1.0, 0.0, -1.0, 0.0, -1.0, 0.0, 1.0 },
+				{ 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0 } };
 
+		double[][][] cofv_auc = new double[2][2][7];
+
+		double[] Baucxm1 = matrix.multiply(Bauc,
+				matrix.get1Dimension(1, m, "0", "0", "*"));
+		for (int i = 0; i < cofv_auc[0][0].length; i++) {
+			cofv_auc[0][0][i] = Baucxm1[i];
+		}
+
+		double[] Baucxm2 = matrix.multiply(Bauc,
+				matrix.get1Dimension(1, m, "1", "1", "*"));
+		for (int i = 0; i < cofv_auc[1][1].length; i++) {
+			cofv_auc[1][1][i] = Baucxm2[i];
+		}
+
+		double[] Baucxm3 = matrix.multiply(Bauc,
+				matrix.get1Dimension(1, m, "1", "0", "*"));
+		for (int i = 0; i < cofv_auc[1][0].length; i++) {
+			cofv_auc[1][0][i] = Baucxm3[i];
+		}
+
+		for (int i = 0; i < cofv_auc[0][1].length; i++) {
+			cofv_auc[0][1][i] = cofv_auc[1][0][i];
+		}
+
+		double[][] Bpc = { { 0, 0, 0, 1, 0, 0, 0, -1 },
+				{ 0, 0, 0, 0, 1, 0, 0, -1 }, { 1, 0, 0, -1, -1, 0, 0, 1 } };
+
+		double[][][] cofv_pc = new double[2][2][3];
+		double[] Bpcxm1 = matrix.multiply(Bpc,
+				matrix.get1Dimension(1, m, "0", "0", "*"));
+		for (int i = 0; i < cofv_pc[0][0].length; i++) {
+			cofv_pc[0][0][i] = Bpcxm1[i];
+		}
+
+		double[] Bpcxm2 = matrix.multiply(Bpc,
+				matrix.get1Dimension(1, m, "1", "1", "*"));
+		for (int i = 0; i < cofv_pc[1][1].length; i++) {
+			cofv_pc[1][1][i] = Bpcxm2[i];
+		}
+
+		double[] Bpcxm3 = matrix.multiply(Bpc,
+				matrix.get1Dimension(1, m, "1", "0", "*"));
+		for (int i = 0; i < cofv_pc[1][0].length; i++) {
+			cofv_pc[1][0][i] = Bpcxm3[i];
+		}
+
+		for (int i = 0; i < cofv_pc[0][1].length; i++) {
+			cofv_pc[0][1][i] = cofv_pc[1][0][i];
+		}
+
+	}
+
+	public static void main(String[] args) {
+		double[][][] m = { { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 } },
+				{ { 10, 11, 12 }, { 13, 14, 15 }, { 16, 17, 18 } },
+				{ { 19, 20, 21 }, { 22, 23, 24 }, { 25, 26, 27 } } };
+
+		double[][] Bauc = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, -1.0 },
+				{ 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, -1.0 },
+				{ 0.0, 0.0, 0.0, 0.0, 1.0, -1.0, -1.0, 1.0 },
+				{ 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, -1.0 },
+				{ 0.0, 0.0, 1.0, -1.0, 0.0, 0.0, -1.0, 1.0 },
+				{ 0.0, 1.0, 0.0, -1.0, 0.0, -1.0, 0.0, 1.0 },
+				{ 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0 } };
+
+		double[][] y = { { 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0 },
+				{ 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0 } };
+
+		double[] yDim1 = new double[y[0].length];
+		for (int i = 0; i < y[0].length; i++) {
+			yDim1[i] = y[0][i];
+		}
+		System.out.println(Arrays.toString(matrix.get1Dimension(1, m, "0", "0",
+				"*")));
 	}
 }

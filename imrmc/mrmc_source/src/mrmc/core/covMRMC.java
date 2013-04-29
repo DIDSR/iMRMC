@@ -88,15 +88,15 @@ public class covMRMC {
 
 		for (int ir = 0; ir < Reader; ir++) {
 			// ***************for the first modality******************
-			int[][] designA0 = matrix.extractFirstDimention(d0, ir, 0);
-			int[][] designA1 = matrix.extractFirstDimention(d1, ir, 0);
+			int[][] designA0 = matrix.extractFirstDimension(d0, ir, 0);
+			int[][] designA1 = matrix.extractFirstDimension(d1, ir, 0);
 			int[][] da = matrix.multiply(designA0,
 					matrix.matrixTranspose(designA1));
 			int totalda = matrix.total(da);
 			double wa = w[ir][0];
-			double[][] ta0 = matrix.extractFirstDimention(t0, ir, 0);
+			double[][] ta0 = matrix.extractFirstDimension(t0, ir, 0);
 			double[][] ta0temp = matrix.linearTrans(ta0, 0.0, 1.0);
-			double[][] ta1 = matrix.extractFirstDimention(t1, ir, 0);
+			double[][] ta1 = matrix.extractFirstDimension(t1, ir, 0);
 			double[][] ta1temp = matrix.linearTrans(ta1, 0.0, 1.0);
 
 			double[][] sa0 = matrix.multiply(ta0,
@@ -116,15 +116,15 @@ public class covMRMC {
 			double[][] wada = matrix.linearTrans(da, wa, 0);
 			double[][] wadasa = matrix.elementMultiply(wada, sa);
 			// ***************for the second modality******************
-			int[][] designB0 = matrix.extractFirstDimention(d0, ir, 1);
-			int[][] designB1 = matrix.extractFirstDimention(d1, ir, 1);
+			int[][] designB0 = matrix.extractFirstDimension(d0, ir, 1);
+			int[][] designB1 = matrix.extractFirstDimension(d1, ir, 1);
 			int[][] db = matrix.multiply(designB0,
 					matrix.matrixTranspose(designB1));
 			int totaldb = matrix.total(db);
 			double wb = w[ir][1];
-			double[][] tb0 = matrix.extractFirstDimention(t0, ir, 1);
+			double[][] tb0 = matrix.extractFirstDimension(t0, ir, 1);
 			double[][] tb0temp = matrix.linearTrans(tb0, 0.0, 1.0);
-			double[][] tb1 = matrix.extractFirstDimention(t1, ir, 1);
+			double[][] tb1 = matrix.extractFirstDimension(t1, ir, 1);
 			double[][] tb1temp = matrix.linearTrans(tb1, 0.0, 1.0);
 
 			double[][] sb0 = matrix.multiply(tb0,

@@ -41,6 +41,7 @@ public class SimRoeMetz {
 		doSim(u, var_t, n);
 	}
 
+	// TODO verify correctness
 	public static void doSim(double[] u, double[] var_t, int[] n) {
 		if (u.length != 2) {
 			System.out.println("input u is of incorrect size");
@@ -69,71 +70,71 @@ public class SimRoeMetz {
 
 		double snr_0 = mu_0 / matrix.total(var_t);
 		double snr_1 = mu_1 / matrix.total(var_t);
-		// auc_0 = snrToAUC(snr_0);
-		// auc_1 = snrToAUC(snr_1);
-		// double[] auc = new double[] { auc_0, auc_1, auc_0 - auc_1 };
+		double auc_0 = snrToAUC(snr_0);
+		double auc_1 = snrToAUC(snr_1);
+		double[] auc = new double[] { auc_0, auc_1, auc_0 - auc_1 };
 
 		Random rand = new Random(); // uses currentTimeMillis() as seed by
 									// default
 
 		double[] R0 = fillGaussian(stdDevs[0], rand, nr);
 		double[] C0 = fillGaussian(stdDevs[1], rand, n0);
-		double[][] RC0 = fillGaussian(stdDevs[2], rand, n0, nr);
+		double[][] RC0 = fillGaussian(stdDevs[2], rand, nr, n0);
 		double[] R00 = fillGaussian(stdDevs[3], rand, nr);
 		double[] R01 = fillGaussian(stdDevs[3], rand, nr);
 		double[] C00 = fillGaussian(stdDevs[4], rand, n0);
 		double[] C01 = fillGaussian(stdDevs[4], rand, n0);
-		double[][] RC00 = fillGaussian(stdDevs[5], rand, n0, nr);
-		double[][] RC01 = fillGaussian(stdDevs[5], rand, n0, nr);
+		double[][] RC00 = fillGaussian(stdDevs[5], rand, nr, n0);
+		double[][] RC01 = fillGaussian(stdDevs[5], rand, nr, n0);
 		double[] R1 = fillGaussian(stdDevs[0], rand, nr);
 		double[] C1 = fillGaussian(stdDevs[1], rand, n1);
-		double[][] RC1 = fillGaussian(stdDevs[2], rand, n1, nr);
+		double[][] RC1 = fillGaussian(stdDevs[2], rand, nr, n1);
 		double[] R10 = fillGaussian(stdDevs[3], rand, nr);
 		double[] R11 = fillGaussian(stdDevs[3], rand, nr);
 		double[] C10 = fillGaussian(stdDevs[4], rand, n1);
 		double[] C11 = fillGaussian(stdDevs[4], rand, n1);
-		double[][] RC10 = fillGaussian(stdDevs[5], rand, n1, nr);
-		double[][] RC11 = fillGaussian(stdDevs[5], rand, n1, nr);
+		double[][] RC10 = fillGaussian(stdDevs[5], rand, nr, n1);
+		double[][] RC11 = fillGaussian(stdDevs[5], rand, nr, n1);
 
-		double[][] t00 = new double[n0][nr];
-		double[][] t01 = new double[n0][nr];
-		double[][] t10 = new double[n1][nr];
-		double[][] t11 = new double[n1][nr];
+		double[][] t00 = new double[nr][n0];
+		double[][] t01 = new double[nr][n0];
+		double[][] t10 = new double[nr][n1];
+		double[][] t11 = new double[nr][n1];
 
-		for (int i = 0; i < n1; i++) {
+		for (int i = 0; i < nr; i++) {
 			Arrays.fill(t10[i], mu_0);
 			Arrays.fill(t11[i], mu_1);
 		}
 
 		for (int r = 0; r < nr; r++) {
 			for (int i = 0; i < n0; i++) {
-				t00[i][r] += R0[r];
-				t00[i][r] += R00[r];
-				t01[i][r] += R0[r];
-				t01[i][r] += R01[r];
+				t00[r][i] += R0[r];
+				t00[r][i] += R00[r];
+				t01[r][i] += R0[r];
+				t01[r][i] += R01[r];
 			}
 			for (int i = 0; i < n1; i++) {
-				t10[i][r] += R1[r];
-				t10[i][r] += R10[r];
-				t11[i][r] += R1[r];
-				t11[i][r] += R11[r];
+				t10[r][i] += R1[r];
+				t10[r][i] += R10[r];
+				t11[r][i] += R1[r];
+				t11[r][i] += R11[r];
 			}
 		}
-		for (int r = 0; r < n0; r++) {
-			for (int i = 0; i < nr; i++) {
-				t00[r][i] += C0[r];
-				t00[r][i] += C00[r];
-				t01[r][i] += C0[r];
-				t01[r][i] += C01[r];
+		for (int r = 0; r < nr; r++) {
+			for (int i = 0; i < n0; i++) {
+				t00[r][i] += C0[i];
+				t00[r][i] += C00[i];
+				t01[r][i] += C0[i];
+				t01[r][i] += C01[i];
 			}
 
 		}
-		for (int r = 0; r < n1; r++) {
-			for (int i = 0; i < nr; i++) {
-				t10[r][i] += C1[r];
-				t10[r][i] += C10[r];
-				t11[r][i] += C1[r];
-				t11[r][i] += C11[r];
+		for (int r = 0; r < nr; r++) {
+			for (int i = 0; i < n1; i++) {
+				t10[r][i] += C1[i];
+				t10[r][i] += C10[i];
+				t11[r][i] += C1[i];
+				t11[r][i] += C11[i];
 			}
 		}
 
@@ -151,6 +152,9 @@ public class SimRoeMetz {
 		try {
 			fstream = new FileWriter("output.txt");
 			BufferedWriter toOut = new BufferedWriter(fstream);
+
+			toOut.write("AUC:\n");
+			toOut.write(Arrays.toString(auc) + "\n");
 
 			toOut.write("R0:\n");
 			toOut.write(Arrays.toString(R0) + "\n");
@@ -242,9 +246,8 @@ public class SimRoeMetz {
 	}
 
 	public static double snrToAUC(double snr) {
-		// TODO define error function
 		double toReturn = 0;
-		// toReturn = 0.5 + (0.5 * errorf(0.5*snr));
+		toReturn = 0.5 + (0.5 * ErrorFunction.erf(0.5 * snr));
 		return toReturn;
 	}
 

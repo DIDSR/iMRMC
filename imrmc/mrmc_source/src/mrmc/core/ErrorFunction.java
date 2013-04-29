@@ -1,5 +1,5 @@
 /*
- * Gaussian.java
+ * ErrorFunction.java
  * 
  * 
  * @Author Robert Sedgewick and Kevin Wayne
@@ -22,56 +22,57 @@
  *     Reference: Evaluating the Normal Distribution by George Marsaglia. http://www.jstatsoft.org/v11/a04/paper
  *     Taken from http://introcs.cs.princeton.edu/java/22library/Gaussian.java.html
  *     
- *     Function to compute the Gaussian pdf (probability density function)
- * 		and the Gaussian cdf (cumulative density function)
+ *     Implements the Gauss error function.
+ *
+ *              erf(z) = 2 / sqrt(pi) * integral(exp(-t*t), t = 0..z) 
  */
 
 package mrmc.core;
 
-public class Gaussian {
-	// return phi(x) = standard Gaussian pdf
-	public static double phi(double x) {
-		return Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI);
-	}
+public class ErrorFunction {
 
-	// return phi(x, mu, signma) = Gaussian pdf with mean mu and stddev sigma
-	public static double phi(double x, double mu, double sigma) {
-		return phi((x - mu) / sigma) / sigma;
-	}
+	// fractional error in math formula less than 1.2 * 10 ^ -7.
+	// although subject to catastrophic cancellation when z in very close to 0
+	// from Chebyshev fitting formula for erf(z) from Numerical Recipes, 6.2
+	public static double erf(double z) {
+		double t = 1.0 / (1.0 + 0.5 * Math.abs(z));
 
-	// return Phi(z) = standard Gaussian cdf using Taylor approximation
-	public static double Phi(double z) {
-		if (z < -8.0)
-			return 0.0;
-		if (z > 8.0)
-			return 1.0;
-		double sum = 0.0, term = z;
-		for (int i = 3; sum + term != sum; i += 2) {
-			sum = sum + term;
-			term = term * z * z / i;
-		}
-		return 0.5 + sum * phi(z);
-	}
-
-	// return Phi(z, mu, sigma) = Gaussian cdf with mean mu and stddev sigma
-	public static double Phi(double z, double mu, double sigma) {
-		return Phi((z - mu) / sigma);
-	}
-
-	// Compute z such that Phi(z) = y via bisection search
-	public static double PhiInverse(double y) {
-		return PhiInverse(y, .00000001, -8, 8);
-	}
-
-	// bisection search
-	private static double PhiInverse(double y, double delta, double lo,
-			double hi) {
-		double mid = lo + (hi - lo) / 2;
-		if (hi - lo < delta)
-			return mid;
-		if (Phi(mid) > y)
-			return PhiInverse(y, delta, lo, mid);
+		// use Horner's method
+		double ans = 1
+				- t
+				* Math.exp(-z
+						* z
+						- 1.26551223
+						+ t
+						* (1.00002368 + t
+								* (0.37409196 + t
+										* (0.09678418 + t
+												* (-0.18628806 + t
+														* (0.27886807 + t
+																* (-1.13520398 + t
+																		* (1.48851587 + t
+																				* (-0.82215223 + t * (0.17087277))))))))));
+		if (z >= 0)
+			return ans;
 		else
-			return PhiInverse(y, delta, mid, hi);
+			return -ans;
+	}
+
+	// fractional error less than x.xx * 10 ^ -4.
+	// Algorithm 26.2.17 in Abromowitz and Stegun, Handbook of Mathematical.
+	public static double erf2(double z) {
+		double t = 1.0 / (1.0 + 0.47047 * Math.abs(z));
+		double poly = t * (0.3480242 + t * (-0.0958798 + t * (0.7478556)));
+		double ans = 1.0 - poly * Math.exp(-z * z);
+		if (z >= 0)
+			return ans;
+		else
+			return -ans;
+	}
+
+	// cumulative normal distribution
+	// See Gaussia.java for a better way to compute Phi(z)
+	public static double Phi(double z) {
+		return 0.5 * (1.0 + erf(z / (Math.sqrt(2.0))));
 	}
 }
