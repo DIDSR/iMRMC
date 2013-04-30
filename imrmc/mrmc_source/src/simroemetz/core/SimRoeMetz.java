@@ -24,9 +24,9 @@
 
 package simroemetz.core;
 
+import org.apache.commons.math3.special.Erf;
 import java.util.Arrays;
 import java.util.Random;
-
 import mrmc.core.matrix;
 
 public class SimRoeMetz {
@@ -170,7 +170,7 @@ public class SimRoeMetz {
 
 	public static double snrToAUC(double snr) {
 		double toReturn = 0;
-		toReturn = 0.5 + (0.5 * ErrorFunction.erf(0.5 * snr));
+		toReturn = 0.5 + (0.5 * Erf.erf(0.5 * snr));
 		return toReturn;
 	}
 

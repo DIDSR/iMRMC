@@ -25,33 +25,36 @@
 package simroemetz.core;
 
 import mrmc.core.matrix;
+import org.apache.commons.math3.distribution.NormalDistribution;
 
 public class CofVGenRoeMetz {
 	static double[][][] cofv_auc;
 	static double[][][] cofv_pc;
 
 	public static void main(String[] args) {
-		double[] u = { 1.5, 1.0 };
-		double[] var_t = { 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0,
-				1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0,
-				1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0,
-				1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0 };
-		int n = 256;
-		genRoeMetz(u, n, var_t);
+		 double[] u = { 1.5, 1.0 };
+		 double[] var_t = { 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0,
+		 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0,
+		 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0,
+		 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0 };
+		 int n = 256;
+		 genRoeMetz(u, n, var_t);
 		
-		System.out.println("cofv_auc:");
-		for (int i = 0; i < cofv_auc.length; i++) {
-			matrix.printMatrix(cofv_auc[i]);
-		}
-		System.out.println();
-		System.out.println("cofv_pc:");
-		for (int i = 0; i < cofv_pc.length; i++) {
-			matrix.printMatrix(cofv_pc[i]);
-		}
+		 System.out.println("cofv_auc:");
+		 for (int i = 0; i < cofv_auc.length; i++) {
+		 matrix.printMatrix(cofv_auc[i]);
+		 }
+		 System.out.println();
+		 System.out.println("cofv_pc:");
+		 for (int i = 0; i < cofv_pc.length; i++) {
+		 matrix.printMatrix(cofv_pc[i]);
+		 }
 	}
 
 	// TODO verify correctness
 	public static double prodMoment1(double[] u, double[] scale, int n) {
+		NormalDistribution gauss = new NormalDistribution();
+
 		double scale1 = scale[0];
 		double scale20 = scale[1];
 		double scale21 = scale[2];
@@ -74,8 +77,10 @@ public class CofVGenRoeMetz {
 
 		double[] phi = new double[n];
 		for (int i = 0; i < n; i++) {
-			phi[i] = Gaussian.Phi((u[0] + x[i]) / Math.sqrt(scale20))
-					* Gaussian.Phi((u[1] + x[i]) / Math.sqrt(scale21));
+			phi[i] = gauss.cumulativeProbability((u[0] + x[i])
+					/ Math.sqrt(scale20))
+					* gauss.cumulativeProbability((u[1] + x[i])
+							/ Math.sqrt(scale21));
 		}
 
 		double[] toTotal = new double[n];
@@ -86,6 +91,7 @@ public class CofVGenRoeMetz {
 	}
 
 	public static double prodMoment(double[] u, double[] scale, int n) {
+		NormalDistribution gauss = new NormalDistribution();
 		double scale1 = scale[0];
 		double scale20 = scale[1];
 		double scale21 = scale[2];
@@ -133,10 +139,10 @@ public class CofVGenRoeMetz {
 			double[] dy1xf1xphi1 = new double[n];
 
 			for (int j = 0; j < n; j++) {
-				phi0[j] = Gaussian.Phi((u[0] + x[j] + y0[i])
+				phi0[j] = gauss.cumulativeProbability((u[0] + x[j] + y0[i])
 						/ Math.sqrt(scale30));
 				dy0xf0xphi0[j] = dy0xf0[j] * phi0[j];
-				phi1[j] = Gaussian.Phi((u[1] + x[j] + y1[i])
+				phi1[j] = gauss.cumulativeProbability((u[1] + x[j] + y1[i])
 						/ Math.sqrt(scale31));
 				dy1xf1xphi1[j] = dy1xf1[j] * phi1[j];
 			}
@@ -156,6 +162,7 @@ public class CofVGenRoeMetz {
 
 	// TODO verify correctness
 	public static void genRoeMetz(double[] u, int n, double[] var_t) {
+		NormalDistribution gauss = new NormalDistribution();
 		if (var_t.length != 18) {
 			System.out
 					.println("var_t should contain 18 components of variance");
@@ -191,8 +198,10 @@ public class CofVGenRoeMetz {
 		double scale1 = v0r + v0c + v0rc + v1r + v1c + v1rc;
 		double scale20 = v00r + v00c + v00rc + v10r + v10c + v10rc;
 		double scale21 = v01r + v01c + v01rc + v11r + v11c + v11rc;
-		m[0][0][0] = Gaussian.Phi(u[0] / Math.sqrt(scale1 + scale20));
-		m[1][1][0] = Gaussian.Phi(u[1] / Math.sqrt(scale1 + scale21));
+		m[0][0][0] = gauss.cumulativeProbability(u[0]
+				/ Math.sqrt(scale1 + scale20));
+		m[1][1][0] = gauss.cumulativeProbability(u[1]
+				/ Math.sqrt(scale1 + scale21));
 		m[1][0][0] = m[0][0][0] - m[1][1][0];
 		m[0][1][0] = -m[1][0][0];
 
