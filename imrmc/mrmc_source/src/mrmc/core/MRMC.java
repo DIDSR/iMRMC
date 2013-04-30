@@ -35,7 +35,8 @@ public class MRMC extends JApplet{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static JFrame mainFrame;
+	private static JFrame mrmcFrame;
+	private static JFrame simFrame;
 	GUInterface gui;
 	GUImenubar menuBar;
 	mrmcDB db;
@@ -49,7 +50,7 @@ public class MRMC extends JApplet{
 	}
 
 	public JFrame getFrame() {
-		return mainFrame;
+		return mrmcFrame;
 	}
 
 	public void init() {
@@ -82,13 +83,13 @@ public class MRMC extends JApplet{
 	}
 
 	public static void run(JApplet applet, int width, int height) {
-		mainFrame = new JFrame("iMRMC 2.0b");
-		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		mainFrame.getContentPane().add(applet);
-		mainFrame.pack();
-		mainFrame.setSize(width, height);
+		mrmcFrame = new JFrame("iMRMC 2.0b");
+		mrmcFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		mrmcFrame.getContentPane().add(applet);
+		mrmcFrame.pack();
+		mrmcFrame.setSize(width, height);
 		applet.init();
 		applet.start();
-		mainFrame.setVisible(true);
+		mrmcFrame.setVisible(true);
 	}
 } 

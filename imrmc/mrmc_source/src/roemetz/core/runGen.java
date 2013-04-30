@@ -1,6 +1,6 @@
 /* class to run tests on generalized roe & metz */
 
-package simroemetz.core;
+package roemetz.core;
 
 import mrmc.core.matrix;
 

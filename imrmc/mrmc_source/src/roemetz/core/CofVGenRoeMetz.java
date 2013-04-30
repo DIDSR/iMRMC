@@ -22,7 +22,7 @@
  *     for each truth state and modality. Adapted for java from cofv_genroemetz.pro (Brandon D. Gallas, PhD)
  */
 
-package simroemetz.core;
+package roemetz.core;
 
 import mrmc.core.matrix;
 import org.apache.commons.math3.distribution.NormalDistribution;

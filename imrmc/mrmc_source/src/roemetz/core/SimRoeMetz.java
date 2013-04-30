@@ -22,7 +22,7 @@
  *     (Brandon D. Gallas, PhD)
  */
 
-package simroemetz.core;
+package roemetz.core;
 
 import org.apache.commons.math3.special.Erf;
 import java.util.Arrays;
