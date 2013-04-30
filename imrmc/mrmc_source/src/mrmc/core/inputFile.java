@@ -467,38 +467,38 @@ public class inputFile {
 			m = 0; // number of false cases
 			n = 0; // number of true cases
 			for (Integer c : keyedData.get(r).keySet()) {
-				double currMod1;
-				double currMod2;
+				double currScoreMod1;
+				double currScoreMod2;
 				if (keyedData.get(r).containsKey(c)) {
 					if (keyedData.get(r).get(c).containsKey(modality1)) {
-						currMod1 = keyedData.get(r).get(c).get(modality1);
+						currScoreMod1 = keyedData.get(r).get(c).get(modality1);
 					} else {
-						currMod1 = 0;
+						currScoreMod1 = 0;
 					}
 					if (keyedData.get(r).get(c).containsKey(modality2)) {
-						currMod2 = keyedData.get(r).get(c).get(modality2);
+						currScoreMod2 = keyedData.get(r).get(c).get(modality2);
 					} else {
-						currMod2 = 0;
+						currScoreMod2 = 0;
 					}
 				} else {
-					currMod1 = 0;
-					currMod2 = 0;
+					currScoreMod1 = 0;
+					currScoreMod2 = 0;
 				}
 				if (truthVals.get(c) == 0) {
-					t0[m][k][0] = currMod1;
-					t0[m][k][1] = currMod2;
-					t01[m][k][0] = currMod1;
-					t01[m][k][1] = currMod1;
-					t02[m][k][0] = currMod2;
-					t02[m][k][1] = currMod2;
+					t0[m][k][0] = currScoreMod1;
+					t0[m][k][1] = currScoreMod2;
+					t01[m][k][0] = currScoreMod1;
+					t01[m][k][1] = currScoreMod1;
+					t02[m][k][0] = currScoreMod2;
+					t02[m][k][1] = currScoreMod2;
 					m++;
 				} else {
-					t1[n][k][0] = currMod1;
-					t1[n][k][1] = currMod2;
-					t11[n][k][0] = currMod1;
-					t11[n][k][1] = currMod1;
-					t12[n][k][0] = currMod2;
-					t12[n][k][1] = currMod2;
+					t1[n][k][0] = currScoreMod1;
+					t1[n][k][1] = currScoreMod2;
+					t11[n][k][0] = currScoreMod1;
+					t11[n][k][1] = currScoreMod1;
+					t12[n][k][0] = currScoreMod2;
+					t12[n][k][1] = currScoreMod2;
 					n++;
 				}
 			}

@@ -22,15 +22,19 @@
  *     (Brandon D. Gallas, PhD)
  */
 
-package mrmc.core;
+package simroemetz.core;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Random;
 
+import mrmc.core.matrix;
+
 public class SimRoeMetz {
+	static double[][] t00;
+	static double[][] t01;
+	static double[][] t10;
+	static double[][] t11;
+	static double[] auc;
 
 	public static void main(String[] args) {
 		// double[] u = { 1.5, 3 };
@@ -38,7 +42,7 @@ public class SimRoeMetz {
 		// 0.0529776 };
 		// int[] n = { 259, 51, 15 };
 		double[] u = { 1.5, 1.0 };
-		// TODO 18 different variance components
+
 		double[] var_t = { 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0,
 				1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0,
 				1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0,
@@ -46,6 +50,21 @@ public class SimRoeMetz {
 		int[] n = { 200, 200, 20 };
 
 		doSim(u, var_t, n);
+
+		System.out.println("t00:");
+		matrix.printMatrix(t00);
+		System.out.println();
+		System.out.println("t01:");
+		matrix.printMatrix(t01);
+		System.out.println();
+		System.out.println("t10:");
+		matrix.printMatrix(t10);
+		System.out.println();
+		System.out.println("t11:");
+		matrix.printMatrix(t11);
+		System.out.println();
+		System.out.println("AUC:");
+		System.out.println(Arrays.toString(auc));
 	}
 
 	// TODO verify correctness
@@ -79,7 +98,7 @@ public class SimRoeMetz {
 		double snr_1 = mu_1 / matrix.total(var_t);
 		double auc_0 = snrToAUC(snr_0);
 		double auc_1 = snrToAUC(snr_1);
-		double[] auc = new double[] { auc_0, auc_1, auc_0 - auc_1 };
+		auc = new double[] { auc_0, auc_1, auc_0 - auc_1 };
 
 		Random rand = new Random(); // uses currentTimeMillis() as seed by
 									// default
@@ -102,10 +121,10 @@ public class SimRoeMetz {
 		double[] C1 = fillGaussian(stdDevs[16], rand, n1);
 		double[][] RC1 = fillGaussian(stdDevs[17], rand, nr, n1);
 
-		double[][] t00 = new double[nr][n0];
-		double[][] t01 = new double[nr][n0];
-		double[][] t10 = new double[nr][n1];
-		double[][] t11 = new double[nr][n1];
+		t00 = new double[nr][n0];
+		t01 = new double[nr][n0];
+		t10 = new double[nr][n1];
+		t11 = new double[nr][n1];
 
 		for (int i = 0; i < nr; i++) {
 			Arrays.fill(t10[i], mu_0);
@@ -146,114 +165,6 @@ public class SimRoeMetz {
 		t11 = matrix.matrixAdd(t11, RC1);
 		t10 = matrix.matrixAdd(t10, RC10);
 		t11 = matrix.matrixAdd(t11, RC11);
-
-		FileWriter fstream;
-		try {
-			fstream = new FileWriter("output.txt");
-			BufferedWriter toOut = new BufferedWriter(fstream);
-
-			toOut.write("AUC:\n");
-			toOut.write(Arrays.toString(auc) + "\n");
-
-			// toOut.write("R0:\n");
-			// toOut.write(Arrays.toString(R0) + "\n");
-			// toOut.newLine();
-			// toOut.write("C0:\n");
-			// toOut.write(Arrays.toString(C0) + "\n");
-			// toOut.newLine();
-			// toOut.write("RC0:\n");
-			// for (int i = 0; i < RC0.length; i++) {
-			// toOut.write(Arrays.toString(RC0[i]) + "\n");
-			// }
-			// toOut.newLine();
-			// toOut.write("R00:\n");
-			// toOut.write(Arrays.toString(R00) + "\n");
-			// toOut.newLine();
-			// toOut.write("C00:\n");
-			// toOut.write(Arrays.toString(C00) + "\n");
-			// toOut.newLine();
-			// toOut.write("RC00:\n");
-			// for (int i = 0; i < RC00.length; i++) {
-			// toOut.write(Arrays.toString(RC00[i]) + "\n");
-			// }
-			// toOut.newLine();
-			// toOut.write("R1:\n");
-			// toOut.write(Arrays.toString(R1) + "\n");
-			// toOut.newLine();
-			// toOut.write("C1:\n");
-			// toOut.write(Arrays.toString(C1) + "\n");
-			// toOut.newLine();
-			// toOut.write("RC1:\n");
-			// for (int i = 0; i < RC1.length; i++) {
-			// toOut.write(Arrays.toString(RC1[i]) + "\n");
-			// }
-			// toOut.write("R10:\n");
-			// toOut.write(Arrays.toString(R10) + "\n");
-			// toOut.newLine();
-			// toOut.write("C10:\n");
-			// toOut.write(Arrays.toString(C10) + "\n");
-			// toOut.newLine();
-			// toOut.write("RC10:\n");
-			// for (int i = 0; i < RC10.length; i++) {
-			// toOut.write(Arrays.toString(RC10[i]) + "\n");
-			// }
-			// toOut.write("R01:\n");
-			// toOut.write(Arrays.toString(R01) + "\n");
-			// toOut.newLine();
-			// toOut.write("C01:\n");
-			// toOut.write(Arrays.toString(C01) + "\n");
-			// toOut.newLine();
-			// toOut.write("RC01:\n");
-			// for (int i = 0; i < RC01.length; i++) {
-			// toOut.write(Arrays.toString(RC01[i]) + "\n");
-			// }
-			// toOut.write("R11:\n");
-			// toOut.write(Arrays.toString(R11) + "\n");
-			// toOut.newLine();
-			// toOut.write("C11:\n");
-			// toOut.write(Arrays.toString(C11) + "\n");
-			// toOut.newLine();
-			// toOut.write("RC11:\n");
-			// for (int i = 0; i < RC11.length; i++) {
-			// toOut.write(Arrays.toString(RC11[i]) + "\n");
-			// }
-
-			toOut.write("t00:\n");
-			for (int i = 0; i < t00.length; i++) {
-				toOut.write(Arrays.toString(t00[i]) + "\n");
-			}
-			toOut.newLine();
-			toOut.write("t01:\n");
-			for (int i = 0; i < t01.length; i++) {
-				toOut.write(Arrays.toString(t01[i]) + "\n");
-			}
-			toOut.newLine();
-			toOut.write("t10:\n");
-			for (int i = 0; i < t10.length; i++) {
-				toOut.write(Arrays.toString(t10[i]) + "\n");
-			}
-			toOut.newLine();
-			toOut.write("t11:\n");
-			for (int i = 0; i < t11.length; i++) {
-				toOut.write(Arrays.toString(t11[i]) + "\n");
-			}
-
-			System.out.println("t00:");
-			matrix.printMatrix(t00);
-			System.out.println();
-			System.out.println("t01:");
-			matrix.printMatrix(t01);
-			System.out.println();
-			System.out.println("t10:");
-			matrix.printMatrix(t10);
-			System.out.println();
-			System.out.println("t11:");
-			matrix.printMatrix(t11);
-
-			toOut.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 
 	}
 

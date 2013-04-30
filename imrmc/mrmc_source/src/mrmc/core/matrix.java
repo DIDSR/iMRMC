@@ -156,6 +156,22 @@ public class matrix {
 		return result;
 	}
 
+	public static void printVector(double[] m) {
+		DecimalFormat df = new DecimalFormat("0.###E0");
+		String temp = "";
+		for (int i = 0; i < m.length; i++) {
+			int totalWidth = 14;
+			int numWidth = df.format(m[i]).length();
+			int numSpaces = totalWidth - numWidth;
+			temp = temp + df.format(m[i]);
+			for (int n = 0; n < numSpaces; n++) {
+				temp = temp + " ";
+			}
+		}
+		temp = temp + "\n";
+		System.out.print(temp);
+	}
+
 	public static void printMatrix(double[][] m) {
 		int col = m[0].length;
 		int row = m.length;
@@ -163,7 +179,13 @@ public class matrix {
 		for (int i = 0; i < row; i++) {
 			String temp = "";
 			for (int j = 0; j < col; j++) {
-				temp = temp + df.format(m[i][j]) + "\t";
+				int totalWidth = 14;
+				int numWidth = df.format(m[i][j]).length();
+				int numSpaces = totalWidth - numWidth;
+				temp = temp + df.format(m[i][j]);
+				for (int n = 0; n < numSpaces; n++) {
+					temp = temp + " ";
+				}
 			}
 			temp = temp + "\n";
 			System.out.print(temp);

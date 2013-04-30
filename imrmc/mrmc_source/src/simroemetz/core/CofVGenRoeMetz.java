@@ -22,9 +22,13 @@
  *     for each truth state and modality. Adapted for java from cofv_genroemetz.pro (Brandon D. Gallas, PhD)
  */
 
-package mrmc.core;
+package simroemetz.core;
+
+import mrmc.core.matrix;
 
 public class CofVGenRoeMetz {
+	static double[][][] cofv_auc;
+	static double[][][] cofv_pc;
 
 	public static void main(String[] args) {
 		double[] u = { 1.5, 1.0 };
@@ -34,7 +38,16 @@ public class CofVGenRoeMetz {
 				1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0 };
 		int n = 256;
 		genRoeMetz(u, n, var_t);
-
+		
+		System.out.println("cofv_auc:");
+		for (int i = 0; i < cofv_auc.length; i++) {
+			matrix.printMatrix(cofv_auc[i]);
+		}
+		System.out.println();
+		System.out.println("cofv_pc:");
+		for (int i = 0; i < cofv_pc.length; i++) {
+			matrix.printMatrix(cofv_pc[i]);
+		}
 	}
 
 	// TODO verify correctness
@@ -355,7 +368,7 @@ public class CofVGenRoeMetz {
 				{ 0.0, 1.0, 0.0, -1.0, 0.0, -1.0, 0.0, 1.0 },
 				{ 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0 } };
 
-		double[][][] cofv_auc = new double[2][2][7];
+		cofv_auc = new double[2][2][7];
 
 		double[] Baucxm1 = matrix.multiply(Bauc,
 				matrix.get1Dimension(1, m, "0", "0", "*"));
@@ -382,7 +395,7 @@ public class CofVGenRoeMetz {
 		double[][] Bpc = { { 0, 0, 0, 1, 0, 0, 0, -1 },
 				{ 0, 0, 0, 0, 1, 0, 0, -1 }, { 1, 0, 0, -1, -1, 0, 0, 1 } };
 
-		double[][][] cofv_pc = new double[2][2][3];
+		cofv_pc = new double[2][2][3];
 		double[] Bpcxm1 = matrix.multiply(Bpc,
 				matrix.get1Dimension(1, m, "0", "0", "*"));
 		for (int i = 0; i < cofv_pc[0][0].length; i++) {
@@ -403,17 +416,6 @@ public class CofVGenRoeMetz {
 
 		for (int i = 0; i < cofv_pc[0][1].length; i++) {
 			cofv_pc[0][1][i] = cofv_pc[1][0][i];
-		}
-
-		
-		System.out.println("cofv_auc:");
-		for (int i = 0; i < cofv_auc.length; i++) {
-			matrix.printMatrix(cofv_auc[i]);
-		}
-		System.out.println();
-		System.out.println("cofv_pc:");
-		for (int i = 0; i < cofv_pc.length; i++) {
-			matrix.printMatrix(cofv_pc[i]);
 		}
 
 	}
