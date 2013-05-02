@@ -32,23 +32,23 @@ public class CofVGenRoeMetz {
 	static double[][][] cofv_pc;
 
 	public static void main(String[] args) {
-		 double[] u = { 1.5, 1.0 };
-		 double[] var_t = { 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0,
-		 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0,
-		 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0,
-		 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0 };
-		 int n = 256;
-		 genRoeMetz(u, n, var_t);
-		
-		 System.out.println("cofv_auc:");
-		 for (int i = 0; i < cofv_auc.length; i++) {
-		 matrix.printMatrix(cofv_auc[i]);
-		 }
-		 System.out.println();
-		 System.out.println("cofv_pc:");
-		 for (int i = 0; i < cofv_pc.length; i++) {
-		 matrix.printMatrix(cofv_pc[i]);
-		 }
+		double[] u = { 1.5, 1.0 };
+		double[] var_t = { 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0,
+				1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0,
+				1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0,
+				1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0 };
+		int n = 256;
+		genRoeMetz(u, n, var_t);
+
+		System.out.println("cofv_auc:");
+		for (int i = 0; i < cofv_auc.length; i++) {
+			matrix.printMatrix(cofv_auc[i]);
+		}
+		System.out.println();
+		System.out.println("cofv_pc:");
+		for (int i = 0; i < cofv_pc.length; i++) {
+			matrix.printMatrix(cofv_pc[i]);
+		}
 	}
 
 	// TODO verify correctness
