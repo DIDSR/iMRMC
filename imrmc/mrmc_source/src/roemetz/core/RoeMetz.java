@@ -37,8 +37,8 @@ public class RoeMetz extends JApplet {
 		iRMFrame = new JFrame("iRoeMetz 2.0b");
 		iRMFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		iRMFrame.getContentPane().add(applet);
-		iRMFrame.setSize(width, height);
 		iRMFrame.pack();
+		iRMFrame.setSize(width, height);
 		applet.init();
 		applet.start();
 		iRMFrame.setVisible(true);

@@ -36,6 +36,23 @@ public class SimRoeMetz {
 	static double[][] t11;
 	static double[] auc;
 
+	public static void printResults() {
+		System.out.println("t00:");
+		matrix.printMatrix(t00);
+		System.out.println();
+		System.out.println("t01:");
+		matrix.printMatrix(t01);
+		System.out.println();
+		System.out.println("t10:");
+		matrix.printMatrix(t10);
+		System.out.println();
+		System.out.println("t11:");
+		matrix.printMatrix(t11);
+		System.out.println();
+		System.out.println("AUC:");
+		System.out.println(Arrays.toString(auc));
+	}
+
 	public static void main(String[] args) {
 		// double[] u = { 1.5, 3 };
 		// double[] var_t = { 0.836205, 6.06649, 0.076157, 0.0645917, 0.30713,
