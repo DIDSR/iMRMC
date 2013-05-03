@@ -25,7 +25,6 @@ public class RoeMetz extends JApplet {
 		resize(6, 6);
 
 		Container cp = getContentPane();
-
 		gui = new RMGUInterface(this, cp);
 	}
 

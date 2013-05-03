@@ -42,8 +42,10 @@ public class RMGUInterface {
 	JTextField n1;
 	JTextField nr;
 	JTextField numSamples;
+	RoeMetz appl;
 
 	public RMGUInterface(RoeMetz lsttemp, Container cp) {
+		appl = lsttemp;
 		cp.setLayout(new BoxLayout(cp, BoxLayout.Y_AXIS));
 
 		/*
@@ -64,28 +66,30 @@ public class RMGUInterface {
 		inputLabels.add(inputDesc);
 
 		/*
-		 * Panel within cofvInputPanel with fields to input variances
+		 * Panel within cofvInputPanel with fields to input variances (row 1)
 		 */
-		JPanel varianceFields = new JPanel(new GridLayout(0, 18, 2, 5));
+		JPanel varianceFields1 = new JPanel();
+		varianceFields1.setLayout(new BoxLayout(varianceFields1,
+				BoxLayout.X_AXIS));
 
 		vR00 = new JTextField(4);
+		vR00.setMaximumSize(vR00.getPreferredSize());
 		vC00 = new JTextField(4);
+		vC00.setMaximumSize(vC00.getPreferredSize());
 		vRC00 = new JTextField(4);
+		vRC00.setMaximumSize(vRC00.getPreferredSize());
 		vR10 = new JTextField(4);
+		vR10.setMaximumSize(vR10.getPreferredSize());
 		vC10 = new JTextField(4);
+		vC10.setMaximumSize(vC10.getPreferredSize());
 		vRC10 = new JTextField(4);
+		vRC10.setMaximumSize(vRC10.getPreferredSize());
 		vR01 = new JTextField(4);
+		vR01.setMaximumSize(vR01.getPreferredSize());
 		vC01 = new JTextField(4);
+		vC01.setMaximumSize(vC01.getPreferredSize());
 		vRC01 = new JTextField(4);
-		vR11 = new JTextField(4);
-		vC11 = new JTextField(4);
-		vRC11 = new JTextField(4);
-		vR0 = new JTextField(4);
-		vC0 = new JTextField(4);
-		vRC0 = new JTextField(4);
-		vR1 = new JTextField(4);
-		vC1 = new JTextField(4);
-		vRC1 = new JTextField(4);
+		vRC01.setMaximumSize(vRC01.getPreferredSize());
 
 		JLabel vR00Label = new JLabel("vR00: ");
 		JLabel vC00Label = new JLabel("vC00: ");
@@ -96,6 +100,52 @@ public class RMGUInterface {
 		JLabel vR01Label = new JLabel("vR01: ");
 		JLabel vC01Label = new JLabel("vC01: ");
 		JLabel vRC01Label = new JLabel("vRC01: ");
+
+		varianceFields1.add(vR00Label);
+		varianceFields1.add(vR00);
+		varianceFields1.add(vC00Label);
+		varianceFields1.add(vC00);
+		varianceFields1.add(vRC00Label);
+		varianceFields1.add(vRC00);
+		varianceFields1.add(vR10Label);
+		varianceFields1.add(vR10);
+		varianceFields1.add(vC10Label);
+		varianceFields1.add(vC10);
+		varianceFields1.add(vRC10Label);
+		varianceFields1.add(vRC10);
+		varianceFields1.add(vR01Label);
+		varianceFields1.add(vR01);
+		varianceFields1.add(vC01Label);
+		varianceFields1.add(vC01);
+		varianceFields1.add(vRC01Label);
+		varianceFields1.add(vRC01);
+
+		/*
+		 * Panel within cofvInputPanel with fields to input variances (row 2)
+		 */
+		JPanel varianceFields2 = new JPanel();
+		varianceFields2.setLayout(new BoxLayout(varianceFields2,
+				BoxLayout.X_AXIS));
+
+		vR11 = new JTextField(4);
+		vR11.setMaximumSize(vR11.getPreferredSize());
+		vC11 = new JTextField(4);
+		vC11.setMaximumSize(vC11.getPreferredSize());
+		vRC11 = new JTextField(4);
+		vRC11.setMaximumSize(vRC11.getPreferredSize());
+		vR0 = new JTextField(4);
+		vR0.setMaximumSize(vR0.getPreferredSize());
+		vC0 = new JTextField(4);
+		vC0.setMaximumSize(vC0.getPreferredSize());
+		vRC0 = new JTextField(4);
+		vRC0.setMaximumSize(vRC0.getPreferredSize());
+		vR1 = new JTextField(4);
+		vR1.setMaximumSize(vR1.getPreferredSize());
+		vC1 = new JTextField(4);
+		vC1.setMaximumSize(vC1.getPreferredSize());
+		vRC1 = new JTextField(4);
+		vRC1.setMaximumSize(vRC1.getPreferredSize());
+
 		JLabel vR11Label = new JLabel("vR11: ");
 		JLabel vC11Label = new JLabel("vC11: ");
 		JLabel vRC11Label = new JLabel("vRC11: ");
@@ -106,42 +156,24 @@ public class RMGUInterface {
 		JLabel vC1Label = new JLabel("vC1: ");
 		JLabel vRC1Label = new JLabel("vRC1: ");
 
-		varianceFields.add(vR00Label);
-		varianceFields.add(vR00);
-		varianceFields.add(vC00Label);
-		varianceFields.add(vC00);
-		varianceFields.add(vRC00Label);
-		varianceFields.add(vRC00);
-		varianceFields.add(vR10Label);
-		varianceFields.add(vR10);
-		varianceFields.add(vC10Label);
-		varianceFields.add(vC10);
-		varianceFields.add(vRC10Label);
-		varianceFields.add(vRC10);
-		varianceFields.add(vR01Label);
-		varianceFields.add(vR01);
-		varianceFields.add(vC01Label);
-		varianceFields.add(vC01);
-		varianceFields.add(vRC01Label);
-		varianceFields.add(vRC01);
-		varianceFields.add(vR11Label);
-		varianceFields.add(vR11);
-		varianceFields.add(vC11Label);
-		varianceFields.add(vC11);
-		varianceFields.add(vRC11Label);
-		varianceFields.add(vRC11);
-		varianceFields.add(vR0Label);
-		varianceFields.add(vR0);
-		varianceFields.add(vC0Label);
-		varianceFields.add(vC0);
-		varianceFields.add(vRC0Label);
-		varianceFields.add(vRC0);
-		varianceFields.add(vR1Label);
-		varianceFields.add(vR1);
-		varianceFields.add(vC1Label);
-		varianceFields.add(vC1);
-		varianceFields.add(vRC1Label);
-		varianceFields.add(vRC1);
+		varianceFields2.add(vR11Label);
+		varianceFields2.add(vR11);
+		varianceFields2.add(vC11Label);
+		varianceFields2.add(vC11);
+		varianceFields2.add(vRC11Label);
+		varianceFields2.add(vRC11);
+		varianceFields2.add(vR0Label);
+		varianceFields2.add(vR0);
+		varianceFields2.add(vC0Label);
+		varianceFields2.add(vC0);
+		varianceFields2.add(vRC0Label);
+		varianceFields2.add(vRC0);
+		varianceFields2.add(vR1Label);
+		varianceFields2.add(vR1);
+		varianceFields2.add(vC1Label);
+		varianceFields2.add(vC1);
+		varianceFields2.add(vRC1Label);
+		varianceFields2.add(vRC1);
 
 		/*
 		 * Panel to input means
@@ -178,7 +210,8 @@ public class RMGUInterface {
 		sizeFields.add(nr);
 
 		cofvInputPanel.add(inputLabels);
-		cofvInputPanel.add(varianceFields);
+		cofvInputPanel.add(varianceFields1);
+		cofvInputPanel.add(varianceFields2);
 		cofvInputPanel.add(meansFields);
 		cofvInputPanel.add(sizeFields);
 
@@ -251,32 +284,39 @@ public class RMGUInterface {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			double[] u = { Double.parseDouble(mu0.getText()),
-					Double.parseDouble(mu1.getText()) };
-			double[] var_t = { Double.parseDouble(vR00.getText()),
-					Double.parseDouble(vC00.getText()),
-					Double.parseDouble(vRC00.getText()),
-					Double.parseDouble(vR10.getText()),
-					Double.parseDouble(vC10.getText()),
-					Double.parseDouble(vRC10.getText()),
-					Double.parseDouble(vR01.getText()),
-					Double.parseDouble(vC01.getText()),
-					Double.parseDouble(vRC01.getText()),
-					Double.parseDouble(vR11.getText()),
-					Double.parseDouble(vC11.getText()),
-					Double.parseDouble(vRC11.getText()),
-					Double.parseDouble(vR0.getText()),
-					Double.parseDouble(vC0.getText()),
-					Double.parseDouble(vRC0.getText()),
-					Double.parseDouble(vR1.getText()),
-					Double.parseDouble(vC1.getText()),
-					Double.parseDouble(vRC1.getText()) };
+			try {
+				double[] u = { Double.parseDouble(mu0.getText()),
+						Double.parseDouble(mu1.getText()) };
+				double[] var_t = { Double.parseDouble(vR00.getText()),
+						Double.parseDouble(vC00.getText()),
+						Double.parseDouble(vRC00.getText()),
+						Double.parseDouble(vR10.getText()),
+						Double.parseDouble(vC10.getText()),
+						Double.parseDouble(vRC10.getText()),
+						Double.parseDouble(vR01.getText()),
+						Double.parseDouble(vC01.getText()),
+						Double.parseDouble(vRC01.getText()),
+						Double.parseDouble(vR11.getText()),
+						Double.parseDouble(vC11.getText()),
+						Double.parseDouble(vRC11.getText()),
+						Double.parseDouble(vR0.getText()),
+						Double.parseDouble(vC0.getText()),
+						Double.parseDouble(vRC0.getText()),
+						Double.parseDouble(vR1.getText()),
+						Double.parseDouble(vC1.getText()),
+						Double.parseDouble(vRC1.getText()) };
 
-			int[] n = { Integer.parseInt(n0.getText()),
-					Integer.parseInt(n1.getText()),
-					Integer.parseInt(nr.getText()) };
-			SimRoeMetz.doSim(u, var_t, n);
-			SimRoeMetz.printResults();
+				int[] n = { Integer.parseInt(n0.getText()),
+						Integer.parseInt(n1.getText()),
+						Integer.parseInt(nr.getText()) };
+				SimRoeMetz.doSim(u, var_t, n);
+				SimRoeMetz.printResults();
+			} catch (NumberFormatException e1) {
+				JOptionPane.showMessageDialog(appl.getFrame(),
+						"Incorrect / Incomplete Input", "Warning",
+						JOptionPane.WARNING_MESSAGE);
+			}
+
 		}
 	}
 
@@ -284,30 +324,36 @@ public class RMGUInterface {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			double[] u = { Double.parseDouble(mu0.getText()),
-					Double.parseDouble(mu1.getText()) };
-			double[] var_t = { Double.parseDouble(vR00.getText()),
-					Double.parseDouble(vC00.getText()),
-					Double.parseDouble(vRC00.getText()),
-					Double.parseDouble(vR10.getText()),
-					Double.parseDouble(vC10.getText()),
-					Double.parseDouble(vRC10.getText()),
-					Double.parseDouble(vR01.getText()),
-					Double.parseDouble(vC01.getText()),
-					Double.parseDouble(vRC01.getText()),
-					Double.parseDouble(vR11.getText()),
-					Double.parseDouble(vC11.getText()),
-					Double.parseDouble(vRC11.getText()),
-					Double.parseDouble(vR0.getText()),
-					Double.parseDouble(vC0.getText()),
-					Double.parseDouble(vRC0.getText()),
-					Double.parseDouble(vR1.getText()),
-					Double.parseDouble(vC1.getText()),
-					Double.parseDouble(vRC1.getText()) };
+			try {
+				double[] u = { Double.parseDouble(mu0.getText()),
+						Double.parseDouble(mu1.getText()) };
+				double[] var_t = { Double.parseDouble(vR00.getText()),
+						Double.parseDouble(vC00.getText()),
+						Double.parseDouble(vRC00.getText()),
+						Double.parseDouble(vR10.getText()),
+						Double.parseDouble(vC10.getText()),
+						Double.parseDouble(vRC10.getText()),
+						Double.parseDouble(vR01.getText()),
+						Double.parseDouble(vC01.getText()),
+						Double.parseDouble(vRC01.getText()),
+						Double.parseDouble(vR11.getText()),
+						Double.parseDouble(vC11.getText()),
+						Double.parseDouble(vRC11.getText()),
+						Double.parseDouble(vR0.getText()),
+						Double.parseDouble(vC0.getText()),
+						Double.parseDouble(vRC0.getText()),
+						Double.parseDouble(vR1.getText()),
+						Double.parseDouble(vC1.getText()),
+						Double.parseDouble(vRC1.getText()) };
 
-			int n = Integer.parseInt(numSamples.getText());
-			CofVGenRoeMetz.genRoeMetz(u, n, var_t);
-			CofVGenRoeMetz.printResults();
+				int n = Integer.parseInt(numSamples.getText());
+				CofVGenRoeMetz.genRoeMetz(u, n, var_t);
+				CofVGenRoeMetz.printResults();
+			} catch (NumberFormatException e1) {
+				JOptionPane.showMessageDialog(appl.getFrame(),
+						"Incorrect / Incomplete Input", "Warning",
+						JOptionPane.WARNING_MESSAGE);
+			}
 		}
 	}
 }
