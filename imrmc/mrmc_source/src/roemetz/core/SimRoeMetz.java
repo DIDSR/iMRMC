@@ -28,6 +28,7 @@ import org.apache.commons.math3.special.Erf;
 import java.util.Arrays;
 import java.util.Random;
 
+import mrmc.core.dbRecord;
 import mrmc.core.inputFile;
 import mrmc.core.matrix;
 
@@ -37,15 +38,25 @@ public class SimRoeMetz {
 	static double[][] t10;
 	static double[][] t11;
 	static double[] auc;
-	private static double[][] BDGbias;
 	private static double[][] BDG;
-
-	public static double[][] getBDGbias() {
-		return BDGbias;
-	}
+	private static double[][] BDGcoeff;
+	private static double[][] MS;
+	private static double[][] MScoeff;
 
 	public static double[][] getBDG() {
 		return BDG;
+	}
+
+	public static double[][] getBDGcoeff() {
+		return BDGcoeff;
+	}
+
+	public static double[][] getMS() {
+		return MS;
+	}
+
+	public static double[][] getMScoeff() {
+		return MScoeff;
 	}
 
 	public static void printResults() {
@@ -253,10 +264,14 @@ public class SimRoeMetz {
 		}
 
 		inputFile toCalc = new inputFile(newt0, newt1, newt00, newt01, newt10,
-				newt11, d0, d1, nr, n0, n1);
+				newt11, d0, d1, nr, n0, n1, "", "");
+
 		toCalc.calculateCovMRMC();
-		BDGbias = toCalc.getBDGbias();
-		BDG = toCalc.getBDG();
+		dbRecord rec = new dbRecord(toCalc);
+		BDG = rec.getBDG(1);
+		BDGcoeff = rec.getBDGcoeff();
+		MS = rec.getMS(1);
+		MScoeff = rec.getMScoeff();
 	}
 
 	public static double snrToAUC(double snr) {

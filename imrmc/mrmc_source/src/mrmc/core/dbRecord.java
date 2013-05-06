@@ -562,15 +562,15 @@ public class dbRecord {
 		return c;
 	}
 
-	public double[][] genBCKCoeff(int N2, int N0, int N1) {
+	public double[][] genBCKCoeff(int NR, int N0, int N1) {
 		double[][] c = new double[4][7];
 		c[0][0] = 1.0 / N0;
 		c[0][1] = 1.0 / N1;
 		c[0][2] = 1.0 / (N0 * N1);
-		c[0][3] = 1.0 / N2;
-		c[0][4] = 1.0 / (N0 * N2);
-		c[0][5] = 1.0 / (N1 * N2);
-		c[0][6] = 1.0 / (N1 * N0 * N2);
+		c[0][3] = 1.0 / NR;
+		c[0][4] = 1.0 / (N0 * NR);
+		c[0][5] = 1.0 / (N1 * NR);
+		c[0][6] = 1.0 / (N1 * N0 * NR);
 
 		c[1] = c[0];
 		c[2] = c[0];
@@ -578,19 +578,19 @@ public class dbRecord {
 		return c;
 	}
 
-	public double[][] genDBMCoeff(int N2, int N0, int N1) {
+	public double[][] genDBMCoeff(int NR, int N0, int N1) {
 		double[][] c = new double[4][6];
 		/*
 		 * c[0][0] = 1.0/N2; c[0][1] = 1.0; c[0][2]= 1.0/N2; c[0][3] = 1.0/N2;
 		 * c[0][4]= 1.0; c[0][5]= 1.0/N2;
 		 */
 		/* per unit */
-		c[0][0] = 1.0 / N2;
+		c[0][0] = 1.0 / NR;
 		c[0][1] = 1.0 / (N0 + N1);
-		c[0][2] = 1.0 / N2 / (N0 + N1);
-		c[0][3] = 1.0 / N2;
+		c[0][2] = 1.0 / NR / (N0 + N1);
+		c[0][3] = 1.0 / NR;
 		c[0][4] = 1.0 / (N0 + N1);
-		c[0][5] = 1.0 / N2 / (N0 + N1);
+		c[0][5] = 1.0 / NR / (N0 + N1);
 
 		c[1] = c[0];
 		c[2] = matrix.scaleVector(c[0], 0);
@@ -608,9 +608,9 @@ public class dbRecord {
 		return c;
 	}
 
-	public double[][] genMSCoeff(int N2, int N0, int N1) {
+	public double[][] genMSCoeff(int NR, int N0, int N1) {
 		double[][] c = new double[4][6];
-		double tmp = 1.0 / (N2 * (N0 + N1));
+		double tmp = 1.0 / (NR * (N0 + N1));
 		c[0][0] = tmp;
 		c[0][1] = tmp;
 		c[0][2] = 0;
@@ -628,22 +628,22 @@ public class dbRecord {
 		return c;
 	}
 
-	public double[][] genORCoeff(int N2, int N0, int N1) {
+	public double[][] genORCoeff(int NR, int N0, int N1) {
 		double[][] c = new double[4][6];
-		c[0][0] = 1.0 / N2;
+		c[0][0] = 1.0 / NR;
 		c[0][1] = 0;
 		c[0][2] = 0;
-		c[0][3] = 1.0 / N2 * (N2 - 1);
+		c[0][3] = 1.0 / NR * (NR - 1);
 		c[0][4] = 0;
-		c[0][5] = 1.0 / N2;
+		c[0][5] = 1.0 / NR;
 		c[1] = c[0];
 		c[2] = matrix.scaleVector(c[0], 0);
 		c[3][0] = 0;
-		c[3][1] = 2.0 / N2;
-		c[3][2] = -2.0 / N2;
-		c[3][3] = 2.0 / N2 * (N2 - 1);
-		c[3][4] = -2.0 / N2 * (N2 - 1);
-		c[3][5] = 2.0 / N2;
+		c[3][1] = 2.0 / NR;
+		c[3][2] = -2.0 / NR;
+		c[3][3] = 2.0 / NR * (NR - 1);
+		c[3][4] = -2.0 / NR * (NR - 1);
+		c[3][5] = 2.0 / NR;
 
 		return c;
 	}

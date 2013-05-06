@@ -67,8 +67,7 @@ public class RMGUInterface {
 		 * Panel within cofvInputPanel with fields to input variances (row 1)
 		 */
 		JPanel varianceFields1 = new JPanel();
-		varianceFields1.setLayout(new BoxLayout(varianceFields1,
-				BoxLayout.X_AXIS));
+		varianceFields1.setLayout(new FlowLayout());
 
 		vR00 = new JTextField(4);
 		vR00.setMaximumSize(vR00.getPreferredSize());
@@ -122,8 +121,7 @@ public class RMGUInterface {
 		 * Panel within cofvInputPanel with fields to input variances (row 2)
 		 */
 		JPanel varianceFields2 = new JPanel();
-		varianceFields2.setLayout(new BoxLayout(varianceFields2,
-				BoxLayout.X_AXIS));
+		varianceFields2.setLayout(new FlowLayout());
 
 		vR11 = new JTextField(4);
 		vR11.setMaximumSize(vR11.getPreferredSize());
@@ -350,30 +348,47 @@ public class RMGUInterface {
 						Double.parseDouble(vR1.getText()),
 						Double.parseDouble(vC1.getText()),
 						Double.parseDouble(vRC1.getText()) };
-
 				int[] n = { Integer.parseInt(n0.getText()),
 						Integer.parseInt(n1.getText()),
 						Integer.parseInt(nr.getText()) };
+
 				int numTimes = Integer.parseInt(numExp.getText());
 				double[][] avgBDG = new double[4][8];
-				double[][] avgBDGbias = new double[4][8];
+				double[][] avgBDGcoeff = new double[4][8];
+				double[][] avgMS = new double[4][6];
+				double[][] avgMScoeff = new double[4][6];
+
 				for (int i = 0; i < numTimes; i++) {
 					SimRoeMetz.doSim(u, var_t, n);
-					avgBDGbias = matrix.matrixAdd(avgBDGbias,
-							SimRoeMetz.getBDGbias());
+					avgBDGcoeff = matrix.matrixAdd(avgBDGcoeff,
+							SimRoeMetz.getBDGcoeff());
 					avgBDG = matrix.matrixAdd(avgBDG, SimRoeMetz.getBDG());
+					avgMScoeff = matrix.matrixAdd(avgMScoeff,
+							SimRoeMetz.getMScoeff());
+					avgMS = matrix.matrixAdd(avgMS, SimRoeMetz.getMS());
 				}
-				avgBDGbias = matrix.scaleMatrix(avgBDGbias,
+				avgBDGcoeff = matrix.scaleMatrix(avgBDGcoeff,
 						1.0 / (double) numTimes);
 				avgBDG = matrix.scaleMatrix(avgBDG, 1.0 / (double) numTimes);
+				avgMScoeff = matrix.scaleMatrix(avgMScoeff,
+						1.0 / (double) numTimes);
+				avgMS = matrix.scaleMatrix(avgMS, 1.0 / (double) numTimes);
 
 				System.out.println("BDG across Experiments\t");
 				for (int i = 0; i < 8; i++)
 					System.out.println(avgBDG[3][i] + "\t");
 				System.out.println("\n");
-				System.out.println("BDGbias across Experiments\t");
+				System.out.println("BDGcoeff across Experiments\t");
 				for (int i = 0; i < 8; i++)
-					System.out.println(avgBDGbias[3][i] + "\t");
+					System.out.println(avgBDGcoeff[3][i] + "\t");
+				System.out.println("\n");
+				System.out.println("MS across Experiments\t");
+				for (int i = 0; i < 6; i++)
+					System.out.println(avgMS[3][i] + "\t");
+				System.out.println("\n");
+				System.out.println("MScoeff across Experiments\t");
+				for (int i = 0; i < 6; i++)
+					System.out.println(avgMScoeff[3][i] + "\t");
 				System.out.println("\n");
 			} catch (NumberFormatException e1) {
 				JOptionPane.showMessageDialog(appl.getFrame(),

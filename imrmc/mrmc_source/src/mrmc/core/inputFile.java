@@ -297,7 +297,7 @@ public class inputFile {
 	 */
 	public inputFile(double[][][] t0, double[][][] t1, double[][][] t00,
 			double[][][] t01, double[][][] t10, double[][][] t11, int[][][] d0,
-			int[][][] d1, int nr, int n0, int n1) {
+			int[][][] d1, int nr, int n0, int n1, String title, String desc) {
 		this.t0 = t0;
 		this.t1 = t1;
 		this.t00 = t00;
@@ -309,6 +309,8 @@ public class inputFile {
 		this.Reader = nr;
 		this.Normal = n0;
 		this.Disease = n1;
+		this.recordTitle = title;
+		this.desc = desc;
 	}
 
 	public void calculateCovMRMC() {
@@ -507,7 +509,7 @@ public class inputFile {
 						r1Count++;
 						rTotal += keyedData.get(r).get(c).get(modality0);
 						rCount++;
-						
+
 					}
 					if (keyedData.get(r).get(c).get(modality1) != null) {
 						r1Total += keyedData.get(r).get(c).get(modality1);
@@ -532,7 +534,7 @@ public class inputFile {
 			ds.addValue(d);
 		}
 		double vR1 = ds.getVariance();
-		
+
 		ds = new DescriptiveStatistics();
 		for (Double d : RCollection) {
 			ds.addValue(d);
