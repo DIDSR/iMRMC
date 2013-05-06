@@ -27,6 +27,8 @@ package mrmc.core;
 import java.util.*;
 import java.io.*;
 
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+
 import mrmc.chart.XYPair;
 
 public class inputFile {
@@ -321,20 +323,20 @@ public class inputFile {
 		double[] Mb2 = mod2.getMb();
 		double[] Mbcov = covMod12.getMb();
 
-//		System.out.println("Mb1\t");
-//		for (int i = 1; i < 9; i++)
-//			System.out.println(Mb1[i] + "\t");
-//		System.out.println("\n");
-//
-//		System.out.println("Mb2\t");
-//		for (int i = 1; i < 9; i++)
-//			System.out.println(Mb2[i] + "\t");
-//		System.out.println("\n");
-//
-//		System.out.println("Mbcov\t");
-//		for (int i = 1; i < 9; i++)
-//			System.out.println(Mbcov[i] + "\t");
-//		System.out.println("\n");
+		// System.out.println("Mb1\t");
+		// for (int i = 1; i < 9; i++)
+		// System.out.println(Mb1[i] + "\t");
+		// System.out.println("\n");
+		//
+		// System.out.println("Mb2\t");
+		// for (int i = 1; i < 9; i++)
+		// System.out.println(Mb2[i] + "\t");
+		// System.out.println("\n");
+		//
+		// System.out.println("Mbcov\t");
+		// for (int i = 1; i < 9; i++)
+		// System.out.println(Mbcov[i] + "\t");
+		// System.out.println("\n");
 
 		aucMod = covMod12.getaucMod();
 		BDG = matrix.setZero(4, 8);
@@ -468,6 +470,77 @@ public class inputFile {
 				}
 			}
 		}
+	}
+
+	/*
+	 * Calculates components of variance
+	 */
+	// FIXME this does not seem to be the correct calculation of CofV
+	public void calcCofV(int modality0, int modality1) {
+		ArrayList<Double> RCollection = new ArrayList<Double>();
+		ArrayList<Double> R0Collection = new ArrayList<Double>();
+		ArrayList<Double> R1Collection = new ArrayList<Double>();
+		for (Integer r : keyedData.keySet()) {
+			double rTotal = 0;
+			int rCount = 0;
+			double r0Total = 0;
+			double r1Total = 0;
+			int r0Count = 0;
+			int r1Count = 0;
+			for (Integer c : keyedData.get(r).keySet()) {
+				if (truthVals.get(c) == 0) {
+					if (keyedData.get(r).get(c).get(modality0) != null) {
+						r0Total += keyedData.get(r).get(c).get(modality0);
+						r0Count++;
+						rTotal += keyedData.get(r).get(c).get(modality0);
+						rCount++;
+					}
+					if (keyedData.get(r).get(c).get(modality1) != null) {
+						r0Total += keyedData.get(r).get(c).get(modality1);
+						r0Count++;
+						rTotal += keyedData.get(r).get(c).get(modality1);
+						rCount++;
+					}
+				} else {
+					if (keyedData.get(r).get(c).get(modality0) != null) {
+						r1Total += keyedData.get(r).get(c).get(modality0);
+						r1Count++;
+						rTotal += keyedData.get(r).get(c).get(modality0);
+						rCount++;
+						
+					}
+					if (keyedData.get(r).get(c).get(modality1) != null) {
+						r1Total += keyedData.get(r).get(c).get(modality1);
+						r1Count++;
+						rTotal += keyedData.get(r).get(c).get(modality1);
+						rCount++;
+					}
+				}
+			}
+			R0Collection.add(r0Total / (double) r0Count);
+			R1Collection.add(r1Total / (double) r1Count);
+			RCollection.add(rTotal / (double) rCount);
+		}
+		DescriptiveStatistics ds = new DescriptiveStatistics();
+		for (Double d : R0Collection) {
+			ds.addValue(d);
+		}
+		double vR0 = ds.getVariance();
+
+		ds = new DescriptiveStatistics();
+		for (Double d : R1Collection) {
+			ds.addValue(d);
+		}
+		double vR1 = ds.getVariance();
+		
+		ds = new DescriptiveStatistics();
+		for (Double d : RCollection) {
+			ds.addValue(d);
+		}
+		double vR = ds.getVariance();
+
+		System.out.println("R0 = " + vR0 + " R1 = " + vR1 + " R = " + vR);
+
 	}
 
 	/* fills matrixes with 0s if data is not present */
