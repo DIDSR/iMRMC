@@ -110,6 +110,16 @@ public class matrix {
 		return result;
 	}
 
+	public static double[][] scaleMatrix(double[][] m, double s) {
+		double[][] result = new double[m.length][m[0].length];
+		for (int i = 0; i < m.length; i++) {
+			for (int j = 0; j < m[i].length; j++) {
+				result[i][j] = m[i][j] * s;
+			}
+		}
+		return result;
+	}
+
 	public static int total(int[][] m) {
 		int rows = m.length;
 		int cols = m[0].length;

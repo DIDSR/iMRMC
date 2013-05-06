@@ -1,16 +1,13 @@
 package roemetz.gui;
 
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.*;
+
+import mrmc.core.matrix;
 
 import roemetz.core.CofVGenRoeMetz;
 import roemetz.core.RoeMetz;
@@ -41,6 +38,7 @@ public class RMGUInterface {
 	JTextField n0;
 	JTextField n1;
 	JTextField nr;
+	JTextField numExp;
 	JTextField numSamples;
 	RoeMetz appl;
 
@@ -209,11 +207,24 @@ public class RMGUInterface {
 		sizeFields.add(nrLabel);
 		sizeFields.add(nr);
 
+		/*
+		 * Panel to populate fields with default values
+		 */
+		JPanel populateFields = new JPanel(new FlowLayout());
+
+		JButton populateButton = new JButton("Populate Components of Variance");
+		populateButton.addActionListener(new populateBtnListner());
+		populateFields.add(populateButton);
+
+		/*
+		 * Add sub-panels to cofvInputPanel
+		 */
 		cofvInputPanel.add(inputLabels);
 		cofvInputPanel.add(varianceFields1);
 		cofvInputPanel.add(varianceFields2);
 		cofvInputPanel.add(meansFields);
 		cofvInputPanel.add(sizeFields);
+		cofvInputPanel.add(populateFields);
 
 		/*
 		 * Panel to perform simulation experiment
@@ -234,9 +245,13 @@ public class RMGUInterface {
 		 */
 		JPanel simulationExperiment = new JPanel(new FlowLayout());
 
+		numExp = new JTextField(4);
+		JLabel numExpLabel = new JLabel("# of Experiments");
 		JButton doSimExp = new JButton("Perform Simulation Experiment");
 		doSimExp.addActionListener(new doSimBtnListner());
 
+		simulationExperiment.add(numExpLabel);
+		simulationExperiment.add(numExp);
 		simulationExperiment.add(doSimExp);
 
 		simExpPanel.add(simExpDesc);
@@ -262,6 +277,7 @@ public class RMGUInterface {
 		JPanel cofvResults = new JPanel(new FlowLayout());
 
 		numSamples = new JTextField(4);
+		numSamples.setText("256");
 		JLabel numSamplesLabel = new JLabel("# Samples: ");
 		JButton doGenRoeMetz = new JButton("Estimate Components of Variance");
 		doGenRoeMetz.addActionListener(new doGenRoeMetzBtnListner());
@@ -280,8 +296,37 @@ public class RMGUInterface {
 		cp.add(cofvResultsPanel);
 	}
 
-	class doSimBtnListner implements ActionListener {
+	class populateBtnListner implements ActionListener {
 
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			vR00.setText("0.166");
+			vC00.setText("0.166");
+			vRC00.setText("0.166");
+			vR10.setText("0.166");
+			vC10.setText("0.166");
+			vRC10.setText("0.166");
+			vR01.setText("0.166");
+			vC01.setText("0.166");
+			vRC01.setText("0.166");
+			vR11.setText("0.166");
+			vC11.setText("0.166");
+			vRC11.setText("0.166");
+			vR0.setText("0.166");
+			vC0.setText("0.166");
+			vRC0.setText("0.166");
+			vR1.setText("0.166");
+			vC1.setText("0.166");
+			vRC1.setText("0.166");
+			mu0.setText("1.5");
+			mu1.setText("1.0");
+			n0.setText("20");
+			n1.setText("20");
+			nr.setText("4");
+		}
+	}
+
+	class doSimBtnListner implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {
@@ -309,8 +354,27 @@ public class RMGUInterface {
 				int[] n = { Integer.parseInt(n0.getText()),
 						Integer.parseInt(n1.getText()),
 						Integer.parseInt(nr.getText()) };
-				SimRoeMetz.doSim(u, var_t, n);
-				SimRoeMetz.printResults();
+				int numTimes = Integer.parseInt(numExp.getText());
+				double[][] avgBDG = new double[4][8];
+				double[][] avgBDGbias = new double[4][8];
+				for (int i = 0; i < numTimes; i++) {
+					SimRoeMetz.doSim(u, var_t, n);
+					avgBDGbias = matrix.matrixAdd(avgBDGbias,
+							SimRoeMetz.getBDGbias());
+					avgBDG = matrix.matrixAdd(avgBDG, SimRoeMetz.getBDG());
+				}
+				avgBDGbias = matrix.scaleMatrix(avgBDGbias,
+						1.0 / (double) numTimes);
+				avgBDG = matrix.scaleMatrix(avgBDG, 1.0 / (double) numTimes);
+
+				System.out.println("BDG across Experiments\t");
+				for (int i = 0; i < 8; i++)
+					System.out.println(avgBDG[3][i] + "\t");
+				System.out.println("\n");
+				System.out.println("BDGbias across Experiments\t");
+				for (int i = 0; i < 8; i++)
+					System.out.println(avgBDGbias[3][i] + "\t");
+				System.out.println("\n");
 			} catch (NumberFormatException e1) {
 				JOptionPane.showMessageDialog(appl.getFrame(),
 						"Incorrect / Incomplete Input", "Warning",
@@ -321,7 +385,6 @@ public class RMGUInterface {
 	}
 
 	class doGenRoeMetzBtnListner implements ActionListener {
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {

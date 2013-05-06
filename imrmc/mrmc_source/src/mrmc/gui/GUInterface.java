@@ -1349,7 +1349,8 @@ public class GUInterface {
 		public void actionPerformed(ActionEvent e) {
 			// System.out.println("browse pressed");
 			JFileChooser fc = new JFileChooser();
-			FileNameExtensionFilter filter = new FileNameExtensionFilter("iMRMC Input Files", "imrmc");
+			FileNameExtensionFilter filter = new FileNameExtensionFilter(
+					"iMRMC Input Files", "imrmc");
 			fc.setFileFilter(filter);
 			// Don't get rid of this despite being unused
 			int returnVal = fc.showOpenDialog((Component) e.getSource());
@@ -1393,8 +1394,6 @@ public class GUInterface {
 				currMod2 = -1;
 				MS2.updateModPanel();
 
-				// if (!lst.getIsApplet())
-				// usrFile = new dbRecord(usr);
 			}
 		}
 	}

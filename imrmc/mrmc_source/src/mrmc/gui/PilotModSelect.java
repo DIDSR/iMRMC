@@ -105,7 +105,8 @@ public class PilotModSelect {
 								.getSelectedItem().toString());
 						gui.currMod2 = -1;
 						varAnalysisButton.setText("MRMC Variance Analysis (A)");
-						gui.usr.dotheWork(gui.currMod1, gui.currMod1);
+						gui.usr.getT0T1s(gui.currMod1, gui.currMod1);
+						gui.usr.calculateCovMRMC();
 						gui.usrFile = new dbRecord(gui.usr);
 						setSelectedMod(0);
 					} else if (!modA && modB) {
@@ -113,7 +114,8 @@ public class PilotModSelect {
 								.getSelectedItem().toString());
 						gui.currMod1 = -1;
 						varAnalysisButton.setText("MRMC Variance Analysis (B)");
-						gui.usr.dotheWork(gui.currMod2, gui.currMod2);
+						gui.usr.getT0T1s(gui.currMod2, gui.currMod2);
+						gui.usr.calculateCovMRMC();
 						gui.usrFile = new dbRecord(gui.usr);
 						setSelectedMod(1);
 					} else if (modA && modB) {
@@ -121,8 +123,10 @@ public class PilotModSelect {
 								.getSelectedItem().toString());
 						gui.currMod2 = Integer.parseInt(chooseB
 								.getSelectedItem().toString());
-						varAnalysisButton.setText("MRMC Variance Analysis (Difference)");
-						gui.usr.dotheWork(gui.currMod1, gui.currMod2);
+						varAnalysisButton
+								.setText("MRMC Variance Analysis (Difference)");
+						gui.usr.getT0T1s(gui.currMod1, gui.currMod2);
+						gui.usr.calculateCovMRMC();
 						gui.usrFile = new dbRecord(gui.usr);
 						setSelectedMod(3);
 					} else {
@@ -148,7 +152,7 @@ public class PilotModSelect {
 
 	class varAnalysisListner implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			//System.out.println("MRMC Variance analysis button clicked");
+			// System.out.println("MRMC Variance analysis button clicked");
 			int check = gui.checkNegative();
 			if (check == 1) {
 				gui.setTab1();

@@ -34,7 +34,7 @@ public class inputFile {
 	private String desc = "";
 	private String recordTitle = "";
 	private int Reader, Normal, Disease, Modality;
-	private double[][][] t0, t1, t01, t11, t02, t12;
+	private double[][][] t0, t1, t00, t10, t01, t11;
 	private int[][][] d0, d1;
 	private boolean isFullyCrossed;
 	private boolean verified = false;
@@ -289,10 +289,29 @@ public class inputFile {
 		isLoaded = true;
 	}
 
-	public void dotheWork(int modality1, int modality2) {
-		getT0T1s(modality1, modality2);
-		covMRMC mod1 = new covMRMC(t01, d0, t11, d1, Reader, Normal, Disease);
-		covMRMC mod2 = new covMRMC(t02, d0, t12, d1, Reader, Normal, Disease);
+	/*
+	 * This is the constructor to be used from iRoeMetz for calculating CovMRMC
+	 * with simulated experiment data
+	 */
+	public inputFile(double[][][] t0, double[][][] t1, double[][][] t00,
+			double[][][] t01, double[][][] t10, double[][][] t11, int[][][] d0,
+			int[][][] d1, int nr, int n0, int n1) {
+		this.t0 = t0;
+		this.t1 = t1;
+		this.t00 = t00;
+		this.t01 = t01;
+		this.t10 = t10;
+		this.t11 = t11;
+		this.d0 = d0;
+		this.d1 = d1;
+		this.Reader = nr;
+		this.Normal = n0;
+		this.Disease = n1;
+	}
+
+	public void calculateCovMRMC() {
+		covMRMC mod1 = new covMRMC(t00, d0, t10, d1, Reader, Normal, Disease);
+		covMRMC mod2 = new covMRMC(t01, d0, t11, d1, Reader, Normal, Disease);
 		covMRMC covMod12 = new covMRMC(t0, d0, t1, d1, Reader, Normal, Disease);
 		double[] M1 = mod1.getM();
 		double[] M2 = mod2.getM();
@@ -302,20 +321,20 @@ public class inputFile {
 		double[] Mb2 = mod2.getMb();
 		double[] Mbcov = covMod12.getMb();
 
-		System.out.println("Mb1\t");
-		for (int i = 1; i < 9; i++)
-			System.out.println(Mb1[i] + "\t");
-		System.out.println("\n");
-
-		System.out.println("Mb2\t");
-		for (int i = 1; i < 9; i++)
-			System.out.println(Mb2[i] + "\t");
-		System.out.println("\n");
-
-		System.out.println("Mbcov\t");
-		for (int i = 1; i < 9; i++)
-			System.out.println(Mbcov[i] + "\t");
-		System.out.println("\n");
+//		System.out.println("Mb1\t");
+//		for (int i = 1; i < 9; i++)
+//			System.out.println(Mb1[i] + "\t");
+//		System.out.println("\n");
+//
+//		System.out.println("Mb2\t");
+//		for (int i = 1; i < 9; i++)
+//			System.out.println(Mb2[i] + "\t");
+//		System.out.println("\n");
+//
+//		System.out.println("Mbcov\t");
+//		for (int i = 1; i < 9; i++)
+//			System.out.println(Mbcov[i] + "\t");
+//		System.out.println("\n");
 
 		aucMod = covMod12.getaucMod();
 		BDG = matrix.setZero(4, 8);
@@ -452,13 +471,13 @@ public class inputFile {
 	}
 
 	/* fills matrixes with 0s if data is not present */
-	private void getT0T1s(int modality1, int modality2) {
+	public void getT0T1s(int modality1, int modality2) {
 		t0 = new double[Normal][Reader][2];
 		t1 = new double[Disease][Reader][2];
+		t00 = new double[Normal][Reader][2];
 		t01 = new double[Normal][Reader][2];
+		t10 = new double[Disease][Reader][2];
 		t11 = new double[Disease][Reader][2];
-		t02 = new double[Normal][Reader][2];
-		t12 = new double[Disease][Reader][2];
 		d0 = new int[Normal][Reader][2];
 		d1 = new int[Disease][Reader][2];
 		int m, n;
@@ -469,50 +488,52 @@ public class inputFile {
 			for (Integer c : keyedData.get(r).keySet()) {
 				double currScoreMod1;
 				double currScoreMod2;
+				int mod1Present = 1;
+				int mod2Present = 1;
 				if (keyedData.get(r).containsKey(c)) {
 					if (keyedData.get(r).get(c).containsKey(modality1)) {
 						currScoreMod1 = keyedData.get(r).get(c).get(modality1);
 					} else {
 						currScoreMod1 = 0;
+						mod1Present = 0;
 					}
 					if (keyedData.get(r).get(c).containsKey(modality2)) {
 						currScoreMod2 = keyedData.get(r).get(c).get(modality2);
 					} else {
 						currScoreMod2 = 0;
+						mod2Present = 0;
 					}
 				} else {
 					currScoreMod1 = 0;
 					currScoreMod2 = 0;
+					mod1Present = 0;
+					mod2Present = 0;
 				}
 				if (truthVals.get(c) == 0) {
 					t0[m][k][0] = currScoreMod1;
 					t0[m][k][1] = currScoreMod2;
-					t01[m][k][0] = currScoreMod1;
-					t01[m][k][1] = currScoreMod1;
-					t02[m][k][0] = currScoreMod2;
-					t02[m][k][1] = currScoreMod2;
+					t00[m][k][0] = currScoreMod1;
+					t00[m][k][1] = currScoreMod1;
+					t01[m][k][0] = currScoreMod2;
+					t01[m][k][1] = currScoreMod2;
+
+					d0[m][k][0] = mod1Present;
+					d0[m][k][1] = mod2Present;
 					m++;
 				} else {
 					t1[n][k][0] = currScoreMod1;
 					t1[n][k][1] = currScoreMod2;
-					t11[n][k][0] = currScoreMod1;
-					t11[n][k][1] = currScoreMod1;
-					t12[n][k][0] = currScoreMod2;
-					t12[n][k][1] = currScoreMod2;
+					t10[n][k][0] = currScoreMod1;
+					t10[n][k][1] = currScoreMod1;
+					t11[n][k][0] = currScoreMod2;
+					t11[n][k][1] = currScoreMod2;
+
+					d1[n][k][0] = mod1Present;
+					d1[n][k][1] = mod2Present;
 					n++;
 				}
 			}
 			k++;
-		}
-		for (int i = 0; i < Reader; i++) {
-			for (int j = 0; j < Disease; j++) {
-				d1[j][i][0] = 1;
-				d1[j][i][1] = 1;
-			}
-			for (int j = 0; j < Normal; j++) {
-				d0[j][i][0] = 1;
-				d0[j][i][1] = 1;
-			}
 		}
 	}
 

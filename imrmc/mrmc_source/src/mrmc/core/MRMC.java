@@ -36,7 +36,6 @@ public class MRMC extends JApplet {
 	 */
 	private static final long serialVersionUID = 1L;
 	private static JFrame mrmcFrame;
-	private static JFrame simFrame;
 	GUInterface gui;
 	GUImenubar menuBar;
 	mrmcDB db;

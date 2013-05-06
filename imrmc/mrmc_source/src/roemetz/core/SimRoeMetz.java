@@ -27,6 +27,8 @@ package roemetz.core;
 import org.apache.commons.math3.special.Erf;
 import java.util.Arrays;
 import java.util.Random;
+
+import mrmc.core.inputFile;
 import mrmc.core.matrix;
 
 public class SimRoeMetz {
@@ -35,6 +37,16 @@ public class SimRoeMetz {
 	static double[][] t10;
 	static double[][] t11;
 	static double[] auc;
+	private static double[][] BDGbias;
+	private static double[][] BDG;
+
+	public static double[][] getBDGbias() {
+		return BDGbias;
+	}
+
+	public static double[][] getBDG() {
+		return BDG;
+	}
 
 	public static void printResults() {
 		System.out.println("t00:");
@@ -68,20 +80,20 @@ public class SimRoeMetz {
 
 		doSim(u, var_t, n);
 
-		System.out.println("t00:");
-		matrix.printMatrix(t00);
-		System.out.println();
-		System.out.println("t01:");
-		matrix.printMatrix(t01);
-		System.out.println();
-		System.out.println("t10:");
-		matrix.printMatrix(t10);
-		System.out.println();
-		System.out.println("t11:");
-		matrix.printMatrix(t11);
-		System.out.println();
-		System.out.println("AUC:");
-		System.out.println(Arrays.toString(auc));
+		// System.out.println("t00:");
+		// matrix.printMatrix(t00);
+		// System.out.println();
+		// System.out.println("t01:");
+		// matrix.printMatrix(t01);
+		// System.out.println();
+		// System.out.println("t10:");
+		// matrix.printMatrix(t10);
+		// System.out.println();
+		// System.out.println("t11:");
+		// matrix.printMatrix(t11);
+		// System.out.println();
+		// System.out.println("AUC:");
+		// System.out.println(Arrays.toString(auc));
 	}
 
 	// TODO verify correctness
@@ -183,6 +195,68 @@ public class SimRoeMetz {
 		t10 = matrix.matrixAdd(t10, RC10);
 		t11 = matrix.matrixAdd(t11, RC11);
 
+		calculateStuff(n0, n1, nr);
+
+	}
+
+	public static void calculateStuff(int n0, int n1, int nr) {
+		// convert t-matrices to correct shape and create t0,t1
+		double[][][] newt00 = new double[n0][nr][2];
+		double[][][] newt01 = new double[n0][nr][2];
+		double[][][] newt10 = new double[n1][nr][2];
+		double[][][] newt11 = new double[n1][nr][2];
+		double[][][] newt0 = new double[n0][nr][2];
+		double[][][] newt1 = new double[n1][nr][2];
+
+		for (int reader = 0; reader < t00.length; reader++) {
+			for (int cases = 0; cases < t00[reader].length; cases++) {
+				newt00[cases][reader][0] = t00[reader][cases];
+				newt00[cases][reader][1] = t00[reader][cases];
+				newt0[cases][reader][0] = t00[reader][cases];
+			}
+		}
+		for (int reader = 0; reader < t01.length; reader++) {
+			for (int cases = 0; cases < t01[reader].length; cases++) {
+				newt01[cases][reader][0] = t01[reader][cases];
+				newt01[cases][reader][1] = t01[reader][cases];
+				newt0[cases][reader][1] = t01[reader][cases];
+			}
+		}
+		for (int reader = 0; reader < t10.length; reader++) {
+			for (int cases = 0; cases < t10[reader].length; cases++) {
+				newt10[cases][reader][0] = t10[reader][cases];
+				newt10[cases][reader][1] = t10[reader][cases];
+				newt1[cases][reader][0] = t10[reader][cases];
+			}
+		}
+		for (int reader = 0; reader < t11.length; reader++) {
+			for (int cases = 0; cases < t11[reader].length; cases++) {
+				newt11[cases][reader][0] = t11[reader][cases];
+				newt11[cases][reader][1] = t11[reader][cases];
+				newt1[cases][reader][1] = t11[reader][cases];
+			}
+		}
+
+		// design matrices are all 1 because data is simulated, therefore all
+		// present
+		int[][][] d0 = new int[n0][nr][2];
+		int[][][] d1 = new int[n1][nr][2];
+		for (int i = 0; i < nr; i++) {
+			for (int j = 0; j < n1; j++) {
+				d1[j][i][0] = 1;
+				d1[j][i][1] = 1;
+			}
+			for (int j = 0; j < n0; j++) {
+				d0[j][i][0] = 1;
+				d0[j][i][1] = 1;
+			}
+		}
+
+		inputFile toCalc = new inputFile(newt0, newt1, newt00, newt01, newt10,
+				newt11, d0, d1, nr, n0, n1);
+		toCalc.calculateCovMRMC();
+		BDGbias = toCalc.getBDGbias();
+		BDG = toCalc.getBDG();
 	}
 
 	public static double snrToAUC(double snr) {
