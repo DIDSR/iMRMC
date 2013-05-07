@@ -297,7 +297,7 @@ public class ManualCard {
 					|| (temp6.equals("") && SingleOrDiff == 1)) {
 				JFrame frame = lst.getFrame();
 				JOptionPane.showMessageDialog(frame,
-						"The input is not complete", "Inane error",
+						"The input is not complete", "Error",
 						JOptionPane.ERROR_MESSAGE);
 				return 0;
 			} else {
@@ -311,8 +311,8 @@ public class ManualCard {
 							+ Integer
 									.toString(numberOfComps[selectedManualComp])
 							+ " elements!\n";
-					JOptionPane.showMessageDialog(frame, strtemp,
-							"Inane error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, strtemp, "Error",
+							JOptionPane.ERROR_MESSAGE);
 					return 0;
 				}
 			}

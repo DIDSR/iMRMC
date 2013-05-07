@@ -358,10 +358,10 @@ public class inputFile {
 			BDGcoeff[3][i] = Coeff[i + 1];
 		}
 
-		System.out.println("BDGbias\t");
-		for (int i = 0; i < 8; i++)
-			System.out.println(BDGbias[3][i] + "\t");
-		System.out.println("\n");
+		// System.out.println("BDGbias\t");
+		// for (int i = 0; i < 8; i++)
+		// System.out.println(BDGbias[3][i] + "\t");
+		// System.out.println("\n");
 	}
 
 	/*

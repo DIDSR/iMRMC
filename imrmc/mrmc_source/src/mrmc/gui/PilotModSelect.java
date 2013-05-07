@@ -107,7 +107,7 @@ public class PilotModSelect {
 						varAnalysisButton.setText("MRMC Variance Analysis (A)");
 						gui.usr.getT0T1s(gui.currMod1, gui.currMod1);
 						gui.usr.calculateCovMRMC();
-						gui.usr.calcCofV(gui.currMod1, gui.currMod1);
+						// gui.usr.calcCofV(gui.currMod1, gui.currMod1);
 						gui.usrFile = new dbRecord(gui.usr);
 						setSelectedMod(0);
 					} else if (!modA && modB) {
@@ -117,7 +117,7 @@ public class PilotModSelect {
 						varAnalysisButton.setText("MRMC Variance Analysis (B)");
 						gui.usr.getT0T1s(gui.currMod2, gui.currMod2);
 						gui.usr.calculateCovMRMC();
-						gui.usr.calcCofV(gui.currMod2, gui.currMod2);
+						// gui.usr.calcCofV(gui.currMod2, gui.currMod2);
 						gui.usrFile = new dbRecord(gui.usr);
 						setSelectedMod(1);
 					} else if (modA && modB) {
@@ -129,7 +129,7 @@ public class PilotModSelect {
 								.setText("MRMC Variance Analysis (Difference)");
 						gui.usr.getT0T1s(gui.currMod1, gui.currMod2);
 						gui.usr.calculateCovMRMC();
-						gui.usr.calcCofV(gui.currMod1, gui.currMod2);
+						// gui.usr.calcCofV(gui.currMod1, gui.currMod2);
 						gui.usrFile = new dbRecord(gui.usr);
 						setSelectedMod(3);
 					} else {

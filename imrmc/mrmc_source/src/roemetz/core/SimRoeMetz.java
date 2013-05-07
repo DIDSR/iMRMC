@@ -42,6 +42,12 @@ public class SimRoeMetz {
 	private static double[][] BDGcoeff;
 	private static double[][] MS;
 	private static double[][] MScoeff;
+	private static double[][] BCK;
+	private static double[][] BCKcoeff;
+	private static double[][] DBM;
+	private static double[][] DBMcoeff;
+	private static double[][] OR;
+	private static double[][] ORcoeff;
 
 	public static double[][] getBDG() {
 		return BDG;
@@ -49,6 +55,30 @@ public class SimRoeMetz {
 
 	public static double[][] getBDGcoeff() {
 		return BDGcoeff;
+	}
+
+	public static double[][] getBCK() {
+		return BCK;
+	}
+
+	public static double[][] getBCKcoeff() {
+		return BCKcoeff;
+	}
+
+	public static double[][] getDBM() {
+		return DBM;
+	}
+
+	public static double[][] getDBMcoeff() {
+		return DBMcoeff;
+	}
+
+	public static double[][] getOR() {
+		return OR;
+	}
+
+	public static double[][] getORcoeff() {
+		return ORcoeff;
 	}
 
 	public static double[][] getMS() {
@@ -74,37 +104,6 @@ public class SimRoeMetz {
 		System.out.println();
 		System.out.println("AUC:");
 		System.out.println(Arrays.toString(auc));
-	}
-
-	public static void main(String[] args) {
-		// double[] u = { 1.5, 3 };
-		// double[] var_t = { 0.836205, 6.06649, 0.076157, 0.0645917, 0.30713,
-		// 0.0529776 };
-		// int[] n = { 259, 51, 15 };
-		double[] u = { 1.5, 1.0 };
-
-		double[] var_t = { 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0,
-				1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0,
-				1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0,
-				1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0 };
-		int[] n = { 200, 200, 20 };
-
-		doSim(u, var_t, n);
-
-		// System.out.println("t00:");
-		// matrix.printMatrix(t00);
-		// System.out.println();
-		// System.out.println("t01:");
-		// matrix.printMatrix(t01);
-		// System.out.println();
-		// System.out.println("t10:");
-		// matrix.printMatrix(t10);
-		// System.out.println();
-		// System.out.println("t11:");
-		// matrix.printMatrix(t11);
-		// System.out.println();
-		// System.out.println("AUC:");
-		// System.out.println(Arrays.toString(auc));
 	}
 
 	// TODO verify correctness
@@ -268,8 +267,14 @@ public class SimRoeMetz {
 
 		toCalc.calculateCovMRMC();
 		dbRecord rec = new dbRecord(toCalc);
-		BDG = rec.getBDG(1);
+		BDG = rec.getBDG(0);
 		BDGcoeff = rec.getBDGcoeff();
+		BCK = rec.getBCK(1);
+		BCKcoeff = rec.getBCKcoeff();
+		DBM = rec.getDBM(1);
+		DBMcoeff = rec.getDBMcoeff();
+		OR = rec.getOR(1);
+		ORcoeff = rec.getORcoeff();
 		MS = rec.getMS(1);
 		MScoeff = rec.getMScoeff();
 	}

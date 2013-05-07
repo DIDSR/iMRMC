@@ -181,7 +181,6 @@ public class ROCCurvePlot extends JFrame {
 		}
 	}
 
-	// TODO verify that this generates correct curve
 	private XYSeries generateDiagonalROC(TreeMap<Integer, TreeSet<XYPair>> data) {
 		XYSeries diagAvg = new XYSeries("Diagonal Average", false);
 		TreeMap<Integer, TreeSet<XYPair>> rotatedData = new TreeMap<Integer, TreeSet<XYPair>>();

@@ -355,41 +355,75 @@ public class RMGUInterface {
 				int numTimes = Integer.parseInt(numExp.getText());
 				double[][] avgBDG = new double[4][8];
 				double[][] avgBDGcoeff = new double[4][8];
+				double[][] avgBCK = new double[4][7];
+				double[][] avgBCKcoeff = new double[4][7];
+				double[][] avgDBM = new double[4][6];
+				double[][] avgDBMcoeff = new double[4][6];
+				double[][] avgOR = new double[4][6];
+				double[][] avgORcoeff = new double[4][6];
 				double[][] avgMS = new double[4][6];
 				double[][] avgMScoeff = new double[4][6];
 
 				for (int i = 0; i < numTimes; i++) {
 					SimRoeMetz.doSim(u, var_t, n);
+					avgBDG = matrix.matrixAdd(avgBDG, SimRoeMetz.getBDG());
 					avgBDGcoeff = matrix.matrixAdd(avgBDGcoeff,
 							SimRoeMetz.getBDGcoeff());
-					avgBDG = matrix.matrixAdd(avgBDG, SimRoeMetz.getBDG());
+					avgBCK = matrix.matrixAdd(avgBCK, SimRoeMetz.getBCK());
+					avgBCKcoeff = matrix.matrixAdd(avgBCKcoeff,
+							SimRoeMetz.getBCKcoeff());
+					avgDBM = matrix.matrixAdd(avgDBM, SimRoeMetz.getDBM());
+					avgDBMcoeff = matrix.matrixAdd(avgDBMcoeff,
+							SimRoeMetz.getDBMcoeff());
+					avgOR = matrix.matrixAdd(avgOR, SimRoeMetz.getOR());
+					avgORcoeff = matrix.matrixAdd(avgORcoeff,
+							SimRoeMetz.getORcoeff());
+					avgMS = matrix.matrixAdd(avgMS, SimRoeMetz.getMS());
 					avgMScoeff = matrix.matrixAdd(avgMScoeff,
 							SimRoeMetz.getMScoeff());
-					avgMS = matrix.matrixAdd(avgMS, SimRoeMetz.getMS());
 				}
-				avgBDGcoeff = matrix.scaleMatrix(avgBDGcoeff,
-						1.0 / (double) numTimes);
-				avgBDG = matrix.scaleMatrix(avgBDG, 1.0 / (double) numTimes);
-				avgMScoeff = matrix.scaleMatrix(avgMScoeff,
-						1.0 / (double) numTimes);
-				avgMS = matrix.scaleMatrix(avgMS, 1.0 / (double) numTimes);
+				double scaleFactor = 1.0 / (double) numTimes;
+				avgBDG = matrix.scaleMatrix(avgBDG, scaleFactor);
+				avgBDGcoeff = matrix.scaleMatrix(avgBDGcoeff, scaleFactor);
+				avgBCK = matrix.scaleMatrix(avgBCK, scaleFactor);
+				avgBCKcoeff = matrix.scaleMatrix(avgBCKcoeff, scaleFactor);
+				avgDBM = matrix.scaleMatrix(avgDBM, scaleFactor);
+				avgDBMcoeff = matrix.scaleMatrix(avgDBMcoeff, scaleFactor);
+				avgOR = matrix.scaleMatrix(avgOR, scaleFactor);
+				avgORcoeff = matrix.scaleMatrix(avgORcoeff, scaleFactor);
+				avgMS = matrix.scaleMatrix(avgMS, scaleFactor);
+				avgMScoeff = matrix.scaleMatrix(avgMScoeff, scaleFactor);
 
 				System.out.println("BDG across Experiments\t");
-				for (int i = 0; i < 8; i++)
-					System.out.println(avgBDG[3][i] + "\t");
+				matrix.printMatrix(avgBDG);
 				System.out.println("\n");
 				System.out.println("BDGcoeff across Experiments\t");
-				for (int i = 0; i < 8; i++)
-					System.out.println(avgBDGcoeff[3][i] + "\t");
+				matrix.printVector(avgBDGcoeff[0]);
 				System.out.println("\n");
-				System.out.println("MS across Experiments\t");
-				for (int i = 0; i < 6; i++)
-					System.out.println(avgMS[3][i] + "\t");
-				System.out.println("\n");
-				System.out.println("MScoeff across Experiments\t");
-				for (int i = 0; i < 6; i++)
-					System.out.println(avgMScoeff[3][i] + "\t");
-				System.out.println("\n");
+				// System.out.println("BCK across Experiments\t");
+				// matrix.printMatrix(avgBCK);
+				// System.out.println("\n");
+				// System.out.println("BCKcoeff across Experiments\t");
+				// matrix.printVector(avgBCKcoeff[0]);
+				// System.out.println("\n");
+				// System.out.println("DBM across Experiments\t");
+				// matrix.printMatrix(avgDBM);
+				// System.out.println("\n");
+				// System.out.println("DBMcoeff across Experiments\t");
+				// matrix.printVector(avgDBMcoeff[0]);
+				// System.out.println("\n");
+				// System.out.println("OR across Experiments\t");
+				// matrix.printMatrix(avgOR);
+				// System.out.println("\n");
+				// System.out.println("ORcoeff across Experiments\t");
+				// matrix.printVector(avgORcoeff[0]);
+				// System.out.println("\n");
+				// System.out.println("MS across Experiments\t");
+				// matrix.printMatrix(avgMS);
+				// System.out.println("\n");
+				// System.out.println("MScoeff across Experiments\t");
+				// matrix.printVector(avgMScoeff[0]);
+				// System.out.println("\n");
 			} catch (NumberFormatException e1) {
 				JOptionPane.showMessageDialog(appl.getFrame(),
 						"Incorrect / Incomplete Input", "Warning",

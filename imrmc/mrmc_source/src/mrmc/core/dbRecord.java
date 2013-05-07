@@ -500,7 +500,7 @@ public class dbRecord {
 		AUC = input.getaucMod();
 
 		String[] temp = recordDesp.split("\n");
-		System.out.println("temp" + "0" + "  =  " + temp[0]);
+		//System.out.println("temp" + "0" + "  =  " + temp[0]);
 		int i = 0;
 		// for(int i =0;i<7; i++)
 
