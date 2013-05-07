@@ -990,7 +990,6 @@ public class GUInterface {
 		// *********************************************************************
 		// Create one-shot tab
 		JPanel panelBDG2 = new JPanel();
-		// BDGnames={"M1","M2","M3","M4","M5","M6","M7","M8"};
 		dm = new DefaultTableModel(3, 8);
 		BDGtable2 = new JTable(dm);
 		scroll2 = genTable(BDGtable2, BDGnames);

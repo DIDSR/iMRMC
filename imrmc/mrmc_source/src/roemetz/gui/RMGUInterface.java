@@ -40,7 +40,9 @@ public class RMGUInterface {
 	JTextField nr;
 	JTextField numExp;
 	JTextField numSamples;
-	RoeMetz appl;
+	static JProgressBar simProgress;
+	static JProgressBar estProgress;
+	static RoeMetz appl;
 
 	public RMGUInterface(RoeMetz lsttemp, Container cp) {
 		appl = lsttemp;
@@ -247,10 +249,13 @@ public class RMGUInterface {
 		JLabel numExpLabel = new JLabel("# of Experiments");
 		JButton doSimExp = new JButton("Perform Simulation Experiment");
 		doSimExp.addActionListener(new doSimBtnListner());
+		// simProgress = new JProgressBar(0, 100);
+		// simProgress.setValue(0);
 
 		simulationExperiment.add(numExpLabel);
 		simulationExperiment.add(numExp);
 		simulationExperiment.add(doSimExp);
+		// simulationExperiment.add(simProgress);
 
 		simExpPanel.add(simExpDesc);
 		simExpPanel.add(simulationExperiment);
@@ -324,6 +329,83 @@ public class RMGUInterface {
 		}
 	}
 
+	private class SimExperiments implements Runnable {
+		double[] u;
+		double[] var_t;
+		int[] n;
+		int numTimes;
+
+		public void run() {
+			simProgress.setMaximum(numTimes - 1);
+
+			double[][] avgBDGdata = new double[3][8];
+			double[][] avgBCKdata = new double[3][7];
+			double[][] avgDBMdata = new double[3][6];
+			double[][] avgORdata = new double[3][6];
+			double[][] avgMSdata = new double[3][6];
+			for (int i = 0; i < numTimes; i++) {
+				SimRoeMetz.doSim(u, var_t, n);
+				avgBDGdata = matrix.matrixAdd(avgBDGdata,
+						SimRoeMetz.getBDGdata());
+				avgBCKdata = matrix.matrixAdd(avgBCKdata,
+						SimRoeMetz.getBCKdata());
+				avgDBMdata = matrix.matrixAdd(avgDBMdata,
+						SimRoeMetz.getDBMdata());
+				avgORdata = matrix.matrixAdd(avgORdata, SimRoeMetz.getORdata());
+				avgMSdata = matrix.matrixAdd(avgMSdata, SimRoeMetz.getMSdata());
+
+				simProgress.setValue(i);
+
+			}
+			double scaleFactor = 1.0 / (double) numTimes;
+			avgBDGdata = matrix.scaleMatrix(avgBDGdata, scaleFactor);
+			avgBCKdata = matrix.scaleMatrix(avgBCKdata, scaleFactor);
+			avgDBMdata = matrix.scaleMatrix(avgDBMdata, scaleFactor);
+			avgORdata = matrix.scaleMatrix(avgORdata, scaleFactor);
+			avgMSdata = matrix.scaleMatrix(avgMSdata, scaleFactor);
+
+			System.out.println("BDG across Experiments\t");
+			matrix.printMatrix(avgBDGdata);
+			System.out.println("\n");
+			System.out.println("BCK across Experiments\t");
+			matrix.printMatrix(avgBCKdata);
+			System.out.println("\n");
+			System.out.println("DBM across Experiments\t");
+			matrix.printMatrix(avgDBMdata);
+			System.out.println("\n");
+			System.out.println("OR across Experiments\t");
+			matrix.printMatrix(avgORdata);
+			System.out.println("\n");
+			System.out.println("MS across Experiments\t");
+			matrix.printMatrix(avgMSdata);
+			System.out.println("\n");
+		}
+
+		public SimExperiments(double[] u, double[] var_t, int[] n, int numTimes) {
+			this.u = u;
+			this.var_t = var_t;
+			this.n = n;
+			this.numTimes = numTimes;
+		}
+	}
+
+	private class EstimateCofV implements Runnable {
+		double[] u;
+		double[] var_t;
+		int n;
+
+		public void run() {
+			CofVGenRoeMetz.genRoeMetz(u, n, var_t);
+			CofVGenRoeMetz.printResults();
+		}
+
+		public EstimateCofV(double[] u, double[] var_t, int n) {
+			this.u = u;
+			this.var_t = var_t;
+			this.n = n;
+		}
+	}
+
 	class doSimBtnListner implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -353,83 +435,20 @@ public class RMGUInterface {
 						Integer.parseInt(nr.getText()) };
 
 				int numTimes = Integer.parseInt(numExp.getText());
-				double[][] avgBDG = new double[4][8];
-				double[][] avgBDGcoeff = new double[4][8];
-				double[][] avgBCK = new double[4][7];
-				double[][] avgBCKcoeff = new double[4][7];
-				double[][] avgDBM = new double[4][6];
-				double[][] avgDBMcoeff = new double[4][6];
-				double[][] avgOR = new double[4][6];
-				double[][] avgORcoeff = new double[4][6];
-				double[][] avgMS = new double[4][6];
-				double[][] avgMScoeff = new double[4][6];
+				simProgress = new JProgressBar(0, 100);
+				simProgress.setValue(0);
 
-				for (int i = 0; i < numTimes; i++) {
-					SimRoeMetz.doSim(u, var_t, n);
-					avgBDG = matrix.matrixAdd(avgBDG, SimRoeMetz.getBDG());
-					avgBDGcoeff = matrix.matrixAdd(avgBDGcoeff,
-							SimRoeMetz.getBDGcoeff());
-					avgBCK = matrix.matrixAdd(avgBCK, SimRoeMetz.getBCK());
-					avgBCKcoeff = matrix.matrixAdd(avgBCKcoeff,
-							SimRoeMetz.getBCKcoeff());
-					avgDBM = matrix.matrixAdd(avgDBM, SimRoeMetz.getDBM());
-					avgDBMcoeff = matrix.matrixAdd(avgDBMcoeff,
-							SimRoeMetz.getDBMcoeff());
-					avgOR = matrix.matrixAdd(avgOR, SimRoeMetz.getOR());
-					avgORcoeff = matrix.matrixAdd(avgORcoeff,
-							SimRoeMetz.getORcoeff());
-					avgMS = matrix.matrixAdd(avgMS, SimRoeMetz.getMS());
-					avgMScoeff = matrix.matrixAdd(avgMScoeff,
-							SimRoeMetz.getMScoeff());
-				}
-				double scaleFactor = 1.0 / (double) numTimes;
-				avgBDG = matrix.scaleMatrix(avgBDG, scaleFactor);
-				avgBDGcoeff = matrix.scaleMatrix(avgBDGcoeff, scaleFactor);
-				avgBCK = matrix.scaleMatrix(avgBCK, scaleFactor);
-				avgBCKcoeff = matrix.scaleMatrix(avgBCKcoeff, scaleFactor);
-				avgDBM = matrix.scaleMatrix(avgDBM, scaleFactor);
-				avgDBMcoeff = matrix.scaleMatrix(avgDBMcoeff, scaleFactor);
-				avgOR = matrix.scaleMatrix(avgOR, scaleFactor);
-				avgORcoeff = matrix.scaleMatrix(avgORcoeff, scaleFactor);
-				avgMS = matrix.scaleMatrix(avgMS, scaleFactor);
-				avgMScoeff = matrix.scaleMatrix(avgMScoeff, scaleFactor);
+				Thread simThread = new Thread(new SimExperiments(u, var_t, n,
+						numTimes));
 
-				System.out.println("BDG across Experiments\t");
-				matrix.printMatrix(avgBDG);
-				System.out.println("\n");
-				System.out.println("BDGcoeff across Experiments\t");
-				matrix.printVector(avgBDGcoeff[0]);
-				System.out.println("\n");
-				// System.out.println("BCK across Experiments\t");
-				// matrix.printMatrix(avgBCK);
-				// System.out.println("\n");
-				// System.out.println("BCKcoeff across Experiments\t");
-				// matrix.printVector(avgBCKcoeff[0]);
-				// System.out.println("\n");
-				// System.out.println("DBM across Experiments\t");
-				// matrix.printMatrix(avgDBM);
-				// System.out.println("\n");
-				// System.out.println("DBMcoeff across Experiments\t");
-				// matrix.printVector(avgDBMcoeff[0]);
-				// System.out.println("\n");
-				// System.out.println("OR across Experiments\t");
-				// matrix.printMatrix(avgOR);
-				// System.out.println("\n");
-				// System.out.println("ORcoeff across Experiments\t");
-				// matrix.printVector(avgORcoeff[0]);
-				// System.out.println("\n");
-				// System.out.println("MS across Experiments\t");
-				// matrix.printMatrix(avgMS);
-				// System.out.println("\n");
-				// System.out.println("MScoeff across Experiments\t");
-				// matrix.printVector(avgMScoeff[0]);
-				// System.out.println("\n");
+				simThread.start();
+				JOptionPane.showMessageDialog(appl.getFrame(), simProgress,
+						"Simulation Progress", JOptionPane.INFORMATION_MESSAGE);
 			} catch (NumberFormatException e1) {
 				JOptionPane.showMessageDialog(appl.getFrame(),
 						"Incorrect / Incomplete Input", "Warning",
 						JOptionPane.WARNING_MESSAGE);
 			}
-
 		}
 	}
 
@@ -459,8 +478,8 @@ public class RMGUInterface {
 						Double.parseDouble(vRC1.getText()) };
 
 				int n = Integer.parseInt(numSamples.getText());
-				CofVGenRoeMetz.genRoeMetz(u, n, var_t);
-				CofVGenRoeMetz.printResults();
+				Thread estThread = new Thread(new EstimateCofV(u, var_t, n));
+				estThread.run();
 			} catch (NumberFormatException e1) {
 				JOptionPane.showMessageDialog(appl.getFrame(),
 						"Incorrect / Incomplete Input", "Warning",

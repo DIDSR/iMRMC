@@ -38,55 +38,30 @@ public class SimRoeMetz {
 	static double[][] t10;
 	static double[][] t11;
 	static double[] auc;
-	private static double[][] BDG;
-	private static double[][] BDGcoeff;
-	private static double[][] MS;
-	private static double[][] MScoeff;
-	private static double[][] BCK;
-	private static double[][] BCKcoeff;
-	private static double[][] DBM;
-	private static double[][] DBMcoeff;
-	private static double[][] OR;
-	private static double[][] ORcoeff;
+	private static double[][] BDGdata1;
+	private static double[][] BCKdata1;
+	private static double[][] DBMdata1;
+	private static double[][] ORdata1;
+	private static double[][] MSdata1;
 
-	public static double[][] getBDG() {
-		return BDG;
+	public static double[][] getBDGdata() {
+		return BDGdata1;
 	}
 
-	public static double[][] getBDGcoeff() {
-		return BDGcoeff;
+	public static double[][] getBCKdata() {
+		return BCKdata1;
 	}
 
-	public static double[][] getBCK() {
-		return BCK;
+	public static double[][] getDBMdata() {
+		return DBMdata1;
 	}
 
-	public static double[][] getBCKcoeff() {
-		return BCKcoeff;
+	public static double[][] getORdata() {
+		return ORdata1;
 	}
 
-	public static double[][] getDBM() {
-		return DBM;
-	}
-
-	public static double[][] getDBMcoeff() {
-		return DBMcoeff;
-	}
-
-	public static double[][] getOR() {
-		return OR;
-	}
-
-	public static double[][] getORcoeff() {
-		return ORcoeff;
-	}
-
-	public static double[][] getMS() {
-		return MS;
-	}
-
-	public static double[][] getMScoeff() {
-		return MScoeff;
+	public static double[][] getMSdata() {
+		return MSdata1;
 	}
 
 	public static void printResults() {
@@ -267,16 +242,12 @@ public class SimRoeMetz {
 
 		toCalc.calculateCovMRMC();
 		dbRecord rec = new dbRecord(toCalc);
-		BDG = rec.getBDG(0);
-		BDGcoeff = rec.getBDGcoeff();
-		BCK = rec.getBCK(1);
-		BCKcoeff = rec.getBCKcoeff();
-		DBM = rec.getDBM(1);
-		DBMcoeff = rec.getDBMcoeff();
-		OR = rec.getOR(1);
-		ORcoeff = rec.getORcoeff();
-		MS = rec.getMS(1);
-		MScoeff = rec.getMScoeff();
+
+		BDGdata1 = rec.getBDGTab(0, rec.getBDG(0), rec.getBDGcoeff());
+		BCKdata1 = rec.getBCKTab(0, rec.getBCK(0), rec.getBCKcoeff());
+		DBMdata1 = rec.getDBMTab(0, rec.getDBM(0), rec.getDBMcoeff());
+		ORdata1 = rec.getORTab(0, rec.getOR(0), rec.getORcoeff());
+		MSdata1 = rec.getMSTab(0, rec.getMS(0), rec.getMScoeff());
 	}
 
 	public static double snrToAUC(double snr) {

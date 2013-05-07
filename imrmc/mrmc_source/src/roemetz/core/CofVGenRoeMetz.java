@@ -33,15 +33,17 @@ public class CofVGenRoeMetz {
 	static double[][][] m;
 
 	public static void printResults() {
-		// System.out.println("cofv_auc:");
-		// for (int i = 0; i < cofv_auc.length; i++) {
-		// matrix.printMatrix(cofv_auc[i]);
-		// }
-		// System.out.println();
-		// System.out.println("cofv_pc:");
-		// for (int i = 0; i < cofv_pc.length; i++) {
-		// matrix.printMatrix(cofv_pc[i]);
-		// }
+		System.out.println("cofv_auc:");
+		for (int i = 0; i < cofv_auc.length; i++) {
+			matrix.printMatrix(cofv_auc[i]);
+			System.out.println();
+		}
+		System.out.println();
+		System.out.println("cofv_pc:");
+		for (int i = 0; i < cofv_pc.length; i++) {
+			matrix.printMatrix(cofv_pc[i]);
+			System.out.println();
+		}
 		System.out.println("\n");
 		System.out.println("M");
 		for (int i = 0; i < m.length; i++) {
