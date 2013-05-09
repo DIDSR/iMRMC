@@ -64,7 +64,7 @@ public class CofVGenRoeMetz {
 		double dx = lx / (double) n;
 		double[] x = new double[n];
 		for (int i = 0; i < n; i++) {
-			x[i] = ((double) i * 10.0) - (0.5 * lx);
+			x[i] = ((double) i * dx) - (0.5 * lx);
 		}
 
 		double f[] = new double[n];
