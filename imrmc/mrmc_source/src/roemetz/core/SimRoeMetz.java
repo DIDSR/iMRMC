@@ -1,7 +1,7 @@
 /*
  * SimRoeMetz.java
  * 
- * v2.0b
+ * v1.0b
  * 
  * @Author Rohan Pathare
  * 
