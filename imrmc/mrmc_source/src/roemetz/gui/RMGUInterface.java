@@ -27,12 +27,20 @@
 
 package roemetz.gui;
 
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import mrmc.core.matrix;
 
@@ -241,9 +249,13 @@ public class RMGUInterface {
 		 */
 		JPanel populateFields = new JPanel(new FlowLayout());
 
-		JButton populateButton = new JButton("Populate Components of Variance");
+		JButton populateButton = new JButton("Populate CofV (Default)");
 		populateButton.addActionListener(new populateBtnListner());
+
+		JButton popFromFile = new JButton("Populate CofV from File");
+		popFromFile.addActionListener(new popFromFileListener());
 		populateFields.add(populateButton);
+		populateFields.add(popFromFile);
 
 		/*
 		 * Add sub-panels to cofvInputPanel
@@ -329,6 +341,192 @@ public class RMGUInterface {
 		cp.add(cofvResultsPanel);
 	}
 
+	private void clearInputs() {
+		vR00.setText("");
+		vC00.setText("");
+		vRC00.setText("");
+		vR10.setText("");
+		vC10.setText("");
+		vRC10.setText("");
+		vR01.setText("");
+		vC01.setText("");
+		vRC01.setText("");
+		vR11.setText("");
+		vC11.setText("");
+		vRC11.setText("");
+		vR0.setText("");
+		vC0.setText("");
+		vRC0.setText("");
+		vR1.setText("");
+		vC1.setText("");
+		vRC1.setText("");
+		mu0.setText("");
+		mu1.setText("");
+		n0.setText("");
+		n1.setText("");
+		nr.setText("");
+	}
+
+	private ArrayList<String> readFile(InputStreamReader isr) {
+		BufferedReader br = new BufferedReader(isr);
+		ArrayList<String> content = new ArrayList<String>();
+		String strtemp;
+		try {
+			while ((strtemp = br.readLine()) != null) {
+				content.add(strtemp);
+			}
+		} catch (Exception e) {
+			System.err.println("read file Error in RMGUInterface.java: "
+					+ e.getMessage());
+		}
+		return content;
+	}
+
+	private void parseCofVfile(File f) {
+		ArrayList<String> fileContent = new ArrayList<String>();
+
+		if (f != null) {
+			String filename = f.getPath();
+			try {
+				InputStreamReader isr;
+				DataInputStream din;
+				FileInputStream fstream = new FileInputStream(filename);
+				din = new DataInputStream(fstream);
+				isr = new InputStreamReader(din);
+				fileContent = readFile(isr);
+				din.close();
+			} catch (Exception e) {
+				System.err.println("Error reading file" + filename
+						+ e.getMessage());
+			}
+		} else {
+			return;
+		}
+
+		clearInputs();
+		int totalLine = fileContent.size();
+		int counter = 0;
+		while (counter < totalLine) {
+			String tempstr = fileContent.get(counter).toUpperCase();
+			int loc = tempstr.indexOf("R00:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				vR00.setText(tempstr.substring(tmploc + 1).trim());
+			}
+			loc = tempstr.indexOf("C00:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				vC00.setText(tempstr.substring(tmploc + 1).trim());
+			}
+			loc = tempstr.indexOf("RC00:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				vRC00.setText(tempstr.substring(tmploc + 1).trim());
+			}
+			loc = tempstr.indexOf("R10:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				vR10.setText(tempstr.substring(tmploc + 1).trim());
+			}
+			loc = tempstr.indexOf("C10:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				vC10.setText(tempstr.substring(tmploc + 1).trim());
+			}
+			loc = tempstr.indexOf("RC10:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				vRC10.setText(tempstr.substring(tmploc + 1).trim());
+			}
+			loc = tempstr.indexOf("R01:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				vR01.setText(tempstr.substring(tmploc + 1).trim());
+			}
+			loc = tempstr.indexOf("C01:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				vC01.setText(tempstr.substring(tmploc + 1).trim());
+			}
+			loc = tempstr.indexOf("RC01:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				vRC01.setText(tempstr.substring(tmploc + 1).trim());
+			}
+			loc = tempstr.indexOf("R11:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				vR11.setText(tempstr.substring(tmploc + 1).trim());
+			}
+			loc = tempstr.indexOf("C11:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				vC11.setText(tempstr.substring(tmploc + 1).trim());
+			}
+			loc = tempstr.indexOf("RC11:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				vRC11.setText(tempstr.substring(tmploc + 1).trim());
+			}
+			loc = tempstr.indexOf("R0:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				vR0.setText(tempstr.substring(tmploc + 1).trim());
+			}
+			loc = tempstr.indexOf("C0:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				vC0.setText(tempstr.substring(tmploc + 1).trim());
+			}
+			loc = tempstr.indexOf("RC0:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				vRC0.setText(tempstr.substring(tmploc + 1).trim());
+			}
+			loc = tempstr.indexOf("R1:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				vR1.setText(tempstr.substring(tmploc + 1).trim());
+			}
+			loc = tempstr.indexOf("C1:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				vC1.setText(tempstr.substring(tmploc + 1).trim());
+			}
+			loc = tempstr.indexOf("RC1:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				vRC1.setText(tempstr.substring(tmploc + 1).trim());
+			}
+			loc = tempstr.indexOf("U0:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				mu0.setText(tempstr.substring(tmploc + 1).trim());
+			}
+			loc = tempstr.indexOf("U1:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				mu1.setText(tempstr.substring(tmploc + 1).trim());
+			}
+			loc = tempstr.indexOf("N0:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				n0.setText(tempstr.substring(tmploc + 1).trim());
+			}
+			loc = tempstr.indexOf("N1:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				n1.setText(tempstr.substring(tmploc + 1).trim());
+			}
+			loc = tempstr.indexOf("NR:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				nr.setText(tempstr.substring(tmploc + 1).trim());
+			}
+			counter++;
+		}
+	}
+
 	class populateBtnListner implements ActionListener {
 
 		@Override
@@ -356,6 +554,20 @@ public class RMGUInterface {
 			n0.setText("20");
 			n1.setText("20");
 			nr.setText("4");
+		}
+	}
+
+	class popFromFileListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JFileChooser fc = new JFileChooser();
+			FileNameExtensionFilter filter = new FileNameExtensionFilter(
+					"iRoeMetz CofV Input (.irm)", "irm");
+			fc.setFileFilter(filter);
+			int fcReturn = fc.showOpenDialog((Component) e.getSource());
+			File f = fc.getSelectedFile();
+			parseCofVfile(f);
 		}
 	}
 

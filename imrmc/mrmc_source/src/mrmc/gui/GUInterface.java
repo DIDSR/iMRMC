@@ -1349,7 +1349,7 @@ public class GUInterface {
 			// System.out.println("browse pressed");
 			JFileChooser fc = new JFileChooser();
 			FileNameExtensionFilter filter = new FileNameExtensionFilter(
-					"iMRMC Input Files", "imrmc");
+					"iMRMC Input Files (.imrmc)", "imrmc");
 			fc.setFileFilter(filter);
 			// Don't get rid of this despite being unused
 			int returnVal = fc.showOpenDialog((Component) e.getSource());
