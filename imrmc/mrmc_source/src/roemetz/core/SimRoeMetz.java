@@ -82,7 +82,7 @@ public class SimRoeMetz {
 	}
 
 	// TODO verify correctness
-	public static void doSim(double[] u, double[] var_t, int[] n) {
+	public static void doSim(double[] u, double[] var_t, int[] n, long seed) {
 		if (u.length != 2) {
 			System.out.println("input u is of incorrect size");
 			return;
@@ -114,8 +114,8 @@ public class SimRoeMetz {
 		double auc_1 = snrToAUC(snr_1);
 		auc = new double[] { auc_0, auc_1, auc_0 - auc_1 };
 
-		Random rand = new Random(); // uses currentTimeMillis() as seed by
-									// default
+		Random rand = new Random(seed);
+
 		double[] R00 = fillGaussian(stdDevs[0], rand, nr);
 		double[] C00 = fillGaussian(stdDevs[1], rand, n0);
 		double[][] RC00 = fillGaussian(stdDevs[2], rand, nr, n0);

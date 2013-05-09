@@ -6,7 +6,6 @@ import mrmc.core.matrix;
 
 public class runGen {
 	public static void main(String[] args) {
-		int nmc = 10001;
 		double[] hypothesis = { 1.5, 1.0, 1.5, 1.0 };
 
 		double[] genCofV_scores = { 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0,
@@ -14,9 +13,10 @@ public class runGen {
 				1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0,
 				1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 6.0 };
 		int[] n = { 200, 200, 20 };
+		int seed = 140592013;
 
 		SimRoeMetz.doSim(new double[] { hypothesis[0], hypothesis[1] },
-				genCofV_scores, n);
+				genCofV_scores, n, seed);
 
 		System.out.println("t00:");
 		matrix.printMatrix(SimRoeMetz.t00);

@@ -40,6 +40,8 @@ public class RMGUInterface {
 	JTextField nr;
 	JTextField numExp;
 	JTextField numSamples;
+	JTextField seed;
+	JDialog progDialog;
 	static JProgressBar simProgress;
 	static JProgressBar estProgress;
 	static RoeMetz appl;
@@ -249,13 +251,14 @@ public class RMGUInterface {
 		JLabel numExpLabel = new JLabel("# of Experiments");
 		JButton doSimExp = new JButton("Perform Simulation Experiment");
 		doSimExp.addActionListener(new doSimBtnListner());
-		// simProgress = new JProgressBar(0, 100);
-		// simProgress.setValue(0);
+		JLabel seedLabel = new JLabel("Seed for RNG");
+		seed = new JTextField(4);
 
+		simulationExperiment.add(seedLabel);
+		simulationExperiment.add(seed);
 		simulationExperiment.add(numExpLabel);
 		simulationExperiment.add(numExp);
 		simulationExperiment.add(doSimExp);
-		// simulationExperiment.add(simProgress);
 
 		simExpPanel.add(simExpDesc);
 		simExpPanel.add(simulationExperiment);
@@ -333,10 +336,11 @@ public class RMGUInterface {
 		double[] u;
 		double[] var_t;
 		int[] n;
+		long seed;
 		int numTimes;
 
 		public void run() {
-			simProgress.setMaximum(numTimes - 1);
+			simProgress.setMaximum(numTimes);
 
 			double[][] avgBDGdata = new double[3][8];
 			double[][] avgBCKdata = new double[3][7];
@@ -344,7 +348,7 @@ public class RMGUInterface {
 			double[][] avgORdata = new double[3][6];
 			double[][] avgMSdata = new double[3][6];
 			for (int i = 0; i < numTimes; i++) {
-				SimRoeMetz.doSim(u, var_t, n);
+				SimRoeMetz.doSim(u, var_t, n, seed);
 				avgBDGdata = matrix.matrixAdd(avgBDGdata,
 						SimRoeMetz.getBDGdata());
 				avgBCKdata = matrix.matrixAdd(avgBCKdata,
@@ -355,8 +359,8 @@ public class RMGUInterface {
 				avgMSdata = matrix.matrixAdd(avgMSdata, SimRoeMetz.getMSdata());
 
 				simProgress.setValue(i);
-
 			}
+			simProgress.setValue(numTimes);
 			double scaleFactor = 1.0 / (double) numTimes;
 			avgBDGdata = matrix.scaleMatrix(avgBDGdata, scaleFactor);
 			avgBCKdata = matrix.scaleMatrix(avgBCKdata, scaleFactor);
@@ -379,30 +383,16 @@ public class RMGUInterface {
 			System.out.println("MS across Experiments\t");
 			matrix.printMatrix(avgMSdata);
 			System.out.println("\n");
+			progDialog.setVisible(false);
 		}
 
-		public SimExperiments(double[] u, double[] var_t, int[] n, int numTimes) {
+		public SimExperiments(double[] u, double[] var_t, int[] n, long seed,
+				int numTimes) {
 			this.u = u;
 			this.var_t = var_t;
 			this.n = n;
+			this.seed = seed;
 			this.numTimes = numTimes;
-		}
-	}
-
-	private class EstimateCofV implements Runnable {
-		double[] u;
-		double[] var_t;
-		int n;
-
-		public void run() {
-			CofVGenRoeMetz.genRoeMetz(u, n, var_t);
-			CofVGenRoeMetz.printResults();
-		}
-
-		public EstimateCofV(double[] u, double[] var_t, int n) {
-			this.u = u;
-			this.var_t = var_t;
-			this.n = n;
 		}
 	}
 
@@ -433,22 +423,50 @@ public class RMGUInterface {
 				int[] n = { Integer.parseInt(n0.getText()),
 						Integer.parseInt(n1.getText()),
 						Integer.parseInt(nr.getText()) };
+				long seedVar = Long.parseLong(seed.getText());
 
 				int numTimes = Integer.parseInt(numExp.getText());
 				simProgress = new JProgressBar(0, 100);
 				simProgress.setValue(0);
 
+				// Perform simulations in background thread
 				Thread simThread = new Thread(new SimExperiments(u, var_t, n,
-						numTimes));
-
+						seedVar, numTimes));
 				simThread.start();
-				JOptionPane.showMessageDialog(appl.getFrame(), simProgress,
-						"Simulation Progress", JOptionPane.INFORMATION_MESSAGE);
+
+				progDialog = new JDialog(appl.getFrame(), "Simulation Progress");
+				JPanel pane = new JPanel(new FlowLayout());
+				pane.add(simProgress);
+				progDialog.setContentPane(pane);
+				progDialog.pack();
+				progDialog.setVisible(true);
+
+				if (!simThread.isAlive()) {
+					progDialog.setVisible(false);
+				}
+
 			} catch (NumberFormatException e1) {
 				JOptionPane.showMessageDialog(appl.getFrame(),
 						"Incorrect / Incomplete Input", "Warning",
 						JOptionPane.WARNING_MESSAGE);
 			}
+		}
+	}
+
+	private class EstimateCofV implements Runnable {
+		double[] u;
+		double[] var_t;
+		int n;
+
+		public void run() {
+			CofVGenRoeMetz.genRoeMetz(u, n, var_t);
+			CofVGenRoeMetz.printResults();
+		}
+
+		public EstimateCofV(double[] u, double[] var_t, int n) {
+			this.u = u;
+			this.var_t = var_t;
+			this.n = n;
 		}
 	}
 
@@ -478,6 +496,7 @@ public class RMGUInterface {
 						Double.parseDouble(vRC1.getText()) };
 
 				int n = Integer.parseInt(numSamples.getText());
+
 				Thread estThread = new Thread(new EstimateCofV(u, var_t, n));
 				estThread.run();
 			} catch (NumberFormatException e1) {
