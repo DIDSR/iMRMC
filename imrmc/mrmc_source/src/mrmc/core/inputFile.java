@@ -27,8 +27,6 @@ package mrmc.core;
 import java.util.*;
 import java.io.*;
 
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-
 import mrmc.chart.XYPair;
 
 public class inputFile {
@@ -174,8 +172,6 @@ public class inputFile {
 					temp.add(new XYPair(fpf, tpf));
 					rocPoints.put(r, temp);
 				}
-				System.out
-						.println(r + ": " + fpf + ", " + tpf + " : " + thresh);
 			}
 		}
 		return rocPoints;

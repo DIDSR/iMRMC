@@ -50,36 +50,35 @@ import roemetz.core.SimRoeMetz;
 
 public class RMGUInterface {
 
-	JTextField vR00;
-	JTextField vC00;
-	JTextField vRC00;
-	JTextField vR10;
-	JTextField vC10;
-	JTextField vRC10;
-	JTextField vR01;
-	JTextField vC01;
-	JTextField vRC01;
-	JTextField vR11;
-	JTextField vC11;
-	JTextField vRC11;
-	JTextField vR0;
-	JTextField vC0;
-	JTextField vRC0;
-	JTextField vR1;
-	JTextField vC1;
-	JTextField vRC1;
-	JTextField mu0;
-	JTextField mu1;
-	JTextField n0;
-	JTextField n1;
-	JTextField nr;
-	JTextField numExp;
-	JTextField numSamples;
-	JTextField seed;
-	JDialog progDialog;
-	static JProgressBar simProgress;
-	static JProgressBar estProgress;
-	static RoeMetz appl;
+	private JTextField vR00;
+	private JTextField vC00;
+	private JTextField vRC00;
+	private JTextField vR10;
+	private JTextField vC10;
+	private JTextField vRC10;
+	private JTextField vR01;
+	private JTextField vC01;
+	private JTextField vRC01;
+	private JTextField vR11;
+	private JTextField vC11;
+	private JTextField vRC11;
+	private JTextField vR0;
+	private JTextField vC0;
+	private JTextField vRC0;
+	private JTextField vR1;
+	private JTextField vC1;
+	private JTextField vRC1;
+	private JTextField mu0;
+	private JTextField mu1;
+	private JTextField n0;
+	private JTextField n1;
+	private JTextField nr;
+	private JTextField numExp;
+	private JTextField numSamples;
+	private JTextField seed;
+	private JDialog progDialog;
+	private static JProgressBar simProgress;
+	private static RoeMetz appl;
 
 	public RMGUInterface(RoeMetz lsttemp, Container cp) {
 		appl = lsttemp;
@@ -639,32 +638,32 @@ public class RMGUInterface {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {
-				double[] u = { Double.parseDouble(mu0.getText()),
-						Double.parseDouble(mu1.getText()) };
-				double[] var_t = { Double.parseDouble(vR00.getText()),
-						Double.parseDouble(vC00.getText()),
-						Double.parseDouble(vRC00.getText()),
-						Double.parseDouble(vR10.getText()),
-						Double.parseDouble(vC10.getText()),
-						Double.parseDouble(vRC10.getText()),
-						Double.parseDouble(vR01.getText()),
-						Double.parseDouble(vC01.getText()),
-						Double.parseDouble(vRC01.getText()),
-						Double.parseDouble(vR11.getText()),
-						Double.parseDouble(vC11.getText()),
-						Double.parseDouble(vRC11.getText()),
-						Double.parseDouble(vR0.getText()),
-						Double.parseDouble(vC0.getText()),
-						Double.parseDouble(vRC0.getText()),
-						Double.parseDouble(vR1.getText()),
-						Double.parseDouble(vC1.getText()),
-						Double.parseDouble(vRC1.getText()) };
-				int[] n = { Integer.parseInt(n0.getText()),
-						Integer.parseInt(n1.getText()),
-						Integer.parseInt(nr.getText()) };
+				double[] u = { Double.valueOf(mu0.getText()),
+						Double.valueOf(mu1.getText()) };
+				double[] var_t = { Double.valueOf(vR00.getText()),
+						Double.valueOf(vC00.getText()),
+						Double.valueOf(vRC00.getText()),
+						Double.valueOf(vR10.getText()),
+						Double.valueOf(vC10.getText()),
+						Double.valueOf(vRC10.getText()),
+						Double.valueOf(vR01.getText()),
+						Double.valueOf(vC01.getText()),
+						Double.valueOf(vRC01.getText()),
+						Double.valueOf(vR11.getText()),
+						Double.valueOf(vC11.getText()),
+						Double.valueOf(vRC11.getText()),
+						Double.valueOf(vR0.getText()),
+						Double.valueOf(vC0.getText()),
+						Double.valueOf(vRC0.getText()),
+						Double.valueOf(vR1.getText()),
+						Double.valueOf(vC1.getText()),
+						Double.valueOf(vRC1.getText()) };
+				int[] n = { Integer.valueOf(n0.getText()),
+						Integer.valueOf(n1.getText()),
+						Integer.valueOf(nr.getText()) };
 				long seedVar = Long.parseLong(seed.getText());
 
-				int numTimes = Integer.parseInt(numExp.getText());
+				int numTimes = Integer.valueOf(numExp.getText());
 				simProgress = new JProgressBar(0, 100);
 				simProgress.setValue(0);
 
@@ -685,6 +684,7 @@ public class RMGUInterface {
 				}
 
 			} catch (NumberFormatException e1) {
+				System.out.print(e1.toString());
 				JOptionPane.showMessageDialog(appl.getFrame(),
 						"Incorrect / Incomplete Input", "Warning",
 						JOptionPane.WARNING_MESSAGE);
@@ -713,28 +713,28 @@ public class RMGUInterface {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {
-				double[] u = { Double.parseDouble(mu0.getText()),
-						Double.parseDouble(mu1.getText()) };
-				double[] var_t = { Double.parseDouble(vR00.getText()),
-						Double.parseDouble(vC00.getText()),
-						Double.parseDouble(vRC00.getText()),
-						Double.parseDouble(vR10.getText()),
-						Double.parseDouble(vC10.getText()),
-						Double.parseDouble(vRC10.getText()),
-						Double.parseDouble(vR01.getText()),
-						Double.parseDouble(vC01.getText()),
-						Double.parseDouble(vRC01.getText()),
-						Double.parseDouble(vR11.getText()),
-						Double.parseDouble(vC11.getText()),
-						Double.parseDouble(vRC11.getText()),
-						Double.parseDouble(vR0.getText()),
-						Double.parseDouble(vC0.getText()),
-						Double.parseDouble(vRC0.getText()),
-						Double.parseDouble(vR1.getText()),
-						Double.parseDouble(vC1.getText()),
-						Double.parseDouble(vRC1.getText()) };
+				double[] u = { Double.valueOf(mu0.getText()),
+						Double.valueOf(mu1.getText()) };
+				double[] var_t = { Double.valueOf(vR00.getText()),
+						Double.valueOf(vC00.getText()),
+						Double.valueOf(vRC00.getText()),
+						Double.valueOf(vR10.getText()),
+						Double.valueOf(vC10.getText()),
+						Double.valueOf(vRC10.getText()),
+						Double.valueOf(vR01.getText()),
+						Double.valueOf(vC01.getText()),
+						Double.valueOf(vRC01.getText()),
+						Double.valueOf(vR11.getText()),
+						Double.valueOf(vC11.getText()),
+						Double.valueOf(vRC11.getText()),
+						Double.valueOf(vR0.getText()),
+						Double.valueOf(vC0.getText()),
+						Double.valueOf(vRC0.getText()),
+						Double.valueOf(vR1.getText()),
+						Double.valueOf(vC1.getText()),
+						Double.valueOf(vRC1.getText()) };
 
-				int n = Integer.parseInt(numSamples.getText());
+				int n = Integer.valueOf(numSamples.getText());
 
 				Thread estThread = new Thread(new EstimateCofV(u, var_t, n));
 				estThread.run();

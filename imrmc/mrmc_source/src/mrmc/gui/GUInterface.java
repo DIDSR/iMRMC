@@ -1253,6 +1253,7 @@ public class GUInterface {
 	/* Drop down menu to select input method */
 	class inputModListener implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
+			@SuppressWarnings("unchecked")
 			JComboBox<String> cb = (JComboBox<String>) evt.getSource();
 			CardLayout cl = (CardLayout) (inputCards.getLayout());
 			cl.show(inputCards, (String) cb.getSelectedItem());
@@ -1296,6 +1297,7 @@ public class GUInterface {
 	/* drop down menu to choose a particular dataset from internal database */
 	class dbActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
+			@SuppressWarnings("unchecked")
 			JComboBox<String> cb = (JComboBox<String>) evt.getSource();
 			selectedDB = (int) cb.getSelectedIndex();
 		}

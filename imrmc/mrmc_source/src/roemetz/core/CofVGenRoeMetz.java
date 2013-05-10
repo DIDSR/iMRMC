@@ -52,7 +52,6 @@ public class CofVGenRoeMetz {
 		}
 	}
 
-	// TODO verify correctness
 	public static double prodMoment1(double[] u, double[] scale, int n) {
 		NormalDistribution gauss = new NormalDistribution();
 
@@ -161,7 +160,6 @@ public class CofVGenRoeMetz {
 		return matrix.total(toTotal);
 	}
 
-	// TODO verify correctness
 	public static void genRoeMetz(double[] u, int n, double[] var_t) {
 		NormalDistribution gauss = new NormalDistribution();
 		if (var_t.length != 18) {
