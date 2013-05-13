@@ -35,7 +35,7 @@ public class PilotModSelect {
 	int selectedMod = 0;
 	int useBiasM = 0;
 	JCheckBox negBox;
-	JComboBox<String> chooseA, chooseB;
+	JComboBox chooseA, chooseB;
 	JButton varAnalysisButton;
 
 	public void setUseBiasM(boolean bias) {
@@ -70,8 +70,8 @@ public class PilotModSelect {
 		negBox.setSelected(false);
 		negBox.addItemListener(new allNegativeListner());
 
-		chooseA = new JComboBox<String>();
-		chooseB = new JComboBox<String>();
+		chooseA = new JComboBox();
+		chooseB = new JComboBox();
 		chooseA.addItem("n/a");
 		chooseB.addItem("n/a");
 

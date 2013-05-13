@@ -767,7 +767,7 @@ public class GUInterface {
 		InputCBPane.setLayout(new FlowLayout());
 		JLabel inLabel = new JLabel("Select an input method: ");
 		String comboBoxItems[] = { DB, Pilot, Manual };
-		JComboBox<String> cb = new JComboBox<String>(comboBoxItems);
+		JComboBox cb = new JComboBox(comboBoxItems);
 		cb.setEditable(false);
 		cb.setSelectedIndex(0);
 		cb.addActionListener(new inputModListener());
@@ -795,7 +795,7 @@ public class GUInterface {
 		layout.setAutoCreateContainerGaps(true);
 
 		JLabel studyLabel = new JLabel("Database ");
-		JComboBox<String> dbCB = new JComboBox<String>(dbBoxItems);
+		JComboBox dbCB = new JComboBox(dbBoxItems);
 		dbCB.setEditable(false);
 		dbCB.addActionListener(new dbActionListener());
 		dbCB.setSelectedIndex(0);
@@ -1254,7 +1254,7 @@ public class GUInterface {
 	class inputModListener implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
 			@SuppressWarnings("unchecked")
-			JComboBox<String> cb = (JComboBox<String>) evt.getSource();
+			JComboBox cb = (JComboBox) evt.getSource();
 			CardLayout cl = (CardLayout) (inputCards.getLayout());
 			cl.show(inputCards, (String) cb.getSelectedItem());
 			selectedInput = cb.getSelectedIndex();
@@ -1298,7 +1298,7 @@ public class GUInterface {
 	class dbActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
 			@SuppressWarnings("unchecked")
-			JComboBox<String> cb = (JComboBox<String>) evt.getSource();
+			JComboBox cb = (JComboBox) evt.getSource();
 			selectedDB = (int) cb.getSelectedIndex();
 		}
 	}
