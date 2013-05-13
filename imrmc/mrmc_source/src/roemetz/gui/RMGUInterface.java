@@ -127,12 +127,6 @@ public class RMGUInterface {
 		vC10.setMaximumSize(vC10.getPreferredSize());
 		vRC10 = new JTextField(4);
 		vRC10.setMaximumSize(vRC10.getPreferredSize());
-		vR01 = new JTextField(4);
-		vR01.setMaximumSize(vR01.getPreferredSize());
-		vC01 = new JTextField(4);
-		vC01.setMaximumSize(vC01.getPreferredSize());
-		vRC01 = new JTextField(4);
-		vRC01.setMaximumSize(vRC01.getPreferredSize());
 
 		JLabel vR00Label = new JLabel("vR00: ");
 		JLabel vC00Label = new JLabel("vC00: ");
@@ -140,9 +134,6 @@ public class RMGUInterface {
 		JLabel vR10Label = new JLabel("vR10: ");
 		JLabel vC10Label = new JLabel("vC10: ");
 		JLabel vRC10Label = new JLabel("vRC10: ");
-		JLabel vR01Label = new JLabel("vR01: ");
-		JLabel vC01Label = new JLabel("vC01: ");
-		JLabel vRC01Label = new JLabel("vRC01: ");
 
 		varianceFields1.add(vR00Label);
 		varianceFields1.add(vR00);
@@ -156,12 +147,6 @@ public class RMGUInterface {
 		varianceFields1.add(vC10);
 		varianceFields1.add(vRC10Label);
 		varianceFields1.add(vRC10);
-		varianceFields1.add(vR01Label);
-		varianceFields1.add(vR01);
-		varianceFields1.add(vC01Label);
-		varianceFields1.add(vC01);
-		varianceFields1.add(vRC01Label);
-		varianceFields1.add(vRC01);
 
 		/*
 		 * Panel within cofvInputPanel with fields to input variances (row 2)
@@ -169,12 +154,45 @@ public class RMGUInterface {
 		JPanel varianceFields2 = new JPanel();
 		varianceFields2.setLayout(new FlowLayout());
 
+		vR01 = new JTextField(4);
+		vR01.setMaximumSize(vR01.getPreferredSize());
+		vC01 = new JTextField(4);
+		vC01.setMaximumSize(vC01.getPreferredSize());
+		vRC01 = new JTextField(4);
+		vRC01.setMaximumSize(vRC01.getPreferredSize());
 		vR11 = new JTextField(4);
 		vR11.setMaximumSize(vR11.getPreferredSize());
 		vC11 = new JTextField(4);
 		vC11.setMaximumSize(vC11.getPreferredSize());
 		vRC11 = new JTextField(4);
 		vRC11.setMaximumSize(vRC11.getPreferredSize());
+
+		JLabel vR01Label = new JLabel("vR01: ");
+		JLabel vC01Label = new JLabel("vC01: ");
+		JLabel vRC01Label = new JLabel("vRC01: ");
+		JLabel vR11Label = new JLabel("vR11: ");
+		JLabel vC11Label = new JLabel("vC11: ");
+		JLabel vRC11Label = new JLabel("vRC11: ");
+
+		varianceFields2.add(vR01Label);
+		varianceFields2.add(vR01);
+		varianceFields2.add(vC01Label);
+		varianceFields2.add(vC01);
+		varianceFields2.add(vRC01Label);
+		varianceFields2.add(vRC01);
+		varianceFields2.add(vR11Label);
+		varianceFields2.add(vR11);
+		varianceFields2.add(vC11Label);
+		varianceFields2.add(vC11);
+		varianceFields2.add(vRC11Label);
+		varianceFields2.add(vRC11);
+
+		/*
+		 * Panel within cofvInputPanel with fields to input variances (row 3)
+		 */
+		JPanel varianceFields3 = new JPanel();
+		varianceFields3.setLayout(new FlowLayout());
+
 		vR0 = new JTextField(4);
 		vR0.setMaximumSize(vR0.getPreferredSize());
 		vC0 = new JTextField(4);
@@ -188,9 +206,6 @@ public class RMGUInterface {
 		vRC1 = new JTextField(4);
 		vRC1.setMaximumSize(vRC1.getPreferredSize());
 
-		JLabel vR11Label = new JLabel("vR11: ");
-		JLabel vC11Label = new JLabel("vC11: ");
-		JLabel vRC11Label = new JLabel("vRC11: ");
 		JLabel vR0Label = new JLabel("vR0: ");
 		JLabel vC0Label = new JLabel("vC0: ");
 		JLabel vRC0Label = new JLabel("vRC0: ");
@@ -198,24 +213,18 @@ public class RMGUInterface {
 		JLabel vC1Label = new JLabel("vC1: ");
 		JLabel vRC1Label = new JLabel("vRC1: ");
 
-		varianceFields2.add(vR11Label);
-		varianceFields2.add(vR11);
-		varianceFields2.add(vC11Label);
-		varianceFields2.add(vC11);
-		varianceFields2.add(vRC11Label);
-		varianceFields2.add(vRC11);
-		varianceFields2.add(vR0Label);
-		varianceFields2.add(vR0);
-		varianceFields2.add(vC0Label);
-		varianceFields2.add(vC0);
-		varianceFields2.add(vRC0Label);
-		varianceFields2.add(vRC0);
-		varianceFields2.add(vR1Label);
-		varianceFields2.add(vR1);
-		varianceFields2.add(vC1Label);
-		varianceFields2.add(vC1);
-		varianceFields2.add(vRC1Label);
-		varianceFields2.add(vRC1);
+		varianceFields3.add(vR0Label);
+		varianceFields3.add(vR0);
+		varianceFields3.add(vC0Label);
+		varianceFields3.add(vC0);
+		varianceFields3.add(vRC0Label);
+		varianceFields3.add(vRC0);
+		varianceFields3.add(vR1Label);
+		varianceFields3.add(vR1);
+		varianceFields3.add(vC1Label);
+		varianceFields3.add(vC1);
+		varianceFields3.add(vRC1Label);
+		varianceFields3.add(vRC1);
 
 		/*
 		 * Panel to input means
@@ -270,6 +279,7 @@ public class RMGUInterface {
 		cofvInputPanel.add(inputLabels);
 		cofvInputPanel.add(varianceFields1);
 		cofvInputPanel.add(varianceFields2);
+		cofvInputPanel.add(varianceFields3);
 		cofvInputPanel.add(meansFields);
 		cofvInputPanel.add(sizeFields);
 		cofvInputPanel.add(populateFields);
