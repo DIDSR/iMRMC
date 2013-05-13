@@ -44,6 +44,14 @@ public class SimRoeMetz {
 	private static double[][] ORdata1;
 	private static double[][] MSdata1;
 
+	public static void main(String[] args) {
+		// double[] u = args[0];
+		// double[] var_t = args[1];
+		// int[] n = args[2];
+		Random rand = new Random(Long.parseLong(args[3]));
+		// doSim(u, var_t, n, rand);
+	}
+
 	public static double[][] getBDGdata() {
 		return BDGdata1;
 	}
@@ -81,7 +89,7 @@ public class SimRoeMetz {
 		System.out.println(Arrays.toString(auc));
 	}
 
-	public static void doSim(double[] u, double[] var_t, int[] n, long seed,
+	public static void doSim(double[] u, double[] var_t, int[] n, Random rand,
 			int selectedMod, int useBiasM) {
 		if (u.length != 2) {
 			System.out.println("input u is of incorrect size");
@@ -113,9 +121,6 @@ public class SimRoeMetz {
 		double auc_0 = snrToAUC(snr_0);
 		double auc_1 = snrToAUC(snr_1);
 		auc = new double[] { auc_0, auc_1, auc_0 - auc_1 };
-
-		// Random rand = new Random(seed);
-		Random rand = new Random();
 
 		double[] R00 = fillGaussian(stdDevs[0], rand, nr);
 		double[] C00 = fillGaussian(stdDevs[1], rand, n0);

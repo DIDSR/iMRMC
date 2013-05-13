@@ -40,6 +40,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -700,23 +708,49 @@ public class RMGUInterface {
 		}
 	}
 
-	private class SimExperiments implements Runnable {
+	private class ProgBar implements Callable<Boolean> {
+		int numTimes;
+		AtomicInteger val = new AtomicInteger(0);
+
+		public Boolean call() {
+			simProgress = new JProgressBar(0, numTimes);
+			simProgress.setValue(val.get());
+
+			progDialog = new JDialog(appl.getFrame(), "Simulation Progress");
+			JPanel pane = new JPanel(new FlowLayout());
+			pane.add(simProgress);
+			progDialog.setContentPane(pane);
+			progDialog.pack();
+			progDialog.setVisible(true);
+
+			return true;
+		}
+
+		public ProgBar(int numTimes) {
+			this.numTimes = numTimes;
+		}
+
+		public void incrProgress() {
+			simProgress.setValue(val.incrementAndGet());
+		}
+	}
+
+	private class SimExperiments implements Callable<double[][][]> {
 		double[] u;
 		double[] var_t;
 		int[] n;
-		long seed;
 		int numTimes;
+		Random rand;
+		AtomicInteger val;
 
-		public void run() {
-			simProgress.setMaximum(numTimes);
-
+		public double[][][] call() {
 			double[][] avgBDGdata = new double[3][8];
 			double[][] avgBCKdata = new double[3][7];
 			double[][] avgDBMdata = new double[3][6];
 			double[][] avgORdata = new double[3][6];
 			double[][] avgMSdata = new double[3][6];
 			for (int i = 0; i < numTimes; i++) {
-				SimRoeMetz.doSim(u, var_t, n, seed, simSelectedMod, useBiasM);
+				SimRoeMetz.doSim(u, var_t, n, rand, simSelectedMod, useBiasM);
 				avgBDGdata = matrix.matrixAdd(avgBDGdata,
 						SimRoeMetz.getBDGdata());
 				avgBCKdata = matrix.matrixAdd(avgBCKdata,
@@ -726,9 +760,9 @@ public class RMGUInterface {
 				avgORdata = matrix.matrixAdd(avgORdata, SimRoeMetz.getORdata());
 				avgMSdata = matrix.matrixAdd(avgMSdata, SimRoeMetz.getMSdata());
 
-				simProgress.setValue(i);
+				simProgress.setValue(val.incrementAndGet());
 			}
-			simProgress.setValue(numTimes);
+			// simProgress.setValue(numTimes);
 			double scaleFactor = 1.0 / (double) numTimes;
 			avgBDGdata = matrix.scaleMatrix(avgBDGdata, scaleFactor);
 			avgBCKdata = matrix.scaleMatrix(avgBCKdata, scaleFactor);
@@ -736,31 +770,20 @@ public class RMGUInterface {
 			avgORdata = matrix.scaleMatrix(avgORdata, scaleFactor);
 			avgMSdata = matrix.scaleMatrix(avgMSdata, scaleFactor);
 
-			System.out.println("BDG across Experiments\t");
-			matrix.printMatrix(avgBDGdata);
-			System.out.println("\n");
-			System.out.println("BCK across Experiments\t");
-			matrix.printMatrix(avgBCKdata);
-			System.out.println("\n");
-			System.out.println("DBM across Experiments\t");
-			matrix.printMatrix(avgDBMdata);
-			System.out.println("\n");
-			System.out.println("OR across Experiments\t");
-			matrix.printMatrix(avgORdata);
-			System.out.println("\n");
-			System.out.println("MS across Experiments\t");
-			matrix.printMatrix(avgMSdata);
-			System.out.println("\n");
-			progDialog.setVisible(false);
+			return new double[][][] { avgBDGdata, avgBCKdata, avgDBMdata,
+					avgORdata, avgMSdata };
+
+			// progDialog.setVisible(false);
 		}
 
-		public SimExperiments(double[] u, double[] var_t, int[] n, long seed,
-				int numTimes) {
+		public SimExperiments(double[] u, double[] var_t, int[] n, Random rand,
+				int numTimes, AtomicInteger val) {
 			this.u = u;
 			this.var_t = var_t;
 			this.n = n;
-			this.seed = seed;
+			this.rand = rand;
 			this.numTimes = numTimes;
+			this.val = val;
 		}
 	}
 
@@ -792,15 +815,31 @@ public class RMGUInterface {
 						Integer.valueOf(n1.getText()),
 						Integer.valueOf(nr.getText()) };
 				long seedVar = Long.parseLong(seed.getText());
-
 				int numTimes = Integer.valueOf(numExp.getText());
-				simProgress = new JProgressBar(0, 100);
-				simProgress.setValue(0);
 
-				// Perform simulations in background thread
-				Thread simThread = new Thread(new SimExperiments(u, var_t, n,
-						seedVar, numTimes));
-				simThread.start();
+				Random rand = new Random(seedVar);
+				// Perform simulations in background threads
+				// // Thread simThread1 = new Thread(new SimExperiments(u,
+				// var_t, n,
+				// // rand, numTimes / 2));
+				// // simThread1.start();
+				// //
+				// // Thread simThread2 = new Thread(new SimExperiments(u,
+				// var_t, n,
+				// // rand, numTimes / 2));
+				// // simThread2.start();
+				//
+				// try {
+				// simThread1.join();
+				// simThread2.join();
+				// } catch (InterruptedException ie) {
+				// System.err
+				// .println("Interrupted Exception at Simulation Experiment Threads");
+				// }
+
+				AtomicInteger val = new AtomicInteger(0);
+				simProgress = new JProgressBar(0, numTimes);
+				simProgress.setValue(val.get());
 
 				progDialog = new JDialog(appl.getFrame(), "Simulation Progress");
 				JPanel pane = new JPanel(new FlowLayout());
@@ -808,16 +847,68 @@ public class RMGUInterface {
 				progDialog.setContentPane(pane);
 				progDialog.pack();
 				progDialog.setVisible(true);
+				ExecutorService executor = Executors.newFixedThreadPool(3);
 
-				if (!simThread.isAlive()) {
-					progDialog.setVisible(false);
-				}
+				// TODO something to make prog bar run in its own thread or not get blocked
+				ProgBar prog = new ProgBar(numTimes);
+				// Callable<Boolean> barThread = prog;
+				Callable<double[][][]> simThread1 = new SimExperiments(u,
+						var_t, n, rand, numTimes / 2, val);
+				Callable<double[][][]> simThread2 = new SimExperiments(u,
+						var_t, n, rand, numTimes / 2, val);
+				Future<double[][][]> resultst1 = executor.submit(simThread1);
+				Future<double[][][]> resultst2 = executor.submit(simThread2);
+				// Future<Boolean> barResult = executor.submit(barThread);
+				// System.out.println(barResult);
+
+				// if (!simThread1.isAlive() && !simThread2.isAlive()) {
+				// simProgress.setValue(numTimes);
+				// progDialog.setVisible(false);
+				// }
+
+				double[][] allBDG = matrix.matrixAdd(resultst1.get()[0],
+						resultst2.get()[0]);
+				double[][] allBCK = matrix.matrixAdd(resultst1.get()[1],
+						resultst2.get()[1]);
+				double[][] allDBM = matrix.matrixAdd(resultst1.get()[2],
+						resultst2.get()[2]);
+				double[][] allOR = matrix.matrixAdd(resultst1.get()[3],
+						resultst2.get()[3]);
+				double[][] allMS = matrix.matrixAdd(resultst1.get()[4],
+						resultst2.get()[4]);
+				allBDG = matrix.scaleMatrix(allBDG, 0.5);
+				allBCK = matrix.scaleMatrix(allBCK, 0.5);
+				allDBM = matrix.scaleMatrix(allDBM, 0.5);
+				allOR = matrix.scaleMatrix(allOR, 0.5);
+				allMS = matrix.scaleMatrix(allMS, 0.5);
+
+				System.out.println("BDG across Experiments\t");
+				matrix.printMatrix(allBDG);
+				System.out.println("\n");
+				System.out.println("BCK across Experiments\t");
+				matrix.printMatrix(allBCK);
+				System.out.println("\n");
+				System.out.println("DBM across Experiments\t");
+				matrix.printMatrix(allDBM);
+				System.out.println("\n");
+				System.out.println("OR across Experiments\t");
+				matrix.printMatrix(allOR);
+				System.out.println("\n");
+				System.out.println("MS across Experiments\t");
+				matrix.printMatrix(allMS);
+				System.out.println("\n");
+
+				executor.shutdown();
 
 			} catch (NumberFormatException e1) {
 				System.out.print(e1.toString());
 				JOptionPane.showMessageDialog(appl.getFrame(),
 						"Incorrect / Incomplete Input", "Warning",
 						JOptionPane.WARNING_MESSAGE);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			} catch (ExecutionException e1) {
+				e1.printStackTrace();
 			}
 		}
 	}
