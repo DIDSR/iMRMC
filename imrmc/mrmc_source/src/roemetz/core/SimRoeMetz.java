@@ -81,7 +81,8 @@ public class SimRoeMetz {
 		System.out.println(Arrays.toString(auc));
 	}
 
-	public static void doSim(double[] u, double[] var_t, int[] n, long seed) {
+	public static void doSim(double[] u, double[] var_t, int[] n, long seed,
+			int selectedMod) {
 		if (u.length != 2) {
 			System.out.println("input u is of incorrect size");
 			return;
@@ -113,7 +114,7 @@ public class SimRoeMetz {
 		double auc_1 = snrToAUC(snr_1);
 		auc = new double[] { auc_0, auc_1, auc_0 - auc_1 };
 
-		//Random rand = new Random(seed);
+		// Random rand = new Random(seed);
 		Random rand = new Random();
 
 		double[] R00 = fillGaussian(stdDevs[0], rand, nr);
@@ -180,11 +181,12 @@ public class SimRoeMetz {
 		t10 = matrix.matrixAdd(t10, RC10);
 		t11 = matrix.matrixAdd(t11, RC11);
 
-		calculateStuff(n0, n1, nr);
+		calculateStuff(n0, n1, nr, selectedMod);
 
 	}
 
-	public static void calculateStuff(int n0, int n1, int nr) {
+	public static void calculateStuff(int n0, int n1, int nr, int selectedMod) {
+
 		// convert t-matrices to correct shape and create t0,t1
 		double[][][] newt00 = new double[n0][nr][2];
 		double[][][] newt01 = new double[n0][nr][2];
@@ -243,11 +245,11 @@ public class SimRoeMetz {
 		toCalc.calculateCovMRMC();
 		dbRecord rec = new dbRecord(toCalc);
 
-		BDGdata1 = rec.getBDGTab(0, rec.getBDG(0), rec.getBDGcoeff());
-		BCKdata1 = rec.getBCKTab(0, rec.getBCK(0), rec.getBCKcoeff());
-		DBMdata1 = rec.getDBMTab(0, rec.getDBM(0), rec.getDBMcoeff());
-		ORdata1 = rec.getORTab(0, rec.getOR(0), rec.getORcoeff());
-		MSdata1 = rec.getMSTab(0, rec.getMS(0), rec.getMScoeff());
+		BDGdata1 = rec.getBDGTab(selectedMod, rec.getBDG(0), rec.getBDGcoeff());
+		BCKdata1 = rec.getBCKTab(selectedMod, rec.getBCK(0), rec.getBCKcoeff());
+		DBMdata1 = rec.getDBMTab(selectedMod, rec.getDBM(0), rec.getDBMcoeff());
+		ORdata1 = rec.getORTab(selectedMod, rec.getOR(0), rec.getORcoeff());
+		MSdata1 = rec.getMSTab(selectedMod, rec.getMS(0), rec.getMScoeff());
 	}
 
 	public static double snrToAUC(double snr) {

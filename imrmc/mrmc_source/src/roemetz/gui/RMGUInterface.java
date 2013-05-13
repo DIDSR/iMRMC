@@ -77,6 +77,10 @@ public class RMGUInterface {
 	private JTextField numSamples;
 	private JTextField seed;
 	private JDialog progDialog;
+	private JRadioButton mod1Button;
+	private JRadioButton mod2Button;
+	private JRadioButton modDButton;
+	private int selectedMod = 0;
 	private static JProgressBar simProgress;
 	private static RoeMetz appl;
 
@@ -292,10 +296,36 @@ public class RMGUInterface {
 		JLabel seedLabel = new JLabel("Seed for RNG");
 		seed = new JTextField(4);
 
+		// create modality select buttons
+		String str1 = "Modality 1";
+		mod1Button = new JRadioButton(str1);
+		mod1Button.setActionCommand(str1);
+		mod1Button.setSelected(true);
+		String str2 = "Modality 2";
+		mod2Button = new JRadioButton(str2);
+		mod2Button.setActionCommand(str2);
+		String strD = "Difference";
+		modDButton = new JRadioButton(strD);
+		modDButton.setActionCommand(strD);
+		// Group the radio buttons.
+		ButtonGroup group = new ButtonGroup();
+		group.add(mod1Button);
+		group.add(mod2Button);
+		group.add(modDButton);
+
+		// Register a listener for the radio buttons.
+		modSelListner gListener = new modSelListner();
+		mod1Button.addActionListener(gListener);
+		mod2Button.addActionListener(gListener);
+		modDButton.addActionListener(gListener);
+
 		simulationExperiment.add(seedLabel);
 		simulationExperiment.add(seed);
 		simulationExperiment.add(numExpLabel);
 		simulationExperiment.add(numExp);
+		simulationExperiment.add(mod1Button);
+		simulationExperiment.add(mod2Button);
+		simulationExperiment.add(modDButton);
 		simulationExperiment.add(doSimExp);
 
 		simExpPanel.add(simExpDesc);
@@ -570,6 +600,28 @@ public class RMGUInterface {
 		}
 	}
 
+	/*
+	 * radio buttons to select the type of modality when performing simulation
+	 * experiments
+	 */
+	class modSelListner implements ActionListener {
+
+		public void actionPerformed(ActionEvent e) {
+			String str;
+			str = e.getActionCommand();
+			System.out.println(str + "radiobutton selected");
+			if (str == "Modality 1") {
+				selectedMod = 0;
+			}
+			if (str == "Modality 2") {
+				selectedMod = 1;
+			}
+			if (str == "Difference") {
+				selectedMod = 3;
+			}
+		}
+	}
+
 	private class SimExperiments implements Runnable {
 		double[] u;
 		double[] var_t;
@@ -586,7 +638,7 @@ public class RMGUInterface {
 			double[][] avgORdata = new double[3][6];
 			double[][] avgMSdata = new double[3][6];
 			for (int i = 0; i < numTimes; i++) {
-				SimRoeMetz.doSim(u, var_t, n, seed);
+				SimRoeMetz.doSim(u, var_t, n, seed, selectedMod);
 				avgBDGdata = matrix.matrixAdd(avgBDGdata,
 						SimRoeMetz.getBDGdata());
 				avgBCKdata = matrix.matrixAdd(avgBCKdata,
