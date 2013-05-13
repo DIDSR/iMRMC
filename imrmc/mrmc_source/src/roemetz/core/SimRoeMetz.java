@@ -82,7 +82,7 @@ public class SimRoeMetz {
 	}
 
 	public static void doSim(double[] u, double[] var_t, int[] n, long seed,
-			int selectedMod) {
+			int selectedMod, int useBiasM) {
 		if (u.length != 2) {
 			System.out.println("input u is of incorrect size");
 			return;
@@ -181,11 +181,12 @@ public class SimRoeMetz {
 		t10 = matrix.matrixAdd(t10, RC10);
 		t11 = matrix.matrixAdd(t11, RC11);
 
-		calculateStuff(n0, n1, nr, selectedMod);
+		calculateStuff(n0, n1, nr, selectedMod, useBiasM);
 
 	}
 
-	public static void calculateStuff(int n0, int n1, int nr, int selectedMod) {
+	public static void calculateStuff(int n0, int n1, int nr, int selectedMod,
+			int useBiasM) {
 
 		// convert t-matrices to correct shape and create t0,t1
 		double[][][] newt00 = new double[n0][nr][2];
@@ -245,11 +246,16 @@ public class SimRoeMetz {
 		toCalc.calculateCovMRMC();
 		dbRecord rec = new dbRecord(toCalc);
 
-		BDGdata1 = rec.getBDGTab(selectedMod, rec.getBDG(0), rec.getBDGcoeff());
-		BCKdata1 = rec.getBCKTab(selectedMod, rec.getBCK(0), rec.getBCKcoeff());
-		DBMdata1 = rec.getDBMTab(selectedMod, rec.getDBM(0), rec.getDBMcoeff());
-		ORdata1 = rec.getORTab(selectedMod, rec.getOR(0), rec.getORcoeff());
-		MSdata1 = rec.getMSTab(selectedMod, rec.getMS(0), rec.getMScoeff());
+		BDGdata1 = rec.getBDGTab(selectedMod, rec.getBDG(useBiasM),
+				rec.getBDGcoeff());
+		BCKdata1 = rec.getBCKTab(selectedMod, rec.getBCK(useBiasM),
+				rec.getBCKcoeff());
+		DBMdata1 = rec.getDBMTab(selectedMod, rec.getDBM(useBiasM),
+				rec.getDBMcoeff());
+		ORdata1 = rec.getORTab(selectedMod, rec.getOR(useBiasM),
+				rec.getORcoeff());
+		MSdata1 = rec.getMSTab(selectedMod, rec.getMS(useBiasM),
+				rec.getMScoeff());
 	}
 
 	public static double snrToAUC(double snr) {

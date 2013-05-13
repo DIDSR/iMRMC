@@ -32,6 +32,8 @@ import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -81,6 +83,8 @@ public class RMGUInterface {
 	private JRadioButton mod2Button;
 	private JRadioButton modDButton;
 	private int selectedMod = 0;
+	private JCheckBox useBias = new JCheckBox("Use Bias");
+	public int useBiasM;
 	private static JProgressBar simProgress;
 	private static RoeMetz appl;
 
@@ -319,6 +323,8 @@ public class RMGUInterface {
 		mod2Button.addActionListener(gListener);
 		modDButton.addActionListener(gListener);
 
+		useBias.addItemListener(new useBiasListner());
+
 		simulationExperiment.add(seedLabel);
 		simulationExperiment.add(seed);
 		simulationExperiment.add(numExpLabel);
@@ -326,6 +332,7 @@ public class RMGUInterface {
 		simulationExperiment.add(mod1Button);
 		simulationExperiment.add(mod2Button);
 		simulationExperiment.add(modDButton);
+		simulationExperiment.add(useBias);
 		simulationExperiment.add(doSimExp);
 
 		simExpPanel.add(simExpDesc);
@@ -622,6 +629,16 @@ public class RMGUInterface {
 		}
 	}
 
+	class useBiasListner implements ItemListener {
+		public void itemStateChanged(ItemEvent e) {
+			if (useBias.isSelected()) {
+				useBiasM = 1;
+			} else {
+				useBiasM = 0;
+			}
+		}
+	}
+
 	private class SimExperiments implements Runnable {
 		double[] u;
 		double[] var_t;
@@ -638,7 +655,7 @@ public class RMGUInterface {
 			double[][] avgORdata = new double[3][6];
 			double[][] avgMSdata = new double[3][6];
 			for (int i = 0; i < numTimes; i++) {
-				SimRoeMetz.doSim(u, var_t, n, seed, selectedMod);
+				SimRoeMetz.doSim(u, var_t, n, seed, selectedMod, useBiasM);
 				avgBDGdata = matrix.matrixAdd(avgBDGdata,
 						SimRoeMetz.getBDGdata());
 				avgBCKdata = matrix.matrixAdd(avgBCKdata,
