@@ -648,7 +648,7 @@ public class dbRecord {
 		return c;
 	}
 
-	public double[][] BDG2BCK(double[][] BDG) {
+	public static double[][] BDG2BCK(double[][] BDG) {
 		double[][] c = new double[4][7];
 		double[][] BAlpha = new double[][] { { 0, 0, 0, 0, 0, 0, 1, -1 },
 				{ 0, 0, 0, 0, 0, 1, 0, -1 }, { 0, 0, 0, 0, 1, -1, -1, 1 },

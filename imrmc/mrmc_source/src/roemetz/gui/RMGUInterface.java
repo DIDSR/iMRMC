@@ -79,12 +79,16 @@ public class RMGUInterface {
 	private JTextField numSamples;
 	private JTextField seed;
 	private JDialog progDialog;
-	private JRadioButton mod1Button;
-	private JRadioButton mod2Button;
-	private JRadioButton modDButton;
-	private int selectedMod = 0;
+	private JRadioButton mod1SimButton;
+	private JRadioButton mod2SimButton;
+	private JRadioButton modDSimButton;
+	private int simSelectedMod = 0;
 	private JCheckBox useBias = new JCheckBox("Use Bias");
 	public int useBiasM;
+	private JRadioButton mod1EstButton;
+	private JRadioButton mod2EstButton;
+	private JRadioButton modDEstButton;
+	public int estSelectedMod = 0;
 	private static JProgressBar simProgress;
 	private static RoeMetz appl;
 
@@ -312,26 +316,26 @@ public class RMGUInterface {
 
 		// create modality select buttons
 		String str1 = "Modality 1";
-		mod1Button = new JRadioButton(str1);
-		mod1Button.setActionCommand(str1);
-		mod1Button.setSelected(true);
+		mod1SimButton = new JRadioButton(str1);
+		mod1SimButton.setActionCommand(str1);
+		mod1SimButton.setSelected(true);
 		String str2 = "Modality 2";
-		mod2Button = new JRadioButton(str2);
-		mod2Button.setActionCommand(str2);
+		mod2SimButton = new JRadioButton(str2);
+		mod2SimButton.setActionCommand(str2);
 		String strD = "Difference";
-		modDButton = new JRadioButton(strD);
-		modDButton.setActionCommand(strD);
+		modDSimButton = new JRadioButton(strD);
+		modDSimButton.setActionCommand(strD);
 		// Group the radio buttons.
 		ButtonGroup group = new ButtonGroup();
-		group.add(mod1Button);
-		group.add(mod2Button);
-		group.add(modDButton);
+		group.add(mod1SimButton);
+		group.add(mod2SimButton);
+		group.add(modDSimButton);
 
 		// Register a listener for the radio buttons.
-		modSelListner gListener = new modSelListner();
-		mod1Button.addActionListener(gListener);
-		mod2Button.addActionListener(gListener);
-		modDButton.addActionListener(gListener);
+		ModSimListner gListener = new ModSimListner();
+		mod1SimButton.addActionListener(gListener);
+		mod2SimButton.addActionListener(gListener);
+		modDSimButton.addActionListener(gListener);
 
 		useBias.addItemListener(new useBiasListner());
 
@@ -339,9 +343,9 @@ public class RMGUInterface {
 		simulationExperiment.add(seed);
 		simulationExperiment.add(numExpLabel);
 		simulationExperiment.add(numExp);
-		simulationExperiment.add(mod1Button);
-		simulationExperiment.add(mod2Button);
-		simulationExperiment.add(modDButton);
+		simulationExperiment.add(mod1SimButton);
+		simulationExperiment.add(mod2SimButton);
+		simulationExperiment.add(modDSimButton);
 		simulationExperiment.add(useBias);
 		simulationExperiment.add(doSimExp);
 
@@ -349,7 +353,7 @@ public class RMGUInterface {
 		simExpPanel.add(simulationExperiment);
 
 		/*
-		 * Panel to calculate moments/components of variance?
+		 * Panel to estimate moments/components of variance
 		 */
 		JPanel cofvResultsPanel = new JPanel();
 		cofvResultsPanel.setLayout(new BoxLayout(cofvResultsPanel,
@@ -370,11 +374,36 @@ public class RMGUInterface {
 		numSamples = new JTextField(4);
 		numSamples.setText("256");
 		JLabel numSamplesLabel = new JLabel("# Samples: ");
+
+		// create modality select buttons
+		mod1EstButton = new JRadioButton(str1);
+		mod1EstButton.setActionCommand(str1);
+		mod1EstButton.setSelected(true);
+		mod2EstButton = new JRadioButton(str2);
+		mod2EstButton.setActionCommand(str2);
+		modDEstButton = new JRadioButton(strD);
+		modDEstButton.setActionCommand(strD);
+		// Group the radio buttons.
+		ButtonGroup groupEst = new ButtonGroup();
+		groupEst.add(mod1EstButton);
+		groupEst.add(mod2EstButton);
+		groupEst.add(modDEstButton);
+
+		// Register a listener for the radio buttons.
+		ModEstListner gListenerEst = new ModEstListner();
+		mod1SimButton.addActionListener(gListenerEst);
+		mod2SimButton.addActionListener(gListenerEst);
+		modDSimButton.addActionListener(gListenerEst);
+
 		JButton doGenRoeMetz = new JButton("Estimate Components of Variance");
 		doGenRoeMetz.addActionListener(new doGenRoeMetzBtnListner());
 
 		cofvResults.add(numSamplesLabel);
 		cofvResults.add(numSamples);
+		cofvResults.add(mod1EstButton);
+		cofvResults.add(mod2EstButton);
+		// TODO figure out how to difference estimate
+		// cofvResults.add(modDEstButton);
 		cofvResults.add(doGenRoeMetz);
 
 		cofvResultsPanel.add(cofvResultsDesc);
@@ -621,20 +650,42 @@ public class RMGUInterface {
 	 * radio buttons to select the type of modality when performing simulation
 	 * experiments
 	 */
-	class modSelListner implements ActionListener {
+	class ModSimListner implements ActionListener {
 
 		public void actionPerformed(ActionEvent e) {
 			String str;
 			str = e.getActionCommand();
 			System.out.println(str + "radiobutton selected");
 			if (str == "Modality 1") {
-				selectedMod = 0;
+				simSelectedMod = 0;
 			}
 			if (str == "Modality 2") {
-				selectedMod = 1;
+				simSelectedMod = 1;
 			}
 			if (str == "Difference") {
-				selectedMod = 3;
+				simSelectedMod = 3;
+			}
+		}
+	}
+
+	/*
+	 * radio buttons to select the type of modality when performing simulation
+	 * experiments
+	 */
+	class ModEstListner implements ActionListener {
+
+		public void actionPerformed(ActionEvent e) {
+			String str;
+			str = e.getActionCommand();
+			System.out.println(str + "radiobutton selected");
+			if (str == "Modality 1") {
+				estSelectedMod = 0;
+			}
+			if (str == "Modality 2") {
+				estSelectedMod = 1;
+			}
+			if (str == "Difference") {
+				estSelectedMod = 3;
 			}
 		}
 	}
@@ -665,7 +716,7 @@ public class RMGUInterface {
 			double[][] avgORdata = new double[3][6];
 			double[][] avgMSdata = new double[3][6];
 			for (int i = 0; i < numTimes; i++) {
-				SimRoeMetz.doSim(u, var_t, n, seed, selectedMod, useBiasM);
+				SimRoeMetz.doSim(u, var_t, n, seed, simSelectedMod, useBiasM);
 				avgBDGdata = matrix.matrixAdd(avgBDGdata,
 						SimRoeMetz.getBDGdata());
 				avgBCKdata = matrix.matrixAdd(avgBCKdata,
@@ -777,7 +828,7 @@ public class RMGUInterface {
 		int n;
 
 		public void run() {
-			CofVGenRoeMetz.genRoeMetz(u, n, var_t);
+			CofVGenRoeMetz.genRoeMetz(u, n, var_t, estSelectedMod);
 			CofVGenRoeMetz.printResults();
 		}
 
