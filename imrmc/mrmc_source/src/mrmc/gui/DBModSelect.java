@@ -125,10 +125,10 @@ public class DBModSelect {
 			String str;
 			str = e.getActionCommand();
 			System.out.println(str + "radiobutton selected");
-			if (str == "Modality A") {
+			if (str == "Modality 1") {
 				selectedMod = 0;
 			}
-			if (str == "Modality B") {
+			if (str == "Modality 2") {
 				selectedMod = 1;
 			}
 			if (str == "Difference") {
