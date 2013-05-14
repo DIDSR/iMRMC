@@ -30,6 +30,7 @@ package roemetz.gui;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -42,6 +43,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -94,13 +96,11 @@ public class RMGUInterface {
 	private JRadioButton mod1SimButton;
 	private JRadioButton mod2SimButton;
 	private JRadioButton modDSimButton;
-	private int simSelectedMod = 0;
 	private JCheckBox useBias = new JCheckBox("Use Bias");
 	public int useBiasM;
 	private JRadioButton mod1EstButton;
 	private JRadioButton mod2EstButton;
 	private JRadioButton modDEstButton;
-	public int estSelectedMod = 0;
 	private static JProgressBar simProgress;
 	private static RoeMetz appl;
 
@@ -324,41 +324,13 @@ public class RMGUInterface {
 		JButton doSimExp = new JButton("Perform Simulation Experiment");
 		doSimExp.addActionListener(new doSimBtnListner());
 		JLabel seedLabel = new JLabel("Seed for RNG");
-		seed = new JTextField(4);
-
-		// create modality select buttons
-		String str1 = "Modality 1";
-		mod1SimButton = new JRadioButton(str1);
-		mod1SimButton.setActionCommand(str1);
-		mod1SimButton.setSelected(true);
-		String str2 = "Modality 2";
-		mod2SimButton = new JRadioButton(str2);
-		mod2SimButton.setActionCommand(str2);
-		String strD = "Difference";
-		modDSimButton = new JRadioButton(strD);
-		modDSimButton.setActionCommand(strD);
-		// Group the radio buttons.
-		ButtonGroup group = new ButtonGroup();
-		group.add(mod1SimButton);
-		group.add(mod2SimButton);
-		group.add(modDSimButton);
-
-		// Register a listener for the radio buttons.
-		ModSimListner gListener = new ModSimListner();
-		mod1SimButton.addActionListener(gListener);
-		mod2SimButton.addActionListener(gListener);
-		modDSimButton.addActionListener(gListener);
-
-		useBias.addItemListener(new useBiasListner());
+		seed = new JTextField(9);
+		seed.setText(Long.toString(System.currentTimeMillis()));
 
 		simulationExperiment.add(seedLabel);
 		simulationExperiment.add(seed);
 		simulationExperiment.add(numExpLabel);
 		simulationExperiment.add(numExp);
-		simulationExperiment.add(mod1SimButton);
-		simulationExperiment.add(mod2SimButton);
-		simulationExperiment.add(modDSimButton);
-		simulationExperiment.add(useBias);
 		simulationExperiment.add(doSimExp);
 
 		simExpPanel.add(simExpDesc);
@@ -387,35 +359,11 @@ public class RMGUInterface {
 		numSamples.setText("256");
 		JLabel numSamplesLabel = new JLabel("# Samples: ");
 
-		// create modality select buttons
-		mod1EstButton = new JRadioButton(str1);
-		mod1EstButton.setActionCommand(str1);
-		mod1EstButton.setSelected(true);
-		mod2EstButton = new JRadioButton(str2);
-		mod2EstButton.setActionCommand(str2);
-		modDEstButton = new JRadioButton(strD);
-		modDEstButton.setActionCommand(strD);
-		// Group the radio buttons.
-		ButtonGroup groupEst = new ButtonGroup();
-		groupEst.add(mod1EstButton);
-		groupEst.add(mod2EstButton);
-		groupEst.add(modDEstButton);
-
-		// Register a listener for the radio buttons.
-		ModEstListner gListenerEst = new ModEstListner();
-		mod1SimButton.addActionListener(gListenerEst);
-		mod2SimButton.addActionListener(gListenerEst);
-		modDSimButton.addActionListener(gListenerEst);
-
 		JButton doGenRoeMetz = new JButton("Estimate Components of Variance");
 		doGenRoeMetz.addActionListener(new doGenRoeMetzBtnListner());
 
 		cofvResults.add(numSamplesLabel);
 		cofvResults.add(numSamples);
-		cofvResults.add(mod1EstButton);
-		cofvResults.add(mod2EstButton);
-		// TODO figure out how to difference estimate
-		// cofvResults.add(modDEstButton);
 		cofvResults.add(doGenRoeMetz);
 
 		cofvResultsPanel.add(cofvResultsDesc);
@@ -669,13 +617,13 @@ public class RMGUInterface {
 			str = e.getActionCommand();
 			System.out.println(str + "radiobutton selected");
 			if (str == "Modality 1") {
-				simSelectedMod = 0;
+				// simSelectedMod = 0;
 			}
 			if (str == "Modality 2") {
-				simSelectedMod = 1;
+				// simSelectedMod = 1;
 			}
 			if (str == "Difference") {
-				simSelectedMod = 3;
+				// simSelectedMod = 3;
 			}
 		}
 	}
@@ -691,13 +639,13 @@ public class RMGUInterface {
 			str = e.getActionCommand();
 			System.out.println(str + "radiobutton selected");
 			if (str == "Modality 1") {
-				estSelectedMod = 0;
+				// estSelectedMod = 0;
 			}
 			if (str == "Modality 2") {
-				estSelectedMod = 1;
+				// estSelectedMod = 1;
 			}
 			if (str == "Difference") {
-				estSelectedMod = 3;
+				// estSelectedMod = 3;
 			}
 		}
 	}
@@ -731,13 +679,13 @@ public class RMGUInterface {
 		}
 
 		public double[][][] doInBackground() {
-			double[][] avgBDGdata = new double[3][8];
-			double[][] avgBCKdata = new double[3][7];
-			double[][] avgDBMdata = new double[3][6];
-			double[][] avgORdata = new double[3][6];
-			double[][] avgMSdata = new double[3][6];
+			double[][] avgBDGdata = new double[4][8];
+			double[][] avgBCKdata = new double[4][7];
+			double[][] avgDBMdata = new double[4][6];
+			double[][] avgORdata = new double[4][6];
+			double[][] avgMSdata = new double[4][6];
 			for (int i = 0; i < numTimes; i++) {
-				SimRoeMetz.doSim(u, var_t, n, rand, simSelectedMod, useBiasM);
+				SimRoeMetz.doSim(u, var_t, n, rand, useBiasM);
 				avgBDGdata = matrix.matrixAdd(avgBDGdata,
 						SimRoeMetz.getBDGdata());
 				avgBCKdata = matrix.matrixAdd(avgBCKdata,
@@ -805,12 +753,12 @@ public class RMGUInterface {
 				long seedVar = Long.parseLong(seed.getText());
 				final int numTimes = Integer.valueOf(numExp.getText());
 
+				// create global RNG which is used across all experiments
 				Random rand = new Random(seedVar);
-				final AtomicInteger val = new AtomicInteger(0);
-
+				// create and display progress bar for simulation progress
+				final AtomicInteger progVal = new AtomicInteger(0);
 				simProgress = new JProgressBar(0, numTimes);
-				simProgress.setValue(val.get());
-
+				simProgress.setValue(progVal.get());
 				progDialog = new JDialog(appl.getFrame(), "Simulation Progress");
 				JPanel pane = new JPanel(new FlowLayout());
 				pane.add(simProgress);
@@ -818,12 +766,13 @@ public class RMGUInterface {
 				progDialog.pack();
 				progDialog.setVisible(true);
 
+				// divide simulations into separate tasks
 				final SimExperiments[] allTasks = new SimExperiments[numCores];
 				for (int i = 0; i < numCores; i++) {
 					final int taskNum = i;
 					allTasks[i] = new SimExperiments(u, var_t, n, rand,
-							numTimes / numCores, val);
-
+							numTimes / numCores, progVal);
+					// Check to see when each task finishes and get its results
 					allTasks[i]
 							.addPropertyChangeListener(new PropertyChangeListener() {
 								public void propertyChange(
@@ -846,6 +795,7 @@ public class RMGUInterface {
 								}
 							});
 				}
+				// run each task in its own thread, to spread across cores
 				for (int i = 0; i < numCores; i++) {
 					allTasks[i].execute();
 				}
@@ -858,6 +808,8 @@ public class RMGUInterface {
 			}
 		}
 
+		// Executed only after all simulation tasks are finished, averages
+		// together their results.
 		public void processResults() {
 			progDialog.setVisible(false);
 
@@ -881,42 +833,91 @@ public class RMGUInterface {
 			allOR = matrix.scaleMatrix(allOR, 1.0 / (double) numCores);
 			allMS = matrix.scaleMatrix(allMS, 1.0 / (double) numCores);
 
-			System.out.println("BDG across Experiments\t");
-			matrix.printMatrix(allBDG);
-			System.out.println("\n");
-			System.out.println("BCK across Experiments\t");
-			matrix.printMatrix(allBCK);
-			System.out.println("\n");
-			System.out.println("DBM across Experiments\t");
-			matrix.printMatrix(allDBM);
-			System.out.println("\n");
-			System.out.println("OR across Experiments\t");
-			matrix.printMatrix(allOR);
-			System.out.println("\n");
-			System.out.println("MS across Experiments\t");
-			matrix.printMatrix(allMS);
-			System.out.println("\n");
+			JDialog simOutput = new JDialog(appl.getFrame(),
+					"Simulation Results");
+			JPanel panel = new JPanel();
+			panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+			JPanel tablePanel = new JPanel();
+			tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
+
+			JPanel buttonPanel = new JPanel();
+			buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
+
+			// TODO these panes should show per modality, coefficient, total
+			JTabbedPane tabTables = new JTabbedPane();
+			JComponent BDGpane = makeBDGpane(allBDG);
+			JComponent BCKpane = makeBCKpane(allBCK);
+			JComponent DBMpane = makeDBMpane(allDBM);
+			JComponent ORpane = makeORpane(allOR);
+			JComponent MSpane = makeMSpane(allMS);
+			tabTables.addTab("BDG", BDGpane);
+			tabTables.addTab("BCK", BCKpane);
+			tabTables.addTab("DBM", DBMpane);
+			tabTables.addTab("OR", ORpane);
+			tabTables.addTab("MS", MSpane);
+
+			// create modality select buttons
+			String str1 = "Modality 1";
+			mod1SimButton = new JRadioButton(str1);
+			mod1SimButton.setActionCommand(str1);
+			mod1SimButton.setSelected(true);
+			String str2 = "Modality 2";
+			mod2SimButton = new JRadioButton(str2);
+			mod2SimButton.setActionCommand(str2);
+			String strD = "Difference";
+			modDSimButton = new JRadioButton(strD);
+			modDSimButton.setActionCommand(strD);
+			// Group the radio buttons.
+			ButtonGroup group = new ButtonGroup();
+			group.add(mod1SimButton);
+			group.add(mod2SimButton);
+			group.add(modDSimButton);
+			// Register a listener for the radio buttons.
+			ModSimListner gListener = new ModSimListner();
+			mod1SimButton.addActionListener(gListener);
+			mod2SimButton.addActionListener(gListener);
+			modDSimButton.addActionListener(gListener);
+			useBias.addItemListener(new useBiasListner());
+
+			tablePanel.add(tabTables);
+			buttonPanel.add(mod1SimButton);
+			buttonPanel.add(mod2SimButton);
+			buttonPanel.add(modDSimButton);
+			buttonPanel.add(useBias);
+			panel.add(tablePanel);
+			panel.add(buttonPanel);
+			simOutput.add(panel);
+			simOutput.pack();
+			simOutput.setVisible(true);
 		}
 	}
 
-	private class EstimateCofV implements Runnable {
+	private class EstimateCofV extends SwingWorker<double[][][], Integer> {
 		double[] u;
 		double[] var_t;
 		int n;
-
-		public void run() {
-			CofVGenRoeMetz.genRoeMetz(u, n, var_t, estSelectedMod);
-			CofVGenRoeMetz.printResults();
-		}
 
 		public EstimateCofV(double[] u, double[] var_t, int n) {
 			this.u = u;
 			this.var_t = var_t;
 			this.n = n;
 		}
+
+		public double[][][] doInBackground() {
+			CofVGenRoeMetz.genRoeMetz(u, n, var_t);
+			return new double[][][] { CofVGenRoeMetz.getBDGdata(),
+					CofVGenRoeMetz.getBCKdata() };
+		}
+
+		protected void done() {
+			firePropertyChange("done", 0, 1);
+		}
 	}
 
 	class doGenRoeMetzBtnListner implements ActionListener {
+		double[][][] results;
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {
@@ -943,13 +944,161 @@ public class RMGUInterface {
 
 				int n = Integer.valueOf(numSamples.getText());
 
-				Thread estThread = new Thread(new EstimateCofV(u, var_t, n));
-				estThread.run();
+				final EstimateCofV estTask = new EstimateCofV(u, var_t, n);
+				estTask.addPropertyChangeListener(new PropertyChangeListener() {
+					public void propertyChange(PropertyChangeEvent evt) {
+						if (evt.getPropertyName().equals("done")) {
+							try {
+								results = estTask.get();
+								processResults();
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							} catch (ExecutionException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+				});
+
+				estTask.execute();
 			} catch (NumberFormatException e1) {
 				JOptionPane.showMessageDialog(appl.getFrame(),
 						"Incorrect / Incomplete Input", "Warning",
 						JOptionPane.WARNING_MESSAGE);
 			}
 		}
+
+		public void processResults() {
+			JDialog estOutput = new JDialog(appl.getFrame(),
+					"Estimation Results");
+			JPanel panel = new JPanel();
+			panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+			JPanel tablePanel = new JPanel();
+			tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
+
+			JPanel buttonPanel = new JPanel();
+			buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
+
+			JTabbedPane tabTables = new JTabbedPane();
+			JComponent BDGpane = makeBDGpane(results[0]);
+			JComponent BCKpane = makeBCKpane(results[1]);
+			tabTables.addTab("BDG", BDGpane);
+			tabTables.addTab("BCK", BCKpane);
+
+			// create modality select buttons
+			String str1 = "Modality 1";
+			mod1EstButton = new JRadioButton(str1);
+			mod1EstButton.setActionCommand(str1);
+			mod1EstButton.setSelected(true);
+			String str2 = "Modality 2";
+			mod2EstButton = new JRadioButton(str2);
+			mod2EstButton.setActionCommand(str2);
+			String strD = "Difference";
+			modDEstButton = new JRadioButton(strD);
+			modDEstButton.setActionCommand(strD);
+			// Group the radio buttons.
+			ButtonGroup groupEst = new ButtonGroup();
+			groupEst.add(mod1EstButton);
+			groupEst.add(mod2EstButton);
+			groupEst.add(modDEstButton);
+
+			// Register a listener for the radio buttons.
+			ModEstListner gListenerEst = new ModEstListner();
+			mod1EstButton.addActionListener(gListenerEst);
+			mod2EstButton.addActionListener(gListenerEst);
+			modDEstButton.addActionListener(gListenerEst);
+
+			tablePanel.add(tabTables);
+			buttonPanel.add(mod1EstButton);
+			buttonPanel.add(mod2EstButton);
+			buttonPanel.add(modDEstButton);
+			panel.add(tablePanel);
+			panel.add(buttonPanel);
+			estOutput.add(panel);
+			estOutput.pack();
+			estOutput.setVisible(true);
+		}
+	}
+
+	private JComponent makeBDGpane(double[][] allBDG) {
+		JPanel BDGpane = new JPanel(false);
+		String[] columnNames = { "M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8" };
+		Object[][] bdgData = new Object[4][8];
+		DecimalFormat df = new DecimalFormat("0.###E0");
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 8; j++) {
+				bdgData[i][j] = (Object) df.format(allBDG[i][j]);
+			}
+		}
+		JTable table = new JTable(bdgData, columnNames);
+		BDGpane.setLayout(new GridLayout(1, 1));
+		BDGpane.add(table);
+		return BDGpane;
+	}
+
+	private JComponent makeBCKpane(double[][] allBCK) {
+		JPanel BCKpane = new JPanel(false);
+		String[] columnNames = { "N", "D", "N~D", "R", "N~R", "D~R", "R~N~D" };
+
+		Object[][] bckData = new Object[4][7];
+		DecimalFormat df = new DecimalFormat("0.###E0");
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 7; j++) {
+				bckData[i][j] = (Object) df.format(allBCK[i][j]);
+			}
+		}
+		JTable table = new JTable(bckData, columnNames);
+		BCKpane.setLayout(new GridLayout(1, 1));
+		BCKpane.add(table);
+		return BCKpane;
+	}
+
+	private JComponent makeDBMpane(double[][] allDBM) {
+		JPanel DBMpane = new JPanel(false);
+		String[] columnNames = { "R", "C", "R~C", "T~R", "T~C", "T~R~C" };
+		Object[][] dbmData = new Object[4][6];
+		DecimalFormat df = new DecimalFormat("0.###E0");
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 6; j++) {
+				dbmData[i][j] = (Object) df.format(allDBM[i][j]);
+			}
+		}
+		JTable table = new JTable(dbmData, columnNames);
+		DBMpane.setLayout(new GridLayout(1, 1));
+		DBMpane.add(table);
+		return DBMpane;
+	}
+
+	private JComponent makeORpane(double[][] allOR) {
+		JPanel ORpane = new JPanel(false);
+		String[] columnNames = { "R", "TR", "COV1", "COV2", "COV3", "ERROR" };
+		Object[][] orData = new Object[4][6];
+		DecimalFormat df = new DecimalFormat("0.###E0");
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 6; j++) {
+				orData[i][j] = (Object) df.format(allOR[i][j]);
+			}
+		}
+		JTable table = new JTable(orData, columnNames);
+		ORpane.setLayout(new GridLayout(1, 1));
+		ORpane.add(table);
+		return ORpane;
+	}
+
+	private JComponent makeMSpane(double[][] allMS) {
+		JPanel MSpane = new JPanel(false);
+		String[] columnNames = { "R", "C", "RC", "MR", "MC", "MRC" };
+		Object[][] msData = new Object[4][6];
+		DecimalFormat df = new DecimalFormat("0.###E0");
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 6; j++) {
+				msData[i][j] = (Object) df.format(allMS[i][j]);
+			}
+		}
+		JTable table = new JTable(msData, columnNames);
+		MSpane.setLayout(new GridLayout(1, 1));
+		MSpane.add(table);
+		return MSpane;
 	}
 }

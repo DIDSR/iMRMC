@@ -32,8 +32,8 @@ public class CofVGenRoeMetz {
 	static double[][][] cofv_auc;
 	static double[][][] cofv_pc;
 	static double[][][] m;
-	static double[][] BDGdata1;
-	static double[][] BCKdata1;
+	private static double[][] BDG;
+	private static double[][] BCK;
 
 	public static void printResults() {
 		System.out.println("cofv_auc:");
@@ -49,13 +49,21 @@ public class CofVGenRoeMetz {
 		}
 		System.out.println("\n");
 		System.out.println("BDG:");
-		matrix.printVector(BDGdata1[0]);
+		matrix.printMatrix(BDG);
 		System.out.println();
-		
+
 		System.out.println("BCK:");
-		matrix.printVector(BCKdata1[0]);
+		matrix.printMatrix(BCK);
 		System.out.println();
-		
+
+	}
+
+	public static double[][] getBDGdata() {
+		return BDG;
+	}
+
+	public static double[][] getBCKdata() {
+		return BCK;
 	}
 
 	public static double prodMoment1(double[] u, double[] scale, int n) {
@@ -166,8 +174,7 @@ public class CofVGenRoeMetz {
 		return matrix.total(toTotal);
 	}
 
-	public static void genRoeMetz(double[] u, int n, double[] var_t,
-			int selectedMod) {
+	public static void genRoeMetz(double[] u, int n, double[] var_t) {
 		NormalDistribution gauss = new NormalDistribution();
 		if (var_t.length != 18) {
 			System.out
@@ -375,11 +382,11 @@ public class CofVGenRoeMetz {
 		m[1][0][8] = m[0][0][0] * m[1][1][0];
 		m[0][1][8] = m[1][0][8];
 
-		calculateStuff(selectedMod);
+		calculateStuff();
 
 	}
 
-	public static void calculateStuff(int selectedMod) {
+	public static void calculateStuff() {
 		double[][] Bauc = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, -1.0 },
 				{ 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, -1.0 },
 				{ 0.0, 0.0, 0.0, 0.0, 1.0, -1.0, -1.0, 1.0 },
@@ -438,17 +445,14 @@ public class CofVGenRoeMetz {
 			cofv_pc[0][1][i] = cofv_pc[1][0][i];
 		}
 
-		double[][] BDG = new double[4][8];
+		BDG = new double[4][8];
 		BDG[0] = matrix.get1Dimension(1, m, "0", "0", "*");
 		BDG[1] = matrix.get1Dimension(1, m, "1", "1", "*");
+		BDG[2] = matrix.get1Dimension(1, m, "0", "1", "*");
+		for (int i = 0; i < 8; i++) {
+			BDG[3][i] = (m[0][0][i + 1] + m[1][1][i + 1] - (2 * m[0][1][i + 1]));
+		}
 
-		BDGdata1 = new double[3][8];
-		BDGdata1[0] = BDG[selectedMod];
-
-		double[][] BCK = dbRecord.BDG2BCK(BDG);
-
-		BCKdata1 = new double[3][7];
-		BCKdata1[0] = BCK[selectedMod];
-
+		BCK = dbRecord.BDG2BCK(BDG);
 	}
 }

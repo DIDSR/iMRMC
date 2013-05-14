@@ -305,7 +305,7 @@ public class dbRecord {
 
 	}
 
-	public double[][] DBM2MS(double[][] DBM, int N2, int N0, int N1) {
+	public static double[][] DBM2MS(double[][] DBM, int N2, int N0, int N1) {
 		double[][] c = new double[4][6];
 		double[][] BAlpha = new double[][] {
 				{ 2 * (N0 + N1), 0, 2, (N0 + N1), 0, 1 },
@@ -325,7 +325,7 @@ public class dbRecord {
 
 	}
 
-	public double[][] BCK2DBM(double[][] BCK, int N2, int N0, int N1) {
+	public static double[][] BCK2DBM(double[][] BCK, int N2, int N0, int N1) {
 		double[] c = new double[7];
 		double[][] tmp = new double[4][7];
 		double[][] tmp1 = new double[4][3];
@@ -500,7 +500,7 @@ public class dbRecord {
 		AUC = input.getaucMod();
 
 		String[] temp = recordDesp.split("\n");
-		//System.out.println("temp" + "0" + "  =  " + temp[0]);
+		// System.out.println("temp" + "0" + "  =  " + temp[0]);
 		int i = 0;
 		// for(int i =0;i<7; i++)
 
@@ -781,7 +781,8 @@ public class dbRecord {
 		return c;
 	}
 
-	public double[][] DBM2OR(int index, double[][] in, int N2, int N0, int N1) {
+	public static double[][] DBM2OR(int index, double[][] in, int N2, int N0,
+			int N1) {
 		double[][] out = new double[4][6];
 		double[][] dbm = new double[4][6];
 		double[][] orVar = new double[4][6];

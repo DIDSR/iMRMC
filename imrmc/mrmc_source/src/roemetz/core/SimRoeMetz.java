@@ -38,11 +38,11 @@ public class SimRoeMetz {
 	static double[][] t10;
 	static double[][] t11;
 	static double[] auc;
-	private static double[][] BDGdata1;
-	private static double[][] BCKdata1;
-	private static double[][] DBMdata1;
-	private static double[][] ORdata1;
-	private static double[][] MSdata1;
+	private static double[][] BDG;
+	private static double[][] BCK;
+	private static double[][] DBM;
+	private static double[][] OR;
+	private static double[][] MS;
 
 	public static void main(String[] args) {
 		// double[] u = args[0];
@@ -53,44 +53,31 @@ public class SimRoeMetz {
 	}
 
 	public static double[][] getBDGdata() {
-		return BDGdata1;
+		return BDG;
 	}
 
 	public static double[][] getBCKdata() {
-		return BCKdata1;
+		return BCK;
 	}
 
 	public static double[][] getDBMdata() {
-		return DBMdata1;
+		return DBM;
 	}
 
 	public static double[][] getORdata() {
-		return ORdata1;
+		return OR;
 	}
 
 	public static double[][] getMSdata() {
-		return MSdata1;
+		return MS;
 	}
 
 	public static void printResults() {
-		System.out.println("t00:");
-		matrix.printMatrix(t00);
-		System.out.println();
-		System.out.println("t01:");
-		matrix.printMatrix(t01);
-		System.out.println();
-		System.out.println("t10:");
-		matrix.printMatrix(t10);
-		System.out.println();
-		System.out.println("t11:");
-		matrix.printMatrix(t11);
-		System.out.println();
-		System.out.println("AUC:");
-		System.out.println(Arrays.toString(auc));
+
 	}
 
 	public static void doSim(double[] u, double[] var_t, int[] n, Random rand,
-			int selectedMod, int useBiasM) {
+			int useBiasM) {
 		if (u.length != 2) {
 			System.out.println("input u is of incorrect size");
 			return;
@@ -186,12 +173,11 @@ public class SimRoeMetz {
 		t10 = matrix.matrixAdd(t10, RC10);
 		t11 = matrix.matrixAdd(t11, RC11);
 
-		calculateStuff(n0, n1, nr, selectedMod, useBiasM);
+		calculateStuff(n0, n1, nr, useBiasM);
 
 	}
 
-	public static void calculateStuff(int n0, int n1, int nr, int selectedMod,
-			int useBiasM) {
+	public static void calculateStuff(int n0, int n1, int nr, int useBiasM) {
 
 		// convert t-matrices to correct shape and create t0,t1
 		double[][][] newt00 = new double[n0][nr][2];
@@ -251,16 +237,11 @@ public class SimRoeMetz {
 		toCalc.calculateCovMRMC();
 		dbRecord rec = new dbRecord(toCalc);
 
-		BDGdata1 = rec.getBDGTab(selectedMod, rec.getBDG(useBiasM),
-				rec.getBDGcoeff());
-		BCKdata1 = rec.getBCKTab(selectedMod, rec.getBCK(useBiasM),
-				rec.getBCKcoeff());
-		DBMdata1 = rec.getDBMTab(selectedMod, rec.getDBM(useBiasM),
-				rec.getDBMcoeff());
-		ORdata1 = rec.getORTab(selectedMod, rec.getOR(useBiasM),
-				rec.getORcoeff());
-		MSdata1 = rec.getMSTab(selectedMod, rec.getMS(useBiasM),
-				rec.getMScoeff());
+		BDG = rec.getBDG(useBiasM);
+		BCK = rec.getBCK(useBiasM);
+		DBM = rec.getDBM(useBiasM);
+		OR = rec.getOR(useBiasM);
+		MS = rec.getMS(useBiasM);
 	}
 
 	public static double snrToAUC(double snr) {
