@@ -197,7 +197,8 @@ public class dbRecord {
 		return c;
 	}
 
-	public double[][] getBDGTab(int i, double[][] BDGtemp, double[][] BDGc) {
+	public static double[][] getBDGTab(int i, double[][] BDGtemp,
+			double[][] BDGc) {
 		double[][] BDGTab1 = new double[3][8];
 		BDGTab1[0] = BDGtemp[i];
 		BDGTab1[1] = BDGc[i];
@@ -205,7 +206,8 @@ public class dbRecord {
 		return BDGTab1;
 	}
 
-	public double[][] getBCKTab(int i, double[][] BCKtemp, double[][] BCKc) {
+	public static double[][] getBCKTab(int i, double[][] BCKtemp,
+			double[][] BCKc) {
 		double[][] BCKTab1 = new double[3][7];
 		BCKTab1[0] = BCKtemp[i];
 		BCKTab1[1] = BCKc[i];
@@ -213,7 +215,8 @@ public class dbRecord {
 		return BCKTab1;
 	}
 
-	public double[][] getDBMTab(int i, double[][] DBMtemp, double[][] DBMc) {
+	public static double[][] getDBMTab(int i, double[][] DBMtemp,
+			double[][] DBMc) {
 		double[][] DBMTab1 = new double[3][6];
 		DBMTab1[0] = DBMtemp[i];
 		DBMTab1[1] = DBMc[i];
@@ -221,7 +224,7 @@ public class dbRecord {
 		return DBMTab1;
 	}
 
-	public double[][] getORTab(int i, double[][] ORtemp, double[][] ORc) {
+	public static double[][] getORTab(int i, double[][] ORtemp, double[][] ORc) {
 		double[][] ORTab1 = new double[3][6];
 		ORTab1[0] = ORtemp[i];
 		ORTab1[1] = ORc[i];
@@ -229,7 +232,7 @@ public class dbRecord {
 		return ORTab1;
 	}
 
-	public double[][] getMSTab(int i, double[][] MStemp, double[][] MSc) {
+	public static double[][] getMSTab(int i, double[][] MStemp, double[][] MSc) {
 		double[][] MSTab1 = new double[3][6];
 		MSTab1[0] = MStemp[i];
 		MSTab1[1] = MSc[i];
@@ -544,7 +547,7 @@ public class dbRecord {
 
 	}
 
-	public double[][] genBDGCoeff(int NR, int N0, int N1) {
+	public static double[][] genBDGCoeff(int NR, int N0, int N1) {
 		double[][] c = new double[4][8];
 		c[0][0] = 1.0 / (NR * N0 * N1);
 		c[0][1] = c[0][0] * (N0 - 1.0);
@@ -562,7 +565,7 @@ public class dbRecord {
 		return c;
 	}
 
-	public double[][] genBCKCoeff(int NR, int N0, int N1) {
+	public static double[][] genBCKCoeff(int NR, int N0, int N1) {
 		double[][] c = new double[4][7];
 		c[0][0] = 1.0 / N0;
 		c[0][1] = 1.0 / N1;
@@ -578,7 +581,7 @@ public class dbRecord {
 		return c;
 	}
 
-	public double[][] genDBMCoeff(int NR, int N0, int N1) {
+	public static double[][] genDBMCoeff(int NR, int N0, int N1) {
 		double[][] c = new double[4][6];
 		/*
 		 * c[0][0] = 1.0/N2; c[0][1] = 1.0; c[0][2]= 1.0/N2; c[0][3] = 1.0/N2;
@@ -608,7 +611,7 @@ public class dbRecord {
 		return c;
 	}
 
-	public double[][] genMSCoeff(int NR, int N0, int N1) {
+	public static double[][] genMSCoeff(int NR, int N0, int N1) {
 		double[][] c = new double[4][6];
 		double tmp = 1.0 / (NR * (N0 + N1));
 		c[0][0] = tmp;
@@ -628,7 +631,7 @@ public class dbRecord {
 		return c;
 	}
 
-	public double[][] genORCoeff(int NR, int N0, int N1) {
+	public static double[][] genORCoeff(int NR, int N0, int N1) {
 		double[][] c = new double[4][6];
 		c[0][0] = 1.0 / NR;
 		c[0][1] = 0;

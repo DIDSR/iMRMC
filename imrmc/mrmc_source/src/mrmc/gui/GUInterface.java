@@ -363,11 +363,11 @@ public class GUInterface {
 		int newD = Parms[2];
 		dbRecord tempRecord = getCurrentRecord();
 
-		double[][] BDGcoeff = tempRecord.genBDGCoeff(newR, newN, newD);
-		double[][] DBMcoeff = tempRecord.genDBMCoeff(newR, newN, newD);
-		double[][] BCKcoeff = tempRecord.genBCKCoeff(newR, newN, newD);
-		double[][] ORcoeff = tempRecord.genORCoeff(newR, newN, newD);
-		double[][] MScoeff = tempRecord.genMSCoeff(newR, newN, newD);
+		double[][] BDGcoeff = dbRecord.genBDGCoeff(newR, newN, newD);
+		double[][] DBMcoeff = dbRecord.genDBMCoeff(newR, newN, newD);
+		double[][] BCKcoeff = dbRecord.genBCKCoeff(newR, newN, newD);
+		double[][] ORcoeff = dbRecord.genORCoeff(newR, newN, newD);
+		double[][] MScoeff = dbRecord.genMSCoeff(newR, newN, newD);
 
 		double[][] BDG = new double[4][8];
 		double[][] BCK = new double[4][7];
@@ -389,37 +389,37 @@ public class GUInterface {
 						newD);
 				DBM = tempRecord.DBMresize(tempRecord.getDBM(0), newR, newN,
 						newD);
-				OR = tempRecord.DBM2OR(0, DBM, newR, newN, newD);
-				MS = tempRecord.DBM2MS(DBM, newR, newN, newD);
+				OR = dbRecord.DBM2OR(0, DBM, newR, newN, newD);
+				MS = dbRecord.DBM2MS(DBM, newR, newN, newD);
 			} else if (MC.getSelectedComp() == 2) // DBM input is used
 			{
 				DBM = tempRecord.DBMresize(tempRecord.getDBM(0), newR, newN,
 						newD);
-				OR = tempRecord.DBM2OR(0, DBM, newR, newN, newD);
-				MS = tempRecord.DBM2MS(DBM, newR, newN, newD);
+				OR = dbRecord.DBM2OR(0, DBM, newR, newN, newD);
+				MS = dbRecord.DBM2MS(DBM, newR, newN, newD);
 			} else if (MC.getSelectedComp() == 3) // OR input is used
 			{
-				DBM = tempRecord.DBM2OR(1, tempRecord.getOR(0), newR, newN,
+				DBM = dbRecord.DBM2OR(1, tempRecord.getOR(0), newR, newN,
 						newD);
 				DBM = tempRecord.DBMresize(DBM, newR, newN, newD);
-				OR = tempRecord.DBM2OR(0, DBM, newR, newN, newD);
-				MS = tempRecord.DBM2MS(DBM, newR, newN, newD);
+				OR = dbRecord.DBM2OR(0, DBM, newR, newN, newD);
+				MS = dbRecord.DBM2MS(DBM, newR, newN, newD);
 			} else if (MC.getSelectedComp() == 4) // MS input is used
 			{
-				DBM = tempRecord.DBM2OR(1, tempRecord.getOR(0), newR, newN,
+				DBM = dbRecord.DBM2OR(1, tempRecord.getOR(0), newR, newN,
 						newD);
 				DBM = tempRecord.DBMresize(DBM, newR, newN, newD);
-				MS = tempRecord.DBM2MS(DBM, newR, newN, newD);
+				MS = dbRecord.DBM2MS(DBM, newR, newN, newD);
 			}
 
 		} else {
 			BDG = tempRecord.getBDG(useBiasM);
-			BCK = tempRecord.BDG2BCK(BDG);
+			BCK = dbRecord.BDG2BCK(BDG);
 			// DBM = tempRecord.BDG2DBM(BDG,newR,newN,newD);
 			// OR = tempRecord.BDG2OR(BDG, newR,newN,newD);
-			DBM = tempRecord.BCK2DBM(BCK, newR, newN, newD);
-			OR = tempRecord.DBM2OR(0, DBM, newR, newN, newD);
-			MS = tempRecord.DBM2MS(DBM, newR, newN, newD);
+			DBM = dbRecord.BCK2DBM(BCK, newR, newN, newD);
+			OR = dbRecord.DBM2OR(0, DBM, newR, newN, newD);
+			MS = dbRecord.DBM2MS(DBM, newR, newN, newD);
 		}
 
 		double sum = 0;
@@ -435,8 +435,8 @@ public class GUInterface {
 			DBM[3][3] = DBM[0][0];
 			DBM[3][4] = DBM[0][1];
 			DBM[3][5] = DBM[0][2];
-			OR = tempRecord.DBM2OR(0, DBM, newR, newN, newD);
-			MS = tempRecord.DBM2MS(DBM, newR, newN, newD);
+			OR = dbRecord.DBM2OR(0, DBM, newR, newN, newD);
+			MS = dbRecord.DBM2MS(DBM, newR, newN, newD);
 
 		}
 
@@ -1415,7 +1415,7 @@ public class GUInterface {
 		public void actionPerformed(ActionEvent e) {
 			// System.out.println("roc button pressed");
 			if (usr != null && usr.isLoaded()) {
-				JComboBox<Integer> chooseMod = new JComboBox<Integer>();
+				JComboBox chooseMod = new JComboBox();
 				for (int i = 1; i <= usr.getModality(); i++) {
 					chooseMod.addItem(i);
 				}
@@ -1473,7 +1473,7 @@ public class GUInterface {
 		public void actionPerformed(ActionEvent e) {
 			// System.out.println("study design button pressed");
 			if (usr != null && usr.isLoaded()) {
-				JComboBox<Integer> choose1 = new JComboBox<Integer>();
+				JComboBox choose1 = new JComboBox();
 				for (int i = 1; i <= usr.getModality(); i++) {
 					choose1.addItem(i);
 				}

@@ -24,6 +24,8 @@
 
 package roemetz.core;
 
+import java.util.Random;
+
 import mrmc.core.dbRecord;
 import mrmc.core.matrix;
 import org.apache.commons.math3.distribution.NormalDistribution;
@@ -34,6 +36,13 @@ public class CofVGenRoeMetz {
 	static double[][][] m;
 	private static double[][] BDG;
 	private static double[][] BCK;
+
+	public static void main(String[] args) {
+		// double[] u = args[0];
+		// double[] var_t = args[1];
+		int n = Integer.parseInt(args[2]);
+		// genRoeMetz(u, n, var_t);
+	}
 
 	public static void printResults() {
 		System.out.println("cofv_auc:");

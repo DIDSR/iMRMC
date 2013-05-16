@@ -58,6 +58,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import mrmc.core.dbRecord;
 import mrmc.core.matrix;
 
 import roemetz.core.CofVGenRoeMetz;
@@ -93,14 +94,8 @@ public class RMGUInterface {
 	private JTextField numSamples;
 	private JTextField seed;
 	private JDialog progDialog;
-	private JRadioButton mod1SimButton;
-	private JRadioButton mod2SimButton;
-	private JRadioButton modDSimButton;
 	private JCheckBox useBias = new JCheckBox("Use Bias");
-	public int useBiasM;
-	private JRadioButton mod1EstButton;
-	private JRadioButton mod2EstButton;
-	private JRadioButton modDEstButton;
+	public int useBiasM = 0;
 	private static JProgressBar simProgress;
 	private static RoeMetz appl;
 
@@ -326,11 +321,13 @@ public class RMGUInterface {
 		JLabel seedLabel = new JLabel("Seed for RNG");
 		seed = new JTextField(9);
 		seed.setText(Long.toString(System.currentTimeMillis()));
+		useBias.addItemListener(new useBiasListner());
 
 		simulationExperiment.add(seedLabel);
 		simulationExperiment.add(seed);
 		simulationExperiment.add(numExpLabel);
 		simulationExperiment.add(numExp);
+		simulationExperiment.add(useBias);
 		simulationExperiment.add(doSimExp);
 
 		simExpPanel.add(simExpDesc);
@@ -606,50 +603,6 @@ public class RMGUInterface {
 		}
 	}
 
-	/*
-	 * radio buttons to select the type of modality when performing simulation
-	 * experiments
-	 */
-	class ModSimListner implements ActionListener {
-
-		public void actionPerformed(ActionEvent e) {
-			String str;
-			str = e.getActionCommand();
-			System.out.println(str + "radiobutton selected");
-			if (str == "Modality 1") {
-				// simSelectedMod = 0;
-			}
-			if (str == "Modality 2") {
-				// simSelectedMod = 1;
-			}
-			if (str == "Difference") {
-				// simSelectedMod = 3;
-			}
-		}
-	}
-
-	/*
-	 * radio buttons to select the type of modality when performing simulation
-	 * experiments
-	 */
-	class ModEstListner implements ActionListener {
-
-		public void actionPerformed(ActionEvent e) {
-			String str;
-			str = e.getActionCommand();
-			System.out.println(str + "radiobutton selected");
-			if (str == "Modality 1") {
-				// estSelectedMod = 0;
-			}
-			if (str == "Modality 2") {
-				// estSelectedMod = 1;
-			}
-			if (str == "Difference") {
-				// estSelectedMod = 3;
-			}
-		}
-	}
-
 	class useBiasListner implements ItemListener {
 		public void itemStateChanged(ItemEvent e) {
 			if (useBias.isSelected()) {
@@ -723,6 +676,7 @@ public class RMGUInterface {
 		int doneTasks = 0;
 		final int numCores = Runtime.getRuntime().availableProcessors();
 		double[][][][] results = new double[numCores][][][];
+		int[] n;
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -747,7 +701,7 @@ public class RMGUInterface {
 						Double.valueOf(vR1.getText()),
 						Double.valueOf(vC1.getText()),
 						Double.valueOf(vRC1.getText()) };
-				int[] n = { Integer.valueOf(n0.getText()),
+				n = new int[] { Integer.valueOf(n0.getText()),
 						Integer.valueOf(n1.getText()),
 						Integer.valueOf(nr.getText()) };
 				long seedVar = Long.parseLong(seed.getText());
@@ -818,6 +772,11 @@ public class RMGUInterface {
 			double[][] allDBM = results[0][2];
 			double[][] allOR = results[0][3];
 			double[][] allMS = results[0][4];
+			double[][] BDGcoeff = dbRecord.genBDGCoeff(n[2], n[0], n[1]);
+			double[][] BCKcoeff = dbRecord.genBCKCoeff(n[2], n[0], n[1]);
+			double[][] DBMcoeff = dbRecord.genDBMCoeff(n[2], n[0], n[1]);
+			double[][] MScoeff = dbRecord.genMSCoeff(n[2], n[0], n[1]);
+			double[][] ORcoeff = dbRecord.genORCoeff(n[2], n[0], n[1]);
 
 			for (int i = 1; i < numCores; i++) {
 				allBDG = matrix.matrixAdd(allBDG, results[i][0]);
@@ -844,29 +803,33 @@ public class RMGUInterface {
 			JPanel buttonPanel = new JPanel();
 			buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 
-			// TODO these panes should show per modality, coefficient, total
 			JTabbedPane tabTables = new JTabbedPane();
-			JComponent BDGpane = makeBDGpane(allBDG);
-			JComponent BCKpane = makeBCKpane(allBCK);
-			JComponent DBMpane = makeDBMpane(allDBM);
-			JComponent ORpane = makeORpane(allOR);
-			JComponent MSpane = makeMSpane(allMS);
+			JComponent BDGpane = makeBDGpane();
+			JComponent BCKpane = makeBCKpane();
+			JComponent DBMpane = makeDBMpane();
+			JComponent ORpane = makeORpane();
+			JComponent MSpane = makeMSpane();
 			tabTables.addTab("BDG", BDGpane);
 			tabTables.addTab("BCK", BCKpane);
 			tabTables.addTab("DBM", DBMpane);
 			tabTables.addTab("OR", ORpane);
 			tabTables.addTab("MS", MSpane);
+			updateBDGpane(BDGpane, 0, allBDG, BDGcoeff);
+			updateBCKpane(BCKpane, 0, allBCK, BCKcoeff);
+			updateDBMpane(DBMpane, 0, allDBM, DBMcoeff);
+			updateORpane(ORpane, 0, allOR, ORcoeff);
+			updateMSpane(MSpane, 0, allMS, MScoeff);
 
 			// create modality select buttons
 			String str1 = "Modality 1";
-			mod1SimButton = new JRadioButton(str1);
+			JRadioButton mod1SimButton = new JRadioButton(str1);
 			mod1SimButton.setActionCommand(str1);
 			mod1SimButton.setSelected(true);
 			String str2 = "Modality 2";
-			mod2SimButton = new JRadioButton(str2);
+			JRadioButton mod2SimButton = new JRadioButton(str2);
 			mod2SimButton.setActionCommand(str2);
 			String strD = "Difference";
-			modDSimButton = new JRadioButton(strD);
+			JRadioButton modDSimButton = new JRadioButton(strD);
 			modDSimButton.setActionCommand(strD);
 			// Group the radio buttons.
 			ButtonGroup group = new ButtonGroup();
@@ -874,22 +837,85 @@ public class RMGUInterface {
 			group.add(mod2SimButton);
 			group.add(modDSimButton);
 			// Register a listener for the radio buttons.
-			ModSimListner gListener = new ModSimListner();
+			ModSimListner gListener = new ModSimListner(tabTables, allBDG,
+					allBCK, allDBM, allOR, allMS, BDGcoeff, BCKcoeff, DBMcoeff,
+					ORcoeff, MScoeff);
 			mod1SimButton.addActionListener(gListener);
 			mod2SimButton.addActionListener(gListener);
 			modDSimButton.addActionListener(gListener);
-			useBias.addItemListener(new useBiasListner());
 
 			tablePanel.add(tabTables);
 			buttonPanel.add(mod1SimButton);
 			buttonPanel.add(mod2SimButton);
 			buttonPanel.add(modDSimButton);
-			buttonPanel.add(useBias);
 			panel.add(tablePanel);
 			panel.add(buttonPanel);
 			simOutput.add(panel);
 			simOutput.pack();
 			simOutput.setVisible(true);
+		}
+
+		/*
+		 * radio buttons to select the type of modality when performing
+		 * simulation experiments
+		 */
+		class ModSimListner implements ActionListener {
+			JTabbedPane tabTables;
+			private double[][] allBDG;
+			private double[][] allBCK;
+			private double[][] allDBM;
+			private double[][] allOR;
+			private double[][] allMS;
+			private double[][] BDGcoeff;
+			private double[][] BCKcoeff;
+			private double[][] DBMcoeff;
+			private double[][] MScoeff;
+			private double[][] ORcoeff;
+
+			public ModSimListner(JTabbedPane tabTables, double[][] allBDG,
+					double[][] allBCK, double[][] allDBM, double[][] allOR,
+					double[][] allMS, double[][] BDGcoeff, double[][] BCKcoeff,
+					double[][] DBMcoeff, double[][] ORcoeff, double[][] MScoeff) {
+				this.tabTables = tabTables;
+				this.allBDG = allBDG;
+				this.allBCK = allBCK;
+				this.allDBM = allDBM;
+				this.allOR = allOR;
+				this.allMS = allMS;
+				this.BDGcoeff = BDGcoeff;
+				this.BCKcoeff = BCKcoeff;
+				this.DBMcoeff = DBMcoeff;
+				this.MScoeff = MScoeff;
+				this.ORcoeff = ORcoeff;
+			}
+
+			public void actionPerformed(ActionEvent e) {
+				String str;
+				str = e.getActionCommand();
+				System.out.println(str + "radiobutton selected");
+				if (str == "Modality 1") {
+					updatePanes(0);
+				}
+				if (str == "Modality 2") {
+					updatePanes(1);
+				}
+				if (str == "Difference") {
+					updatePanes(3);
+				}
+			}
+
+			private void updatePanes(int mod) {
+				updateBDGpane((JComponent) tabTables.getComponent(0), mod,
+						allBDG, BDGcoeff);
+				updateBCKpane((JComponent) tabTables.getComponent(1), mod,
+						allBCK, BCKcoeff);
+				updateDBMpane((JComponent) tabTables.getComponent(2), mod,
+						allDBM, DBMcoeff);
+				updateORpane((JComponent) tabTables.getComponent(3), mod,
+						allOR, ORcoeff);
+				updateMSpane((JComponent) tabTables.getComponent(4), mod,
+						allMS, MScoeff);
+			}
 		}
 	}
 
@@ -981,21 +1007,28 @@ public class RMGUInterface {
 			buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 
 			JTabbedPane tabTables = new JTabbedPane();
-			JComponent BDGpane = makeBDGpane(results[0]);
-			JComponent BCKpane = makeBCKpane(results[1]);
+			JComponent BDGpane = makeBDGpane();
+			JComponent BCKpane = makeBCKpane();
 			tabTables.addTab("BDG", BDGpane);
 			tabTables.addTab("BCK", BCKpane);
 
+			double[][] BDG = results[0];
+			double[][] BCK = results[1];
+			double[][] BDGcoeff = new double[4][8];
+			double[][] BCKcoeff = new double[4][7];
+			updateBDGpane(BDGpane, 0, results[0], BDGcoeff);
+			updateBCKpane(BCKpane, 0, results[1], BCKcoeff);
+
 			// create modality select buttons
 			String str1 = "Modality 1";
-			mod1EstButton = new JRadioButton(str1);
+			JRadioButton mod1EstButton = new JRadioButton(str1);
 			mod1EstButton.setActionCommand(str1);
 			mod1EstButton.setSelected(true);
 			String str2 = "Modality 2";
-			mod2EstButton = new JRadioButton(str2);
+			JRadioButton mod2EstButton = new JRadioButton(str2);
 			mod2EstButton.setActionCommand(str2);
 			String strD = "Difference";
-			modDEstButton = new JRadioButton(strD);
+			JRadioButton modDEstButton = new JRadioButton(strD);
 			modDEstButton.setActionCommand(strD);
 			// Group the radio buttons.
 			ButtonGroup groupEst = new ButtonGroup();
@@ -1004,7 +1037,8 @@ public class RMGUInterface {
 			groupEst.add(modDEstButton);
 
 			// Register a listener for the radio buttons.
-			ModEstListner gListenerEst = new ModEstListner();
+			ModEstListner gListenerEst = new ModEstListner(tabTables, BDG, BCK,
+					BDGcoeff, BCKcoeff);
 			mod1EstButton.addActionListener(gListenerEst);
 			mod2EstButton.addActionListener(gListenerEst);
 			modDEstButton.addActionListener(gListenerEst);
@@ -1019,86 +1053,159 @@ public class RMGUInterface {
 			estOutput.pack();
 			estOutput.setVisible(true);
 		}
-	}
 
-	private JComponent makeBDGpane(double[][] allBDG) {
-		JPanel BDGpane = new JPanel(false);
-		String[] columnNames = { "M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8" };
-		Object[][] bdgData = new Object[4][8];
-		DecimalFormat df = new DecimalFormat("0.###E0");
-		for (int i = 0; i < 4; i++) {
-			for (int j = 0; j < 8; j++) {
-				bdgData[i][j] = (Object) df.format(allBDG[i][j]);
+		/*
+		 * radio buttons to select the type of modality when performing
+		 * simulation experiments
+		 */
+		class ModEstListner implements ActionListener {
+			JTabbedPane tabTables;
+			double[][] BDG;
+			double[][] BCK;
+			double[][] BDGcoeff;
+			double[][] BCKcoeff;
+
+			public ModEstListner(JTabbedPane tabTables, double[][] BDG,
+					double[][] BCK, double[][] BDGcoeff, double[][] BCKcoeff) {
+				this.tabTables = tabTables;
+				this.BDG = BDG;
+				this.BCK = BCK;
+				this.BDGcoeff = BDGcoeff;
+				this.BCKcoeff = BCKcoeff;
+			}
+
+			public void actionPerformed(ActionEvent e) {
+				String str;
+				str = e.getActionCommand();
+				System.out.println(str + "radiobutton selected");
+				if (str == "Modality 1") {
+					updatePanes(0);
+				}
+				if (str == "Modality 2") {
+					updatePanes(1);
+				}
+				if (str == "Difference") {
+					updatePanes(3);
+				}
+			}
+
+			private void updatePanes(int mod) {
+				updateBDGpane((JComponent) tabTables.getComponent(0), mod,
+						results[0], BDGcoeff);
+				updateBCKpane((JComponent) tabTables.getComponent(1), mod,
+						results[1], BCKcoeff);
 			}
 		}
+	}
+
+	private JComponent makeBDGpane() {
+		JPanel BDGpane = new JPanel(false);
+		String[] columnNames = { "M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8" };
+		Object[][] bdgData = new Object[3][8];
 		JTable table = new JTable(bdgData, columnNames);
 		BDGpane.setLayout(new GridLayout(1, 1));
 		BDGpane.add(table);
 		return BDGpane;
 	}
 
-	private JComponent makeBCKpane(double[][] allBCK) {
+	private void updateBDGpane(JComponent BDGpane, int mod, double[][] allBDG,
+			double[][] BDGcoeff) {
+		JTable table = (JTable) BDGpane.getComponent(0);
+		double[][] BDGdata = dbRecord.getBDGTab(mod, allBDG, BDGcoeff);
+		DecimalFormat df = new DecimalFormat("0.###E0");
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 8; j++) {
+				table.setValueAt(df.format(BDGdata[i][j]), i, j);
+			}
+		}
+	}
+
+	private JComponent makeBCKpane() {
 		JPanel BCKpane = new JPanel(false);
 		String[] columnNames = { "N", "D", "N~D", "R", "N~R", "D~R", "R~N~D" };
 
-		Object[][] bckData = new Object[4][7];
-		DecimalFormat df = new DecimalFormat("0.###E0");
-		for (int i = 0; i < 4; i++) {
-			for (int j = 0; j < 7; j++) {
-				bckData[i][j] = (Object) df.format(allBCK[i][j]);
-			}
-		}
+		Object[][] bckData = new Object[3][7];
 		JTable table = new JTable(bckData, columnNames);
 		BCKpane.setLayout(new GridLayout(1, 1));
 		BCKpane.add(table);
 		return BCKpane;
 	}
 
-	private JComponent makeDBMpane(double[][] allDBM) {
-		JPanel DBMpane = new JPanel(false);
-		String[] columnNames = { "R", "C", "R~C", "T~R", "T~C", "T~R~C" };
-		Object[][] dbmData = new Object[4][6];
+	private void updateBCKpane(JComponent BCKpane, int mod, double[][] allBCK,
+			double[][] BCKcoeff) {
+		JTable table = (JTable) BCKpane.getComponent(0);
+		double[][] BCKdata = dbRecord.getBCKTab(mod, allBCK, BCKcoeff);
 		DecimalFormat df = new DecimalFormat("0.###E0");
-		for (int i = 0; i < 4; i++) {
-			for (int j = 0; j < 6; j++) {
-				dbmData[i][j] = (Object) df.format(allDBM[i][j]);
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 7; j++) {
+				table.setValueAt(df.format(BCKdata[i][j]), i, j);
 			}
 		}
+	}
+
+	private JComponent makeDBMpane() {
+		JPanel DBMpane = new JPanel(false);
+		String[] columnNames = { "R", "C", "R~C", "T~R", "T~C", "T~R~C" };
+		Object[][] dbmData = new Object[3][6];
 		JTable table = new JTable(dbmData, columnNames);
 		DBMpane.setLayout(new GridLayout(1, 1));
 		DBMpane.add(table);
 		return DBMpane;
 	}
 
-	private JComponent makeORpane(double[][] allOR) {
-		JPanel ORpane = new JPanel(false);
-		String[] columnNames = { "R", "TR", "COV1", "COV2", "COV3", "ERROR" };
-		Object[][] orData = new Object[4][6];
+	private void updateDBMpane(JComponent DBMpane, int mod, double[][] allDBM,
+			double[][] DBMcoeff) {
+		JTable table = (JTable) DBMpane.getComponent(0);
+		double[][] DBMdata = dbRecord.getDBMTab(mod, allDBM, DBMcoeff);
 		DecimalFormat df = new DecimalFormat("0.###E0");
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 6; j++) {
-				orData[i][j] = (Object) df.format(allOR[i][j]);
+				table.setValueAt(df.format(DBMdata[i][j]), i, j);
 			}
 		}
+	}
+
+	private JComponent makeORpane() {
+		JPanel ORpane = new JPanel(false);
+		String[] columnNames = { "R", "TR", "COV1", "COV2", "COV3", "ERROR" };
+		Object[][] orData = new Object[3][6];
 		JTable table = new JTable(orData, columnNames);
 		ORpane.setLayout(new GridLayout(1, 1));
 		ORpane.add(table);
 		return ORpane;
 	}
 
-	private JComponent makeMSpane(double[][] allMS) {
-		JPanel MSpane = new JPanel(false);
-		String[] columnNames = { "R", "C", "RC", "MR", "MC", "MRC" };
-		Object[][] msData = new Object[4][6];
+	private void updateORpane(JComponent ORpane, int mod, double[][] allOR,
+			double[][] ORcoeff) {
+		JTable table = (JTable) ORpane.getComponent(0);
+		double[][] ORdata = dbRecord.getORTab(mod, allOR, ORcoeff);
 		DecimalFormat df = new DecimalFormat("0.###E0");
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 6; j++) {
-				msData[i][j] = (Object) df.format(allMS[i][j]);
+				table.setValueAt(df.format(ORdata[i][j]), i, j);
 			}
 		}
+	}
+
+	private JComponent makeMSpane() {
+		JPanel MSpane = new JPanel(false);
+		String[] columnNames = { "R", "C", "RC", "MR", "MC", "MRC" };
+		Object[][] msData = new Object[3][6];
 		JTable table = new JTable(msData, columnNames);
 		MSpane.setLayout(new GridLayout(1, 1));
 		MSpane.add(table);
 		return MSpane;
+	}
+
+	private void updateMSpane(JComponent MSpane, int mod, double[][] allMS,
+			double[][] MScoeff) {
+		JTable table = (JTable) MSpane.getComponent(0);
+		double[][] MSdata = dbRecord.getMSTab(mod, allMS, MScoeff);
+		DecimalFormat df = new DecimalFormat("0.###E0");
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 6; j++) {
+				table.setValueAt(df.format(MSdata[i][j]), i, j);
+			}
+		}
 	}
 }
