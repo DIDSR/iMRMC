@@ -27,6 +27,7 @@
 
 package roemetz.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FlowLayout;
@@ -38,9 +39,12 @@ import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
@@ -639,6 +643,10 @@ public class RMGUInterface {
 			double[][] avgMSdata = new double[4][6];
 			for (int i = 0; i < numTimes; i++) {
 				SimRoeMetz.doSim(u, var_t, n, rand, useBiasM);
+				// TODO implement filename field
+				writeMRMCFile(SimRoeMetz.gett00(), SimRoeMetz.gett01(),
+						SimRoeMetz.gett10(), SimRoeMetz.gett11(),
+						"filenamePlace", val.get());
 				avgBDGdata = matrix.matrixAdd(avgBDGdata,
 						SimRoeMetz.getBDGdata());
 				avgBCKdata = matrix.matrixAdd(avgBCKdata,
@@ -675,6 +683,7 @@ public class RMGUInterface {
 	class doSimBtnListner implements ActionListener {
 		int doneTasks = 0;
 		final int numCores = Runtime.getRuntime().availableProcessors();
+		int numTasks;
 		double[][][][] results = new double[numCores][][][];
 		int[] n;
 
@@ -721,11 +730,16 @@ public class RMGUInterface {
 				progDialog.setVisible(true);
 
 				// divide simulations into separate tasks
-				final SimExperiments[] allTasks = new SimExperiments[numCores];
-				for (int i = 0; i < numCores; i++) {
+				if (numTimes < numCores) {
+					numTasks = numTimes;
+				} else {
+					numTasks = numCores;
+				}
+				final SimExperiments[] allTasks = new SimExperiments[numTasks];
+				for (int i = 0; i < numTasks; i++) {
 					final int taskNum = i;
 					allTasks[i] = new SimExperiments(u, var_t, n, rand,
-							numTimes / numCores, progVal);
+							numTimes / numTasks, progVal);
 					// Check to see when each task finishes and get its results
 					allTasks[i]
 							.addPropertyChangeListener(new PropertyChangeListener() {
@@ -736,7 +750,7 @@ public class RMGUInterface {
 											results[taskNum] = allTasks[taskNum]
 													.get();
 											doneTasks++;
-											if (doneTasks == numCores) {
+											if (doneTasks == numTasks) {
 												doneTasks = 0;
 												processResults();
 											}
@@ -750,7 +764,7 @@ public class RMGUInterface {
 							});
 				}
 				// run each task in its own thread, to spread across cores
-				for (int i = 0; i < numCores; i++) {
+				for (int i = 0; i < numTasks; i++) {
 					allTasks[i].execute();
 				}
 
@@ -778,7 +792,7 @@ public class RMGUInterface {
 			double[][] MScoeff = dbRecord.genMSCoeff(n[2], n[0], n[1]);
 			double[][] ORcoeff = dbRecord.genORCoeff(n[2], n[0], n[1]);
 
-			for (int i = 1; i < numCores; i++) {
+			for (int i = 1; i < numTasks; i++) {
 				allBDG = matrix.matrixAdd(allBDG, results[i][0]);
 				allBCK = matrix.matrixAdd(allBCK, results[i][1]);
 				allDBM = matrix.matrixAdd(allDBM, results[i][2]);
@@ -786,11 +800,11 @@ public class RMGUInterface {
 				allMS = matrix.matrixAdd(allMS, results[i][4]);
 			}
 
-			allBDG = matrix.scaleMatrix(allBDG, 1.0 / (double) numCores);
-			allBCK = matrix.scaleMatrix(allBCK, 1.0 / (double) numCores);
-			allDBM = matrix.scaleMatrix(allDBM, 1.0 / (double) numCores);
-			allOR = matrix.scaleMatrix(allOR, 1.0 / (double) numCores);
-			allMS = matrix.scaleMatrix(allMS, 1.0 / (double) numCores);
+			allBDG = matrix.scaleMatrix(allBDG, 1.0 / (double) numTasks);
+			allBCK = matrix.scaleMatrix(allBCK, 1.0 / (double) numTasks);
+			allDBM = matrix.scaleMatrix(allDBM, 1.0 / (double) numTasks);
+			allOR = matrix.scaleMatrix(allOR, 1.0 / (double) numTasks);
+			allMS = matrix.scaleMatrix(allMS, 1.0 / (double) numTasks);
 
 			JDialog simOutput = new JDialog(appl.getFrame(),
 					"Simulation Results");
@@ -798,7 +812,7 @@ public class RMGUInterface {
 			panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
 			JPanel tablePanel = new JPanel();
-			tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
+			tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.X_AXIS));
 
 			JPanel buttonPanel = new JPanel();
 			buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
@@ -1103,14 +1117,36 @@ public class RMGUInterface {
 		String[] columnNames = { "M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8" };
 		Object[][] bdgData = new Object[3][8];
 		JTable table = new JTable(bdgData, columnNames);
-		BDGpane.setLayout(new GridLayout(1, 1));
+		BDGpane.setLayout(new BorderLayout());
+		BDGpane.add(table.getTableHeader(), BorderLayout.PAGE_START);
 		BDGpane.add(table);
 		return BDGpane;
 	}
 
+	// TODO actually turn tmatrices into scores file
+	public void writeMRMCFile(double[][] gett00, double[][] gett01,
+			double[][] gett10, double[][] gett11, String filename, int fileNum) {
+		try {
+			File file = new File("simulatedMRMCinput/" + filename + fileNum
+					+ ".imrmc");
+
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			FileWriter fw = new FileWriter(file.getAbsoluteFile());
+			BufferedWriter bw = new BufferedWriter(fw);
+			bw.write("BEGIN DATA:\n");
+			bw.close();
+
+			System.out.println("wrote file");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	private void updateBDGpane(JComponent BDGpane, int mod, double[][] allBDG,
 			double[][] BDGcoeff) {
-		JTable table = (JTable) BDGpane.getComponent(0);
+		JTable table = (JTable) BDGpane.getComponent(1);
 		double[][] BDGdata = dbRecord.getBDGTab(mod, allBDG, BDGcoeff);
 		DecimalFormat df = new DecimalFormat("0.###E0");
 		for (int i = 0; i < 3; i++) {
@@ -1126,14 +1162,15 @@ public class RMGUInterface {
 
 		Object[][] bckData = new Object[3][7];
 		JTable table = new JTable(bckData, columnNames);
-		BCKpane.setLayout(new GridLayout(1, 1));
+		BCKpane.setLayout(new BorderLayout());
+		BCKpane.add(table.getTableHeader(), BorderLayout.PAGE_START);
 		BCKpane.add(table);
 		return BCKpane;
 	}
 
 	private void updateBCKpane(JComponent BCKpane, int mod, double[][] allBCK,
 			double[][] BCKcoeff) {
-		JTable table = (JTable) BCKpane.getComponent(0);
+		JTable table = (JTable) BCKpane.getComponent(1);
 		double[][] BCKdata = dbRecord.getBCKTab(mod, allBCK, BCKcoeff);
 		DecimalFormat df = new DecimalFormat("0.###E0");
 		for (int i = 0; i < 3; i++) {
@@ -1148,14 +1185,15 @@ public class RMGUInterface {
 		String[] columnNames = { "R", "C", "R~C", "T~R", "T~C", "T~R~C" };
 		Object[][] dbmData = new Object[3][6];
 		JTable table = new JTable(dbmData, columnNames);
-		DBMpane.setLayout(new GridLayout(1, 1));
+		DBMpane.setLayout(new BorderLayout());
+		DBMpane.add(table.getTableHeader(), BorderLayout.PAGE_START);
 		DBMpane.add(table);
 		return DBMpane;
 	}
 
 	private void updateDBMpane(JComponent DBMpane, int mod, double[][] allDBM,
 			double[][] DBMcoeff) {
-		JTable table = (JTable) DBMpane.getComponent(0);
+		JTable table = (JTable) DBMpane.getComponent(1);
 		double[][] DBMdata = dbRecord.getDBMTab(mod, allDBM, DBMcoeff);
 		DecimalFormat df = new DecimalFormat("0.###E0");
 		for (int i = 0; i < 3; i++) {
@@ -1170,14 +1208,15 @@ public class RMGUInterface {
 		String[] columnNames = { "R", "TR", "COV1", "COV2", "COV3", "ERROR" };
 		Object[][] orData = new Object[3][6];
 		JTable table = new JTable(orData, columnNames);
-		ORpane.setLayout(new GridLayout(1, 1));
+		ORpane.setLayout(new BorderLayout());
+		ORpane.add(table.getTableHeader(), BorderLayout.PAGE_START);
 		ORpane.add(table);
 		return ORpane;
 	}
 
 	private void updateORpane(JComponent ORpane, int mod, double[][] allOR,
 			double[][] ORcoeff) {
-		JTable table = (JTable) ORpane.getComponent(0);
+		JTable table = (JTable) ORpane.getComponent(1);
 		double[][] ORdata = dbRecord.getORTab(mod, allOR, ORcoeff);
 		DecimalFormat df = new DecimalFormat("0.###E0");
 		for (int i = 0; i < 3; i++) {
@@ -1192,14 +1231,15 @@ public class RMGUInterface {
 		String[] columnNames = { "R", "C", "RC", "MR", "MC", "MRC" };
 		Object[][] msData = new Object[3][6];
 		JTable table = new JTable(msData, columnNames);
-		MSpane.setLayout(new GridLayout(1, 1));
+		MSpane.setLayout(new BorderLayout());
+		MSpane.add(table.getTableHeader(), BorderLayout.PAGE_START);
 		MSpane.add(table);
 		return MSpane;
 	}
 
 	private void updateMSpane(JComponent MSpane, int mod, double[][] allMS,
 			double[][] MScoeff) {
-		JTable table = (JTable) MSpane.getComponent(0);
+		JTable table = (JTable) MSpane.getComponent(1);
 		double[][] MSdata = dbRecord.getMSTab(mod, allMS, MScoeff);
 		DecimalFormat df = new DecimalFormat("0.###E0");
 		for (int i = 0; i < 3; i++) {

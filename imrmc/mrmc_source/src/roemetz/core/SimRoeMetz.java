@@ -72,6 +72,22 @@ public class SimRoeMetz {
 		return MS;
 	}
 
+	public static double[][] gett00() {
+		return t00;
+	}
+
+	public static double[][] gett01() {
+		return t01;
+	}
+
+	public static double[][] gett10() {
+		return t10;
+	}
+
+	public static double[][] gett11() {
+		return t11;
+	}
+
 	public static void printResults() {
 
 	}
