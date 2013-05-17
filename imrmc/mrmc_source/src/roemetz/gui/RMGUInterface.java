@@ -669,11 +669,8 @@ public class RMGUInterface {
 			double[][] avgDBMdata = new double[4][6];
 			double[][] avgORdata = new double[4][6];
 			double[][] avgMSdata = new double[4][6];
-			System.out.println(numTimes);
 			for (int i = 0; i < numTimes; i++) {
-
 				SimRoeMetz currSim = new SimRoeMetz(u, var_t, n, rand, useBiasM);
-				System.out.println("finished experiment" + val.get());
 				writeMRMCFile(currSim.gett00(), currSim.gett01(),
 						currSim.gett10(), currSim.gett11(), filenameTime,
 						((whichTask * numTimes) + i));
@@ -939,7 +936,6 @@ public class RMGUInterface {
 			public void actionPerformed(ActionEvent e) {
 				String str;
 				str = e.getActionCommand();
-				System.out.println(str + "radiobutton selected");
 				if (str == "Modality 1") {
 					updatePanes(0);
 				}
@@ -1124,7 +1120,6 @@ public class RMGUInterface {
 			public void actionPerformed(ActionEvent e) {
 				String str;
 				str = e.getActionCommand();
-				System.out.println(str + "radiobutton selected");
 				if (str == "Modality 1") {
 					updatePanes(0);
 				}
@@ -1156,7 +1151,6 @@ public class RMGUInterface {
 		return BDGpane;
 	}
 
-	// TODO actually turn tmatrices into scores file
 	public void writeMRMCFile(double[][] t00, double[][] t01, double[][] t10,
 			double[][] t11, String filename, int fileNum) {
 		try {
@@ -1167,6 +1161,11 @@ public class RMGUInterface {
 			}
 			FileWriter fw = new FileWriter(file.getAbsoluteFile());
 			BufferedWriter bw = new BufferedWriter(fw);
+			bw.write("NR: " + t00.length + "\n");
+			bw.write("N0: " + t00[0].length + "\n");
+			bw.write("N1: " + t10[0].length + "\n");
+			bw.write("NM: 2\n");
+			bw.write("\n");
 			bw.write("BEGIN DATA:\n");
 
 			int caseNum = 1;
@@ -1193,7 +1192,6 @@ public class RMGUInterface {
 				}
 			}
 			bw.close();
-			System.out.println("wrote file" + fileNum);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
