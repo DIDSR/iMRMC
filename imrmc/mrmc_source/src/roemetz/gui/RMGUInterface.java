@@ -666,21 +666,19 @@ public class RMGUInterface {
 			double[][] avgDBMdata = new double[4][6];
 			double[][] avgORdata = new double[4][6];
 			double[][] avgMSdata = new double[4][6];
+			System.out.println(numTimes);
 			for (int i = 0; i < numTimes; i++) {
-				SimRoeMetz.doSim(u, var_t, n, rand, useBiasM);
-				// TODO implement filename field
 
-				writeMRMCFile(SimRoeMetz.gett00(), SimRoeMetz.gett01(),
-						SimRoeMetz.gett10(), SimRoeMetz.gett11(), filenameTime,
+				SimRoeMetz currSim = new SimRoeMetz(u, var_t, n, rand, useBiasM);
+				System.out.println("finished experiment" + val.get());
+				writeMRMCFile(currSim.gett00(), currSim.gett01(),
+						currSim.gett10(), currSim.gett11(), filenameTime,
 						val.get());
-				avgBDGdata = matrix.matrixAdd(avgBDGdata,
-						SimRoeMetz.getBDGdata());
-				avgBCKdata = matrix.matrixAdd(avgBCKdata,
-						SimRoeMetz.getBCKdata());
-				avgDBMdata = matrix.matrixAdd(avgDBMdata,
-						SimRoeMetz.getDBMdata());
-				avgORdata = matrix.matrixAdd(avgORdata, SimRoeMetz.getORdata());
-				avgMSdata = matrix.matrixAdd(avgMSdata, SimRoeMetz.getMSdata());
+				avgBDGdata = matrix.matrixAdd(avgBDGdata, currSim.getBDGdata());
+				avgBCKdata = matrix.matrixAdd(avgBCKdata, currSim.getBCKdata());
+				avgDBMdata = matrix.matrixAdd(avgDBMdata, currSim.getDBMdata());
+				avgORdata = matrix.matrixAdd(avgORdata, currSim.getORdata());
+				avgMSdata = matrix.matrixAdd(avgMSdata, currSim.getMSdata());
 
 				publish(val.getAndIncrement());
 				setProgress(100 * i / numTimes);
@@ -1156,8 +1154,8 @@ public class RMGUInterface {
 	}
 
 	// TODO actually turn tmatrices into scores file
-	public void writeMRMCFile(double[][] t00, double[][] t01,
-			double[][] t10, double[][] t11, String filename, int fileNum) {
+	public void writeMRMCFile(double[][] t00, double[][] t01, double[][] t10,
+			double[][] t11, String filename, int fileNum) {
 		try {
 			File file = new File(simSaveDirectory + "\\" + filename + "-"
 					+ String.format("%05d", fileNum) + ".imrmc");
@@ -1167,8 +1165,32 @@ public class RMGUInterface {
 			FileWriter fw = new FileWriter(file.getAbsoluteFile());
 			BufferedWriter bw = new BufferedWriter(fw);
 			bw.write("BEGIN DATA:\n");
-			bw.close();
 
+			int caseNum = 1;
+			for (int j = 0; j < t00[0].length; j++) {
+				bw.write("-1," + caseNum + ",0,0\n");
+				caseNum++;
+			}
+			for (int k = 0; k < t10[0].length; k++) {
+				bw.write("-1," + caseNum + ",0,1\n");
+				caseNum++;
+			}
+
+			for (int i = 0; i < t00.length; i++) {
+				caseNum = 1;
+				for (int m = 0; m < t00[i].length; m++) {
+					bw.write((i + 1) + "," + caseNum + ",1," + t00[i][m] + "\n");
+					bw.write((i + 1) + "," + caseNum + ",2," + t01[i][m] + "\n");
+					caseNum++;
+				}
+				for (int n = 0; n < t10[i].length; n++) {
+					bw.write((i + 1) + "," + caseNum + ",1," + t10[i][n] + "\n");
+					bw.write((i + 1) + "," + caseNum + ",2," + t11[i][n] + "\n");
+					caseNum++;
+				}
+			}
+			bw.close();
+			System.out.println("wrote file" + fileNum);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

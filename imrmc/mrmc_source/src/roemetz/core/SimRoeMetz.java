@@ -33,16 +33,21 @@ import mrmc.core.inputFile;
 import mrmc.core.matrix;
 
 public class SimRoeMetz {
-	static double[][] t00;
-	static double[][] t01;
-	static double[][] t10;
-	static double[][] t11;
-	static double[] auc;
-	private static double[][] BDG;
-	private static double[][] BCK;
-	private static double[][] DBM;
-	private static double[][] OR;
-	private static double[][] MS;
+	double[][] t00;
+	double[][] t01;
+	double[][] t10;
+	double[][] t11;
+	double[] auc;
+	double[][] BDG;
+	double[][] BCK;
+	double[][] DBM;
+	double[][] OR;
+	double[][] MS;
+
+	public SimRoeMetz(double[] u, double[] var_t, int[] n, Random rand,
+			int useBiasM) {
+		doSim(u, var_t, n, rand, useBiasM);
+	}
 
 	public static void main(String[] args) {
 		// double[] u = args[0];
@@ -52,47 +57,43 @@ public class SimRoeMetz {
 		// doSim(u, var_t, n, rand);
 	}
 
-	public static double[][] getBDGdata() {
+	public double[][] getBDGdata() {
 		return BDG;
 	}
 
-	public static double[][] getBCKdata() {
+	public double[][] getBCKdata() {
 		return BCK;
 	}
 
-	public static double[][] getDBMdata() {
+	public double[][] getDBMdata() {
 		return DBM;
 	}
 
-	public static double[][] getORdata() {
+	public double[][] getORdata() {
 		return OR;
 	}
 
-	public static double[][] getMSdata() {
+	public double[][] getMSdata() {
 		return MS;
 	}
 
-	public static double[][] gett00() {
+	public double[][] gett00() {
 		return t00;
 	}
 
-	public static double[][] gett01() {
+	public double[][] gett01() {
 		return t01;
 	}
 
-	public static double[][] gett10() {
+	public double[][] gett10() {
 		return t10;
 	}
 
-	public static double[][] gett11() {
+	public double[][] gett11() {
 		return t11;
 	}
 
-	public static void printResults() {
-
-	}
-
-	public static void doSim(double[] u, double[] var_t, int[] n, Random rand,
+	public void doSim(double[] u, double[] var_t, int[] n, Random rand,
 			int useBiasM) {
 		if (u.length != 2) {
 			System.out.println("input u is of incorrect size");
@@ -193,7 +194,7 @@ public class SimRoeMetz {
 
 	}
 
-	public static void calculateStuff(int n0, int n1, int nr, int useBiasM) {
+	public void calculateStuff(int n0, int n1, int nr, int useBiasM) {
 
 		// convert t-matrices to correct shape and create t0,t1
 		double[][][] newt00 = new double[n0][nr][2];
