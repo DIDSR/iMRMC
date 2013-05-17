@@ -47,8 +47,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Callable;
@@ -100,6 +103,7 @@ public class RMGUInterface {
 	private JDialog progDialog;
 	private JCheckBox useBias = new JCheckBox("Use Bias");
 	public int useBiasM = 0;
+	public String simSaveDirectory;
 	private static JProgressBar simProgress;
 	private static RoeMetz appl;
 
@@ -326,12 +330,15 @@ public class RMGUInterface {
 		seed = new JTextField(9);
 		seed.setText(Long.toString(System.currentTimeMillis()));
 		useBias.addItemListener(new useBiasListner());
+		JButton saveLoc = new JButton("Output Location");
+		saveLoc.addActionListener(new saveSimulationListner());
 
 		simulationExperiment.add(seedLabel);
 		simulationExperiment.add(seed);
 		simulationExperiment.add(numExpLabel);
 		simulationExperiment.add(numExp);
 		simulationExperiment.add(useBias);
+		simulationExperiment.add(saveLoc);
 		simulationExperiment.add(doSimExp);
 
 		simExpPanel.add(simExpDesc);
@@ -617,6 +624,22 @@ public class RMGUInterface {
 		}
 	}
 
+	class saveSimulationListner implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			JFileChooser fc = new JFileChooser();
+			fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			int fcReturn = fc.showSaveDialog((JComponent) arg0.getSource());
+			if (fcReturn == JFileChooser.APPROVE_OPTION) {
+				simSaveDirectory = fc.getSelectedFile().toString();
+				System.out.println(simSaveDirectory);
+			} else {
+				System.out.println("No save directory selected");
+			}
+		}
+	}
+
 	private class SimExperiments extends SwingWorker<double[][][], Integer> {
 		double[] u;
 		double[] var_t;
@@ -624,15 +647,17 @@ public class RMGUInterface {
 		int numTimes;
 		Random rand;
 		AtomicInteger val;
+		String filenameTime;
 
 		public SimExperiments(double[] u, double[] var_t, int[] n, Random rand,
-				int numTimes, AtomicInteger val) {
+				int numTimes, AtomicInteger val, String filenameTime) {
 			this.u = u;
 			this.var_t = var_t;
 			this.n = n;
 			this.rand = rand;
 			this.numTimes = numTimes;
 			this.val = val;
+			this.filenameTime = filenameTime;
 		}
 
 		public double[][][] doInBackground() {
@@ -644,9 +669,10 @@ public class RMGUInterface {
 			for (int i = 0; i < numTimes; i++) {
 				SimRoeMetz.doSim(u, var_t, n, rand, useBiasM);
 				// TODO implement filename field
+
 				writeMRMCFile(SimRoeMetz.gett00(), SimRoeMetz.gett01(),
-						SimRoeMetz.gett10(), SimRoeMetz.gett11(),
-						"filenamePlace", val.get());
+						SimRoeMetz.gett10(), SimRoeMetz.gett11(), filenameTime,
+						val.get());
 				avgBDGdata = matrix.matrixAdd(avgBDGdata,
 						SimRoeMetz.getBDGdata());
 				avgBCKdata = matrix.matrixAdd(avgBCKdata,
@@ -716,6 +742,12 @@ public class RMGUInterface {
 				long seedVar = Long.parseLong(seed.getText());
 				final int numTimes = Integer.valueOf(numExp.getText());
 
+				// create string representation of current time to use in
+				// filename
+				DateFormat date = new SimpleDateFormat("yy-MM-dd-HH-mm-ss");
+				Date currDate = new Date();
+				String filenameTime = date.format(currDate);
+
 				// create global RNG which is used across all experiments
 				Random rand = new Random(seedVar);
 				// create and display progress bar for simulation progress
@@ -739,7 +771,7 @@ public class RMGUInterface {
 				for (int i = 0; i < numTasks; i++) {
 					final int taskNum = i;
 					allTasks[i] = new SimExperiments(u, var_t, n, rand,
-							numTimes / numTasks, progVal);
+							numTimes / numTasks, progVal, filenameTime);
 					// Check to see when each task finishes and get its results
 					allTasks[i]
 							.addPropertyChangeListener(new PropertyChangeListener() {
@@ -1124,12 +1156,11 @@ public class RMGUInterface {
 	}
 
 	// TODO actually turn tmatrices into scores file
-	public void writeMRMCFile(double[][] gett00, double[][] gett01,
-			double[][] gett10, double[][] gett11, String filename, int fileNum) {
+	public void writeMRMCFile(double[][] t00, double[][] t01,
+			double[][] t10, double[][] t11, String filename, int fileNum) {
 		try {
-			File file = new File("simulatedMRMCinput/" + filename + fileNum
-					+ ".imrmc");
-
+			File file = new File(simSaveDirectory + "\\" + filename + "-"
+					+ String.format("%05d", fileNum) + ".imrmc");
 			if (!file.exists()) {
 				file.createNewFile();
 			}
@@ -1138,7 +1169,6 @@ public class RMGUInterface {
 			bw.write("BEGIN DATA:\n");
 			bw.close();
 
-			System.out.println("wrote file");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
