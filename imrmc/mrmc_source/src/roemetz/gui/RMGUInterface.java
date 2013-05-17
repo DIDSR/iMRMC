@@ -648,9 +648,11 @@ public class RMGUInterface {
 		Random rand;
 		AtomicInteger val;
 		String filenameTime;
+		int whichTask;
 
 		public SimExperiments(double[] u, double[] var_t, int[] n, Random rand,
-				int numTimes, AtomicInteger val, String filenameTime) {
+				int numTimes, AtomicInteger val, String filenameTime,
+				int whichTask) {
 			this.u = u;
 			this.var_t = var_t;
 			this.n = n;
@@ -658,6 +660,7 @@ public class RMGUInterface {
 			this.numTimes = numTimes;
 			this.val = val;
 			this.filenameTime = filenameTime;
+			this.whichTask = whichTask;
 		}
 
 		public double[][][] doInBackground() {
@@ -673,7 +676,7 @@ public class RMGUInterface {
 				System.out.println("finished experiment" + val.get());
 				writeMRMCFile(currSim.gett00(), currSim.gett01(),
 						currSim.gett10(), currSim.gett11(), filenameTime,
-						val.get());
+						((whichTask * numTimes) + i));
 				avgBDGdata = matrix.matrixAdd(avgBDGdata, currSim.getBDGdata());
 				avgBCKdata = matrix.matrixAdd(avgBCKdata, currSim.getBCKdata());
 				avgDBMdata = matrix.matrixAdd(avgDBMdata, currSim.getDBMdata());
@@ -769,7 +772,7 @@ public class RMGUInterface {
 				for (int i = 0; i < numTasks; i++) {
 					final int taskNum = i;
 					allTasks[i] = new SimExperiments(u, var_t, n, rand,
-							numTimes / numTasks, progVal, filenameTime);
+							numTimes / numTasks, progVal, filenameTime, i);
 					// Check to see when each task finishes and get its results
 					allTasks[i]
 							.addPropertyChangeListener(new PropertyChangeListener() {
