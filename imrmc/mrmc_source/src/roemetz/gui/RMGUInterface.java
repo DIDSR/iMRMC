@@ -1157,7 +1157,7 @@ public class RMGUInterface {
 	public void writeMRMCFile(double[][] t00, double[][] t01, double[][] t10,
 			double[][] t11, String filename, int fileNum) {
 		try {
-			File file = new File(simSaveDirectory + "\\" + filename + "-"
+			File file = new File(simSaveDirectory + "/" + filename + "-"
 					+ String.format("%05d", fileNum) + ".imrmc");
 			if (!file.exists()) {
 				file.createNewFile();
