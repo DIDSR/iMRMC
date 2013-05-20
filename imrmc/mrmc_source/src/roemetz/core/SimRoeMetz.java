@@ -57,6 +57,10 @@ public class SimRoeMetz {
 		// doSim(u, var_t, n, rand);
 	}
 
+	public double[] getAUC() {
+		return auc;
+	}
+
 	public double[][] getBDGdata() {
 		return BDG;
 	}
@@ -124,7 +128,7 @@ public class SimRoeMetz {
 		double snr_1 = mu_1 / matrix.total(var_t);
 		double auc_0 = snrToAUC(snr_0);
 		double auc_1 = snrToAUC(snr_1);
-		auc = new double[] { auc_0, auc_1, auc_0 - auc_1 };
+		// auc = new double[] { auc_0, auc_1, auc_0 - auc_1 };
 
 		double[] R00 = fillGaussian(stdDevs[0], rand, nr);
 		double[] C00 = fillGaussian(stdDevs[1], rand, n0);
@@ -259,6 +263,8 @@ public class SimRoeMetz {
 		DBM = rec.getDBM(useBiasM);
 		OR = rec.getOR(useBiasM);
 		MS = rec.getMS(useBiasM);
+		auc = new double[] { rec.getAUCinNumber(0), rec.getAUCinNumber(1),
+				(rec.getAUCinNumber(0) - rec.getAUCinNumber(1)) };
 	}
 
 	public static double snrToAUC(double snr) {

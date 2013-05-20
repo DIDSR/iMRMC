@@ -65,6 +65,10 @@ public class CofVGenRoeMetz {
 		matrix.printMatrix(BCK);
 		System.out.println();
 
+		System.out.println("M:");
+		matrix.printMatrix(m[0]);
+		matrix.printMatrix(m[1]);
+		System.out.println();
 	}
 
 	public static double[][] getBDGdata() {

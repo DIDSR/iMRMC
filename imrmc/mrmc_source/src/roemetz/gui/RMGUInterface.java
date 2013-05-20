@@ -669,16 +669,18 @@ public class RMGUInterface {
 			double[][] avgDBMdata = new double[4][6];
 			double[][] avgORdata = new double[4][6];
 			double[][] avgMSdata = new double[4][6];
+			double[] avgAUC = new double[3];
 			for (int i = 0; i < numTimes; i++) {
 				SimRoeMetz currSim = new SimRoeMetz(u, var_t, n, rand, useBiasM);
 				writeMRMCFile(currSim.gett00(), currSim.gett01(),
-						currSim.gett10(), currSim.gett11(), filenameTime,
-						((whichTask * numTimes) + i));
+						currSim.gett10(), currSim.gett11(), currSim.getAUC(),
+						filenameTime, ((whichTask * numTimes) + i));
 				avgBDGdata = matrix.matrixAdd(avgBDGdata, currSim.getBDGdata());
 				avgBCKdata = matrix.matrixAdd(avgBCKdata, currSim.getBCKdata());
 				avgDBMdata = matrix.matrixAdd(avgDBMdata, currSim.getDBMdata());
 				avgORdata = matrix.matrixAdd(avgORdata, currSim.getORdata());
 				avgMSdata = matrix.matrixAdd(avgMSdata, currSim.getMSdata());
+				avgAUC = matrix.matrixAdd(avgAUC, currSim.getAUC());
 
 				publish(val.getAndIncrement());
 				setProgress(100 * i / numTimes);
@@ -689,9 +691,10 @@ public class RMGUInterface {
 			avgDBMdata = matrix.scaleMatrix(avgDBMdata, scaleFactor);
 			avgORdata = matrix.scaleMatrix(avgORdata, scaleFactor);
 			avgMSdata = matrix.scaleMatrix(avgMSdata, scaleFactor);
+			avgAUC = matrix.scaleVector(avgAUC, scaleFactor);
 
 			return new double[][][] { avgBDGdata, avgBCKdata, avgDBMdata,
-					avgORdata, avgMSdata };
+					avgORdata, avgMSdata, { avgAUC } };
 		}
 
 		protected void process(List<Integer> chunks) {
@@ -816,6 +819,7 @@ public class RMGUInterface {
 			double[][] allDBM = results[0][2];
 			double[][] allOR = results[0][3];
 			double[][] allMS = results[0][4];
+			double[] allAUC = results[0][5][0];
 			double[][] BDGcoeff = dbRecord.genBDGCoeff(n[2], n[0], n[1]);
 			double[][] BCKcoeff = dbRecord.genBCKCoeff(n[2], n[0], n[1]);
 			double[][] DBMcoeff = dbRecord.genDBMCoeff(n[2], n[0], n[1]);
@@ -828,6 +832,7 @@ public class RMGUInterface {
 				allDBM = matrix.matrixAdd(allDBM, results[i][2]);
 				allOR = matrix.matrixAdd(allOR, results[i][3]);
 				allMS = matrix.matrixAdd(allMS, results[i][4]);
+				allAUC = matrix.matrixAdd(allAUC, results[i][5][0]);
 			}
 
 			allBDG = matrix.scaleMatrix(allBDG, 1.0 / (double) numTasks);
@@ -835,6 +840,7 @@ public class RMGUInterface {
 			allDBM = matrix.scaleMatrix(allDBM, 1.0 / (double) numTasks);
 			allOR = matrix.scaleMatrix(allOR, 1.0 / (double) numTasks);
 			allMS = matrix.scaleMatrix(allMS, 1.0 / (double) numTasks);
+			allAUC = matrix.scaleVector(allAUC, 1.0 / (double) numTasks);
 
 			JDialog simOutput = new JDialog(appl.getFrame(),
 					"Simulation Results");
@@ -864,6 +870,12 @@ public class RMGUInterface {
 			updateORpane(ORpane, 0, allOR, ORcoeff);
 			updateMSpane(MSpane, 0, allMS, MScoeff);
 
+			// Display AUCs
+			DecimalFormat df = new DecimalFormat("0.###");
+			JLabel AUCs = new JLabel("AUC1: " + df.format(allAUC[0])
+					+ "   AUC2: " + df.format(allAUC[1]) + "   AUC1-AUC2: "
+					+ df.format(allAUC[2]) + "   ");
+
 			// create modality select buttons
 			String str1 = "Modality 1";
 			JRadioButton mod1SimButton = new JRadioButton(str1);
@@ -889,6 +901,7 @@ public class RMGUInterface {
 			modDSimButton.addActionListener(gListener);
 
 			tablePanel.add(tabTables);
+			buttonPanel.add(AUCs);
 			buttonPanel.add(mod1SimButton);
 			buttonPanel.add(mod2SimButton);
 			buttonPanel.add(modDSimButton);
@@ -1062,6 +1075,12 @@ public class RMGUInterface {
 			updateBDGpane(BDGpane, 0, results[0], BDGcoeff);
 			updateBCKpane(BCKpane, 0, results[1], BCKcoeff);
 
+			// create AUCs label
+			DecimalFormat df = new DecimalFormat("0.###");
+			JLabel AUCs = new JLabel("AUC1: " + df.format(BDG[0][0])
+					+ "   AUC2: " + df.format(BDG[1][0]) + "   AUC1-AUC2: "
+					+ df.format(BDG[0][0] - BDG[1][0]) + "    ");
+
 			// create modality select buttons
 			String str1 = "Modality 1";
 			JRadioButton mod1EstButton = new JRadioButton(str1);
@@ -1087,6 +1106,7 @@ public class RMGUInterface {
 			modDEstButton.addActionListener(gListenerEst);
 
 			tablePanel.add(tabTables);
+			buttonPanel.add(AUCs);
 			buttonPanel.add(mod1EstButton);
 			buttonPanel.add(mod2EstButton);
 			buttonPanel.add(modDEstButton);
@@ -1152,7 +1172,7 @@ public class RMGUInterface {
 	}
 
 	public void writeMRMCFile(double[][] t00, double[][] t01, double[][] t10,
-			double[][] t11, String filename, int fileNum) {
+			double[][] t11, double[] auc, String filename, int fileNum) {
 		try {
 			File file = new File(simSaveDirectory + "/" + filename + "-"
 					+ String.format("%05d", fileNum) + ".imrmc");
@@ -1161,10 +1181,18 @@ public class RMGUInterface {
 			}
 			FileWriter fw = new FileWriter(file.getAbsoluteFile());
 			BufferedWriter bw = new BufferedWriter(fw);
+			DecimalFormat df = new DecimalFormat("0.###");
+
+			bw.write("Simulated iMRMC input from " + filename + "\n");
+			bw.write("\n");
 			bw.write("NR: " + t00.length + "\n");
 			bw.write("N0: " + t00[0].length + "\n");
 			bw.write("N1: " + t10[0].length + "\n");
 			bw.write("NM: 2\n");
+			bw.write("\n");
+			bw.write("AUC1: " + df.format(auc[0]) + "\n");
+			bw.write("AUC2: " + df.format(auc[1]) + "\n");
+			bw.write("DAUC: " + df.format(auc[2]) + "\n");
 			bw.write("\n");
 			bw.write("BEGIN DATA:\n");
 
