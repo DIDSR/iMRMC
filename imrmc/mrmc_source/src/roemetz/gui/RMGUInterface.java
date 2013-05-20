@@ -31,7 +31,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -46,7 +45,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.InvocationTargetException;
+import java.nio.ByteBuffer;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -54,12 +53,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.Callable;
+import org.uncommons.maths.random.MersenneTwisterRNG;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.*;
@@ -750,7 +745,10 @@ public class RMGUInterface {
 				String filenameTime = date.format(currDate);
 
 				// create global RNG which is used across all experiments
-				Random rand = new Random(seedVar);
+				byte[] byteSeed = ByteBuffer.allocate(16).putLong(seedVar)
+						.array();
+				Random rand = new MersenneTwisterRNG(byteSeed);
+
 				// create and display progress bar for simulation progress
 				final AtomicInteger progVal = new AtomicInteger(0);
 				simProgress = new JProgressBar(0, numTimes);
