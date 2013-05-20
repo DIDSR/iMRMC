@@ -1160,17 +1160,6 @@ public class RMGUInterface {
 		}
 	}
 
-	private JComponent makeBDGpane() {
-		JPanel BDGpane = new JPanel(false);
-		String[] columnNames = { "M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8" };
-		Object[][] bdgData = new Object[3][8];
-		JTable table = new JTable(bdgData, columnNames);
-		BDGpane.setLayout(new BorderLayout());
-		BDGpane.add(table.getTableHeader(), BorderLayout.PAGE_START);
-		BDGpane.add(table);
-		return BDGpane;
-	}
-
 	public void writeMRMCFile(double[][] t00, double[][] t01, double[][] t10,
 			double[][] t11, double[] auc, String filename, int fileNum) {
 		try {
@@ -1225,6 +1214,21 @@ public class RMGUInterface {
 		}
 	}
 
+	private JComponent makeBDGpane() {
+		JPanel BDGpane = new JPanel(false);
+		String[] columnNames = { "", "M1", "M2", "M3", "M4", "M5", "M6", "M7",
+				"M8" };
+		Object[][] bdgData = new Object[3][9];
+		JTable table = new JTable(bdgData, columnNames);
+		table.setValueAt("components", 0, 0);
+		table.setValueAt("coeff", 1, 0);
+		table.setValueAt("total", 2, 0);
+		BDGpane.setLayout(new BorderLayout());
+		BDGpane.add(table.getTableHeader(), BorderLayout.PAGE_START);
+		BDGpane.add(table);
+		return BDGpane;
+	}
+
 	private void updateBDGpane(JComponent BDGpane, int mod, double[][] allBDG,
 			double[][] BDGcoeff) {
 		JTable table = (JTable) BDGpane.getComponent(1);
@@ -1232,17 +1236,20 @@ public class RMGUInterface {
 		DecimalFormat df = new DecimalFormat("0.###E0");
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 8; j++) {
-				table.setValueAt(df.format(BDGdata[i][j]), i, j);
+				table.setValueAt(df.format(BDGdata[i][j]), i, j + 1);
 			}
 		}
 	}
 
 	private JComponent makeBCKpane() {
 		JPanel BCKpane = new JPanel(false);
-		String[] columnNames = { "N", "D", "N~D", "R", "N~R", "D~R", "R~N~D" };
-
-		Object[][] bckData = new Object[3][7];
+		String[] columnNames = { "", "N", "D", "N~D", "R", "N~R", "D~R",
+				"R~N~D" };
+		Object[][] bckData = new Object[3][8];
 		JTable table = new JTable(bckData, columnNames);
+		table.setValueAt("components", 0, 0);
+		table.setValueAt("coeff", 1, 0);
+		table.setValueAt("total", 2, 0);
 		BCKpane.setLayout(new BorderLayout());
 		BCKpane.add(table.getTableHeader(), BorderLayout.PAGE_START);
 		BCKpane.add(table);
@@ -1256,16 +1263,19 @@ public class RMGUInterface {
 		DecimalFormat df = new DecimalFormat("0.###E0");
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 7; j++) {
-				table.setValueAt(df.format(BCKdata[i][j]), i, j);
+				table.setValueAt(df.format(BCKdata[i][j]), i, j + 1);
 			}
 		}
 	}
 
 	private JComponent makeDBMpane() {
 		JPanel DBMpane = new JPanel(false);
-		String[] columnNames = { "R", "C", "R~C", "T~R", "T~C", "T~R~C" };
-		Object[][] dbmData = new Object[3][6];
+		String[] columnNames = { "", "R", "C", "R~C", "T~R", "T~C", "T~R~C" };
+		Object[][] dbmData = new Object[3][7];
 		JTable table = new JTable(dbmData, columnNames);
+		table.setValueAt("components", 0, 0);
+		table.setValueAt("coeff", 1, 0);
+		table.setValueAt("total", 2, 0);
 		DBMpane.setLayout(new BorderLayout());
 		DBMpane.add(table.getTableHeader(), BorderLayout.PAGE_START);
 		DBMpane.add(table);
@@ -1279,16 +1289,19 @@ public class RMGUInterface {
 		DecimalFormat df = new DecimalFormat("0.###E0");
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 6; j++) {
-				table.setValueAt(df.format(DBMdata[i][j]), i, j);
+				table.setValueAt(df.format(DBMdata[i][j]), i, j + 1);
 			}
 		}
 	}
 
 	private JComponent makeORpane() {
 		JPanel ORpane = new JPanel(false);
-		String[] columnNames = { "R", "TR", "COV1", "COV2", "COV3", "ERROR" };
-		Object[][] orData = new Object[3][6];
+		String[] columnNames = { "", "R", "TR", "COV1", "COV2", "COV3", "ERROR" };
+		Object[][] orData = new Object[3][7];
 		JTable table = new JTable(orData, columnNames);
+		table.setValueAt("components", 0, 0);
+		table.setValueAt("coeff", 1, 0);
+		table.setValueAt("total", 2, 0);
 		ORpane.setLayout(new BorderLayout());
 		ORpane.add(table.getTableHeader(), BorderLayout.PAGE_START);
 		ORpane.add(table);
@@ -1302,16 +1315,19 @@ public class RMGUInterface {
 		DecimalFormat df = new DecimalFormat("0.###E0");
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 6; j++) {
-				table.setValueAt(df.format(ORdata[i][j]), i, j);
+				table.setValueAt(df.format(ORdata[i][j]), i, j + 1);
 			}
 		}
 	}
 
 	private JComponent makeMSpane() {
 		JPanel MSpane = new JPanel(false);
-		String[] columnNames = { "R", "C", "RC", "MR", "MC", "MRC" };
-		Object[][] msData = new Object[3][6];
+		String[] columnNames = { "", "R", "C", "RC", "MR", "MC", "MRC" };
+		Object[][] msData = new Object[3][7];
 		JTable table = new JTable(msData, columnNames);
+		table.setValueAt("components", 0, 0);
+		table.setValueAt("coeff", 1, 0);
+		table.setValueAt("total", 2, 0);
 		MSpane.setLayout(new BorderLayout());
 		MSpane.add(table.getTableHeader(), BorderLayout.PAGE_START);
 		MSpane.add(table);
@@ -1325,7 +1341,7 @@ public class RMGUInterface {
 		DecimalFormat df = new DecimalFormat("0.###E0");
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 6; j++) {
-				table.setValueAt(df.format(MSdata[i][j]), i, j);
+				table.setValueAt(df.format(MSdata[i][j]), i, j + 1);
 			}
 		}
 	}
