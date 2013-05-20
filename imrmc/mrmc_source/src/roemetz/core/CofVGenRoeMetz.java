@@ -24,8 +24,6 @@
 
 package roemetz.core;
 
-import java.util.Random;
-
 import mrmc.core.dbRecord;
 import mrmc.core.matrix;
 import org.apache.commons.math3.distribution.NormalDistribution;
@@ -38,10 +36,41 @@ public class CofVGenRoeMetz {
 	private static double[][] BCK;
 
 	public static void main(String[] args) {
-		// double[] u = args[0];
-		// double[] var_t = args[1];
-		int n = Integer.parseInt(args[2]);
-		// genRoeMetz(u, n, var_t);
+		try {
+			double[] u = new double[2];
+			String[] us = args[0].substring(args[0].lastIndexOf("[") + 1,
+					args[0].indexOf("]")).split(",");
+			if (us.length != 2) {
+				System.out.println("Expected input u to contain 2 elements");
+				return;
+			} else {
+				u = new double[] { Double.parseDouble(us[0]),
+						Double.parseDouble(us[1]) };
+			}
+			double[] var_t = new double[18];
+			String[] var_ts = args[1].substring(args[1].indexOf("[") + 1,
+					args[1].indexOf("]")).split(",");
+			if (var_ts.length != 18) {
+				System.out
+						.println("Expected input var_t to contain 18 elements");
+				return;
+			} else {
+				for (int i = 0; i < var_ts.length; i++) {
+					var_t[i] = Double.parseDouble(var_ts[i]);
+				}
+			}
+			int n = Integer.parseInt(args[2]);
+			genRoeMetz(u, n, var_t);
+			printResults();
+		} catch (NumberFormatException e) {
+			System.out.println("Incorrectly Formatted Input");
+			e.printStackTrace();
+		} catch (ArrayIndexOutOfBoundsException e) {
+			System.out.println("Missing Arguments");
+			System.out
+					.println("Format is: CofVGenRoeMetz [u0,u1] [R00,C00,RC00,R10,C10,RC10,R01,C01,RC01,R11,C11,RC11,R0,C0,RC0,R1,C1,RC1] numSamples");
+			e.printStackTrace();
+		}
 	}
 
 	public static void printResults() {

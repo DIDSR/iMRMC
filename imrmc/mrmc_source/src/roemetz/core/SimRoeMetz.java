@@ -50,11 +50,62 @@ public class SimRoeMetz {
 	}
 
 	public static void main(String[] args) {
-		// double[] u = args[0];
-		// double[] var_t = args[1];
-		// int[] n = args[2];
-		Random rand = new Random(Long.parseLong(args[3]));
-		// doSim(u, var_t, n, rand);
+		try {
+			double[] u = new double[2];
+			String[] us = args[0].substring(args[0].lastIndexOf("[") + 1,
+					args[0].indexOf("]")).split(",");
+			if (us.length != 2) {
+				System.out.println("Expected input u to contain 2 elements");
+				return;
+			} else {
+				u = new double[] { Double.parseDouble(us[0]),
+						Double.parseDouble(us[1]) };
+			}
+			double[] var_t = new double[18];
+			String[] var_ts = args[1].substring(args[1].indexOf("[") + 1,
+					args[1].indexOf("]")).split(",");
+			if (var_ts.length != 18) {
+				System.out
+						.println("Expected input var_t to contain 18 elements");
+				return;
+			} else {
+				for (int i = 0; i < var_ts.length; i++) {
+					var_t[i] = Double.parseDouble(var_ts[i]);
+				}
+			}
+			int[] n = new int[3];
+			String[] ns = args[2].substring(args[2].indexOf("[") + 1,
+					args[2].indexOf("]")).split(",");
+			if (ns.length != 3) {
+				System.out.println("Expected input n to contain 3 elements");
+				return;
+			} else {
+				for (int i = 0; i < ns.length; i++) {
+					n[i] = Integer.parseInt(ns[i]);
+				}
+			}
+			Random rand = new Random(Long.parseLong(args[3]));
+			int useBias = Integer.parseInt(args[4]);
+			SimRoeMetz exp = new SimRoeMetz(u, var_t, n, rand, useBias);
+			exp.printResults();
+		} catch (NumberFormatException e) {
+			System.out.println("Incorrectly Formatted Input");
+			e.printStackTrace();
+		} catch (ArrayIndexOutOfBoundsException e) {
+			System.out.println("Missing Arguments");
+			System.out
+					.println("Format is: SimRoeMetz [u0,u1] [R00,C00,RC00,R10,C10,RC10,R01,C01,RC01,R11,C11,RC11,R0,C0,RC0,R1,C1,RC1] [n0,n1,nr] seed useBias");
+			e.printStackTrace();
+		}
+	}
+
+	private void printResults() {
+		System.out.println("BDG:");
+		matrix.printMatrix(BDG);
+		System.out.println();
+		System.out.println("AUCs:");
+		matrix.printVector(auc);
+		System.out.println();
 	}
 
 	public double[] getAUC() {
@@ -123,12 +174,6 @@ public class SimRoeMetz {
 		int n0 = n[0];
 		int n1 = n[1];
 		int nr = n[2];
-
-		double snr_0 = mu_0 / matrix.total(var_t);
-		double snr_1 = mu_1 / matrix.total(var_t);
-		double auc_0 = snrToAUC(snr_0);
-		double auc_1 = snrToAUC(snr_1);
-		// auc = new double[] { auc_0, auc_1, auc_0 - auc_1 };
 
 		double[] R00 = fillGaussian(stdDevs[0], rand, nr);
 		double[] C00 = fillGaussian(stdDevs[1], rand, n0);
