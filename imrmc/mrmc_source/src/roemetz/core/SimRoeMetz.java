@@ -301,7 +301,7 @@ public class SimRoeMetz {
 				newt11, d0, d1, nr, n0, n1, "", "");
 
 		toCalc.calculateCovMRMC();
-		dbRecord rec = new dbRecord(toCalc);
+		dbRecord rec = new dbRecord(toCalc, 1, 2);
 
 		BDG = rec.getBDG(useBiasM);
 		BCK = rec.getBCK(useBiasM);

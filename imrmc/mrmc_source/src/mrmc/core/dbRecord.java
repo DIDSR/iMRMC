@@ -73,6 +73,7 @@ public class dbRecord {
 	int nDisease;
 	int flagCompleteRecord;
 	int flagCom;
+	boolean fullyCrossed;
 
 	public String getTask() {
 		return Task;
@@ -491,7 +492,7 @@ public class dbRecord {
 	}
 
 	/* Constructor 2: generate a DB record from raw datafile */
-	public dbRecord(inputFile input) {
+	public dbRecord(inputFile input, int currMod1, int currMod2) {
 
 		recordTitle = input.getTitle();
 		recordDesp = input.getDesc();
@@ -501,6 +502,7 @@ public class dbRecord {
 		nDisease = input.getDisease();
 		flagCompleteRecord = 1;
 		AUC = input.getaucMod();
+		fullyCrossed = input.getFullyCrossedStatus();
 
 		String[] temp = recordDesp.split("\n");
 		// System.out.println("temp" + "0" + "  =  " + temp[0]);
@@ -524,11 +526,15 @@ public class dbRecord {
 			i++;
 		}
 
-		BDGcoeff = genBDGCoeff(nReader, nNormal, nDisease);
-		DBMcoeff = genDBMCoeff(nReader, nNormal, nDisease);
-		BCKcoeff = genBCKCoeff(nReader, nNormal, nDisease);
-		ORcoeff = genORCoeff(nReader, nNormal, nDisease);
-		MScoeff = genMSCoeff(nReader, nNormal, nDisease);
+		if (fullyCrossed) {
+			BDGcoeff = genBDGCoeff(nReader, nNormal, nDisease);
+			DBMcoeff = genDBMCoeff(nReader, nNormal, nDisease);
+			BCKcoeff = genBCKCoeff(nReader, nNormal, nDisease);
+			ORcoeff = genORCoeff(nReader, nNormal, nDisease);
+			MScoeff = genMSCoeff(nReader, nNormal, nDisease);
+		} else {
+
+		}
 
 		BDG = input.getBDG();
 		BDGbias = input.getBDGbias();
@@ -544,7 +550,49 @@ public class dbRecord {
 		DBMbias = BCK2DBM(BCKbias, nReader, nNormal, nDisease);
 		ORbias = DBM2OR(0, DBMbias, nReader, nNormal, nDisease);
 		MSbias = DBM2MS(DBMbias, nReader, nNormal, nDisease);
+	}
 
+	public static double[][] genBDGCoeff(int NR, int N0, int N1,
+			boolean[][][] mod0design, boolean[][][] mod1design) {
+		double[][] c = new double[4][8];
+		int nStarM0 = 0;
+		int nStarM1 = 0;
+		double coeffM1 = 0;
+		for (int r = 0; r < NR; r++) {
+			for (int i = 0; i < N0; i++) {
+				for (int j = 0; j < N1; j++) {
+					if (mod0design[r][i][j]) {
+						nStarM0++;
+					}
+					if (mod1design[r][i][j]) {
+						nStarM1++;
+					}
+				}
+			}
+		}
+		// Calculate coefficient for M1
+		for (int r = 0; r < NR; r++) {
+			for (int i = 0; i < N0; i++) {
+				for (int j = 0; j < N1; j++) {
+					int dm0ijr;
+					int dm1ijr;
+					if (mod0design[r][i][j]) {
+						dm0ijr = 1;
+					} else {
+						dm0ijr = 0;
+					}
+					if (mod1design[r][i][j]) {
+						dm1ijr = 1;
+					} else {
+						dm1ijr = 0;
+					}
+					coeffM1 += ((double) dm0ijr / (double) nStarM0)
+							* ((double) dm1ijr / (double) nStarM1);
+				}
+			}
+		}
+
+		return c;
 	}
 
 	public static double[][] genBDGCoeff(int NR, int N0, int N1) {

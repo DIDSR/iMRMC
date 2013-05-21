@@ -259,7 +259,7 @@ public class covMRMC {
 		}
 
 		// coefficients
-		double[] c = matrix
+		c = matrix
 				.linearTrans(denom, 1.0 / (totalwada * totalwbdb), 0);
 		c[8] = c[8] - 1.0;
 

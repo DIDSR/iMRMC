@@ -363,11 +363,11 @@ public class GUInterface {
 		int newD = Parms[2];
 		dbRecord tempRecord = getCurrentRecord();
 
-		double[][] BDGcoeff = dbRecord.genBDGCoeff(newR, newN, newD);
-		double[][] DBMcoeff = dbRecord.genDBMCoeff(newR, newN, newD);
-		double[][] BCKcoeff = dbRecord.genBCKCoeff(newR, newN, newD);
-		double[][] ORcoeff = dbRecord.genORCoeff(newR, newN, newD);
-		double[][] MScoeff = dbRecord.genMSCoeff(newR, newN, newD);
+		double[][] BDGcoeff = tempRecord.getBDGcoeff();
+		double[][] BCKcoeff = tempRecord.getBCKcoeff();
+		double[][] DBMcoeff = tempRecord.getDBMcoeff();
+		double[][] ORcoeff = tempRecord.getORcoeff();
+		double[][] MScoeff = tempRecord.getMScoeff();
 
 		double[][] BDG = new double[4][8];
 		double[][] BCK = new double[4][7];
@@ -399,15 +399,13 @@ public class GUInterface {
 				MS = dbRecord.DBM2MS(DBM, newR, newN, newD);
 			} else if (MC.getSelectedComp() == 3) // OR input is used
 			{
-				DBM = dbRecord.DBM2OR(1, tempRecord.getOR(0), newR, newN,
-						newD);
+				DBM = dbRecord.DBM2OR(1, tempRecord.getOR(0), newR, newN, newD);
 				DBM = tempRecord.DBMresize(DBM, newR, newN, newD);
 				OR = dbRecord.DBM2OR(0, DBM, newR, newN, newD);
 				MS = dbRecord.DBM2MS(DBM, newR, newN, newD);
 			} else if (MC.getSelectedComp() == 4) // MS input is used
 			{
-				DBM = dbRecord.DBM2OR(1, tempRecord.getOR(0), newR, newN,
-						newD);
+				DBM = dbRecord.DBM2OR(1, tempRecord.getOR(0), newR, newN, newD);
 				DBM = tempRecord.DBMresize(DBM, newR, newN, newD);
 				MS = dbRecord.DBM2MS(DBM, newR, newN, newD);
 			}
@@ -440,11 +438,11 @@ public class GUInterface {
 
 		}
 
-		double[][] BDGdata1 = tempRecord.getBDGTab(selectedMod, BDG, BDGcoeff);
-		double[][] BCKdata1 = tempRecord.getBCKTab(selectedMod, BCK, BCKcoeff);
-		double[][] DBMdata1 = tempRecord.getDBMTab(selectedMod, DBM, DBMcoeff);
-		double[][] ORdata1 = tempRecord.getORTab(selectedMod, OR, ORcoeff);
-		double[][] MSdata1 = tempRecord.getMSTab(selectedMod, MS, MScoeff);
+		double[][] BDGdata1 = dbRecord.getBDGTab(selectedMod, BDG, BDGcoeff);
+		double[][] BCKdata1 = dbRecord.getBCKTab(selectedMod, BCK, BCKcoeff);
+		double[][] DBMdata1 = dbRecord.getDBMTab(selectedMod, DBM, DBMcoeff);
+		double[][] ORdata1 = dbRecord.getORTab(selectedMod, OR, ORcoeff);
+		double[][] MSdata1 = dbRecord.getMSTab(selectedMod, MS, MScoeff);
 
 		double BDGv = 0;
 		double BCKv = 0;
@@ -663,15 +661,15 @@ public class GUInterface {
 		if (selectedInput == 1 && filename.equals(null))
 			return;
 
-		BDGdata1 = tempRecord.getBDGTab(selectedMod,
-				tempRecord.getBDG(useBiasM), tempRecord.getBDGcoeff());
-		BCKdata1 = tempRecord.getBCKTab(selectedMod,
-				tempRecord.getBCK(useBiasM), tempRecord.getBCKcoeff());
-		DBMdata1 = tempRecord.getDBMTab(selectedMod,
-				tempRecord.getDBM(useBiasM), tempRecord.getDBMcoeff());
-		ORdata1 = tempRecord.getORTab(selectedMod, tempRecord.getOR(useBiasM),
+		BDGdata1 = dbRecord.getBDGTab(selectedMod, tempRecord.getBDG(useBiasM),
+				tempRecord.getBDGcoeff());
+		BCKdata1 = dbRecord.getBCKTab(selectedMod, tempRecord.getBCK(useBiasM),
+				tempRecord.getBCKcoeff());
+		DBMdata1 = dbRecord.getDBMTab(selectedMod, tempRecord.getDBM(useBiasM),
+				tempRecord.getDBMcoeff());
+		ORdata1 = dbRecord.getORTab(selectedMod, tempRecord.getOR(useBiasM),
 				tempRecord.getORcoeff());
-		MSdata1 = tempRecord.getMSTab(selectedMod, tempRecord.getMS(useBiasM),
+		MSdata1 = dbRecord.getMSTab(selectedMod, tempRecord.getMS(useBiasM),
 				tempRecord.getMScoeff());
 
 		double BDGv = 0;

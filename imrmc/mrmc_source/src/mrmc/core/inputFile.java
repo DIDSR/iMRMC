@@ -266,6 +266,14 @@ public class inputFile {
 		return design;
 	}
 
+	// TODO need to get study design that is separated for normal and
+	// disease cases
+	public boolean[][][] getStudyDesignSeparated(int modality) {
+		boolean[][][] design = new boolean[Reader][Normal][Disease];
+
+		return design;
+	}
+
 	// this is the constructor for the stand alone application
 	// reading a file locally
 	public inputFile(String file) throws IOException {
@@ -307,6 +315,7 @@ public class inputFile {
 		this.Disease = n1;
 		this.recordTitle = title;
 		this.desc = desc;
+		this.isFullyCrossed = true;
 	}
 
 	public void calculateCovMRMC() {
@@ -317,6 +326,7 @@ public class inputFile {
 		double[] M2 = mod2.getM();
 		double[] Mcov = covMod12.getM();
 		double[] Coeff = mod1.getC();
+		// double[] Coeff = dbRecord.genBDGCoeff(Reader, Normal, Disease)[0];
 		double[] Mb1 = mod1.getMb();
 		double[] Mb2 = mod2.getMb();
 		double[] Mbcov = covMod12.getMb();
