@@ -526,15 +526,19 @@ public class dbRecord {
 			i++;
 		}
 
-		if (fullyCrossed) {
-			BDGcoeff = genBDGCoeff(nReader, nNormal, nDisease);
-			DBMcoeff = genDBMCoeff(nReader, nNormal, nDisease);
-			BCKcoeff = genBCKCoeff(nReader, nNormal, nDisease);
-			ORcoeff = genORCoeff(nReader, nNormal, nDisease);
-			MScoeff = genMSCoeff(nReader, nNormal, nDisease);
-		} else {
+//		if (fullyCrossed) {
+//			BDGcoeff = genBDGCoeff(nReader, nNormal, nDisease);
+//		} else {
+			BDGcoeff = genBDGCoeff(nReader, nNormal, nDisease,
+					input.getStudyDesignSeparated(currMod1),
+					input.getStudyDesignSeparated(currMod2));
+			// TODO what about other coefficients?
+//		}
 
-		}
+		DBMcoeff = genDBMCoeff(nReader, nNormal, nDisease);
+		BCKcoeff = genBCKCoeff(nReader, nNormal, nDisease);
+		ORcoeff = genORCoeff(nReader, nNormal, nDisease);
+		MScoeff = genMSCoeff(nReader, nNormal, nDisease);
 
 		BDG = input.getBDG();
 		BDGbias = input.getBDGbias();
@@ -552,49 +556,121 @@ public class dbRecord {
 		MSbias = DBM2MS(DBMbias, nReader, nNormal, nDisease);
 	}
 
+	// To determine BDG coefficient for non-fully-crossed data
 	public static double[][] genBDGCoeff(int NR, int N0, int N1,
-			boolean[][][] mod0design, boolean[][][] mod1design) {
+			int[][][] mod0design, int[][][] mod1design) {
 		double[][] c = new double[4][8];
-		int nStarM0 = 0;
-		int nStarM1 = 0;
+		double nStarM0 = 0;
+		double nStarM1 = 0;
 		double coeffM1 = 0;
+		double coeffM2 = 0;
+		double coeffM3 = 0;
+		double coeffM4 = 0;
+		double coeffM5 = 0;
+		double coeffM6 = 0;
+		double coeffM7 = 0;
+		double coeffM8 = 0;
 		for (int r = 0; r < NR; r++) {
 			for (int i = 0; i < N0; i++) {
 				for (int j = 0; j < N1; j++) {
-					if (mod0design[r][i][j]) {
-						nStarM0++;
-					}
-					if (mod1design[r][i][j]) {
-						nStarM1++;
-					}
-				}
-			}
-		}
-		// Calculate coefficient for M1
-		for (int r = 0; r < NR; r++) {
-			for (int i = 0; i < N0; i++) {
-				for (int j = 0; j < N1; j++) {
-					int dm0ijr;
-					int dm1ijr;
-					if (mod0design[r][i][j]) {
-						dm0ijr = 1;
-					} else {
-						dm0ijr = 0;
-					}
-					if (mod1design[r][i][j]) {
-						dm1ijr = 1;
-					} else {
-						dm1ijr = 0;
-					}
-					coeffM1 += ((double) dm0ijr / (double) nStarM0)
-							* ((double) dm1ijr / (double) nStarM1);
+					nStarM0 += (double) mod0design[r][i][j];
+					nStarM1 += (double) mod1design[r][i][j];
 				}
 			}
 		}
 
+		for (int r = 0; r < NR; r++) {
+			for (int i = 0; i < N0; i++) {
+				for (int j = 0; j < N1; j++) {
+					double tempOuterSum = (double) mod0design[r][i][j] / nStarM0;
+					double tempInnerSumM2 = 0;
+					double tempInnerSumM3 = 0;
+					double tempInnerSumM4 = 0;
+					double tempInnerSumM5 = 0;
+					double tempInnerSumM6 = 0;
+					double tempInnerSumM7 = 0;
+					double tempInnerSumM8 = 0;
+
+					// calc coeff M1
+					coeffM1 += tempOuterSum
+							* ((double) mod1design[r][i][j] / nStarM1);
+
+					for (int iprime = 0; iprime < N0; iprime++) {
+						if (iprime != i) {
+							tempInnerSumM2 += (double) mod1design[r][iprime][j]
+									/ nStarM1;
+							for (int jprime = 0; jprime < N1; jprime++) {
+								if (jprime != j) {
+									tempInnerSumM4 += (double) mod1design[r][iprime][jprime]
+											/ nStarM1;
+								}
+							}
+						}
+					}
+					coeffM2 += tempOuterSum * tempInnerSumM2;
+					coeffM4 += tempOuterSum * tempInnerSumM4;
+
+					for (int jprime = 0; jprime < N1; jprime++) {
+						if (jprime != j) {
+							tempInnerSumM3 += (double) mod1design[r][i][jprime]
+									/ nStarM1;
+						}
+					}
+					coeffM3 += tempOuterSum * tempInnerSumM3;
+
+					for (int rprime = 0; rprime < NR; rprime++) {
+						if (rprime != r) {
+							tempInnerSumM5 += (double) mod1design[rprime][i][j]
+									/ nStarM1;
+							for (int iprime = 0; iprime < N0; iprime++) {
+								if (iprime != i) {
+									tempInnerSumM6 += (double) mod1design[rprime][iprime][j]
+											/ nStarM1;
+									for (int jprime = 0; jprime < N1; jprime++) {
+										if (jprime != j) {
+											tempInnerSumM8 += (double) mod1design[rprime][iprime][jprime]
+													/ nStarM1;
+										}
+									}
+								}
+							}
+						}
+					}
+					coeffM5 += tempOuterSum * tempInnerSumM5;
+					coeffM6 += tempOuterSum * tempInnerSumM6;
+					coeffM8 += tempOuterSum * tempInnerSumM8;
+
+					// calc coeff M7
+					for (int rprime = 0; rprime < NR; rprime++) {
+						for (int jprime = 0; jprime < N1; jprime++) {
+							if (rprime != r && jprime != j) {
+								tempInnerSumM7 += (double) mod1design[rprime][i][jprime]
+										/ nStarM1;
+							}
+						}
+					}
+					coeffM7 += tempOuterSum * tempInnerSumM7;
+				}
+			}
+		}
+
+		coeffM8 -= 1.0;
+
+		c[0][0] = coeffM1;
+		c[0][1] = coeffM2;
+		c[0][2] = coeffM3;
+		c[0][3] = coeffM4;
+		c[0][4] = coeffM5;
+		c[0][5] = coeffM6;
+		c[0][6] = coeffM7;
+		c[0][7] = coeffM8;
+		c[1] = c[0];
+		c[2] = c[0];
+		c[3] = c[0];
 		return c;
 	}
 
+	// To determine BDG coefficient for fully-crossed data
 	public static double[][] genBDGCoeff(int NR, int N0, int N1) {
 		double[][] c = new double[4][8];
 		c[0][0] = 1.0 / (NR * N0 * N1);

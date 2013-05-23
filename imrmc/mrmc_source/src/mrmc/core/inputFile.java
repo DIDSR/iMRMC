@@ -248,29 +248,68 @@ public class inputFile {
 		return cpr;
 	}
 
+	public ArrayList<ArrayList<Integer>> getN0N1CaseNums() {
+		ArrayList<Integer> diseaseCases = new ArrayList<Integer>();
+		ArrayList<Integer> normalCases = new ArrayList<Integer>();
+		for (Integer caseNum : keyedData.get(keyedData.firstKey()).keySet()) {
+			if (truthVals.get(caseNum) == 0) {
+				normalCases.add(caseNum);
+			} else {
+				diseaseCases.add(caseNum);
+			}
+		}
+		ArrayList<ArrayList<Integer>> toReturn = new ArrayList<ArrayList<Integer>>();
+		toReturn.add(normalCases);
+		toReturn.add(diseaseCases);
+		return toReturn;
+	}
+
+	// get study design that simply checks if data is present at the modality
+	// for a reader of any case
 	public boolean[][] getStudyDesign(int modality) {
 		boolean[][] design = new boolean[Reader][Normal + Disease];
-		int i = 0, j = 0;
-		for (Integer r : keyedData.keySet()) {
-			j = 0;
-			for (Integer c : keyedData.get(r).keySet()) {
-				if (keyedData.get(r).get(c).get(modality) != null) {
-					design[i][j] = true;
+		int r = 0, i = 0;
+		for (Integer reader : keyedData.keySet()) {
+			i = 0;
+			for (Integer caseNum : keyedData.get(reader).keySet()) {
+				if (keyedData.get(reader).get(caseNum).get(modality) != null) {
+					design[r][i] = true;
 				} else {
-					design[i][j] = false;
+					design[r][i] = false;
 				}
-				j++;
+				i++;
 			}
-			i++;
+			r++;
 		}
 		return design;
 	}
 
-	// TODO need to get study design that is separated for normal and
+	// get study design that is separated, compares for normal and
 	// disease cases
-	public boolean[][][] getStudyDesignSeparated(int modality) {
-		boolean[][][] design = new boolean[Reader][Normal][Disease];
-
+	public int[][][] getStudyDesignSeparated(int modality) {
+		int[][][] design = new int[Reader][Normal][Disease];
+		ArrayList<ArrayList<Integer>> n0n1CaseNums = getN0N1CaseNums();
+		ArrayList<Integer> normalCases = n0n1CaseNums.get(0);
+		ArrayList<Integer> diseaseCases = n0n1CaseNums.get(1);
+		int r = 0, i, j;
+		for (Integer reader : keyedData.keySet()) {
+			i = 0;
+			for (Integer normCase : normalCases) {
+				j = 0;
+				for (Integer disCase : diseaseCases) {
+					if ((keyedData.get(reader).get(normCase).get(modality) != null)
+							&& (keyedData.get(reader).get(disCase)
+									.get(modality) != null)) {
+						design[r][i][j] = 1;
+					} else {
+						design[r][i][j] = 0;
+					}
+					j++;
+				}
+				i++;
+			}
+			r++;
+		}
 		return design;
 	}
 
