@@ -319,7 +319,7 @@ public class RMGUInterface {
 
 		numExp = new JTextField(4);
 		JLabel numExpLabel = new JLabel("# of Experiments");
-		JButton doSimExp = new JButton("Perform Simulation Experiment");
+		JButton doSimExp = new JButton("Perform Simulation Experiments");
 		doSimExp.addActionListener(new doSimBtnListner());
 		JLabel seedLabel = new JLabel("Seed for RNG");
 		seed = new JTextField(9);
@@ -350,7 +350,7 @@ public class RMGUInterface {
 		 * Panel within cofvResultsPanel to describe function
 		 */
 		JPanel cofvResultsDesc = new JPanel(new FlowLayout());
-		JLabel cofvLabel = new JLabel("Components of Variance:");
+		JLabel cofvLabel = new JLabel("Estimate Components of Variance:");
 		cofvResultsDesc.add(cofvLabel);
 
 		/*
@@ -362,7 +362,7 @@ public class RMGUInterface {
 		numSamples.setText("256");
 		JLabel numSamplesLabel = new JLabel("# Samples: ");
 
-		JButton doGenRoeMetz = new JButton("Estimate Components of Variance");
+		JButton doGenRoeMetz = new JButton("Perform Estimation");
 		doGenRoeMetz.addActionListener(new doGenRoeMetzBtnListner());
 
 		cofvResults.add(numSamplesLabel);
@@ -665,11 +665,14 @@ public class RMGUInterface {
 			double[][] avgORdata = new double[4][6];
 			double[][] avgMSdata = new double[4][6];
 			double[] avgAUC = new double[3];
+
 			for (int i = 0; i < numTimes; i++) {
 				SimRoeMetz currSim = new SimRoeMetz(u, var_t, n, rand, useBiasM);
+
 				writeMRMCFile(currSim.gett00(), currSim.gett01(),
 						currSim.gett10(), currSim.gett11(), currSim.getAUC(),
 						filenameTime, ((whichTask * numTimes) + i));
+
 				avgBDGdata = matrix.matrixAdd(avgBDGdata, currSim.getBDGdata());
 				avgBCKdata = matrix.matrixAdd(avgBCKdata, currSim.getBCKdata());
 				avgDBMdata = matrix.matrixAdd(avgDBMdata, currSim.getDBMdata());
@@ -680,6 +683,7 @@ public class RMGUInterface {
 				publish(val.getAndIncrement());
 				setProgress(100 * i / numTimes);
 			}
+
 			double scaleFactor = 1.0 / (double) numTimes;
 			avgBDGdata = matrix.scaleMatrix(avgBDGdata, scaleFactor);
 			avgBCKdata = matrix.scaleMatrix(avgBCKdata, scaleFactor);
@@ -737,6 +741,14 @@ public class RMGUInterface {
 						Integer.valueOf(nr.getText()) };
 				long seedVar = Long.parseLong(seed.getText());
 				final int numTimes = Integer.valueOf(numExp.getText());
+
+				if (simSaveDirectory == null || simSaveDirectory.equals("")) {
+					JOptionPane
+							.showMessageDialog(
+									appl.getFrame(),
+									"Save directory not specified.\nExperiment output files will not be written.",
+									"Warning", JOptionPane.WARNING_MESSAGE);
+				}
 
 				// create string representation of current time to use in
 				// filename
@@ -800,10 +812,11 @@ public class RMGUInterface {
 				}
 
 			} catch (NumberFormatException e1) {
-				System.out.print(e1.toString());
+				System.out.println(e1.toString());
 				JOptionPane.showMessageDialog(appl.getFrame(),
-						"Incorrect / Incomplete Input", "Warning",
-						JOptionPane.WARNING_MESSAGE);
+						"Incorrect / Incomplete Input", "Error",
+						JOptionPane.ERROR_MESSAGE);
+
 			}
 		}
 
@@ -1043,8 +1056,8 @@ public class RMGUInterface {
 				estTask.execute();
 			} catch (NumberFormatException e1) {
 				JOptionPane.showMessageDialog(appl.getFrame(),
-						"Incorrect / Incomplete Input", "Warning",
-						JOptionPane.WARNING_MESSAGE);
+						"Incorrect / Incomplete Input", "Error",
+						JOptionPane.ERROR_MESSAGE);
 			}
 		}
 
@@ -1208,7 +1221,7 @@ public class RMGUInterface {
 			}
 			bw.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+
 		}
 	}
 

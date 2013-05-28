@@ -288,12 +288,10 @@ public class SimRoeMetz {
 		int[][][] d1 = new int[n1][nr][2];
 		for (int i = 0; i < nr; i++) {
 			for (int j = 0; j < n1; j++) {
-				d1[j][i][0] = 1;
-				d1[j][i][1] = 1;
+				Arrays.fill(d1[j][i], 1);
 			}
 			for (int j = 0; j < n0; j++) {
-				d0[j][i][0] = 1;
-				d0[j][i][1] = 1;
+				Arrays.fill(d0[j][i], 1);
 			}
 		}
 

@@ -526,14 +526,14 @@ public class dbRecord {
 			i++;
 		}
 
-//		if (fullyCrossed) {
-//			BDGcoeff = genBDGCoeff(nReader, nNormal, nDisease);
-//		} else {
+		if (fullyCrossed) {
+			BDGcoeff = genBDGCoeff(nReader, nNormal, nDisease);
+		} else {
 			BDGcoeff = genBDGCoeff(nReader, nNormal, nDisease,
 					input.getStudyDesignSeparated(currMod1),
 					input.getStudyDesignSeparated(currMod2));
 			// TODO what about other coefficients?
-//		}
+		}
 
 		DBMcoeff = genDBMCoeff(nReader, nNormal, nDisease);
 		BCKcoeff = genBCKCoeff(nReader, nNormal, nDisease);
@@ -582,7 +582,8 @@ public class dbRecord {
 		for (int r = 0; r < NR; r++) {
 			for (int i = 0; i < N0; i++) {
 				for (int j = 0; j < N1; j++) {
-					double tempOuterSum = (double) mod0design[r][i][j] / nStarM0;
+					double tempOuterSum = (double) mod0design[r][i][j]
+							/ nStarM0;
 					double tempInnerSumM2 = 0;
 					double tempInnerSumM3 = 0;
 					double tempInnerSumM4 = 0;
@@ -590,6 +591,8 @@ public class dbRecord {
 					double tempInnerSumM6 = 0;
 					double tempInnerSumM7 = 0;
 					double tempInnerSumM8 = 0;
+
+					// TODO reduce these calculations to n^3
 
 					// calc coeff M1
 					coeffM1 += tempOuterSum
