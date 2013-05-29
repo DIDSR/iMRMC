@@ -293,30 +293,7 @@ public class statTest {
 	}
 
 	public double ZTest(double[] var, int r, int c, double totalVar) {
-		double SigTR = var[0];
-		double SigTC = var[1];
-		double SigTRC = var[2];
 
-		// print, SigTRC, SigTR, SigTC
-		/*
-		 * SigTR=SigTR; SigTC=SigTC*c; SigTRC=SigTRC; SigTRC=SigTRC*c;
-		 */
-
-		// SigTR = SigTR;
-		// SigTC = SigTC;
-		// SigTRC = SigTRC;
-
-		if (SigTR < 0) {
-			SigTR = 0;
-		}
-		if (SigTC < 0) {
-			SigTC = 0;
-		}
-		if (SigTRC < 0) {
-			SigTRC = 0;
-		}
-		// double sigma=Math.sqrt(2*(SigTR/r+SigTC/c+SigTRC/(r*c)));
-		// double sigma=Math.sqrt((SigTR/r+SigTC/c+SigTRC/(r*c)));
 		double sigma = Math.sqrt(totalVar);
 		double v = NormalDist.inverseF(0, sigma, 1 - sigLevel / 2.0);
 		powerZ = 1 - NormalDist.cdf(effSize, sigma, v);

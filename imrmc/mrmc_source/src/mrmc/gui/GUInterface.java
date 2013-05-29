@@ -522,9 +522,8 @@ public class GUInterface {
 		}
 		double obsDiff = Math.abs(tempRecord.getAUCinNumber(0)
 				- tempRecord.getAUCinNumber(1));
-		if (selectedMod == 0 || selectedMod == 1)
+		if (selectedMod == 0 || selectedMod == 1){
 			obsDiff = tempRecord.getAUCinNumber(selectedMod) - 0.5;
-		if (sum != 0 || sum == 0 && selectedMod != 3) {
 			statTest stat = new statTest(var, OR[selectedMod], newR, newN
 					+ newD, sig, eff, obsDiff, BDGv);
 			formatter = new DecimalFormat("0.00");
@@ -1556,7 +1555,7 @@ public class GUInterface {
 	 * of components. This function sets the format and headers of each table
 	 */
 	public JScrollPane genTable(JTable table, String[] names) {
-		ListModel<?> lm = new AbstractListModel<Object>() {
+		ListModel lm = new AbstractListModel() {
 			/**
 			 * 
 			 */
