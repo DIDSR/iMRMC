@@ -110,11 +110,11 @@ public class GUInterface {
 	JLabel HillisPower;
 	JLabel ZPower;
 	JLabel Delta;
-	JLabel DDF;
+	JLabel sizedDFHillis;
 	JLabel CVF;
 	JLabel tStat;
 	JLabel sqrtTotalVar;
-	JLabel df;
+	JLabel dfHillis;
 	JLabel pVal;
 	JLabel confInt;
 	int selectedDB = 0;
@@ -154,7 +154,7 @@ public class GUInterface {
 
 	public String getStat1() {
 		String results = tStat.getText();
-		results = results + "\t" + df.getText();
+		results = results + "\t" + dfHillis.getText();
 		results = results + "\t" + pVal.getText();
 		results = results + "\t" + confInt.getText();
 		results = results + "\t" + sqrtTotalVar.getText();
@@ -164,7 +164,7 @@ public class GUInterface {
 	public String getStat2() {
 		String results = MSvar2.getText();
 		results = results + "\t" + Delta.getText();
-		results = results + "\t" + DDF.getText();
+		results = results + "\t" + sizedDFHillis.getText();
 		results = results + "\t" + CVF.getText();
 		results = results + "\t" + HillisPower.getText();
 		results = results + "\t" + ZPower.getText();
@@ -242,11 +242,11 @@ public class GUInterface {
 		MSvar2.setText("");
 		ZPower.setText("");
 		Delta.setText("");
-		DDF.setText("");
+		sizedDFHillis.setText("");
 		CVF.setText("");
 		tStat.setText("");
 		sqrtTotalVar.setText("");
-		df.setText("");
+		dfHillis.setText("");
 		pVal.setText("");
 		confInt.setText("");
 
@@ -329,7 +329,7 @@ public class GUInterface {
 			DecimalFormat formatter = new DecimalFormat("0.00");
 			// DOF
 			String output = formatter.format(stat2.getDOF());
-			df.setText("  df(Hillis 2008)= " + output);
+			dfHillis.setText("  df(Hillis 2008)= " + output);
 			// tStat
 			output = formatter.format(stat2.gettStat());
 			tStat.setText("  tStat= " + output);
@@ -343,7 +343,7 @@ public class GUInterface {
 			String output2 = formatter.format(stat2.getciBot());
 			confInt.setText("Conf. Int.=(" + output2 + ", " + output + ")");
 		} else {
-			df.setText("  df(Hillis 2008)= ");
+			dfHillis.setText("  df(Hillis 2008)= ");
 			tStat.setText("  tStat= ");
 			sqrtTotalVar.setText("  sqrt(total var)= ");
 			pVal.setText("  p-Value= ");
@@ -356,18 +356,29 @@ public class GUInterface {
 	 * ********click the size trial button, set Table 2 based on the new study
 	 * size perform statistical analysis***
 	 */
-	public void sizeTrial(int[] Parms, double[] Parms2) {
+	public void sizeTrial(int[] Parms, double[] Parms2, int[] Parms3) {
 		int i, j;
 		int newR = Parms[0];
 		int newN = Parms[1];
 		int newD = Parms[2];
+		int numSplitPlots = Parms3[0];
+		int pairedReaders = Parms3[1];
+		int pairedCases = Parms3[2];
 		dbRecord tempRecord = getCurrentRecord();
 
-		double[][] BDGcoeff = tempRecord.getBDGcoeff();
-		double[][] BCKcoeff = tempRecord.getBCKcoeff();
-		double[][] DBMcoeff = tempRecord.getDBMcoeff();
-		double[][] ORcoeff = tempRecord.getORcoeff();
-		double[][] MScoeff = tempRecord.getMScoeff();
+		// TODO create study design matrix from Parms3
+		int[][][][] design = createSplitPlotDesign(newR, newN, newD,
+				numSplitPlots, pairedReaders, pairedCases);
+
+		// TODO use versions of gen that account for study design once we have
+		// math for it and once we can input study design
+		// double[][] BDGcoeff = dbRecord.genBDGCoeff(newR, newN, newD,
+		// design[0], design[1]);
+		double[][] BDGcoeff = dbRecord.genBDGCoeff(newR, newN, newD);
+		double[][] BCKcoeff = dbRecord.genBCKCoeff(newR, newN, newD);
+		double[][] DBMcoeff = dbRecord.genDBMCoeff(newR, newN, newD);
+		double[][] ORcoeff = dbRecord.genORCoeff(newR, newN, newD);
+		double[][] MScoeff = dbRecord.genMSCoeff(newR, newN, newD);
 
 		double[][] BDG = new double[4][8];
 		double[][] BCK = new double[4][7];
@@ -522,7 +533,7 @@ public class GUInterface {
 		}
 		double obsDiff = Math.abs(tempRecord.getAUCinNumber(0)
 				- tempRecord.getAUCinNumber(1));
-		if (selectedMod == 0 || selectedMod == 1){
+		if (selectedMod == 0 || selectedMod == 1) {
 			obsDiff = tempRecord.getAUCinNumber(selectedMod) - 0.5;
 			statTest stat = new statTest(var, OR[selectedMod], newR, newN
 					+ newD, sig, eff, obsDiff, BDGv);
@@ -534,14 +545,14 @@ public class GUInterface {
 			output = formatter.format(stat.getDelta());
 			Delta.setText("  Delta= " + output);
 			output = formatter.format(stat.getDDF());
-			DDF.setText("  DDF= " + output);
+			sizedDFHillis.setText("  df(Hillis 2008)= " + output);
 			output = formatter.format(stat.getCVF());
 			CVF.setText("  CVF= " + output);
 		} else {
 			HillisPower.setText("      Power(Hillis 2011) = ");
 			ZPower.setText("  Power(Z test)= ");
 			Delta.setText("  Delta= ");
-			DDF.setText("  DDF= ");
+			sizedDFHillis.setText("  df(Hillis 2008)= ");
 			CVF.setText("  CVF= ");
 		}
 		if (selectedMod == 3) {
@@ -577,6 +588,56 @@ public class GUInterface {
 
 	}
 
+	// TODO complete this
+	private int[][][][] createSplitPlotDesign(int newR, int newN, int newD,
+			int numSplitPlots, int pairedReaders, int pairedCases) {
+		int[][][] mod0design = new int[newR][newN][newD];
+		int[][][] mod1design = new int[newR][newN][newD];
+		int readersRange = 0;
+		int normalRange = 0;
+		int diseaseRange = 0;
+		int splitReadersRange = 0;
+		int splitNormalRange = 0;
+		int splitDiseaseRange = 0;
+
+		if (pairedReaders == 1) {
+			readersRange = newR;
+		} else {
+			readersRange = newR / 2;
+		}
+		if (pairedCases == 1) {
+			normalRange = newN;
+			diseaseRange = newD;
+		} else {
+			normalRange = newN / 2;
+			diseaseRange = newD / 2;
+		}
+
+		splitReadersRange = readersRange / numSplitPlots;
+		splitNormalRange = normalRange / numSplitPlots;
+		splitDiseaseRange = diseaseRange / numSplitPlots;
+
+		int[][] mod0Normal = new int[newR][newN];
+		int[][] mod1Normal = new int[newR][newN];
+
+		for (int i = 0; i < readersRange; i++) {
+			for (int j = 0; j < normalRange; j++) {
+
+			}
+		}
+
+		for (int s = 0; s < numSplitPlots; s++) {
+			for (int i = 0; i < splitReadersRange; i++) {
+				for (int j = 0; j < splitNormalRange; j++) {
+					mod0Normal[i + (splitReadersRange * s)][j
+							+ (splitNormalRange * s)] = 1;
+				}
+			}
+		}
+
+		return new int[][][][] { mod0design, mod1design };
+	}
+
 	public int getSelectedMod() {
 		return selectedMod;
 	}
@@ -587,7 +648,7 @@ public class GUInterface {
 		HillisPower.setText("Power(Hillis 2011) = ");
 		Delta.setText("Delta = ");
 		CVF.setText("CVF = ");
-		DDF.setText("DDF = ");
+		sizedDFHillis.setText("df(Hillis 2008) = ");
 		if ((sel == 0) || (sel == 1)) {
 			// sigLevel.setEnabled(false);
 			// effSize.setEnabled(false);
@@ -1062,11 +1123,13 @@ public class GUInterface {
 		// effSizeLabel = new JLabel("Effect Size");
 		// effSize = new JTextField ("0.5",3);
 		Delta = new JLabel("  Delta= 0.00");
-		DDF = new JLabel("  DDF= 0.00");
+		sizedDFHillis = new JLabel("  df(Hillis 2008)= 0.00");
 		CVF = new JLabel("  CVF= 0.00");
 		ZPower = new JLabel("  Power(Z test)= 0.00");
 		HillisPower = new JLabel("      Power(Hillis 2011) = 0.00");
 		MSvar2 = new JLabel("sqrt(Var)=0.00");
+		// TODO why is sqrt(var) MSvar2?
+
 		// panelStat11.add(new JLabel("Significance Level"));
 		// panelStat11.add(sigLevel);
 		// panelStat11.add(effSizeLabel);
@@ -1074,7 +1137,7 @@ public class GUInterface {
 		panelStat12.add(new JLabel("Sizing Results:   "));
 		panelStat12.add(MSvar2);
 		panelStat12.add(Delta);
-		panelStat12.add(DDF);
+		panelStat12.add(sizedDFHillis);
 		panelStat12.add(CVF);
 		panelStat12.add(HillisPower);
 		panelStat12.add(ZPower);
@@ -1090,7 +1153,7 @@ public class GUInterface {
 
 		JPanel panelStat2 = new JPanel();
 		JLabel StatResults = new JLabel("Statistical Analysis:");
-		df = new JLabel("  df(Hillis 2008)=0.00");
+		dfHillis = new JLabel("  df(Hillis 2008)=0.00");
 		pVal = new JLabel("  p-value=0.00");
 		tStat = new JLabel("  t-Stat=0.00");
 		confInt = new JLabel("  confInt=0.00");
@@ -1098,7 +1161,7 @@ public class GUInterface {
 		panelStat2.add(StatResults);
 		panelStat2.add(sqrtTotalVar);
 		panelStat2.add(tStat);
-		panelStat2.add(df);
+		panelStat2.add(dfHillis);
 		panelStat2.add(pVal);
 		panelStat2.add(confInt);
 

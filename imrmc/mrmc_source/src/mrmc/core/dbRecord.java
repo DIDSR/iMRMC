@@ -532,7 +532,7 @@ public class dbRecord {
 			BDGcoeff = genBDGCoeff(nReader, nNormal, nDisease,
 					input.getStudyDesignSeparated(currMod1),
 					input.getStudyDesignSeparated(currMod2));
-			// TODO what about other coefficients?
+			// TODO get math for other coefficients from Brandon
 		}
 
 		DBMcoeff = genDBMCoeff(nReader, nNormal, nDisease);

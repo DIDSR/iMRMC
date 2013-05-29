@@ -24,6 +24,7 @@
 package mrmc.gui;
 
 import javax.swing.*;
+
 import java.awt.event.*;
 import java.awt.*;
 import java.lang.Math;
@@ -46,6 +47,9 @@ public class sPanel {
 	String SEPA = ",";
 	DecimalFormat formatter = new DecimalFormat("0.00000E0");
 	DecimalFormat formatter2 = new DecimalFormat("0.00");
+	private JTextField numSplitPlot;
+	public int pairedCs;
+	public int pairedRs;
 
 	public void setNumbers(int[] Parms) {
 		sizeR.setText(Integer.toString(Parms[0]));
@@ -61,31 +65,77 @@ public class sPanel {
 	public sPanel(int[] Parms, JPanel sizingPanel, GUInterface guitemp) {
 		gui = guitemp;
 
+		JPanel innerSizingPanel = new JPanel();
+		innerSizingPanel.setLayout(new BoxLayout(innerSizingPanel,
+				BoxLayout.PAGE_AXIS));
+		JPanel studyDesignInput = new JPanel(new FlowLayout());
+		JPanel sizeTrialInput = new JPanel(new FlowLayout());
+
+		JLabel studyDesignLabel = new JLabel("Study Design:  ");
+		numSplitPlot = new JTextField("1", 3);
+
+		JRadioButton pairedRYes = new JRadioButton("Yes");
+		pairedRYes.setActionCommand("Yes");
+		JRadioButton pairedRNo = new JRadioButton("No");
+		pairedRNo.setActionCommand("No");
+		ButtonGroup pairedRGroup = new ButtonGroup();
+		pairedRGroup.add(pairedRYes);
+		pairedRGroup.add(pairedRNo);
+		PairedRListener pairedReaders = new PairedRListener();
+		pairedRYes.addActionListener(pairedReaders);
+		pairedRNo.addActionListener(pairedReaders);
+
+		JRadioButton pairedCYes = new JRadioButton("Yes");
+		pairedCYes.setActionCommand("Yes");
+		JRadioButton pairedCNo = new JRadioButton("No");
+		pairedCNo.setActionCommand("No");
+		ButtonGroup pairedCGroup = new ButtonGroup();
+		pairedCGroup.add(pairedCYes);
+		pairedCGroup.add(pairedCNo);
+		PairedCListener pairedCases = new PairedCListener();
+		pairedCYes.addActionListener(pairedCases);
+		pairedCNo.addActionListener(pairedCases);
+
+		studyDesignInput.add(studyDesignLabel);
+		studyDesignInput.add(new JLabel("# of Split-Plot Groups"));
+		studyDesignInput.add(numSplitPlot);
+		studyDesignInput.add(new JLabel("    Paired Readers? "));
+		studyDesignInput.add(pairedRYes);
+		studyDesignInput.add(pairedRNo);
+		studyDesignInput.add(new JLabel("    Paired Cases? "));
+		studyDesignInput.add(pairedCYes);
+		studyDesignInput.add(pairedCNo);
+
 		JLabel sigLevelLabel = new JLabel("Significance level");
 		sigLevel = new JTextField("0.05", 3);
 		effSizeLabel = new JLabel("Effect Size");
 		effSize = new JTextField("0.05", 3);
-		sizingPanel.add(sigLevelLabel);
-		sizingPanel.add(sigLevel);
-		sizingPanel.add(effSizeLabel);
-		sizingPanel.add(effSize);
+		sizeTrialInput.add(sigLevelLabel);
+		sizeTrialInput.add(sigLevel);
+		sizeTrialInput.add(effSizeLabel);
+		sizeTrialInput.add(effSize);
 
-		sizingPanel.add(new Label("#Reader"));
+		sizeTrialInput.add(new Label("#Reader"));
 		sizeR = new JTextField(2);
-		sizingPanel.add(sizeR);
-		sizingPanel.add(new Label("#Normal"));
+		sizeTrialInput.add(sizeR);
+		sizeTrialInput.add(new Label("#Normal"));
 		sizeN = new JTextField(3);
-		sizingPanel.add(sizeN);
-		sizingPanel.add(new Label("#Diseased"));
+		sizeTrialInput.add(sizeN);
+		sizeTrialInput.add(new Label("#Diseased"));
 		sizeD = new JTextField(3);
-		sizingPanel.add(sizeD);
+		sizeTrialInput.add(sizeD);
 		setNumbers(Parms);
 		JButton sizeTrial = new JButton("Size a Trial");
 		sizeTrial.addActionListener(new sizeTrialListner());
-		sizingPanel.add(sizeTrial);
+		sizeTrialInput.add(sizeTrial);
 		JButton genReport = new JButton("Generate Report");
 		genReport.addActionListener(new genReportListner());
-		sizingPanel.add(genReport);
+		sizeTrialInput.add(genReport);
+
+		innerSizingPanel.add(studyDesignInput);
+		innerSizingPanel.add(sizeTrialInput);
+
+		sizingPanel.add(innerSizingPanel);
 	}
 
 	public String genReport() {
@@ -348,6 +398,38 @@ public class sPanel {
 		return str;
 	}
 
+	/*
+	 * radio buttons to choose if study design has paired readers
+	 */
+	class PairedRListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			String str;
+			str = e.getActionCommand();
+			if (str == "Yes") {
+				pairedRs = 1;
+			}
+			if (str == "No") {
+				pairedRs = 0;
+			}
+		}
+	}
+
+	/*
+	 * radio buttons to choose if study design has paired cases
+	 */
+	class PairedCListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			String str;
+			str = e.getActionCommand();
+			if (str == "Yes") {
+				pairedCs = 1;
+			}
+			if (str == "No") {
+				pairedCs = 0;
+			}
+		}
+	}
+
 	/* button to generate report from dataset */
 	class genReportListner implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
@@ -386,7 +468,9 @@ public class sPanel {
 			// Integer.parseInt(effSize.getText())};
 			double[] Parms1 = { Double.parseDouble(sigLevel.getText()),
 					Double.parseDouble(effSize.getText()) };
-			gui.sizeTrial(Parms, Parms1);
+			int[] Parms2 = { Integer.parseInt(numSplitPlot.getText()),
+					pairedRs, pairedCs };
+			gui.sizeTrial(Parms, Parms1, Parms2);
 		}
 	}
 

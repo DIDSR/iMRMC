@@ -52,6 +52,7 @@ public class statTest {
 	double CVF;
 	double df2;
 	double Delta;
+	double dfBDG;
 
 	public double getciBot() {
 		return ciBot;
@@ -99,6 +100,10 @@ public class statTest {
 
 	public double getDDF() {
 		return df2;
+	}
+
+	public double getDfBDG() {
+		return dfBDG;
 	}
 
 	public statTest(double[] var, double[] OR, int r, int c, double sig,
