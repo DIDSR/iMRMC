@@ -48,8 +48,8 @@ public class sPanel {
 	DecimalFormat formatter = new DecimalFormat("0.00000E0");
 	DecimalFormat formatter2 = new DecimalFormat("0.00");
 	private JTextField numSplitPlot;
-	public int pairedCs;
-	public int pairedRs;
+	public int pairedCs = 1;
+	public int pairedRs = 1;
 
 	public void setNumbers(int[] Parms) {
 		sizeR.setText(Integer.toString(Parms[0]));
@@ -76,6 +76,7 @@ public class sPanel {
 
 		JRadioButton pairedRYes = new JRadioButton("Yes");
 		pairedRYes.setActionCommand("Yes");
+		pairedRYes.setSelected(true);
 		JRadioButton pairedRNo = new JRadioButton("No");
 		pairedRNo.setActionCommand("No");
 		ButtonGroup pairedRGroup = new ButtonGroup();
@@ -87,6 +88,7 @@ public class sPanel {
 
 		JRadioButton pairedCYes = new JRadioButton("Yes");
 		pairedCYes.setActionCommand("Yes");
+		pairedCYes.setSelected(true);
 		JRadioButton pairedCNo = new JRadioButton("No");
 		pairedCNo.setActionCommand("No");
 		ButtonGroup pairedCGroup = new ButtonGroup();

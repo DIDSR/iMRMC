@@ -208,7 +208,7 @@ public class matrix {
 		for (int i = 0; i < row; i++) {
 			String temp = "";
 			for (int j = 0; j < col; j++) {
-				temp = temp + m[i][j] + "\t";
+				temp = temp + m[i][j] + " ";
 			}
 			temp = temp + "\n";
 			System.out.print(temp);

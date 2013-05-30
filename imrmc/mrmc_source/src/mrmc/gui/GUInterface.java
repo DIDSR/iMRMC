@@ -51,6 +51,7 @@ import mrmc.chart.ROCCurvePlot;
 import mrmc.core.MRMC;
 import mrmc.core.dbRecord;
 import mrmc.core.inputFile;
+import mrmc.core.matrix;
 import mrmc.core.mrmcDB;
 import mrmc.core.statTest;
 
@@ -366,15 +367,14 @@ public class GUInterface {
 		int pairedCases = Parms3[2];
 		dbRecord tempRecord = getCurrentRecord();
 
-		// TODO create study design matrix from Parms3
 		int[][][][] design = createSplitPlotDesign(newR, newN, newD,
 				numSplitPlots, pairedReaders, pairedCases);
 
 		// TODO use versions of gen that account for study design once we have
 		// math for it and once we can input study design
-		// double[][] BDGcoeff = dbRecord.genBDGCoeff(newR, newN, newD,
-		// design[0], design[1]);
-		double[][] BDGcoeff = dbRecord.genBDGCoeff(newR, newN, newD);
+		double[][] BDGcoeff = dbRecord.genBDGCoeff(newR, newN, newD, design[0],
+				design[1]);
+		// double[][] BDGcoeff = dbRecord.genBDGCoeff(newR, newN, newD);
 		double[][] BCKcoeff = dbRecord.genBCKCoeff(newR, newN, newD);
 		double[][] DBMcoeff = dbRecord.genDBMCoeff(newR, newN, newD);
 		double[][] ORcoeff = dbRecord.genORCoeff(newR, newN, newD);
@@ -537,7 +537,7 @@ public class GUInterface {
 			obsDiff = tempRecord.getAUCinNumber(selectedMod) - 0.5;
 			statTest stat = new statTest(var, OR[selectedMod], newR, newN
 					+ newD, sig, eff, obsDiff, BDGv);
-			formatter = new DecimalFormat("0.00");
+			formatter = new DecimalFormat("0.000E0");
 			output = formatter.format(stat.getHillisPower());
 			HillisPower.setText("      Power(Hillis 2011) = " + output);
 			output = formatter.format(stat.getZPower());
@@ -588,17 +588,19 @@ public class GUInterface {
 
 	}
 
-	// TODO complete this
-	private int[][][][] createSplitPlotDesign(int newR, int newN, int newD,
-			int numSplitPlots, int pairedReaders, int pairedCases) {
+	// makes a matrix of study design for given split plot and pairing
+	// parameters
+	private static int[][][][] createSplitPlotDesign(int newR, int newN,
+			int newD, int numSplitPlots, int pairedReaders, int pairedCases) {
 		int[][][] mod0design = new int[newR][newN][newD];
 		int[][][] mod1design = new int[newR][newN][newD];
-		int readersRange = 0;
-		int normalRange = 0;
-		int diseaseRange = 0;
-		int splitReadersRange = 0;
-		int splitNormalRange = 0;
-		int splitDiseaseRange = 0;
+		int[][] mod0Normal = new int[newR][newN];
+		int[][] mod1Normal = new int[newR][newN];
+		int[][] mod0Disease = new int[newR][newD];
+		int[][] mod1Disease = new int[newR][newD];
+		int readersRange;
+		int normalRange;
+		int diseaseRange;
 
 		if (pairedReaders == 1) {
 			readersRange = newR;
@@ -613,24 +615,93 @@ public class GUInterface {
 			diseaseRange = newD / 2;
 		}
 
-		splitReadersRange = readersRange / numSplitPlots;
-		splitNormalRange = normalRange / numSplitPlots;
-		splitDiseaseRange = diseaseRange / numSplitPlots;
-
-		int[][] mod0Normal = new int[newR][newN];
-		int[][] mod1Normal = new int[newR][newN];
-
-		for (int i = 0; i < readersRange; i++) {
-			for (int j = 0; j < normalRange; j++) {
-
-			}
-		}
+		int splitReadersRange = readersRange / numSplitPlots;
+		int splitNormalRange = normalRange / numSplitPlots;
+		int splitDiseaseRange = diseaseRange / numSplitPlots;
 
 		for (int s = 0; s < numSplitPlots; s++) {
 			for (int i = 0; i < splitReadersRange; i++) {
+				int x0 = i + (splitReadersRange * s);
+				int x1 = 0;
+				if (pairedReaders == 1) {
+					x1 = x0;
+				} else {
+					x1 = x0 + readersRange;
+				}
 				for (int j = 0; j < splitNormalRange; j++) {
-					mod0Normal[i + (splitReadersRange * s)][j
-							+ (splitNormalRange * s)] = 1;
+					int y0 = j + (splitNormalRange * s);
+					mod0Normal[x0][y0] = 1;
+					int y1 = 0;
+
+					if (pairedCases == 1) {
+						y1 = y0;
+					} else {
+						y1 = y0 + normalRange;
+					}
+					mod1Normal[x1][y1] = 1;
+				}
+				if (newN % 2 == 1 && s == numSplitPlots - 1) {
+					mod1Normal[x1][newN - 1] = 1;
+				}
+
+				for (int j = 0; j < splitDiseaseRange; j++) {
+					int y0 = j + (splitDiseaseRange * s);
+					mod0Disease[x0][y0] = 1;
+					int y1 = 0;
+					if (pairedCases == 1) {
+						y1 = y0;
+					} else {
+						y1 = y0 + diseaseRange;
+					}
+					mod1Disease[x1][y1] = 1;
+				}
+				if (newD % 2 == 1 && s == numSplitPlots - 1) {
+					mod1Disease[x1][newD - 1] = 1;
+				}
+			}
+		}
+
+		for (int i = splitReadersRange * (numSplitPlots - 1); i < readersRange; i++) {
+			int x1 = 0;
+			if (pairedReaders == 1) {
+				x1 = i;
+			} else {
+				x1 = i + readersRange;
+			}
+			for (int j = splitNormalRange * (numSplitPlots - 1); j < normalRange; j++) {
+				mod0Normal[i][j] = 1;
+				int y1 = 0;
+				if (pairedCases == 1) {
+					y1 = j;
+				} else {
+					y1 = j + normalRange;
+				}
+				mod1Normal[x1][y1] = 1;
+			}
+			mod1Normal[x1][newN - 1] = 1;
+
+			for (int j = splitDiseaseRange * (numSplitPlots - 1); j < diseaseRange; j++) {
+				mod0Disease[i][j] = 1;
+				int y1 = 0;
+				if (pairedCases == 1) {
+					y1 = j;
+				} else {
+					y1 = j + diseaseRange;
+				}
+				mod1Disease[x1][y1] = 1;
+			}
+			mod1Disease[x1][newD - 1] = 1;
+		}
+
+		for (int r = 0; r < newR; r++) {
+			for (int n = 0; n < newN; n++) {
+				for (int d = 0; d < newD; d++) {
+					if (mod0Normal[r][n] == 1 && mod0Disease[r][d] == 1) {
+						mod0design[r][n][d] = 1;
+					}
+					if (mod1Normal[r][n] == 1 && mod1Disease[r][d] == 1) {
+						mod1design[r][n][d] = 1;
+					}
 				}
 			}
 		}
