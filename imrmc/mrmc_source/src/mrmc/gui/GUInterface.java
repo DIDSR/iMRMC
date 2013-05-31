@@ -500,16 +500,17 @@ public class GUInterface {
 			}
 		}
 
-		DecimalFormat formatter = new DecimalFormat("0.000");
-		String output = formatter.format(Math.sqrt(BDGv));
+		DecimalFormat formatter1 = new DecimalFormat("0.000");
+		DecimalFormat formatter2 = new DecimalFormat("0.00");
+		String output = formatter1.format(Math.sqrt(BDGv));
 		BDGvar2.setText("sqrt(Var)=" + output);
-		output = formatter.format(Math.sqrt(BCKv));
+		output = formatter1.format(Math.sqrt(BCKv));
 		BCKvar2.setText("sqrt(Var)=" + output);
-		output = formatter.format(Math.sqrt(DBMv));
+		output = formatter1.format(Math.sqrt(DBMv));
 		DBMvar2.setText("sqrt(Var)=" + output);
-		output = formatter.format(Math.sqrt(ORv));
+		output = formatter1.format(Math.sqrt(ORv));
 		ORvar2.setText("sqrt(Var)=" + output);
-		output = formatter.format(Math.sqrt(MSv));
+		output = formatter1.format(Math.sqrt(MSv));
 		MSvar2.setText("sqrt(Var)=" + output);
 
 		double[] var = new double[3];
@@ -537,16 +538,17 @@ public class GUInterface {
 			obsDiff = tempRecord.getAUCinNumber(selectedMod) - 0.5;
 			statTest stat = new statTest(var, OR[selectedMod], newR, newN
 					+ newD, sig, eff, obsDiff, BDGv);
-			formatter = new DecimalFormat("0.000E0");
-			output = formatter.format(stat.getHillisPower());
+			formatter1 = new DecimalFormat("0.000E0");
+			formatter2 = new DecimalFormat("0.00");
+			output = formatter2.format(stat.getHillisPower());
 			HillisPower.setText("      Power(Hillis 2011) = " + output);
-			output = formatter.format(stat.getZPower());
+			output = formatter2.format(stat.getZPower());
 			ZPower.setText("  Power(Z test)= " + output);
-			output = formatter.format(stat.getDelta());
+			output = formatter1.format(stat.getDelta());
 			Delta.setText("  Delta= " + output);
-			output = formatter.format(stat.getDDF());
+			output = formatter2.format(stat.getDDF());
 			sizedDFHillis.setText("  df(Hillis 2008)= " + output);
-			output = formatter.format(stat.getCVF());
+			output = formatter2.format(stat.getCVF());
 			CVF.setText("  CVF= " + output);
 		} else {
 			HillisPower.setText("      Power(Hillis 2011) = ");
