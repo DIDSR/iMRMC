@@ -284,7 +284,7 @@ public class GUInterface {
 	// }
 
 	public dbRecord getCurrentRecord() {
-		dbRecord tempRecord = new dbRecord();
+		dbRecord tempRecord = null;
 		if (selectedInput == 0)
 			tempRecord = Records[selectedDB];
 		else if (selectedInput == 1)
@@ -485,6 +485,13 @@ public class GUInterface {
 				if (i == 2) {
 					MSv = MSv + MSdata1[i][j];
 				}
+				// if study is not fully crossed, MS coeff calculation is
+				// incorrect
+				if (!tempRecord.getFullyCrossedStatus()) {
+					if (i > 0) {
+						MStable1.setValueAt("0", i, j);
+					}
+				}
 			}
 			for (j = 0; j < 6; j++) {
 				DBMtable2.setValueAt(DBMdata1[i][j], i, j);
@@ -496,6 +503,14 @@ public class GUInterface {
 				if (i == 2) {
 					DBMv = DBMv + DBMdata1[i][j];
 					ORv = ORv + ORdata1[i][j];
+				}
+				// if study is not fully crossed, DBM, OR coeff calculation is
+				// incorrect
+				if (!tempRecord.getFullyCrossedStatus()) {
+					if (i > 0) {
+						DBMtable1.setValueAt("0", i, j);
+						ORtable1.setValueAt("0", i, j);
+					}
 				}
 			}
 		}
@@ -835,6 +850,15 @@ public class GUInterface {
 					DBMv = DBMv + DBMdata1[i][j];
 					ORv = ORv + ORdata1[i][j];
 				}
+				// if study is not fully crossed, DBM, OR coeff calculation is
+				// incorrect
+				if (!tempRecord.getFullyCrossedStatus()) {
+					if (i > 0) {
+						DBMtable1.setValueAt("0", i, j);
+						ORtable1.setValueAt("0", i, j);
+					}
+				}
+
 			}
 			for (j = 0; j < 6; j++) {
 				MStable1.setValueAt(MSdata1[i][j], i, j);
@@ -842,6 +866,13 @@ public class GUInterface {
 						.setCellRenderer(new DecimalFormatRenderer());
 				if (i == 2) {
 					MSv = MSv + MSdata1[i][j];
+				}
+				// if study is not fully crossed, MS coeff calculation is
+				// incorrect
+				if (!tempRecord.getFullyCrossedStatus()) {
+					if (i > 0) {
+						MStable1.setValueAt("0", i, j);
+					}
 				}
 			}
 		}

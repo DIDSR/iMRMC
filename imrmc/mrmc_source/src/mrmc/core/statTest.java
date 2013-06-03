@@ -26,13 +26,11 @@
 
 package mrmc.core;
 
-import umontreal.iro.lecuyer.probdist.FisherFDist;
 import umontreal.iro.lecuyer.probdist.BetaDist;
+import umontreal.iro.lecuyer.probdist.FisherFDist;
 import umontreal.iro.lecuyer.probdist.NormalDist;
-//import umontreal.iro.lecuyer.probdist.StudentDist;
-import java.lang.Math;
 
-import org.apache.commons.math3.distribution.NormalDistribution;
+//import umontreal.iro.lecuyer.probdist.StudentDist;
 
 public class statTest {
 	int INFINITY = 500;
@@ -56,22 +54,28 @@ public class statTest {
 	double dfBDG;
 
 	public static void main(String[] args) {
-		int ddf = 2000;
-		double statT = 14.3;
-		FisherFDist fdist = new FisherFDist(1, ddf);
-		double asdpValF = FisherFDist.cdf(1, ddf, 5, statT * statT);
-		asdpValF = 1 - asdpValF;
-		double Fval = fdist.inverseF(1 - 0.05);
-		System.out.println("pVal = " + asdpValF);
-		System.out.println("Fval = " + Fval);
+		// int ddf = 50;
+		// double statT = 16.84;
+		// FisherFDist fdist = new FisherFDist(1, ddf);
+		// double asdpValF = FisherFDist.cdf(1, ddf, 5, statT * statT);
+		// asdpValF = 1 - asdpValF;
+		// double Fval = fdist.inverseF(1 - 0.05);
+		// System.out.println("pVal = " + asdpValF);
+		// System.out.println("Fval = " + Fval);
+		//
+		// NormalDist ndist = new NormalDist();
+		// double asdpValF2 = NormalDist.cdf(0, 1, statT * statT);
+		// asdpValF2 = 1 - asdpValF2;
+		// double Fval2 = ndist.inverseF(1 - 0.05);
+		// System.out.println("pVal2 = " + asdpValF2);
+		// System.out.println("fVal2 = " + Fval2);
 
-		NormalDistribution gauss = new NormalDistribution();
-		double asdpValF2 = gauss.cumulativeProbability(statT * statT);
-		asdpValF2 = 1 - asdpValF2;
-		double Fval2 = gauss.inverseCumulativeProbability(1 - 0.05);
-		System.out.println("pVal2 = " + asdpValF2);
-		System.out.println("fVal2 = " + Fval2);
-
+		double df1 = 1, df2 = 6000;
+		double x = 4.24;
+		int j = 500;
+		double tempF = BetaDist.cdf(df1 / 2.0 + j, df2 / 2.0, 6, df1
+				* x / (df2 + df1 * x));
+		System.out.println("tempf = " + tempF);
 	}
 
 	public double getciBot() {
@@ -140,7 +144,7 @@ public class statTest {
 		double mst = 0, denom = 0, statT = 0, ddf = 0;
 		double[] aucs = { 0, 0 };
 		double[][] MS = curRecord.getMS(useBiasM);
-		double[][] coeff = curRecord.genBDGCoeff(N2, N0, N1);
+		double[][] coeff = dbRecord.genBDGCoeff(N2, N0, N1);
 		double[][] BDG = curRecord.getBDG(useBiasM);
 
 		System.out.println("***********");
@@ -199,9 +203,9 @@ public class statTest {
 		// equal at that point, and FisherFDist can't handle large DOFs
 		double Fval = 0;
 		if (ddf >= 50) {
-			NormalDistribution gauss = new NormalDistribution();
-			pValF = gauss.cumulativeProbability(statT * statT);
-			Fval = gauss.inverseCumulativeProbability(1 - sig);
+			NormalDist ndist = new NormalDist();
+			pValF = NormalDist.cdf(0, 1, statT * statT);
+			Fval = ndist.inverseF(1 - sig);
 		} else {
 			FisherFDist fdist = new FisherFDist(1, (int) ddf);
 			pValF = FisherFDist.cdf(1, (int) ddf, 5, statT * statT);
@@ -287,13 +291,14 @@ public class statTest {
 		System.out.println("delta=" + Delta);
 
 		// tStat=Math.sqrt(Delta);
-		FisherFDist fdist = new FisherFDist(1, (int) df2);
-		// use normal distribution for DOF > 50 since it is close to Fisher F and
-		// fisherF fails for DOF > 2000
+
+		// use normal distribution for DOF > 50 since it is close to Fisher F
+		// and fisherF fails for DOF > 2000
 		if (df2 >= 50) {
-			NormalDistribution gauss = new NormalDistribution();
-			CVF = gauss.inverseCumulativeProbability(1 - sigLevel);
+			NormalDist ndist = new NormalDist();
+			CVF = ndist.inverseF(1 - sigLevel);
 		} else {
+			FisherFDist fdist = new FisherFDist(1, (int) df2);
 			CVF = fdist.inverseF(1 - sigLevel);
 		}
 		double cdftemp = cdfNonCentralF(1, (int) df2, Delta, CVF);
@@ -309,6 +314,7 @@ public class statTest {
 	public double cdfNonCentralF(int df1, int df2, double delta, double x) {
 		double cdf = 0;
 		for (int j = 0; j < INFINITY; j++) {
+			// TODO this also fails for high DOF, what to do?
 			double tempF = BetaDist.cdf(df1 / 2.0 + j, df2 / 2.0, PRECISION,
 					df1 * x / (df2 + df1 * x));
 			double sfactor = 1;

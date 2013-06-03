@@ -73,7 +73,7 @@ public class dbRecord {
 	int nDisease;
 	int flagCompleteRecord;
 	int flagCom;
-	boolean fullyCrossed;
+	private boolean fullyCrossed;
 
 	public String getTask() {
 		return Task;
@@ -105,6 +105,10 @@ public class dbRecord {
 
 	public String getRecordDesp() {
 		return recordDesp;
+	}
+
+	public boolean getFullyCrossedStatus() {
+		return fullyCrossed;
 	}
 
 	public double[][] getBDG(int useBiasM) {
@@ -248,6 +252,7 @@ public class dbRecord {
 		flagCompleteRecord = 1;
 		recordTitle = desp.get(0).substring(2);
 		filename = fname;
+		fullyCrossed = true;
 
 		for (i = 0; i < 7; i++) {
 			String tempStr = desp.get(i);
@@ -391,9 +396,6 @@ public class dbRecord {
 		return results;
 	}
 
-	public dbRecord() {
-	}
-
 	/* constructor 3: generate a record from manually input information. */
 	public dbRecord(double[] data, int flag, int Reader, int Normal,
 			int Disease, double[] auc) {
@@ -404,6 +406,7 @@ public class dbRecord {
 		AUC = auc;
 		flagCompleteRecord = 0;
 		flagCom = flag;
+		fullyCrossed = true;
 		switch (flag) {
 		case 0: // BDG
 			for (int i = 0; i < 4; i++) {
@@ -532,7 +535,6 @@ public class dbRecord {
 			BDGcoeff = genBDGCoeff(nReader, nNormal, nDisease,
 					input.getStudyDesignSeparated(currMod1),
 					input.getStudyDesignSeparated(currMod2));
-			// TODO get math for other coefficients from Brandon
 		}
 
 		DBMcoeff = genDBMCoeff(nReader, nNormal, nDisease);
@@ -575,88 +577,47 @@ public class dbRecord {
 				for (int j = 0; j < N1; j++) {
 					nStarM0 += (double) mod0design[r][i][j];
 					nStarM1 += (double) mod1design[r][i][j];
+
+					coeffM1 += ((double) mod0design[r][i][j] * (double) mod1design[r][i][j]);
 				}
 			}
 		}
 
-		for (int r = 0; r < NR; r++) {
-			for (int i = 0; i < N0; i++) {
+		// This is correct!
+		for (int j = 0; j < N1; j++) {
+			for (int r = 0; r < NR; r++) {
+				double innerSum = 0;
+				for (int ipr = 0; ipr < N0; ipr++) {
+					innerSum += (double) mod1design[r][ipr][j];
+				}
+				for (int i = 0; i < N0; i++) {
+					coeffM2 += (double) mod0design[r][i][j]
+							* (innerSum - mod1design[r][i][j]);
+
+				}
+
+			}
+		}
+
+		// TODO this and the rest of them properly
+		for (int i = 0; i < N0; i++) {
+			for (int r = 0; r < NR; r++) {
+				double outerSum = 0;
+				double innerSum = 0;
 				for (int j = 0; j < N1; j++) {
-					double tempOuterSum = (double) mod0design[r][i][j]
-							/ nStarM0;
-					double tempInnerSumM2 = 0;
-					double tempInnerSumM3 = 0;
-					double tempInnerSumM4 = 0;
-					double tempInnerSumM5 = 0;
-					double tempInnerSumM6 = 0;
-					double tempInnerSumM7 = 0;
-					double tempInnerSumM8 = 0;
-
-					// TODO reduce these calculations to n^3
-
-					// calc coeff M1
-					coeffM1 += tempOuterSum
-							* ((double) mod1design[r][i][j] / nStarM1);
-
-					for (int iprime = 0; iprime < N0; iprime++) {
-						if (iprime != i) {
-							tempInnerSumM2 += (double) mod1design[r][iprime][j]
-									/ nStarM1;
-							for (int jprime = 0; jprime < N1; jprime++) {
-								if (jprime != j) {
-									tempInnerSumM4 += (double) mod1design[r][iprime][jprime]
-											/ nStarM1;
-								}
-							}
-						}
-					}
-					coeffM2 += tempOuterSum * tempInnerSumM2;
-					coeffM4 += tempOuterSum * tempInnerSumM4;
-
-					for (int jprime = 0; jprime < N1; jprime++) {
-						if (jprime != j) {
-							tempInnerSumM3 += (double) mod1design[r][i][jprime]
-									/ nStarM1;
-						}
-					}
-					coeffM3 += tempOuterSum * tempInnerSumM3;
-
-					for (int rprime = 0; rprime < NR; rprime++) {
-						if (rprime != r) {
-							tempInnerSumM5 += (double) mod1design[rprime][i][j]
-									/ nStarM1;
-							for (int iprime = 0; iprime < N0; iprime++) {
-								if (iprime != i) {
-									tempInnerSumM6 += (double) mod1design[rprime][iprime][j]
-											/ nStarM1;
-									for (int jprime = 0; jprime < N1; jprime++) {
-										if (jprime != j) {
-											tempInnerSumM8 += (double) mod1design[rprime][iprime][jprime]
-													/ nStarM1;
-										}
-									}
-								}
-							}
-						}
-					}
-					coeffM5 += tempOuterSum * tempInnerSumM5;
-					coeffM6 += tempOuterSum * tempInnerSumM6;
-					coeffM8 += tempOuterSum * tempInnerSumM8;
-
-					// calc coeff M7
-					for (int rprime = 0; rprime < NR; rprime++) {
-						for (int jprime = 0; jprime < N1; jprime++) {
-							if (rprime != r && jprime != j) {
-								tempInnerSumM7 += (double) mod1design[rprime][i][jprime]
-										/ nStarM1;
-							}
-						}
-					}
-					coeffM7 += tempOuterSum * tempInnerSumM7;
+					outerSum += (double) mod0design[r][i][j];
+					innerSum += (double) mod1design[r][i][j];
+				}
+				for (int jpr = 0; jpr < N1; jpr++) {
+					coeffM3 += outerSum
+							* (innerSum - (double) mod1design[r][i][jpr]);
 				}
 			}
 		}
 
+		coeffM1 = coeffM1 / (nStarM0 * nStarM1);
+		coeffM2 = coeffM2 / (nStarM0 * nStarM1);
+		coeffM3 = coeffM3 / (nStarM0 * nStarM1);
 		coeffM8 -= 1.0;
 
 		c[0][0] = coeffM1;

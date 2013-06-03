@@ -163,14 +163,14 @@ public class sPanel {
 		int newR = Integer.parseInt(sizeR.getText());
 		int newN = Integer.parseInt(sizeN.getText());
 		int newD = Integer.parseInt(sizeD.getText());
-		double[][] newBDGcoeff = curRecord.genBDGCoeff(newR, newN, newD);
-		double[][] newDBMcoeff = curRecord.genDBMCoeff(newR, newN, newD);
-		double[][] newBCKcoeff = curRecord.genBCKCoeff(newR, newN, newD);
-		double[][] newORcoeff = curRecord.genORCoeff(newR, newN, newD);
+		double[][] newBDGcoeff = dbRecord.genBDGCoeff(newR, newN, newD);
+		double[][] newDBMcoeff = dbRecord.genDBMCoeff(newR, newN, newD);
+		double[][] newBCKcoeff = dbRecord.genBCKCoeff(newR, newN, newD);
+		double[][] newORcoeff = dbRecord.genORCoeff(newR, newN, newD);
 		// double[][] DBMnew = curRecord.BDG2DBM(BDG,newR,newN,newD);
 		// double[][] ORnew = curRecord.BDG2OR(BDG, newR,newN,newD);
-		double[][] DBMnew = curRecord.BCK2DBM(BCK, newR, newN, newD);
-		double[][] ORnew = curRecord.DBM2OR(0, DBMnew, newR, newN, newD);
+		double[][] DBMnew = dbRecord.BCK2DBM(BCK, newR, newN, newD);
+		double[][] ORnew = dbRecord.DBM2OR(0, DBMnew, newR, newN, newD);
 
 		// double[] resultsNew = sizeTrial(DBMnew, ORnew, statParms[0],
 		// statParms[1], newR, newN, newD);
@@ -296,14 +296,14 @@ public class sPanel {
 		int newR = Integer.parseInt(sizeR.getText());
 		int newN = Integer.parseInt(sizeN.getText());
 		int newD = Integer.parseInt(sizeD.getText());
-		double[][] newBDGcoeff = curRecord.genBDGCoeff(newR, newN, newD);
-		double[][] newDBMcoeff = curRecord.genDBMCoeff(newR, newN, newD);
-		double[][] newBCKcoeff = curRecord.genBCKCoeff(newR, newN, newD);
-		double[][] newORcoeff = curRecord.genORCoeff(newR, newN, newD);
+		double[][] newBDGcoeff = dbRecord.genBDGCoeff(newR, newN, newD);
+		double[][] newDBMcoeff = dbRecord.genDBMCoeff(newR, newN, newD);
+		double[][] newBCKcoeff = dbRecord.genBCKCoeff(newR, newN, newD);
+		double[][] newORcoeff = dbRecord.genORCoeff(newR, newN, newD);
 		// double[][] DBMnew = curRecord.BDG2DBM(BDG,newR,newN,newD);
 		// double[][] ORnew = curRecord.BDG2OR(BDG, newR,newN,newD);
-		double[][] DBMnew = curRecord.BCK2DBM(BCK, newR, newN, newD);
-		double[][] ORnew = curRecord.DBM2OR(0, DBMnew, newR, newN, newD);
+		double[][] DBMnew = dbRecord.BCK2DBM(BCK, newR, newN, newD);
+		double[][] ORnew = dbRecord.DBM2OR(0, DBMnew, newR, newN, newD);
 
 		String resultnew = gui.getStat2();
 
