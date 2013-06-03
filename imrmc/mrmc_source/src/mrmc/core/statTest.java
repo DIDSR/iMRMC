@@ -32,6 +32,8 @@ import umontreal.iro.lecuyer.probdist.NormalDist;
 //import umontreal.iro.lecuyer.probdist.StudentDist;
 import java.lang.Math;
 
+import org.apache.commons.math3.distribution.NormalDistribution;
+
 public class statTest {
 	int INFINITY = 500;
 	int PRECISION = 6;
@@ -43,7 +45,6 @@ public class statTest {
 	double DOF2011 = 0;
 	double tStat = 0;
 	double effSize;
-	double obsDiff;
 	double sigLevel;
 	double pValZ;
 	double pValF;
@@ -53,6 +54,25 @@ public class statTest {
 	double df2;
 	double Delta;
 	double dfBDG;
+
+	public static void main(String[] args) {
+		int ddf = 2000;
+		double statT = 14.3;
+		FisherFDist fdist = new FisherFDist(1, ddf);
+		double asdpValF = FisherFDist.cdf(1, ddf, 5, statT * statT);
+		asdpValF = 1 - asdpValF;
+		double Fval = fdist.inverseF(1 - 0.05);
+		System.out.println("pVal = " + asdpValF);
+		System.out.println("Fval = " + Fval);
+
+		NormalDistribution gauss = new NormalDistribution();
+		double asdpValF2 = gauss.cumulativeProbability(statT * statT);
+		asdpValF2 = 1 - asdpValF2;
+		double Fval2 = gauss.inverseCumulativeProbability(1 - 0.05);
+		System.out.println("pVal2 = " + asdpValF2);
+		System.out.println("fVal2 = " + Fval2);
+
+	}
 
 	public double getciBot() {
 		return ciBot;
@@ -107,10 +127,9 @@ public class statTest {
 	}
 
 	public statTest(double[] var, double[] OR, int r, int c, double sig,
-			double eff, double obsDif, double totalVar0) {
+			double eff, double totalVar0) {
 		sigLevel = sig;
 		effSize = eff;
-		obsDiff = obsDif;
 		totalVar = totalVar0;
 		powerF = FTest(var, r, c, totalVar);
 		powerZ = ZTest(var, r, c, totalVar);
@@ -176,10 +195,19 @@ public class statTest {
 		}
 		tStat = statT;
 		DOF = ddf;
-		FisherFDist fdist = new FisherFDist(1, (int) ddf);
-		pValF = FisherFDist.cdf(1, (int) ddf, 5, statT * statT);
+		// Use normal distribution if DOF > 50, since they are approximately
+		// equal at that point, and FisherFDist can't handle large DOFs
+		double Fval = 0;
+		if (ddf >= 50) {
+			NormalDistribution gauss = new NormalDistribution();
+			pValF = gauss.cumulativeProbability(statT * statT);
+			Fval = gauss.inverseCumulativeProbability(1 - sig);
+		} else {
+			FisherFDist fdist = new FisherFDist(1, (int) ddf);
+			pValF = FisherFDist.cdf(1, (int) ddf, 5, statT * statT);
+			Fval = fdist.inverseF(1 - sig);
+		}
 		pValF = 1 - pValF;
-		double Fval = fdist.inverseF(1 - sig);
 
 		ciBot = meanCI - Math.sqrt(var0) * Math.sqrt(Fval); // bdg
 		ciTop = meanCI + Math.sqrt(var0) * Math.sqrt(Fval); // bdg
@@ -260,7 +288,14 @@ public class statTest {
 
 		// tStat=Math.sqrt(Delta);
 		FisherFDist fdist = new FisherFDist(1, (int) df2);
-		CVF = fdist.inverseF(1 - sigLevel);
+		// use normal distribution for DOF > 50 since it is close to Fisher F and
+		// fisherF fails for DOF > 2000
+		if (df2 >= 50) {
+			NormalDistribution gauss = new NormalDistribution();
+			CVF = gauss.inverseCumulativeProbability(1 - sigLevel);
+		} else {
+			CVF = fdist.inverseF(1 - sigLevel);
+		}
 		double cdftemp = cdfNonCentralF(1, (int) df2, Delta, CVF);
 		powerF = 1 - cdftemp;
 		System.out.println("delta=" + Delta + " df2=" + df2 + " CVF=" + CVF);

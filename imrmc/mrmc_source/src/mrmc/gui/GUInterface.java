@@ -532,12 +532,9 @@ public class GUInterface {
 			var[1] = DBM[3][4];
 			var[2] = DBM[3][5];
 		}
-		double obsDiff = Math.abs(tempRecord.getAUCinNumber(0)
-				- tempRecord.getAUCinNumber(1));
 		if (selectedMod == 0 || selectedMod == 1) {
-			obsDiff = tempRecord.getAUCinNumber(selectedMod) - 0.5;
 			statTest stat = new statTest(var, OR[selectedMod], newR, newN
-					+ newD, sig, eff, obsDiff, BDGv);
+					+ newD, sig, eff, BDGv);
 			formatter1 = new DecimalFormat("0.000E0");
 			formatter2 = new DecimalFormat("0.00");
 			output = formatter2.format(stat.getHillisPower());

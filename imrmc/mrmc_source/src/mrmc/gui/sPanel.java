@@ -504,12 +504,8 @@ public class sPanel {
 				* ((N + D) * var[0] + R * var[1] + var[2]);
 		if (selectedMod == 3)
 			totalVar = totalVar * 2;
-		double obsDiff = Math.abs(curRecord.getAUCinNumber(0)
-				- curRecord.getAUCinNumber(1));
-		if (selectedMod == 0 || selectedMod == 1)
-			obsDiff = eff;
 		statTest stat = new statTest(var, OR[selectedMod], R, N + D, sig, eff,
-				obsDiff, totalVar);
+				totalVar);
 
 		double[] results = new double[3];
 		results[0] = stat.getDOF();
