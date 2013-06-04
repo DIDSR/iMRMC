@@ -592,25 +592,119 @@ public class dbRecord {
 				}
 				for (int i = 0; i < N0; i++) {
 					coeffM2 += (double) mod0design[r][i][j]
-							* (innerSum - mod1design[r][i][j]);
+							* (innerSum - (double) mod1design[r][i][j]);
 
 				}
 
 			}
 		}
 
-		// TODO this and the rest of them properly
+		// This is correct!
 		for (int i = 0; i < N0; i++) {
 			for (int r = 0; r < NR; r++) {
-				double outerSum = 0;
 				double innerSum = 0;
-				for (int j = 0; j < N1; j++) {
-					outerSum += (double) mod0design[r][i][j];
-					innerSum += (double) mod1design[r][i][j];
-				}
 				for (int jpr = 0; jpr < N1; jpr++) {
-					coeffM3 += outerSum
-							* (innerSum - (double) mod1design[r][i][jpr]);
+					innerSum += (double) mod1design[r][i][jpr];
+				}
+				for (int j = 0; j < N1; j++) {
+					coeffM3 += (double) mod0design[r][i][j]
+							* (innerSum - (double) mod1design[r][i][j]);
+				}
+			}
+		}
+
+		// TODO these
+		for (int r = 0; r < NR; r++) {
+			for (int i = 0; i < N0; i++) {
+				for (int j = 0; j < N1; j++) {
+					double innerSum = 0;
+					for (int ipr = 0; ipr < N0; ipr++) {
+						double innerMostSum = 0;
+						for (int jpr = 0; jpr < N1; jpr++) {
+							innerMostSum += (double) mod1design[r][ipr][jpr];
+						}
+						innerSum += innerMostSum
+								- (double) mod1design[r][ipr][j];
+					}
+
+					coeffM4 += (double) mod0design[r][i][j]
+							* (innerSum - (double) mod1design[r][i][j]);
+				}
+			}
+		}
+
+		// for (int r = 0; r < NR; r++) {
+		//
+		// for (int i = 0; i < N0; i++) {
+		// for (int j = 0; j < N1; j++) {
+		// double totalSum = 0;
+		//
+		// for (int ipr = 0; ipr < N0; ipr++) {
+		// if (ipr != i) {
+		// for (int jpr = 0; jpr < N1; jpr++) {
+		// if (jpr != j) {
+		// totalSum += (double) mod1design[r][ipr][jpr];
+		// }
+		// }
+		// }
+		// }
+		//
+		// coeffM4 += mod0design[r][i][j] * totalSum;
+		// }
+		// }
+		//
+		// }
+
+		// This is correct!
+		for (int i = 0; i < N0; i++) {
+			for (int j = 0; j < N1; j++) {
+				double innerSum = 0;
+				for (int rpr = 0; rpr < NR; rpr++) {
+					innerSum += (double) mod1design[rpr][i][j];
+				}
+				for (int r = 0; r < NR; r++) {
+					coeffM5 += (double) mod0design[r][i][j]
+							* (innerSum - (double) mod1design[r][i][j]);
+				}
+			}
+		}
+
+		// M8
+		double totalSum = 0;
+		double isum = 0;
+		for (int ipr = 0; ipr < N0; ipr++) {
+			double jsum = 0;
+			for (int jpr = 0; jpr < N1; jpr++) {
+				double rsum = 0;
+				for (int rpr = 0; rpr < NR; rpr++) {
+					rsum += (double) mod1design[rpr][ipr][jpr];
+				}
+				for (int r = 0; r < NR; r++) {
+					jsum += (rsum - (double) mod1design[r][ipr][jpr]);
+				}
+			}
+			for (int j = 0; j < N1; j++) {
+				double rToSubtract = 0;
+				for (int r = 0; r < NR; r++) {
+					rToSubtract += (double) mod1design[r][ipr][j];
+				}
+				isum += (jsum - rToSubtract);
+			}
+		}
+		for (int i = 0; i < N0; i++) {
+			double innerToSubtract = 0;
+			for (int j = 0; j < N1; j++) {
+				for (int r = 0; r < NR; r++) {
+					innerToSubtract += (double) mod1design[r][i][j];
+				}
+			}
+
+			totalSum += (isum - innerToSubtract);
+		}
+		for (int i = 0; i < N0; i++) {
+			for (int j = 0; j < N1; j++) {
+				for (int r = 0; r < NR; r++) {
+					coeffM8 += ((double) mod0design[r][i][j] * totalSum);
 				}
 			}
 		}
@@ -618,6 +712,11 @@ public class dbRecord {
 		coeffM1 = coeffM1 / (nStarM0 * nStarM1);
 		coeffM2 = coeffM2 / (nStarM0 * nStarM1);
 		coeffM3 = coeffM3 / (nStarM0 * nStarM1);
+		coeffM4 = coeffM4 / (nStarM0 * nStarM1);
+		coeffM5 = coeffM5 / (nStarM0 * nStarM1);
+		coeffM6 = coeffM6 / (nStarM0 * nStarM1);
+		coeffM7 = coeffM7 / (nStarM0 * nStarM1);
+		coeffM8 = coeffM8 / (nStarM0 * nStarM1);
 		coeffM8 -= 1.0;
 
 		c[0][0] = coeffM1;
@@ -649,6 +748,17 @@ public class dbRecord {
 		c[1] = c[0];
 		c[2] = c[0];
 		c[3] = c[0];
+
+		return c;
+	}
+
+	// TODO complete this
+	public static double[][] genBCKCoeff(int NR, int N0, int N1, int m) {
+		double[][] c = new double[4][7];
+		int[][] c2ca = new int[][] { { 1, 0, 1, 0, 1, 0, 1, 0 },
+				{ 1, 1, 0, 0, 1, 1, 0, 0 }, { 1, 0, 0, 0, 1, 0, 0, 0 },
+				{ 1, 1, 1, 1, 0, 0, 0, 0 }, { 1, 0, 1, 0, 0, 0, 0, 0 },
+				{ 1, 1, 0, 0, 0, 0, 0, 0 }, { 1, 0, 0, 0, 0, 0, 0, 0 } };
 
 		return c;
 	}
