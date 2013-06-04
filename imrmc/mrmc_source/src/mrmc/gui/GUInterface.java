@@ -51,7 +51,6 @@ import mrmc.chart.ROCCurvePlot;
 import mrmc.core.MRMC;
 import mrmc.core.dbRecord;
 import mrmc.core.inputFile;
-import mrmc.core.matrix;
 import mrmc.core.mrmcDB;
 import mrmc.core.statTest;
 

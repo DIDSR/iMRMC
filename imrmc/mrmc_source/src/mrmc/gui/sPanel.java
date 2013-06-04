@@ -27,7 +27,6 @@ import javax.swing.*;
 
 import java.awt.event.*;
 import java.awt.*;
-import java.lang.Math;
 import mrmc.core.dbRecord;
 import mrmc.core.statTest;
 
