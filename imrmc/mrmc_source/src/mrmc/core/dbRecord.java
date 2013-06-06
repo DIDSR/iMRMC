@@ -572,161 +572,115 @@ public class dbRecord {
 		double coeffM6 = 0;
 		double coeffM7 = 0;
 		double coeffM8 = 0;
+
+		// M1, N*m, N*m'
 		for (int r = 0; r < NR; r++) {
 			for (int i = 0; i < N0; i++) {
 				for (int j = 0; j < N1; j++) {
 					nStarM0 += (double) mod0design[r][i][j];
 					nStarM1 += (double) mod1design[r][i][j];
-
 					coeffM1 += ((double) mod0design[r][i][j] * (double) mod1design[r][i][j]);
 				}
 			}
 		}
 
-		// This is correct!
+		// M2
 		for (int j = 0; j < N1; j++) {
 			for (int r = 0; r < NR; r++) {
-				double innerSum = 0;
-				for (int ipr = 0; ipr < N0; ipr++) {
-					innerSum += (double) mod1design[r][ipr][j];
-				}
+				double iSum = 0, iprSum = 0;
 				for (int i = 0; i < N0; i++) {
-					coeffM2 += (double) mod0design[r][i][j]
-							* (innerSum - (double) mod1design[r][i][j]);
-
+					iSum += (double) mod0design[r][i][j];
+					iprSum += (double) mod1design[r][i][j];
 				}
-
+				coeffM2 += iSum * iprSum;
 			}
 		}
 
-		// This is correct!
+		// M3
 		for (int i = 0; i < N0; i++) {
 			for (int r = 0; r < NR; r++) {
-				double innerSum = 0;
-				for (int jpr = 0; jpr < N1; jpr++) {
-					innerSum += (double) mod1design[r][i][jpr];
-				}
+				double jSum = 0, jprSum = 0;
 				for (int j = 0; j < N1; j++) {
-					coeffM3 += (double) mod0design[r][i][j]
-							* (innerSum - (double) mod1design[r][i][j]);
+					jSum += (double) mod0design[r][i][j];
+					jprSum += (double) mod1design[r][i][j];
 				}
+				coeffM3 += jSum * jprSum;
 			}
 		}
 
-		// TODO these
+		// M4
 		for (int r = 0; r < NR; r++) {
+			double ijSum = 0, iprJprSum = 0;
 			for (int i = 0; i < N0; i++) {
 				for (int j = 0; j < N1; j++) {
-					double innerSum = 0;
-					for (int ipr = 0; ipr < N0; ipr++) {
-						double innerMostSum = 0;
-						for (int jpr = 0; jpr < N1; jpr++) {
-							innerMostSum += (double) mod1design[r][ipr][jpr];
-						}
-						innerSum += innerMostSum
-								- (double) mod1design[r][ipr][j];
-					}
-
-					coeffM4 += (double) mod0design[r][i][j]
-							* (innerSum - (double) mod1design[r][i][j]);
+					ijSum += (double) mod0design[r][i][j];
+					iprJprSum += (double) mod1design[r][i][j];
 				}
+			}
+			coeffM4 += ijSum * iprJprSum;
+		}
+
+		// M5
+		for (int i = 0; i < N0; i++) {
+			for (int j = 0; j < N1; j++) {
+				double rSum = 0, rprSum = 0;
+				for (int r = 0; r < NR; r++) {
+					rSum += (double) mod0design[r][i][j];
+					rprSum += (double) mod1design[r][i][j];
+				}
+				coeffM5 += rSum * rprSum;
 			}
 		}
 
-		// for (int r = 0; r < NR; r++) {
-		//
-		// for (int i = 0; i < N0; i++) {
-		// for (int j = 0; j < N1; j++) {
-		// double totalSum = 0;
-		//
-		// for (int ipr = 0; ipr < N0; ipr++) {
-		// if (ipr != i) {
-		// for (int jpr = 0; jpr < N1; jpr++) {
-		// if (jpr != j) {
-		// totalSum += (double) mod1design[r][ipr][jpr];
-		// }
-		// }
-		// }
-		// }
-		//
-		// coeffM4 += mod0design[r][i][j] * totalSum;
-		// }
-		// }
-		//
-		// }
-
-		// This is correct!
-		for (int i = 0; i < N0; i++) {
-			for (int j = 0; j < N1; j++) {
-				double innerSum = 0;
-				for (int rpr = 0; rpr < NR; rpr++) {
-					innerSum += (double) mod1design[rpr][i][j];
-				}
+		// M6
+		for (int j = 0; j < N1; j++) {
+			double irSum = 0, iprRprSum = 0;
+			for (int i = 0; i < N0; i++) {
 				for (int r = 0; r < NR; r++) {
-					coeffM5 += (double) mod0design[r][i][j]
-							* (innerSum - (double) mod1design[r][i][j]);
+					irSum += (double) mod0design[r][i][j];
+					iprRprSum += (double) mod1design[r][i][j];
 				}
 			}
+			coeffM6 += irSum * iprRprSum;
+		}
+
+		// M7
+		for (int i = 0; i < N0; i++) {
+			double jrSum = 0, jprRprSum = 0;
+			for (int j = 0; j < N1; j++) {
+				for (int r = 0; r < NR; r++) {
+					jrSum += (double) mod0design[r][i][j];
+					jprRprSum += (double) mod1design[r][i][j];
+				}
+			}
+			coeffM7 += jrSum * jprRprSum;
 		}
 
 		// M8
-		double totalSum = 0;
-		double isum = 0;
-		for (int ipr = 0; ipr < N0; ipr++) {
-			double jsum = 0;
-			for (int jpr = 0; jpr < N1; jpr++) {
-				double rsum = 0;
-				for (int rpr = 0; rpr < NR; rpr++) {
-					rsum += (double) mod1design[rpr][ipr][jpr];
-				}
-				for (int r = 0; r < NR; r++) {
-					jsum += (rsum - (double) mod1design[r][ipr][jpr]);
-				}
-			}
-			for (int j = 0; j < N1; j++) {
-				double rToSubtract = 0;
-				for (int r = 0; r < NR; r++) {
-					rToSubtract += (double) mod1design[r][ipr][j];
-				}
-				isum += (jsum - rToSubtract);
-			}
-		}
-		for (int i = 0; i < N0; i++) {
-			double innerToSubtract = 0;
-			for (int j = 0; j < N1; j++) {
-				for (int r = 0; r < NR; r++) {
-					innerToSubtract += (double) mod1design[r][i][j];
-				}
-			}
-
-			totalSum += (isum - innerToSubtract);
-		}
+		double ijrSum = 0, iprJprRprSum = 0;
 		for (int i = 0; i < N0; i++) {
 			for (int j = 0; j < N1; j++) {
 				for (int r = 0; r < NR; r++) {
-					coeffM8 += ((double) mod0design[r][i][j] * totalSum);
+					ijrSum += (double) mod0design[r][i][j];
+					iprJprRprSum += (double) mod1design[r][i][j];
 				}
 			}
 		}
+		coeffM8 = ijrSum * iprJprRprSum;
 
-		coeffM1 = coeffM1 / (nStarM0 * nStarM1);
-		coeffM2 = coeffM2 / (nStarM0 * nStarM1);
-		coeffM3 = coeffM3 / (nStarM0 * nStarM1);
-		coeffM4 = coeffM4 / (nStarM0 * nStarM1);
-		coeffM5 = coeffM5 / (nStarM0 * nStarM1);
-		coeffM6 = coeffM6 / (nStarM0 * nStarM1);
-		coeffM7 = coeffM7 / (nStarM0 * nStarM1);
-		coeffM8 = coeffM8 / (nStarM0 * nStarM1);
-		coeffM8 -= 1.0;
+		double[] cBiased = new double[] { coeffM1, coeffM2, coeffM3, coeffM4,
+				coeffM5, coeffM6, coeffM7, coeffM8 };
+		double[][] bias2unbias = new double[][] { { 1, 0, 0, 0, 0, 0, 0, 0 },
+				{ -1, 1, 0, 0, 0, 0, 0, 0 }, { -1, 0, 1, 0, 0, 0, 0, 0 },
+				{ 1, -1, -1, 1, 0, 0, 0, 0 }, { -1, 0, 0, 0, 1, 0, 0, 0 },
+				{ 1, -1, 0, 0, -1, 1, 0, 0 }, { 1, 0, -1, 0, -1, 0, 1, 0 },
+				{ -1, 1, 1, -1, 1, -1, -1, 1 } };
 
-		c[0][0] = coeffM1;
-		c[0][1] = coeffM2;
-		c[0][2] = coeffM3;
-		c[0][3] = coeffM4;
-		c[0][4] = coeffM5;
-		c[0][5] = coeffM6;
-		c[0][6] = coeffM7;
-		c[0][7] = coeffM8;
+		double[] cUnbiased = matrix.multiply(bias2unbias, cBiased);
+		cUnbiased = matrix.scaleVector(cUnbiased, 1.0 / (nStarM0 * nStarM1));
+		cUnbiased[7]--;
+
+		c[0] = cUnbiased;
 		c[1] = c[0];
 		c[2] = c[0];
 		c[3] = c[0];
