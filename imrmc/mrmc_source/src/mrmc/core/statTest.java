@@ -73,8 +73,8 @@ public class statTest {
 		double df1 = 1, df2 = 6000;
 		double x = 4.24;
 		int j = 500;
-		double tempF = BetaDist.cdf(df1 / 2.0 + j, df2 / 2.0, 6, df1
-				* x / (df2 + df1 * x));
+		double tempF = BetaDist.cdf(df1 / 2.0 + j, df2 / 2.0, 6, df1 * x
+				/ (df2 + df1 * x));
 		System.out.println("tempf = " + tempF);
 	}
 
@@ -339,7 +339,6 @@ public class statTest {
 	}
 
 	public double ZTest(double[] var, int r, int c, double totalVar) {
-
 		double sigma = Math.sqrt(totalVar);
 		double v = NormalDist.inverseF(0, sigma, 1 - sigLevel / 2.0);
 		powerZ = 1 - NormalDist.cdf(effSize, sigma, v);

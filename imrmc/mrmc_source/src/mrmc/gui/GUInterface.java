@@ -370,11 +370,10 @@ public class GUInterface {
 				numSplitPlots, pairedReaders, pairedCases);
 
 		// TODO use versions of gen that account for study design once we have
-		// math for it and once we can input study design
+		// math for DBM, OR, MS
 		double[][] BDGcoeff = dbRecord.genBDGCoeff(newR, newN, newD, design[0],
 				design[1]);
-		// double[][] BDGcoeff = dbRecord.genBDGCoeff(newR, newN, newD);
-		double[][] BCKcoeff = dbRecord.genBCKCoeff(newR, newN, newD);
+		double[][] BCKcoeff = dbRecord.genBCKCoeff(newR, newN, newD, BDGcoeff[0]);
 		double[][] DBMcoeff = dbRecord.genDBMCoeff(newR, newN, newD);
 		double[][] ORcoeff = dbRecord.genORCoeff(newR, newN, newD);
 		double[][] MScoeff = dbRecord.genMSCoeff(newR, newN, newD);
@@ -488,7 +487,7 @@ public class GUInterface {
 				// incorrect
 				if (!tempRecord.getFullyCrossedStatus()) {
 					if (i > 0) {
-						MStable1.setValueAt("0", i, j);
+						MStable1.setValueAt("*", i, j);
 					}
 				}
 			}
@@ -507,8 +506,8 @@ public class GUInterface {
 				// incorrect
 				if (!tempRecord.getFullyCrossedStatus()) {
 					if (i > 0) {
-						DBMtable1.setValueAt("0", i, j);
-						ORtable1.setValueAt("0", i, j);
+						DBMtable1.setValueAt("*", i, j);
+						ORtable1.setValueAt("*", i, j);
 					}
 				}
 			}
@@ -853,8 +852,8 @@ public class GUInterface {
 				// incorrect
 				if (!tempRecord.getFullyCrossedStatus()) {
 					if (i > 0) {
-						DBMtable1.setValueAt("0", i, j);
-						ORtable1.setValueAt("0", i, j);
+						DBMtable1.setValueAt("*", i, j);
+						ORtable1.setValueAt("*", i, j);
 					}
 				}
 
@@ -870,7 +869,7 @@ public class GUInterface {
 				// incorrect
 				if (!tempRecord.getFullyCrossedStatus()) {
 					if (i > 0) {
-						MStable1.setValueAt("0", i, j);
+						MStable1.setValueAt("*", i, j);
 					}
 				}
 			}
@@ -1767,7 +1766,7 @@ public class GUInterface {
 			} catch (ClassCastException e) {
 				// for some reason sometimes value is a string containing
 				// char representation of its actual value, so we parse it out
-				value = Double.parseDouble((String) value);
+				//value = Double.parseDouble((String) value);
 			}
 			return super.getTableCellRendererComponent(table, value,
 					isSelected, hasFocus, row, column);

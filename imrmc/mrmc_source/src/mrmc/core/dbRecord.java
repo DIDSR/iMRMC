@@ -531,14 +531,15 @@ public class dbRecord {
 
 		if (fullyCrossed) {
 			BDGcoeff = genBDGCoeff(nReader, nNormal, nDisease);
+			BCKcoeff = genBCKCoeff(nReader, nNormal, nDisease);
 		} else {
 			BDGcoeff = genBDGCoeff(nReader, nNormal, nDisease,
 					input.getStudyDesignSeparated(currMod1),
 					input.getStudyDesignSeparated(currMod2));
+			BCKcoeff = genBCKCoeff(nReader, nNormal, nDisease, BDGcoeff[0]);
 		}
 
 		DBMcoeff = genDBMCoeff(nReader, nNormal, nDisease);
-		BCKcoeff = genBCKCoeff(nReader, nNormal, nDisease);
 		ORcoeff = genORCoeff(nReader, nNormal, nDisease);
 		MScoeff = genMSCoeff(nReader, nNormal, nDisease);
 
@@ -558,7 +559,7 @@ public class dbRecord {
 		MSbias = DBM2MS(DBMbias, nReader, nNormal, nDisease);
 	}
 
-	// To determine BDG coefficient for non-fully-crossed data
+	// To determine BDG coefficient for non-fully-crossed study design
 	public static double[][] genBDGCoeff(int NR, int N0, int N1,
 			int[][][] mod0design, int[][][] mod1design) {
 		double[][] c = new double[4][8];
@@ -572,7 +573,6 @@ public class dbRecord {
 		double coeffM6 = 0;
 		double coeffM7 = 0;
 		double coeffM8 = 0;
-
 		// M1, N*m, N*m'
 		for (int r = 0; r < NR; r++) {
 			for (int i = 0; i < N0; i++) {
@@ -583,7 +583,6 @@ public class dbRecord {
 				}
 			}
 		}
-
 		// M2
 		for (int j = 0; j < N1; j++) {
 			for (int r = 0; r < NR; r++) {
@@ -595,7 +594,6 @@ public class dbRecord {
 				coeffM2 += iSum * iprSum;
 			}
 		}
-
 		// M3
 		for (int i = 0; i < N0; i++) {
 			for (int r = 0; r < NR; r++) {
@@ -607,7 +605,6 @@ public class dbRecord {
 				coeffM3 += jSum * jprSum;
 			}
 		}
-
 		// M4
 		for (int r = 0; r < NR; r++) {
 			double ijSum = 0, iprJprSum = 0;
@@ -619,7 +616,6 @@ public class dbRecord {
 			}
 			coeffM4 += ijSum * iprJprSum;
 		}
-
 		// M5
 		for (int i = 0; i < N0; i++) {
 			for (int j = 0; j < N1; j++) {
@@ -631,7 +627,6 @@ public class dbRecord {
 				coeffM5 += rSum * rprSum;
 			}
 		}
-
 		// M6
 		for (int j = 0; j < N1; j++) {
 			double irSum = 0, iprRprSum = 0;
@@ -643,7 +638,6 @@ public class dbRecord {
 			}
 			coeffM6 += irSum * iprRprSum;
 		}
-
 		// M7
 		for (int i = 0; i < N0; i++) {
 			double jrSum = 0, jprRprSum = 0;
@@ -655,7 +649,6 @@ public class dbRecord {
 			}
 			coeffM7 += jrSum * jprRprSum;
 		}
-
 		// M8
 		double ijrSum = 0, iprJprRprSum = 0;
 		for (int i = 0; i < N0; i++) {
@@ -667,7 +660,6 @@ public class dbRecord {
 			}
 		}
 		coeffM8 = ijrSum * iprJprRprSum;
-
 		double[] cBiased = new double[] { coeffM1, coeffM2, coeffM3, coeffM4,
 				coeffM5, coeffM6, coeffM7, coeffM8 };
 		double[][] bias2unbias = new double[][] { { 1, 0, 0, 0, 0, 0, 0, 0 },
@@ -679,7 +671,6 @@ public class dbRecord {
 		double[] cUnbiased = matrix.multiply(bias2unbias, cBiased);
 		cUnbiased = matrix.scaleVector(cUnbiased, 1.0 / (nStarM0 * nStarM1));
 		cUnbiased[7]--;
-
 		c[0] = cUnbiased;
 		c[1] = c[0];
 		c[2] = c[0];
@@ -706,17 +697,22 @@ public class dbRecord {
 		return c;
 	}
 
-	// TODO complete this
-	public static double[][] genBCKCoeff(int NR, int N0, int N1, int m) {
-		double[][] c = new double[4][7];
-		int[][] c2ca = new int[][] { { 1, 0, 1, 0, 1, 0, 1, 0 },
-				{ 1, 1, 0, 0, 1, 1, 0, 0 }, { 1, 0, 0, 0, 1, 0, 0, 0 },
-				{ 1, 1, 1, 1, 0, 0, 0, 0 }, { 1, 0, 1, 0, 0, 0, 0, 0 },
-				{ 1, 1, 0, 0, 0, 0, 0, 0 }, { 1, 0, 0, 0, 0, 0, 0, 0 } };
+	// Determines BCK coefficients for non-fully-crossed data
+	public static double[][] genBCKCoeff(int NR, int N0, int N1, double[] c) {
+		double[][] c2ca = new double[][] {
+				{ 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0 },
+				{ 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0 },
+				{ 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0 },
+				{ 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0 },
+				{ 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+				{ 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+				{ 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
 
-		return c;
+		double[] cAlpha = matrix.multiply(c2ca, c);
+		return new double[][] { cAlpha, cAlpha, cAlpha, cAlpha };
 	}
 
+	// Determines BCK coefficients for fully-crossed data
 	public static double[][] genBCKCoeff(int NR, int N0, int N1) {
 		double[][] c = new double[4][7];
 		c[0][0] = 1.0 / N0;
@@ -733,6 +729,7 @@ public class dbRecord {
 		return c;
 	}
 
+	// TODO what should be done about DBM for non-fully-crossed?
 	public static double[][] genDBMCoeff(int NR, int N0, int N1) {
 		double[][] c = new double[4][6];
 		/*
