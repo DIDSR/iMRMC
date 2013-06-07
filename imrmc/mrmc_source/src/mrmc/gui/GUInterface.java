@@ -44,6 +44,7 @@ import java.lang.Math;
 
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.*;
+
 import java.text.DecimalFormat;
 import mrmc.chart.BarGraph;
 import mrmc.chart.StudyDesignPlot;
@@ -51,6 +52,7 @@ import mrmc.chart.ROCCurvePlot;
 import mrmc.core.MRMC;
 import mrmc.core.dbRecord;
 import mrmc.core.inputFile;
+import mrmc.core.matrix;
 import mrmc.core.mrmcDB;
 import mrmc.core.statTest;
 
@@ -373,7 +375,8 @@ public class GUInterface {
 		// math for DBM, OR, MS
 		double[][] BDGcoeff = dbRecord.genBDGCoeff(newR, newN, newD, design[0],
 				design[1]);
-		double[][] BCKcoeff = dbRecord.genBCKCoeff(newR, newN, newD, BDGcoeff[0]);
+		double[][] BCKcoeff = dbRecord.genBCKCoeff(newR, newN, newD,
+				BDGcoeff[0]);
 		double[][] DBMcoeff = dbRecord.genDBMCoeff(newR, newN, newD);
 		double[][] ORcoeff = dbRecord.genORCoeff(newR, newN, newD);
 		double[][] MScoeff = dbRecord.genMSCoeff(newR, newN, newD);
@@ -458,6 +461,8 @@ public class GUInterface {
 		double DBMv = 0;
 		double ORv = 0;
 		double MSv = 0;
+
+		matrix.printMatrix(BDGdata1);
 
 		for (i = 0; i < 3; i++) {
 			for (j = 0; j < 8; j++) {
@@ -552,6 +557,7 @@ public class GUInterface {
 			formatter2 = new DecimalFormat("0.00");
 			output = formatter2.format(stat.getHillisPower());
 			HillisPower.setText("      Power(Hillis 2011) = " + output);
+			// TODO zpower is undefined when total variance (BDGv) is <= 0
 			output = formatter2.format(stat.getZPower());
 			ZPower.setText("  Power(Z test)= " + output);
 			output = formatter1.format(stat.getDelta());
@@ -820,7 +826,27 @@ public class GUInterface {
 		double DBMv = 0;
 		double ORv = 0;
 		double MSv = 0;
-		for (i = 0; i < 3; i++) {
+
+		int numRows = 3;
+		// TODO make sure correct rows are being added and removed
+		if (selectedMod == 3 && BDGtable1.getRowCount() == 3) {
+			((DefaultTableModel) BDGtable1.getModel()).addRow(new Number[] { 0,
+					0, 0, 0, 0, 0, 0, 0 });
+			((DefaultTableModel) BDGtable1.getModel()).addRow(new Number[] { 0,
+					0, 0, 0, 0, 0, 0, 0 });
+			((DefaultTableModel) BDGtable1.getModel()).addRow(new Number[] { 0,
+					0, 0, 0, 0, 0, 0, 0 });
+			((DefaultTableModel) BDGtable1.getModel()).addRow(new Number[] { 0,
+					0, 0, 0, 0, 0, 0, 0 });
+			numRows = 7;
+		} else if (selectedMod != 3 && BDGtable1.getRowCount() == 7) {
+			((DefaultTableModel) BDGtable1.getModel()).removeRow(0);
+			((DefaultTableModel) BDGtable1.getModel()).removeRow(1);
+			((DefaultTableModel) BDGtable1.getModel()).removeRow(2);
+			((DefaultTableModel) BDGtable1.getModel()).removeRow(3);
+			numRows = 3;
+		}
+		for (i = 0; i < numRows; i++) {
 			for (j = 0; j < 8; j++) {
 				BDGtable1.setValueAt(BDGdata1[i][j], i, j);
 				BDGtable1.getColumnModel().getColumn(j)
@@ -829,50 +855,50 @@ public class GUInterface {
 					BDGv = BDGv + BDGdata1[i][j];
 				}
 			}
-			for (j = 0; j < 7; j++) {
-				BCKtable1.setValueAt(BCKdata1[i][j], i, j);
-				BCKtable1.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-				if (i == 2) {
-					BCKv = BCKv + BCKdata1[i][j];
-				}
-			}
-			for (j = 0; j < 6; j++) {
-				DBMtable1.setValueAt(DBMdata1[i][j], i, j);
-				ORtable1.setValueAt(ORdata1[i][j], i, j);
-				DBMtable1.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-				ORtable1.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-				if (i == 2) {
-					DBMv = DBMv + DBMdata1[i][j];
-					ORv = ORv + ORdata1[i][j];
-				}
-				// if study is not fully crossed, DBM, OR coeff calculation is
-				// incorrect
-				if (!tempRecord.getFullyCrossedStatus()) {
-					if (i > 0) {
-						DBMtable1.setValueAt("*", i, j);
-						ORtable1.setValueAt("*", i, j);
-					}
-				}
-
-			}
-			for (j = 0; j < 6; j++) {
-				MStable1.setValueAt(MSdata1[i][j], i, j);
-				MStable1.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-				if (i == 2) {
-					MSv = MSv + MSdata1[i][j];
-				}
-				// if study is not fully crossed, MS coeff calculation is
-				// incorrect
-				if (!tempRecord.getFullyCrossedStatus()) {
-					if (i > 0) {
-						MStable1.setValueAt("*", i, j);
-					}
-				}
-			}
+			// for (j = 0; j < 7; j++) {
+			// BCKtable1.setValueAt(BCKdata1[i][j], i, j);
+			// BCKtable1.getColumnModel().getColumn(j)
+			// .setCellRenderer(new DecimalFormatRenderer());
+			// if (i == 2) {
+			// BCKv = BCKv + BCKdata1[i][j];
+			// }
+			// }
+			// for (j = 0; j < 6; j++) {
+			// DBMtable1.setValueAt(DBMdata1[i][j], i, j);
+			// ORtable1.setValueAt(ORdata1[i][j], i, j);
+			// DBMtable1.getColumnModel().getColumn(j)
+			// .setCellRenderer(new DecimalFormatRenderer());
+			// ORtable1.getColumnModel().getColumn(j)
+			// .setCellRenderer(new DecimalFormatRenderer());
+			// if (i == 2) {
+			// DBMv = DBMv + DBMdata1[i][j];
+			// ORv = ORv + ORdata1[i][j];
+			// }
+			// // if study is not fully crossed, DBM, OR coeff calculation is
+			// // incorrect
+			// if (!tempRecord.getFullyCrossedStatus()) {
+			// if (i > 0) {
+			// DBMtable1.setValueAt("*", i, j);
+			// ORtable1.setValueAt("*", i, j);
+			// }
+			// }
+			//
+			// }
+			// for (j = 0; j < 6; j++) {
+			// MStable1.setValueAt(MSdata1[i][j], i, j);
+			// MStable1.getColumnModel().getColumn(j)
+			// .setCellRenderer(new DecimalFormatRenderer());
+			// if (i == 2) {
+			// MSv = MSv + MSdata1[i][j];
+			// }
+			// // if study is not fully crossed, MS coeff calculation is
+			// // incorrect
+			// if (!tempRecord.getFullyCrossedStatus()) {
+			// if (i > 0) {
+			// MStable1.setValueAt("*", i, j);
+			// }
+			// }
+			// }
 		}
 		resetTab2();
 		DecimalFormat formatter = new DecimalFormat("0.000");
@@ -1077,7 +1103,7 @@ public class GUInterface {
 		panelBDG1.add(scroll);
 		int height = BDGtable1.getRowHeight();
 		BDGtable1.setPreferredScrollableViewportSize(new Dimension(650,
-				height * 4));
+				height * 7));
 		BDGtable1.setFillsViewportHeight(true);
 		BDGvar = new JLabel("sqrt(Var)=0.00");
 		panelBDG1.add(BDGvar);
@@ -1766,7 +1792,7 @@ public class GUInterface {
 			} catch (ClassCastException e) {
 				// for some reason sometimes value is a string containing
 				// char representation of its actual value, so we parse it out
-				//value = Double.parseDouble((String) value);
+				// value = Double.parseDouble((String) value);
 			}
 			return super.getTableCellRendererComponent(table, value,
 					isSelected, hasFocus, row, column);

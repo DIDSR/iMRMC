@@ -202,12 +202,30 @@ public class dbRecord {
 		return c;
 	}
 
-	public static double[][] getBDGTab(int i, double[][] BDGtemp,
+	public static double[][] getBDGTab(int selectedMod, double[][] BDGtemp,
 			double[][] BDGc) {
-		double[][] BDGTab1 = new double[3][8];
-		BDGTab1[0] = BDGtemp[i];
-		BDGTab1[1] = BDGc[i];
-		BDGTab1[2] = matrix.dotProduct(BDGTab1[0], BDGTab1[1]);
+		double[][] BDGTab1 = null;
+		if (selectedMod == 3) {
+			// TODO some of these covariance calculations might be incorrect?
+			// test against normal version
+			BDGTab1 = new double[7][8];
+			BDGTab1[0] = BDGtemp[0];
+			BDGTab1[1] = BDGc[0];
+			BDGTab1[2] = BDGtemp[1];
+			BDGTab1[3] = BDGc[1];
+			BDGTab1[4] = BDGtemp[3];
+			BDGTab1[5] = matrix.scaleVector(BDGc[3], 2);
+			for (int i = 0; i < 8; i++) {
+				BDGTab1[6][i] = (BDGTab1[0][i] * BDGTab1[1][i])
+						+ (BDGTab1[2][i] * BDGTab1[3][i])
+						- (BDGTab1[4][i] * BDGTab1[5][i]);
+			}
+		} else {
+			BDGTab1 = new double[3][8];
+			BDGTab1[0] = BDGtemp[selectedMod];
+			BDGTab1[1] = BDGc[selectedMod];
+			BDGTab1[2] = matrix.dotProduct(BDGTab1[0], BDGTab1[1]);
+		}
 		return BDGTab1;
 	}
 
