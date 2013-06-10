@@ -37,6 +37,7 @@
 package mrmc.gui;
 
 import javax.swing.*;
+
 import java.awt.event.*;
 import java.awt.*;
 import java.io.*;
@@ -175,7 +176,7 @@ public class GUInterface {
 
 	/* ****************************** reset************************ */
 	public void resetTab2() {
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 7; i++) {
 			for (int j = 0; j < 8; j++) {
 				BDGtable2.setValueAt(0, i, j);
 				BDGtable2.getColumnModel().getColumn(j)
@@ -186,6 +187,8 @@ public class GUInterface {
 				BCKtable2.getColumnModel().getColumn(j)
 						.setCellRenderer(new DecimalFormatRenderer());
 			}
+		}
+		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 6; j++) {
 				MStable2.setValueAt(0, i, j);
 				MStable2.getColumnModel().getColumn(j)
@@ -204,7 +207,7 @@ public class GUInterface {
 
 	public void reset() {
 		// Clear Table
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < BDGtable1.getRowCount(); i++) {
 			for (int j = 0; j < 8; j++) {
 				BDGtable1.setValueAt(0, i, j);
 				BDGtable1.getColumnModel().getColumn(j)
@@ -215,6 +218,8 @@ public class GUInterface {
 				BCKtable1.getColumnModel().getColumn(j)
 						.setCellRenderer(new DecimalFormatRenderer());
 			}
+		}
+		for (int i = 0; i < MStable1.getRowCount(); i++) {
 			for (int j = 0; j < 6; j++) {
 				MStable1.setValueAt(0, i, j);
 				MStable1.getColumnModel().getColumn(j)
@@ -359,7 +364,6 @@ public class GUInterface {
 	 * size perform statistical analysis***
 	 */
 	public void sizeTrial(int[] Parms, double[] Parms2, int[] Parms3) {
-		int i, j;
 		int newR = Parms[0];
 		int newN = Parms[1];
 		int newD = Parms[2];
@@ -371,8 +375,6 @@ public class GUInterface {
 		int[][][][] design = createSplitPlotDesign(newR, newN, newD,
 				numSplitPlots, pairedReaders, pairedCases);
 
-		// TODO use versions of gen that account for study design once we have
-		// math for DBM, OR, MS
 		double[][] BDGcoeff = dbRecord.genBDGCoeff(newR, newN, newD, design[0],
 				design[1]);
 		double[][] BCKcoeff = dbRecord.genBCKCoeff(newR, newN, newD,
@@ -464,39 +466,39 @@ public class GUInterface {
 
 		matrix.printMatrix(BDGdata1);
 
-		for (i = 0; i < 3; i++) {
-			for (j = 0; j < 8; j++) {
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 8; j++) {
 				BDGtable2.setValueAt(BDGdata1[i][j], i, j);
 				BDGtable2.getColumnModel().getColumn(j)
 						.setCellRenderer(new DecimalFormatRenderer());
-				if (i == 2) {
+				if (i == 6) {
 					BDGv = BDGv + BDGdata1[i][j];
 				}
 			}
-			for (j = 0; j < 7; j++) {
+			for (int j = 0; j < 7; j++) {
 				BCKtable2.setValueAt(BCKdata1[i][j], i, j);
 				BCKtable2.getColumnModel().getColumn(j)
 						.setCellRenderer(new DecimalFormatRenderer());
-				if (i == 2) {
+				if (i == 6) {
 					BCKv = BCKv + BCKdata1[i][j];
 				}
 			}
-			for (j = 0; j < 6; j++) {
+		}
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 6; j++) {
 				MStable2.setValueAt(MSdata1[i][j], i, j);
 				MStable2.getColumnModel().getColumn(j)
 						.setCellRenderer(new DecimalFormatRenderer());
 				if (i == 2) {
 					MSv = MSv + MSdata1[i][j];
 				}
-				// if study is not fully crossed, MS coeff calculation is
+				// if study is not fully crossed, MS calculation is
 				// incorrect
 				if (!tempRecord.getFullyCrossedStatus()) {
-					if (i > 0) {
-						MStable1.setValueAt("*", i, j);
-					}
+					MStable2.setValueAt("***", i, j);
 				}
 			}
-			for (j = 0; j < 6; j++) {
+			for (int j = 0; j < 6; j++) {
 				DBMtable2.setValueAt(DBMdata1[i][j], i, j);
 				ORtable2.setValueAt(ORdata1[i][j], i, j);
 				DBMtable2.getColumnModel().getColumn(j)
@@ -507,13 +509,11 @@ public class GUInterface {
 					DBMv = DBMv + DBMdata1[i][j];
 					ORv = ORv + ORdata1[i][j];
 				}
-				// if study is not fully crossed, DBM, OR coeff calculation is
+				// if study is not fully crossed, DBM, OR calculation is
 				// incorrect
 				if (!tempRecord.getFullyCrossedStatus()) {
-					if (i > 0) {
-						DBMtable1.setValueAt("*", i, j);
-						ORtable1.setValueAt("*", i, j);
-					}
+					DBMtable2.setValueAt("***", i, j);
+					ORtable2.setValueAt("***", i, j);
 				}
 			}
 		}
@@ -798,8 +798,6 @@ public class GUInterface {
 	}
 
 	public void setTab1() {
-		int i, j;
-
 		double[][] BDGdata1 = new double[3][8];
 		double[][] BCKdata1 = new double[3][7];
 		double[][] DBMdata1 = new double[3][6];
@@ -827,78 +825,58 @@ public class GUInterface {
 		double ORv = 0;
 		double MSv = 0;
 
-		int numRows = 3;
-		// TODO make sure correct rows are being added and removed
-		if (selectedMod == 3 && BDGtable1.getRowCount() == 3) {
-			((DefaultTableModel) BDGtable1.getModel()).addRow(new Number[] { 0,
-					0, 0, 0, 0, 0, 0, 0 });
-			((DefaultTableModel) BDGtable1.getModel()).addRow(new Number[] { 0,
-					0, 0, 0, 0, 0, 0, 0 });
-			((DefaultTableModel) BDGtable1.getModel()).addRow(new Number[] { 0,
-					0, 0, 0, 0, 0, 0, 0 });
-			((DefaultTableModel) BDGtable1.getModel()).addRow(new Number[] { 0,
-					0, 0, 0, 0, 0, 0, 0 });
-			numRows = 7;
-		} else if (selectedMod != 3 && BDGtable1.getRowCount() == 7) {
-			((DefaultTableModel) BDGtable1.getModel()).removeRow(0);
-			((DefaultTableModel) BDGtable1.getModel()).removeRow(1);
-			((DefaultTableModel) BDGtable1.getModel()).removeRow(2);
-			((DefaultTableModel) BDGtable1.getModel()).removeRow(3);
-			numRows = 3;
-		}
-		for (i = 0; i < numRows; i++) {
-			for (j = 0; j < 8; j++) {
+		// TODO rewrite table data
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 8; j++) {
 				BDGtable1.setValueAt(BDGdata1[i][j], i, j);
 				BDGtable1.getColumnModel().getColumn(j)
 						.setCellRenderer(new DecimalFormatRenderer());
-				if (i == 2) {
+				if (i == 6) {
 					BDGv = BDGv + BDGdata1[i][j];
 				}
 			}
-			// for (j = 0; j < 7; j++) {
-			// BCKtable1.setValueAt(BCKdata1[i][j], i, j);
-			// BCKtable1.getColumnModel().getColumn(j)
-			// .setCellRenderer(new DecimalFormatRenderer());
-			// if (i == 2) {
-			// BCKv = BCKv + BCKdata1[i][j];
-			// }
-			// }
-			// for (j = 0; j < 6; j++) {
-			// DBMtable1.setValueAt(DBMdata1[i][j], i, j);
-			// ORtable1.setValueAt(ORdata1[i][j], i, j);
-			// DBMtable1.getColumnModel().getColumn(j)
-			// .setCellRenderer(new DecimalFormatRenderer());
-			// ORtable1.getColumnModel().getColumn(j)
-			// .setCellRenderer(new DecimalFormatRenderer());
-			// if (i == 2) {
-			// DBMv = DBMv + DBMdata1[i][j];
-			// ORv = ORv + ORdata1[i][j];
-			// }
-			// // if study is not fully crossed, DBM, OR coeff calculation is
-			// // incorrect
-			// if (!tempRecord.getFullyCrossedStatus()) {
-			// if (i > 0) {
-			// DBMtable1.setValueAt("*", i, j);
-			// ORtable1.setValueAt("*", i, j);
-			// }
-			// }
-			//
-			// }
-			// for (j = 0; j < 6; j++) {
-			// MStable1.setValueAt(MSdata1[i][j], i, j);
-			// MStable1.getColumnModel().getColumn(j)
-			// .setCellRenderer(new DecimalFormatRenderer());
-			// if (i == 2) {
-			// MSv = MSv + MSdata1[i][j];
-			// }
-			// // if study is not fully crossed, MS coeff calculation is
-			// // incorrect
-			// if (!tempRecord.getFullyCrossedStatus()) {
-			// if (i > 0) {
-			// MStable1.setValueAt("*", i, j);
-			// }
-			// }
-			// }
+			for (int j = 0; j < 7; j++) {
+				BCKtable1.setValueAt(BCKdata1[i][j], i, j);
+				BCKtable1.getColumnModel().getColumn(j)
+						.setCellRenderer(new DecimalFormatRenderer());
+				if (i == 6) {
+					BCKv = BCKv + BCKdata1[i][j];
+				}
+			}
+		}
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 6; j++) {
+				DBMtable1.setValueAt(DBMdata1[i][j], i, j);
+				ORtable1.setValueAt(ORdata1[i][j], i, j);
+				DBMtable1.getColumnModel().getColumn(j)
+						.setCellRenderer(new DecimalFormatRenderer());
+				ORtable1.getColumnModel().getColumn(j)
+						.setCellRenderer(new DecimalFormatRenderer());
+				if (i == 2) {
+					DBMv = DBMv + DBMdata1[i][j];
+					ORv = ORv + ORdata1[i][j];
+				}
+				// if study is not fully crossed, DBM, OR calculation is
+				// incorrect
+				if (!tempRecord.getFullyCrossedStatus()) {
+					DBMtable1.setValueAt("***", i, j);
+					ORtable1.setValueAt("***", i, j);
+				}
+
+			}
+			for (int j = 0; j < 6; j++) {
+				MStable1.setValueAt(MSdata1[i][j], i, j);
+				MStable1.getColumnModel().getColumn(j)
+						.setCellRenderer(new DecimalFormatRenderer());
+				if (i == 2) {
+					MSv = MSv + MSdata1[i][j];
+				}
+				// if study is not fully crossed, MS calculation is
+				// incorrect
+				if (!tempRecord.getFullyCrossedStatus()) {
+					MStable1.setValueAt("***", i, j);
+				}
+			}
 		}
 		resetTab2();
 		DecimalFormat formatter = new DecimalFormat("0.000");
@@ -1095,28 +1073,33 @@ public class GUInterface {
 		// *************tabbed panel 1*********************************
 		// *********************************************************************
 		// Create one-shot tab
+		// TODO set new row headers
+		String[] rowNamesDiff = new String[] { "comp M0", "coeff M0",
+				"comp M1", "coeff M1", "comp M0-M1", "2*coeff M0-M1", "total" };
+		String[] rowNamesSingle = new String[] { "components", "coeff", "total" };
 		JPanel panelBDG1 = new JPanel();
 		String[] BDGnames = { "M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8" };
-		DefaultTableModel dm = new DefaultTableModel(3, 8);
+
+		DefaultTableModel dm = new DefaultTableModel(7, 8);
 		BDGtable1 = new JTable(dm);
-		JScrollPane scroll = genTable(BDGtable1, BDGnames);
-		panelBDG1.add(scroll);
+		JScrollPane BDGscroll = genTable(BDGtable1, BDGnames, rowNamesDiff);
 		int height = BDGtable1.getRowHeight();
+		panelBDG1.add(BDGscroll);
 		BDGtable1.setPreferredScrollableViewportSize(new Dimension(650,
-				height * 7));
+				height * 8));
 		BDGtable1.setFillsViewportHeight(true);
 		BDGvar = new JLabel("sqrt(Var)=0.00");
 		panelBDG1.add(BDGvar);
 		// Create BCK tab
 		JPanel panelBCK1 = new JPanel();
 		String[] BCKnames = { "N", "D", "N~D", "R", "N~R", "D~R", "R~N~D" };
-		dm = new DefaultTableModel(3, 7);
+		dm = new DefaultTableModel(7, 7);
 		BCKtable1 = new JTable(dm);
-		JScrollPane scroll2 = genTable(BCKtable1, BCKnames);
-		panelBCK1.add(scroll2);
+		JScrollPane BCKscroll = genTable(BCKtable1, BCKnames, rowNamesDiff);
+		panelBCK1.add(BCKscroll);
 		height = BCKtable1.getRowHeight();
 		BCKtable1.setPreferredScrollableViewportSize(new Dimension(650,
-				height * 4));
+				height * 8));
 		BCKtable1.setFillsViewportHeight(true);
 		BCKvar = new JLabel("sqrt(Var)=0.00");
 		panelBCK1.add(BCKvar);
@@ -1125,8 +1108,8 @@ public class GUInterface {
 		String[] DBMnames = { "R", "C", "R~C", "T~R", "T~C", "T~R~C" };
 		dm = new DefaultTableModel(3, 6);
 		DBMtable1 = new JTable(dm);
-		JScrollPane scroll3 = genTable(DBMtable1, DBMnames);
-		panelDBM1.add(scroll3);
+		JScrollPane DBMscroll = genTable(DBMtable1, DBMnames, rowNamesSingle);
+		panelDBM1.add(DBMscroll);
 		height = DBMtable1.getRowHeight();
 		DBMtable1.setPreferredScrollableViewportSize(new Dimension(650,
 				height * 4));
@@ -1138,8 +1121,8 @@ public class GUInterface {
 		String[] ORnames = { "R", "TR", "COV1", "COV2", "COV3", "ERROR" };
 		dm = new DefaultTableModel(3, 6);
 		ORtable1 = new JTable(dm);
-		JScrollPane scroll4 = genTable(ORtable1, ORnames);
-		panelOR1.add(scroll4);
+		JScrollPane ORscroll = genTable(ORtable1, ORnames, rowNamesSingle);
+		panelOR1.add(ORscroll);
 		height = ORtable1.getRowHeight();
 		ORtable1.setPreferredScrollableViewportSize(new Dimension(650,
 				height * 4));
@@ -1152,8 +1135,8 @@ public class GUInterface {
 		String[] MSnames = { "R", "C", "RC", "MR", "MC", "MRC" };
 		dm = new DefaultTableModel(3, 6);
 		MStable1 = new JTable(dm);
-		JScrollPane scroll5 = genTable(MStable1, MSnames);
-		panelMS1.add(scroll5);
+		JScrollPane MSscroll = genTable(MStable1, MSnames, rowNamesSingle);
+		panelMS1.add(MSscroll);
 		height = MStable1.getRowHeight();
 		MStable1.setPreferredScrollableViewportSize(new Dimension(650,
 				height * 4));
@@ -1173,25 +1156,25 @@ public class GUInterface {
 		// *********************************************************************
 		// Create one-shot tab
 		JPanel panelBDG2 = new JPanel();
-		dm = new DefaultTableModel(3, 8);
+		dm = new DefaultTableModel(7, 8);
 		BDGtable2 = new JTable(dm);
-		scroll2 = genTable(BDGtable2, BDGnames);
-		panelBDG2.add(scroll2);
+		BCKscroll = genTable(BDGtable2, BDGnames, rowNamesDiff);
+		panelBDG2.add(BCKscroll);
 		height = BDGtable2.getRowHeight();
 		BDGtable2.setPreferredScrollableViewportSize(new Dimension(650,
-				height * 4));
+				height * 8));
 		BDGtable2.setFillsViewportHeight(true);
 		BDGvar2 = new JLabel("sqrt(Var)=0.00");
 		panelBDG2.add(BDGvar2);
 		// Create BCK tab
 		JPanel panelBCK2 = new JPanel();
-		dm = new DefaultTableModel(3, 7);
+		dm = new DefaultTableModel(7, 7);
 		BCKtable2 = new JTable(dm);
-		scroll2 = genTable(BCKtable2, BCKnames);
-		panelBCK2.add(scroll2);
+		BCKscroll = genTable(BCKtable2, BCKnames, rowNamesDiff);
+		panelBCK2.add(BCKscroll);
 		height = BCKtable2.getRowHeight();
 		BCKtable2.setPreferredScrollableViewportSize(new Dimension(650,
-				height * 4));
+				height * 8));
 		BCKtable2.setFillsViewportHeight(true);
 		BCKvar2 = new JLabel("sqrt(Var)=0.00");
 		panelBCK2.add(BCKvar2);
@@ -1199,8 +1182,8 @@ public class GUInterface {
 		JPanel panelDBM2 = new JPanel();
 		dm = new DefaultTableModel(3, 6);
 		DBMtable2 = new JTable(dm);
-		scroll2 = genTable(DBMtable2, DBMnames);
-		panelDBM2.add(scroll2);
+		BCKscroll = genTable(DBMtable2, DBMnames, rowNamesSingle);
+		panelDBM2.add(BCKscroll);
 		height = DBMtable2.getRowHeight();
 		DBMtable2.setPreferredScrollableViewportSize(new Dimension(650,
 				height * 4));
@@ -1211,8 +1194,8 @@ public class GUInterface {
 		JPanel panelOR2 = new JPanel();
 		dm = new DefaultTableModel(3, 6);
 		ORtable2 = new JTable(dm);
-		scroll2 = genTable(ORtable2, ORnames);
-		panelOR2.add(scroll2);
+		BCKscroll = genTable(ORtable2, ORnames, rowNamesSingle);
+		panelOR2.add(BCKscroll);
 		height = ORtable2.getRowHeight();
 		ORtable2.setPreferredScrollableViewportSize(new Dimension(650,
 				height * 4));
@@ -1225,8 +1208,8 @@ public class GUInterface {
 		// String[] MSnames={"MS1","MS2","MS3","MS4","MS5","MS6"};
 		dm = new DefaultTableModel(3, 6);
 		MStable2 = new JTable(dm);
-		scroll5 = genTable(MStable2, MSnames);
-		panelMS2.add(scroll5);
+		MSscroll = genTable(MStable2, MSnames, rowNamesSingle);
+		panelMS2.add(MSscroll);
 		height = MStable2.getRowHeight();
 		MStable2.setPreferredScrollableViewportSize(new Dimension(650,
 				height * 4));
@@ -1742,31 +1725,15 @@ public class GUInterface {
 	 * generate a table, call this function to generate the table for each set
 	 * of components. This function sets the format and headers of each table
 	 */
-	public JScrollPane genTable(JTable table, String[] names) {
-		ListModel lm = new AbstractListModel() {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-			String headers[] = rowhead;
-
-			public int getSize() {
-				return headers.length;
-			}
-
-			public Object getElementAt(int index) {
-				return headers[index];
-			}
-		};
+	public JScrollPane genTable(JTable table, String[] names, String[] rowNames) {
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		for (int i = 0; i < names.length; i++)
 			table.getColumnModel().getColumn(i).setHeaderValue(names[i]);
 
-		JList rowHeader = new JList(lm);
+		JList rowHeader = new JList(rowNames);
 		rowHeader.setFixedCellWidth(80);
 
-		rowHeader.setFixedCellHeight(table.getRowHeight()
-				+ table.getRowMargin());
+		rowHeader.setFixedCellHeight(table.getRowHeight());
 		rowHeader.setCellRenderer(new RowHeaderRenderer(table));
 
 		JScrollPane scroll = new JScrollPane(table);
@@ -1775,7 +1742,7 @@ public class GUInterface {
 
 	}
 
-	/* Table cell formater renderer */
+	/* Table cell formatter renderer */
 	static class DecimalFormatRenderer extends DefaultTableCellRenderer {
 		/**
 		 * 

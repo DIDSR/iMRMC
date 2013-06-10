@@ -1243,7 +1243,19 @@ public class RMGUInterface {
 	private void updateBDGpane(JComponent BDGpane, int mod, double[][] allBDG,
 			double[][] BDGcoeff) {
 		JTable table = (JTable) BDGpane.getComponent(1);
-		double[][] BDGdata = dbRecord.getBDGTab(mod, allBDG, BDGcoeff);
+		double[][] BDGdata = new double[3][8];
+		double[][] tempBDG = dbRecord.getBDGTab(mod, allBDG, BDGcoeff);
+		if (mod == 0) {
+			BDGdata[0] = tempBDG[0];
+			BDGdata[1] = tempBDG[1];
+		} else if (mod == 1) {
+			BDGdata[0] = tempBDG[2];
+			BDGdata[1] = tempBDG[3];
+		} else if (mod == 3) {
+			BDGdata[0] = tempBDG[4];
+			BDGdata[1] = matrix.scaleVector(tempBDG[5], 0.5);
+		}
+		BDGdata[2] = tempBDG[6];
 		DecimalFormat df = new DecimalFormat("0.###E0");
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 8; j++) {
@@ -1270,7 +1282,19 @@ public class RMGUInterface {
 	private void updateBCKpane(JComponent BCKpane, int mod, double[][] allBCK,
 			double[][] BCKcoeff) {
 		JTable table = (JTable) BCKpane.getComponent(1);
-		double[][] BCKdata = dbRecord.getBCKTab(mod, allBCK, BCKcoeff);
+		double[][] BCKdata = new double[3][7];
+		double[][] tempBCK = dbRecord.getBCKTab(mod, allBCK, BCKcoeff);
+		if (mod == 0) {
+			BCKdata[0] = tempBCK[0];
+			BCKdata[1] = tempBCK[1];
+		} else if (mod == 1) {
+			BCKdata[0] = tempBCK[2];
+			BCKdata[1] = tempBCK[3];
+		} else if (mod == 3) {
+			BCKdata[0] = tempBCK[4];
+			BCKdata[1] = matrix.scaleVector(tempBCK[5], 0.5);
+		}
+		BCKdata[2] = tempBCK[6];
 		DecimalFormat df = new DecimalFormat("0.###E0");
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 7; j++) {

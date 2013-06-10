@@ -78,7 +78,7 @@ public class MRMC extends JApplet {
 		 * that case. if it is a command line application, the program enters
 		 * here
 		 */
-		run(new MRMC(), 1000, 600);
+		run(new MRMC(), 1000, 650);
 	}
 
 	public static void run(JApplet applet, int width, int height) {
