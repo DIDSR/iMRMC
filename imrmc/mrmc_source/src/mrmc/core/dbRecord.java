@@ -216,7 +216,7 @@ public class dbRecord {
 			BDGTab1[1] = BDGc[0];
 			BDGTab1[2] = BDGtemp[1];
 			BDGTab1[3] = BDGc[1];
-			BDGTab1[4] = BDGtemp[3];
+			BDGTab1[4] = BDGtemp[2]; // covariance
 			BDGTab1[5] = matrix.scaleVector(BDGc[3], 2);
 		}
 		for (int i = 0; i < 8; i++) {
@@ -241,7 +241,7 @@ public class dbRecord {
 			BCKTab1[1] = BCKc[0];
 			BCKTab1[2] = BCKtemp[1];
 			BCKTab1[3] = BCKc[1];
-			BCKTab1[4] = BCKtemp[3];
+			BCKTab1[4] = BCKtemp[2]; // covariance
 			BCKTab1[5] = matrix.scaleVector(BCKc[3], 2);
 		}
 		for (int i = 0; i < 7; i++) {

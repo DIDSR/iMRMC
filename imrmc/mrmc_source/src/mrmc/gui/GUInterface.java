@@ -399,27 +399,29 @@ public class GUInterface {
 				// "error",
 				// JOptionPane.ERROR_MESSAGE);
 				// return ;
-				BCK = tempRecord.BCKresize(tempRecord.getBCK(0), newR, newN,
-						newD);
-				DBM = tempRecord.DBMresize(tempRecord.getDBM(0), newR, newN,
-						newD);
+				BCK = tempRecord.BCKresize(tempRecord.getBCK(useBiasM), newR,
+						newN, newD);
+				DBM = tempRecord.DBMresize(tempRecord.getDBM(useBiasM), newR,
+						newN, newD);
 				OR = dbRecord.DBM2OR(0, DBM, newR, newN, newD);
 				MS = dbRecord.DBM2MS(DBM, newR, newN, newD);
 			} else if (MC.getSelectedComp() == 2) // DBM input is used
 			{
-				DBM = tempRecord.DBMresize(tempRecord.getDBM(0), newR, newN,
-						newD);
+				DBM = tempRecord.DBMresize(tempRecord.getDBM(useBiasM), newR,
+						newN, newD);
 				OR = dbRecord.DBM2OR(0, DBM, newR, newN, newD);
 				MS = dbRecord.DBM2MS(DBM, newR, newN, newD);
 			} else if (MC.getSelectedComp() == 3) // OR input is used
 			{
-				DBM = dbRecord.DBM2OR(1, tempRecord.getOR(0), newR, newN, newD);
+				DBM = dbRecord.DBM2OR(1, tempRecord.getOR(useBiasM), newR,
+						newN, newD);
 				DBM = tempRecord.DBMresize(DBM, newR, newN, newD);
 				OR = dbRecord.DBM2OR(0, DBM, newR, newN, newD);
 				MS = dbRecord.DBM2MS(DBM, newR, newN, newD);
 			} else if (MC.getSelectedComp() == 4) // MS input is used
 			{
-				DBM = dbRecord.DBM2OR(1, tempRecord.getOR(0), newR, newN, newD);
+				DBM = dbRecord.DBM2OR(1, tempRecord.getOR(useBiasM), newR,
+						newN, newD);
 				DBM = tempRecord.DBMresize(DBM, newR, newN, newD);
 				MS = dbRecord.DBM2MS(DBM, newR, newN, newD);
 			}
@@ -463,8 +465,6 @@ public class GUInterface {
 		double DBMv = 0;
 		double ORv = 0;
 		double MSv = 0;
-
-		matrix.printMatrix(BDGdata1);
 
 		for (int i = 0; i < 7; i++) {
 			for (int j = 0; j < 8; j++) {
@@ -550,45 +550,22 @@ public class GUInterface {
 			var[1] = DBM[3][4];
 			var[2] = DBM[3][5];
 		}
-		if (selectedMod == 0 || selectedMod == 1) {
-			statTest stat = new statTest(var, OR[selectedMod], newR, newN
-					+ newD, sig, eff, BDGv);
-			formatter1 = new DecimalFormat("0.000E0");
-			formatter2 = new DecimalFormat("0.00");
-			output = formatter2.format(stat.getHillisPower());
-			HillisPower.setText("      Power(Hillis 2011) = " + output);
-			// TODO zpower is undefined when total variance (BDGv) is <= 0
-			output = formatter2.format(stat.getZPower());
-			ZPower.setText("  Power(Z test)= " + output);
-			output = formatter1.format(stat.getDelta());
-			Delta.setText("  Delta= " + output);
-			output = formatter2.format(stat.getDDF());
-			sizedDFHillis.setText("  df(Hillis 2008)= " + output);
-			output = formatter2.format(stat.getCVF());
-			CVF.setText("  CVF= " + output);
-		} else {
-			HillisPower.setText("      Power(Hillis 2011) = ");
-			ZPower.setText("  Power(Z test)= ");
-			Delta.setText("  Delta= ");
-			sizedDFHillis.setText("  df(Hillis 2008)= ");
-			CVF.setText("  CVF= ");
-		}
-		if (selectedMod == 3) {
-			int[] oldParms = tempRecord.getParmInt();
-			double[][] oldOR = tempRecord.getOR(useBiasM);
-			// double power2011 = stat.FTest2011(oldOR[selectedMod],
-			// oldParms[0], oldParms[1]+oldParms[2], newR, newN+newD, sig, eff);
-			// System.out.println("Print POwer 2011="+power2011);
-		}
-		// output = formatter.format(stat2.getDOF());
-		// df.setText("  df= "+output);
-		// output = formatter.format(stat2.gettStat());
-		// tStat.setText("  tStat= "+output);
-		// output = formatter.format(stat2.getpValF());
-		// pVal.setText("  p-Value= "+output);
-		// output = formatter.format(stat2.getciTop());
-		// String output2 = formatter.format(stat2.getciBot());
-		// confInt.setText("Conf. Int.=("+output2+", "+output+")");
+
+		statTest stat = new statTest(var, OR[selectedMod], newR, newN + newD,
+				sig, eff, BDGv);
+		formatter1 = new DecimalFormat("0.000E0");
+		formatter2 = new DecimalFormat("0.00");
+		output = formatter2.format(stat.getHillisPower());
+		HillisPower.setText("      Power(Hillis 2011) = " + output);
+		// TODO zpower is undefined when total variance (BDGv) is <= 0
+		output = formatter2.format(stat.getZPower());
+		ZPower.setText("  Power(Z test)= " + output);
+		output = formatter1.format(stat.getDelta());
+		Delta.setText("  Delta= " + output);
+		output = formatter2.format(stat.getDDF());
+		sizedDFHillis.setText("  df(Hillis 2008)= " + output);
+		output = formatter2.format(stat.getCVF());
+		CVF.setText("  CVF= " + output);
 
 		if (useBiasM == 1) {
 			tabbedPane2.setTitleAt(0, "BDG**");
@@ -1079,7 +1056,8 @@ public class GUInterface {
 		// Create one-shot tab
 		// TODO set new row headers
 		String[] rowNamesDiff = new String[] { "comp M0", "coeff M0",
-				"comp M1", "coeff M1", "comp M0-M1", "2*coeff M0-M1", "total" };
+				"comp M1", "coeff M1", "product M0,M1", "2*coeff M0-M1",
+				"total" };
 		String[] rowNamesSingle = new String[] { "components", "coeff", "total" };
 		JPanel panelBDG1 = new JPanel();
 		String[] BDGnames = { "M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8" };
