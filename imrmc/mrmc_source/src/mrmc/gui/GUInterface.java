@@ -758,10 +758,12 @@ public class GUInterface {
 		tabbedPane1.setEnabledAt(1, false);
 		tabbedPane1.setEnabledAt(2, false);
 		tabbedPane1.setEnabledAt(3, false);
+		tabbedPane1.setEnabledAt(4, false);
 		tabbedPane2.setEnabledAt(0, false);
 		tabbedPane2.setEnabledAt(1, false);
 		tabbedPane2.setEnabledAt(2, false);
 		tabbedPane2.setEnabledAt(3, false);
+		tabbedPane2.setEnabledAt(4, false);
 	}
 
 	public void enableTabs() {
@@ -769,10 +771,12 @@ public class GUInterface {
 		tabbedPane1.setEnabledAt(1, true);
 		tabbedPane1.setEnabledAt(2, true);
 		tabbedPane1.setEnabledAt(3, true);
+		tabbedPane1.setEnabledAt(4, true);
 		tabbedPane2.setEnabledAt(0, true);
 		tabbedPane2.setEnabledAt(1, true);
 		tabbedPane2.setEnabledAt(2, true);
 		tabbedPane2.setEnabledAt(3, true);
+		tabbedPane2.setEnabledAt(4, true);
 		tabbedPane2.setSelectedIndex(0);
 
 	}
@@ -1558,7 +1562,16 @@ public class GUInterface {
 					JOptionPane.showMessageDialog(lst.getFrame(),
 							"The study is not fully crossed", "Warning",
 							JOptionPane.WARNING_MESSAGE);
+					tabbedPane1.setEnabledAt(2, false);
+					tabbedPane1.setEnabledAt(3, false);
+					tabbedPane1.setEnabledAt(4, false);
+
+				} else {
+					tabbedPane1.setEnabledAt(2, true);
+					tabbedPane1.setEnabledAt(3, true);
+					tabbedPane1.setEnabledAt(4, true);
 				}
+
 				currMod1 = -1;
 				currMod2 = -1;
 				MS2.updateModPanel();
@@ -1673,14 +1686,14 @@ public class GUInterface {
 	public int checkNegative() {
 		hasNegative = 0;
 
-		if (currMod1 == -1 && currMod2 == -1) {
-			JFrame frame = lst.getFrame();
-			JOptionPane.showMessageDialog(frame,
-					"You must select at least one modality", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return 0;
-		}
 		if (selectedInput == 1) {
+			if (currMod1 == -1 && currMod2 == -1) {
+				JFrame frame = lst.getFrame();
+				JOptionPane.showMessageDialog(frame,
+						"You must select at least one modality", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				return 0;
+			}
 			System.out.println("test" + "input" + selectedInput);
 			String name = pilotFile.getText();
 			System.out.println("name=" + name);
