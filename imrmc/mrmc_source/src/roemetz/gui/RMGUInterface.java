@@ -1237,12 +1237,14 @@ public class RMGUInterface {
 		BDGpane.setLayout(new BorderLayout());
 		BDGpane.add(table.getTableHeader(), BorderLayout.PAGE_START);
 		BDGpane.add(table);
+		BDGpane.add(new JLabel("sqrt(Var) = "), BorderLayout.EAST);
 		return BDGpane;
 	}
 
 	private void updateBDGpane(JComponent BDGpane, int mod, double[][] allBDG,
 			double[][] BDGcoeff) {
 		JTable table = (JTable) BDGpane.getComponent(1);
+		JLabel varLabel = (JLabel) BDGpane.getComponent(2);
 		double[][] BDGdata = new double[3][8];
 		double[][] tempBDG = dbRecord.getBDGTab(mod, allBDG, BDGcoeff);
 		if (mod == 0) {
@@ -1256,12 +1258,16 @@ public class RMGUInterface {
 			BDGdata[1] = matrix.scaleVector(tempBDG[5], 0.5);
 		}
 		BDGdata[2] = tempBDG[6];
-		DecimalFormat df = new DecimalFormat("0.###E0");
+		double currVar = matrix.total(tempBDG[6]);
+		DecimalFormat df1 = new DecimalFormat("0.###E0");
+		DecimalFormat df2 = new DecimalFormat("0.000");
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 8; j++) {
-				table.setValueAt(df.format(BDGdata[i][j]), i, j + 1);
+				table.setValueAt(df1.format(BDGdata[i][j]), i, j + 1);
 			}
 		}
+		String output = df2.format(Math.sqrt(currVar));
+		varLabel.setText("sqrt(Var) = " + output);
 	}
 
 	private JComponent makeBCKpane() {
@@ -1276,12 +1282,14 @@ public class RMGUInterface {
 		BCKpane.setLayout(new BorderLayout());
 		BCKpane.add(table.getTableHeader(), BorderLayout.PAGE_START);
 		BCKpane.add(table);
+		BCKpane.add(new JLabel("sqrt(Var) = "), BorderLayout.EAST);
 		return BCKpane;
 	}
 
 	private void updateBCKpane(JComponent BCKpane, int mod, double[][] allBCK,
 			double[][] BCKcoeff) {
 		JTable table = (JTable) BCKpane.getComponent(1);
+		JLabel varLabel = (JLabel) BCKpane.getComponent(2);
 		double[][] BCKdata = new double[3][7];
 		double[][] tempBCK = dbRecord.getBCKTab(mod, allBCK, BCKcoeff);
 		if (mod == 0) {
@@ -1295,12 +1303,16 @@ public class RMGUInterface {
 			BCKdata[1] = matrix.scaleVector(tempBCK[5], 0.5);
 		}
 		BCKdata[2] = tempBCK[6];
-		DecimalFormat df = new DecimalFormat("0.###E0");
+		double currVar = matrix.total(tempBCK[6]);
+		DecimalFormat df1 = new DecimalFormat("0.###E0");
+		DecimalFormat df2 = new DecimalFormat("0.000");
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 7; j++) {
-				table.setValueAt(df.format(BCKdata[i][j]), i, j + 1);
+				table.setValueAt(df1.format(BCKdata[i][j]), i, j + 1);
 			}
 		}
+		String output = df2.format(Math.sqrt(currVar));
+		varLabel.setText("sqrt(Var) = " + output);
 	}
 
 	private JComponent makeDBMpane() {
@@ -1314,19 +1326,25 @@ public class RMGUInterface {
 		DBMpane.setLayout(new BorderLayout());
 		DBMpane.add(table.getTableHeader(), BorderLayout.PAGE_START);
 		DBMpane.add(table);
+		DBMpane.add(new JLabel("sqrt(Var) = "), BorderLayout.EAST);
 		return DBMpane;
 	}
 
 	private void updateDBMpane(JComponent DBMpane, int mod, double[][] allDBM,
 			double[][] DBMcoeff) {
 		JTable table = (JTable) DBMpane.getComponent(1);
+		JLabel varLabel = (JLabel) DBMpane.getComponent(2);
 		double[][] DBMdata = dbRecord.getDBMTab(mod, allDBM, DBMcoeff);
-		DecimalFormat df = new DecimalFormat("0.###E0");
+		DecimalFormat df1 = new DecimalFormat("0.###E0");
+		DecimalFormat df2 = new DecimalFormat("0.000");
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 6; j++) {
-				table.setValueAt(df.format(DBMdata[i][j]), i, j + 1);
+				table.setValueAt(df1.format(DBMdata[i][j]), i, j + 1);
 			}
 		}
+		double currVar = matrix.total(DBMdata[2]);
+		String output = df2.format(Math.sqrt(currVar));
+		varLabel.setText("sqrt(Var) = " + output);
 	}
 
 	private JComponent makeORpane() {
@@ -1340,19 +1358,25 @@ public class RMGUInterface {
 		ORpane.setLayout(new BorderLayout());
 		ORpane.add(table.getTableHeader(), BorderLayout.PAGE_START);
 		ORpane.add(table);
+		ORpane.add(new JLabel("sqrt(Var) = "), BorderLayout.EAST);
 		return ORpane;
 	}
 
 	private void updateORpane(JComponent ORpane, int mod, double[][] allOR,
 			double[][] ORcoeff) {
 		JTable table = (JTable) ORpane.getComponent(1);
+		JLabel varLabel = (JLabel) ORpane.getComponent(2);
 		double[][] ORdata = dbRecord.getORTab(mod, allOR, ORcoeff);
 		DecimalFormat df = new DecimalFormat("0.###E0");
+		DecimalFormat df2 = new DecimalFormat("0.000");
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 6; j++) {
 				table.setValueAt(df.format(ORdata[i][j]), i, j + 1);
 			}
 		}
+		double currVar = matrix.total(ORdata[2]);
+		String output = df2.format(Math.sqrt(currVar));
+		varLabel.setText("sqrt(Var) = " + output);
 	}
 
 	private JComponent makeMSpane() {
@@ -1366,18 +1390,24 @@ public class RMGUInterface {
 		MSpane.setLayout(new BorderLayout());
 		MSpane.add(table.getTableHeader(), BorderLayout.PAGE_START);
 		MSpane.add(table);
+		MSpane.add(new JLabel("sqrt(Var) = "), BorderLayout.EAST);
 		return MSpane;
 	}
 
 	private void updateMSpane(JComponent MSpane, int mod, double[][] allMS,
 			double[][] MScoeff) {
 		JTable table = (JTable) MSpane.getComponent(1);
+		JLabel varLabel = (JLabel) MSpane.getComponent(2);
 		double[][] MSdata = dbRecord.getMSTab(mod, allMS, MScoeff);
 		DecimalFormat df = new DecimalFormat("0.###E0");
+		DecimalFormat df2 = new DecimalFormat("0.000");
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 6; j++) {
 				table.setValueAt(df.format(MSdata[i][j]), i, j + 1);
 			}
 		}
+		double currVar = matrix.total(MSdata[2]);
+		String output = df2.format(Math.sqrt(currVar));
+		varLabel.setText("sqrt(Var) = " + output);
 	}
 }

@@ -806,7 +806,6 @@ public class GUInterface {
 		double ORv = 0;
 		double MSv = 0;
 
-		// TODO rewrite table data
 		for (int i = 0; i < 7; i++) {
 			for (int j = 0; j < 8; j++) {
 				BDGtable1.setValueAt(BDGdata1[i][j], i, j);
@@ -1054,7 +1053,6 @@ public class GUInterface {
 		// *************tabbed panel 1*********************************
 		// *********************************************************************
 		// Create one-shot tab
-		// TODO set new row headers
 		String[] rowNamesDiff = new String[] { "comp M0", "coeff M0",
 				"comp M1", "coeff M1", "product M0,M1", "2*coeff M0-M1",
 				"total" };
