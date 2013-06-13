@@ -134,6 +134,7 @@ public class GUInterface {
 	PilotModSelect MS2;
 	ManualCard MC;
 	JTabbedPane tabbedPane1, tabbedPane2;
+	private JLabel sizedDFBDG;
 
 	public int getuseBiasM() {
 		return useBiasM;
@@ -168,6 +169,7 @@ public class GUInterface {
 		String results = MSvar2.getText();
 		results = results + "\t" + Delta.getText();
 		results = results + "\t" + sizedDFHillis.getText();
+		results = results + "\t" + sizedDFBDG.getText();
 		results = results + "\t" + CVF.getText();
 		results = results + "\t" + HillisPower.getText();
 		results = results + "\t" + ZPower.getText();
@@ -250,6 +252,7 @@ public class GUInterface {
 		ZPower.setText("");
 		Delta.setText("");
 		sizedDFHillis.setText("");
+		sizedDFBDG.setText("");
 		CVF.setText("");
 		tStat.setText("");
 		sqrtTotalVar.setText("");
@@ -331,8 +334,7 @@ public class GUInterface {
 														// different
 		{
 			statTest stat2 = new statTest(tempRecord, selectedMod, useBiasM,
-					tempRecord.getReader(), tempRecord.getNormal(),
-					tempRecord.getDisease(), 0.05, eff);
+					0.05, eff);
 			DecimalFormat formatter = new DecimalFormat("0.00");
 			// DOF
 			String output = formatter.format(stat2.getDOF());
@@ -557,13 +559,14 @@ public class GUInterface {
 		formatter2 = new DecimalFormat("0.00");
 		output = formatter2.format(stat.getHillisPower());
 		HillisPower.setText("      Power(Hillis 2011) = " + output);
-		// TODO zpower is undefined when total variance (BDGv) is <= 0
 		output = formatter2.format(stat.getZPower());
 		ZPower.setText("  Power(Z test)= " + output);
 		output = formatter1.format(stat.getDelta());
 		Delta.setText("  Delta= " + output);
 		output = formatter2.format(stat.getDDF());
 		sizedDFHillis.setText("  df(Hillis 2008)= " + output);
+		output = formatter2.format(stat.getDfBDG());
+		sizedDFBDG.setText("  df(BDG) = " + output);
 		output = formatter2.format(stat.getCVF());
 		CVF.setText("  CVF= " + output);
 
@@ -715,6 +718,7 @@ public class GUInterface {
 		Delta.setText("Delta = ");
 		CVF.setText("CVF = ");
 		sizedDFHillis.setText("df(Hillis 2008) = ");
+		sizedDFBDG.setText("df(BDG) = ");
 		if ((sel == 0) || (sel == 1)) {
 			// sigLevel.setEnabled(false);
 			// effSize.setEnabled(false);
@@ -1078,7 +1082,7 @@ public class GUInterface {
 		JScrollPane BCKscroll = genTable(BCKtable1, BCKnames, rowNamesDiff);
 		panelBCK1.add(BCKscroll);
 		height = BCKtable1.getRowHeight();
-		BCKtable1.setPreferredScrollableViewportSize(new Dimension(650,
+		BCKtable1.setPreferredScrollableViewportSize(new Dimension(575,
 				height * 8));
 		BCKtable1.setFillsViewportHeight(true);
 		BCKvar = new JLabel("sqrt(Var)=0.00");
@@ -1091,7 +1095,7 @@ public class GUInterface {
 		JScrollPane DBMscroll = genTable(DBMtable1, DBMnames, rowNamesSingle);
 		panelDBM1.add(DBMscroll);
 		height = DBMtable1.getRowHeight();
-		DBMtable1.setPreferredScrollableViewportSize(new Dimension(650,
+		DBMtable1.setPreferredScrollableViewportSize(new Dimension(500,
 				height * 4));
 		DBMtable1.setFillsViewportHeight(true);
 		DBMvar = new JLabel("sqrt(Var)=0.00");
@@ -1104,7 +1108,7 @@ public class GUInterface {
 		JScrollPane ORscroll = genTable(ORtable1, ORnames, rowNamesSingle);
 		panelOR1.add(ORscroll);
 		height = ORtable1.getRowHeight();
-		ORtable1.setPreferredScrollableViewportSize(new Dimension(650,
+		ORtable1.setPreferredScrollableViewportSize(new Dimension(500,
 				height * 4));
 		ORtable1.setFillsViewportHeight(true);
 		ORvar = new JLabel("sqrt(Var)=0.00");
@@ -1118,7 +1122,7 @@ public class GUInterface {
 		JScrollPane MSscroll = genTable(MStable1, MSnames, rowNamesSingle);
 		panelMS1.add(MSscroll);
 		height = MStable1.getRowHeight();
-		MStable1.setPreferredScrollableViewportSize(new Dimension(650,
+		MStable1.setPreferredScrollableViewportSize(new Dimension(500,
 				height * 4));
 		MStable1.setFillsViewportHeight(true);
 		MSvar = new JLabel("sqrt(Var)=0.00");
@@ -1212,6 +1216,7 @@ public class GUInterface {
 		// effSize = new JTextField ("0.5",3);
 		Delta = new JLabel("  Delta= 0.00");
 		sizedDFHillis = new JLabel("  df(Hillis 2008)= 0.00");
+		sizedDFBDG = new JLabel("  df(BDG) = 0.00");
 		CVF = new JLabel("  CVF= 0.00");
 		ZPower = new JLabel("  Power(Z test)= 0.00");
 		HillisPower = new JLabel("      Power(Hillis 2011) = 0.00");
@@ -1222,10 +1227,11 @@ public class GUInterface {
 		// panelStat11.add(sigLevel);
 		// panelStat11.add(effSizeLabel);
 		// panelStat11.add(effSize);
-		panelStat12.add(new JLabel("Sizing Results:   "));
+		panelStat12.add(new JLabel("Sizing Results (t or z):   "));
 		panelStat12.add(MSvar2);
 		panelStat12.add(Delta);
 		panelStat12.add(sizedDFHillis);
+		panelStat12.add(sizedDFBDG);
 		panelStat12.add(CVF);
 		panelStat12.add(HillisPower);
 		panelStat12.add(ZPower);

@@ -74,6 +74,8 @@ public class dbRecord {
 	int flagCompleteRecord;
 	int flagCom;
 	private boolean fullyCrossed;
+	private int[][][] mod0StudyDesign;
+	private int[][][] mod1StudyDesign;
 
 	public String getTask() {
 		return Task;
@@ -164,6 +166,14 @@ public class dbRecord {
 
 	public double[][] getORcoeff() {
 		return ORcoeff;
+	}
+
+	public int[][][] getMod0StudyDesign() {
+		return mod0StudyDesign;
+	}
+
+	public int[][][] getMod1StudyDesign() {
+		return mod1StudyDesign;
 	}
 
 	public String getAUC(int i) {
@@ -306,6 +316,18 @@ public class dbRecord {
 		nReader = Integer.valueOf(tempAUC[3]);
 		nNormal = Integer.valueOf(tempAUC[4]);
 		nDisease = Integer.valueOf(tempAUC[5]);
+		mod0StudyDesign = new int[nReader][nNormal][nDisease];
+		for (int m = 0; m < mod0StudyDesign.length; m++) {
+			for (int n = 0; n < mod0StudyDesign[m].length; n++) {
+				Arrays.fill(mod0StudyDesign[m][n], 1);
+			}
+		}
+		mod1StudyDesign = new int[nReader][nNormal][nDisease];
+		for (int m = 0; m < mod1StudyDesign.length; m++) {
+			for (int n = 0; n < mod1StudyDesign[m].length; n++) {
+				Arrays.fill(mod1StudyDesign[m][n], 1);
+			}
+		}
 
 		for (i = 0; i < desp.size(); i++) {
 			recordDesp = recordDesp + desp.get(i) + "\n";
@@ -435,10 +457,23 @@ public class dbRecord {
 		nReader = Reader;
 		nNormal = Normal;
 		nDisease = Disease;
+
 		AUC = auc;
 		flagCompleteRecord = 0;
 		flagCom = flag;
 		fullyCrossed = true;
+		mod0StudyDesign = new int[nReader][nNormal][nDisease];
+		for (int m = 0; m < mod0StudyDesign.length; m++) {
+			for (int n = 0; n < mod0StudyDesign[m].length; n++) {
+				Arrays.fill(mod0StudyDesign[m][n], 1);
+			}
+		}
+		mod1StudyDesign = new int[nReader][nNormal][nDisease];
+		for (int m = 0; m < mod1StudyDesign.length; m++) {
+			for (int n = 0; n < mod1StudyDesign[m].length; n++) {
+				Arrays.fill(mod1StudyDesign[m][n], 1);
+			}
+		}
 		switch (flag) {
 		case 0: // BDG
 			for (int i = 0; i < 4; i++) {
@@ -538,6 +573,23 @@ public class dbRecord {
 		flagCompleteRecord = 1;
 		AUC = input.getaucMod();
 		fullyCrossed = input.getFullyCrossedStatus();
+		if (fullyCrossed) {
+			mod0StudyDesign = new int[nReader][nNormal][nDisease];
+			for (int m = 0; m < mod0StudyDesign.length; m++) {
+				for (int n = 0; n < mod0StudyDesign[m].length; n++) {
+					Arrays.fill(mod0StudyDesign[m][n], 1);
+				}
+			}
+			mod1StudyDesign = new int[nReader][nNormal][nDisease];
+			for (int m = 0; m < mod1StudyDesign.length; m++) {
+				for (int n = 0; n < mod1StudyDesign[m].length; n++) {
+					Arrays.fill(mod1StudyDesign[m][n], 1);
+				}
+			}
+		} else {
+			mod0StudyDesign = input.getStudyDesignSeparated(currMod1);
+			mod1StudyDesign = input.getStudyDesignSeparated(currMod2);
+		}
 
 		String[] temp = recordDesp.split("\n");
 		// System.out.println("temp" + "0" + "  =  " + temp[0]);

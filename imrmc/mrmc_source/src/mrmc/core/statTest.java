@@ -37,7 +37,6 @@ public class statTest {
 	int PRECISION = 6;
 	double ZERO = 1E-300;
 	double powerF;
-	double powerF2011;
 	double powerZ;
 	double DOF = 0;
 	double DOF2011 = 0;
@@ -53,31 +52,6 @@ public class statTest {
 	double Delta;
 	double dfBDG;
 
-	public static void main(String[] args) {
-		// int ddf = 50;
-		// double statT = 16.84;
-		// FisherFDist fdist = new FisherFDist(1, ddf);
-		// double asdpValF = FisherFDist.cdf(1, ddf, 5, statT * statT);
-		// asdpValF = 1 - asdpValF;
-		// double Fval = fdist.inverseF(1 - 0.05);
-		// System.out.println("pVal = " + asdpValF);
-		// System.out.println("Fval = " + Fval);
-		//
-		// NormalDist ndist = new NormalDist();
-		// double asdpValF2 = NormalDist.cdf(0, 1, statT * statT);
-		// asdpValF2 = 1 - asdpValF2;
-		// double Fval2 = ndist.inverseF(1 - 0.05);
-		// System.out.println("pVal2 = " + asdpValF2);
-		// System.out.println("fVal2 = " + Fval2);
-
-		double df1 = 1, df2 = 6000;
-		double x = 4.24;
-		int j = 500;
-		double tempF = BetaDist.cdf(df1 / 2.0 + j, df2 / 2.0, 6, df1 * x
-				/ (df2 + df1 * x));
-		System.out.println("tempf = " + tempF);
-	}
-
 	public double getciBot() {
 		return ciBot;
 	}
@@ -89,10 +63,6 @@ public class statTest {
 	public double getHillisPower() {
 		return powerF;
 	}
-
-	public double getHillis2011() {
-		return powerF2011;
-	};
 
 	public double getZPower() {
 		return powerZ;
@@ -137,14 +107,25 @@ public class statTest {
 		totalVar = totalVar0;
 		powerF = FTest(var, r, c, totalVar);
 		powerZ = ZTest(var, r, c, totalVar);
+		dfBDG = calcDFBDG();
 	}
 
-	public statTest(dbRecord curRecord, int selectedMod, int useBiasM, int N2,
-			int N0, int N1, double sig, double eff) {
+	public statTest(dbRecord curRecord, int selectedMod, int useBiasM,
+			double sig, double eff) {
 		double mst = 0, denom = 0, statT = 0, ddf = 0;
 		double[] aucs = { 0, 0 };
 		double[][] MS = curRecord.getMS(useBiasM);
-		double[][] coeff = dbRecord.genBDGCoeff(N2, N0, N1);
+		double[][] coeff = new double[4][8];
+		if (curRecord.getFullyCrossedStatus()) {
+			coeff = dbRecord.genBDGCoeff(curRecord.getReader(),
+					curRecord.getNormal(), curRecord.getDisease());
+		} else {
+			coeff = dbRecord.genBDGCoeff(curRecord.getReader(),
+					curRecord.getNormal(), curRecord.getDisease(),
+					curRecord.getMod0StudyDesign(),
+					curRecord.getMod1StudyDesign());
+		}
+
 		double[][] BDG = curRecord.getBDG(useBiasM);
 
 		System.out.println("***********");
@@ -167,7 +148,7 @@ public class statTest {
 		double dnr = curRecord.getReader() * 1.0;
 		double dnc = dn0 + dn1;
 
-		double[] var = matrix.dotProduct(BDG[selectedMod], coeff[selectedMod]);
+		double[] var = dbRecord.getBDGTab(selectedMod, BDG, coeff)[6];
 		double var0 = 0;
 		for (int j = 0; j < 8; j++)
 			var0 = var0 + var[j];
@@ -175,6 +156,8 @@ public class statTest {
 		aucs[0] = curRecord.getAUCinNumber(0);
 		aucs[1] = curRecord.getAUCinNumber(1);
 		double meanCI = 0;
+		// TODO these calculations are meaningless when non-fully crossed
+		// because MS is not correct
 		if (selectedMod == 0 || selectedMod == 1) {
 			meanCI = aucs[selectedMod];
 			// mst=dnr*dnc*(aucs[selectedMod]-eff)*(aucs[selectedMod]-eff);
@@ -290,23 +273,26 @@ public class statTest {
 		Delta = effSize * effSize / totalVar;
 		System.out.println("delta=" + Delta);
 
-		// tStat=Math.sqrt(Delta);
-
 		// use normal distribution for DOF > 50 since it is close to Fisher F
 		// and fisherF fails for DOF > 2000
+		double cdftemp;
 		if (df2 >= 50) {
-			NormalDist ndist = new NormalDist();
-			CVF = ndist.inverseF(1 - sigLevel);
+			Delta = Math.sqrt(Delta);
+			CVF = NormalDist.inverseF(0, 1, (1 - sigLevel / 2.0));
+			cdftemp = NormalDist.cdf(Delta, 1, CVF);
 		} else {
 			FisherFDist fdist = new FisherFDist(1, (int) df2);
 			CVF = fdist.inverseF(1 - sigLevel);
+			cdftemp = cdfNonCentralF(1, (int) df2, Delta, CVF);
+			// Rescale Delta, CVF to correspond to t-distribution ~= normal
+			// distribution
+			Delta = Math.sqrt(Delta);
+			CVF = Math.sqrt(CVF);
 		}
-		double cdftemp = cdfNonCentralF(1, (int) df2, Delta, CVF);
+
 		powerF = 1 - cdftemp;
-		System.out.println("delta=" + Delta + " df2=" + df2 + " CVF=" + CVF);
-		// compute p-value
-		// Delta=obsDiff*obsDiff/denom;
-		// pValF = fdist.cdf(1, (int)df2, 5,Delta);
+		System.out.println("delta=" + Delta + " df2=" + df2 + " CVF=" + CVF
+				+ " powerF= " + powerF + " totalVar= " + totalVar);
 
 		return powerF;
 	}
@@ -314,7 +300,6 @@ public class statTest {
 	public double cdfNonCentralF(int df1, int df2, double delta, double x) {
 		double cdf = 0;
 		for (int j = 0; j < INFINITY; j++) {
-			// TODO this also fails for high DOF, what to do?
 			double tempF = BetaDist.cdf(df1 / 2.0 + j, df2 / 2.0, PRECISION,
 					df1 * x / (df2 + df1 * x));
 			double sfactor = 1;
@@ -330,21 +315,20 @@ public class statTest {
 		return cdf;
 	}
 
-	public int factorial(int K) {
-		int total = 1;
-		for (int i = 1; i <= K; i++) {
-			total = i * total;
-		}
-		return total;
-	}
-
 	public double ZTest(double[] var, int r, int c, double totalVar) {
 		double sigma = Math.sqrt(totalVar);
 		double v = NormalDist.inverseF(0, sigma, 1 - sigLevel / 2.0);
 		powerZ = 1 - NormalDist.cdf(effSize, sigma, v);
+		System.out.println("powerZ=" + powerZ + " effSize= " + effSize
+				+ " CVF= " + v + " totalVar= " + totalVar);
 		// pValZ = 1-centralN.cdf(0,sigma,v);
 
 		return powerZ;
+	}
+
+	private double calcDFBDG() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 	/*
 	 * public double FTest2011(double[] OR,int r, int c, int rnew, int
