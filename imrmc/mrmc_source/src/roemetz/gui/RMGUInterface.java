@@ -93,7 +93,6 @@ public class RMGUInterface {
 	private JTextField n1;
 	private JTextField nr;
 	private JTextField numExp;
-	private JTextField numSamples;
 	private JTextField seed;
 	private JDialog progDialog;
 	private JCheckBox useBias = new JCheckBox("Use Bias");
@@ -309,7 +308,7 @@ public class RMGUInterface {
 		 */
 		JPanel simExpDesc = new JPanel(new FlowLayout());
 
-		JLabel expLabel = new JLabel("Simulation Experiment:");
+		JLabel expLabel = new JLabel("Simulation Experiments:");
 		simExpDesc.add(expLabel);
 
 		/*
@@ -350,7 +349,7 @@ public class RMGUInterface {
 		 * Panel within cofvResultsPanel to describe function
 		 */
 		JPanel cofvResultsDesc = new JPanel(new FlowLayout());
-		JLabel cofvLabel = new JLabel("Estimate Components of Variance:");
+		JLabel cofvLabel = new JLabel("Calculate Components of Variance:");
 		cofvResultsDesc.add(cofvLabel);
 
 		/*
@@ -358,15 +357,9 @@ public class RMGUInterface {
 		 */
 		JPanel cofvResults = new JPanel(new FlowLayout());
 
-		numSamples = new JTextField(4);
-		numSamples.setText("256");
-		JLabel numSamplesLabel = new JLabel("# Samples: ");
-
-		JButton doGenRoeMetz = new JButton("Perform Estimation");
+		JButton doGenRoeMetz = new JButton("Perform Calculation");
 		doGenRoeMetz.addActionListener(new doGenRoeMetzBtnListner());
 
-		cofvResults.add(numSamplesLabel);
-		cofvResults.add(numSamples);
 		cofvResults.add(doGenRoeMetz);
 
 		cofvResultsPanel.add(cofvResultsDesc);
@@ -989,18 +982,19 @@ public class RMGUInterface {
 	private class EstimateCofV extends SwingWorker<double[][][], Integer> {
 		double[] u;
 		double[] var_t;
-		int n;
+		int[] n;
 
-		public EstimateCofV(double[] u, double[] var_t, int n) {
+		public EstimateCofV(double[] u, double[] var_t, int[] n) {
 			this.u = u;
 			this.var_t = var_t;
 			this.n = n;
 		}
 
 		public double[][][] doInBackground() {
-			CofVGenRoeMetz.genRoeMetz(u, n, var_t);
+			CofVGenRoeMetz.genRoeMetz(u, var_t, n);
 			return new double[][][] { CofVGenRoeMetz.getBDGdata(),
-					CofVGenRoeMetz.getBCKdata() };
+					CofVGenRoeMetz.getBCKdata(), CofVGenRoeMetz.getDBMdata(),
+					CofVGenRoeMetz.getORdata(), CofVGenRoeMetz.getMSdata() };
 		}
 
 		protected void done() {
@@ -1010,6 +1004,7 @@ public class RMGUInterface {
 
 	class doGenRoeMetzBtnListner implements ActionListener {
 		double[][][] results;
+		int[] n;
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -1035,7 +1030,9 @@ public class RMGUInterface {
 						Double.valueOf(vC1.getText()),
 						Double.valueOf(vRC1.getText()) };
 
-				int n = Integer.valueOf(numSamples.getText());
+				n = new int[] { Integer.valueOf(n0.getText()),
+						Integer.valueOf(n1.getText()),
+						Integer.valueOf(nr.getText()) };
 
 				final EstimateCofV estTask = new EstimateCofV(u, var_t, n);
 				estTask.addPropertyChangeListener(new PropertyChangeListener() {
@@ -1076,15 +1073,30 @@ public class RMGUInterface {
 			JTabbedPane tabTables = new JTabbedPane();
 			JComponent BDGpane = makeBDGpane();
 			JComponent BCKpane = makeBCKpane();
+			JComponent DBMpane = makeDBMpane();
+			JComponent ORpane = makeORpane();
+			JComponent MSpane = makeMSpane();
 			tabTables.addTab("BDG", BDGpane);
 			tabTables.addTab("BCK", BCKpane);
+			tabTables.addTab("DBM", DBMpane);
+			tabTables.addTab("OR", ORpane);
+			tabTables.addTab("MS", MSpane);
 
 			double[][] BDG = results[0];
 			double[][] BCK = results[1];
-			double[][] BDGcoeff = new double[4][8];
-			double[][] BCKcoeff = new double[4][7];
+			double[][] DBM = results[2];
+			double[][] OR = results[3];
+			double[][] MS = results[4];
+			double[][] BDGcoeff = dbRecord.genBDGCoeff(n[2], n[0], n[1]);
+			double[][] BCKcoeff = dbRecord.genBCKCoeff(n[2], n[0], n[1]);
+			double[][] DBMcoeff = dbRecord.genDBMCoeff(n[2], n[0], n[1]);
+			double[][] MScoeff = dbRecord.genMSCoeff(n[2], n[0], n[1]);
+			double[][] ORcoeff = dbRecord.genORCoeff(n[2], n[0], n[1]);
 			updateBDGpane(BDGpane, 0, results[0], BDGcoeff);
 			updateBCKpane(BCKpane, 0, results[1], BCKcoeff);
+			updateDBMpane(DBMpane, 0, results[2], DBMcoeff);
+			updateORpane(ORpane, 0, results[3], ORcoeff);
+			updateMSpane(MSpane, 0, results[4], MScoeff);
 
 			// create AUCs label
 			DecimalFormat df = new DecimalFormat("0.###");
@@ -1111,7 +1123,7 @@ public class RMGUInterface {
 
 			// Register a listener for the radio buttons.
 			ModEstListner gListenerEst = new ModEstListner(tabTables, BDG, BCK,
-					BDGcoeff, BCKcoeff);
+					DBM, OR, MS, BDGcoeff, BCKcoeff, DBMcoeff, ORcoeff, MScoeff);
 			mod1EstButton.addActionListener(gListenerEst);
 			mod2EstButton.addActionListener(gListenerEst);
 			modDEstButton.addActionListener(gListenerEst);
@@ -1129,23 +1141,37 @@ public class RMGUInterface {
 		}
 
 		/*
-		 * radio buttons to select the type of modality when performing
-		 * simulation experiments
+		 * radio buttons to select the type of modality when performing variance
+		 * calculation
 		 */
 		class ModEstListner implements ActionListener {
 			JTabbedPane tabTables;
 			double[][] BDG;
 			double[][] BCK;
+			double[][] DBM;
+			double[][] OR;
+			double[][] MS;
 			double[][] BDGcoeff;
 			double[][] BCKcoeff;
+			double[][] DBMcoeff;
+			double[][] ORcoeff;
+			double[][] MScoeff;
 
 			public ModEstListner(JTabbedPane tabTables, double[][] BDG,
-					double[][] BCK, double[][] BDGcoeff, double[][] BCKcoeff) {
+					double[][] BCK, double[][] DBM, double[][] OR,
+					double[][] MS, double[][] BDGcoeff, double[][] BCKcoeff,
+					double[][] DBMcoeff, double[][] ORcoeff, double[][] MScoeff) {
 				this.tabTables = tabTables;
 				this.BDG = BDG;
 				this.BCK = BCK;
+				this.DBM = DBM;
+				this.OR = OR;
+				this.MS = MS;
 				this.BDGcoeff = BDGcoeff;
 				this.BCKcoeff = BCKcoeff;
+				this.DBMcoeff = DBMcoeff;
+				this.ORcoeff = ORcoeff;
+				this.MScoeff = MScoeff;
 			}
 
 			public void actionPerformed(ActionEvent e) {
@@ -1167,6 +1193,12 @@ public class RMGUInterface {
 						results[0], BDGcoeff);
 				updateBCKpane((JComponent) tabTables.getComponent(1), mod,
 						results[1], BCKcoeff);
+				updateDBMpane((JComponent) tabTables.getComponent(2), mod,
+						results[2], DBMcoeff);
+				updateORpane((JComponent) tabTables.getComponent(3), mod,
+						results[3], ORcoeff);
+				updateMSpane((JComponent) tabTables.getComponent(4), mod,
+						results[4], MScoeff);
 			}
 		}
 	}

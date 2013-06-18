@@ -34,6 +34,9 @@ public class CofVGenRoeMetz {
 	static double[][][] m;
 	private static double[][] BDG;
 	private static double[][] BCK;
+	private static double[][] DBM;
+	private static double[][] OR;
+	private static double[][] MS;
 
 	public static void main(String[] args) {
 		try {
@@ -59,8 +62,17 @@ public class CofVGenRoeMetz {
 					var_t[i] = Double.parseDouble(var_ts[i]);
 				}
 			}
-			int n = Integer.parseInt(args[2]);
-			genRoeMetz(u, n, var_t);
+			int[] n = new int[3];
+			String[] ns = args[0].substring(args[0].lastIndexOf("[") + 1,
+					args[0].indexOf("]")).split(",");
+			if (ns.length != 2) {
+				System.out.println("Expected input n to contain 3 elements");
+				return;
+			} else {
+				n = new int[] { Integer.parseInt(ns[0]),
+						Integer.parseInt(ns[1]), Integer.parseInt(ns[2]) };
+			}
+			genRoeMetz(u, var_t, n);
 			printResults();
 		} catch (NumberFormatException e) {
 			System.out.println("Incorrectly Formatted Input");
@@ -106,6 +118,18 @@ public class CofVGenRoeMetz {
 
 	public static double[][] getBCKdata() {
 		return BCK;
+	}
+
+	public static double[][] getDBMdata() {
+		return DBM;
+	}
+
+	public static double[][] getORdata() {
+		return OR;
+	}
+
+	public static double[][] getMSdata() {
+		return MS;
 	}
 
 	public static double prodMoment1(double[] u, double[] scale, int n) {
@@ -216,7 +240,7 @@ public class CofVGenRoeMetz {
 		return matrix.total(toTotal);
 	}
 
-	public static void genRoeMetz(double[] u, int n, double[] var_t) {
+	public static void genRoeMetz(double[] u, double[] var_t, int[] n) {
 		NormalDistribution gauss = new NormalDistribution();
 		if (var_t.length != 18) {
 			System.out
@@ -243,10 +267,13 @@ public class CofVGenRoeMetz {
 		double v1c = var_t[16];
 		double v1rc = var_t[17];
 
+		int n0 = n[0];
+		int n1 = n[1];
+		int nr = n[2];
+
 		// default value of n could be 256
-		if (n == 0) {
-			n = 256;
-		}
+		int numSamples = 256;
+
 		m = new double[2][2][9];
 
 		// AUC
@@ -264,7 +291,7 @@ public class CofVGenRoeMetz {
 		double[] scaleM1 = { scale1, scale20, scale21 };
 		m[0][0][1] = m[0][0][0];
 		m[1][1][1] = m[1][1][0];
-		m[1][0][1] = prodMoment1(u, scaleM1, n);
+		m[1][0][1] = prodMoment1(u, scaleM1, numSamples);
 		m[0][1][1] = m[1][0][1];
 
 		// M2
@@ -277,15 +304,17 @@ public class CofVGenRoeMetz {
 		scaleM1[0] = scale1 + scale20;
 		scaleM1[1] = scale30;
 		scaleM1[2] = scale30;
-		m[0][0][2] = prodMoment1(new double[] { u[0], u[0] }, scaleM1, n);
+		m[0][0][2] = prodMoment1(new double[] { u[0], u[0] }, scaleM1,
+				numSamples);
 
 		scaleM1[0] = scale1 + scale21;
 		scaleM1[1] = scale31;
 		scaleM1[2] = scale31;
-		m[1][1][2] = prodMoment1(new double[] { u[1], u[1] }, scaleM1, n);
+		m[1][1][2] = prodMoment1(new double[] { u[1], u[1] }, scaleM1,
+				numSamples);
 
 		double[] scaleM = { scale1, scale20, scale21, scale30, scale31 };
-		m[1][0][2] = prodMoment(new double[] { u[0], u[1] }, scaleM, n);
+		m[1][0][2] = prodMoment(new double[] { u[0], u[1] }, scaleM, numSamples);
 		m[0][1][2] = m[1][0][2];
 
 		// M3
@@ -298,19 +327,21 @@ public class CofVGenRoeMetz {
 		scaleM1[0] = scale1 + scale20;
 		scaleM1[1] = scale30;
 		scaleM1[2] = scale30;
-		m[0][0][3] = prodMoment1(new double[] { u[0], u[0] }, scaleM1, n);
+		m[0][0][3] = prodMoment1(new double[] { u[0], u[0] }, scaleM1,
+				numSamples);
 
 		scaleM1[0] = scale1 + scale21;
 		scaleM1[1] = scale31;
 		scaleM1[2] = scale31;
-		m[1][1][3] = prodMoment1(new double[] { u[1], u[1] }, scaleM1, n);
+		m[1][1][3] = prodMoment1(new double[] { u[1], u[1] }, scaleM1,
+				numSamples);
 
 		scaleM[0] = scale1;
 		scaleM[1] = scale20;
 		scaleM[2] = scale21;
 		scaleM[3] = scale30;
 		scaleM[4] = scale31;
-		m[1][0][3] = prodMoment(new double[] { u[0], u[1] }, scaleM, n);
+		m[1][0][3] = prodMoment(new double[] { u[0], u[1] }, scaleM, numSamples);
 		m[0][1][3] = m[1][0][3];
 
 		// M4
@@ -323,19 +354,21 @@ public class CofVGenRoeMetz {
 		scaleM1[0] = scale1 + scale20;
 		scaleM1[1] = scale30;
 		scaleM1[2] = scale30;
-		m[0][0][4] = prodMoment1(new double[] { u[0], u[0] }, scaleM1, n);
+		m[0][0][4] = prodMoment1(new double[] { u[0], u[0] }, scaleM1,
+				numSamples);
 
 		scaleM1[0] = scale1 + scale21;
 		scaleM1[1] = scale31;
 		scaleM1[2] = scale31;
-		m[1][1][4] = prodMoment1(new double[] { u[1], u[1] }, scaleM1, n);
+		m[1][1][4] = prodMoment1(new double[] { u[1], u[1] }, scaleM1,
+				numSamples);
 
 		scaleM[0] = scale1;
 		scaleM[1] = scale20;
 		scaleM[2] = scale21;
 		scaleM[3] = scale30;
 		scaleM[4] = scale31;
-		m[1][0][4] = prodMoment(new double[] { u[0], u[1] }, scaleM, n);
+		m[1][0][4] = prodMoment(new double[] { u[0], u[1] }, scaleM, numSamples);
 		m[0][1][4] = m[1][0][4];
 
 		// M5
@@ -348,19 +381,21 @@ public class CofVGenRoeMetz {
 		scaleM1[0] = scale1 + scale20;
 		scaleM1[1] = scale30;
 		scaleM1[2] = scale30;
-		m[0][0][5] = prodMoment1(new double[] { u[0], u[0] }, scaleM1, n);
+		m[0][0][5] = prodMoment1(new double[] { u[0], u[0] }, scaleM1,
+				numSamples);
 
 		scaleM1[0] = scale1 + scale21;
 		scaleM1[1] = scale31;
 		scaleM1[2] = scale31;
-		m[1][1][5] = prodMoment1(new double[] { u[1], u[1] }, scaleM1, n);
+		m[1][1][5] = prodMoment1(new double[] { u[1], u[1] }, scaleM1,
+				numSamples);
 
 		scaleM[0] = scale1;
 		scaleM[1] = scale20;
 		scaleM[2] = scale21;
 		scaleM[3] = scale30;
 		scaleM[4] = scale31;
-		m[1][0][5] = prodMoment(new double[] { u[0], u[1] }, scaleM, n);
+		m[1][0][5] = prodMoment(new double[] { u[0], u[1] }, scaleM, numSamples);
 		m[0][1][5] = m[1][0][5];
 
 		// M6
@@ -375,19 +410,21 @@ public class CofVGenRoeMetz {
 		scaleM1[0] = scale1 + scale20;
 		scaleM1[1] = scale30;
 		scaleM1[2] = scale30;
-		m[0][0][6] = prodMoment1(new double[] { u[0], u[0] }, scaleM1, n);
+		m[0][0][6] = prodMoment1(new double[] { u[0], u[0] }, scaleM1,
+				numSamples);
 
 		scaleM1[0] = scale1 + scale21;
 		scaleM1[1] = scale31;
 		scaleM1[2] = scale31;
-		m[1][1][6] = prodMoment1(new double[] { u[1], u[1] }, scaleM1, n);
+		m[1][1][6] = prodMoment1(new double[] { u[1], u[1] }, scaleM1,
+				numSamples);
 
 		scaleM[0] = scale1;
 		scaleM[1] = scale20;
 		scaleM[2] = scale21;
 		scaleM[3] = scale30;
 		scaleM[4] = scale31;
-		m[1][0][6] = prodMoment(new double[] { u[0], u[1] }, scaleM, n);
+		m[1][0][6] = prodMoment(new double[] { u[0], u[1] }, scaleM, numSamples);
 		m[0][1][6] = m[1][0][6];
 
 		// M7
@@ -402,19 +439,21 @@ public class CofVGenRoeMetz {
 		scaleM1[0] = scale1 + scale20;
 		scaleM1[1] = scale30;
 		scaleM1[2] = scale30;
-		m[0][0][7] = prodMoment1(new double[] { u[0], u[0] }, scaleM1, n);
+		m[0][0][7] = prodMoment1(new double[] { u[0], u[0] }, scaleM1,
+				numSamples);
 
 		scaleM1[0] = scale1 + scale21;
 		scaleM1[1] = scale31;
 		scaleM1[2] = scale31;
-		m[1][1][7] = prodMoment1(new double[] { u[1], u[1] }, scaleM1, n);
+		m[1][1][7] = prodMoment1(new double[] { u[1], u[1] }, scaleM1,
+				numSamples);
 
 		scaleM[0] = scale1;
 		scaleM[1] = scale20;
 		scaleM[2] = scale21;
 		scaleM[3] = scale30;
 		scaleM[4] = scale31;
-		m[1][0][7] = prodMoment(new double[] { u[0], u[1] }, scaleM, n);
+		m[1][0][7] = prodMoment(new double[] { u[0], u[1] }, scaleM, numSamples);
 		m[0][1][7] = m[1][0][7];
 
 		//
@@ -424,11 +463,11 @@ public class CofVGenRoeMetz {
 		m[1][0][8] = m[0][0][0] * m[1][1][0];
 		m[0][1][8] = m[1][0][8];
 
-		calculateStuff();
+		calculateStuff(n0, n1, nr);
 
 	}
 
-	public static void calculateStuff() {
+	public static void calculateStuff(int n0, int n1, int nr) {
 		double[][] Bauc = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, -1.0 },
 				{ 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, -1.0 },
 				{ 0.0, 0.0, 0.0, 0.0, 1.0, -1.0, -1.0, 1.0 },
@@ -496,5 +535,8 @@ public class CofVGenRoeMetz {
 		}
 
 		BCK = dbRecord.BDG2BCK(BDG);
+		DBM = dbRecord.BCK2DBM(BCK, nr, n0, n1);
+		OR = dbRecord.DBM2OR(0, DBM, nr, n0, n1);
+		MS = dbRecord.DBM2MS(DBM, nr, n0, n1);
 	}
 }

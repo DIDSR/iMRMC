@@ -368,12 +368,12 @@ public class dbRecord {
 
 	}
 
-	public static double[][] DBM2MS(double[][] DBM, int N2, int N0, int N1) {
+	public static double[][] DBM2MS(double[][] DBM, int NR, int N0, int N1) {
 		double[][] c = new double[4][6];
 		double[][] BAlpha = new double[][] {
 				{ 2 * (N0 + N1), 0, 2, (N0 + N1), 0, 1 },
-				{ 0, 2 * N2, 2, 0, N2, 1 }, { 0, 0, 0, (N0 + N1), 0, 1 },
-				{ 0, 0, 0, 0, N2, 1 }, { 0, 0, 2, 0, 0, 1 },
+				{ 0, 2 * NR, 2, 0, NR, 1 }, { 0, 0, 0, (N0 + N1), 0, 1 },
+				{ 0, 0, 0, 0, NR, 1 }, { 0, 0, 2, 0, 0, 1 },
 				{ 0, 0, 0, 0, 0, 1 } };
 		for (int i = 0; i < 4; i++)
 			for (int j = 0; j < 6; j++)
@@ -388,7 +388,7 @@ public class dbRecord {
 
 	}
 
-	public static double[][] BCK2DBM(double[][] BCK, int N2, int N0, int N1) {
+	public static double[][] BCK2DBM(double[][] BCK, int NR, int N0, int N1) {
 		double[] c = new double[7];
 		double[][] tmp = new double[4][7];
 		double[][] tmp1 = new double[4][3];
@@ -397,17 +397,17 @@ public class dbRecord {
 		c[0] = 1.0 / N0;
 		c[1] = 1.0 / N1;
 		c[2] = 1.0 / (N0 * N1);
-		c[3] = 1.0 / N2;
-		c[4] = 1.0 / (N0 * N2);
-		c[5] = 1.0 / (N1 * N2);
-		c[6] = 1.0 / (N0 * N1 * N2);
+		c[3] = 1.0 / NR;
+		c[4] = 1.0 / (N0 * NR);
+		c[5] = 1.0 / (N1 * NR);
+		c[6] = 1.0 / (N0 * N1 * NR);
 
 		for (int i = 0; i < 4; i++)
 			tmp[i] = matrix.dotProduct(BCK[i], c);
 
 		double[][] alpha = new double[][] { { 0, 1, 0 }, { 0, 1, 0 },
-				{ 0, 1, 0 }, { N2, 0, 0 }, { 0, 0, N2 }, { 0, 0, N2 },
-				{ 0, 0, N2 } };
+				{ 0, 1, 0 }, { NR, 0, 0 }, { 0, 0, NR }, { 0, 0, NR },
+				{ 0, 0, NR } };
 
 		tmp1 = matrix.multiply(tmp, alpha);
 
@@ -900,7 +900,7 @@ public class dbRecord {
 
 	}
 
-	public double[][] computeTempDBM(double[][] BDG, int N2, int N0, int N1) {
+	public double[][] computeTempDBM(double[][] BDG, int NR, int N0, int N1) {
 		double[][] B25 = new double[][] {
 				{ 1.0, 0, 0, 0 },
 				{ 1.0 / N0, (N0 - 1.0) / N0, 0, 0 },
@@ -914,23 +914,23 @@ public class dbRecord {
 			for (int j = 0; j < 4; j++) {
 				B[i][j] = B25[i][j];
 				B[i][j + 4] = 0.0;
-				B[i + 4][j] = B25[i][j] / N2;
-				B[i + 4][j + 4] = B25[i][j] * (N2 - 1.0) / N2;
+				B[i + 4][j] = B25[i][j] / NR;
+				B[i + 4][j + 4] = B25[i][j] * (NR - 1.0) / NR;
 			}
 		double[][] BTheta = new double[][] {
 				{ 1.0 / (N0 + N1), 0, -1.0 / (N0 + N1) },
-				{ 0, 1.0 / (N0 + N1) / N2, -1.0 / (N0 + N1) / N2 },
+				{ 0, 1.0 / (N0 + N1) / NR, -1.0 / (N0 + N1) / NR },
 				{ 0, 0, 1.0 / (N0 + N1) } };
 
-		double b1 = (N0 + N1) * N2 / (N2 - 1.0);
-		double b2 = (N0 + N1 - 1.0) * N1 * N2 / (N1 - 1.0) / (N1 - 1.0);
-		double b3 = (N0 + N1 - 1.0) * N0 * N2 / (N0 - 1.0) / (N0 - 1.0);
+		double b1 = (N0 + N1) * NR / (NR - 1.0);
+		double b2 = (N0 + N1 - 1.0) * N1 * NR / (N1 - 1.0) / (N1 - 1.0);
+		double b3 = (N0 + N1 - 1.0) * N0 * NR / (N0 - 1.0) / (N0 - 1.0);
 		double[][] Bms = new double[][] {
 				{ 0, 0, 0, b1, 0, 0, 0, -b1 },
 				{ 0, 0, 0, 0, 0, b2, b3, -b2 - b3 },
-				{ 0, b2 / (N2 - 1.0), b3 / (N2 - 1.0), -(b2 + b3) / (N2 - 1.0),
-						0, -b2 / (N2 - 1.0), -b3 / (N2 - 1.0),
-						(b2 + b3) / (N2 - 1.0) } };
+				{ 0, b2 / (NR - 1.0), b3 / (NR - 1.0), -(b2 + b3) / (NR - 1.0),
+						0, -b2 / (NR - 1.0), -b3 / (NR - 1.0),
+						(b2 + b3) / (NR - 1.0) } };
 		double[][] c = new double[4][3];
 		for (int i = 0; i < 4; i++)
 			for (int j = 0; j < 3; j++)
@@ -943,9 +943,9 @@ public class dbRecord {
 		return c;
 	}
 
-	public double[][] BDG2DBM(double[][] BDG, int N2, int N0, int N1) {
+	public double[][] BDG2DBM(double[][] BDG, int NR, int N0, int N1) {
 		double[][] c = new double[4][6];
-		double[][] tempDBM = computeTempDBM(BDG, N2, N0, N1);
+		double[][] tempDBM = computeTempDBM(BDG, NR, N0, N1);
 		// compute DBM components
 		for (int i = 0; i < 4; i++)
 			for (int j = 0; j < 6; j++)
@@ -986,9 +986,9 @@ public class dbRecord {
 		return c;
 	}
 
-	public double[][] BDG2OR(double[][] BDG, int N2, int N0, int N1) {
+	public double[][] BDG2OR(double[][] BDG, int NR, int N0, int N1) {
 		double[][] c = new double[4][6];
-		double[][] tempDBM = computeTempDBM(BDG, N2, N0, N1);
+		double[][] tempDBM = computeTempDBM(BDG, NR, N0, N1);
 		double[][] ThetaOR = new double[][] { { 1, 0, 0 }, { 0, 1, 0 },
 				{ 0, 1, 1 } };
 		double[][] tempOR = matrix.matrixTranspose(matrix.multiply(ThetaOR,
@@ -1017,7 +1017,7 @@ public class dbRecord {
 		return c;
 	}
 
-	public static double[][] DBM2OR(int index, double[][] in, int N2, int N0,
+	public static double[][] DBM2OR(int index, double[][] in, int NR, int N0,
 			int N1) {
 		double[][] out = new double[4][6];
 		double[][] dbm = new double[4][6];
