@@ -31,6 +31,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FlowLayout;
+import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -128,17 +129,17 @@ public class RMGUInterface {
 		JPanel varianceFields1 = new JPanel();
 		varianceFields1.setLayout(new FlowLayout());
 
-		vR00 = new JTextField(4);
+		vR00 = new JTextField("0.166", 4);
 		vR00.setMaximumSize(vR00.getPreferredSize());
-		vC00 = new JTextField(4);
+		vC00 = new JTextField("0.166", 4);
 		vC00.setMaximumSize(vC00.getPreferredSize());
-		vRC00 = new JTextField(4);
+		vRC00 = new JTextField("0.166", 4);
 		vRC00.setMaximumSize(vRC00.getPreferredSize());
-		vR10 = new JTextField(4);
+		vR10 = new JTextField("0.166", 4);
 		vR10.setMaximumSize(vR10.getPreferredSize());
-		vC10 = new JTextField(4);
+		vC10 = new JTextField("0.166", 4);
 		vC10.setMaximumSize(vC10.getPreferredSize());
-		vRC10 = new JTextField(4);
+		vRC10 = new JTextField("0.166", 4);
 		vRC10.setMaximumSize(vRC10.getPreferredSize());
 
 		JLabel vR00Label = new JLabel("vR00: ");
@@ -167,17 +168,17 @@ public class RMGUInterface {
 		JPanel varianceFields2 = new JPanel();
 		varianceFields2.setLayout(new FlowLayout());
 
-		vR01 = new JTextField(4);
+		vR01 = new JTextField("0.166", 4);
 		vR01.setMaximumSize(vR01.getPreferredSize());
-		vC01 = new JTextField(4);
+		vC01 = new JTextField("0.166", 4);
 		vC01.setMaximumSize(vC01.getPreferredSize());
-		vRC01 = new JTextField(4);
+		vRC01 = new JTextField("0.166", 4);
 		vRC01.setMaximumSize(vRC01.getPreferredSize());
-		vR11 = new JTextField(4);
+		vR11 = new JTextField("0.166", 4);
 		vR11.setMaximumSize(vR11.getPreferredSize());
-		vC11 = new JTextField(4);
+		vC11 = new JTextField("0.166", 4);
 		vC11.setMaximumSize(vC11.getPreferredSize());
-		vRC11 = new JTextField(4);
+		vRC11 = new JTextField("0.166", 4);
 		vRC11.setMaximumSize(vRC11.getPreferredSize());
 
 		JLabel vR01Label = new JLabel("vR01: ");
@@ -206,17 +207,17 @@ public class RMGUInterface {
 		JPanel varianceFields3 = new JPanel();
 		varianceFields3.setLayout(new FlowLayout());
 
-		vR0 = new JTextField(4);
+		vR0 = new JTextField("0.166", 4);
 		vR0.setMaximumSize(vR0.getPreferredSize());
-		vC0 = new JTextField(4);
+		vC0 = new JTextField("0.166", 4);
 		vC0.setMaximumSize(vC0.getPreferredSize());
-		vRC0 = new JTextField(4);
+		vRC0 = new JTextField("0.166", 4);
 		vRC0.setMaximumSize(vRC0.getPreferredSize());
-		vR1 = new JTextField(4);
+		vR1 = new JTextField("0.166", 4);
 		vR1.setMaximumSize(vR1.getPreferredSize());
-		vC1 = new JTextField(4);
+		vC1 = new JTextField("0.166", 4);
 		vC1.setMaximumSize(vC1.getPreferredSize());
-		vRC1 = new JTextField(4);
+		vRC1 = new JTextField("0.166", 4);
 		vRC1.setMaximumSize(vRC1.getPreferredSize());
 
 		JLabel vR0Label = new JLabel("vR0: ");
@@ -244,8 +245,8 @@ public class RMGUInterface {
 		 */
 		JPanel meansFields = new JPanel(new FlowLayout());
 
-		mu0 = new JTextField(4);
-		mu1 = new JTextField(4);
+		mu0 = new JTextField("1.5", 4);
+		mu1 = new JTextField("1.0", 4);
 		JLabel mu0Label = new JLabel("\u00B50: ");
 		JLabel mu1Label = new JLabel("\u00B51: ");
 
@@ -259,9 +260,9 @@ public class RMGUInterface {
 		 */
 		JPanel sizeFields = new JPanel(new FlowLayout());
 
-		n0 = new JTextField(4);
-		n1 = new JTextField(4);
-		nr = new JTextField(4);
+		n0 = new JTextField("20", 4);
+		n1 = new JTextField("20", 4);
+		nr = new JTextField("4", 4);
 		JLabel n0Label = new JLabel("n0: ");
 		JLabel n1Label = new JLabel("n1: ");
 		JLabel nrLabel = new JLabel("nr: ");
@@ -278,13 +279,18 @@ public class RMGUInterface {
 		 */
 		JPanel populateFields = new JPanel(new FlowLayout());
 
-		JButton populateButton = new JButton("Populate CofV (Default)");
-		populateButton.addActionListener(new populateBtnListner());
+		JButton clearButton = new JButton("Clear Fields");
+		clearButton.addActionListener(new ClearBtnListner());
 
-		JButton popFromFile = new JButton("Populate CofV from File");
-		popFromFile.addActionListener(new popFromFileListener());
-		populateFields.add(populateButton);
+		JButton popFromFile = new JButton("Populate Components from File");
+		popFromFile.addActionListener(new PopFromFileListener());
+
+		JButton saveFields = new JButton("Save Components to File");
+		saveFields.addActionListener(new SaveFieldsListener());
+
+		populateFields.add(clearButton);
 		populateFields.add(popFromFile);
+		populateFields.add(saveFields);
 
 		/*
 		 * Add sub-panels to cofvInputPanel
@@ -558,37 +564,37 @@ public class RMGUInterface {
 		}
 	}
 
-	class populateBtnListner implements ActionListener {
+	class ClearBtnListner implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			vR00.setText("0.166");
-			vC00.setText("0.166");
-			vRC00.setText("0.166");
-			vR10.setText("0.166");
-			vC10.setText("0.166");
-			vRC10.setText("0.166");
-			vR01.setText("0.166");
-			vC01.setText("0.166");
-			vRC01.setText("0.166");
-			vR11.setText("0.166");
-			vC11.setText("0.166");
-			vRC11.setText("0.166");
-			vR0.setText("0.166");
-			vC0.setText("0.166");
-			vRC0.setText("0.166");
-			vR1.setText("0.166");
-			vC1.setText("0.166");
-			vRC1.setText("0.166");
-			mu0.setText("1.5");
-			mu1.setText("1.0");
-			n0.setText("20");
-			n1.setText("20");
-			nr.setText("4");
+			vR00.setText("");
+			vC00.setText("");
+			vRC00.setText("");
+			vR10.setText("");
+			vC10.setText("");
+			vRC10.setText("");
+			vR01.setText("");
+			vC01.setText("");
+			vRC01.setText("");
+			vR11.setText("");
+			vC11.setText("");
+			vRC11.setText("");
+			vR0.setText("");
+			vC0.setText("");
+			vRC0.setText("");
+			vR1.setText("");
+			vC1.setText("");
+			vRC1.setText("");
+			mu0.setText("");
+			mu1.setText("");
+			n0.setText("");
+			n1.setText("");
+			nr.setText("");
 		}
 	}
 
-	class popFromFileListener implements ActionListener {
+	class PopFromFileListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -599,6 +605,59 @@ public class RMGUInterface {
 			int fcReturn = fc.showOpenDialog((Component) e.getSource());
 			File f = fc.getSelectedFile();
 			parseCofVfile(f);
+		}
+	}
+
+	class SaveFieldsListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			try {
+				JFileChooser fc = new JFileChooser();
+				FileNameExtensionFilter filter = new FileNameExtensionFilter(
+						"iRoeMetz CofV Input (.irm)", "irm");
+				fc.setFileFilter(filter);
+				int fcReturn = fc.showOpenDialog((Component) e.getSource());
+				if (fcReturn == JFileChooser.APPROVE_OPTION) {
+					File f = fc.getSelectedFile();
+					String fPath = f.getPath();
+					if (!fPath.toLowerCase().endsWith(".irm")) {
+						f = new File(fPath + ".irm");
+					}
+					if (!f.exists()) {
+						f.createNewFile();
+					}
+					FileWriter fw = new FileWriter(f.getAbsoluteFile());
+					BufferedWriter bw = new BufferedWriter(fw);
+					bw.write("R00: " + vR00.getText() + "\n");
+					bw.write("C00: " + vC00.getText() + "\n");
+					bw.write("RC00: " + vRC00.getText() + "\n");
+					bw.write("R10: " + vR10.getText() + "\n");
+					bw.write("C10: " + vC10.getText() + "\n");
+					bw.write("RC10: " + vRC10.getText() + "\n");
+					bw.write("R01: " + vR01.getText() + "\n");
+					bw.write("C01: " + vC01.getText() + "\n");
+					bw.write("RC01: " + vRC01.getText() + "\n");
+					bw.write("R11: " + vR11.getText() + "\n");
+					bw.write("C11: " + vC11.getText() + "\n");
+					bw.write("RC11: " + vRC11.getText() + "\n");
+					bw.write("R0: " + vR0.getText() + "\n");
+					bw.write("C0: " + vC0.getText() + "\n");
+					bw.write("RC0: " + vRC0.getText() + "\n");
+					bw.write("R1: " + vR1.getText() + "\n");
+					bw.write("C1: " + vC1.getText() + "\n");
+					bw.write("RC1: " + vRC1.getText() + "\n");
+					bw.write("u0: " + mu0.getText() + "\n");
+					bw.write("u1: " + mu1.getText() + "\n");
+					bw.write("n0: " + n0.getText() + "\n");
+					bw.write("n1: " + n1.getText() + "\n");
+					bw.write("nr: " + nr.getText() + "\n");
+					bw.close();
+				}
+			} catch (HeadlessException e1) {
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 
