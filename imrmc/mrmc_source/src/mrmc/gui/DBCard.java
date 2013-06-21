@@ -27,7 +27,7 @@ package mrmc.gui;
 import javax.swing.*;
 import java.awt.event.*;
 
-public class DBModSelect {
+public class DBCard {
 	GUInterface gui;
 	int selectedMod = 0;
 	int useBiasM = 0;
@@ -57,7 +57,7 @@ public class DBModSelect {
 		gui.setSelectedMod(selectedMod);
 	}
 
-	public DBModSelect(JPanel mPanel, GUInterface guitemp) {
+	public DBCard(JPanel mPanel, GUInterface guitemp) {
 		gui = guitemp;
 		// create the checkbox for allowing negative components
 		cb = new JCheckBox(

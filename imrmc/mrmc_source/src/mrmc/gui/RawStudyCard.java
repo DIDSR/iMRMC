@@ -30,7 +30,7 @@ import mrmc.core.dbRecord;
 
 import java.awt.event.*;
 
-public class PilotModSelect {
+public class RawStudyCard {
 	GUInterface gui;
 	int selectedMod = 0;
 	int useBiasM = 0;
@@ -63,7 +63,7 @@ public class PilotModSelect {
 		}
 	}
 
-	public PilotModSelect(JPanel mPanel, GUInterface guitemp) {
+	public RawStudyCard(JPanel mPanel, GUInterface guitemp) {
 		gui = guitemp;
 		negBox = new JCheckBox(
 				"use MLE estimates of moments to avoid negatives    ");

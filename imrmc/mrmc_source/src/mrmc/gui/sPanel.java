@@ -457,14 +457,19 @@ public class sPanel {
 	/* button to size a trial from dataset */
 	class sizeTrialListner implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			int[] Parms = { Integer.parseInt(sizeR.getText()),
-					Integer.parseInt(sizeN.getText()),
-					Integer.parseInt(sizeD.getText()) };
-			double[] Parms1 = { Double.parseDouble(sigLevel.getText()),
-					Double.parseDouble(effSize.getText()) };
-			int[] Parms2 = { Integer.parseInt(numSplitPlot.getText()),
-					pairedRs, pairedCs };
-			gui.sizeTrial(Parms, Parms1, Parms2);
+			try {
+				int[] Parms = { Integer.parseInt(sizeR.getText()),
+						Integer.parseInt(sizeN.getText()),
+						Integer.parseInt(sizeD.getText()) };
+				double[] Parms1 = { Double.parseDouble(sigLevel.getText()),
+						Double.parseDouble(effSize.getText()) };
+				int[] Parms2 = { Integer.parseInt(numSplitPlot.getText()),
+						pairedRs, pairedCs };
+				gui.sizeTrial(Parms, Parms1, Parms2);
+			} catch (NumberFormatException e1) {
+				JOptionPane.showMessageDialog(reportFrame, "Invalid Input",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
 		}
 	}
 

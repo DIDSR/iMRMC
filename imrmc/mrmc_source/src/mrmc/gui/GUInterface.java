@@ -129,8 +129,8 @@ public class GUInterface {
 	int SummaryUseMLE = 0;
 
 	double totalStd = 0;
-	DBModSelect MS;
-	PilotModSelect MS2;
+	DBCard DBC;
+	RawStudyCard RSC;
 	ManualCard MC;
 	JTabbedPane tabbedPane1, tabbedPane2;
 	private JLabel sizedDFBDG;
@@ -262,23 +262,26 @@ public class GUInterface {
 		HillisPower.setText("");
 		// Selections
 		setUseBiasM(0);
-		MS.setUseBiasM(0);
-		MS2.setUseBiasM(false);
+		DBC.setUseBiasM(0);
+		RSC.setUseBiasM(false);
 		tabbedPane1.setTitleAt(0, "BDG");
 		tabbedPane1.setTitleAt(1, "BCK");
 		tabbedPane1.setTitleAt(2, "DBM");
 		tabbedPane1.setTitleAt(3, "OR");
+		tabbedPane1.setTitleAt(4, "MS");
 		tabbedPane2.setTitleAt(0, "BDG");
 		tabbedPane2.setTitleAt(1, "BCK");
 		tabbedPane2.setTitleAt(2, "DBM");
 		tabbedPane2.setTitleAt(3, "OR");
+		tabbedPane2.setTitleAt(4, "MS");
 		// Modality on MS
-		MS.setSelectedMod(0);
-		MS2.setSelectedMod(0);
+		DBC.setSelectedMod(0);
+		RSC.setSelectedMod(0);
 		// pilot file input field
 		pilotFile.setText("");
 		enableTabs();
 		MC.reset();
+		usr = null;
 	}
 
 	// public double[] getSiglevel()
@@ -939,7 +942,7 @@ public class GUInterface {
 		JButton descButton = new JButton("Record Description");
 		descButton.addActionListener(new descButtonListner());
 		JPanel modSelPanel = new JPanel();
-		MS = new DBModSelect(modSelPanel, this);
+		DBC = new DBCard(modSelPanel, this);
 
 		layout.setHorizontalGroup(layout.createSequentialGroup().addGroup(
 				layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -975,7 +978,7 @@ public class GUInterface {
 		layout.setAutoCreateContainerGaps(true);
 		studyLabel = new JLabel("pilot study...");
 		JPanel pilotCard2 = new JPanel();
-		MS2 = new PilotModSelect(pilotCard2, this);
+		RSC = new RawStudyCard(pilotCard2, this);
 		JButton fmtHelpButton = new JButton("Format Info.");
 		JButton readerCasesButton = new JButton("Input Statistics Charts");
 		JButton designButton = new JButton("Show Study Design");
@@ -1545,7 +1548,7 @@ public class GUInterface {
 
 				currMod1 = -1;
 				currMod2 = -1;
-				MS2.updateModPanel();
+				RSC.updateModPanel();
 
 			}
 		}
@@ -1692,12 +1695,12 @@ public class GUInterface {
 			if (JOptionPane.CANCEL_OPTION == result) {
 				System.out.println("cancel");
 			} else if (JOptionPane.YES_OPTION == result) {
-				MS.setUseBiasM(1);
-				MS2.setUseBiasM(true);
+				DBC.setUseBiasM(1);
+				RSC.setUseBiasM(true);
 				useBiasM = 1;
 			} else if (JOptionPane.NO_OPTION == result) {
-				MS.setUseBiasM(0);
-				MS2.setUseBiasM(false);
+				DBC.setUseBiasM(0);
+				RSC.setUseBiasM(false);
 				useBiasM = 0;
 			}
 
