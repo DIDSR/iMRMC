@@ -60,23 +60,23 @@ public class covMRMC {
 		double totalwada = 0;
 		double totalwbdb = 0;
 		auc = new double[Reader][2];
-		double[] bnumer = matrix.setZero(9);
-		double[][] wadasaSumr = matrix.setZero(Normal, Disease);
-		double[][] wbdbsbSumr = matrix.setZero(Normal, Disease);
-		double[] wadasaSumir = matrix.setZero(Disease);
-		double[] wbdbsbSumir = matrix.setZero(Disease);
-		double[] wadasaSumjr = matrix.setZero(Normal);
-		double[] wbdbsbSumjr = matrix.setZero(Normal);
+		double[] bnumer = new double[9];
+		double[][] wadasaSumr = new double[Normal][Disease];
+		double[][] wbdbsbSumr = new double[Normal][Disease];
+		double[] wadasaSumir = new double[Disease];
+		double[] wbdbsbSumir = new double[Disease];
+		double[] wadasaSumjr = new double[Normal];
+		double[] wbdbsbSumjr = new double[Normal];
 		double wadasaSumijr = 0.0;
 		double wbdbsbSumijr = 0.0;
 
-		double[] bdenom = matrix.setZero(9);
-		double[][] wadaSumr = matrix.setZero(Normal, Disease);
-		double[][] wbdbSumr = matrix.setZero(Normal, Disease);
-		double[] wadaSumir = matrix.setZero(Disease);
-		double[] wbdbSumir = matrix.setZero(Disease);
-		double[] wadaSumjr = matrix.setZero(Normal);
-		double[] wbdbSumjr = matrix.setZero(Normal);
+		double[] bdenom = new double[9];
+		double[][] wadaSumr = new double[Normal][Disease];
+		double[][] wbdbSumr = new double[Normal][Disease];
+		double[] wadaSumir = new double[Disease];
+		double[] wbdbSumir = new double[Disease];
+		double[] wadaSumjr = new double[Normal];
+		double[] wbdbSumjr = new double[Normal];
 		double wadaSumijr = 0.0;
 		double wbdbSumijr = 0.0;
 
@@ -259,8 +259,7 @@ public class covMRMC {
 		}
 
 		// coefficients
-		c = matrix
-				.linearTrans(denom, 1.0 / (totalwada * totalwbdb), 0);
+		c = matrix.linearTrans(denom, 1.0 / (totalwada * totalwbdb), 0);
 		c[8] = c[8] - 1.0;
 
 		aucMod[0] = aucA / totalwada;

@@ -70,7 +70,6 @@ public class ManualCard {
 	public void reset() {
 		com1Button.setSelected(true);
 		gui.enableTabs();
-		int SingleOrDiff = 0;
 		SingleMod.setSelected(true);
 		AUCText2.setEnabled(false);
 		manualInReader.setText("22");

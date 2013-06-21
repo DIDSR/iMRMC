@@ -53,7 +53,6 @@ import mrmc.chart.ROCCurvePlot;
 import mrmc.core.MRMC;
 import mrmc.core.dbRecord;
 import mrmc.core.inputFile;
-import mrmc.core.matrix;
 import mrmc.core.mrmcDB;
 import mrmc.core.statTest;
 
@@ -373,6 +372,12 @@ public class GUInterface {
 		int pairedReaders = Parms3[1];
 		int pairedCases = Parms3[2];
 		dbRecord tempRecord = getCurrentRecord();
+		if (tempRecord == null) {
+			JOptionPane.showMessageDialog(lst.getFrame(),
+					"Must perform variance analysis first.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 
 		int[][][][] design = createSplitPlotDesign(newR, newN, newD,
 				numSplitPlots, pairedReaders, pairedCases);
@@ -538,7 +543,6 @@ public class GUInterface {
 		// double eff=Double.parseDouble(effSize.getText());
 		double sig = Parms2[0];
 		double eff = Parms2[1];
-		double effSize = eff;
 		System.out.println("inside GUI sig=" + sig + " eff=" + eff);
 		if (selectedMod == 1 || selectedMod == 0) {
 			// eff=tempRecord.getAUCinNumber(selectedMod)-eff;
@@ -719,19 +723,7 @@ public class GUInterface {
 		CVF.setText("CVF = ");
 		sizedDFHillis.setText("df(Hillis 2008) = ");
 		sizedDFBDG.setText("df(BDG) = ");
-		if ((sel == 0) || (sel == 1)) {
-			// sigLevel.setEnabled(false);
-			// effSize.setEnabled(false);
-			genSP.setEff("Effect Size", "0.05");
-			// effSizeLabel.setText("Compare to AUC value ");
-			// effSize.setText("0.5");
-		} else {
-			genSP.setEff("Effect Size", "0.05");
-			// effSizeLabel.setText("Effect Size");
-			// sigLevel.setEnabled(true);
-			// effSize.setEnabled(true);
-			// effSize.setText("0.05");
-		}
+		genSP.setEff("Effect Size", "0.05");
 	}
 
 	public void disableTabs() {
@@ -1407,7 +1399,6 @@ public class GUInterface {
 	/* Drop down menu to select input method */
 	class inputModListener implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
-			@SuppressWarnings("unchecked")
 			JComboBox cb = (JComboBox) evt.getSource();
 			CardLayout cl = (CardLayout) (inputCards.getLayout());
 			cl.show(inputCards, (String) cb.getSelectedItem());
@@ -1433,9 +1424,8 @@ public class GUInterface {
 
 			descFrame.getRootPane().setWindowDecorationStyle(
 					JRootPane.PLAIN_DIALOG);
-			String str = "temptemptemp";
-			JTextArea desc = new JTextArea(str, 18, 40);
-			desc.setText(Records[selectedDB].getRecordDesp());
+			JTextArea desc = new JTextArea(Records[selectedDB].getRecordDesp(),
+					18, 40);
 			JScrollPane scrollPane = new JScrollPane(desc,
 					JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 					JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
@@ -1451,7 +1441,6 @@ public class GUInterface {
 	/* drop down menu to choose a particular dataset from internal database */
 	class dbActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
-			@SuppressWarnings("unchecked")
 			JComboBox cb = (JComboBox) evt.getSource();
 			selectedDB = (int) cb.getSelectedIndex();
 		}

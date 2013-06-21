@@ -813,7 +813,6 @@ public class dbRecord {
 		return c;
 	}
 
-	// TODO what should be done about DBM for non-fully-crossed?
 	public static double[][] genDBMCoeff(int NR, int N0, int N1) {
 		double[][] c = new double[4][6];
 		/*

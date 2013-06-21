@@ -97,8 +97,8 @@ public class RMGUInterface {
 	private JTextField seed;
 	private JDialog progDialog;
 	private JCheckBox useBias = new JCheckBox("Use Bias");
-	public int useBiasM = 0;
-	public String simSaveDirectory;
+	private int useBiasM = 0;
+	private String simSaveDirectory;
 	private static JProgressBar simProgress;
 	private static RoeMetz appl;
 
@@ -109,7 +109,6 @@ public class RMGUInterface {
 		/*
 		 * Panel to handle CofV inputs
 		 */
-
 		JPanel cofvInputPanel = new JPanel();
 		cofvInputPanel
 				.setLayout(new BoxLayout(cofvInputPanel, BoxLayout.Y_AXIS));
@@ -325,13 +324,13 @@ public class RMGUInterface {
 		numExp = new JTextField(4);
 		JLabel numExpLabel = new JLabel("# of Experiments");
 		JButton doSimExp = new JButton("Perform Simulation Experiments");
-		doSimExp.addActionListener(new doSimBtnListner());
+		doSimExp.addActionListener(new DoSimBtnListner());
 		JLabel seedLabel = new JLabel("Seed for RNG");
 		seed = new JTextField(9);
 		seed.setText(Long.toString(System.currentTimeMillis()));
-		useBias.addItemListener(new useBiasListner());
+		useBias.addItemListener(new UseBiasListner());
 		JButton saveLoc = new JButton("Output Location");
-		saveLoc.addActionListener(new saveSimulationListner());
+		saveLoc.addActionListener(new SaveSimulationListner());
 
 		simulationExperiment.add(seedLabel);
 		simulationExperiment.add(seed);
@@ -364,7 +363,7 @@ public class RMGUInterface {
 		JPanel cofvResults = new JPanel(new FlowLayout());
 
 		JButton doGenRoeMetz = new JButton("Perform Calculation");
-		doGenRoeMetz.addActionListener(new doGenRoeMetzBtnListner());
+		doGenRoeMetz.addActionListener(new DoGenRoeMetzBtnListner());
 
 		cofvResults.add(doGenRoeMetz);
 
@@ -565,7 +564,6 @@ public class RMGUInterface {
 	}
 
 	class ClearBtnListner implements ActionListener {
-
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			vR00.setText("");
@@ -595,13 +593,13 @@ public class RMGUInterface {
 	}
 
 	class PopFromFileListener implements ActionListener {
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JFileChooser fc = new JFileChooser();
 			FileNameExtensionFilter filter = new FileNameExtensionFilter(
 					"iRoeMetz CofV Input (.irm)", "irm");
 			fc.setFileFilter(filter);
+			@SuppressWarnings("unused")
 			int fcReturn = fc.showOpenDialog((Component) e.getSource());
 			File f = fc.getSelectedFile();
 			parseCofVfile(f);
@@ -661,7 +659,7 @@ public class RMGUInterface {
 		}
 	}
 
-	class useBiasListner implements ItemListener {
+	class UseBiasListner implements ItemListener {
 		public void itemStateChanged(ItemEvent e) {
 			if (useBias.isSelected()) {
 				useBiasM = 1;
@@ -671,8 +669,7 @@ public class RMGUInterface {
 		}
 	}
 
-	class saveSimulationListner implements ActionListener {
-
+	class SaveSimulationListner implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			JFileChooser fc = new JFileChooser();
@@ -758,7 +755,7 @@ public class RMGUInterface {
 		}
 	}
 
-	class doSimBtnListner implements ActionListener {
+	class DoSimBtnListner implements ActionListener {
 		int doneTasks = 0;
 		final int numCores = Runtime.getRuntime().availableProcessors();
 		int numTasks;
@@ -768,29 +765,9 @@ public class RMGUInterface {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {
-				double[] u = { Double.valueOf(mu0.getText()),
-						Double.valueOf(mu1.getText()) };
-				double[] var_t = { Double.valueOf(vR00.getText()),
-						Double.valueOf(vC00.getText()),
-						Double.valueOf(vRC00.getText()),
-						Double.valueOf(vR10.getText()),
-						Double.valueOf(vC10.getText()),
-						Double.valueOf(vRC10.getText()),
-						Double.valueOf(vR01.getText()),
-						Double.valueOf(vC01.getText()),
-						Double.valueOf(vRC01.getText()),
-						Double.valueOf(vR11.getText()),
-						Double.valueOf(vC11.getText()),
-						Double.valueOf(vRC11.getText()),
-						Double.valueOf(vR0.getText()),
-						Double.valueOf(vC0.getText()),
-						Double.valueOf(vRC0.getText()),
-						Double.valueOf(vR1.getText()),
-						Double.valueOf(vC1.getText()),
-						Double.valueOf(vRC1.getText()) };
-				n = new int[] { Integer.valueOf(n0.getText()),
-						Integer.valueOf(n1.getText()),
-						Integer.valueOf(nr.getText()) };
+				double[] u = getMeans();
+				double[] var_t = getVariances();
+				n = getSizes();
 				long seedVar = Long.parseLong(seed.getText());
 				final int numTimes = Integer.valueOf(numExp.getText());
 
@@ -917,11 +894,16 @@ public class RMGUInterface {
 			buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 
 			JTabbedPane tabTables = new JTabbedPane();
-			JComponent BDGpane = makeBDGpane();
-			JComponent BCKpane = makeBCKpane();
-			JComponent DBMpane = makeDBMpane();
-			JComponent ORpane = makeORpane();
-			JComponent MSpane = makeMSpane();
+			JComponent BDGpane = makeTablePane(new String[] { "", "M1", "M2",
+					"M3", "M4", "M5", "M6", "M7", "M8" });
+			JComponent BCKpane = makeTablePane(new String[] { "", "N", "D",
+					"N~D", "R", "N~R", "D~R", "R~N~D" });
+			JComponent DBMpane = makeTablePane(new String[] { "", "R", "C",
+					"R~C", "T~R", "T~C", "T~R~C" });
+			JComponent ORpane = makeTablePane(new String[] { "", "R", "TR",
+					"COV1", "COV2", "COV3", "ERROR" });
+			JComponent MSpane = makeTablePane(new String[] { "", "R", "C",
+					"RC", "MR", "MC", "MRC" });
 			tabTables.addTab("BDG", BDGpane);
 			tabTables.addTab("BCK", BCKpane);
 			tabTables.addTab("DBM", DBMpane);
@@ -1038,12 +1020,12 @@ public class RMGUInterface {
 		}
 	}
 
-	private class EstimateCofV extends SwingWorker<double[][][], Integer> {
+	private class CalculateCofV extends SwingWorker<double[][][], Integer> {
 		double[] u;
 		double[] var_t;
 		int[] n;
 
-		public EstimateCofV(double[] u, double[] var_t, int[] n) {
+		public CalculateCofV(double[] u, double[] var_t, int[] n) {
 			this.u = u;
 			this.var_t = var_t;
 			this.n = n;
@@ -1061,39 +1043,19 @@ public class RMGUInterface {
 		}
 	}
 
-	class doGenRoeMetzBtnListner implements ActionListener {
+	class DoGenRoeMetzBtnListner implements ActionListener {
 		double[][][] results;
 		int[] n;
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {
-				double[] u = { Double.valueOf(mu0.getText()),
-						Double.valueOf(mu1.getText()) };
-				double[] var_t = { Double.valueOf(vR00.getText()),
-						Double.valueOf(vC00.getText()),
-						Double.valueOf(vRC00.getText()),
-						Double.valueOf(vR10.getText()),
-						Double.valueOf(vC10.getText()),
-						Double.valueOf(vRC10.getText()),
-						Double.valueOf(vR01.getText()),
-						Double.valueOf(vC01.getText()),
-						Double.valueOf(vRC01.getText()),
-						Double.valueOf(vR11.getText()),
-						Double.valueOf(vC11.getText()),
-						Double.valueOf(vRC11.getText()),
-						Double.valueOf(vR0.getText()),
-						Double.valueOf(vC0.getText()),
-						Double.valueOf(vRC0.getText()),
-						Double.valueOf(vR1.getText()),
-						Double.valueOf(vC1.getText()),
-						Double.valueOf(vRC1.getText()) };
+				double[] u = getMeans();
+				double[] var_t = getVariances();
+				n = getSizes();
+				;
 
-				n = new int[] { Integer.valueOf(n0.getText()),
-						Integer.valueOf(n1.getText()),
-						Integer.valueOf(nr.getText()) };
-
-				final EstimateCofV estTask = new EstimateCofV(u, var_t, n);
+				final CalculateCofV estTask = new CalculateCofV(u, var_t, n);
 				estTask.addPropertyChangeListener(new PropertyChangeListener() {
 					public void propertyChange(PropertyChangeEvent evt) {
 						if (evt.getPropertyName().equals("done")) {
@@ -1130,11 +1092,16 @@ public class RMGUInterface {
 			buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 
 			JTabbedPane tabTables = new JTabbedPane();
-			JComponent BDGpane = makeBDGpane();
-			JComponent BCKpane = makeBCKpane();
-			JComponent DBMpane = makeDBMpane();
-			JComponent ORpane = makeORpane();
-			JComponent MSpane = makeMSpane();
+			JComponent BDGpane = makeTablePane(new String[] { "", "M1", "M2",
+					"M3", "M4", "M5", "M6", "M7", "M8" });
+			JComponent BCKpane = makeTablePane(new String[] { "", "N", "D",
+					"N~D", "R", "N~R", "D~R", "R~N~D" });
+			JComponent DBMpane = makeTablePane(new String[] { "", "R", "C",
+					"R~C", "T~R", "T~C", "T~R~C" });
+			JComponent ORpane = makeTablePane(new String[] { "", "R", "TR",
+					"COV1", "COV2", "COV3", "ERROR" });
+			JComponent MSpane = makeTablePane(new String[] { "", "R", "C",
+					"RC", "MR", "MC", "MRC" });
 			tabTables.addTab("BDG", BDGpane);
 			tabTables.addTab("BCK", BCKpane);
 			tabTables.addTab("DBM", DBMpane);
@@ -1316,20 +1283,43 @@ public class RMGUInterface {
 		}
 	}
 
-	private JComponent makeBDGpane() {
-		JPanel BDGpane = new JPanel(false);
-		String[] columnNames = { "", "M1", "M2", "M3", "M4", "M5", "M6", "M7",
-				"M8" };
-		Object[][] bdgData = new Object[3][9];
-		JTable table = new JTable(bdgData, columnNames);
+	public int[] getSizes() {
+		return new int[] { Integer.valueOf(n0.getText()),
+				Integer.valueOf(n1.getText()), Integer.valueOf(nr.getText()) };
+	}
+
+	public double[] getMeans() {
+		return new double[] { Double.valueOf(mu0.getText()),
+				Double.valueOf(mu1.getText()) };
+	}
+
+	public double[] getVariances() {
+		return new double[] { Double.valueOf(vR00.getText()),
+				Double.valueOf(vC00.getText()),
+				Double.valueOf(vRC00.getText()),
+				Double.valueOf(vR10.getText()), Double.valueOf(vC10.getText()),
+				Double.valueOf(vRC10.getText()),
+				Double.valueOf(vR01.getText()), Double.valueOf(vC01.getText()),
+				Double.valueOf(vRC01.getText()),
+				Double.valueOf(vR11.getText()), Double.valueOf(vC11.getText()),
+				Double.valueOf(vRC11.getText()), Double.valueOf(vR0.getText()),
+				Double.valueOf(vC0.getText()), Double.valueOf(vRC0.getText()),
+				Double.valueOf(vR1.getText()), Double.valueOf(vC1.getText()),
+				Double.valueOf(vRC1.getText()) };
+	}
+
+	private JComponent makeTablePane(String[] colNames) {
+		JPanel thePane = new JPanel(false);
+		Object[][] theData = new Object[3][colNames.length];
+		JTable table = new JTable(theData, colNames);
 		table.setValueAt("components", 0, 0);
 		table.setValueAt("coeff", 1, 0);
 		table.setValueAt("total", 2, 0);
-		BDGpane.setLayout(new BorderLayout());
-		BDGpane.add(table.getTableHeader(), BorderLayout.PAGE_START);
-		BDGpane.add(table);
-		BDGpane.add(new JLabel("sqrt(Var) = "), BorderLayout.EAST);
-		return BDGpane;
+		thePane.setLayout(new BorderLayout());
+		thePane.add(table.getTableHeader(), BorderLayout.PAGE_START);
+		thePane.add(table);
+		thePane.add(new JLabel("sqrt(Var) = "), BorderLayout.EAST);
+		return thePane;
 	}
 
 	private void updateBDGpane(JComponent BDGpane, int mod, double[][] allBDG,
@@ -1361,22 +1351,6 @@ public class RMGUInterface {
 		varLabel.setText("sqrt(Var) = " + output);
 	}
 
-	private JComponent makeBCKpane() {
-		JPanel BCKpane = new JPanel(false);
-		String[] columnNames = { "", "N", "D", "N~D", "R", "N~R", "D~R",
-				"R~N~D" };
-		Object[][] bckData = new Object[3][8];
-		JTable table = new JTable(bckData, columnNames);
-		table.setValueAt("components", 0, 0);
-		table.setValueAt("coeff", 1, 0);
-		table.setValueAt("total", 2, 0);
-		BCKpane.setLayout(new BorderLayout());
-		BCKpane.add(table.getTableHeader(), BorderLayout.PAGE_START);
-		BCKpane.add(table);
-		BCKpane.add(new JLabel("sqrt(Var) = "), BorderLayout.EAST);
-		return BCKpane;
-	}
-
 	private void updateBCKpane(JComponent BCKpane, int mod, double[][] allBCK,
 			double[][] BCKcoeff) {
 		JTable table = (JTable) BCKpane.getComponent(1);
@@ -1406,21 +1380,6 @@ public class RMGUInterface {
 		varLabel.setText("sqrt(Var) = " + output);
 	}
 
-	private JComponent makeDBMpane() {
-		JPanel DBMpane = new JPanel(false);
-		String[] columnNames = { "", "R", "C", "R~C", "T~R", "T~C", "T~R~C" };
-		Object[][] dbmData = new Object[3][7];
-		JTable table = new JTable(dbmData, columnNames);
-		table.setValueAt("components", 0, 0);
-		table.setValueAt("coeff", 1, 0);
-		table.setValueAt("total", 2, 0);
-		DBMpane.setLayout(new BorderLayout());
-		DBMpane.add(table.getTableHeader(), BorderLayout.PAGE_START);
-		DBMpane.add(table);
-		DBMpane.add(new JLabel("sqrt(Var) = "), BorderLayout.EAST);
-		return DBMpane;
-	}
-
 	private void updateDBMpane(JComponent DBMpane, int mod, double[][] allDBM,
 			double[][] DBMcoeff) {
 		JTable table = (JTable) DBMpane.getComponent(1);
@@ -1438,21 +1397,6 @@ public class RMGUInterface {
 		varLabel.setText("sqrt(Var) = " + output);
 	}
 
-	private JComponent makeORpane() {
-		JPanel ORpane = new JPanel(false);
-		String[] columnNames = { "", "R", "TR", "COV1", "COV2", "COV3", "ERROR" };
-		Object[][] orData = new Object[3][7];
-		JTable table = new JTable(orData, columnNames);
-		table.setValueAt("components", 0, 0);
-		table.setValueAt("coeff", 1, 0);
-		table.setValueAt("total", 2, 0);
-		ORpane.setLayout(new BorderLayout());
-		ORpane.add(table.getTableHeader(), BorderLayout.PAGE_START);
-		ORpane.add(table);
-		ORpane.add(new JLabel("sqrt(Var) = "), BorderLayout.EAST);
-		return ORpane;
-	}
-
 	private void updateORpane(JComponent ORpane, int mod, double[][] allOR,
 			double[][] ORcoeff) {
 		JTable table = (JTable) ORpane.getComponent(1);
@@ -1468,21 +1412,6 @@ public class RMGUInterface {
 		double currVar = matrix.total(ORdata[2]);
 		String output = df2.format(Math.sqrt(currVar));
 		varLabel.setText("sqrt(Var) = " + output);
-	}
-
-	private JComponent makeMSpane() {
-		JPanel MSpane = new JPanel(false);
-		String[] columnNames = { "", "R", "C", "RC", "MR", "MC", "MRC" };
-		Object[][] msData = new Object[3][7];
-		JTable table = new JTable(msData, columnNames);
-		table.setValueAt("components", 0, 0);
-		table.setValueAt("coeff", 1, 0);
-		table.setValueAt("total", 2, 0);
-		MSpane.setLayout(new BorderLayout());
-		MSpane.add(table.getTableHeader(), BorderLayout.PAGE_START);
-		MSpane.add(table);
-		MSpane.add(new JLabel("sqrt(Var) = "), BorderLayout.EAST);
-		return MSpane;
 	}
 
 	private void updateMSpane(JComponent MSpane, int mod, double[][] allMS,

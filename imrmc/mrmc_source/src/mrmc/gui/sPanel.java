@@ -35,31 +35,20 @@ import java.text.DecimalFormat;
 public class sPanel {
 	GUInterface gui;
 	JFrame reportFrame;
-	JTextField sizeR;
-	JTextField sizeN;
-	JTextField sizeD;
-	JTextField sigLevel;
-	JTextField effSize;
-	JLabel effSizeLabel;
+	private JTextField sizeR;
+	private JTextField sizeN;
+	private JTextField sizeD;
+	private JTextField sigLevel;
+	private JTextField effSize;
+	private JLabel effSizeLabel;
 	double[] statParms = new double[2];
 	dbRecord curRecord;
 	String SEPA = ",";
 	DecimalFormat formatter = new DecimalFormat("0.00000E0");
 	DecimalFormat formatter2 = new DecimalFormat("0.00");
 	private JTextField numSplitPlot;
-	public int pairedCs = 1;
-	public int pairedRs = 1;
-
-	public void setNumbers(int[] Parms) {
-		sizeR.setText(Integer.toString(Parms[0]));
-		sizeN.setText(Integer.toString(Parms[1]));
-		sizeD.setText(Integer.toString(Parms[2]));
-	}
-
-	public void setEff(String text, String val) {
-		effSizeLabel.setText(text);
-		effSize.setText(val);
-	}
+	private int pairedCs = 1;
+	private int pairedRs = 1;
 
 	public sPanel(int[] Parms, JPanel sizingPanel, GUInterface guitemp) {
 		gui = guitemp;
@@ -139,6 +128,17 @@ public class sPanel {
 		sizingPanel.add(innerSizingPanel);
 	}
 
+	public void setNumbers(int[] Parms) {
+		sizeR.setText(Integer.toString(Parms[0]));
+		sizeN.setText(Integer.toString(Parms[1]));
+		sizeD.setText(Integer.toString(Parms[2]));
+	}
+
+	public void setEff(String text, String val) {
+		effSizeLabel.setText(text);
+		effSize.setText(val);
+	}
+
 	public String genReport() {
 		int useBiasM = gui.getuseBiasM();
 
@@ -166,8 +166,6 @@ public class sPanel {
 		double[][] newDBMcoeff = dbRecord.genDBMCoeff(newR, newN, newD);
 		double[][] newBCKcoeff = dbRecord.genBCKCoeff(newR, newN, newD);
 		double[][] newORcoeff = dbRecord.genORCoeff(newR, newN, newD);
-		// double[][] DBMnew = curRecord.BDG2DBM(BDG,newR,newN,newD);
-		// double[][] ORnew = curRecord.BDG2OR(BDG, newR,newN,newD);
 		double[][] DBMnew = dbRecord.BCK2DBM(BCK, newR, newN, newD);
 		double[][] ORnew = dbRecord.DBM2OR(0, DBMnew, newR, newN, newD);
 
@@ -462,11 +460,6 @@ public class sPanel {
 			int[] Parms = { Integer.parseInt(sizeR.getText()),
 					Integer.parseInt(sizeN.getText()),
 					Integer.parseInt(sizeD.getText()) };
-			// int[] Parms={Integer.parseInt(sizeR.getText()),
-			// Integer.parseInt(sizeN.getText()),
-			// Integer.parseInt(sizeD.getText()),
-			// Integer.parseInt(sigLevel.getText()),
-			// Integer.parseInt(effSize.getText())};
 			double[] Parms1 = { Double.parseDouble(sigLevel.getText()),
 					Double.parseDouble(effSize.getText()) };
 			int[] Parms2 = { Integer.parseInt(numSplitPlot.getText()),
@@ -477,7 +470,6 @@ public class sPanel {
 
 	public double[] sizeTrial(double[][] DBM, double[][] OR, double sig,
 			double eff, int R, int N, int D) {
-
 		double[] var = new double[3];
 		int selectedMod = gui.getSelectedMod();
 		int selectedInput = gui.getSelectedInput();

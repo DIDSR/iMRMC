@@ -30,8 +30,6 @@ import umontreal.iro.lecuyer.probdist.BetaDist;
 import umontreal.iro.lecuyer.probdist.FisherFDist;
 import umontreal.iro.lecuyer.probdist.NormalDist;
 
-//import umontreal.iro.lecuyer.probdist.StudentDist;
-
 public class statTest {
 	int INFINITY = 500;
 	int PRECISION = 6;
