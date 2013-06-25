@@ -415,8 +415,7 @@ public class GUInterface {
 						newN, newD);
 				OR = dbRecord.DBM2OR(0, DBM, newR, newN, newD);
 				MS = dbRecord.DBM2MS(DBM, newR, newN, newD);
-			} else if (MC.getSelectedComp() == 2) // DBM input is used
-			{
+			} else if (MC.getSelectedComp() == 2) {// DBM input is used
 				DBM = tempRecord.DBMresize(tempRecord.getDBM(useBiasM), newR,
 						newN, newD);
 				OR = dbRecord.DBM2OR(0, DBM, newR, newN, newD);

@@ -1055,12 +1055,12 @@ public class RMGUInterface {
 				n = getSizes();
 				;
 
-				final CalculateCofV estTask = new CalculateCofV(u, var_t, n);
-				estTask.addPropertyChangeListener(new PropertyChangeListener() {
+				final CalculateCofV calcTask = new CalculateCofV(u, var_t, n);
+				calcTask.addPropertyChangeListener(new PropertyChangeListener() {
 					public void propertyChange(PropertyChangeEvent evt) {
 						if (evt.getPropertyName().equals("done")) {
 							try {
-								results = estTask.get();
+								results = calcTask.get();
 								processResults();
 							} catch (InterruptedException e) {
 								e.printStackTrace();
@@ -1071,7 +1071,7 @@ public class RMGUInterface {
 					}
 				});
 
-				estTask.execute();
+				calcTask.execute();
 			} catch (NumberFormatException e1) {
 				JOptionPane.showMessageDialog(appl.getFrame(),
 						"Incorrect / Incomplete Input", "Error",
@@ -1081,7 +1081,7 @@ public class RMGUInterface {
 
 		public void processResults() {
 			JDialog estOutput = new JDialog(appl.getFrame(),
-					"Estimation Results");
+					"Calculation Results");
 			JPanel panel = new JPanel();
 			panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
