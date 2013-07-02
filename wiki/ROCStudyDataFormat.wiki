@@ -1,6 +1,7 @@
 =Data Format for ROC Ratings=
 Here we describe a properly formatted file of ROC ratings. These instructions can also be accessed via the “Format Info.” button. 
 
+http://imrmc.googlecode.com/svn/images/format%20button.png
  
 
 The file format has two parts: the study description at the top followed by a list of ROC ratings. The study description can include any information as free text. It must include four lines corresponding to the size of the experiment and then conclude with a line stating “BEGIN DATA”. We demonstrate the formatting of these lines in an example. If the study has 9 readers, 55 diseased patients, and 75 non-diseased patients, and 5 modalities, then a legitimate study description can be nothing more than the following lines:
