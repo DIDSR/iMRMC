@@ -54,12 +54,12 @@ If any of the resulting components are negative, the user will be asked if they 
 
 The populated table shows the components of variance, which can be given in five different representations: these are available by clicking on the corresponding tab of the “Statistical Analysis” table. For the BDG and BCK representation we have 7 total rows. The “comp M0” and “comp M1” rows show the components for each modality, and the “coeff M0” and “coeff M1” rows give the corresponding coefficients/weights for each component of variance. The “product M0, M1” shows the covariance components for both modalities, and the “2*coeff M0-M1” gives its coefficient/weight. The “total” row displays the contribution towards the total variance by each component. The contributions are summed to produce the total variance, and the square root of that is the standard error, which is displayed to the right of the table. The DBM, OR, and MS tabs are similar, but only contain 3 rows, showing the components, coefficients, and total without separating by modality. 
 
- 
+http://imrmc.googlecode.com/svn/images/stat%20panel.png
 
 ==Sizing a Future Study==
 The second panel is for sizing a trial using the components of variance shown. Input the number of split-plot groups, pairing of readers, pairing of cases, number of readers, non-diseased cases, and diseased cases, as well as the significance level and the effect size. Then click “Size a Trial”. The summary statistics that are produced show the square root total variance, the delta, degrees of freedom by Hillis’ method with F-test [9] and BDG method [11], CVF, and statistical power by Hillis’ method and the Z test method.
 
- 
+http://imrmc.googlecode.com/svn/images/sizing%20panel.png
 
 ==Generate a Report==
 
