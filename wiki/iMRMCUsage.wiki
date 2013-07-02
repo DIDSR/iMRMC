@@ -26,19 +26,19 @@ There are three methods to input data for analysis. The methods can be selected 
 ==Data Analysis==
 ===ROC Data Analysis Charts===
 
- 
+http://imrmc.googlecode.com/svn/images/study%20buttons.png
 
 If raw data was input from a file of ROC ratings, the user can view some visual representations of this data. The “Input Statistics Charts” button, located next to “Format Info.” causes two charts to appear. These charts show information about the study, allowing the user to easily determine if the study has been input correctly. One chart displays the number of cases that each reader scored, and the other displays the number of readers that scored each case. The bars allow for easy visual recognition of where the study is incomplete. Hovering the mouse over a particular bar displays the relevant information for the data.
 
- 
+http://imrmc.googlecode.com/svn/images/input%20statistics.png
 
 For a more in-depth view of the completeness of the study, the “Show Study Design” button allows the user to view the presence or absence of score data per modality. The user selects a modality to view, and a chart displaying each case and each reader appears. A black square represents an existing score for said modality, case, and reader. A white square represents missing data at this point. Hovering the mouse over a particular square displays this information as “Present/Absent (Case # / Reader #)”.
 
- 
+http://imrmc.googlecode.com/svn/images/imrmc%20study%20design.png
 
 The “Show ROC Curve” button asks for a modality, and then displays the ROC curves for the given modality. Selecting the various checkboxes on the bottom border of the chart window enables/disables ROC curves for each individual reader, as well as average ROC curves, of which there are four types. Horizontal Average averages in specificity at every possible specificity, Vertical Average averages in sensitivity at every possible specificity, and Diagonal Average averages in the direction of sensitivity+specificity at every sensitivity-specificity (along x=y diagonal line). Pooled Average gathers all reader scores into one large set and calculates the ROC curve across that set.
 
- 
+http://imrmc.googlecode.com/svn/images/imrmc%20roc.png
 
 These charts are all resizable, and their contents will scale to the new size automatically. Additionally, clicking and dragging from an upper left to lower right direction zooms the view in on that area. Clicking and dragging from a lower right direction to an upper left direction returns the view to its default zoom.
 
