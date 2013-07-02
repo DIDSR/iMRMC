@@ -1,0 +1,10 @@
+=iMRMC Database=
+
+The software includes a database that consists of results from simulated data and results from previous MRMC reader studies. We have accrued many reader study datasets and are working on the letters of permission to include them. The datasets are from a variety of sources including FDA sponsor data for imaging device approvals, as well as academic research studies. Each dataset contains
+  * Basic information of the study: this includes the source of the study, a summary of the study, related publications, and other information.
+  * Key information of the study: number of readers, number non-diseased cases, number of diseased cases, modalities used, and task.
+  * Variance representations as outlined above.
+
+See Appendix A [link to page] for details regarding the summary information. 
+
+In addition to the information outlined above, we are working on permission letters to share the ROC scores for each study. The ROC scores that we share are listed on the website. You can download a file with the study description that produced the ROC scores followed by the ROC scores themselves; the file is formatted for use with the iMRMC software. See the “Data Format for ROC Ratings” [link to page]  section for more information on the iMRMC file formatting and the “Sample Permission Letter” section below [link to page]. We welcome more data. Please contact us.
