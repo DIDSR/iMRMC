@@ -5,20 +5,17 @@ Here we describe a properly formatted file of ROC ratings. These instructions ca
 
 The file format has two parts: the study description at the top followed by a list of ROC ratings. The study description can include any information as free text. It must include four lines corresponding to the size of the experiment and then conclude with a line stating “BEGIN DATA”. We demonstrate the formatting of these lines in an example. If the study has 9 readers, 55 diseased patients, and 75 non-diseased patients, and 5 modalities, then a legitimate study description can be nothing more than the following lines:
 
+{{{
 N0: 75
-
 N1: 55
-
 NR: 9
-
 NM: 5
-
 BEGIN DATA
-
 … …
+}}}
 
 The list of ROC ratings has a row for each reader scoring each case for each modality in the study, in any order. It also has rows specifying the truth value of each case. iMRMC can handle non-fully crossed data for any number of modalities, though only two of those modalities may be used at a time for variance analysis. Each row has four fields: the reader id (integer), case id (integer), modality index (-1 = truth, 1 = modality 1, 2 = modality 2, etc.), and the score corresponding to the value for a particular modality. The score would be 0 or 1 for a truth modality index (indicating normal or diseased) or a value (integer or float) for a particular modality. Higher scores should indicate higher likelihood or confidence of disease and low ratings should indicate lesser likelihood or confidence of disease. Otherwise, AUC calculations and ROC curve displays will be incorrect. Each field should be separated by only a comma and each row terminated by a newline character. For example, the first few rows could look like the following:
-
+{{{
 -1,1,0,1
 -1,2,0,0
 1,1,1,3
@@ -33,5 +30,6 @@ The list of ROC ratings has a row for each reader scoring each case for each mod
 2,2,1,1
 2,2,2,3
 2,2,3,15.8
+}}}
 
 In the example, we see the ROC ratings from two readers reading two cases with three modalities each. The first line indicates that case 1 is a diseased (N1) case. The second line indicates that case 2 is a normal (N0) case. The third through fifth lines show reader 1’s score for modalities 1 through 3 on case 1. The sixth through eighth lines indicate the same but for reader 2 instead. The remaining lines repeat the pattern with readers 1 and 2 scoring the modalities of case 2.
