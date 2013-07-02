@@ -1,0 +1,124 @@
+=Using the iMRMC Application=
+
+==Technical Specifications==
+The software is written in Java. It requires Java Runtime Environment (JRE) 1.6 or 1.7.
+
+The application has been tested on the following operating systems:
+  * Ubuntu Linux 12.04 32-bit, success
+  * Windows 7 64-bit, success
+
+Please let us know what system you have tried to run the application on, and its success. We are attempting to make the application as portable as possible.
+
+==First Time Use==
+Test that Java is working on your computer by going to
+http://java.com/en/download/testjava.jsp
+
+Running the application:
+
+Extract imrmc.zip to the desired folder. It should contain imrmc.jar and the DB folder, containing files for the imrmc database. Double click on imrmc.jar to start the application. Alternatively, navigate to the containing folder via command line and run the command ‘java –jar imrmc.jar’ to start the application (This requires the java system variable to be set if it has not been already. See http://docs.oracle.com/javase/tutorial/essential/environment/paths.html).
+==Input data==
+There are three methods to input data for analysis. The methods can be selected from the pull-down menu next to “Select an input method”. 
+
+		# The user may choose a study from our database. After selecting a dataset, go to the “Data Analysis” section (4.5).
+
+ 
+Figure 4.3.1: Database input panel
+
+		# The user may choose “Input raw data…”, where “raw data” refers to ROC ratings from an MRMC reader study. See the “Data Format for ROC Ratings” section below to create a properly formatted file of ROC ratings. Click on the “Browse” button to open up a file browser and navigate to a suitable .imrmc input file. Select open or double click on the file to load it into the application. A dialog box will pop up displaying information about the study content (number of readers, number of diseased and normal cases, and number of modalities). If the study is not fully crossed, a dialog box will inform the user as well. If the input file is incorrectly formatted, a dialog box will inform the user, and provide the line in the file at which the error occurs. 
+
+ 
+Figure 4.3.2: Raw study data input panel
+
+		# The user may choose to input the variance components from an existing study manually. The user may choose to use other software to compute the components of variance and input those components manually into our application to size a trial. The application currently can size trials based on BDG, BCK, DBM, and OR components. After selecting a dataset, skip to the “Data Analysis” section (4.5).
+
+ 
+Figure 4.3.3: Manual component input panel
+
+==Data Format for ROC Ratings==
+Here we describe a properly formatted file of ROC ratings. These instructions can also be accessed via the “Format Info.” button. 
+
+ 
+Figure 4.4.1: Format info button
+
+The file format has two parts: the study description at the top followed by a list of ROC ratings. The study description can include any information as free text. It must include four lines corresponding to the size of the experiment and then conclude with a line stating “BEGIN DATA”. We demonstrate the formatting of these lines in an example. If the study has 9 readers, 55 diseased patients, and 75 non-diseased patients, and 5 modalities, then a legitimate study description can be nothing more than the following lines:
+
+N0: 75
+N1: 55
+NR: 9
+NM: 5
+BEGIN DATA
+… …
+
+The list of ROC ratings has a row for each reader scoring each case for each modality in the study, in any order. It also has rows specifying the truth value of each case. iMRMC can handle non-fully crossed data for any number of modalities, though only two of those modalities may be used at a time for variance analysis. Each row has four fields: the reader id (integer), case id (integer), modality index (-1 = truth, 1 = modality 1, 2 = modality 2, etc.), and the score corresponding to the value for a particular modality. The score would be 0 or 1 for a truth modality index (indicating normal or diseased) or a value (integer or float) for a particular modality. Higher scores should indicate higher likelihood or confidence of disease and low ratings should indicate lesser likelihood or confidence of disease. Otherwise, AUC calculations and ROC curve displays will be incorrect. Each field should be separated by only a comma and each row terminated by a newline character. For example, the first few rows could look like the following:
+
+-1,1,0,1
+-1,2,0,0
+1,1,1,3
+1,1,2,5
+1,1,3,55.12
+2,1,1,2
+2,1,2,7
+2,1,3,46.3
+1,2,1,1
+1,2,2,0
+1,2,3,23.32
+2,2,1,1
+2,2,2,3
+2,2,3,15.8
+
+In the example, we see the ROC ratings from two readers reading two cases with three modalities each. The first line indicates that case 1 is a diseased (N1) case. The second line indicates that case 2 is a normal (N0) case. The third through fifth lines show reader 1’s score for modalities 1 through 3 on case 1. The sixth through eighth lines indicate the same but for reader 2 instead. The remaining lines repeat the pattern with readers 1 and 2 scoring the modalities of case 2.
+==Data Analysis==
+===ROC Data Analysis Charts===
+
+ 
+Figure 4.5.1: Data analysis diagram buttons
+
+If raw data was input from a file of ROC ratings, the user can view some visual representations of this data. The “Input Statistics Charts” button, located next to “Format Info.” causes two charts to appear. These charts show information about the study, allowing the user to easily determine if the study has been input correctly. One chart displays the number of cases that each reader scored, and the other displays the number of readers that scored each case. The bars allow for easy visual recognition of where the study is incomplete. Hovering the mouse over a particular bar displays the relevant information for the data.
+
+ 
+Figure 4.5.2: Input statistics charts
+
+For a more in-depth view of the completeness of the study, the “Show Study Design” button allows the user to view the presence or absence of score data per modality. The user selects a modality to view, and a chart displaying each case and each reader appears. A black square represents an existing score for said modality, case, and reader. A white square represents missing data at this point. Hovering the mouse over a particular square displays this information as “Present/Absent (Case # / Reader #)”.
+
+ 
+Figure 4.5.3: Study design chart
+
+The “Show ROC Curve” button asks for a modality, and then displays the ROC curves for the given modality. Selecting the various checkboxes on the bottom border of the chart window enables/disables ROC curves for each individual reader, as well as average ROC curves, of which there are four types. Horizontal Average averages in specificity at every possible specificity, Vertical Average averages in sensitivity at every possible specificity, and Diagonal Average averages in the direction of sensitivity+specificity at every sensitivity-specificity (along x=y diagonal line). Pooled Average gathers all reader scores into one large set and calculates the ROC curve across that set.
+
+ 
+Figure 4.5.4: ROC curve chart
+
+These charts are all resizable, and their contents will scale to the new size automatically. Additionally, clicking and dragging from an upper left to lower right direction zooms the view in on that area. Clicking and dragging from a lower right direction to an upper left direction returns the view to its default zoom.
+
+===Variance Analysis===
+
+The user can estimate the components of variance for modality 1, modality 2, or the difference in modalities when data is input from the database. Choose the desired modality with the radio buttons and click “MRMC variance analysis” to perform the statistical analysis. 
+
+If data is input from raw ROC ratings, there will be a drop-down menu next to “Modality A” and Modality “B”, allowing the user to choose from the various modalities in the input file. If one modality is selected in either only Modality A or only Modality B and the other is set to none, the “MRMC Variance Analysis” button will show which modality the components of variance will be estimated for. If a modality is selected in both Modality A and Modality B, the components of variance will be estimated for the difference in the two modalities. The “MRMC Variance Analysis” button will reflect this.
+
+For manual input of variance components, the relevant information of the study is input, and the radio buttons to choose between single modality and difference are available. Once this is done, the “MRMC Variance Analysis” button will perform the statistical analysis.
+
+If any of the resulting components are negative, the user will be asked if they would like to use MLE estimates instead of the usual u-statistics estimates. The MLE estimates of the components are never negative, and this can help with calculating the variance/error sometimes. If MLE estimates are being used, a double asterisk (**) will appear next to the decomposition names in the table.
+
+The populated table shows the components of variance, which can be given in five different representations: these are available by clicking on the corresponding tab of the “Statistical Analysis” table. For the BDG and BCK representation we have 7 total rows. The “comp M0” and “comp M1” rows show the components for each modality, and the “coeff M0” and “coeff M1” rows give the corresponding coefficients/weights for each component of variance. The “product M0, M1” shows the covariance components for both modalities, and the “2*coeff M0-M1” gives its coefficient/weight. The “total” row displays the contribution towards the total variance by each component. The contributions are summed to produce the total variance, and the square root of that is the standard error, which is displayed to the right of the table. The DBM, OR, and MS tabs are similar, but only contain 3 rows, showing the components, coefficients, and total without separating by modality. 
+
+ 
+Figure 4.5.5: Variance analysis results table
+
+==Sizing a Future Study==
+The second panel is for sizing a trial using the components of variance shown. Input the number of split-plot groups, pairing of readers, pairing of cases, number of readers, non-diseased cases, and diseased cases, as well as the significance level and the effect size. Then click “Size a Trial”. The summary statistics that are produced show the square root total variance, the delta, degrees of freedom by Hillis’ method with F-test [9] and BDG method [11], CVF, and statistical power by Hillis’ method and the Z test method.
+
+ 
+Figure 4.6.1: Study sizing panel
+
+==Generate a Report==
+
+The following information is summarized and displayed by the GUI. A report of the results may also be generated:
+	# size of the existing study and AUC values
+	# components of variance calculated from the existing study in BDG, BCK, DBM, OR, MS representations
+	# size of the future study and AUC values
+	# effect size, significance level, and corresponding statistical power
+	# For input from database or input of raw data, the report may also include a description of the existing study if available.  For the manual input, the report may not include all four kinds of components of variance, depending on whether the input components of variance are convertible to other types of components of variances. For example, if the user chooses to input DBM components of variance, OR components can be derived while BDG components cannot. 
+
+==Database==
+At the bottom of the applet is the means by which we are sharing the whole database (basic information of each study, size of the study, and variance decompositions). The “database” is populated by simulated datasets right now. The buttons at the bottom are related to downloading a spread sheet of that data (work in progress).
