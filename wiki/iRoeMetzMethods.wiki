@@ -10,7 +10,7 @@ iRoeMetz makes use of a generalized version of the Roe & Metz model [1]. This ge
 
 ==Simulation==
 
-Experiments are simulated by taking normally distributed random variables of the corresponding variance to the input and using them in the equations detailed in Figure 1.1.1. The t-matrices produced by these equations can be used to estimate the components of variance and their respective decompositions (see iMRMC User Guide section 2.1, 2.2 for explanation), and to create simulated reader scores. 
+Experiments are simulated by taking normally distributed random variables of the corresponding variance to the input and using them in the equations detailed in Figure 1.1.1. The t-matrices produced by these equations can be used to estimate the components of variance and their respective decompositions [iMRMCMethods#Components_of_Variance] (see iMRMC User Guide section 2.1, 2.2 for explanation), and to create simulated reader scores. 
 
 The random variables are created by using a pseudo-random number generator known as the Mersenne Twister. This method of random number generation is particularly suited to Monte Carlo trials, and is faster and more efficient than Java’s standard library pseudo-random number generator. 
 
