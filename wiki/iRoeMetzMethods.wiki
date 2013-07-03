@@ -18,3 +18,9 @@ iRoeMetz has the ability to perform numerous simulations at once based on the sa
 
 
 ==Calculation==
+
+Given the variances, means and experiment size, the components of variance can calculated via numerical integration. This calculation can be found in the source file `CofVGenRoeMetz.java` (package `roemetz.core`) inside the method: 
+
+{{{
+public static void genRoeMetz(double[] u, double[] var_t, int[] n);
+}}}
