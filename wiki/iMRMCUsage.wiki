@@ -1,5 +1,7 @@
 =Using the iMRMC Application=
 
+<wiki:toc max_depth="3" />
+
 ==Technical Specifications==
 The software is written in Java. It requires Java Runtime Environment (JRE) 1.6 or 1.7.
 
@@ -19,9 +21,9 @@ Extract imrmc.zip to the desired folder. It should contain imrmc.jar and the DB 
 ==Input data==
 There are three methods to input data for analysis. The methods can be selected from the pull-down menu next to “Select an input method”. 
 
-		# The user may choose a study from our database. After selecting a dataset, go to the “Data Analysis” section (4.5). 
-		# The user may choose “Input raw data…”, where “raw data” refers to ROC ratings from an MRMC reader study. See [ROCStudyDataFormat the formatting guide] to create a properly formatted file of ROC ratings. Click on the “Browse” button to open up a file browser and navigate to a suitable .imrmc input file. Select open or double click on the file to load it into the application. A dialog box will pop up displaying information about the study content (number of readers, number of diseased and normal cases, and number of modalities). If the study is not fully crossed, a dialog box will inform the user as well. If the input file is incorrectly formatted, a dialog box will inform the user, and provide the line in the file at which the error occurs. 
-		# The user may choose to input the variance components from an existing study manually. The user may choose to use other software to compute the components of variance and input those components manually into our application to size a trial. The application currently can size trials based on BDG, BCK, DBM, and OR components. After selecting a dataset, skip to the “Data Analysis” section (4.5).
+  # The user may choose a study from our database. After selecting a dataset, go to the “Data Analysis” section (4.5). 
+  # The user may choose “Input raw data…”, where “raw data” refers to ROC ratings from an MRMC reader study. See [ROCStudyDataFormat the formatting guide] to create a properly formatted file of ROC ratings. Click on the “Browse” button to open up a file browser and navigate to a suitable .imrmc input file. Select open or double click on the file to load it into the application. A dialog box will pop up displaying information about the study content (number of readers, number of diseased and normal cases, and number of modalities). If the study is not fully crossed, a dialog box will inform the user as well. If the input file is incorrectly formatted, a dialog box will inform the user, and provide the line in the file at which the error occurs. 
+  # The user may choose to input the variance components from an existing study manually. The user may choose to use other software to compute the components of variance and input those components manually into our application to size a trial. The application currently can size trials based on BDG, BCK, DBM, and OR components. After selecting a dataset, skip to the “Data Analysis” section (4.5).
 
 ==Data Analysis==
 ===ROC Data Analysis Charts===
