@@ -1,0 +1,2 @@
+=References for iRoeMetz Application=
+  # Metz, C. E., “Basic principles of ROC analysis.”, Semin Nucl Med. 1978 Oct;8(4):283-98.
