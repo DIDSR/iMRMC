@@ -1,68 +1,53 @@
-This describes the basic and key information we intend to provide for each dataset.
+A description of the basic and key information we intend to provide for each dataset.
 
 ==Basic Information==
-
-The following fields summarize the data source, setting, experimental conditions, and reference material related to the reader ROC ratings.
-
-  1. Source: (Owner of data, free text) Data owner or representative, affiliation, mailing address, phone, and email.
-
-  2. Summary: (free text) A succinct description of the reader study (readers, cases, reference method, rating method) with more details on the task and modalities (treatments) under investigation.
-
-  3. Publication: (free text) Full references to articles that describe or utilize the reader study or data. This field should also include other sources of information related to the study or data (links to webpages, protocol identifiers).
-  4. Notes: (free text) This field can alert the user to any peculiar issues related to the data. For example, is there any missing data or corrections to the data?
-
-  5. Acknowledgements: (free text)
-
-  6. NR: (Number of readers, integer)
-
-  7. N0: (Number of normal cases, integer)
-
-  8. N1: (Number of abnormal cases, integer)
-
-  9. NM: (Number of modalities, integer)
-
-  10. AUC1: (AUC Modality 1, floating point)
-
-  11. AUC2: (AUC Modality 2, floating point)
-
-  12. …
-
-  13. AUCn: (AUC Modality n, floating point)
-
-  14. DAUC: (Difference in AUCs, floating point) 
-
+Fields which summarize the data source, setting, experimental conditions, and reference material related to the reader ROC ratings.
 
 ==Key Information==
+Items which are critical for determining the application area of the components of (co)variance. They may be renamed and regrouped over time as deemed useful.
 
-The following items are critical for determining the application area of the components of (co)variance. They may be renamed and regrouped over time as deemed useful.
-
-  15. Mod1: (Modality 1, limited choices)
-
-16.	Mod2: (Modality 2, limited choices) 
-a.	simulation
-b.	film radiography
-c.	digital radiography
-d.	film with CAD
-e.	film mammography
-f.	digital mammography
-g.	SE MRI
-h.	CINE MRI
-i.	Multi-detector row CT
-j.	Digital breast tomosythesis
-k.	Mammography + ultrasound
-l.	Mammography + ultrasound + CAD
-m.	Ultrasound
-n.	Ultraound + CAD
-17.	Task: (limited choices)
-a.	simulation
-b.	chest and abdominal abnormality detection 
-c.	breast abnormality detection
-d.	breast cancer detection
-e.	detection of thoracic aortic dissection
-18.	TaskAdd: (limited choices) This field indicates a modification or qualifier to the task. Multiple qualifiers may be indicated. More liberty will be given to data suppliers in defining these choices. This list is expected to grow.
-a.	pediatric
-b.	malignant mass
-c.	malignant calcification
-d.	nodule
-e.	pneumothorax
-f.	interstitial disease
+ # ===Basic Information===
+  # *Source: (Owner of data, free text)* Data owner or representative, affiliation, mailing address, phone, and email.
+  # *Summary: (free text)* A succinct description of the reader study (readers, cases, reference method, rating method) with more details on the task and modalities (treatments) under investigation.
+  # *Publication: (free text)* Full references to articles that describe or utilize the reader study or data. This field should also include other sources of information related to the study or data (links to webpages, protocol identifiers).
+  # *Notes: (free text)* This field can alert the user to any peculiar issues related to the data. For example, is there any missing data or corrections to the data?
+  # *Acknowledgements: (free text)*
+  # *NR: (Number of readers, integer)*
+  # *N0: (Number of normal cases, integer)*
+  # *N1: (Number of abnormal cases, integer)*
+  # *NM: (Number of modalities, integer)*
+  # *AUC1: (AUC Modality 1, floating point)*
+  # *AUC2: (AUC Modality 2, floating point)*
+  # *…*
+  # *AUCn: (AUC Modality n, floating point)*
+  # *DAUC: (Difference in AUCs, floating point)*
+ # ===Key Information===
+  # *Mod1: (Modality 1, limited choices)*
+  # *Mod2: (Modality 2, limited choices)*
+   #	simulation
+   #	film radiography
+   #	digital radiography
+   #	film with CAD
+   #	film mammography
+   #	digital mammography
+   #	SE MRI
+   #	CINE MRI
+   #	Multi-detector row CT
+   #	Digital breast tomosynthesis
+   #	Mammography + ultrasound
+   #	Mammography + ultrasound + CAD
+   #	Ultrasound
+   #	Ultrasound + CAD
+  # *Task: (limited choices)*
+   #	simulation
+   #	chest and abdominal abnormality detection 
+   #	breast abnormality detection
+   #	breast cancer detection
+   #	detection of thoracic aortic dissection
+  # *TaskAdd: (limited choices)* This field indicates a modification  or qualifier to the task. Multiple qualifiers may be indicated. More liberty will be given to data suppliers in defining these choices. This list is expected to grow.
+   #	pediatric
+   #	malignant mass
+   #	malignant calcification
+   #	nodule
+   #	pneumothorax
+   #	interstitial disease
