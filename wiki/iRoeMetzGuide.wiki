@@ -1,8 +1,8 @@
 #labels Featured
 iRoeMetz is a Java application which can be used to simulate the results of a number of experiments via Monte Carlo methods given variance components of a theoretical study. These experiment results can be used in MRMC variance analysis programs such as iMRMC. 
 
-For an in-depth explanation of MRMC/ROC reader studies, refer to [IntroToROCReaderStudies]
+  * [IntroToROCReaderStudies In-depth explanation of MRMC/ROC reader studies]
 
-[iRoeMetzMethods Technical details of the features of iRoeMetz]
+  * [iRoeMetzMethods Technical details of the features of iRoeMetz]
 
-[iRoeMetzUsage How to use the iRoeMetz application]
+  * [iRoeMetzUsage How to use the iRoeMetz application]
