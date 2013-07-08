@@ -1,5 +1,5 @@
   * [iMRMCGuide iMRMC User Guide]
-    * [IntroToROCReaderStudies Introduction to ROC Reader Studies
+    * [IntroToROCReaderStudies Introduction to ROC Reader Studies]
     * [iMRMCMethods Technical Details]
     * [iMRMCDatabase Previous Study Database]
     * [iMRMCUsage How to Use iMRMC]
