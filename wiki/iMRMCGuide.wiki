@@ -1,3 +1,13 @@
+#sidebar TableOfContents
+  * [Articles HOWTO articles]
+    * [ArticlesXSS Web security]
+    * [ArticlesDom DOM manipulation]
+    * [ArticlesStyle CSS and style]
+    * [ArticlesTips Tips and tricks]
+  * [DOMReference DOM reference]
+  * [HTMLElements HTML reference]
+  * [CSSReference CSS reference]
+
 The primary objective of this application, iMRMC, is to assist investigators with analyzing and sizing multi-reader multi-case (MRMC) reader studies that compare the difference in the area under Receiver Operating Characteristic curves (AUCs) from two modalities. The core features of this java application include the ability to do MRMC variance analysis, the ability to size an MRMC trial, and a database containing components of variance from past MRMC studies.
 
   * [IntroToROCReaderStudies More about the concepts behind iMRMC]
