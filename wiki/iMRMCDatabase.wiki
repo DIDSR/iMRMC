@@ -5,6 +5,6 @@ The software includes a database that consists of results from simulated data an
   * Key information of the study: number of readers, number non-diseased cases, number of diseased cases, modalities used, and task.
   * Variance representations as outlined above.
 
-See Appendix A [link to page] for details regarding the summary information. 
+See [DatasetSummaryInfo Dataset Information] for details regarding the summary information. 
 
 In addition to the information outlined above, we are working on permission letters to share the ROC scores for each study. The ROC scores that we share are listed on the website. You can download a file with the study description that produced the ROC scores followed by the ROC scores themselves; the file is formatted for use with the iMRMC software. See the “Data Format for ROC Ratings” [link to page]  section for more information on the iMRMC file formatting and the “Sample Permission Letter” section below [link to page]. We welcome more data. Please contact us.
