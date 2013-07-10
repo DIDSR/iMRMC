@@ -20,9 +20,8 @@
  *     
  * one entry in the database
  * This class includes all the information on one study.
- * it also includes all the formulas convert one type 
- * of components to the other.
- * The convertion formulas are based on 
+ * it also includes all the formulas to convert one decomposition to the other
+ * The conversion formulas are based on 
  * Gallas BD, Bandos A, Samuelson F, Wagner RF. A Framework 
  * for random-effects ROC analsysis: Biases with the Bootstrap 
  * and other variance estimators�, Commun Stat A-Theory 38(15), 
@@ -34,8 +33,8 @@ package mrmc.core;
 import java.util.*;
 import java.text.DecimalFormat;
 
-public class dbRecord {
-	private String recordDesp = "";
+public class DBRecord {
+	private String recordDesc = "";
 	private String recordTitle = "";
 	private String filename = "";
 	private String[] Modality = new String[2];
@@ -92,7 +91,7 @@ public class dbRecord {
 	}
 
 	public String getRecordDesp() {
-		return recordDesp;
+		return recordDesc;
 	}
 
 	public boolean getFullyCrossedStatus() {
@@ -162,124 +161,14 @@ public class dbRecord {
 		return mod1StudyDesign;
 	}
 
-	public String getAUC(int i) {
-		DecimalFormat threeDec = new DecimalFormat("0.000");
-		threeDec.setGroupingUsed(false);
-		// STring ss=threeDec.format(inValue);
-
-		String temp = "";
-		switch (i) {
-		case 0:
-			temp = "AUC1=" + threeDec.format(AUC[0]) + "       ";
-			break;
-		case 1:
-			temp = "AUC2=" + threeDec.format(AUC[1]) + "       ";
-			break;
-		case 3:
-			temp = "AUC1=" + threeDec.format(AUC[0]) + "       AUC2="
-					+ threeDec.format(AUC[1]) + "       AUC1-AUC2="
-					+ threeDec.format(AUC[0] - AUC[1]) + "       ";
-		}
-		return temp;
-	}
-
-	public double getAUCinNumber(int i) {
-		return AUC[i];
-	}
-
-	public String getParm() {
-		return (Integer.toString(nReader) + " Readers,  "
-				+ Integer.toString(nNormal) + " Normal cases,  "
-				+ Integer.toString(nDisease) + " Disease cases.");
-	}
-
-	public int[] getParmInt() {
-		int[] c = { nReader, nNormal, nDisease };
-		return c;
-	}
-
-	public static double[][] getBDGTab(int selectedMod, double[][] BDGtemp,
-			double[][] BDGc) {
-		double[][] BDGTab1 = new double[7][8];
-		if (selectedMod == 0) {
-			BDGTab1[0] = BDGtemp[0];
-			BDGTab1[1] = BDGc[0];
-		} else if (selectedMod == 1) {
-			BDGTab1[2] = BDGtemp[1];
-			BDGTab1[3] = BDGc[1];
-		} else if (selectedMod == 3) {
-			BDGTab1[0] = BDGtemp[0];
-			BDGTab1[1] = BDGc[0];
-			BDGTab1[2] = BDGtemp[1];
-			BDGTab1[3] = BDGc[1];
-			BDGTab1[4] = BDGtemp[2]; // covariance
-			BDGTab1[5] = matrix.scaleVector(BDGc[3], 2);
-		}
-		for (int i = 0; i < 8; i++) {
-			BDGTab1[6][i] = (BDGTab1[0][i] * BDGTab1[1][i])
-					+ (BDGTab1[2][i] * BDGTab1[3][i])
-					- (BDGTab1[4][i] * BDGTab1[5][i]);
-		}
-		return BDGTab1;
-	}
-
-	public static double[][] getBCKTab(int selectedMod, double[][] BCKtemp,
-			double[][] BCKc) {
-		double[][] BCKTab1 = new double[7][7];
-		if (selectedMod == 0) {
-			BCKTab1[0] = BCKtemp[0];
-			BCKTab1[1] = BCKc[0];
-		} else if (selectedMod == 1) {
-			BCKTab1[2] = BCKtemp[1];
-			BCKTab1[3] = BCKc[1];
-		} else if (selectedMod == 3) {
-			BCKTab1[0] = BCKtemp[0];
-			BCKTab1[1] = BCKc[0];
-			BCKTab1[2] = BCKtemp[1];
-			BCKTab1[3] = BCKc[1];
-			BCKTab1[4] = BCKtemp[2]; // covariance
-			BCKTab1[5] = matrix.scaleVector(BCKc[3], 2);
-		}
-		for (int i = 0; i < 7; i++) {
-			BCKTab1[6][i] = (BCKTab1[0][i] * BCKTab1[1][i])
-					+ (BCKTab1[2][i] * BCKTab1[3][i])
-					- (BCKTab1[4][i] * BCKTab1[5][i]);
-		}
-		return BCKTab1;
-	}
-
-	public static double[][] getDBMTab(int i, double[][] DBMtemp,
-			double[][] DBMc) {
-		double[][] DBMTab1 = new double[3][6];
-		DBMTab1[0] = DBMtemp[i];
-		DBMTab1[1] = DBMc[i];
-		DBMTab1[2] = matrix.dotProduct(DBMTab1[0], DBMTab1[1]);
-		return DBMTab1;
-	}
-
-	public static double[][] getORTab(int i, double[][] ORtemp, double[][] ORc) {
-		double[][] ORTab1 = new double[3][6];
-		ORTab1[0] = ORtemp[i];
-		ORTab1[1] = ORc[i];
-		ORTab1[2] = matrix.dotProduct(ORTab1[0], ORTab1[1]);
-		return ORTab1;
-	}
-
-	public static double[][] getMSTab(int i, double[][] MStemp, double[][] MSc) {
-		double[][] MSTab1 = new double[3][6];
-		MSTab1[0] = MStemp[i];
-		MSTab1[1] = MSc[i];
-		MSTab1[2] = matrix.dotProduct(MSTab1[0], MSTab1[1]);
-		return MSTab1;
-	}
-
 	/* constructor 1, create a record from database file */
-	public dbRecord(String fname, String[] str, ArrayList<String> desp,
+	public DBRecord(String fname, String[] str, ArrayList<String> desp,
 			String AUCstr) {
 		int i, j;
 		recordTitle = desp.get(0).substring(2);
 		filename = fname;
-		fullyCrossed = true;
+		fullyCrossed = true; // currently all files in DB are fully crossed, may
+								// change
 
 		for (i = 0; i < 7; i++) {
 			String tempStr = desp.get(i);
@@ -315,7 +204,7 @@ public class dbRecord {
 		}
 
 		for (i = 0; i < desp.size(); i++) {
-			recordDesp = recordDesp + desp.get(i) + "\n";
+			recordDesc = recordDesc + desp.get(i) + "\n";
 		}
 
 		for (i = 0; i < str.length / 2; i++) {
@@ -338,112 +227,101 @@ public class dbRecord {
 		MScoeff = genMSCoeff(nReader, nNormal, nDisease);
 
 		BCK = BDG2BCK(BDG);
-		// DBM = BDG2DBM(BDG, nReader, nNormal, nDisease);
-		// OR = BDG2OR(BDG, nReader, nNormal, nDisease);
 		DBM = BCK2DBM(BCK, nReader, nNormal, nDisease);
 		OR = DBM2OR(0, DBM, nReader, nNormal, nDisease);
 		MS = DBM2MS(DBM, nReader, nNormal, nDisease);
 
 		BCKbias = BDG2BCK(BDGbias);
-		// DBMbias = BDG2DBM(BDGbias, nReader, nNormal, nDisease);
-		// ORbias = BDG2OR(BDGbias, nReader, nNormal, nDisease);
 		DBMbias = BCK2DBM(BCKbias, nReader, nNormal, nDisease);
 		ORbias = DBM2OR(0, DBMbias, nReader, nNormal, nDisease);
 		MSbias = DBM2MS(DBMbias, nReader, nNormal, nDisease);
-
 	}
 
-	public static double[][] DBM2MS(double[][] DBM, int NR, int N0, int N1) {
-		double[][] c = new double[4][6];
-		double[][] BAlpha = new double[][] {
-				{ 2 * (N0 + N1), 0, 2, (N0 + N1), 0, 1 },
-				{ 0, 2 * NR, 2, 0, NR, 1 }, { 0, 0, 0, (N0 + N1), 0, 1 },
-				{ 0, 0, 0, 0, NR, 1 }, { 0, 0, 2, 0, 0, 1 },
-				{ 0, 0, 0, 0, 0, 1 } };
-		for (int i = 0; i < 4; i++)
-			for (int j = 0; j < 6; j++)
-				c[i][j] = 0;
-		c = matrix.matrixTranspose(matrix.multiply(BAlpha,
-				matrix.matrixTranspose(DBM)));
-		for (int i = 0; i < 2; i++)
-			for (int j = 0; j < 6; j++)
-				c[i][j] = c[i][j] / 2.0;
+	/* Constructor 2: generate a DB record from raw datafile */
+	public DBRecord(InputFile input, int currMod1, int currMod2) {
 
-		return c;
+		recordTitle = input.getTitle();
+		recordDesc = input.getDesc();
+		filename = input.getFilename();
+		nReader = input.getReader();
+		nNormal = input.getNormal();
+		nDisease = input.getDisease();
+		AUC = input.getaucMod();
+		fullyCrossed = input.getFullyCrossedStatus();
+		if (fullyCrossed) {
+			mod0StudyDesign = new int[nReader][nNormal][nDisease];
+			for (int m = 0; m < mod0StudyDesign.length; m++) {
+				for (int n = 0; n < mod0StudyDesign[m].length; n++) {
+					Arrays.fill(mod0StudyDesign[m][n], 1);
+				}
+			}
+			mod1StudyDesign = new int[nReader][nNormal][nDisease];
+			for (int m = 0; m < mod1StudyDesign.length; m++) {
+				for (int n = 0; n < mod1StudyDesign[m].length; n++) {
+					Arrays.fill(mod1StudyDesign[m][n], 1);
+				}
+			}
+		} else {
+			mod0StudyDesign = input.getStudyDesignSeparated(currMod1);
+			mod1StudyDesign = input.getStudyDesignSeparated(currMod2);
+		}
 
-	}
+		String[] descLines = recordDesc.split("\n");
+		int i = 0;
 
-	public static double[][] BCK2DBM(double[][] BCK, int NR, int N0, int N1) {
-		double[] c = new double[7];
-		double[][] tmp = new double[4][7];
-		double[][] tmp1 = new double[4][3];
-		double[][] results = new double[4][6];
+		Modality[0] = "Mod1";
+		Modality[1] = "Mod2";
+		Task = "task unspecified";
+		while (descLines[i].equals("BEGIN DATA")) {
+			String descLine = descLines[i];
+			if (descLine.startsWith("*  Modal")
+					|| descLine.startsWith("*  MODAL")) {
+				String[] tempStr2 = descLine.split(",");
+				Modality[0] = tempStr2[1];
+				Modality[1] = tempStr2[2];
+			}
+			if (descLine.startsWith("*  Task")
+					|| descLine.startsWith("*  TASK")) {
+				String[] tempStr2 = descLine.split(",");
+				Task = tempStr2[1];
+			}
+			i++;
+		}
 
-		c[0] = 1.0 / N0;
-		c[1] = 1.0 / N1;
-		c[2] = 1.0 / (N0 * N1);
-		c[3] = 1.0 / NR;
-		c[4] = 1.0 / (N0 * NR);
-		c[5] = 1.0 / (N1 * NR);
-		c[6] = 1.0 / (N0 * N1 * NR);
+		if (fullyCrossed) {
+			BDGcoeff = genBDGCoeff(nReader, nNormal, nDisease);
+			BCKcoeff = genBCKCoeff(nReader, nNormal, nDisease);
+		} else {
+			BDGcoeff = genBDGCoeff(nReader, nNormal, nDisease,
+					input.getStudyDesignSeparated(currMod1),
+					input.getStudyDesignSeparated(currMod2));
+			BCKcoeff = genBCKCoeff(nReader, nNormal, nDisease, BDGcoeff[0]);
+		}
 
-		for (int i = 0; i < 4; i++)
-			tmp[i] = matrix.dotProduct(BCK[i], c);
+		DBMcoeff = genDBMCoeff(nReader, nNormal, nDisease);
+		ORcoeff = genORCoeff(nReader, nNormal, nDisease);
+		MScoeff = genMSCoeff(nReader, nNormal, nDisease);
 
-		double[][] alpha = new double[][] { { 0, 1, 0 }, { 0, 1, 0 },
-				{ 0, 1, 0 }, { NR, 0, 0 }, { 0, 0, NR }, { 0, 0, NR },
-				{ 0, 0, NR } };
-
-		tmp1 = matrix.multiply(tmp, alpha);
-
-		for (int i = 0; i < 4; i++)
-			for (int j = 0; j < 6; j++)
-				results[i][j] = 0;
-		/*
-		 * results[0][0]=tmp1[0][0]; results[0][1]=tmp1[0][1];
-		 * results[0][2]=tmp1[0][2]; results[1][0]=tmp1[1][0];
-		 * results[1][1]=tmp1[1][1]; results[1][2]=tmp1[1][2];
-		 * results[3][0]=(tmp1[0][0]+tmp1[1][0])/2.0;
-		 * results[3][1]=(tmp1[0][1]+tmp1[1][1])/2.0;
-		 * results[3][2]=(tmp1[0][2]+tmp1[1][2])/2.0;
-		 * results[3][3]=(tmp1[0][0]+tmp1[1][0])/2.0-tmp1[2][0];
-		 * results[3][4]=(tmp1[0][1]+tmp1[1][1])/2.0-tmp1[2][1];
-		 * results[3][5]=(tmp1[0][2]+tmp1[1][2])/2.0-tmp1[2][2];
-		 */
-		results[0][0] = tmp1[0][0];
-		results[0][1] = tmp1[0][1] * (N0 + N1);
-		results[0][2] = tmp1[0][2] * (N0 + N1);
-		results[1][0] = tmp1[1][0];
-		results[1][1] = tmp1[1][1] * (N0 + N1);
-		results[1][2] = tmp1[1][2] * (N0 + N1);
-		// results[3][0]=(tmp1[0][0]+tmp1[1][0])/2.0;
-		// results[3][1]=(tmp1[0][1]+tmp1[1][1])/2.0*(N0+N1);
-		// results[3][2]=(tmp1[0][2]+tmp1[1][2])/2.0*(N0+N1);
-		results[3][0] = tmp1[2][0];
-		results[3][1] = tmp1[2][1] * (N0 + N1);
-		results[3][2] = tmp1[2][2] * (N0 + N1);
-
-		results[3][3] = (tmp1[0][0] + tmp1[1][0]) / 2.0 - tmp1[2][0];
-		results[3][4] = ((tmp1[0][1] + tmp1[1][1]) / 2.0 - tmp1[2][1])
-				* (N0 + N1);
-		results[3][5] = ((tmp1[0][2] + tmp1[1][2]) / 2.0 - tmp1[2][2])
-				* (N0 + N1);
-
-		// System.out.println("tmp1[2][0]=" + tmp1[2][0] +" tmp1[2][1]=" +
-		// tmp1[2][1] +" tmp1[2][2]=" +tmp1[2][2]);
-
-		return results;
+		BDG = input.getBDG();
+		BCK = BDG2BCK(BDG);
+		DBM = BCK2DBM(BCK, nReader, nNormal, nDisease);
+		OR = DBM2OR(0, DBM, nReader, nNormal, nDisease);
+		MS = DBM2MS(DBM, nReader, nNormal, nDisease);
+		BDGbias = input.getBDGbias();
+		BCKbias = BDG2BCK(BDGbias);
+		DBMbias = BCK2DBM(BCKbias, nReader, nNormal, nDisease);
+		ORbias = DBM2OR(0, DBMbias, nReader, nNormal, nDisease);
+		MSbias = DBM2MS(DBMbias, nReader, nNormal, nDisease);
 	}
 
 	/* constructor 3: generate a record from manually input information. */
-	public dbRecord(double[] data, int flag, int Reader, int Normal,
+	public DBRecord(double[] data, int flag, int Reader, int Normal,
 			int Disease, double[] auc) {
 		AUC = auc;
 		nReader = Reader;
 		nNormal = Normal;
 		nDisease = Disease;
 
-		AUC = auc;
 		fullyCrossed = true;
 		mod0StudyDesign = new int[nReader][nNormal][nDisease];
 		for (int m = 0; m < mod0StudyDesign.length; m++) {
@@ -541,88 +419,198 @@ public class dbRecord {
 			break;
 
 		}
+	}
+
+	public String getAUC(int i) {
+		DecimalFormat threeDec = new DecimalFormat("0.000");
+		threeDec.setGroupingUsed(false);
+
+		String temp = "";
+		switch (i) {
+		case 0:
+			temp = "AUC1=" + threeDec.format(AUC[0]) + "       ";
+			break;
+		case 1:
+			temp = "AUC2=" + threeDec.format(AUC[1]) + "       ";
+			break;
+		case 3:
+			temp = "AUC1=" + threeDec.format(AUC[0]) + "       AUC2="
+					+ threeDec.format(AUC[1]) + "       AUC1-AUC2="
+					+ threeDec.format(AUC[0] - AUC[1]) + "       ";
+		}
+		return temp;
+	}
+
+	public double getAUCinNumber(int i) {
+		return AUC[i];
+	}
+
+	public String getParm() {
+		return (Integer.toString(nReader) + " Readers,  "
+				+ Integer.toString(nNormal) + " Normal cases,  "
+				+ Integer.toString(nDisease) + " Disease cases.");
+	}
+
+	public int[] getParmInt() {
+		int[] c = { nReader, nNormal, nDisease };
+		return c;
+	}
+
+	public static double[][] getBDGTab(int selectedMod, double[][] BDGtemp,
+			double[][] BDGc) {
+		double[][] BDGTab1 = new double[7][8];
+		if (selectedMod == 0) {
+			BDGTab1[0] = BDGtemp[0];
+			BDGTab1[1] = BDGc[0];
+		} else if (selectedMod == 1) {
+			BDGTab1[2] = BDGtemp[1];
+			BDGTab1[3] = BDGc[1];
+		} else if (selectedMod == 3) {
+			BDGTab1[0] = BDGtemp[0];
+			BDGTab1[1] = BDGc[0];
+			BDGTab1[2] = BDGtemp[1];
+			BDGTab1[3] = BDGc[1];
+			BDGTab1[4] = BDGtemp[2]; // covariance
+			BDGTab1[5] = Matrix.scaleVector(BDGc[3], 2);
+		}
+		for (int i = 0; i < 8; i++) {
+			BDGTab1[6][i] = (BDGTab1[0][i] * BDGTab1[1][i])
+					+ (BDGTab1[2][i] * BDGTab1[3][i])
+					- (BDGTab1[4][i] * BDGTab1[5][i]);
+		}
+		return BDGTab1;
+	}
+
+	public static double[][] getBCKTab(int selectedMod, double[][] BCKtemp,
+			double[][] BCKc) {
+		double[][] BCKTab1 = new double[7][7];
+		if (selectedMod == 0) {
+			BCKTab1[0] = BCKtemp[0];
+			BCKTab1[1] = BCKc[0];
+		} else if (selectedMod == 1) {
+			BCKTab1[2] = BCKtemp[1];
+			BCKTab1[3] = BCKc[1];
+		} else if (selectedMod == 3) {
+			BCKTab1[0] = BCKtemp[0];
+			BCKTab1[1] = BCKc[0];
+			BCKTab1[2] = BCKtemp[1];
+			BCKTab1[3] = BCKc[1];
+			BCKTab1[4] = BCKtemp[2]; // covariance
+			BCKTab1[5] = Matrix.scaleVector(BCKc[3], 2);
+		}
+		for (int i = 0; i < 7; i++) {
+			BCKTab1[6][i] = (BCKTab1[0][i] * BCKTab1[1][i])
+					+ (BCKTab1[2][i] * BCKTab1[3][i])
+					- (BCKTab1[4][i] * BCKTab1[5][i]);
+		}
+		return BCKTab1;
+	}
+
+	public static double[][] getDBMTab(int i, double[][] DBMtemp,
+			double[][] DBMc) {
+		double[][] DBMTab1 = new double[3][6];
+		DBMTab1[0] = DBMtemp[i];
+		DBMTab1[1] = DBMc[i];
+		DBMTab1[2] = Matrix.dotProduct(DBMTab1[0], DBMTab1[1]);
+		return DBMTab1;
+	}
+
+	public static double[][] getORTab(int i, double[][] ORtemp, double[][] ORc) {
+		double[][] ORTab1 = new double[3][6];
+		ORTab1[0] = ORtemp[i];
+		ORTab1[1] = ORc[i];
+		ORTab1[2] = Matrix.dotProduct(ORTab1[0], ORTab1[1]);
+		return ORTab1;
+	}
+
+	public static double[][] getMSTab(int i, double[][] MStemp, double[][] MSc) {
+		double[][] MSTab1 = new double[3][6];
+		MSTab1[0] = MStemp[i];
+		MSTab1[1] = MSc[i];
+		MSTab1[2] = Matrix.dotProduct(MSTab1[0], MSTab1[1]);
+		return MSTab1;
+	}
+
+	public static double[][] DBM2MS(double[][] DBM, int NR, int N0, int N1) {
+		double[][] c = new double[4][6];
+		double[][] BAlpha = new double[][] {
+				{ 2 * (N0 + N1), 0, 2, (N0 + N1), 0, 1 },
+				{ 0, 2 * NR, 2, 0, NR, 1 }, { 0, 0, 0, (N0 + N1), 0, 1 },
+				{ 0, 0, 0, 0, NR, 1 }, { 0, 0, 2, 0, 0, 1 },
+				{ 0, 0, 0, 0, 0, 1 } };
+		for (int i = 0; i < 4; i++)
+			for (int j = 0; j < 6; j++)
+				c[i][j] = 0;
+		c = Matrix.matrixTranspose(Matrix.multiply(BAlpha,
+				Matrix.matrixTranspose(DBM)));
+		for (int i = 0; i < 2; i++)
+			for (int j = 0; j < 6; j++)
+				c[i][j] = c[i][j] / 2.0;
+
+		return c;
 
 	}
 
-	/* Constructor 2: generate a DB record from raw datafile */
-	public dbRecord(inputFile input, int currMod1, int currMod2) {
+	public static double[][] BCK2DBM(double[][] BCK, int NR, int N0, int N1) {
+		double[] c = new double[7];
+		double[][] tmp = new double[4][7];
+		double[][] tmp1 = new double[4][3];
+		double[][] results = new double[4][6];
 
-		recordTitle = input.getTitle();
-		recordDesp = input.getDesc();
-		filename = input.getFilename();
-		nReader = input.getReader();
-		nNormal = input.getNormal();
-		nDisease = input.getDisease();
-		AUC = input.getaucMod();
-		fullyCrossed = input.getFullyCrossedStatus();
-		if (fullyCrossed) {
-			mod0StudyDesign = new int[nReader][nNormal][nDisease];
-			for (int m = 0; m < mod0StudyDesign.length; m++) {
-				for (int n = 0; n < mod0StudyDesign[m].length; n++) {
-					Arrays.fill(mod0StudyDesign[m][n], 1);
-				}
-			}
-			mod1StudyDesign = new int[nReader][nNormal][nDisease];
-			for (int m = 0; m < mod1StudyDesign.length; m++) {
-				for (int n = 0; n < mod1StudyDesign[m].length; n++) {
-					Arrays.fill(mod1StudyDesign[m][n], 1);
-				}
-			}
-		} else {
-			mod0StudyDesign = input.getStudyDesignSeparated(currMod1);
-			mod1StudyDesign = input.getStudyDesignSeparated(currMod2);
-		}
+		c[0] = 1.0 / N0;
+		c[1] = 1.0 / N1;
+		c[2] = 1.0 / (N0 * N1);
+		c[3] = 1.0 / NR;
+		c[4] = 1.0 / (N0 * NR);
+		c[5] = 1.0 / (N1 * NR);
+		c[6] = 1.0 / (N0 * N1 * NR);
 
-		String[] temp = recordDesp.split("\n");
-		// System.out.println("temp" + "0" + "  =  " + temp[0]);
-		int i = 0;
-		// for(int i =0;i<7; i++)
+		for (int i = 0; i < 4; i++)
+			tmp[i] = Matrix.dotProduct(BCK[i], c);
 
-		Modality[0] = "Mod1";
-		Modality[1] = "Mod2";
-		Task = "task unspecified";
-		while (temp[i].equals("BEGIN DATA")) {
-			String tempStr = temp[i];
-			if (tempStr.startsWith("*  Modal")) {
-				String[] tempStr2 = tempStr.split(",");
-				Modality[0] = tempStr2[1];
-				Modality[1] = tempStr2[2];
-			}
-			if (tempStr.startsWith("*  Task") || tempStr.startsWith("*  TASK")) {
-				String[] tempStr2 = tempStr.split(",");
-				Task = tempStr2[1];
-			}
-			i++;
-		}
+		double[][] alpha = new double[][] { { 0, 1, 0 }, { 0, 1, 0 },
+				{ 0, 1, 0 }, { NR, 0, 0 }, { 0, 0, NR }, { 0, 0, NR },
+				{ 0, 0, NR } };
 
-		if (fullyCrossed) {
-			BDGcoeff = genBDGCoeff(nReader, nNormal, nDisease);
-			BCKcoeff = genBCKCoeff(nReader, nNormal, nDisease);
-		} else {
-			BDGcoeff = genBDGCoeff(nReader, nNormal, nDisease,
-					input.getStudyDesignSeparated(currMod1),
-					input.getStudyDesignSeparated(currMod2));
-			BCKcoeff = genBCKCoeff(nReader, nNormal, nDisease, BDGcoeff[0]);
-		}
+		tmp1 = Matrix.multiply(tmp, alpha);
 
-		DBMcoeff = genDBMCoeff(nReader, nNormal, nDisease);
-		ORcoeff = genORCoeff(nReader, nNormal, nDisease);
-		MScoeff = genMSCoeff(nReader, nNormal, nDisease);
+		for (int i = 0; i < 4; i++)
+			for (int j = 0; j < 6; j++)
+				results[i][j] = 0;
+		/*
+		 * results[0][0]=tmp1[0][0]; results[0][1]=tmp1[0][1];
+		 * results[0][2]=tmp1[0][2]; results[1][0]=tmp1[1][0];
+		 * results[1][1]=tmp1[1][1]; results[1][2]=tmp1[1][2];
+		 * results[3][0]=(tmp1[0][0]+tmp1[1][0])/2.0;
+		 * results[3][1]=(tmp1[0][1]+tmp1[1][1])/2.0;
+		 * results[3][2]=(tmp1[0][2]+tmp1[1][2])/2.0;
+		 * results[3][3]=(tmp1[0][0]+tmp1[1][0])/2.0-tmp1[2][0];
+		 * results[3][4]=(tmp1[0][1]+tmp1[1][1])/2.0-tmp1[2][1];
+		 * results[3][5]=(tmp1[0][2]+tmp1[1][2])/2.0-tmp1[2][2];
+		 */
+		results[0][0] = tmp1[0][0];
+		results[0][1] = tmp1[0][1] * (N0 + N1);
+		results[0][2] = tmp1[0][2] * (N0 + N1);
+		results[1][0] = tmp1[1][0];
+		results[1][1] = tmp1[1][1] * (N0 + N1);
+		results[1][2] = tmp1[1][2] * (N0 + N1);
+		// results[3][0]=(tmp1[0][0]+tmp1[1][0])/2.0;
+		// results[3][1]=(tmp1[0][1]+tmp1[1][1])/2.0*(N0+N1);
+		// results[3][2]=(tmp1[0][2]+tmp1[1][2])/2.0*(N0+N1);
+		results[3][0] = tmp1[2][0];
+		results[3][1] = tmp1[2][1] * (N0 + N1);
+		results[3][2] = tmp1[2][2] * (N0 + N1);
 
-		BDG = input.getBDG();
-		BDGbias = input.getBDGbias();
-		BCK = BDG2BCK(BDG);
-		// DBM = BDG2DBM(BDG, nReader, nNormal, nDisease);
-		// OR = BDG2OR(BDG, nReader, nNormal, nDisease);
-		DBM = BCK2DBM(BCK, nReader, nNormal, nDisease);
-		OR = DBM2OR(0, DBM, nReader, nNormal, nDisease);
-		MS = DBM2MS(DBM, nReader, nNormal, nDisease);
-		BCKbias = BDG2BCK(BDGbias);
-		// DBMbias = BDG2DBM(BDGbias, nReader, nNormal, nDisease);
-		// ORbias = BDG2OR(BDGbias, nReader, nNormal, nDisease);
-		DBMbias = BCK2DBM(BCKbias, nReader, nNormal, nDisease);
-		ORbias = DBM2OR(0, DBMbias, nReader, nNormal, nDisease);
-		MSbias = DBM2MS(DBMbias, nReader, nNormal, nDisease);
+		results[3][3] = (tmp1[0][0] + tmp1[1][0]) / 2.0 - tmp1[2][0];
+		results[3][4] = ((tmp1[0][1] + tmp1[1][1]) / 2.0 - tmp1[2][1])
+				* (N0 + N1);
+		results[3][5] = ((tmp1[0][2] + tmp1[1][2]) / 2.0 - tmp1[2][2])
+				* (N0 + N1);
+
+		// System.out.println("tmp1[2][0]=" + tmp1[2][0] +" tmp1[2][1]=" +
+		// tmp1[2][1] +" tmp1[2][2]=" +tmp1[2][2]);
+
+		return results;
 	}
 
 	// To determine BDG coefficient for non-fully-crossed study design
@@ -734,8 +722,8 @@ public class dbRecord {
 				{ 1, -1, 0, 0, -1, 1, 0, 0 }, { 1, 0, -1, 0, -1, 0, 1, 0 },
 				{ -1, 1, 1, -1, 1, -1, -1, 1 } };
 
-		double[] cUnbiased = matrix.multiply(bias2unbias, cBiased);
-		cUnbiased = matrix.scaleVector(cUnbiased, 1.0 / (nStarM0 * nStarM1));
+		double[] cUnbiased = Matrix.multiply(bias2unbias, cBiased);
+		cUnbiased = Matrix.scaleVector(cUnbiased, 1.0 / (nStarM0 * nStarM1));
 		cUnbiased[7]--;
 		c[0] = cUnbiased;
 		c[1] = c[0];
@@ -774,7 +762,7 @@ public class dbRecord {
 				{ 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
 				{ 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
 
-		double[] cAlpha = matrix.multiply(c2ca, c);
+		double[] cAlpha = Matrix.multiply(c2ca, c);
 		return new double[][] { cAlpha, cAlpha, cAlpha, cAlpha };
 	}
 
@@ -810,8 +798,8 @@ public class dbRecord {
 		c[0][5] = 1.0 / NR / (N0 + N1);
 
 		c[1] = c[0];
-		c[2] = matrix.scaleVector(c[0], 0);
-		c[3] = matrix.scaleVector(c[0], 2);
+		c[2] = Matrix.scaleVector(c[0], 0);
+		c[3] = Matrix.scaleVector(c[0], 2);
 		c[3][0] = 0;
 		c[3][1] = 0;
 		c[3][2] = 0;
@@ -835,7 +823,7 @@ public class dbRecord {
 		c[0][4] = -tmp;
 		c[0][5] = 0;
 		c[1] = c[0];
-		c[2] = matrix.scaleVector(c[0], 0);
+		c[2] = Matrix.scaleVector(c[0], 0);
 		c[3][0] = 0;
 		c[3][1] = 0;
 		c[3][2] = tmp * 2.0;
@@ -854,7 +842,7 @@ public class dbRecord {
 		c[0][4] = 0;
 		c[0][5] = 1.0 / NR;
 		c[1] = c[0];
-		c[2] = matrix.scaleVector(c[0], 0);
+		c[2] = Matrix.scaleVector(c[0], 0);
 		c[3][0] = 0;
 		c[3][1] = 2.0 / NR;
 		c[3][2] = -2.0 / NR;
@@ -874,11 +862,10 @@ public class dbRecord {
 		for (int i = 0; i < 4; i++)
 			for (int j = 0; j < 7; j++)
 				c[i][j] = 0;
-		c = matrix.matrixTranspose(matrix.multiply(BAlpha,
-				matrix.matrixTranspose(BDG)));
+		c = Matrix.matrixTranspose(Matrix.multiply(BAlpha,
+				Matrix.matrixTranspose(BDG)));
 
 		return c;
-
 	}
 
 	public double[][] computeTempDBM(double[][] BDG, int NR, int N0, int N1) {
@@ -916,10 +903,10 @@ public class dbRecord {
 		for (int i = 0; i < 4; i++)
 			for (int j = 0; j < 3; j++)
 				c[i][j] = 0;
-		c = matrix.matrixTranspose(matrix.multiply(
+		c = Matrix.matrixTranspose(Matrix.multiply(
 				BTheta,
-				matrix.multiply(Bms,
-						matrix.multiply(B, matrix.matrixTranspose(BDG)))));
+				Matrix.multiply(Bms,
+						Matrix.multiply(B, Matrix.matrixTranspose(BDG)))));
 
 		return c;
 	}
@@ -948,12 +935,6 @@ public class dbRecord {
 		c[1][0] = tempDBM[1][0];
 		c[1][1] = tempDBM[1][1] * (N0 + N1);
 		c[1][2] = tempDBM[1][2] * (N0 + N1);
-		// *************************************************
-		// old way of getting var_r(diff), var_c(diff) and var_rc(diff)
-		// c[3][0]=(tempDBM[0][0]+tempDBM[1][0])/2.0;
-		// c[3][1]=(tempDBM[0][1]+tempDBM[1][1])/2.0*(N0+N1);
-		// c[3][2]=(tempDBM[0][2]+tempDBM[1][2])/2.0*(N0+N1);
-		// new way, see Brandon's email on 12/12/11
 		c[3][0] = tempDBM[2][0];
 		c[3][1] = tempDBM[2][1] * (N0 + N1);
 		c[3][2] = tempDBM[2][2] * (N0 + N1);
@@ -972,8 +953,8 @@ public class dbRecord {
 		double[][] tempDBM = computeTempDBM(BDG, NR, N0, N1);
 		double[][] ThetaOR = new double[][] { { 1, 0, 0 }, { 0, 1, 0 },
 				{ 0, 1, 1 } };
-		double[][] tempOR = matrix.matrixTranspose(matrix.multiply(ThetaOR,
-				matrix.matrixTranspose(tempDBM)));
+		double[][] tempOR = Matrix.matrixTranspose(Matrix.multiply(ThetaOR,
+				Matrix.matrixTranspose(tempDBM)));
 		for (int i = 0; i < 4; i++)
 			for (int j = 0; j < 6; j++)
 				c[i][j] = 0;
@@ -1000,11 +981,10 @@ public class dbRecord {
 
 	public static double[][] DBM2OR(int index, double[][] in, int NR, int N0,
 			int N1) {
-		double[][] out = new double[4][6];
+		double[][] toReturn = new double[4][6];
 		double[][] dbm = new double[4][6];
 		double[][] orVar = new double[4][6];
-		if (index == 0) // the input is DBM;
-		{
+		if (index == 0) {// the input is DBM;
 			dbm = in;
 			for (int i = 0; i < 4; i++) {
 				/*
@@ -1023,9 +1003,8 @@ public class dbRecord {
 						/ (N0 + N1);
 
 			}
-			out = orVar;
-		} else // the input is OR
-		{
+			toReturn = orVar;
+		} else { // the input is OR
 			orVar = in;
 			for (int i = 0; i < 4; i++) {
 				/*
@@ -1043,11 +1022,10 @@ public class dbRecord {
 				dbm[i][5] = (orVar[i][5] - orVar[i][2] - orVar[i][3] + orVar[i][4])
 						* (N0 + N1);
 			}
-			out = dbm;
+			toReturn = dbm;
 
 		}
-		return out;
-
+		return toReturn;
 	}
 
 	// TODO is this implemented correctly? what's the point?
@@ -1057,8 +1035,6 @@ public class dbRecord {
 
 	public double[][] DBMresize(double[][] dbm, int newR, int newN, int newD) {
 		double[][] DBMnew = new double[4][6];
-		// double lamda =
-		// Double.valueOf(nNormal+nDisease)/Double.valueOf(newN+newD);
 		double lamda = 1.0 / Double.valueOf(newN + newD);
 		for (int i = 0; i < 4; i++) {
 			DBMnew[i][0] = dbm[i][0];

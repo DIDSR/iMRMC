@@ -25,8 +25,8 @@ package mrmc.core;
 
 import java.text.DecimalFormat;
 
-public class matrix {
-	public matrix() {
+public class Matrix {
+	public Matrix() {
 	}
 
 	public static double[][] multiply(double[][] m1, double[][] m2) {

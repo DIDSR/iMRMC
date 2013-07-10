@@ -51,10 +51,10 @@ import mrmc.chart.BarGraph;
 import mrmc.chart.StudyDesignPlot;
 import mrmc.chart.ROCCurvePlot;
 import mrmc.core.MRMC;
-import mrmc.core.dbRecord;
-import mrmc.core.inputFile;
-import mrmc.core.mrmcDB;
-import mrmc.core.statTest;
+import mrmc.core.DBRecord;
+import mrmc.core.InputFile;
+import mrmc.core.MrmcDB;
+import mrmc.core.StatTest;
 
 import org.jfree.ui.RefineryUtilities;
 
@@ -62,19 +62,27 @@ public class GUInterface {
 	JPanel inputCards; // the panel that uses CardLayout, there are three cards
 						// for three different input
 	JPanel manual3; // the panel that shares different manual input components
-	final static String DB = "Input from database ... ";
-	final static String Pilot = "Input raw data...";
-	final static String Manual = "Manual input...";
-	final static String[] rowhead = { "components", "coeff", "total" };
-	final int USE_BIAS = 1;
-	final int NO_BIAS = 0;
+	private final static String DB = "Input from database ... ";
+	private final static String Pilot = "Input raw data...";
+	private final static String Manual = "Manual input...";
+	final static int USE_BIAS = 1;
+	final static int NO_BIAS = 0;
+	final static int NO_MOD = -1;
+	private final int SELECT_DB = 0;
+	private final int SELECT_FILE = 1;
+	private final int SELECT_MAN = 2;
 	private JTextField pilotFile;
 	private String filename = "";
 	private MRMC lst;
-	private mrmcDB fdaDB;
-	inputFile usr;
-	private dbRecord[] Records;
-	dbRecord usrFile;
+	private MrmcDB fdaDB;
+	InputFile usr;
+	private DBRecord[] Records;
+	DBRecord usrFile;
+
+	private DBCard DBC;
+	private RawStudyCard RSC;
+	private ManualCard MC;
+
 	private JTable BDGtable1;
 	private JTable BCKtable1;
 	private JTable DBMtable1;
@@ -86,8 +94,8 @@ public class GUInterface {
 	private JTable ORtable2;
 	private JTable MStable2;
 	private JLabel aucOutput;
-	private sPanel genSP;
-
+	private SizePanel genSP;
+	private JTabbedPane tabbedPane1, tabbedPane2;
 	private JLabel BDGvar, BDGvar2;
 	private JLabel BCKvar, BCKvar2;
 	private JLabel DBMvar, DBMvar2;
@@ -116,10 +124,10 @@ public class GUInterface {
 	private int useBiasM = 0;
 	private int SummaryUseMLE = 0;
 
-	DBCard DBC;
-	RawStudyCard RSC;
-	ManualCard MC;
-	private JTabbedPane tabbedPane1, tabbedPane2;
+	DecimalFormat twoDec = new DecimalFormat("0.00");
+	DecimalFormat threeDec = new DecimalFormat("0.000");
+	DecimalFormat threeDecE = new DecimalFormat("0.000E0");
+	DecimalFormat fourDec = new DecimalFormat("0.0000");
 
 	public int getuseBiasM() {
 		return useBiasM;
@@ -162,7 +170,7 @@ public class GUInterface {
 	}
 
 	/* ****************************** reset************************ */
-	public void resetTab2() {
+	private void resetTab2() {
 		for (int i = 0; i < 7; i++) {
 			for (int j = 0; j < 8; j++) {
 				BDGtable2.setValueAt(0, i, j);
@@ -263,30 +271,19 @@ public class GUInterface {
 		// Modality on MS
 		DBC.setSelectedMod(0);
 		RSC.setSelectedMod(0);
-		// pilot file input field
 		pilotFile.setText("");
 		enableTabs();
 		MC.reset();
 		usr = null;
 	}
 
-	// public double[] getSiglevel()
-	// {
-	// double[] result = new double[2];
-	// double sig=Double.parseDouble(sigLevel.getText());
-	// double eff=Double.parseDouble(effSize.getText());
-	// result[0]=sig;
-	// result[1]=eff;
-	// return result;
-	// }
-
-	public dbRecord getCurrentRecord() {
-		dbRecord tempRecord = null;
-		if (selectedInput == 0)
+	public DBRecord getCurrentRecord() {
+		DBRecord tempRecord = null;
+		if (selectedInput == SELECT_DB)
 			tempRecord = Records[selectedDB];
-		else if (selectedInput == 1)
+		else if (selectedInput == SELECT_FILE)
 			tempRecord = usrFile;
-		else if (selectedInput == 2) {
+		else if (selectedInput == SELECT_MAN) {
 			tempRecord = MC.getManualRecord();
 		}
 		return tempRecord;
@@ -297,13 +294,13 @@ public class GUInterface {
 	}
 
 	public void setSPanel() {
-		dbRecord tempRecord = getCurrentRecord();
+		DBRecord tempRecord = getCurrentRecord();
 		int[] Parms = tempRecord.getParmInt();
 		genSP.setNumbers(Parms);
 	}
 
 	public void set1stStatPanel() {
-		dbRecord tempRecord = getCurrentRecord();
+		DBRecord tempRecord = getCurrentRecord();
 		double eff;
 
 		double[][] BDGtmp = tempRecord.getBDG(useBiasM);
@@ -321,23 +318,20 @@ public class GUInterface {
 		if (sum != 0 || sum == 0 && selectedMod != 3) // two modalities are
 														// different
 		{
-			statTest stat2 = new statTest(tempRecord, selectedMod, useBiasM,
+			StatTest stat2 = new StatTest(tempRecord, selectedMod, useBiasM,
 					0.05, eff);
-			DecimalFormat formatter = new DecimalFormat("0.00");
 			// DOF
-			String output = formatter.format(stat2.getDOF());
+			String output = twoDec.format(stat2.getDOF());
 			dfHillis.setText("  df(Hillis 2008)= " + output);
 			// tStat
-			output = formatter.format(stat2.gettStat());
+			output = twoDec.format(stat2.gettStat());
 			tStat.setText("  tStat= " + output);
 			// pVal
-			formatter = new DecimalFormat("0.0000");
-			output = formatter.format(stat2.getpValF());
+			output = fourDec.format(stat2.getpValF());
 			pVal.setText("  p-Value= " + output);
 			// ci
-			formatter = new DecimalFormat("0.00");
-			output = formatter.format(stat2.getciTop());
-			String output2 = formatter.format(stat2.getciBot());
+			output = twoDec.format(stat2.getciTop());
+			String output2 = twoDec.format(stat2.getciBot());
 			confInt.setText("Conf. Int.=(" + output2 + ", " + output + ")");
 		} else {
 			dfHillis.setText("  df(Hillis 2008)= ");
@@ -352,14 +346,14 @@ public class GUInterface {
 	/*
 	 * ********click the size trial button, perform statistical analysis***
 	 */
-	public void sizeTrial(int[] Parms, double[] Parms2, int[] Parms3) {
-		int newR = Parms[0];
-		int newN = Parms[1];
-		int newD = Parms[2];
-		int numSplitPlots = Parms3[0];
-		int pairedReaders = Parms3[1];
-		int pairedCases = Parms3[2];
-		dbRecord tempRecord = getCurrentRecord();
+	public void sizeTrial(int[] parms1, double[] parms2, int[] parms3) {
+		int newR = parms1[0];
+		int newN = parms1[1];
+		int newD = parms1[2];
+		int numSplitPlots = parms3[0];
+		int pairedReaders = parms3[1];
+		int pairedCases = parms3[2];
+		DBRecord tempRecord = getCurrentRecord();
 		if (tempRecord == null) {
 			JOptionPane.showMessageDialog(lst.getFrame(),
 					"Must perform variance analysis first.", "Error",
@@ -370,20 +364,20 @@ public class GUInterface {
 		int[][][][] design = createSplitPlotDesign(newR, newN, newD,
 				numSplitPlots, pairedReaders, pairedCases);
 
-		double[][] BDGcoeff = dbRecord.genBDGCoeff(newR, newN, newD, design[0],
+		double[][] BDGcoeff = DBRecord.genBDGCoeff(newR, newN, newD, design[0],
 				design[1]);
-		double[][] BCKcoeff = dbRecord.genBCKCoeff(newR, newN, newD,
+		double[][] BCKcoeff = DBRecord.genBCKCoeff(newR, newN, newD,
 				BDGcoeff[0]);
-		double[][] DBMcoeff = dbRecord.genDBMCoeff(newR, newN, newD);
-		double[][] ORcoeff = dbRecord.genORCoeff(newR, newN, newD);
-		double[][] MScoeff = dbRecord.genMSCoeff(newR, newN, newD);
+		double[][] DBMcoeff = DBRecord.genDBMCoeff(newR, newN, newD);
+		double[][] ORcoeff = DBRecord.genORCoeff(newR, newN, newD);
+		double[][] MScoeff = DBRecord.genMSCoeff(newR, newN, newD);
 
 		double[][] BDG = new double[4][8];
 		double[][] BCK = new double[4][7];
 		double[][] DBM = new double[4][6];
 		double[][] OR = new double[4][6];
 		double[][] MS = new double[4][6];
-		if (selectedInput == 2 && MC.getSelectedComp() != 0) {
+		if (selectedInput == SELECT_MAN && MC.getSelectedComp() != 0) {
 			BDG = tempRecord.getBDG(NO_BIAS);
 			if (MC.getSelectedComp() == 1) {
 				// ******* Brandon's new formula
@@ -398,41 +392,37 @@ public class GUInterface {
 						newN, newD);
 				DBM = tempRecord.DBMresize(tempRecord.getDBM(useBiasM), newR,
 						newN, newD);
-				OR = dbRecord.DBM2OR(0, DBM, newR, newN, newD);
-				MS = dbRecord.DBM2MS(DBM, newR, newN, newD);
+				OR = DBRecord.DBM2OR(0, DBM, newR, newN, newD);
+				MS = DBRecord.DBM2MS(DBM, newR, newN, newD);
 			} else if (MC.getSelectedComp() == 2) {// DBM input is used
 				DBM = tempRecord.DBMresize(tempRecord.getDBM(useBiasM), newR,
 						newN, newD);
-				OR = dbRecord.DBM2OR(0, DBM, newR, newN, newD);
-				MS = dbRecord.DBM2MS(DBM, newR, newN, newD);
+				OR = DBRecord.DBM2OR(0, DBM, newR, newN, newD);
+				MS = DBRecord.DBM2MS(DBM, newR, newN, newD);
 			} else if (MC.getSelectedComp() == 3) // OR input is used
 			{
-				DBM = dbRecord.DBM2OR(1, tempRecord.getOR(useBiasM), newR,
+				DBM = DBRecord.DBM2OR(1, tempRecord.getOR(useBiasM), newR,
 						newN, newD);
 				DBM = tempRecord.DBMresize(DBM, newR, newN, newD);
-				OR = dbRecord.DBM2OR(0, DBM, newR, newN, newD);
-				MS = dbRecord.DBM2MS(DBM, newR, newN, newD);
+				OR = DBRecord.DBM2OR(0, DBM, newR, newN, newD);
+				MS = DBRecord.DBM2MS(DBM, newR, newN, newD);
 			} else if (MC.getSelectedComp() == 4) // MS input is used
 			{
-				DBM = dbRecord.DBM2OR(1, tempRecord.getOR(useBiasM), newR,
+				DBM = DBRecord.DBM2OR(1, tempRecord.getOR(useBiasM), newR,
 						newN, newD);
 				DBM = tempRecord.DBMresize(DBM, newR, newN, newD);
-				MS = dbRecord.DBM2MS(DBM, newR, newN, newD);
+				MS = DBRecord.DBM2MS(DBM, newR, newN, newD);
 			}
 
 		} else {
 			BDG = tempRecord.getBDG(useBiasM);
-			BCK = dbRecord.BDG2BCK(BDG);
-			DBM = dbRecord.BCK2DBM(BCK, newR, newN, newD);
-			OR = dbRecord.DBM2OR(0, DBM, newR, newN, newD);
-			MS = dbRecord.DBM2MS(DBM, newR, newN, newD);
+			BCK = DBRecord.BDG2BCK(BDG);
+			DBM = DBRecord.BCK2DBM(BCK, newR, newN, newD);
+			OR = DBRecord.DBM2OR(0, DBM, newR, newN, newD);
+			MS = DBRecord.DBM2MS(DBM, newR, newN, newD);
 		}
 
-		double sum = 0;
-		for (int sss = 1; sss < 8; sss++)
-			sum = sum + (BDG[0][sss] - BDG[1][sss]);
-
-		if (selectedInput == 2) {
+		if (selectedInput == SELECT_MAN) {
 			BDG[3] = BDG[0];
 			BCK[3] = BCK[0];
 			DBM[3][0] = 0;
@@ -441,22 +431,18 @@ public class GUInterface {
 			DBM[3][3] = DBM[0][0];
 			DBM[3][4] = DBM[0][1];
 			DBM[3][5] = DBM[0][2];
-			OR = dbRecord.DBM2OR(0, DBM, newR, newN, newD);
-			MS = dbRecord.DBM2MS(DBM, newR, newN, newD);
+			OR = DBRecord.DBM2OR(0, DBM, newR, newN, newD);
+			MS = DBRecord.DBM2MS(DBM, newR, newN, newD);
 
 		}
 
-		double[][] BDGdata1 = dbRecord.getBDGTab(selectedMod, BDG, BDGcoeff);
-		double[][] BCKdata1 = dbRecord.getBCKTab(selectedMod, BCK, BCKcoeff);
-		double[][] DBMdata1 = dbRecord.getDBMTab(selectedMod, DBM, DBMcoeff);
-		double[][] ORdata1 = dbRecord.getORTab(selectedMod, OR, ORcoeff);
-		double[][] MSdata1 = dbRecord.getMSTab(selectedMod, MS, MScoeff);
+		double[][] BDGdata1 = DBRecord.getBDGTab(selectedMod, BDG, BDGcoeff);
+		double[][] BCKdata1 = DBRecord.getBCKTab(selectedMod, BCK, BCKcoeff);
+		double[][] DBMdata1 = DBRecord.getDBMTab(selectedMod, DBM, DBMcoeff);
+		double[][] ORdata1 = DBRecord.getORTab(selectedMod, OR, ORcoeff);
+		double[][] MSdata1 = DBRecord.getMSTab(selectedMod, MS, MScoeff);
 
-		double BDGv = 0;
-		double BCKv = 0;
-		double DBMv = 0;
-		double ORv = 0;
-		double MSv = 0;
+		double BDGv = 0, BCKv = 0, DBMv = 0, ORv = 0, MSv = 0;
 
 		for (int i = 0; i < 7; i++) {
 			for (int j = 0; j < 8; j++) {
@@ -510,24 +496,20 @@ public class GUInterface {
 			}
 		}
 
-		DecimalFormat formatter1 = new DecimalFormat("0.000");
-		DecimalFormat formatter2 = new DecimalFormat("0.00");
-		String output = formatter1.format(Math.sqrt(BDGv));
+		String output = threeDec.format(Math.sqrt(BDGv));
 		BDGvar2.setText("sqrt(Var)=" + output);
-		output = formatter1.format(Math.sqrt(BCKv));
+		output = threeDec.format(Math.sqrt(BCKv));
 		BCKvar2.setText("sqrt(Var)=" + output);
-		output = formatter1.format(Math.sqrt(DBMv));
+		output = threeDec.format(Math.sqrt(DBMv));
 		DBMvar2.setText("sqrt(Var)=" + output);
-		output = formatter1.format(Math.sqrt(ORv));
+		output = threeDec.format(Math.sqrt(ORv));
 		ORvar2.setText("sqrt(Var)=" + output);
-		output = formatter1.format(Math.sqrt(MSv));
+		output = threeDec.format(Math.sqrt(MSv));
 		MSvar2.setText("sqrt(Var)=" + output);
 
 		double[] var = new double[3];
-		// double sig=Double.parseDouble(sigLevel.getText());
-		// double eff=Double.parseDouble(effSize.getText());
-		double sig = Parms2[0];
-		double eff = Parms2[1];
+		double sig = parms2[0];
+		double eff = parms2[1];
 		System.out.println("inside GUI sig=" + sig + " eff=" + eff);
 		if (selectedMod == 1 || selectedMod == 0) {
 			// eff=tempRecord.getAUCinNumber(selectedMod)-eff;
@@ -542,21 +524,19 @@ public class GUInterface {
 			var[2] = DBM[3][5];
 		}
 
-		statTest stat = new statTest(var, newR, newN, newD, sig, eff, BDGv,
+		StatTest stat = new StatTest(var, newR, newN, newD, sig, eff, BDGv,
 				tempRecord.getBCK(USE_BIAS));
-		formatter1 = new DecimalFormat("0.000E0");
-		formatter2 = new DecimalFormat("0.00");
-		output = formatter2.format(stat.getHillisPower());
+		output = twoDec.format(stat.getHillisPower());
 		HillisPower.setText("      Power(Hillis 2011) = " + output);
-		output = formatter2.format(stat.getZPower());
+		output = twoDec.format(stat.getZPower());
 		ZPower.setText("  Power(Z test)= " + output);
-		output = formatter1.format(stat.getDelta());
+		output = threeDecE.format(stat.getDelta());
 		Delta.setText("  Delta= " + output);
-		output = formatter2.format(stat.getDDF());
+		output = twoDec.format(stat.getDDF());
 		sizedDFHillis.setText("  df(Hillis 2008)= " + output);
-		output = formatter2.format(stat.getDfBDG());
+		output = twoDec.format(stat.getDfBDG());
 		sizedDFBDG.setText("  df(BDG) = " + output);
-		output = formatter2.format(stat.getCVF());
+		output = twoDec.format(stat.getCVF());
 		CVF.setText("  CVF= " + output);
 
 		if (useBiasM == USE_BIAS) {
@@ -760,26 +740,22 @@ public class GUInterface {
 	}
 
 	public void setTab1() {
-		double[][] BDGdata1 = new double[3][8];
-		double[][] BCKdata1 = new double[3][7];
-		double[][] DBMdata1 = new double[3][6];
-		double[][] ORdata1 = new double[3][6];
-		double[][] MSdata1 = new double[3][6];
+		DBRecord tempRecord = getCurrentRecord();
 
-		dbRecord tempRecord = getCurrentRecord();
-		if (selectedInput == 1 && filename.equals(null))
+		if (selectedInput == SELECT_FILE && filename.equals(null)) {
 			return;
+		}
 
-		BDGdata1 = dbRecord.getBDGTab(selectedMod, tempRecord.getBDG(useBiasM),
-				tempRecord.getBDGcoeff());
-		BCKdata1 = dbRecord.getBCKTab(selectedMod, tempRecord.getBCK(useBiasM),
-				tempRecord.getBCKcoeff());
-		DBMdata1 = dbRecord.getDBMTab(selectedMod, tempRecord.getDBM(useBiasM),
-				tempRecord.getDBMcoeff());
-		ORdata1 = dbRecord.getORTab(selectedMod, tempRecord.getOR(useBiasM),
-				tempRecord.getORcoeff());
-		MSdata1 = dbRecord.getMSTab(selectedMod, tempRecord.getMS(useBiasM),
-				tempRecord.getMScoeff());
+		double[][] BDGdata1 = DBRecord.getBDGTab(selectedMod,
+				tempRecord.getBDG(useBiasM), tempRecord.getBDGcoeff());
+		double[][] BCKdata1 = DBRecord.getBCKTab(selectedMod,
+				tempRecord.getBCK(useBiasM), tempRecord.getBCKcoeff());
+		double[][] DBMdata1 = DBRecord.getDBMTab(selectedMod,
+				tempRecord.getDBM(useBiasM), tempRecord.getDBMcoeff());
+		double[][] ORdata1 = DBRecord.getORTab(selectedMod,
+				tempRecord.getOR(useBiasM), tempRecord.getORcoeff());
+		double[][] MSdata1 = DBRecord.getMSTab(selectedMod,
+				tempRecord.getMS(useBiasM), tempRecord.getMScoeff());
 
 		double BDGv = 0;
 		double BCKv = 0;
@@ -840,20 +816,17 @@ public class GUInterface {
 			}
 		}
 		resetTab2();
-		DecimalFormat formatter = new DecimalFormat("0.000");
-		String output = formatter.format(Math.sqrt(BDGv));
+		String output = threeDec.format(Math.sqrt(BDGv));
 		BDGvar.setText("sqrt(Var)=" + output);
-		output = formatter.format(Math.sqrt(BCKv));
+		output = threeDec.format(Math.sqrt(BCKv));
 		BCKvar.setText("sqrt(Var)=" + output);
-		output = formatter.format(Math.sqrt(DBMv));
+		output = threeDec.format(Math.sqrt(DBMv));
 		DBMvar.setText("sqrt(Var)=" + output);
-		output = formatter.format(Math.sqrt(ORv));
+		output = threeDec.format(Math.sqrt(ORv));
 		ORvar.setText("sqrt(Var)=" + output);
-		output = formatter.format(Math.sqrt(MSv));
+		output = threeDec.format(Math.sqrt(MSv));
 		MSvar.setText("sqrt(Var)=" + output);
 		sqrtTotalVar.setText("   sqrt(total var)=" + output);
-
-		// System.out.println("BDG="+BDGv+" BCK="+BCKv+" DBM="+DBMv+" OR="+ORv);
 
 		if (useBiasM == USE_BIAS) {
 			tabbedPane1.setTitleAt(0, "BDG**");
@@ -871,14 +844,14 @@ public class GUInterface {
 	}
 
 	public void setAUCoutput() {
-		dbRecord tempRecord = getCurrentRecord();
+		DBRecord tempRecord = getCurrentRecord();
 		String displayAUC = tempRecord.getAUC(selectedMod);
 		String displayParm = tempRecord.getParm();
 		aucOutput.setText(displayAUC + displayParm);
 		System.out.println("displayParm" + displayParm);
 	}
 
-	/* constructor for hte graphic interface */
+	/* constructor for the graphic interface */
 	public GUInterface(MRMC lsttemp, Container cp) {
 		int i;
 		lst = lsttemp;
@@ -1197,7 +1170,6 @@ public class GUInterface {
 		ZPower = new JLabel("  Power(Z test)= 0.00");
 		HillisPower = new JLabel("      Power(Hillis 2011) = 0.00");
 		MSvar2 = new JLabel("sqrt(Var)=0.00");
-		// TODO why is sqrt(var) MSvar2?
 
 		// panelStat11.add(new JLabel("Significance Level"));
 		// panelStat11.add(sigLevel);
@@ -1219,7 +1191,7 @@ public class GUInterface {
 		int[] Parms = Records[selectedDB].getParmInt();
 		// genSP = new
 		// sPanel(Parms,Float.parseInt(sigLevel.getText()),Float.parseInt(effSize.getText()),sizingPanel,this);
-		genSP = new sPanel(Parms, sizingPanel, this);
+		genSP = new SizePanel(Parms, sizingPanel, this);
 
 		JPanel panelStat2 = new JPanel();
 		JLabel StatResults = new JLabel("Statistical Analysis:");
@@ -1388,7 +1360,6 @@ public class GUInterface {
 			cl.show(inputCards, (String) cb.getSelectedItem());
 			selectedInput = cb.getSelectedIndex();
 			reset();
-			// System.out.println("Input method"+(String)cb.getSelectedItem()+"is selected");
 		}
 	}
 
@@ -1402,8 +1373,6 @@ public class GUInterface {
 	/* button to open window describing record taken from internal database */
 	class descButtonListner implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
-			// System.out.println("output record"+ selectedDB+"description");
-
 			JFrame descFrame = new JFrame();
 
 			descFrame.getRootPane().setWindowDecorationStyle(
@@ -1432,8 +1401,7 @@ public class GUInterface {
 
 	class fmtSelListner implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			String str;
-			str = e.getActionCommand();
+			String str = e.getActionCommand();
 			System.out.println(str + "format radiobutton selected");
 		}
 	}
@@ -1444,12 +1412,11 @@ public class GUInterface {
 	 */
 	class SummarySelListner implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			String str;
-			str = e.getActionCommand();
-			if (str == "Single Modality") {
+			String str = e.getActionCommand();
+			if (str.equals("Single Modality")) {
 				selectedSummary = 0;
 			}
-			if (str == "Difference") {
+			if (str.equals("Difference")) {
 				selectedSummary = 1;
 			}
 		}
@@ -1458,13 +1425,12 @@ public class GUInterface {
 	/* radio buttons selecting whether or not to use MLE */
 	class MLESelListner implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			String str;
-			str = e.getActionCommand();
-			if (str == "Yes") {
-				SummaryUseMLE = 1;
+			String str = e.getActionCommand();
+			if (str.equals("Yes")) {
+				SummaryUseMLE = USE_BIAS;
 			}
-			if (str == "No") {
-				SummaryUseMLE = 0;
+			if (str.equals("No")) {
+				SummaryUseMLE = NO_BIAS;
 			}
 		}
 	}
@@ -1488,7 +1454,7 @@ public class GUInterface {
 				pilotFile.setText(filename);
 				// check the input format
 				try {
-					usr = new inputFile(filename);
+					usr = new InputFile(filename);
 				} catch (IOException except) {
 					except.printStackTrace();
 					JOptionPane.showMessageDialog(lst.getFrame(),
@@ -1527,8 +1493,8 @@ public class GUInterface {
 					tabbedPane1.setEnabledAt(4, true);
 				}
 
-				currMod1 = -1;
-				currMod2 = -1;
+				currMod1 = NO_MOD;
+				currMod2 = NO_MOD;
 				RSC.updateModPanel();
 
 			}
@@ -1538,7 +1504,7 @@ public class GUInterface {
 	/* button to open window displaying info on how to format raw data for input */
 	class fmtHelpButtonListner implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			dataFormat fmt = new dataFormat();
+			DataFormat fmt = new DataFormat();
 			JOptionPane.showMessageDialog(lst.getFrame(),
 					fmt.getInfo() + fmt.getSample(), "Information",
 					JOptionPane.INFORMATION_MESSAGE);
@@ -1641,18 +1607,16 @@ public class GUInterface {
 	public int checkNegative() {
 		hasNegative = 0;
 
-		if (selectedInput == 1) {
-			if (currMod1 == -1 && currMod2 == -1) {
+		if (selectedInput == SELECT_FILE) {
+			if (currMod1 == NO_MOD && currMod2 == NO_MOD) {
 				JFrame frame = lst.getFrame();
 				JOptionPane.showMessageDialog(frame,
 						"You must select at least one modality", "Error",
 						JOptionPane.ERROR_MESSAGE);
 				return 0;
 			}
-			System.out.println("test" + "input" + selectedInput);
 			String name = pilotFile.getText();
 			System.out.println("name=" + name);
-			// if (name.equals(null) || !(new File("filename")).exists())
 			if (name.equals(null) || name.equals("")) {
 				JFrame frame = lst.getFrame();
 				JOptionPane.showMessageDialog(frame, "invalid input", " Error",
@@ -1661,7 +1625,7 @@ public class GUInterface {
 			}
 		}
 
-		dbRecord tempRecord = getCurrentRecord();
+		DBRecord tempRecord = getCurrentRecord();
 		double[][] tempBDG = tempRecord.getBDG(NO_BIAS);
 		for (int i = 0; i < 8; i++) {
 			if (tempBDG[selectedMod][i] < 0)
@@ -1716,12 +1680,11 @@ public class GUInterface {
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
-		private static final DecimalFormat formatter = new DecimalFormat(
-				"0.00000E0");
 
 		public Component getTableCellRendererComponent(JTable table,
 				Object value, boolean isSelected, boolean hasFocus, int row,
 				int column) {
+			DecimalFormat formatter = new DecimalFormat("0.00000E0");
 			try {
 				value = formatter.format((Number) value);
 			} catch (ClassCastException e) {

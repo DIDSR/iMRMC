@@ -30,14 +30,14 @@ import umontreal.iro.lecuyer.probdist.BetaDist;
 import umontreal.iro.lecuyer.probdist.FisherFDist;
 import umontreal.iro.lecuyer.probdist.NormalDist;
 
-public class statTest {
+public class StatTest {
 	final int INFINITY = 500;
 	final int PRECISION = 6;
 	final double ZERO = 1E-300;
 	private double powerF;
 	private double powerZ;
 	private double DOF = 0;
-	private double dfBDG;
+	private double dfBDG; // degrees of freedom based on Obuchowski/BDG method
 	private double tStat = 0;
 	private double effSize;
 	private double sigLevel;
@@ -45,6 +45,7 @@ public class statTest {
 	private double pValF;
 	private double ciBot, ciTop;
 	private double f0;
+	private double df1 = 1.0; // future versions may account for greater df1
 	private double df2;
 	private double fStat;
 
@@ -104,41 +105,39 @@ public class statTest {
 	 * 
 	 * @param totalVar Summed total variance
 	 */
-	public statTest(double[] DBMvar, int r, int n, int d, double sig,
+	public StatTest(double[] DBMvar, int r, int n, int d, double sig,
 			double eff, double totalVar, double[][] BCKbias) {
 		sigLevel = sig;
 		effSize = eff;
 		df2 = DDF_Hillis(DBMvar, r, n + d, totalVar);
-		double df1 = 1.0; // where should we get this parameter?
-		powerF = FTest_power(DBMvar, r, n + d, df1, totalVar);
+		powerF = FTest_power(DBMvar, r, n + d, totalVar);
 		powerZ = ZTest(DBMvar, r, n + d, totalVar);
 		dfBDG = calcDFBDG(BCKbias, r, n, d, totalVar);
 	}
 
 	/* Constructor used for stats in variance analysis panel */
-	public statTest(dbRecord curRecord, int selectedMod, int useBiasM,
+	public StatTest(DBRecord curRecord, int selectedMod, int useBiasM,
 			double sig, double eff) {
 		double mst = 0, denom = 0, statT = 0, ddf = 0;
 		double[] aucs = { 0, 0 };
-		double[][] MS = curRecord.getMS(useBiasM);
-		double[][] coeff = new double[4][8];
+		double[][] coeff;
 		if (curRecord.getFullyCrossedStatus()) {
-			coeff = dbRecord.genBDGCoeff(curRecord.getReader(),
+			coeff = DBRecord.genBDGCoeff(curRecord.getReader(),
 					curRecord.getNormal(), curRecord.getDisease());
 		} else {
-			coeff = dbRecord.genBDGCoeff(curRecord.getReader(),
+			coeff = DBRecord.genBDGCoeff(curRecord.getReader(),
 					curRecord.getNormal(), curRecord.getDisease(),
 					curRecord.getMod0StudyDesign(),
 					curRecord.getMod1StudyDesign());
 		}
-
 		double[][] BDG = curRecord.getBDG(useBiasM);
+		double[][] MS = curRecord.getMS(useBiasM);
 		double dn0 = curRecord.getNormal();
 		double dn1 = curRecord.getDisease();
 		double dnr = curRecord.getReader();
 		double dnc = dn0 + dn1;
 
-		double[] var = dbRecord.getBDGTab(selectedMod, BDG, coeff)[6];
+		double[] var = DBRecord.getBDGTab(selectedMod, BDG, coeff)[6];
 		double var0 = 0;
 		for (int j = 0; j < 8; j++) {
 			var0 = var0 + var[j];
@@ -175,7 +174,7 @@ public class statTest {
 		DOF = ddf;
 		// Use normal distribution if DOF > 50, since they are approximately
 		// equal at that point, and FisherFDist can't handle large DOFs
-		double Fval = 0;
+		double Fval;
 		if (ddf >= 50) {
 			NormalDist ndist = new NormalDist();
 			pValF = NormalDist.cdf(0, 1, statT * statT);
@@ -198,8 +197,6 @@ public class statTest {
 
 		System.out.println("auc(0)=" + meanCI + "Fval=" + Math.sqrt(Fval)
 				+ "std" + Math.sqrt(var[selectedMod]));
-		// System.out.println("selectedMod="+selectedMod+" mst="+mst+" denom="+denom+" tstat="+statT+" df="+ddf+"Fval="+Fval);
-
 	}
 
 	public double doVar(double a, double b) {
@@ -242,12 +239,11 @@ public class statTest {
 		return ddf_hillis;
 	}
 
-	public double FTest_power(double[] var, int r, int c, double df1,
-			double totalVar) {
+	public double FTest_power(double[] var, int r, int c, double totalVar) {
 		double SigTR = var[0];
 		double SigTC = var[1];
 		double SigTRC = var[2];
-		double ftestpower;
+		double fTestPower;
 
 		if (SigTR < 0) {
 			SigTR = 0;
@@ -269,7 +265,7 @@ public class statTest {
 		fStat = effSize * effSize / totalVar;
 		System.out.println("delta=" + fStat);
 
-		// use normal distribution for DOF > 50 since it is close to Fisher F
+		// we use normal distribution for DOF > 50 since it is close to Fisher F
 		// and fisherF fails for DOF > 2000
 		double cdftemp;
 		if (df2 >= 50) {
@@ -292,11 +288,11 @@ public class statTest {
 			f0 = Math.sqrt(f0);
 		}
 
-		ftestpower = 1 - cdftemp;
+		fTestPower = 1 - cdftemp;
 		System.out.println("delta=" + fStat + " df2=" + df2 + " CVF=" + f0
-				+ " powerF= " + ftestpower + " totalVar= " + totalVar);
+				+ " powerF= " + fTestPower + " totalVar= " + totalVar);
 
-		return ftestpower;
+		return fTestPower;
 	}
 
 	public double cdfNonCentralF(int df1, int df2, double delta, double x) {
@@ -323,8 +319,6 @@ public class statTest {
 		powerZ = 1 - NormalDist.cdf(effSize, sigma, v);
 		System.out.println("powerZ=" + powerZ + " effSize= " + effSize
 				+ " CVF= " + v + " totalVar= " + totalVar);
-		// pValZ = 1-centralN.cdf(0,sigma,v);
-
 		return powerZ;
 	}
 

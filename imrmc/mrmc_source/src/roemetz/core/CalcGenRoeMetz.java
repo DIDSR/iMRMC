@@ -1,5 +1,5 @@
 /*
- * CofVGenRoeMetz.java
+ * CalcGenRoeMetz.java
  * 
  * v1.0b
  * 
@@ -24,20 +24,23 @@
 
 package roemetz.core;
 
-import mrmc.core.dbRecord;
-import mrmc.core.matrix;
+import mrmc.core.DBRecord;
+import mrmc.core.Matrix;
 import org.apache.commons.math3.distribution.NormalDistribution;
 
-public class CofVGenRoeMetz {
-	static double[][][] cofv_auc;
-	static double[][][] cofv_pc;
-	static double[][][] m;
+public class CalcGenRoeMetz {
+	private static double[][][] cofv_auc;
+	private static double[][][] cofv_pc;
+	private static double[][][] m;
 	private static double[][] BDG;
 	private static double[][] BCK;
 	private static double[][] DBM;
 	private static double[][] OR;
 	private static double[][] MS;
 
+	/*
+	 * Can be executed from command-line, or used as closed-box library function
+	 */
 	public static void main(String[] args) {
 		try {
 			double[] u = new double[2];
@@ -88,27 +91,27 @@ public class CofVGenRoeMetz {
 	public static void printResults() {
 		System.out.println("cofv_auc:");
 		for (int i = 0; i < cofv_auc.length; i++) {
-			matrix.printMatrix(cofv_auc[i]);
+			Matrix.printMatrix(cofv_auc[i]);
 			System.out.println();
 		}
 		System.out.println();
 		System.out.println("cofv_pc:");
 		for (int i = 0; i < cofv_pc.length; i++) {
-			matrix.printMatrix(cofv_pc[i]);
+			Matrix.printMatrix(cofv_pc[i]);
 			System.out.println();
 		}
 		System.out.println("\n");
 		System.out.println("BDG:");
-		matrix.printMatrix(BDG);
+		Matrix.printMatrix(BDG);
 		System.out.println();
 
 		System.out.println("BCK:");
-		matrix.printMatrix(BCK);
+		Matrix.printMatrix(BCK);
 		System.out.println();
 
 		System.out.println("M:");
-		matrix.printMatrix(m[0]);
-		matrix.printMatrix(m[1]);
+		Matrix.printMatrix(m[0]);
+		Matrix.printMatrix(m[1]);
 		System.out.println();
 	}
 
@@ -167,7 +170,7 @@ public class CofVGenRoeMetz {
 		for (int i = 0; i < n; i++) {
 			toTotal[i] = dx * f[i] * phi[i];
 		}
-		return matrix.total(toTotal);
+		return Matrix.total(toTotal);
 	}
 
 	public static double prodMoment(double[] u, double[] scale, int n) {
@@ -226,7 +229,7 @@ public class CofVGenRoeMetz {
 						/ Math.sqrt(scale31));
 				dy1xf1xphi1[j] = dy1xf1[j] * phi1[j];
 			}
-			ff[i] = matrix.total(dy0xf0xphi0) * matrix.total(dy1xf1xphi1);
+			ff[i] = Matrix.total(dy0xf0xphi0) * Matrix.total(dy1xf1xphi1);
 		}
 
 		double[] f = new double[n];
@@ -237,7 +240,7 @@ public class CofVGenRoeMetz {
 			toTotal[i] = dx * f[i] * ff[i];
 		}
 
-		return matrix.total(toTotal);
+		return Matrix.total(toTotal);
 	}
 
 	public static void genRoeMetz(double[] u, double[] var_t, int[] n) {
@@ -478,20 +481,20 @@ public class CofVGenRoeMetz {
 
 		cofv_auc = new double[2][2][7];
 
-		double[] Baucxm1 = matrix.multiply(Bauc,
-				matrix.get1Dimension(1, m, "0", "0", "*"));
+		double[] Baucxm1 = Matrix.multiply(Bauc,
+				Matrix.get1Dimension(1, m, "0", "0", "*"));
 		for (int i = 0; i < cofv_auc[0][0].length; i++) {
 			cofv_auc[0][0][i] = Baucxm1[i];
 		}
 
-		double[] Baucxm2 = matrix.multiply(Bauc,
-				matrix.get1Dimension(1, m, "1", "1", "*"));
+		double[] Baucxm2 = Matrix.multiply(Bauc,
+				Matrix.get1Dimension(1, m, "1", "1", "*"));
 		for (int i = 0; i < cofv_auc[1][1].length; i++) {
 			cofv_auc[1][1][i] = Baucxm2[i];
 		}
 
-		double[] Baucxm3 = matrix.multiply(Bauc,
-				matrix.get1Dimension(1, m, "1", "0", "*"));
+		double[] Baucxm3 = Matrix.multiply(Bauc,
+				Matrix.get1Dimension(1, m, "1", "0", "*"));
 		for (int i = 0; i < cofv_auc[1][0].length; i++) {
 			cofv_auc[1][0][i] = Baucxm3[i];
 		}
@@ -504,20 +507,20 @@ public class CofVGenRoeMetz {
 				{ 0, 0, 0, 0, 1, 0, 0, -1 }, { 1, 0, 0, -1, -1, 0, 0, 1 } };
 
 		cofv_pc = new double[2][2][3];
-		double[] Bpcxm1 = matrix.multiply(Bpc,
-				matrix.get1Dimension(1, m, "0", "0", "*"));
+		double[] Bpcxm1 = Matrix.multiply(Bpc,
+				Matrix.get1Dimension(1, m, "0", "0", "*"));
 		for (int i = 0; i < cofv_pc[0][0].length; i++) {
 			cofv_pc[0][0][i] = Bpcxm1[i];
 		}
 
-		double[] Bpcxm2 = matrix.multiply(Bpc,
-				matrix.get1Dimension(1, m, "1", "1", "*"));
+		double[] Bpcxm2 = Matrix.multiply(Bpc,
+				Matrix.get1Dimension(1, m, "1", "1", "*"));
 		for (int i = 0; i < cofv_pc[1][1].length; i++) {
 			cofv_pc[1][1][i] = Bpcxm2[i];
 		}
 
-		double[] Bpcxm3 = matrix.multiply(Bpc,
-				matrix.get1Dimension(1, m, "1", "0", "*"));
+		double[] Bpcxm3 = Matrix.multiply(Bpc,
+				Matrix.get1Dimension(1, m, "1", "0", "*"));
 		for (int i = 0; i < cofv_pc[1][0].length; i++) {
 			cofv_pc[1][0][i] = Bpcxm3[i];
 		}
@@ -527,16 +530,16 @@ public class CofVGenRoeMetz {
 		}
 
 		BDG = new double[4][8];
-		BDG[0] = matrix.get1Dimension(1, m, "0", "0", "*");
-		BDG[1] = matrix.get1Dimension(1, m, "1", "1", "*");
-		BDG[2] = matrix.get1Dimension(1, m, "0", "1", "*");
+		BDG[0] = Matrix.get1Dimension(1, m, "0", "0", "*");
+		BDG[1] = Matrix.get1Dimension(1, m, "1", "1", "*");
+		BDG[2] = Matrix.get1Dimension(1, m, "0", "1", "*");
 		for (int i = 0; i < 8; i++) {
 			BDG[3][i] = (m[0][0][i + 1] + m[1][1][i + 1] - (2 * m[0][1][i + 1]));
 		}
 
-		BCK = dbRecord.BDG2BCK(BDG);
-		DBM = dbRecord.BCK2DBM(BCK, nr, n0, n1);
-		OR = dbRecord.DBM2OR(0, DBM, nr, n0, n1);
-		MS = dbRecord.DBM2MS(DBM, nr, n0, n1);
+		BCK = DBRecord.BDG2BCK(BDG);
+		DBM = DBRecord.BCK2DBM(BCK, nr, n0, n1);
+		OR = DBRecord.DBM2OR(0, DBM, nr, n0, n1);
+		MS = DBRecord.DBM2MS(DBM, nr, n0, n1);
 	}
 }

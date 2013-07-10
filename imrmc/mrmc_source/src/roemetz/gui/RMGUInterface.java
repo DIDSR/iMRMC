@@ -54,22 +54,25 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+
 import org.uncommons.maths.random.MersenneTwisterRNG;
+
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import mrmc.core.dbRecord;
-import mrmc.core.matrix;
-
-import roemetz.core.CofVGenRoeMetz;
+import mrmc.core.DBRecord;
+import mrmc.core.Matrix;
+import roemetz.core.CalcGenRoeMetz;
 import roemetz.core.RoeMetz;
 import roemetz.core.SimRoeMetz;
 
 public class RMGUInterface {
-
+	private final int USE_BIAS = 1;
+	private final int NO_BIAS = 0;
+	private static RoeMetz appl;
 	private JTextField vR00;
 	private JTextField vC00;
 	private JTextField vRC00;
@@ -96,11 +99,13 @@ public class RMGUInterface {
 	private JTextField numExp;
 	private JTextField seed;
 	private JDialog progDialog;
-	private JCheckBox useBias = new JCheckBox("Use Bias");
-	private int useBiasM = 0;
+	private JCheckBox useBiasBox = new JCheckBox("Use Bias");
+	private int useBiasM = NO_BIAS;
 	private String simSaveDirectory;
 	private static JProgressBar simProgress;
-	private static RoeMetz appl;
+	private DecimalFormat threeDecOpt = new DecimalFormat("0.###");
+	private DecimalFormat threeDecOptE = new DecimalFormat("0.###E0");
+	private DecimalFormat threeDec = new DecimalFormat("0.000");
 
 	public RMGUInterface(RoeMetz lsttemp, Container cp) {
 		appl = lsttemp;
@@ -328,7 +333,7 @@ public class RMGUInterface {
 		JLabel seedLabel = new JLabel("Seed for RNG");
 		seed = new JTextField(9);
 		seed.setText(Long.toString(System.currentTimeMillis()));
-		useBias.addItemListener(new UseBiasListner());
+		useBiasBox.addItemListener(new UseBiasListner());
 		JButton saveLoc = new JButton("Output Location");
 		saveLoc.addActionListener(new SaveSimulationListner());
 
@@ -336,7 +341,7 @@ public class RMGUInterface {
 		simulationExperiment.add(seed);
 		simulationExperiment.add(numExpLabel);
 		simulationExperiment.add(numExp);
-		simulationExperiment.add(useBias);
+		simulationExperiment.add(useBiasBox);
 		simulationExperiment.add(saveLoc);
 		simulationExperiment.add(doSimExp);
 
@@ -661,10 +666,10 @@ public class RMGUInterface {
 
 	class UseBiasListner implements ItemListener {
 		public void itemStateChanged(ItemEvent e) {
-			if (useBias.isSelected()) {
-				useBiasM = 1;
+			if (useBiasBox.isSelected()) {
+				useBiasM = USE_BIAS;
 			} else {
-				useBiasM = 0;
+				useBiasM = NO_BIAS;
 			}
 		}
 	}
@@ -722,24 +727,24 @@ public class RMGUInterface {
 						currSim.gett10(), currSim.gett11(), currSim.getAUC(),
 						filenameTime, ((whichTask * numTimes) + i));
 
-				avgBDGdata = matrix.matrixAdd(avgBDGdata, currSim.getBDGdata());
-				avgBCKdata = matrix.matrixAdd(avgBCKdata, currSim.getBCKdata());
-				avgDBMdata = matrix.matrixAdd(avgDBMdata, currSim.getDBMdata());
-				avgORdata = matrix.matrixAdd(avgORdata, currSim.getORdata());
-				avgMSdata = matrix.matrixAdd(avgMSdata, currSim.getMSdata());
-				avgAUC = matrix.matrixAdd(avgAUC, currSim.getAUC());
+				avgBDGdata = Matrix.matrixAdd(avgBDGdata, currSim.getBDGdata());
+				avgBCKdata = Matrix.matrixAdd(avgBCKdata, currSim.getBCKdata());
+				avgDBMdata = Matrix.matrixAdd(avgDBMdata, currSim.getDBMdata());
+				avgORdata = Matrix.matrixAdd(avgORdata, currSim.getORdata());
+				avgMSdata = Matrix.matrixAdd(avgMSdata, currSim.getMSdata());
+				avgAUC = Matrix.matrixAdd(avgAUC, currSim.getAUC());
 
 				publish(val.getAndIncrement());
 				setProgress(100 * i / numTimes);
 			}
 
 			double scaleFactor = 1.0 / (double) numTimes;
-			avgBDGdata = matrix.scaleMatrix(avgBDGdata, scaleFactor);
-			avgBCKdata = matrix.scaleMatrix(avgBCKdata, scaleFactor);
-			avgDBMdata = matrix.scaleMatrix(avgDBMdata, scaleFactor);
-			avgORdata = matrix.scaleMatrix(avgORdata, scaleFactor);
-			avgMSdata = matrix.scaleMatrix(avgMSdata, scaleFactor);
-			avgAUC = matrix.scaleVector(avgAUC, scaleFactor);
+			avgBDGdata = Matrix.scaleMatrix(avgBDGdata, scaleFactor);
+			avgBCKdata = Matrix.scaleMatrix(avgBCKdata, scaleFactor);
+			avgDBMdata = Matrix.scaleMatrix(avgDBMdata, scaleFactor);
+			avgORdata = Matrix.scaleMatrix(avgORdata, scaleFactor);
+			avgMSdata = Matrix.scaleMatrix(avgMSdata, scaleFactor);
+			avgAUC = Matrix.scaleVector(avgAUC, scaleFactor);
 
 			return new double[][][] { avgBDGdata, avgBCKdata, avgDBMdata,
 					avgORdata, avgMSdata, { avgAUC } };
@@ -860,27 +865,27 @@ public class RMGUInterface {
 			double[][] allOR = results[0][3];
 			double[][] allMS = results[0][4];
 			double[] allAUC = results[0][5][0];
-			double[][] BDGcoeff = dbRecord.genBDGCoeff(n[2], n[0], n[1]);
-			double[][] BCKcoeff = dbRecord.genBCKCoeff(n[2], n[0], n[1]);
-			double[][] DBMcoeff = dbRecord.genDBMCoeff(n[2], n[0], n[1]);
-			double[][] MScoeff = dbRecord.genMSCoeff(n[2], n[0], n[1]);
-			double[][] ORcoeff = dbRecord.genORCoeff(n[2], n[0], n[1]);
+			double[][] BDGcoeff = DBRecord.genBDGCoeff(n[2], n[0], n[1]);
+			double[][] BCKcoeff = DBRecord.genBCKCoeff(n[2], n[0], n[1]);
+			double[][] DBMcoeff = DBRecord.genDBMCoeff(n[2], n[0], n[1]);
+			double[][] MScoeff = DBRecord.genMSCoeff(n[2], n[0], n[1]);
+			double[][] ORcoeff = DBRecord.genORCoeff(n[2], n[0], n[1]);
 
 			for (int i = 1; i < numTasks; i++) {
-				allBDG = matrix.matrixAdd(allBDG, results[i][0]);
-				allBCK = matrix.matrixAdd(allBCK, results[i][1]);
-				allDBM = matrix.matrixAdd(allDBM, results[i][2]);
-				allOR = matrix.matrixAdd(allOR, results[i][3]);
-				allMS = matrix.matrixAdd(allMS, results[i][4]);
-				allAUC = matrix.matrixAdd(allAUC, results[i][5][0]);
+				allBDG = Matrix.matrixAdd(allBDG, results[i][0]);
+				allBCK = Matrix.matrixAdd(allBCK, results[i][1]);
+				allDBM = Matrix.matrixAdd(allDBM, results[i][2]);
+				allOR = Matrix.matrixAdd(allOR, results[i][3]);
+				allMS = Matrix.matrixAdd(allMS, results[i][4]);
+				allAUC = Matrix.matrixAdd(allAUC, results[i][5][0]);
 			}
 
-			allBDG = matrix.scaleMatrix(allBDG, 1.0 / (double) numTasks);
-			allBCK = matrix.scaleMatrix(allBCK, 1.0 / (double) numTasks);
-			allDBM = matrix.scaleMatrix(allDBM, 1.0 / (double) numTasks);
-			allOR = matrix.scaleMatrix(allOR, 1.0 / (double) numTasks);
-			allMS = matrix.scaleMatrix(allMS, 1.0 / (double) numTasks);
-			allAUC = matrix.scaleVector(allAUC, 1.0 / (double) numTasks);
+			allBDG = Matrix.scaleMatrix(allBDG, 1.0 / (double) numTasks);
+			allBCK = Matrix.scaleMatrix(allBCK, 1.0 / (double) numTasks);
+			allDBM = Matrix.scaleMatrix(allDBM, 1.0 / (double) numTasks);
+			allOR = Matrix.scaleMatrix(allOR, 1.0 / (double) numTasks);
+			allMS = Matrix.scaleMatrix(allMS, 1.0 / (double) numTasks);
+			allAUC = Matrix.scaleVector(allAUC, 1.0 / (double) numTasks);
 
 			JDialog simOutput = new JDialog(appl.getFrame(),
 					"Simulation Results");
@@ -916,10 +921,9 @@ public class RMGUInterface {
 			updateMSpane(MSpane, 0, allMS, MScoeff);
 
 			// Display AUCs
-			DecimalFormat df = new DecimalFormat("0.###");
-			JLabel AUCs = new JLabel("AUC1: " + df.format(allAUC[0])
-					+ "   AUC2: " + df.format(allAUC[1]) + "   AUC1-AUC2: "
-					+ df.format(allAUC[2]) + "   ");
+			JLabel AUCs = new JLabel("AUC1: " + threeDecOpt.format(allAUC[0])
+					+ "   AUC2: " + threeDecOpt.format(allAUC[1])
+					+ "   AUC1-AUC2: " + threeDecOpt.format(allAUC[2]) + "   ");
 
 			// create modality select buttons
 			String str1 = "Modality 1";
@@ -1032,10 +1036,10 @@ public class RMGUInterface {
 		}
 
 		public double[][][] doInBackground() {
-			CofVGenRoeMetz.genRoeMetz(u, var_t, n);
-			return new double[][][] { CofVGenRoeMetz.getBDGdata(),
-					CofVGenRoeMetz.getBCKdata(), CofVGenRoeMetz.getDBMdata(),
-					CofVGenRoeMetz.getORdata(), CofVGenRoeMetz.getMSdata() };
+			CalcGenRoeMetz.genRoeMetz(u, var_t, n);
+			return new double[][][] { CalcGenRoeMetz.getBDGdata(),
+					CalcGenRoeMetz.getBCKdata(), CalcGenRoeMetz.getDBMdata(),
+					CalcGenRoeMetz.getORdata(), CalcGenRoeMetz.getMSdata() };
 		}
 
 		protected void done() {
@@ -1113,11 +1117,11 @@ public class RMGUInterface {
 			double[][] DBM = results[2];
 			double[][] OR = results[3];
 			double[][] MS = results[4];
-			double[][] BDGcoeff = dbRecord.genBDGCoeff(n[2], n[0], n[1]);
-			double[][] BCKcoeff = dbRecord.genBCKCoeff(n[2], n[0], n[1]);
-			double[][] DBMcoeff = dbRecord.genDBMCoeff(n[2], n[0], n[1]);
-			double[][] MScoeff = dbRecord.genMSCoeff(n[2], n[0], n[1]);
-			double[][] ORcoeff = dbRecord.genORCoeff(n[2], n[0], n[1]);
+			double[][] BDGcoeff = DBRecord.genBDGCoeff(n[2], n[0], n[1]);
+			double[][] BCKcoeff = DBRecord.genBCKCoeff(n[2], n[0], n[1]);
+			double[][] DBMcoeff = DBRecord.genDBMCoeff(n[2], n[0], n[1]);
+			double[][] MScoeff = DBRecord.genMSCoeff(n[2], n[0], n[1]);
+			double[][] ORcoeff = DBRecord.genORCoeff(n[2], n[0], n[1]);
 			updateBDGpane(BDGpane, 0, results[0], BDGcoeff);
 			updateBCKpane(BCKpane, 0, results[1], BCKcoeff);
 			updateDBMpane(DBMpane, 0, results[2], DBMcoeff);
@@ -1125,10 +1129,10 @@ public class RMGUInterface {
 			updateMSpane(MSpane, 0, results[4], MScoeff);
 
 			// create AUCs label
-			DecimalFormat df = new DecimalFormat("0.###");
-			JLabel AUCs = new JLabel("AUC1: " + df.format(BDG[0][0])
-					+ "   AUC2: " + df.format(BDG[1][0]) + "   AUC1-AUC2: "
-					+ df.format(BDG[0][0] - BDG[1][0]) + "    ");
+			JLabel AUCs = new JLabel("AUC1: " + threeDecOpt.format(BDG[0][0])
+					+ "   AUC2: " + threeDecOpt.format(BDG[1][0])
+					+ "   AUC1-AUC2: "
+					+ threeDecOpt.format(BDG[0][0] - BDG[1][0]) + "    ");
 
 			// create modality select buttons
 			String str1 = "Modality 1";
@@ -1239,7 +1243,6 @@ public class RMGUInterface {
 			}
 			FileWriter fw = new FileWriter(file.getAbsoluteFile());
 			BufferedWriter bw = new BufferedWriter(fw);
-			DecimalFormat df = new DecimalFormat("0.###");
 
 			bw.write("Simulated iMRMC input from " + filename + "\n");
 			bw.write("\n");
@@ -1248,9 +1251,9 @@ public class RMGUInterface {
 			bw.write("N1: " + t10[0].length + "\n");
 			bw.write("NM: 2\n");
 			bw.write("\n");
-			bw.write("AUC1: " + df.format(auc[0]) + "\n");
-			bw.write("AUC2: " + df.format(auc[1]) + "\n");
-			bw.write("DAUC: " + df.format(auc[2]) + "\n");
+			bw.write("AUC1: " + threeDecOpt.format(auc[0]) + "\n");
+			bw.write("AUC2: " + threeDecOpt.format(auc[1]) + "\n");
+			bw.write("DAUC: " + threeDecOpt.format(auc[2]) + "\n");
 			bw.write("\n");
 			bw.write("BEGIN DATA:\n");
 
@@ -1327,7 +1330,7 @@ public class RMGUInterface {
 		JTable table = (JTable) BDGpane.getComponent(1);
 		JLabel varLabel = (JLabel) BDGpane.getComponent(2);
 		double[][] BDGdata = new double[3][8];
-		double[][] tempBDG = dbRecord.getBDGTab(mod, allBDG, BDGcoeff);
+		double[][] tempBDG = DBRecord.getBDGTab(mod, allBDG, BDGcoeff);
 		if (mod == 0) {
 			BDGdata[0] = tempBDG[0];
 			BDGdata[1] = tempBDG[1];
@@ -1336,18 +1339,16 @@ public class RMGUInterface {
 			BDGdata[1] = tempBDG[3];
 		} else if (mod == 3) {
 			BDGdata[0] = tempBDG[4];
-			BDGdata[1] = matrix.scaleVector(tempBDG[5], 0.5);
+			BDGdata[1] = Matrix.scaleVector(tempBDG[5], 0.5);
 		}
 		BDGdata[2] = tempBDG[6];
-		double currVar = matrix.total(tempBDG[6]);
-		DecimalFormat df1 = new DecimalFormat("0.###E0");
-		DecimalFormat df2 = new DecimalFormat("0.000");
+		double currVar = Matrix.total(tempBDG[6]);
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 8; j++) {
-				table.setValueAt(df1.format(BDGdata[i][j]), i, j + 1);
+				table.setValueAt(threeDecOptE.format(BDGdata[i][j]), i, j + 1);
 			}
 		}
-		String output = df2.format(Math.sqrt(currVar));
+		String output = threeDec.format(Math.sqrt(currVar));
 		varLabel.setText("sqrt(Var) = " + output);
 	}
 
@@ -1356,7 +1357,7 @@ public class RMGUInterface {
 		JTable table = (JTable) BCKpane.getComponent(1);
 		JLabel varLabel = (JLabel) BCKpane.getComponent(2);
 		double[][] BCKdata = new double[3][7];
-		double[][] tempBCK = dbRecord.getBCKTab(mod, allBCK, BCKcoeff);
+		double[][] tempBCK = DBRecord.getBCKTab(mod, allBCK, BCKcoeff);
 		if (mod == 0) {
 			BCKdata[0] = tempBCK[0];
 			BCKdata[1] = tempBCK[1];
@@ -1365,18 +1366,16 @@ public class RMGUInterface {
 			BCKdata[1] = tempBCK[3];
 		} else if (mod == 3) {
 			BCKdata[0] = tempBCK[4];
-			BCKdata[1] = matrix.scaleVector(tempBCK[5], 0.5);
+			BCKdata[1] = Matrix.scaleVector(tempBCK[5], 0.5);
 		}
 		BCKdata[2] = tempBCK[6];
-		double currVar = matrix.total(tempBCK[6]);
-		DecimalFormat df1 = new DecimalFormat("0.###E0");
-		DecimalFormat df2 = new DecimalFormat("0.000");
+		double currVar = Matrix.total(tempBCK[6]);
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 7; j++) {
-				table.setValueAt(df1.format(BCKdata[i][j]), i, j + 1);
+				table.setValueAt(threeDecOptE.format(BCKdata[i][j]), i, j + 1);
 			}
 		}
-		String output = df2.format(Math.sqrt(currVar));
+		String output = threeDec.format(Math.sqrt(currVar));
 		varLabel.setText("sqrt(Var) = " + output);
 	}
 
@@ -1384,16 +1383,14 @@ public class RMGUInterface {
 			double[][] DBMcoeff) {
 		JTable table = (JTable) DBMpane.getComponent(1);
 		JLabel varLabel = (JLabel) DBMpane.getComponent(2);
-		double[][] DBMdata = dbRecord.getDBMTab(mod, allDBM, DBMcoeff);
-		DecimalFormat df1 = new DecimalFormat("0.###E0");
-		DecimalFormat df2 = new DecimalFormat("0.000");
+		double[][] DBMdata = DBRecord.getDBMTab(mod, allDBM, DBMcoeff);
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 6; j++) {
-				table.setValueAt(df1.format(DBMdata[i][j]), i, j + 1);
+				table.setValueAt(threeDecOptE.format(DBMdata[i][j]), i, j + 1);
 			}
 		}
-		double currVar = matrix.total(DBMdata[2]);
-		String output = df2.format(Math.sqrt(currVar));
+		double currVar = Matrix.total(DBMdata[2]);
+		String output = threeDec.format(Math.sqrt(currVar));
 		varLabel.setText("sqrt(Var) = " + output);
 	}
 
@@ -1401,16 +1398,14 @@ public class RMGUInterface {
 			double[][] ORcoeff) {
 		JTable table = (JTable) ORpane.getComponent(1);
 		JLabel varLabel = (JLabel) ORpane.getComponent(2);
-		double[][] ORdata = dbRecord.getORTab(mod, allOR, ORcoeff);
-		DecimalFormat df = new DecimalFormat("0.###E0");
-		DecimalFormat df2 = new DecimalFormat("0.000");
+		double[][] ORdata = DBRecord.getORTab(mod, allOR, ORcoeff);
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 6; j++) {
-				table.setValueAt(df.format(ORdata[i][j]), i, j + 1);
+				table.setValueAt(threeDecOptE.format(ORdata[i][j]), i, j + 1);
 			}
 		}
-		double currVar = matrix.total(ORdata[2]);
-		String output = df2.format(Math.sqrt(currVar));
+		double currVar = Matrix.total(ORdata[2]);
+		String output = threeDec.format(Math.sqrt(currVar));
 		varLabel.setText("sqrt(Var) = " + output);
 	}
 
@@ -1418,16 +1413,14 @@ public class RMGUInterface {
 			double[][] MScoeff) {
 		JTable table = (JTable) MSpane.getComponent(1);
 		JLabel varLabel = (JLabel) MSpane.getComponent(2);
-		double[][] MSdata = dbRecord.getMSTab(mod, allMS, MScoeff);
-		DecimalFormat df = new DecimalFormat("0.###E0");
-		DecimalFormat df2 = new DecimalFormat("0.000");
+		double[][] MSdata = DBRecord.getMSTab(mod, allMS, MScoeff);
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 6; j++) {
-				table.setValueAt(df.format(MSdata[i][j]), i, j + 1);
+				table.setValueAt(threeDecOptE.format(MSdata[i][j]), i, j + 1);
 			}
 		}
-		double currVar = matrix.total(MSdata[2]);
-		String output = df2.format(Math.sqrt(currVar));
+		double currVar = Matrix.total(MSdata[2]);
+		String output = threeDec.format(Math.sqrt(currVar));
 		varLabel.setText("sqrt(Var) = " + output);
 	}
 }

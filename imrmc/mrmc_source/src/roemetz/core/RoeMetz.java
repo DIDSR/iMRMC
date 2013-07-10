@@ -36,7 +36,7 @@ public class RoeMetz extends JApplet {
 	 */
 	private static final long serialVersionUID = 1L;
 	private static JFrame iRMFrame;
-	RMGUInterface gui;
+	private RMGUInterface gui;
 
 	public JFrame getFrame() {
 		return iRMFrame;
