@@ -29,7 +29,7 @@ One interpretation of AUC is that it is the reader's average sensitivity over al
 such, it is a global summary of task performance that avoids thresholds entirely. AUC is also mathematically 
 equivalent to the probability that a random reader will correctly choose the signal-present image over the 
 signal-absent image when a pair is presented side-by-side or sequentially, as is done in a 2-alternative forced 
-choice (2AFC) task [iMRMCReferences [12]]. 
+choice (2AFC) task [iMRMCReferences#12 [12]]. 
 
 To account for the variability in readers, an ROC study is often conducted in a multi-reader paradigm. The 
 endpoint of such an ROC reader study is the reader-averaged AUC value.  The uncertainty in the reader-averaged 
@@ -37,6 +37,6 @@ AUC suffers from two sources of variability: the readers and the cases. To accou
 variability, reader studies often involve several trained readers in addition to a dataset of diseased and 
 non-diseased cases. One popular study design for estimating AUC is the fully crossed study design in which every 
 reader reads every case. Statistical methods have been proposed in the literature to analyze fully-crossed MRMC 
-data [iMRMCReferences [13]]. The origin of each method differs, and consequently, the estimation process of each method differs. 
+data [iMRMCReferences#13 [13]]. The origin of each method differs, and consequently, the estimation process of each method differs. 
 Additionally, each method has at its foundation a different decomposition, or representation, of the total 
 variance.
