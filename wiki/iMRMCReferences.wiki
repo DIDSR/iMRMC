@@ -11,5 +11,5 @@
   # Hillis S.L.,  Berbaum K. S. “Power estimation for the Dorfman-Berbaum-Metz method.” Acad Radiol. 2004 Nov;11(11):1260-73, 2004.
   # Hillis, S. L.; Berbaum, K. S. & Metz, C. E. (2008), 'Recent developments in the Dorfman-Berbaum-Metz procedure for multireader ROC study analysis.', Acad Radiol 15(5), 647--661.
   # Obuchowski, N.A.; Gallas, B. D. & Hillis, S. L. (2012), ‘Multi-reader ROC Studies with Split-plot Designs: A Comparison of Statistical Methods’, Acad Radiol 19(12), 1508-1517.
-  # Wagner, R. F.; Metz, C. E. & Campbell, G. (2007), 'Assessment of Medical Imaging Systems and Computer Aids: A TutorialReview', Acad Radiol 14(6), 723-748.
+  # Wagner, R. F.; Metz, C. E. & Campbell, G. (2007), 'Assessment of Medical Imaging Systems and Computer Aids: A Tutorial Review', Acad Radiol 14(6), 723-748.
   # Gallas, B. D.; Chan, H.; D'Orsi, C. J.; Dodd, L. E.; Giger, M. L.; Gur, D.; Krupinski, E. A.; Metz, C. E.; Myers, K. J.; Obuchowski, N. A.; Sahiner, B.; Toledano, A. Y. & Zuley, M. L. (2012), 'Evaluating Imaging and Computer-aided Detection and Diagnosis Devices at the FDA.', Acad Radiol 19(4), 463-477.
