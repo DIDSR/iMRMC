@@ -15,7 +15,7 @@ or quasi-continuous rating scale; ratings may be a number from 0 to 1, or 1 to 1
 collected for both non-diseased and diseased cases. 
 
 Given ratings for non-diseased and diseased cases, an ROC curve can be traced out by calculating the 
-sensitivity/specificity (TPF/TNF) pair for each confidence level, or threshold, possible [iMRMCReferences#Metz,_C ghf]. An ROC curve 
+sensitivity/specificity (TPF/TNF) pair for each confidence level, or threshold, possible [iMRMCReferences [1]]. An ROC curve 
 illustrates the tradeoff between sensitivity and specificity of the reader across all thresholds. This tradeoff 
 is realized by a change in the reader's threshold. In the case of breast cancer screening via mammography, when 
 the threshold is made more aggressive the reader recalls more women for additional imaging, increasing his or 
