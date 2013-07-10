@@ -36,27 +36,6 @@ public class DBCard {
 	private JRadioButton mod2Button;
 	private JRadioButton modDButton;
 
-	public void setUseBiasM(int temp) {
-		if (temp == 1) {
-			useBiasM = 1;
-			cb.setSelected(true);
-		} else {
-			useBiasM = 0;
-			cb.setSelected(false);
-		}
-	}
-
-	public void setSelectedMod(int input) {
-		if (input == 0)
-			mod1Button.setSelected(true);
-		else if (input == 1)
-			mod2Button.setSelected(true);
-		else if (input == 3)
-			modDButton.setSelected(true);
-		selectedMod = input;
-		gui.setSelectedMod(selectedMod);
-	}
-
 	public DBCard(JPanel mPanel, GUInterface guitemp) {
 		gui = guitemp;
 		// create the checkbox for allowing negative components
@@ -100,7 +79,27 @@ public class DBCard {
 																	// button
 		mPanel.add(okButton);
 		okButton.addActionListener(new okButtonListner());
+	}
 
+	public void setUseBiasM(int temp) {
+		if (temp == 1) {
+			useBiasM = 1;
+			cb.setSelected(true);
+		} else {
+			useBiasM = 0;
+			cb.setSelected(false);
+		}
+	}
+
+	public void setSelectedMod(int input) {
+		if (input == 0)
+			mod1Button.setSelected(true);
+		else if (input == 1)
+			mod2Button.setSelected(true);
+		else if (input == 3)
+			modDButton.setSelected(true);
+		selectedMod = input;
+		gui.setSelectedMod(selectedMod);
 	}
 
 	/*

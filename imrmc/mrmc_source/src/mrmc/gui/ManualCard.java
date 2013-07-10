@@ -26,8 +26,7 @@ package mrmc.gui;
 import javax.swing.*;
 import java.awt.event.*;
 import mrmc.core.MRMC;
-import mrmc.core.dbRecord;
-import mrmc.core.matrix;
+import mrmc.core.DBRecord;
 
 public class ManualCard {
 	private GUInterface gui;
@@ -37,7 +36,7 @@ public class ManualCard {
 	private JTextField manualInDisease;
 	private JTextField AUCText1;
 	private JTextField AUCText2;
-	private dbRecord record;
+	private DBRecord record;
 	private double[] auc = new double[2];
 	private JRadioButton com1Button;
 	private JRadioButton SingleMod;
@@ -55,7 +54,6 @@ public class ManualCard {
 	private int[] numberOfComps = new int[] { 8, 7, 6, 6 };
 	private String[] com = new String[] { "BDG", "BCK", "DBM", "OR" };
 	private String[] mod = new String[] { "Single Modality", "Difference" };
-	private matrix mx = new matrix();
 	private int SingleOrDiff = 0;
 
 	public int getSelectedManualComp() {
@@ -83,7 +81,7 @@ public class ManualCard {
 		return selectedManualComp;
 	}
 
-	public dbRecord getManualRecord() {
+	public DBRecord getManualRecord() {
 		return record;
 	}
 
@@ -300,8 +298,7 @@ public class ManualCard {
 				return 0;
 			} else {
 				String[] tempComp = temp4.split(",");
-
-				if (temp4.split(",").length != numberOfComps[selectedManualComp]) {
+				if (tempComp.length != numberOfComps[selectedManualComp]) {
 					JFrame frame = lst.getFrame();
 					String strtemp = "The "
 							+ com[selectedManualComp]
@@ -335,7 +332,7 @@ public class ManualCard {
 			auc[1] = auc[0];
 			if (SingleOrDiff == 1)
 				auc[1] = Double.valueOf(AUCText2.getText());
-			record = new dbRecord(data, selectedManualComp, Reader, Normal,
+			record = new DBRecord(data, selectedManualComp, Reader, Normal,
 					Disease, auc);
 			gui.setTab1();
 			gui.setAUCoutput();

@@ -29,7 +29,7 @@ import java.io.*;
 
 import mrmc.chart.XYPair;
 
-public class inputFile {
+public class InputFile {
 	private String filename;
 	private String desc = "";
 	private String recordTitle = "";
@@ -104,6 +104,52 @@ public class inputFile {
 		return BDGbias;
 	}
 
+	/*
+	 * Constructor for the application reading in a file locally
+	 */
+	public InputFile(String file) throws IOException {
+		filename = file;
+		ArrayList<String> fileContent = new ArrayList<String>();
+		try {
+			InputStreamReader isr;
+			DataInputStream din;
+			FileInputStream fstream = new FileInputStream(filename);
+			din = new DataInputStream(fstream);
+			isr = new InputStreamReader(din);
+			fileContent = readFile(isr);
+			din.close();
+		} catch (Exception e) {
+			System.err
+					.println("Error reading file" + filename + e.getMessage());
+		}
+		organizeData(fileContent);
+		isLoaded = true;
+	}
+
+	/*
+	 * Constructor to be used from iRoeMetz for calculating CovMRMC with
+	 * simulated experiment data
+	 */
+	public InputFile(double[][][] t0, double[][][] t1, double[][][] t00,
+			double[][][] t01, double[][][] t10, double[][][] t11, int[][][] d0,
+			int[][][] d1, int nr, int n0, int n1, String title, String desc) {
+		this.t0 = t0;
+		this.t1 = t1;
+		this.t00 = t00;
+		this.t01 = t01;
+		this.t10 = t10;
+		this.t11 = t11;
+		this.d0 = d0;
+		this.d1 = d1;
+		this.Reader = nr;
+		this.Normal = n0;
+		this.Disease = n1;
+		this.recordTitle = title;
+		this.desc = desc;
+		this.isFullyCrossed = true;
+	}
+
+	// Largest score in study, for purpose of determining relative bounds
 	public double getMaxScore(int mod) {
 		double max = Double.MIN_VALUE;
 		for (Integer r : keyedData.keySet()) {
@@ -118,6 +164,7 @@ public class inputFile {
 		return max;
 	}
 
+	// smallest score in study, for purpose of determining relative bounds
 	public double getMinScore(int mod) {
 		double min = Double.MAX_VALUE;
 		for (Integer r : keyedData.keySet()) {
@@ -248,6 +295,7 @@ public class inputFile {
 		return cpr;
 	}
 
+	// Creates separate lists of normal and disease case numbers
 	public ArrayList<ArrayList<Integer>> getN0N1CaseNums() {
 		ArrayList<Integer> diseaseCases = new ArrayList<Integer>();
 		ArrayList<Integer> normalCases = new ArrayList<Integer>();
@@ -313,54 +361,10 @@ public class inputFile {
 		return design;
 	}
 
-	// this is the constructor for the stand alone application
-	// reading a file locally
-	public inputFile(String file) throws IOException {
-		filename = file;
-		ArrayList<String> fileContent = new ArrayList<String>();
-		try {
-			InputStreamReader isr;
-			DataInputStream din;
-			FileInputStream fstream = new FileInputStream(filename);
-			din = new DataInputStream(fstream);
-			isr = new InputStreamReader(din);
-			fileContent = readFile(isr);
-			din.close();
-		} catch (Exception e) {
-			System.err
-					.println("Error reading file" + filename + e.getMessage());
-		}
-		organizeData(fileContent);
-		isLoaded = true;
-	}
-
-	/*
-	 * This is the constructor to be used from iRoeMetz for calculating CovMRMC
-	 * with simulated experiment data
-	 */
-	public inputFile(double[][][] t0, double[][][] t1, double[][][] t00,
-			double[][][] t01, double[][][] t10, double[][][] t11, int[][][] d0,
-			int[][][] d1, int nr, int n0, int n1, String title, String desc) {
-		this.t0 = t0;
-		this.t1 = t1;
-		this.t00 = t00;
-		this.t01 = t01;
-		this.t10 = t10;
-		this.t11 = t11;
-		this.d0 = d0;
-		this.d1 = d1;
-		this.Reader = nr;
-		this.Normal = n0;
-		this.Disease = n1;
-		this.recordTitle = title;
-		this.desc = desc;
-		this.isFullyCrossed = true;
-	}
-
 	public void calculateCovMRMC() {
-		covMRMC mod1 = new covMRMC(t00, d0, t10, d1, Reader, Normal, Disease);
-		covMRMC mod2 = new covMRMC(t01, d0, t11, d1, Reader, Normal, Disease);
-		covMRMC covMod12 = new covMRMC(t0, d0, t1, d1, Reader, Normal, Disease);
+		CovMRMC mod1 = new CovMRMC(t00, d0, t10, d1, Reader, Normal, Disease);
+		CovMRMC mod2 = new CovMRMC(t01, d0, t11, d1, Reader, Normal, Disease);
+		CovMRMC covMod12 = new CovMRMC(t0, d0, t1, d1, Reader, Normal, Disease);
 		double[] M1 = mod1.getMoments();
 		double[] M2 = mod2.getMoments();
 		double[] Mcov = covMod12.getMoments();
@@ -370,24 +374,9 @@ public class inputFile {
 		double[] Mb2 = mod2.getBiasedMoments();
 		double[] Mbcov = covMod12.getBiasedMoments();
 
-		// System.out.println("Mb1\t");
-		// for (int i = 1; i < 9; i++)
-		// System.out.println(Mb1[i] + "\t");
-		// System.out.println("\n");
-		//
-		// System.out.println("Mb2\t");
-		// for (int i = 1; i < 9; i++)
-		// System.out.println(Mb2[i] + "\t");
-		// System.out.println("\n");
-		//
-		// System.out.println("Mbcov\t");
-		// for (int i = 1; i < 9; i++)
-		// System.out.println(Mbcov[i] + "\t");
-		// System.out.println("\n");
-
 		aucMod = covMod12.getaucMod();
-		BDG = matrix.setZero(4, 8);
-		BDGcoeff = matrix.setZero(4, 8);
+		BDG = Matrix.setZero(4, 8);
+		BDGcoeff = Matrix.setZero(4, 8);
 		for (int i = 0; i < 8; i++) {
 			BDG[0][i] = M1[i + 1];
 			BDG[1][i] = M2[i + 1];
@@ -402,11 +391,6 @@ public class inputFile {
 			BDGcoeff[2][i] = Coeff[i + 1];
 			BDGcoeff[3][i] = Coeff[i + 1];
 		}
-
-		// System.out.println("BDGbias\t");
-		// for (int i = 0; i < 8; i++)
-		// System.out.println(BDGbias[3][i] + "\t");
-		// System.out.println("\n");
 	}
 
 	/*
@@ -519,8 +503,8 @@ public class inputFile {
 		}
 	}
 
-	/* fills matrixes with 0s if data is not present */
-	public void getT0T1s(int modality1, int modality2) {
+	/* fills matrices with 0s if data is not present */
+	public void makeTMatrices(int modality1, int modality2) {
 		t0 = new double[Normal][Reader][2];
 		t1 = new double[Disease][Reader][2];
 		t00 = new double[Normal][Reader][2];

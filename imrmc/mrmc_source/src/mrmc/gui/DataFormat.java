@@ -1,5 +1,5 @@
 /*
- * dataFormat.java
+ * DataFormat.java
  * 
  * v2.0b
  * 
@@ -23,7 +23,7 @@
 
 package mrmc.gui;
 
-public class dataFormat {
+public class DataFormat {
 
 	private String fmtHelp;
 	private String sampleFmt;
@@ -36,7 +36,7 @@ public class dataFormat {
 		return sampleFmt;
 	}
 
-	public dataFormat() {
+	public DataFormat() {
 		fmtHelp = "The file format has two parts: the study description at the top followed by a list of the ROC ratings. The\n"
 				+ "study description can include any information as free text. It must include four lines corresponding to the\n"
 				+ "size of the experiment and then conclude with a line stating \"BEGIN DATA\". We demonstrate the formatting of\n"

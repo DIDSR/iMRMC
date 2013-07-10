@@ -1,5 +1,5 @@
 /*
- * sPanel.java
+ * SizePanel.java
  * 
  * v2.0b
  * 
@@ -27,12 +27,10 @@ import javax.swing.*;
 
 import java.awt.event.*;
 import java.awt.*;
-import mrmc.core.dbRecord;
-import mrmc.core.statTest;
-
+import mrmc.core.DBRecord;
 import java.text.DecimalFormat;
 
-public class sPanel {
+public class SizePanel {
 	private GUInterface gui;
 	private JFrame reportFrame;
 	private JTextField sizeR;
@@ -42,15 +40,15 @@ public class sPanel {
 	private JTextField effSize;
 	private JLabel effSizeLabel;
 	double[] statParms = new double[2];
-	private dbRecord curRecord;
+	private DBRecord curRecord;
 	private String SEPA = ",";
-	private DecimalFormat formatter = new DecimalFormat("0.00000E0");
-	private DecimalFormat formatter2 = new DecimalFormat("0.00");
+	private DecimalFormat fiveDecE = new DecimalFormat("0.00000E0");
+	private DecimalFormat twoDec = new DecimalFormat("0.00");
 	private JTextField numSplitPlot;
 	private int pairedCs = 1;
 	private int pairedRs = 1;
 
-	public sPanel(int[] Parms, JPanel sizingPanel, GUInterface guitemp) {
+	public SizePanel(int[] Parms, JPanel sizingPanel, GUInterface guitemp) {
 		gui = guitemp;
 
 		JPanel innerSizingPanel = new JPanel();
@@ -162,13 +160,7 @@ public class sPanel {
 		int newR = Integer.parseInt(sizeR.getText());
 		int newN = Integer.parseInt(sizeN.getText());
 		int newD = Integer.parseInt(sizeD.getText());
-		double[][] newBDGcoeff = dbRecord.genBDGCoeff(newR, newN, newD);
-		double[][] newDBMcoeff = dbRecord.genDBMCoeff(newR, newN, newD);
-		double[][] newBCKcoeff = dbRecord.genBCKCoeff(newR, newN, newD);
-		double[][] newORcoeff = dbRecord.genORCoeff(newR, newN, newD);
-		double[][] DBMnew = dbRecord.BCK2DBM(BCK, newR, newN, newD);
-		double[][] ORnew = dbRecord.DBM2OR(0, DBMnew, newR, newN, newD);
-
+		
 		// double[] resultsNew = sizeTrial(DBMnew, ORnew, statParms[0],
 		// statParms[1], newR, newN, newD);
 		String resultnew = gui.getStat2();
@@ -189,64 +181,64 @@ public class sPanel {
 				+ "\n";
 		str = str + "Modality1" + SEPA;
 		for (int i = 0; i < 8; i++)
-			str = str + formatter.format(BDG[0][i]) + SEPA;
+			str = str + fiveDecE.format(BDG[0][i]) + SEPA;
 		str = str + "\n" + "Modality2" + SEPA;
 		for (int i = 0; i < 8; i++)
-			str = str + formatter.format(BDG[1][i]) + SEPA;
+			str = str + fiveDecE.format(BDG[1][i]) + SEPA;
 		str = str + "\n" + "Difference" + SEPA;
 		for (int i = 0; i < 8; i++)
-			str = str + formatter.format(BDG[3][i]) + SEPA;
+			str = str + fiveDecE.format(BDG[3][i]) + SEPA;
 		str = str + "\n" + "Coeff" + SEPA;
 		for (int i = 0; i < 8; i++)
-			str = str + formatter.format(BDGcoeff[0][i]) + SEPA;
+			str = str + fiveDecE.format(BDGcoeff[0][i]) + SEPA;
 		str = str
 				+ "\n**********************BCK Results***************************";
 		str = str + "\nMoments" + SEPA + "N" + SEPA + "D" + SEPA + "N~D" + SEPA
 				+ "R" + SEPA + "N~R" + SEPA + "D~R" + SEPA + "R~N~D";
 		str = str + "\nModality1" + SEPA;
 		for (int i = 0; i < 7; i++)
-			str = str + formatter.format(BCK[0][i]) + SEPA;
+			str = str + fiveDecE.format(BCK[0][i]) + SEPA;
 		str = str + "\nModality2" + SEPA;
 		for (int i = 0; i < 7; i++)
-			str = str + formatter.format(BCK[1][i]) + SEPA;
+			str = str + fiveDecE.format(BCK[1][i]) + SEPA;
 		str = str + "\nDifference" + SEPA;
 		for (int i = 0; i < 7; i++)
-			str = str + formatter.format(BCK[3][i]) + SEPA;
+			str = str + fiveDecE.format(BCK[3][i]) + SEPA;
 		str = str + "\nCoeff" + SEPA;
 		for (int i = 0; i < 7; i++)
-			str = str + formatter.format(BCKcoeff[0][i]) + SEPA;
+			str = str + fiveDecE.format(BCKcoeff[0][i]) + SEPA;
 		str = str
 				+ "\n**********************DBM Results***************************";
 		str = str + "\nComponents" + SEPA + "R" + SEPA + "C" + SEPA + "R~C"
 				+ SEPA + "T~R" + SEPA + "T~C" + SEPA + "T~R~C";
 		str = str + "\nModality1" + SEPA;
 		for (int i = 0; i < 6; i++)
-			str = str + formatter.format(DBM[0][i]) + SEPA;
+			str = str + fiveDecE.format(DBM[0][i]) + SEPA;
 		str = str + "\nModality2" + SEPA;
 		for (int i = 0; i < 6; i++)
-			str = str + formatter.format(DBM[1][i]) + SEPA;
+			str = str + fiveDecE.format(DBM[1][i]) + SEPA;
 		str = str + "\nDifference" + SEPA;
 		for (int i = 0; i < 6; i++)
-			str = str + formatter.format(DBM[3][i]) + SEPA;
+			str = str + fiveDecE.format(DBM[3][i]) + SEPA;
 		str = str + "\nCoeff" + SEPA;
 		for (int i = 0; i < 6; i++)
-			str = str + formatter.format(DBMcoeff[3][i]) + SEPA;
+			str = str + fiveDecE.format(DBMcoeff[3][i]) + SEPA;
 		str = str
 				+ "\n**********************OR Results***************************";
 		str = str + "\nComponents" + SEPA + "R" + SEPA + "TR" + SEPA + "COV1"
 				+ SEPA + "COV2" + SEPA + "COV3" + SEPA + "ERROR";
 		str = str + "\nModality1" + SEPA;
 		for (int i = 0; i < 6; i++)
-			str = str + formatter.format(OR[0][i]) + SEPA;
+			str = str + fiveDecE.format(OR[0][i]) + SEPA;
 		str = str + "\nModality2" + SEPA;
 		for (int i = 0; i < 6; i++)
-			str = str + formatter.format(OR[1][i]) + SEPA;
+			str = str + fiveDecE.format(OR[1][i]) + SEPA;
 		str = str + "\nDifference" + SEPA;
 		for (int i = 0; i < 6; i++)
-			str = str + formatter.format(OR[3][i]) + SEPA;
+			str = str + fiveDecE.format(OR[3][i]) + SEPA;
 		str = str + "\nCoeff" + SEPA;
 		for (int i = 0; i < 6; i++)
-			str = str + formatter.format(ORcoeff[3][i]) + SEPA;
+			str = str + fiveDecE.format(ORcoeff[3][i]) + SEPA;
 		str = str
 				+ "\n*****************************************************************";
 		str = str
@@ -263,8 +255,8 @@ public class sPanel {
 		str = str
 				+ "\n*****************************************************************";
 		str = str + "\n" + "Effective Size = "
-				+ formatter2.format(statParms[1]) + SEPA
-				+ "Significance Level = " + formatter2.format(statParms[0]);
+				+ twoDec.format(statParms[1]) + SEPA
+				+ "Significance Level = " + twoDec.format(statParms[0]);
 
 		str = str
 				+ "\n*****************************************************************";
@@ -293,14 +285,6 @@ public class sPanel {
 		int newR = Integer.parseInt(sizeR.getText());
 		int newN = Integer.parseInt(sizeN.getText());
 		int newD = Integer.parseInt(sizeD.getText());
-		double[][] newBDGcoeff = dbRecord.genBDGCoeff(newR, newN, newD);
-		double[][] newDBMcoeff = dbRecord.genDBMCoeff(newR, newN, newD);
-		double[][] newBCKcoeff = dbRecord.genBCKCoeff(newR, newN, newD);
-		double[][] newORcoeff = dbRecord.genORCoeff(newR, newN, newD);
-		// double[][] DBMnew = curRecord.BDG2DBM(BDG,newR,newN,newD);
-		// double[][] ORnew = curRecord.BDG2OR(BDG, newR,newN,newD);
-		double[][] DBMnew = dbRecord.BCK2DBM(BCK, newR, newN, newD);
-		double[][] ORnew = dbRecord.DBM2OR(0, DBMnew, newR, newN, newD);
 
 		String resultnew = gui.getStat2();
 
@@ -332,10 +316,10 @@ public class sPanel {
 					+ SEPA + "M8" + "\n";
 			str = str + "moments" + SEPA;
 			for (int i = 0; i < 8; i++)
-				str = str + formatter.format(BDG[0][i]) + SEPA;
+				str = str + fiveDecE.format(BDG[0][i]) + SEPA;
 			str = str + "\n" + "Coeff" + SEPA;
 			for (int i = 0; i < 8; i++)
-				str = str + formatter.format(BDGcoeff[0][i]) + SEPA;
+				str = str + fiveDecE.format(BDGcoeff[0][i]) + SEPA;
 		} else if (selectedManualComp == 1) {
 			str = str
 					+ "\n**********************BCK Results***************************";
@@ -343,10 +327,10 @@ public class sPanel {
 					+ SEPA + "R" + SEPA + "N~R" + SEPA + "D~R" + SEPA + "R~N~D";
 			str = str + "\nMoments" + SEPA;
 			for (int i = 0; i < 7; i++)
-				str = str + formatter.format(BCK[0][i]) + SEPA;
+				str = str + fiveDecE.format(BCK[0][i]) + SEPA;
 			str = str + "\nCoeff" + SEPA;
 			for (int i = 0; i < 7; i++)
-				str = str + formatter.format(BCKcoeff[0][i]) + SEPA;
+				str = str + fiveDecE.format(BCKcoeff[0][i]) + SEPA;
 		}
 
 		str = str
@@ -355,20 +339,20 @@ public class sPanel {
 				+ SEPA + "T~R" + SEPA + "T~C" + SEPA + "T~R~C";
 		str = str + "\ncompnents" + SEPA;
 		for (int i = 0; i < 6; i++)
-			str = str + formatter.format(DBM[0][i]) + SEPA;
+			str = str + fiveDecE.format(DBM[0][i]) + SEPA;
 		str = str + "\nCoeff" + SEPA;
 		for (int i = 0; i < 6; i++)
-			str = str + formatter.format(DBMcoeff[3][i]) + SEPA;
+			str = str + fiveDecE.format(DBMcoeff[3][i]) + SEPA;
 		str = str
 				+ "\n**********************OR Results***************************";
 		str = str + "\nComponents" + SEPA + "R" + SEPA + "TR" + SEPA + "COV1"
 				+ SEPA + "COV2" + SEPA + "COV3" + SEPA + "ERROR";
 		str = str + "\ncomponents" + SEPA;
 		for (int i = 0; i < 6; i++)
-			str = str + formatter.format(OR[0][i]) + SEPA;
+			str = str + fiveDecE.format(OR[0][i]) + SEPA;
 		str = str + "\nCoeff" + SEPA;
 		for (int i = 0; i < 6; i++)
-			str = str + formatter.format(ORcoeff[3][i]) + SEPA;
+			str = str + fiveDecE.format(ORcoeff[3][i]) + SEPA;
 		str = str
 				+ "\n*****************************************************************";
 		str = str
@@ -384,8 +368,8 @@ public class sPanel {
 		str = str
 				+ "\n*****************************************************************";
 		str = str + "\n" + "Effective Size = "
-				+ formatter2.format(statParms[1]) + SEPA
-				+ "Significance Level = " + formatter2.format(statParms[0]);
+				+ twoDec.format(statParms[1]) + SEPA
+				+ "Significance Level = " + twoDec.format(statParms[0]);
 
 		str = str
 				+ "\n*****************************************************************";
@@ -458,14 +442,14 @@ public class sPanel {
 	class sizeTrialListner implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			try {
-				int[] Parms = { Integer.parseInt(sizeR.getText()),
+				int[] parms1 = { Integer.parseInt(sizeR.getText()),
 						Integer.parseInt(sizeN.getText()),
 						Integer.parseInt(sizeD.getText()) };
-				double[] Parms1 = { Double.parseDouble(sigLevel.getText()),
+				double[] parms2 = { Double.parseDouble(sigLevel.getText()),
 						Double.parseDouble(effSize.getText()) };
-				int[] Parms2 = { Integer.parseInt(numSplitPlot.getText()),
+				int[] parms3 = { Integer.parseInt(numSplitPlot.getText()),
 						pairedRs, pairedCs };
-				gui.sizeTrial(Parms, Parms1, Parms2);
+				gui.sizeTrial(parms1, parms2, parms3);
 			} catch (NumberFormatException e1) {
 				JOptionPane.showMessageDialog(reportFrame, "Invalid Input",
 						"Error", JOptionPane.ERROR_MESSAGE);

@@ -24,31 +24,63 @@
 
 package roemetz.core;
 
-import org.apache.commons.math3.special.Erf;
 import java.util.Arrays;
 import java.util.Random;
-
-import mrmc.core.dbRecord;
-import mrmc.core.inputFile;
-import mrmc.core.matrix;
+import mrmc.core.DBRecord;
+import mrmc.core.InputFile;
+import mrmc.core.Matrix;
 
 public class SimRoeMetz {
-	double[][] t00;
-	double[][] t01;
-	double[][] t10;
-	double[][] t11;
-	double[] auc;
-	double[][] BDG;
-	double[][] BCK;
-	double[][] DBM;
-	double[][] OR;
-	double[][] MS;
+	private double[][] t00;
+	private double[][] t01;
+	private double[][] t10;
+	private double[][] t11;
+	private double[] auc;
+	private double[][] BDG;
+	private double[][] BCK;
+	private double[][] DBM;
+	private double[][] OR;
+	private double[][] MS;
+	private int n0;
+	private int n1;
+	private int nr;
+	private double u0;
+	private double u1;
 
+	/*
+	 * @param u size 2, contains means
+	 * 
+	 * @param var_t size 18, contains variance components
+	 * 
+	 * @param n size 3, contains experiment sizes
+	 */
 	public SimRoeMetz(double[] u, double[] var_t, int[] n, Random rand,
 			int useBiasM) {
-		doSim(u, var_t, n, rand, useBiasM);
+		if (u.length != 2) {
+			System.out.println("input u is of incorrect size");
+			return;
+		}
+		if (var_t.length != 18) {
+			System.out.println("input var_t is of incorrect size");
+			return;
+		}
+		if (n.length != 3) {
+			System.out.println("input n is of incorrect size");
+			return;
+		}
+
+		n0 = n[0];
+		n1 = n[1];
+		nr = n[2];
+		u0 = u[0];
+		u1 = u[1];
+		doSim(var_t, rand, useBiasM);
+		calculateStuff(useBiasM);
 	}
 
+	/*
+	 * Can be executed from command-line, or used as closed-box library function
+	 */
 	public static void main(String[] args) {
 		try {
 			double[] u = new double[2];
@@ -101,10 +133,10 @@ public class SimRoeMetz {
 
 	private void printResults() {
 		System.out.println("BDG:");
-		matrix.printMatrix(BDG);
+		Matrix.printMatrix(BDG);
 		System.out.println();
 		System.out.println("AUCs:");
-		matrix.printVector(auc);
+		Matrix.printVector(auc);
 		System.out.println();
 	}
 
@@ -148,32 +180,18 @@ public class SimRoeMetz {
 		return t11;
 	}
 
-	public void doSim(double[] u, double[] var_t, int[] n, Random rand,
-			int useBiasM) {
-		if (u.length != 2) {
-			System.out.println("input u is of incorrect size");
-			return;
-		}
-		if (var_t.length != 18) {
-			System.out.println("input var_t is of incorrect size");
-			return;
-		}
-		if (n.length != 3) {
-			System.out.println("input n is of incorrect size");
-			return;
-		}
-
-		double mu_0 = u[0];
-		double mu_1 = u[1];
-
+	/*
+	 * @param u size 2, contains means *
+	 * 
+	 * @param var_t size 18, contains variance components
+	 * 
+	 * @param n size 3, contains experiment sizes
+	 */
+	private void doSim(double[] var_t, Random rand, int useBiasM) {
 		double[] stdDevs = new double[var_t.length];
 		for (int i = 0; i < var_t.length; i++) {
 			stdDevs[i] = Math.sqrt(var_t[i]);
 		}
-
-		int n0 = n[0];
-		int n1 = n[1];
-		int nr = n[2];
 
 		double[] R00 = fillGaussian(stdDevs[0], rand, nr);
 		double[] C00 = fillGaussian(stdDevs[1], rand, n0);
@@ -200,8 +218,8 @@ public class SimRoeMetz {
 		t11 = new double[nr][n1];
 
 		for (int i = 0; i < nr; i++) {
-			Arrays.fill(t10[i], mu_0);
-			Arrays.fill(t11[i], mu_1);
+			Arrays.fill(t10[i], u0);
+			Arrays.fill(t11[i], u1);
 		}
 
 		for (int r = 0; r < nr; r++) {
@@ -229,21 +247,18 @@ public class SimRoeMetz {
 			}
 		}
 
-		t00 = matrix.matrixAdd(t00, RC0);
-		t01 = matrix.matrixAdd(t01, RC0);
-		t00 = matrix.matrixAdd(t00, RC00);
-		t01 = matrix.matrixAdd(t01, RC01);
+		t00 = Matrix.matrixAdd(t00, RC0);
+		t01 = Matrix.matrixAdd(t01, RC0);
+		t00 = Matrix.matrixAdd(t00, RC00);
+		t01 = Matrix.matrixAdd(t01, RC01);
 
-		t10 = matrix.matrixAdd(t10, RC1);
-		t11 = matrix.matrixAdd(t11, RC1);
-		t10 = matrix.matrixAdd(t10, RC10);
-		t11 = matrix.matrixAdd(t11, RC11);
-
-		calculateStuff(n0, n1, nr, useBiasM);
-
+		t10 = Matrix.matrixAdd(t10, RC1);
+		t11 = Matrix.matrixAdd(t11, RC1);
+		t10 = Matrix.matrixAdd(t10, RC10);
+		t11 = Matrix.matrixAdd(t11, RC11);
 	}
 
-	public void calculateStuff(int n0, int n1, int nr, int useBiasM) {
+	private void calculateStuff(int useBiasM) {
 
 		// convert t-matrices to correct shape and create t0,t1
 		double[][][] newt00 = new double[n0][nr][2];
@@ -295,11 +310,11 @@ public class SimRoeMetz {
 			}
 		}
 
-		inputFile toCalc = new inputFile(newt0, newt1, newt00, newt01, newt10,
+		InputFile toCalc = new InputFile(newt0, newt1, newt00, newt01, newt10,
 				newt11, d0, d1, nr, n0, n1, "", "");
 
 		toCalc.calculateCovMRMC();
-		dbRecord rec = new dbRecord(toCalc, 1, 2);
+		DBRecord rec = new DBRecord(toCalc, 1, 2);
 
 		BDG = rec.getBDG(useBiasM);
 		BCK = rec.getBCK(useBiasM);
@@ -308,12 +323,6 @@ public class SimRoeMetz {
 		MS = rec.getMS(useBiasM);
 		auc = new double[] { rec.getAUCinNumber(0), rec.getAUCinNumber(1),
 				(rec.getAUCinNumber(0) - rec.getAUCinNumber(1)) };
-	}
-
-	public static double snrToAUC(double snr) {
-		double toReturn = 0;
-		toReturn = 0.5 + (0.5 * Erf.erf(0.5 * snr));
-		return toReturn;
 	}
 
 	public static double[] fillGaussian(double scalar, Random rand, int x) {

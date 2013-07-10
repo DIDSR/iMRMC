@@ -1,5 +1,5 @@
 /*
- * PilotModSelect.java
+ * RawStudyCard.java
  * 
  * v2.0b
  * 
@@ -26,7 +26,7 @@ package mrmc.gui;
 
 import javax.swing.*;
 
-import mrmc.core.dbRecord;
+import mrmc.core.DBRecord;
 
 import java.awt.event.*;
 
@@ -40,7 +40,7 @@ public class RawStudyCard {
 
 	public void setUseBiasM(int bias) {
 		useBiasM = bias;
-		if (bias == 0) {
+		if (bias == GUInterface.NO_BIAS) {
 			negBox.setSelected(false);
 		} else {
 			negBox.setSelected(true);
@@ -103,21 +103,21 @@ public class RawStudyCard {
 					if (modA && !modB) {
 						gui.currMod1 = Integer.parseInt(chooseA
 								.getSelectedItem().toString());
-						gui.currMod2 = -1;
+						gui.currMod2 = GUInterface.NO_MOD;
 						varAnalysisButton.setText("MRMC Variance Analysis (A)");
-						gui.usr.getT0T1s(gui.currMod1, gui.currMod1);
+						gui.usr.makeTMatrices(gui.currMod1, gui.currMod1);
 						gui.usr.calculateCovMRMC();
-						gui.usrFile = new dbRecord(gui.usr, gui.currMod1,
+						gui.usrFile = new DBRecord(gui.usr, gui.currMod1,
 								gui.currMod1);
 						setSelectedMod(0);
 					} else if (!modA && modB) {
 						gui.currMod2 = Integer.parseInt(chooseB
 								.getSelectedItem().toString());
-						gui.currMod1 = -1;
+						gui.currMod1 = GUInterface.NO_MOD;
 						varAnalysisButton.setText("MRMC Variance Analysis (B)");
-						gui.usr.getT0T1s(gui.currMod2, gui.currMod2);
+						gui.usr.makeTMatrices(gui.currMod2, gui.currMod2);
 						gui.usr.calculateCovMRMC();
-						gui.usrFile = new dbRecord(gui.usr, gui.currMod2,
+						gui.usrFile = new DBRecord(gui.usr, gui.currMod2,
 								gui.currMod2);
 						setSelectedMod(1);
 					} else if (modA && modB) {
@@ -127,15 +127,15 @@ public class RawStudyCard {
 								.getSelectedItem().toString());
 						varAnalysisButton
 								.setText("MRMC Variance Analysis (Difference)");
-						gui.usr.getT0T1s(gui.currMod1, gui.currMod2);
+						gui.usr.makeTMatrices(gui.currMod1, gui.currMod2);
 						gui.usr.calculateCovMRMC();
-						gui.usrFile = new dbRecord(gui.usr, gui.currMod1,
+						gui.usrFile = new DBRecord(gui.usr, gui.currMod1,
 								gui.currMod2);
 						setSelectedMod(3);
 					} else {
 						varAnalysisButton.setText("MRMC Variance Analysis");
-						gui.currMod1 = -1;
-						gui.currMod2 = -1;
+						gui.currMod1 = GUInterface.NO_MOD;
+						gui.currMod2 = GUInterface.NO_MOD;
 					}
 				}
 			}
@@ -145,9 +145,9 @@ public class RawStudyCard {
 	class allNegativeListner implements ItemListener {
 		public void itemStateChanged(ItemEvent e) {
 			if (negBox.isSelected()) {
-				useBiasM = 1;
+				useBiasM = GUInterface.USE_BIAS;
 			} else {
-				useBiasM = 0;
+				useBiasM = GUInterface.NO_BIAS;
 			}
 			gui.setUseBiasM(useBiasM);
 		}

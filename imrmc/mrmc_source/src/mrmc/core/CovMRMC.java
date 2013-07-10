@@ -1,5 +1,5 @@
 /*
- * covMRMC.java
+ * CovMRMC.java
  * 
  * v2.0b
  * 
@@ -23,7 +23,7 @@
 
 package mrmc.core;
 
-public class covMRMC {
+public class CovMRMC {
 	private int Reader, Normal, Disease;
 	private int nmod = 2;
 	private double[] moments = new double[9];
@@ -48,7 +48,7 @@ public class covMRMC {
 		return aucMod;
 	}
 
-	public covMRMC(double[][][] t0, int[][][] d0, double[][][] t1,
+	public CovMRMC(double[][][] t0, int[][][] d0, double[][][] t1,
 			int[][][] d1, int R, int N, int D) {
 		Reader = R;
 		Normal = N;
@@ -88,22 +88,22 @@ public class covMRMC {
 
 		for (int ir = 0; ir < Reader; ir++) {
 			// ***************for the first modality******************
-			int[][] designA0 = matrix.extractFirstDimension(d0, ir, 0);
-			int[][] designA1 = matrix.extractFirstDimension(d1, ir, 0);
-			int[][] da = matrix.multiply(designA0,
-					matrix.matrixTranspose(designA1));
-			int totalda = matrix.total(da);
+			int[][] designA0 = Matrix.extractFirstDimension(d0, ir, 0);
+			int[][] designA1 = Matrix.extractFirstDimension(d1, ir, 0);
+			int[][] da = Matrix.multiply(designA0,
+					Matrix.matrixTranspose(designA1));
+			int totalda = Matrix.total(da);
 			double wa = w[ir][0];
-			double[][] ta0 = matrix.extractFirstDimension(t0, ir, 0);
-			double[][] ta0temp = matrix.linearTrans(ta0, 0.0, 1.0);
-			double[][] ta1 = matrix.extractFirstDimension(t1, ir, 0);
-			double[][] ta1temp = matrix.linearTrans(ta1, 0.0, 1.0);
+			double[][] ta0 = Matrix.extractFirstDimension(t0, ir, 0);
+			double[][] ta0temp = Matrix.linearTrans(ta0, 0.0, 1.0);
+			double[][] ta1 = Matrix.extractFirstDimension(t1, ir, 0);
+			double[][] ta1temp = Matrix.linearTrans(ta1, 0.0, 1.0);
 
-			double[][] sa0 = matrix.multiply(ta0,
-					matrix.matrixTranspose(ta1temp));
-			double[][] sa1 = matrix.multiply(ta0temp,
-					matrix.matrixTranspose(ta1));
-			double[][] sa = matrix.subtract(sa1, sa0);
+			double[][] sa0 = Matrix.multiply(ta0,
+					Matrix.matrixTranspose(ta1temp));
+			double[][] sa1 = Matrix.multiply(ta0temp,
+					Matrix.matrixTranspose(ta1));
+			double[][] sa = Matrix.subtract(sa1, sa0);
 			for (int i = 0; i < Normal; i++)
 				for (int j = 0; j < Disease; j++) {
 					if (sa[i][j] < 0)
@@ -113,25 +113,25 @@ public class covMRMC {
 					else if (sa[i][j] > 0)
 						sa[i][j] = 1.0;
 				}
-			double[][] wada = matrix.linearTrans(da, wa, 0);
-			double[][] wadasa = matrix.elementMultiply(wada, sa);
+			double[][] wada = Matrix.linearTrans(da, wa, 0);
+			double[][] wadasa = Matrix.elementMultiply(wada, sa);
 			// ***************for the second modality******************
-			int[][] designB0 = matrix.extractFirstDimension(d0, ir, 1);
-			int[][] designB1 = matrix.extractFirstDimension(d1, ir, 1);
-			int[][] db = matrix.multiply(designB0,
-					matrix.matrixTranspose(designB1));
-			int totaldb = matrix.total(db);
+			int[][] designB0 = Matrix.extractFirstDimension(d0, ir, 1);
+			int[][] designB1 = Matrix.extractFirstDimension(d1, ir, 1);
+			int[][] db = Matrix.multiply(designB0,
+					Matrix.matrixTranspose(designB1));
+			int totaldb = Matrix.total(db);
 			double wb = w[ir][1];
-			double[][] tb0 = matrix.extractFirstDimension(t0, ir, 1);
-			double[][] tb0temp = matrix.linearTrans(tb0, 0.0, 1.0);
-			double[][] tb1 = matrix.extractFirstDimension(t1, ir, 1);
-			double[][] tb1temp = matrix.linearTrans(tb1, 0.0, 1.0);
+			double[][] tb0 = Matrix.extractFirstDimension(t0, ir, 1);
+			double[][] tb0temp = Matrix.linearTrans(tb0, 0.0, 1.0);
+			double[][] tb1 = Matrix.extractFirstDimension(t1, ir, 1);
+			double[][] tb1temp = Matrix.linearTrans(tb1, 0.0, 1.0);
 
-			double[][] sb0 = matrix.multiply(tb0,
-					matrix.matrixTranspose(tb1temp));
-			double[][] sb1 = matrix.multiply(tb0temp,
-					matrix.matrixTranspose(tb1));
-			double[][] sb = matrix.subtract(sb1, sb0);
+			double[][] sb0 = Matrix.multiply(tb0,
+					Matrix.matrixTranspose(tb1temp));
+			double[][] sb1 = Matrix.multiply(tb0temp,
+					Matrix.matrixTranspose(tb1));
+			double[][] sb = Matrix.subtract(sb1, sb0);
 			for (int i = 0; i < Normal; i++)
 				for (int j = 0; j < Disease; j++) {
 					if (sb[i][j] < 0)
@@ -141,62 +141,62 @@ public class covMRMC {
 					else if (sb[i][j] > 0)
 						sb[i][j] = 1.0;
 				}
-			double[][] wbdb = matrix.linearTrans(db, wb, 0);
-			double[][] wbdbsb = matrix.elementMultiply(wbdb, sb);
+			double[][] wbdb = Matrix.linearTrans(db, wb, 0);
+			double[][] wbdbsb = Matrix.elementMultiply(wbdb, sb);
 
 			// ************count the readings ***********************
 			pairs[0] = pairs[0] + totalda;
 			pairs[1] = pairs[1] + totaldb;
-			pairs[2] = pairs[2] + matrix.total(matrix.elementMultiply(da, db));
+			pairs[2] = pairs[2] + Matrix.total(Matrix.elementMultiply(da, db));
 
 			// ***********precompute row (col???) sums***********************
-			double[] wada_sumi = matrix.colSum(wada);
-			double[] wbdb_sumi = matrix.colSum(wbdb);
-			double[] wadasa_sumi = matrix.colSum(wadasa);
-			double[] wbdbsb_sumi = matrix.colSum(wbdbsb);
+			double[] wada_sumi = Matrix.colSum(wada);
+			double[] wbdb_sumi = Matrix.colSum(wbdb);
+			double[] wadasa_sumi = Matrix.colSum(wadasa);
+			double[] wbdbsb_sumi = Matrix.colSum(wbdbsb);
 			// ***********precompute col (row?????) sums***********************
-			double[] wada_sumj = matrix.rowSum(wada);
-			double[] wbdb_sumj = matrix.rowSum(wbdb);
-			double[] wadasa_sumj = matrix.rowSum(wadasa);
-			double[] wbdbsb_sumj = matrix.rowSum(wbdbsb);
+			double[] wada_sumj = Matrix.rowSum(wada);
+			double[] wbdb_sumj = Matrix.rowSum(wbdb);
+			double[] wadasa_sumj = Matrix.rowSum(wadasa);
+			double[] wbdbsb_sumj = Matrix.rowSum(wbdbsb);
 			// **********precompute the matrix sums*****************
-			double wada_sumij = matrix.total(wada);
-			double wbdb_sumij = matrix.total(wbdb);
-			double wadasa_sumij = matrix.total(wadasa);
-			double wbdbsb_sumij = matrix.total(wbdbsb);
+			double wada_sumij = Matrix.total(wada);
+			double wbdb_sumij = Matrix.total(wbdb);
+			double wadasa_sumij = Matrix.total(wadasa);
+			double wbdbsb_sumij = Matrix.total(wbdbsb);
 
 			// *********aggregate the sum over readers that will feed M1-M4
 			bdenom[1] = bdenom[1]
-					+ matrix.total(matrix.elementMultiply(wada, wbdb));
+					+ Matrix.total(Matrix.elementMultiply(wada, wbdb));
 			bdenom[2] = bdenom[2]
-					+ matrix.total(matrix.elementMultiply(wada_sumi, wbdb_sumi));
+					+ Matrix.total(Matrix.elementMultiply(wada_sumi, wbdb_sumi));
 			bdenom[3] = bdenom[3]
-					+ matrix.total(matrix.elementMultiply(wada_sumj, wbdb_sumj));
+					+ Matrix.total(Matrix.elementMultiply(wada_sumj, wbdb_sumj));
 			bdenom[4] = bdenom[4] + wada_sumij * wbdb_sumij;
 			bnumer[1] = bnumer[1]
-					+ matrix.total(matrix.elementMultiply(wadasa, wbdbsb));
+					+ Matrix.total(Matrix.elementMultiply(wadasa, wbdbsb));
 			bnumer[2] = bnumer[2]
-					+ matrix.total(matrix.elementMultiply(wadasa_sumi,
+					+ Matrix.total(Matrix.elementMultiply(wadasa_sumi,
 							wbdbsb_sumi));
 			bnumer[3] = bnumer[3]
-					+ matrix.total(matrix.elementMultiply(wadasa_sumj,
+					+ Matrix.total(Matrix.elementMultiply(wadasa_sumj,
 							wbdbsb_sumj));
 			bnumer[4] = bnumer[4] + wadasa_sumij * wbdbsb_sumij;
 
 			// *********aggregate the sum over readers that will feed M5-M8
-			wadaSumr = matrix.matrixAdd(wadaSumr, wada);
-			wbdbSumr = matrix.matrixAdd(wbdbSumr, wbdb);
-			wadasaSumr = matrix.matrixAdd(wadasaSumr, wadasa);
-			wbdbsbSumr = matrix.matrixAdd(wbdbsbSumr, wbdbsb);
-			wadaSumir = matrix.matrixAdd(wadaSumir, wada_sumi);
-			wbdbSumir = matrix.matrixAdd(wbdbSumir, wbdb_sumi);
-			wadasaSumir = matrix.matrixAdd(wadasaSumir, wadasa_sumi);
-			wbdbsbSumir = matrix.matrixAdd(wbdbsbSumir, wbdbsb_sumi);
+			wadaSumr = Matrix.matrixAdd(wadaSumr, wada);
+			wbdbSumr = Matrix.matrixAdd(wbdbSumr, wbdb);
+			wadasaSumr = Matrix.matrixAdd(wadasaSumr, wadasa);
+			wbdbsbSumr = Matrix.matrixAdd(wbdbsbSumr, wbdbsb);
+			wadaSumir = Matrix.matrixAdd(wadaSumir, wada_sumi);
+			wbdbSumir = Matrix.matrixAdd(wbdbSumir, wbdb_sumi);
+			wadasaSumir = Matrix.matrixAdd(wadasaSumir, wadasa_sumi);
+			wbdbsbSumir = Matrix.matrixAdd(wbdbsbSumir, wbdbsb_sumi);
 
-			wadaSumjr = matrix.matrixAdd(wadaSumjr, wada_sumj);
-			wbdbSumjr = matrix.matrixAdd(wbdbSumjr, wbdb_sumj);
-			wadasaSumjr = matrix.matrixAdd(wadasaSumjr, wadasa_sumj);
-			wbdbsbSumjr = matrix.matrixAdd(wbdbsbSumjr, wbdbsb_sumj);
+			wadaSumjr = Matrix.matrixAdd(wadaSumjr, wada_sumj);
+			wbdbSumjr = Matrix.matrixAdd(wbdbSumjr, wbdb_sumj);
+			wadasaSumjr = Matrix.matrixAdd(wadasaSumjr, wadasa_sumj);
+			wbdbsbSumjr = Matrix.matrixAdd(wbdbsbSumjr, wbdbsb_sumj);
 			wadaSumijr = wadaSumijr + wada_sumij;
 			wbdbSumijr = wbdbSumijr + wbdb_sumij;
 			wadasaSumijr = wadasaSumijr + wadasa_sumij;
@@ -208,26 +208,26 @@ public class covMRMC {
 			// evaluate auc modality a
 			if (totalda > 0) {
 				totalwada = totalwada + wa * totalda;
-				auc[ir][0] = matrix.total(wadasa) / totalda;
+				auc[ir][0] = Matrix.total(wadasa) / totalda;
 				aucA = aucA + totalda * auc[ir][0];
 			}
 			// evaluate auc modality b
 			if (totaldb > 0) {
 				totalwbdb = totalwbdb + wb * totaldb;
-				auc[ir][1] = matrix.total(wbdbsb) / totaldb;
+				auc[ir][1] = Matrix.total(wbdbsb) / totaldb;
 				aucB = aucB + totaldb * auc[ir][1];
 			}
 
 		} // end reader loop
-		bdenom[5] = matrix.total(matrix.elementMultiply(wadaSumr, wbdbSumr));
-		bdenom[6] = matrix.total(matrix.elementMultiply(wadaSumir, wbdbSumir));
-		bdenom[7] = matrix.total(matrix.elementMultiply(wadaSumjr, wbdbSumjr));
+		bdenom[5] = Matrix.total(Matrix.elementMultiply(wadaSumr, wbdbSumr));
+		bdenom[6] = Matrix.total(Matrix.elementMultiply(wadaSumir, wbdbSumir));
+		bdenom[7] = Matrix.total(Matrix.elementMultiply(wadaSumjr, wbdbSumjr));
 		bdenom[8] = wadaSumijr * wbdbSumijr;
-		bnumer[5] = matrix
-				.total(matrix.elementMultiply(wadasaSumr, wbdbsbSumr));
-		bnumer[6] = matrix.total(matrix.elementMultiply(wadasaSumir,
+		bnumer[5] = Matrix
+				.total(Matrix.elementMultiply(wadasaSumr, wbdbsbSumr));
+		bnumer[6] = Matrix.total(Matrix.elementMultiply(wadasaSumir,
 				wbdbsbSumir));
-		bnumer[7] = matrix.total(matrix.elementMultiply(wadasaSumjr,
+		bnumer[7] = Matrix.total(Matrix.elementMultiply(wadasaSumjr,
 				wbdbsbSumjr));
 		bnumer[8] = wadasaSumijr * wbdbsbSumijr;
 
@@ -241,12 +241,12 @@ public class covMRMC {
 				{ 0, 1.0, 0, -1.0, 0, -1.0, 0, 1.0, 0 },
 				{ 0, -1.0, 1.0, 1.0, -1.0, 1.0, -1.0, -1.0, 1.0 } };
 
-		double[] denom = matrix.multiply(bias2unbias, bdenom);
-		double[] numer = matrix.multiply(bias2unbias, bnumer);
+		double[] denom = Matrix.multiply(bias2unbias, bdenom);
+		double[] numer = Matrix.multiply(bias2unbias, bnumer);
 		// biased moments
 		biasM = bnumer;
 		for (int i = 0; i < biasM.length; i++) {
-			if (bdenom[i] > matrix.min(w) / 2.0)
+			if (bdenom[i] > Matrix.min(w) / 2.0)
 				biasM[i] = biasM[i] / bdenom[i];
 		}
 
@@ -254,12 +254,12 @@ public class covMRMC {
 		// double[] m = numer;
 		moments = numer;
 		for (int i = 0; i < moments.length; i++) {
-			if (denom[i] > matrix.min(w) / 2.0)
+			if (denom[i] > Matrix.min(w) / 2.0)
 				moments[i] = moments[i] / denom[i];
 		}
 
 		// coefficients
-		c = matrix.linearTrans(denom, 1.0 / (totalwada * totalwbdb), 0);
+		c = Matrix.linearTrans(denom, 1.0 / (totalwada * totalwbdb), 0);
 		c[8] = c[8] - 1.0;
 
 		aucMod[0] = aucA / totalwada;

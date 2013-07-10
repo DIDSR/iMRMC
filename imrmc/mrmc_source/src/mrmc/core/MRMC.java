@@ -38,13 +38,13 @@ public class MRMC extends JApplet {
 	private static JFrame mrmcFrame;
 	GUInterface gui;
 	GUImenubar menuBar;
-	mrmcDB db;
+	MrmcDB db;
 
 	public int getDBSize() {
 		return db.getNoOfItems();
 	}
 
-	public mrmcDB getDB() {
+	public MrmcDB getDB() {
 		return db;
 	}
 
@@ -59,7 +59,7 @@ public class MRMC extends JApplet {
 		resize(6, 6);
 
 		// create the database
-		db = new mrmcDB(this);
+		db = new MrmcDB(this);
 
 		Container cp = getContentPane();
 		// Create the interface

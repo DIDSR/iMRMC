@@ -1,5 +1,5 @@
 /*
- * mrmcDB.java
+ * MrmcDB.java
  * 
  * v2.0b
  * 
@@ -28,18 +28,34 @@ import java.io.*;
 import java.util.*;
 import java.io.FileInputStream;
 
-public class mrmcDB {
+public class MrmcDB {
 	private int noOfItems;
 	private File[] dbFiles;
-	private dbRecord[] Records;
+	private DBRecord[] Records;
 	private ArrayList<String> dbFilenamesInJar = new ArrayList<String>();
 
 	public int getNoOfItems() {
 		return noOfItems;
 	}
 
-	public dbRecord[] getRecords() {
+	public DBRecord[] getRecords() {
 		return Records;
+	}
+
+	/* constructor */
+	public MrmcDB(MRMC mrmc) {
+		FilenameFilter filefilter = new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				// if the file extension is .jdb return true, else false
+				return name.endsWith(".jdb");
+			}
+		};
+
+		dbFiles = new File("DB").listFiles(filefilter);
+		noOfItems = dbFiles.length;
+		// System.out.println("a total of "+noOfItems+"files in DB");
+		Records = new DBRecord[noOfItems];
+		loadDB();
 	}
 
 	/*
@@ -130,7 +146,7 @@ public class mrmcDB {
 				}
 
 			}
-			Records[i] = new dbRecord(filename, strLine, dbDesp, AUCstr);
+			Records[i] = new DBRecord(filename, strLine, dbDesp, AUCstr);
 		} catch (Exception e) {
 			System.err
 					.println("read record Error in function readRecord in mrmcDB.java: "
@@ -163,23 +179,6 @@ public class mrmcDB {
 						+ e.getMessage());
 			}
 		}
-
-	}
-
-	/* constructor */
-	public mrmcDB(MRMC mrmc) {
-		FilenameFilter filefilter = new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				// if the file extension is .jdb return true, else false
-				return name.endsWith(".jdb");
-			}
-		};
-
-		dbFiles = new File("DB").listFiles(filefilter);
-		noOfItems = dbFiles.length;
-		// System.out.println("a total of "+noOfItems+"files in DB");
-		Records = new dbRecord[noOfItems];
-		loadDB();
 
 	}
 
