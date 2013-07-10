@@ -66,74 +66,60 @@ public class GUInterface {
 	final static String Pilot = "Input raw data...";
 	final static String Manual = "Manual input...";
 	final static String[] rowhead = { "components", "coeff", "total" };
-	JTextField pilotFile;
-	String filename = "";
-	MRMC lst;
-	mrmcDB fdaDB;
+	final int USE_BIAS = 1;
+	final int NO_BIAS = 0;
+	private JTextField pilotFile;
+	private String filename = "";
+	private MRMC lst;
+	private mrmcDB fdaDB;
 	inputFile usr;
-	dbRecord[] Records;
+	private dbRecord[] Records;
 	dbRecord usrFile;
-	JTable BDGtable1;
-	JTable BCKtable1;
-	JTable DBMtable1;
-	JTable ORtable1;
-	JTable MStable1;
-	JTable BDGtable2;
-	JTable BCKtable2;
-	JTable DBMtable2;
-	JTable ORtable2;
-	JTable MStable2;
-	JLabel aucOutput;
-	sPanel genSP;
+	private JTable BDGtable1;
+	private JTable BCKtable1;
+	private JTable DBMtable1;
+	private JTable ORtable1;
+	private JTable MStable1;
+	private JTable BDGtable2;
+	private JTable BCKtable2;
+	private JTable DBMtable2;
+	private JTable ORtable2;
+	private JTable MStable2;
+	private JLabel aucOutput;
+	private sPanel genSP;
 
-	JLabel BDGvar, BDGvar2;
-	JLabel BCKvar, BCKvar2;
-	JLabel DBMvar, DBMvar2;
-	JLabel ORvar, ORvar2;
-	JLabel MSvar, MSvar2;
+	private JLabel BDGvar, BDGvar2;
+	private JLabel BCKvar, BCKvar2;
+	private JLabel DBMvar, DBMvar2;
+	private JLabel ORvar, ORvar2;
+	private JLabel MSvar, MSvar2;
 
-	JTextField manualInReader;
-	JTextField manualInNormal;
-	JTextField manualInDisease;
-	JTextField BDGcomp;
-	JTextField DBMcomp;
-	JTextField BCKcomp;
-	JTextField ORcomp;
-	int manualReader;
-	int manualNormal;
-	int manualDisease;
+	int currMod1; // Chosen mod A when reading raw data
+	int currMod2; // Chosen mod B when reading raw data
 
-	int currMod1;
-	int currMod2;
+	private JLabel HillisPower;
+	private JLabel ZPower;
+	private JLabel Delta;
+	private JLabel sizedDFHillis;
+	private JLabel CVF;
+	private JLabel tStat;
+	private JLabel sqrtTotalVar;
+	private JLabel dfHillis;
+	private JLabel pVal;
+	private JLabel confInt;
+	private JLabel sizedDFBDG;
+	private int selectedDB = 0;
+	private int selectedMod = 0;
+	private int selectedInput = 0;
+	private int selectedSummary = 0;
+	private int hasNegative = 0;
+	private int useBiasM = 0;
+	private int SummaryUseMLE = 0;
 
-	// JTextField sigLevel;
-	// JTextField effSize;
-	// JLabel effSizeLabel;
-	JLabel HillisPower;
-	JLabel ZPower;
-	JLabel Delta;
-	JLabel sizedDFHillis;
-	JLabel CVF;
-	JLabel tStat;
-	JLabel sqrtTotalVar;
-	JLabel dfHillis;
-	JLabel pVal;
-	JLabel confInt;
-	int selectedDB = 0;
-	int selectedMod = 0;
-	int selectedInput = 0;
-	int selectedManualComp = 0;
-	int selectedSummary = 0;
-	int hasNegative = 0;
-	int useBiasM = 0;
-	int SummaryUseMLE = 0;
-
-	double totalStd = 0;
 	DBCard DBC;
 	RawStudyCard RSC;
 	ManualCard MC;
-	JTabbedPane tabbedPane1, tabbedPane2;
-	private JLabel sizedDFBDG;
+	private JTabbedPane tabbedPane1, tabbedPane2;
 
 	public int getuseBiasM() {
 		return useBiasM;
@@ -261,9 +247,9 @@ public class GUInterface {
 
 		HillisPower.setText("");
 		// Selections
-		setUseBiasM(0);
-		DBC.setUseBiasM(0);
-		RSC.setUseBiasM(false);
+		setUseBiasM(NO_BIAS);
+		DBC.setUseBiasM(NO_BIAS);
+		RSC.setUseBiasM(NO_BIAS);
 		tabbedPane1.setTitleAt(0, "BDG");
 		tabbedPane1.setTitleAt(1, "BCK");
 		tabbedPane1.setTitleAt(2, "DBM");
@@ -364,8 +350,7 @@ public class GUInterface {
 	}
 
 	/*
-	 * ********click the size trial button, set Table 2 based on the new study
-	 * size perform statistical analysis***
+	 * ********click the size trial button, perform statistical analysis***
 	 */
 	public void sizeTrial(int[] Parms, double[] Parms2, int[] Parms3) {
 		int newR = Parms[0];
@@ -399,7 +384,7 @@ public class GUInterface {
 		double[][] OR = new double[4][6];
 		double[][] MS = new double[4][6];
 		if (selectedInput == 2 && MC.getSelectedComp() != 0) {
-			BDG = tempRecord.getBDG(0);
+			BDG = tempRecord.getBDG(NO_BIAS);
 			if (MC.getSelectedComp() == 1) {
 				// ******* Brandon's new formula
 				// BCK = tempRecord.getBCK(0);
@@ -438,8 +423,6 @@ public class GUInterface {
 		} else {
 			BDG = tempRecord.getBDG(useBiasM);
 			BCK = dbRecord.BDG2BCK(BDG);
-			// DBM = tempRecord.BDG2DBM(BDG,newR,newN,newD);
-			// OR = tempRecord.BDG2OR(BDG, newR,newN,newD);
 			DBM = dbRecord.BCK2DBM(BCK, newR, newN, newD);
 			OR = dbRecord.DBM2OR(0, DBM, newR, newN, newD);
 			MS = dbRecord.DBM2MS(DBM, newR, newN, newD);
@@ -559,8 +542,8 @@ public class GUInterface {
 			var[2] = DBM[3][5];
 		}
 
-		statTest stat = new statTest(var, OR[selectedMod], newR, newN + newD,
-				sig, eff, BDGv);
+		statTest stat = new statTest(var, newR, newN, newD, sig, eff, BDGv,
+				tempRecord.getBCK(USE_BIAS));
 		formatter1 = new DecimalFormat("0.000E0");
 		formatter2 = new DecimalFormat("0.00");
 		output = formatter2.format(stat.getHillisPower());
@@ -576,13 +559,13 @@ public class GUInterface {
 		output = formatter2.format(stat.getCVF());
 		CVF.setText("  CVF= " + output);
 
-		if (useBiasM == 1) {
+		if (useBiasM == USE_BIAS) {
 			tabbedPane2.setTitleAt(0, "BDG**");
 			tabbedPane2.setTitleAt(1, "BCK**");
 			tabbedPane2.setTitleAt(2, "DBM**");
 			tabbedPane2.setTitleAt(3, "OR**");
 			tabbedPane2.setTitleAt(4, "MS**");
-		} else if (useBiasM == 0) {
+		} else if (useBiasM == NO_BIAS) {
 			tabbedPane2.setTitleAt(0, "BDG");
 			tabbedPane2.setTitleAt(1, "BCK");
 			tabbedPane2.setTitleAt(2, "DBM");
@@ -865,7 +848,6 @@ public class GUInterface {
 		output = formatter.format(Math.sqrt(DBMv));
 		DBMvar.setText("sqrt(Var)=" + output);
 		output = formatter.format(Math.sqrt(ORv));
-		totalStd = Math.sqrt(ORv);
 		ORvar.setText("sqrt(Var)=" + output);
 		output = formatter.format(Math.sqrt(MSv));
 		MSvar.setText("sqrt(Var)=" + output);
@@ -873,13 +855,13 @@ public class GUInterface {
 
 		// System.out.println("BDG="+BDGv+" BCK="+BCKv+" DBM="+DBMv+" OR="+ORv);
 
-		if (useBiasM == 1) {
+		if (useBiasM == USE_BIAS) {
 			tabbedPane1.setTitleAt(0, "BDG**");
 			tabbedPane1.setTitleAt(1, "BCK**");
 			tabbedPane1.setTitleAt(2, "DBM**");
 			tabbedPane1.setTitleAt(3, "OR**");
 			tabbedPane1.setTitleAt(4, "MS**");
-		} else if (useBiasM == 0) {
+		} else if (useBiasM == NO_BIAS) {
 			tabbedPane1.setTitleAt(0, "BDG");
 			tabbedPane1.setTitleAt(1, "BCK");
 			tabbedPane1.setTitleAt(2, "DBM");
@@ -1680,12 +1662,12 @@ public class GUInterface {
 		}
 
 		dbRecord tempRecord = getCurrentRecord();
-		double[][] tempBDG = tempRecord.getBDG(0);
+		double[][] tempBDG = tempRecord.getBDG(NO_BIAS);
 		for (int i = 0; i < 8; i++) {
 			if (tempBDG[selectedMod][i] < 0)
 				hasNegative = 1;
 		}
-		if (hasNegative == 1 & useBiasM == 0) {
+		if (hasNegative == 1 & useBiasM == NO_BIAS) {
 			JFrame frame = lst.getFrame();
 			int result = JOptionPane
 					.showConfirmDialog(
@@ -1694,13 +1676,13 @@ public class GUInterface {
 			if (JOptionPane.CANCEL_OPTION == result) {
 				System.out.println("cancel");
 			} else if (JOptionPane.YES_OPTION == result) {
-				DBC.setUseBiasM(1);
-				RSC.setUseBiasM(true);
-				useBiasM = 1;
+				DBC.setUseBiasM(USE_BIAS);
+				RSC.setUseBiasM(USE_BIAS);
+				useBiasM = USE_BIAS;
 			} else if (JOptionPane.NO_OPTION == result) {
-				DBC.setUseBiasM(0);
-				RSC.setUseBiasM(false);
-				useBiasM = 0;
+				DBC.setUseBiasM(NO_BIAS);
+				RSC.setUseBiasM(NO_BIAS);
+				useBiasM = NO_BIAS;
 			}
 
 		}

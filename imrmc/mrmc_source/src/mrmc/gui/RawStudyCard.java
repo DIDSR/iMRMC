@@ -31,20 +31,20 @@ import mrmc.core.dbRecord;
 import java.awt.event.*;
 
 public class RawStudyCard {
-	GUInterface gui;
-	int selectedMod = 0;
-	int useBiasM = 0;
-	JCheckBox negBox;
-	JComboBox chooseA, chooseB;
-	JButton varAnalysisButton;
+	private GUInterface gui;
+	private int selectedMod = 0;
+	private int useBiasM = 0;
+	private JCheckBox negBox;
+	private JComboBox chooseA, chooseB;
+	private JButton varAnalysisButton;
 
-	public void setUseBiasM(boolean bias) {
-		if (bias) {
-			useBiasM = 1;
+	public void setUseBiasM(int bias) {
+		useBiasM = bias;
+		if (bias == 0) {
+			negBox.setSelected(false);
 		} else {
-			useBiasM = 0;
+			negBox.setSelected(true);
 		}
-		negBox.setSelected(bias);
 	}
 
 	public void setSelectedMod(int input) {

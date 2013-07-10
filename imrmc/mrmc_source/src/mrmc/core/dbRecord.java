@@ -35,44 +35,30 @@ import java.util.*;
 import java.text.DecimalFormat;
 
 public class dbRecord {
-	String recordDesp = "";
-	String recordTitle = "";
-	String filename = "";
-	String[] Modality = new String[2];
-	String Task = "";
-	double[][] BDGbias = new double[4][8];
-	double[][] BDG = new double[4][8];
-	double[][] BDGcoeff = new double[4][8];
-
-	double[][] BCKbias = new double[4][7];
-	double[][] BCK = new double[4][7];
-	double[][] BCKcoeff = new double[4][7];
-
-	double[][] DBMbias = new double[4][6];
-	double[][] DBM = new double[4][6];
-	double[][] DBMcoeff = new double[4][6];
-
-	double[][] ORbias = new double[4][6];
-	double[][] OR = new double[4][6];
-	double[][] ORcoeff = new double[4][6];
-
-	// double[][] DBMfromU = new double[4][6];
-	// double[][] DBMbiasfromU = new double[4][6];
-	// double[][] ORfromU = new double[4][6];
-	// double[][] ORbiasfromU = new double[4][6];
-
-	double[][] MS = new double[4][6];
-	double[][] MSbias = new double[4][6];
-	double[][] MScoeff = new double[4][6];
-
-	matrix mx = new matrix();
-
-	double[] AUC = new double[2];
-	int nReader;
-	int nNormal;
-	int nDisease;
-	int flagCompleteRecord;
-	int flagCom;
+	private String recordDesp = "";
+	private String recordTitle = "";
+	private String filename = "";
+	private String[] Modality = new String[2];
+	private String Task = "";
+	private double[][] BDGbias = new double[4][8];
+	private double[][] BDG = new double[4][8];
+	private double[][] BDGcoeff = new double[4][8];
+	private double[][] BCKbias = new double[4][7];
+	private double[][] BCK = new double[4][7];
+	private double[][] BCKcoeff = new double[4][7];
+	private double[][] DBMbias = new double[4][6];
+	private double[][] DBM = new double[4][6];
+	private double[][] DBMcoeff = new double[4][6];
+	private double[][] ORbias = new double[4][6];
+	private double[][] OR = new double[4][6];
+	private double[][] ORcoeff = new double[4][6];
+	private double[][] MS = new double[4][6];
+	private double[][] MSbias = new double[4][6];
+	private double[][] MScoeff = new double[4][6];
+	private double[] AUC = new double[2];
+	private int nReader;
+	private int nNormal;
+	private int nDisease;
 	private boolean fullyCrossed;
 	private int[][][] mod0StudyDesign;
 	private int[][][] mod1StudyDesign;
@@ -291,7 +277,6 @@ public class dbRecord {
 	public dbRecord(String fname, String[] str, ArrayList<String> desp,
 			String AUCstr) {
 		int i, j;
-		flagCompleteRecord = 1;
 		recordTitle = desp.get(0).substring(2);
 		filename = fname;
 		fullyCrossed = true;
@@ -459,8 +444,6 @@ public class dbRecord {
 		nDisease = Disease;
 
 		AUC = auc;
-		flagCompleteRecord = 0;
-		flagCom = flag;
 		fullyCrossed = true;
 		mod0StudyDesign = new int[nReader][nNormal][nDisease];
 		for (int m = 0; m < mod0StudyDesign.length; m++) {
@@ -570,7 +553,6 @@ public class dbRecord {
 		nReader = input.getReader();
 		nNormal = input.getNormal();
 		nDisease = input.getDisease();
-		flagCompleteRecord = 1;
 		AUC = input.getaucMod();
 		fullyCrossed = input.getFullyCrossedStatus();
 		if (fullyCrossed) {
@@ -1068,6 +1050,7 @@ public class dbRecord {
 
 	}
 
+	// TODO is this implemented correctly? what's the point?
 	public double[][] BCKresize(double[][] bck, int newR, int newN, int newD) {
 		return bck;
 	}

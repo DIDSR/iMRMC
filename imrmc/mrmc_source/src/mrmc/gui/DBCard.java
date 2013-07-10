@@ -28,13 +28,13 @@ import javax.swing.*;
 import java.awt.event.*;
 
 public class DBCard {
-	GUInterface gui;
-	int selectedMod = 0;
-	int useBiasM = 0;
-	JCheckBox cb;
-	JRadioButton mod1Button;
-	JRadioButton mod2Button;
-	JRadioButton modDButton;
+	private GUInterface gui;
+	private int selectedMod = 0;
+	private int useBiasM = 0;
+	private JCheckBox cb;
+	private JRadioButton mod1Button;
+	private JRadioButton mod2Button;
+	private JRadioButton modDButton;
 
 	public void setUseBiasM(int temp) {
 		if (temp == 1) {

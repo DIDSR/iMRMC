@@ -31,24 +31,22 @@ import umontreal.iro.lecuyer.probdist.FisherFDist;
 import umontreal.iro.lecuyer.probdist.NormalDist;
 
 public class statTest {
-	int INFINITY = 500;
-	int PRECISION = 6;
-	double ZERO = 1E-300;
-	double powerF;
-	double powerZ;
-	double DOF = 0;
-	double DOF2011 = 0;
-	double tStat = 0;
-	double effSize;
-	double sigLevel;
-	double pValZ;
-	double pValF;
-	double ciBot, ciTop;
-	double totalVar;
-	double CVF;
-	double df2;
-	double Delta;
-	double dfBDG;
+	final int INFINITY = 500;
+	final int PRECISION = 6;
+	final double ZERO = 1E-300;
+	private double powerF;
+	private double powerZ;
+	private double DOF = 0;
+	private double dfBDG;
+	private double tStat = 0;
+	private double effSize;
+	private double sigLevel;
+	private double pValZ;
+	private double pValF;
+	private double ciBot, ciTop;
+	private double f0;
+	private double df2;
+	private double fStat;
 
 	public double getciBot() {
 		return ciBot;
@@ -83,11 +81,11 @@ public class statTest {
 	}
 
 	public double getCVF() {
-		return CVF;
+		return f0;
 	}
 
 	public double getDelta() {
-		return Delta;
+		return fStat;
 	}
 
 	public double getDDF() {
@@ -98,16 +96,26 @@ public class statTest {
 		return dfBDG;
 	}
 
-	public statTest(double[] var, double[] OR, int r, int c, double sig,
-			double eff, double totalVar0) {
+	/*
+	 * Constructor used for stats in sizing panel
+	 * 
+	 * @param DBMvar 3 elements, components for a given modality in DBM
+	 * representation or total if difference in modalities
+	 * 
+	 * @param totalVar Summed total variance
+	 */
+	public statTest(double[] DBMvar, int r, int n, int d, double sig,
+			double eff, double totalVar, double[][] BCKbias) {
 		sigLevel = sig;
 		effSize = eff;
-		totalVar = totalVar0;
-		powerF = FTest(var, r, c, totalVar);
-		powerZ = ZTest(var, r, c, totalVar);
-		dfBDG = calcDFBDG();
+		df2 = DDF_Hillis(DBMvar, r, n + d, totalVar);
+		double df1 = 1.0; // where should we get this parameter?
+		powerF = FTest_power(DBMvar, r, n + d, df1, totalVar);
+		powerZ = ZTest(DBMvar, r, n + d, totalVar);
+		dfBDG = calcDFBDG(BCKbias, r, n, d, totalVar);
 	}
 
+	/* Constructor used for stats in variance analysis panel */
 	public statTest(dbRecord curRecord, int selectedMod, int useBiasM,
 			double sig, double eff) {
 		double mst = 0, denom = 0, statT = 0, ddf = 0;
@@ -125,31 +133,16 @@ public class statTest {
 		}
 
 		double[][] BDG = curRecord.getBDG(useBiasM);
-
-		System.out.println("***********");
-		for (int i = 0; i < 4; i++) {
-			for (int j = 0; j < 8; j++) {
-				System.out.println(coeff[i][j] + "    ");
-			}
-			System.out.println("\n");
-		}
-		// double
-		// dn0=(coeff[selectedMod][2]+coeff[selectedMod][1])/coeff[selectedMod][1];
-		// double
-		// dn1=(coeff[selectedMod][3]+coeff[selectedMod][1])/coeff[selectedMod][1];
-		// double
-		// dnr=(coeff[selectedMod][5]+coeff[selectedMod][1])/coeff[selectedMod][1];
-		// double dnc=dn0+dn1;
-
-		double dn0 = curRecord.getNormal() * 1.0;
-		double dn1 = curRecord.getDisease() * 1.0;
-		double dnr = curRecord.getReader() * 1.0;
+		double dn0 = curRecord.getNormal();
+		double dn1 = curRecord.getDisease();
+		double dnr = curRecord.getReader();
 		double dnc = dn0 + dn1;
 
 		double[] var = dbRecord.getBDGTab(selectedMod, BDG, coeff)[6];
 		double var0 = 0;
-		for (int j = 0; j < 8; j++)
+		for (int j = 0; j < 8; j++) {
 			var0 = var0 + var[j];
+		}
 
 		aucs[0] = curRecord.getAUCinNumber(0);
 		aucs[1] = curRecord.getAUCinNumber(1);
@@ -161,7 +154,7 @@ public class statTest {
 			// mst=dnr*dnc*(aucs[selectedMod]-eff)*(aucs[selectedMod]-eff);
 			mst = dnr * dnc * eff * eff;
 			denom = MS[selectedMod][0]
-					+ max(0.0, (MS[selectedMod][1] - MS[selectedMod][4]));
+					+ Math.max(0.0, (MS[selectedMod][1] - MS[selectedMod][4]));
 			statT = Math.sqrt(mst / denom);
 			ddf = denom * denom
 					/ (MS[selectedMod][0] * MS[selectedMod][0] / (dnr - 1));
@@ -169,7 +162,7 @@ public class statTest {
 			meanCI = aucs[0] - aucs[1];
 			mst = dnr * dnc * doVar(aucs[0], aucs[1]);
 			denom = MS[selectedMod][2]
-					+ max(0.0, (MS[selectedMod][3] - MS[selectedMod][5]));
+					+ Math.max(0.0, (MS[selectedMod][3] - MS[selectedMod][5]));
 			statT = Math.sqrt(mst / denom);
 			ddf = denom * denom
 					/ (MS[selectedMod][2] * MS[selectedMod][2] / (dnr - 1));
@@ -215,26 +208,11 @@ public class statTest {
 		return var;
 	}
 
-	public double max(double a, double b) {
-		if (a > b)
-			return a;
-		else
-			return b;
-	}
-
-	public double FTest(double[] var, int r, int c, double totalVar) {
+	public double DDF_Hillis(double[] var, int r, int c, double totalVar) {
 		double SigTR = var[0];
 		double SigTC = var[1];
 		double SigTRC = var[2];
-
-		// print, SigTRC, SigTR, SigTC
-		/*
-		 * SigTR=SigTR; SigTC=SigTC*c; SigTRC=SigTRC; SigTRC=SigTRC*c;
-		 */
-
-		// SigTR = SigTR;
-		// SigTC = SigTC;
-		// SigTRC = SigTRC;
+		double ddf_hillis;
 
 		if (SigTR < 0) {
 			SigTR = 0;
@@ -249,7 +227,7 @@ public class statTest {
 		// F statistics Hillis 2004
 		double Nu, De1, De2, De3;
 		if (SigTC == 0) {
-			df2 = r - 1;
+			ddf_hillis = r - 1;
 		} else {
 			Nu = c * SigTR + r * SigTC + SigTRC;
 			Nu = Nu * Nu;
@@ -258,41 +236,67 @@ public class statTest {
 			De2 = r * SigTC + SigTRC;
 			De2 = De2 * De2 / (c - 1);
 			De3 = SigTRC * SigTRC / (r - 1) / (c - 1);
-			df2 = Nu / (De1 + De2 + De3);
-			df2 = Nu / (De1);
+			ddf_hillis = Nu / (De1 + De2 + De3);
+			ddf_hillis = Nu / (De1);
 		}
-		Delta = c * SigTR + r * SigTC + SigTRC;
-		System.out.println("delta=" + Delta);
-		Delta = 2.0 * Delta / r / c;
-		System.out.println("delta=" + Delta);
-		// double denom=Delta;
-		Delta = effSize * effSize / Delta;
+		return ddf_hillis;
+	}
 
-		Delta = effSize * effSize / totalVar;
-		System.out.println("delta=" + Delta);
+	public double FTest_power(double[] var, int r, int c, double df1,
+			double totalVar) {
+		double SigTR = var[0];
+		double SigTC = var[1];
+		double SigTRC = var[2];
+		double ftestpower;
+
+		if (SigTR < 0) {
+			SigTR = 0;
+		}
+		if (SigTC < 0) {
+			SigTC = 0;
+		}
+		if (SigTRC < 0) {
+			SigTRC = 0;
+		}
+
+		fStat = c * SigTR + r * SigTC + SigTRC;
+		System.out.println("delta=" + fStat);
+		fStat = 2.0 * fStat / r / c;
+		System.out.println("delta=" + fStat);
+		// double denom=Delta;
+		fStat = effSize * effSize / fStat;
+
+		fStat = effSize * effSize / totalVar;
+		System.out.println("delta=" + fStat);
 
 		// use normal distribution for DOF > 50 since it is close to Fisher F
 		// and fisherF fails for DOF > 2000
 		double cdftemp;
 		if (df2 >= 50) {
-			Delta = Math.sqrt(Delta);
-			CVF = NormalDist.inverseF(0, 1, (1 - sigLevel / 2.0));
-			cdftemp = NormalDist.cdf(Delta, 1, CVF);
+			fStat = Math.sqrt(fStat);
+			// Inverse normal cumulative d.f.
+			// return = NormalDist.inverseF(mean, var, prob);
+			// prob = integral(-inf, return) normal_pdf(mean, var)
+			f0 = NormalDist.inverseF(0, 1, (1 - sigLevel / 2.0));
+			// Normal cumulative d.f.
+			// return = NormalDist.cdf(mean, var, x0);
+			// return = integral(-inf, x0) normal.pdf(mean, var)
+			cdftemp = NormalDist.cdf(fStat, 1, f0);
 		} else {
-			FisherFDist fdist = new FisherFDist(1, (int) df2);
-			CVF = fdist.inverseF(1 - sigLevel);
-			cdftemp = cdfNonCentralF(1, (int) df2, Delta, CVF);
+			FisherFDist fdist = new FisherFDist((int) df1, (int) df2);
+			f0 = fdist.inverseF(1 - sigLevel);
+			cdftemp = cdfNonCentralF((int) df1, (int) df2, fStat, f0);
 			// Rescale Delta, CVF to correspond to t-distribution ~= normal
 			// distribution
-			Delta = Math.sqrt(Delta);
-			CVF = Math.sqrt(CVF);
+			fStat = Math.sqrt(fStat);
+			f0 = Math.sqrt(f0);
 		}
 
-		powerF = 1 - cdftemp;
-		System.out.println("delta=" + Delta + " df2=" + df2 + " CVF=" + CVF
-				+ " powerF= " + powerF + " totalVar= " + totalVar);
+		ftestpower = 1 - cdftemp;
+		System.out.println("delta=" + fStat + " df2=" + df2 + " CVF=" + f0
+				+ " powerF= " + ftestpower + " totalVar= " + totalVar);
 
-		return powerF;
+		return ftestpower;
 	}
 
 	public double cdfNonCentralF(int df1, int df2, double delta, double x) {
@@ -324,9 +328,17 @@ public class statTest {
 		return powerZ;
 	}
 
-	private double calcDFBDG() {
-		// TODO Auto-generated method stub
-		return 0;
+	// TODO verify correctness
+	private double calcDFBDG(double[][] BCKbias, int r, int n, int d,
+			double totalVar) {
+		double s2br = BCKbias[0][3] + BCKbias[1][3] - (2 * BCKbias[2][3]);
+		double s2b0 = BCKbias[0][0] + BCKbias[1][0] - (2 * BCKbias[2][0]);
+		double s2b1 = BCKbias[0][1] + BCKbias[1][1] - (2 * BCKbias[2][1]);
+		double df = Math.pow(totalVar, 2)
+				/ ((Math.pow(s2br, 2) / Math.pow(r - 1, 3))
+						+ (Math.pow(s2b0, 2) / Math.pow(n - 1, 3)) + (Math.pow(
+						s2b1, 2) / Math.pow(d - 1, 3)));
+		return df;
 	}
 	/*
 	 * public double FTest2011(double[] OR,int r, int c, int rnew, int

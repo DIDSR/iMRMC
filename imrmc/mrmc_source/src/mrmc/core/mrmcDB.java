@@ -29,11 +29,10 @@ import java.util.*;
 import java.io.FileInputStream;
 
 public class mrmcDB {
-	int noOfItems;
-	File[] dbFiles;
-	dbRecord[] Records;
-	boolean isApplet;
-	ArrayList<String> dbFilenamesInJar = new ArrayList<String>();
+	private int noOfItems;
+	private File[] dbFiles;
+	private dbRecord[] Records;
+	private ArrayList<String> dbFilenamesInJar = new ArrayList<String>();
 
 	public int getNoOfItems() {
 		return noOfItems;

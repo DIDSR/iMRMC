@@ -30,34 +30,33 @@ import mrmc.core.dbRecord;
 import mrmc.core.matrix;
 
 public class ManualCard {
-	JPanel manual3; // the panel that shares different manual input compenents
-	GUInterface gui;
-	MRMC lst;
-	JTextField manualInReader;
-	JTextField manualInNormal;
-	JTextField manualInDisease;
-	JTextField AUCText1;
-	JTextField AUCText2;
-	dbRecord record;
-	double[] auc = new double[2];
-	JRadioButton com1Button;
-	JRadioButton SingleMod;
+	private GUInterface gui;
+	private MRMC lst;
+	private JTextField manualInReader;
+	private JTextField manualInNormal;
+	private JTextField manualInDisease;
+	private JTextField AUCText1;
+	private JTextField AUCText2;
+	private dbRecord record;
+	private double[] auc = new double[2];
+	private JRadioButton com1Button;
+	private JRadioButton SingleMod;
 
-	int Reader;
-	int Normal;
-	int Disease;
-	int selectedManualComp = 0;
-	String BDGlabel = "M1, M2, M3, M4, M5, M6, M7, M8";
-	String DBMlabel = "R, C, RC, TR, TC, TRC";
-	String BCKlabel = "N, D, ND, R, NR, DR, RND";
-	String ORlabel = "R, TR, COV1, COV2, COV3, ERROR";
-	JLabel compLabel;
-	JTextField compText;
-	int[] numberOfComps = new int[] { 8, 7, 6, 6 };
-	String[] com = new String[] { "BDG", "BCK", "DBM", "OR" };
-	String[] mod = new String[] { "Single Modality", "Difference" };
-	matrix mx = new matrix();
-	int SingleOrDiff = 0;
+	private int Reader;
+	private int Normal;
+	private int Disease;
+	private int selectedManualComp = 0;
+	private String BDGlabel = "M1, M2, M3, M4, M5, M6, M7, M8";
+	private String DBMlabel = "R, C, RC, TR, TC, TRC";
+	private String BCKlabel = "N, D, ND, R, NR, DR, RND";
+	private String ORlabel = "R, TR, COV1, COV2, COV3, ERROR";
+	private JLabel compLabel;
+	private JTextField compText;
+	private int[] numberOfComps = new int[] { 8, 7, 6, 6 };
+	private String[] com = new String[] { "BDG", "BCK", "DBM", "OR" };
+	private String[] mod = new String[] { "Single Modality", "Difference" };
+	private matrix mx = new matrix();
+	private int SingleOrDiff = 0;
 
 	public int getSelectedManualComp() {
 		return selectedManualComp;

@@ -25,8 +25,8 @@ package mrmc.gui;
 
 public class dataFormat {
 
-	String fmtHelp;
-	String sampleFmt;
+	private String fmtHelp;
+	private String sampleFmt;
 
 	public String getInfo() {
 		return fmtHelp;
