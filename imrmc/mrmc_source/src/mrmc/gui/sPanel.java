@@ -33,8 +33,8 @@ import mrmc.core.statTest;
 import java.text.DecimalFormat;
 
 public class sPanel {
-	GUInterface gui;
-	JFrame reportFrame;
+	private GUInterface gui;
+	private JFrame reportFrame;
 	private JTextField sizeR;
 	private JTextField sizeN;
 	private JTextField sizeD;
@@ -42,10 +42,10 @@ public class sPanel {
 	private JTextField effSize;
 	private JLabel effSizeLabel;
 	double[] statParms = new double[2];
-	dbRecord curRecord;
-	String SEPA = ",";
-	DecimalFormat formatter = new DecimalFormat("0.00000E0");
-	DecimalFormat formatter2 = new DecimalFormat("0.00");
+	private dbRecord curRecord;
+	private String SEPA = ",";
+	private DecimalFormat formatter = new DecimalFormat("0.00000E0");
+	private DecimalFormat formatter2 = new DecimalFormat("0.00");
 	private JTextField numSplitPlot;
 	private int pairedCs = 1;
 	private int pairedRs = 1;
@@ -472,42 +472,4 @@ public class sPanel {
 			}
 		}
 	}
-
-	public double[] sizeTrial(double[][] DBM, double[][] OR, double sig,
-			double eff, int R, int N, int D) {
-		double[] var = new double[3];
-		int selectedMod = gui.getSelectedMod();
-		int selectedInput = gui.getSelectedInput();
-		if (selectedInput == 0 || selectedInput == 1) {
-			if (selectedMod == 3) {
-				var[0] = DBM[3][3];
-				var[1] = DBM[3][4];
-				var[2] = DBM[3][5];
-			} else {
-				var[0] = DBM[selectedMod][0];
-				var[1] = DBM[selectedMod][1];
-				var[2] = DBM[selectedMod][2];
-			}
-		}
-		if (selectedInput == 2) {
-			var[0] = DBM[0][0];
-			var[1] = DBM[0][1];
-			var[2] = DBM[0][2];
-
-		}
-
-		double totalVar = 1.0 / (R * (N + D))
-				* ((N + D) * var[0] + R * var[1] + var[2]);
-		if (selectedMod == 3)
-			totalVar = totalVar * 2;
-		statTest stat = new statTest(var, OR[selectedMod], R, N + D, sig, eff,
-				totalVar);
-
-		double[] results = new double[3];
-		results[0] = stat.getDOF();
-		results[1] = stat.getHillisPower();
-		results[2] = stat.getZPower();
-		return results;
-	}
-
 }

@@ -33,8 +33,8 @@ import java.util.HashMap;
 
 
 public class InterpolatedLine {
-	HashMap<XYPair, double[]> allLineEqs;
-	TreeSet<XYPair> actualPoints;
+	private HashMap<XYPair, double[]> allLineEqs;
+	private TreeSet<XYPair> actualPoints;
 
 	public InterpolatedLine(TreeSet<XYPair> series) {
 		TreeMap<Double, TreeSet<Double>> allDistinctXs = new TreeMap<Double, TreeSet<Double>>();

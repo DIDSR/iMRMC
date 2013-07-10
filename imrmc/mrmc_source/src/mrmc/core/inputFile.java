@@ -361,14 +361,14 @@ public class inputFile {
 		covMRMC mod1 = new covMRMC(t00, d0, t10, d1, Reader, Normal, Disease);
 		covMRMC mod2 = new covMRMC(t01, d0, t11, d1, Reader, Normal, Disease);
 		covMRMC covMod12 = new covMRMC(t0, d0, t1, d1, Reader, Normal, Disease);
-		double[] M1 = mod1.getM();
-		double[] M2 = mod2.getM();
-		double[] Mcov = covMod12.getM();
+		double[] M1 = mod1.getMoments();
+		double[] M2 = mod2.getMoments();
+		double[] Mcov = covMod12.getMoments();
 		double[] Coeff = mod1.getC();
 		// double[] Coeff = dbRecord.genBDGCoeff(Reader, Normal, Disease)[0];
-		double[] Mb1 = mod1.getMb();
-		double[] Mb2 = mod2.getMb();
-		double[] Mbcov = covMod12.getMb();
+		double[] Mb1 = mod1.getBiasedMoments();
+		double[] Mb2 = mod2.getBiasedMoments();
+		double[] Mbcov = covMod12.getBiasedMoments();
 
 		// System.out.println("Mb1\t");
 		// for (int i = 1; i < 9; i++)

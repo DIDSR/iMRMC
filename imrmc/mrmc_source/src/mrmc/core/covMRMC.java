@@ -24,19 +24,19 @@
 package mrmc.core;
 
 public class covMRMC {
-	int Reader, Normal, Disease;
-	int nmod = 2;
-	double[] moments = new double[9];
-	double[] biasM = new double[9];
-	double[] c = new double[9];
-	double[][] auc; // auc for each reader each modality
-	double[] aucMod = new double[2];
+	private int Reader, Normal, Disease;
+	private int nmod = 2;
+	private double[] moments = new double[9];
+	private double[] biasM = new double[9];
+	private double[] c = new double[9];
+	private double[][] auc; // auc for each reader each modality
+	private double[] aucMod = new double[2];
 
-	public double[] getM() {
+	public double[] getMoments() {
 		return moments;
 	}
 
-	public double[] getMb() {
+	public double[] getBiasedMoments() {
 		return biasM;
 	}
 

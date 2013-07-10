@@ -27,7 +27,6 @@ import java.text.DecimalFormat;
 
 public class matrix {
 	public matrix() {
-		;
 	}
 
 	public static double[][] multiply(double[][] m1, double[][] m2) {

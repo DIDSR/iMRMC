@@ -28,13 +28,14 @@ import java.awt.event.*;
 import mrmc.core.MRMC;
 
 public class GUImenubar {
-	MRMC lst;
-	JMenuBar menuBar = new JMenuBar();
-	String Manual = "Dowload manual, sample file, source code and database at\n"
+	private MRMC lst;
+	private JMenuBar menuBar = new JMenuBar();
+	private String Manual = "Dowload manual, sample file, source code and database at\n"
 			+ "http://js.cx/~xin/download.html\n";
-	String About = "MRMC 1.0\n" + "Developed by Xin He and Brandon Gallas\n"
+	private String About = "MRMC 1.0\n"
+			+ "Developed by Xin He and Brandon Gallas\n"
 			+ "http://www.fda.gov\n";
-	String Ref = "1. A Probabilistic Development of the MRMC Method, Eric Clarkson, Matthew A.Kupinski,\n"
+	private String Ref = "1. A Probabilistic Development of the MRMC Method, Eric Clarkson, Matthew A.Kupinski,\n"
 			+ "   Harrison H. Barrett, Academic Radiology. 2006 Mar;13(3):353-62.\n"
 			+ "2. One-Shot Estimate of MRMC Variance: AUC, Brandon D. Gallas, Academic Radiology 13,\n"
 			+ "   pp. 353-362, 2006.\n"
