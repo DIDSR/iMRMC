@@ -12,4 +12,4 @@ The primary objective of this application, iMRMC, is to assist investigators wit
   * [iMRMCReferences References for iMRMC]
 
 
-[http://imrmc.googlecode.com/svn/wiki/gadgets/printwikis.html?_gnpi_subversion="svn"&_gnpi_wikilist="iMRMCGuide|iMRMCReferences" Print Me]
+[http://imrmc.googlecode.com/svn/wiki/gadgets/printwikis.html?_gnpi_subversion="svn"&_gnpi_wikilist="TableOfContents|iMRMCReferences" Print Me]
