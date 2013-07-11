@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+  <ModulePrefs title="Gateway to other Wikis"
+               title_url="http://code.google.com/p/wikignpi/"
+               description="Advanced gadget for showing an embedded wiki page\nlicense MIT License http://www.opensource.org/licenses/mit-license.php"
+               author="Bruno Santos">
+    <Require feature="dynamic-height"/>
+  </ModulePrefs>
+  <UserPref name="projectname" display_name="Project Name" datatype="string" default_value="wikignpi"/>
+  <UserPref name="subversion" display_name="Subversion system" datatype="enum" default_value="hg">
+    <EnumValue value="svn" />
+    <EnumValue value="hg" />
+  </UserPref>
+  <UserPref name="wikiname" display_name="Wiki Page Name" datatype="string" default_value="News"/>
+  <UserPref name="autoresize" display_name="Gadget auto resize to child wiki page contents" datatype="bool" default_value="false"/>
+  <UserPref name="disableWarnings" display_name="Don't show operational warnings from the scripts" datatype="bool"  default_value="true"/>
+  <UserPref name="wikiBaseURL" display_name="The base link for the wiki pages" datatype="string" default_value="http://code.google.com/p/wikignpi/wiki/"/>
+  <UserPref name="openURLSInNewWindow" display_name="Open links in a new window" datatype="bool" default_value="true"/>
+  <UserPref name="showLabels" display_name="Show the labels for this wiki page" datatype="bool" default_value="false"/>
+  <UserPref name="showSummary" display_name="Show the summary for this wiki page" datatype="bool" default_value="false"/>
+  <UserPref name="showFileName" display_name="Show the file name for this wiki page as title" datatype="bool" default_value="false"/>
+  <UserPref name="cachedTime" display_name="Refresh time for the cached page in seconds" datatype="int" default_value="-1"/>
+  <UserPref name="hideComments" display_name="Hide wiki:comment" datatype="bool" default_value="true"/>
+  <UserPref name="showGadgets" display_name="Show wiki:gadget's" datatype="bool" default_value="true"/>
+  <UserPref name="showVideos" display_name="Show wiki:video's" datatype="bool" default_value="true"/>
+  <UserPref name="language" display_name="Language to be displayed" datatype="string" default_value=""/>
+  <UserPref name="showLanguages" display_name="Show available languages (needs languages.lst)" datatype="bool" default_value="false"/>
+  <UserPref name="waitmessage" display_name="Message to display while waiting for the wiki page to load" datatype="string" default_value="Collecting data, please wait..."/>
+  <UserPref name="plugins" display_name="List of plug-ins to load, with respective options" datatype="string" default_value=""/>
+  <Content type="html">
+     <![CDATA[
+<script src="http://code.jquery.com/jquery-1.5.2.min.js" type="text/javascript"></script>
+<script src="http://wiki.__UP_projectname__.googlecode.com/hg/gadgets/GoogleCodeWikiParser.min.js" type="text/javascript"></script>
+<script src="http://__UP_projectname__.googlecode.com/svn/wiki/gadgets/GoogleCodeWikiParser.min.js" type="text/javascript"></script>
+<script src="http://wiki.__UP_projectname__.googlecode.com/hg/gadgets/xregexp-min.js" type="text/javascript"></script>
+<script src="http://__UP_projectname__.googlecode.com/svn/wiki/gadgets/xregexp-min.js" type="text/javascript"></script>
+
+<script src="http://code-opensocial.googleusercontent.com/gadgets/js/rpc.js?c=1&amp;container=code"></script>
+<script type="text/javascript">
+  /* RPC Stuff */
+  function resizeIframeHandler(opt_height) {
+    var elem = document.getElementById(this.f);
+    if (!elem) return;
+    if (!opt_height) {
+      elem.style.height = undefined;
+    }
+    else {
+      opt_height = Math.max(10, opt_height);
+      elem.style.height = opt_height + 'px';
+    }
+  }
+  gadgets.rpc.register("resize_iframe", resizeIframeHandler);
+
+  gadgets.rpc.register('set_title', function(title) {
+  var elem = document.getElementById(this.f + '_title');
+  if (elem) {
+    elem.innerHTML = gadgets.util.escape(title);
+  }
+  });
+</script>
+
+<script src="http://wiki.__UP_projectname__.googlecode.com/hg/gadgets/wikigateway-min.js" type="text/javascript"></script>
+<script src="http://__UP_projectname__.googlecode.com/svn/wiki/gadgets/wikigateway-min.js" type="text/javascript"></script>
+<noscript>Please turn on JavaScript, otherwise you can't use this gadget...</noscript>
+
+<div id="wikicontent">
+<p>__UP_waitmessage__</p>
+</div>
+
+    ]]>
+  </Content>
+</Module>
