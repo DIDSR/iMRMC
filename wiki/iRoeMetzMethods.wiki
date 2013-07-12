@@ -6,7 +6,9 @@
 
 iRoeMetz makes use of a generalized version of the Roe & Metz model [1]. This generalized model accounts for 18 variances as opposed to the six variances in the original model. The original six variances were of readers, cases, the interaction between readers and cases, and the interaction of modality with the three aforementioned variances. The generalized model takes these existing six and then accounts for the interaction of them against truth and differing modalities [2].
 
-<wiki:gadget url="http://mathml-gadget.googlecode.com/svn/trunk/mathml-gadget.xml" border="0" up_content="a x^2+b x+c=0"/>
+http://imrmc.googlecode.com/svn/images/irm%20eq1.png
+
+http://imrmc.googlecode.com/svn/images/irm%20eq2.png
 
 
 ==Simulation==
