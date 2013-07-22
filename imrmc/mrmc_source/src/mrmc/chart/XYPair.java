@@ -1,9 +1,9 @@
-/*
+/**
  * XYPair.java
  * 
- * v2.0b
+ * @version 2.0b
  * 
- * @Author Brandon D. Gallas, PhD, Rohan Pathare
+ * @author Rohan Pathare
  * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
@@ -29,11 +29,23 @@ public class XYPair implements Comparable<XYPair> {
 	public double x;
 	public double y;
 
+	/**
+	 * Sole constructor. Creates a new XYPair with the specified position
+	 * 
+	 * @param theX The X coordinate
+	 * @param theY The Y coordinate
+	 */
 	public XYPair(double theX, double theY) {
 		x = theX;
 		y = theY;
 	}
 
+	/**
+	 * Determines whether this point is in the same position as another point
+	 * 
+	 * @param other The other point
+	 * @return true if the points are in the same position, false otherwise
+	 */
 	public boolean equals(Object other) {
 		if (other == null) {
 			return false;
@@ -50,6 +62,14 @@ public class XYPair implements Comparable<XYPair> {
 				this.y, compared.y) == 0));
 	}
 
+	/**
+	 * Compares the position of this point to another point
+	 * 
+	 * @param other The point being compared
+	 * @return 0 If the points are in the same position, -1 if this point is to
+	 *         the left or directly below the other point, and 1 if this point
+	 *         is to the right or directly above the other point
+	 */
 	@Override
 	public int compareTo(XYPair other) {
 		if (other == null) {
@@ -77,6 +97,11 @@ public class XYPair implements Comparable<XYPair> {
 		}
 	}
 
+	/**
+	 * Returns a string representation of this point
+	 * 
+	 * @return String representation of this point
+	 */
 	public String toString() {
 		return "(" + x + ", " + y + ")";
 	}

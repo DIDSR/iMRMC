@@ -1,9 +1,9 @@
-/*
+/**
  * WrapLayout.java
  * 
  * FlowLayout subclass that fully supports wrapping of components.
  * 
- * @Author Rob Camick
+ * @author Rob Camick
  * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
@@ -34,7 +34,8 @@ public class WrapLayout extends FlowLayout {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	//private Dimension preferredLayoutSize;
+
+	// private Dimension preferredLayoutSize;
 
 	/**
 	 * Constructs a new <code>WrapLayout</code> with a left alignment and a
@@ -50,8 +51,7 @@ public class WrapLayout extends FlowLayout {
 	 * argument must be one of <code>WrapLayout</code>, <code>WrapLayout</code>,
 	 * or <code>WrapLayout</code>.
 	 * 
-	 * @param align
-	 *            the alignment value
+	 * @param align the alignment value
 	 */
 	public WrapLayout(int align) {
 		super(align);
@@ -65,12 +65,9 @@ public class WrapLayout extends FlowLayout {
 	 * <code>WrapLayout</code>, <code>WrapLayout</code>, or
 	 * <code>WrapLayout</code>.
 	 * 
-	 * @param align
-	 *            the alignment value
-	 * @param hgap
-	 *            the horizontal gap between components
-	 * @param vgap
-	 *            the vertical gap between components
+	 * @param align the alignment value
+	 * @param hgap the horizontal gap between components
+	 * @param vgap the vertical gap between components
 	 */
 	public WrapLayout(int align, int hgap, int vgap) {
 		super(align, hgap, vgap);
@@ -80,8 +77,7 @@ public class WrapLayout extends FlowLayout {
 	 * Returns the preferred dimensions for this layout given the <i>visible</i>
 	 * components in the specified target container.
 	 * 
-	 * @param target
-	 *            the component which needs to be laid out � * @return the
+	 * @param target the component which needs to be laid out � * @return the
 	 *            preferred dimensions to lay out the subcomponents of the
 	 *            specified container
 	 */
@@ -94,8 +90,7 @@ public class WrapLayout extends FlowLayout {
 	 * Returns the minimum dimensions needed to layout the <i>visible</i>
 	 * components contained in the specified target container.
 	 * 
-	 * @param target
-	 *            the component which needs to be laid out
+	 * @param target the component which needs to be laid out
 	 * @return the minimum dimensions to lay out the subcomponents of the
 	 *         specified container
 	 */
@@ -110,10 +105,8 @@ public class WrapLayout extends FlowLayout {
 	 * Returns the minimum or preferred dimension needed to layout the target
 	 * container.
 	 * 
-	 * @param target
-	 *            target to get layout size for
-	 * @param preferred
-	 *            should preferred size be calculated
+	 * @param target target to get layout size for
+	 * @param preferred should preferred size be calculated
 	 * @return the dimension to layout the target container
 	 */
 	private Dimension layoutSize(Container target, boolean preferred) {
@@ -190,7 +183,7 @@ public class WrapLayout extends FlowLayout {
 		}
 	}
 
-	/*
+	/**
 	 * A new row has been completed. Use the dimensions of this row to update
 	 * the preferred size for the container.
 	 * 

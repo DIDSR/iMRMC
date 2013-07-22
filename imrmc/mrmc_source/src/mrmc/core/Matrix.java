@@ -1,9 +1,11 @@
-/*
- * matrix.java
+/**
+ * Matrix.java
  * 
- * v2.0b
+ * @version 2.0b
  * 
- * @Author Xin He, Phd, Brandon D. Gallas, PhD, Rohan Pathare
+ * @author Xin He, Ph.D
+ * @author Brandon D. Gallas, Ph.D
+ * @author Rohan Pathare
  * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
@@ -26,9 +28,13 @@ package mrmc.core;
 import java.text.DecimalFormat;
 
 public class Matrix {
-	public Matrix() {
-	}
-
+	/**
+	 * Multiplies two double matrices
+	 * 
+	 * @param m1 First matrix
+	 * @param m2 Second matrix
+	 * @return m1 multiplied by m2
+	 */
 	public static double[][] multiply(double[][] m1, double[][] m2) {
 		int m1rows = m1.length;
 		int m1cols = m1[0].length;
@@ -50,6 +56,13 @@ public class Matrix {
 		return result;
 	}
 
+	/**
+	 * Multiplies a double matrix by a double vector
+	 * 
+	 * @param m1 The matrix
+	 * @param m2 The vectory
+	 * @return m1 multiplied by m2
+	 */
 	public static double[] multiply(double[][] m1, double[] m2) {
 		int m1rows = m1.length;
 		int m1cols = m1[0].length;
@@ -68,6 +81,13 @@ public class Matrix {
 		return result;
 	}
 
+	/**
+	 * Multiplies two int matrices
+	 * 
+	 * @param m1 First matrix
+	 * @param m2 Second matrix
+	 * @return m1 multiplied by m2
+	 */
 	public static int[][] multiply(int[][] m1, int[][] m2) {
 		int m1rows = m1.length;
 		int m1cols = m1[0].length;
@@ -89,6 +109,13 @@ public class Matrix {
 		return result;
 	}
 
+	/**
+	 * Calculates dot product of two double vectors
+	 * 
+	 * @param m1 First vector
+	 * @param m2 Second vector
+	 * @return dot product of m1, m2
+	 */
 	public static double[] dotProduct(double[] m1, double[] m2) {
 		double result[] = new double[m1.length];
 		if (m1.length != m2.length)
@@ -101,6 +128,13 @@ public class Matrix {
 		return result;
 	}
 
+	/**
+	 * Scales a double vector by a double
+	 * 
+	 * @param m1 The vector
+	 * @param s The scalar
+	 * @return m1 scaled by s
+	 */
 	public static double[] scaleVector(double[] m1, double s) {
 		double[] result = new double[m1.length];
 		for (int i = 0; i < m1.length; i++) {
@@ -109,6 +143,13 @@ public class Matrix {
 		return result;
 	}
 
+	/**
+	 * Scales a double matrix by a double
+	 * 
+	 * @param m The matrix
+	 * @param s The scalar
+	 * @return m scaled by s
+	 */
 	public static double[][] scaleMatrix(double[][] m, double s) {
 		double[][] result = new double[m.length][m[0].length];
 		for (int i = 0; i < m.length; i++) {
@@ -119,6 +160,12 @@ public class Matrix {
 		return result;
 	}
 
+	/**
+	 * Calculates the total of all values in an int matrix
+	 * 
+	 * @param m The matrix
+	 * @return Total value of all entries in m
+	 */
 	public static int total(int[][] m) {
 		int rows = m.length;
 		int cols = m[0].length;
@@ -129,6 +176,12 @@ public class Matrix {
 		return T;
 	}
 
+	/**
+	 * Calculates the total of all values in a double matrix
+	 * 
+	 * @param m The matrix
+	 * @return Total value of all entries in m
+	 */
 	public static double total(double[][] m) {
 		int rows = m.length;
 		int cols = m[0].length;
@@ -139,6 +192,12 @@ public class Matrix {
 		return T;
 	}
 
+	/**
+	 * Calculates the total of all values in a double vector
+	 * 
+	 * @param m The vector
+	 * @return Total value of all entries in m
+	 */
 	public static double total(double[] m) {
 		int rows = m.length;
 		double T = 0;
@@ -147,6 +206,12 @@ public class Matrix {
 		return T;
 	}
 
+	/**
+	 * Transposes a double matrix
+	 * 
+	 * @param m The matrix
+	 * @return Transposition of m
+	 */
 	public static double[][] matrixTranspose(double[][] m) {
 		double[][] result = new double[m[0].length][m.length];
 		for (int i = 0; i < m.length; i++) {
@@ -156,6 +221,12 @@ public class Matrix {
 		return result;
 	}
 
+	/**
+	 * Transposes an int matrix
+	 * 
+	 * @param m The matrix
+	 * @return Transposition of m
+	 */
 	public static int[][] matrixTranspose(int[][] m) {
 		int[][] result = new int[m[0].length][m.length];
 		for (int i = 0; i < m.length; i++) {
@@ -165,6 +236,11 @@ public class Matrix {
 		return result;
 	}
 
+	/**
+	 * Prints a double vector in an easy to read format
+	 * 
+	 * @param m The vector
+	 */
 	public static void printVector(double[] m) {
 		DecimalFormat df = new DecimalFormat("0.###E0");
 		String temp = "";
@@ -181,6 +257,11 @@ public class Matrix {
 		System.out.print(temp);
 	}
 
+	/**
+	 * Prints a double matrix in an easy to read format
+	 * 
+	 * @param m The matrix
+	 */
 	public static void printMatrix(double[][] m) {
 		int col = m[0].length;
 		int row = m.length;
@@ -201,6 +282,11 @@ public class Matrix {
 		}
 	}
 
+	/**
+	 * Prints an int matrix in an easy to read format
+	 * 
+	 * @param m The matrix
+	 */
 	public static void printMatrix(int[][] m) {
 		int col = m[0].length;
 		int row = m.length;
@@ -215,6 +301,17 @@ public class Matrix {
 	}
 
 	// extracts elements from 3d matrix like IDL syntax m[*, d2, d3]
+	/**
+	 * Places one dimension of a 3-D matrix into a vector using a syntax similar
+	 * to IDL of m[*,d2,d3], etc.
+	 * 
+	 * @param start How far along the dimension to iterate
+	 * @param m The matrix
+	 * @param d1 First dimension parameter
+	 * @param d2 Second dimension parameter
+	 * @param d3 Third dimension parameter
+	 * @return Vector of all values in the specified dimension
+	 */
 	public static double[] get1Dimension(int start, double[][][] m, String d1,
 			String d2, String d3) {
 		double[] result;
@@ -244,10 +341,17 @@ public class Matrix {
 			throw new NumberFormatException(
 					"Must indicate a dimension to iterate");
 		}
-
 		return result;
 	}
 
+	/**
+	 * Gets two dimensions of a 3-d int matrix
+	 * 
+	 * @param m The matrix
+	 * @param d2 Second dimension
+	 * @param d3 Third dimension
+	 * @return Matrix of two specified dimensions
+	 */
 	public static int[][] extractFirstDimension(int[][][] m, int d2, int d3) {
 		int[][] result = new int[m.length][1];
 		for (int i = 0; i < m.length; i++) {
@@ -256,6 +360,14 @@ public class Matrix {
 		return result;
 	}
 
+	/**
+	 * Gets two dimensions of a 3-d double matrix
+	 * 
+	 * @param m The matrix
+	 * @param d2 Second dimension
+	 * @param d3 Third dimension
+	 * @return Matrix of two specified dimensions
+	 */
 	public static double[][] extractFirstDimension(double[][][] m, int d2,
 			int d3) {
 		double[][] result = new double[m.length][1];
@@ -265,6 +377,14 @@ public class Matrix {
 		return result;
 	}
 
+	/**
+	 * Performs linear transformation on a double matrix
+	 * 
+	 * @param m The matrix
+	 * @param k Scalar
+	 * @param d Add value
+	 * @return Transformed matrix
+	 */
 	public static double[][] linearTrans(double[][] m, double k, double d) {
 		double[][] result = new double[m.length][m[0].length];
 		for (int i = 0; i < m.length; i++)
@@ -273,6 +393,14 @@ public class Matrix {
 		return result;
 	}
 
+	/**
+	 * Performs linear transformation on a double vector
+	 * 
+	 * @param m The vector
+	 * @param k Scalar
+	 * @param d Add value
+	 * @return Transformed matrix
+	 */
 	public static double[] linearTrans(double[] m, double k, double d) {
 		double[] result = new double[m.length];
 		for (int i = 0; i < m.length; i++)
@@ -280,6 +408,14 @@ public class Matrix {
 		return result;
 	}
 
+	/**
+	 * Performs linear transformation on an int matrix
+	 * 
+	 * @param m The matrix
+	 * @param k Scalar
+	 * @param d Add value
+	 * @return Transformed matrix
+	 */
 	public static double[][] linearTrans(int[][] m, double k, double d) {
 		double[][] result = new double[m.length][m[0].length];
 		for (int i = 0; i < m.length; i++)
@@ -288,6 +424,13 @@ public class Matrix {
 		return result;
 	}
 
+	/**
+	 * Subtracts one double matrix from another
+	 * 
+	 * @param m1 First matrix
+	 * @param m2 Second matrix
+	 * @return result of m1 - m2
+	 */
 	public static double[][] subtract(double[][] m1, double[][] m2) {
 		double[][] result = new double[m1.length][m1[0].length];
 		for (int i = 0; i < m1.length; i++)
@@ -296,6 +439,13 @@ public class Matrix {
 		return result;
 	}
 
+	/**
+	 * Multiplies the corresponding elements of a double matrix
+	 * 
+	 * @param m1 First matrix
+	 * @param m2 Second matrix
+	 * @return Multiplied matrix
+	 */
 	public static double[][] elementMultiply(double[][] m1, double[][] m2) {
 		double[][] result = new double[m1.length][m1[0].length];
 		for (int i = 0; i < m1.length; i++)
@@ -304,6 +454,13 @@ public class Matrix {
 		return result;
 	}
 
+	/**
+	 * Multiplies the corresponding elements of an int matrix
+	 * 
+	 * @param m1 First matrix
+	 * @param m2 Second matrix
+	 * @return Multiplied matrix
+	 */
 	public static int[][] elementMultiply(int[][] m1, int[][] m2) {
 		int[][] result = new int[m1.length][m1[0].length];
 		for (int i = 0; i < m1.length; i++)
@@ -312,6 +469,13 @@ public class Matrix {
 		return result;
 	}
 
+	/**
+	 * Adds the corresponding elements of two double vectors
+	 * 
+	 * @param m1 First vector
+	 * @param m2 Second vector
+	 * @return Vector of m1 + m2
+	 */
 	public static double[] matrixAdd(double[] m1, double[] m2) {
 		double[] result = new double[m1.length];
 		for (int i = 0; i < m1.length; i++)
@@ -319,6 +483,13 @@ public class Matrix {
 		return result;
 	}
 
+	/**
+	 * Adds the corresponding elements of two double matrices
+	 * 
+	 * @param m1 First matrix
+	 * @param m2 Second matrix
+	 * @return Matrix of m1 + m2
+	 */
 	public static double[][] matrixAdd(double[][] m1, double[][] m2) {
 		double[][] result = new double[m1.length][m1[0].length];
 		for (int i = 0; i < m1.length; i++)
@@ -327,6 +498,14 @@ public class Matrix {
 		return result;
 	}
 
+	/**
+	 * Same as double dot product, but doesn't check bounds
+	 * 
+	 * @param m1 First vector
+	 * @param m2 Second vector
+	 * @return Multiplied vector
+	 * @see #dotProduct(double[], double[])
+	 */
 	public static double[] elementMultiply(double[] m1, double[] m2) {
 		double[] result = new double[m1.length];
 		for (int i = 0; i < m1.length; i++)
@@ -334,6 +513,12 @@ public class Matrix {
 		return result;
 	}
 
+	/**
+	 * Sums across all rows in the matrix
+	 * 
+	 * @param m The matrix
+	 * @return Array of sums for each row
+	 */
 	public static double[] rowSum(double[][] m) {
 		double[] result = new double[m.length];
 		for (int i = 0; i < m.length; i++) {
@@ -345,6 +530,12 @@ public class Matrix {
 		return result;
 	}
 
+	/**
+	 * Sums across all columns in the matrix
+	 * 
+	 * @param m The matrix
+	 * @return Array of sums for each column
+	 */
 	public static double[] colSum(double[][] m) {
 		double[] result = new double[m[0].length];
 		for (int j = 0; j < m[0].length; j++) {
@@ -356,6 +547,14 @@ public class Matrix {
 		return result;
 	}
 
+	/**
+	 * Creates a double vector of size X with all elements initialized to zero.
+	 * Note that this method is not necessary since declaring a double array of
+	 * any dimensions automatically initializes its contents to zero.
+	 * 
+	 * @param X size of vector
+	 * @return zero'd vector
+	 */
 	public static double[] setZero(int X) {
 		double[] result = new double[X];
 		for (int i = 0; i < X; i++)
@@ -363,6 +562,15 @@ public class Matrix {
 		return result;
 	}
 
+	/**
+	 * Creates a double matrix of dimensions X, Y with all elements initialized
+	 * to zero. Note that this method is not necessary since declaring a double
+	 * array of any dimensions automatically initializes its contents to zero.
+	 * 
+	 * @param X First dimension of matrix
+	 * @param Y Second dimension of matrix
+	 * @return zero'd matrix
+	 */
 	public static double[][] setZero(int X, int Y) {
 		double[][] result = new double[X][Y];
 		for (int i = 0; i < X; i++)
@@ -371,6 +579,12 @@ public class Matrix {
 		return result;
 	}
 
+	/**
+	 * Gets the minimum value in a double matrix
+	 * 
+	 * @param m The matrix
+	 * @return The minimum value
+	 */
 	public static double min(double[][] m) {
 		double x = m[0][0];
 		for (int i = 0; i < m.length; i++)

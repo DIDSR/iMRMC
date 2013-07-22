@@ -1,9 +1,11 @@
-/*
+/**
  * CovMRMC.java
  * 
- * v2.0b
+ * @version 2.0b
  * 
- * @Author Xin He, Phd, Brandon D. Gallas, PhD, Rohan Pathare
+ * @author Xin He, Ph.D, 
+ * @author Brandon D. Gallas, Ph.D
+ * @author Rohan Pathare
  * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
@@ -32,22 +34,54 @@ public class CovMRMC {
 	private double[][] auc; // auc for each reader each modality
 	private double[] aucMod = new double[2];
 
+	/**
+	 * Gets the matrix of moments
+	 * 
+	 * @return Moments matrix
+	 */
 	public double[] getMoments() {
 		return moments;
 	}
 
+	/**
+	 * Gets the matrix of moments with bias applied
+	 * 
+	 * @return Biased moments matrix
+	 */
 	public double[] getBiasedMoments() {
 		return biasM;
 	}
 
+	/**
+	 * Gets the coefficients vector
+	 * 
+	 * @return Coefficients vector
+	 */
 	public double[] getC() {
 		return c;
 	}
 
+	/**
+	 * Gets the AUCs for both modalities
+	 * 
+	 * @return Array of AUCs for both modalities
+	 */
 	public double[] getaucMod() {
 		return aucMod;
 	}
 
+	/**
+	 * Sole constructor for CovMRMC. Performs variance analysis on experiment
+	 * data and parameters.
+	 * 
+	 * @param t0 Scores for modality 0
+	 * @param d0 Design matrix for modality 0
+	 * @param t1 Scores for modality 1
+	 * @param d1 Design matrix for modality 1
+	 * @param R Number of readers
+	 * @param N Number of normal cases
+	 * @param D Number of disease cases
+	 */
 	public CovMRMC(double[][][] t0, int[][][] d0, double[][][] t1,
 			int[][][] d1, int R, int N, int D) {
 		Reader = R;
@@ -80,11 +114,14 @@ public class CovMRMC {
 		double wadaSumijr = 0.0;
 		double wbdbSumijr = 0.0;
 
-		for (int i = 0; i < Reader; i++)
-			for (int j = 0; j < nmod; j++)
+		for (int i = 0; i < Reader; i++) {
+			for (int j = 0; j < nmod; j++) {
 				w[i][j] = 1.0;
-		for (int i = 0; i < 3; i++)
+			}
+		}
+		for (int i = 0; i < 3; i++) {
 			pairs[i] = 0;
+		}
 
 		for (int ir = 0; ir < Reader; ir++) {
 			// ***************for the first modality******************
@@ -219,6 +256,8 @@ public class CovMRMC {
 			}
 
 		} // end reader loop
+		
+		
 		bdenom[5] = Matrix.total(Matrix.elementMultiply(wadaSumr, wbdbSumr));
 		bdenom[6] = Matrix.total(Matrix.elementMultiply(wadaSumir, wbdbSumir));
 		bdenom[7] = Matrix.total(Matrix.elementMultiply(wadaSumjr, wbdbSumjr));
@@ -264,18 +303,5 @@ public class CovMRMC {
 
 		aucMod[0] = aucA / totalwada;
 		aucMod[1] = aucB / totalwbdb;
-		// System.out.println("AUC1="+aucMod[0]+"  AUC2="+aucMod[1]);
-		// System.out.println("M1="+moments[1]+"M2="+moments[2]+"M3="+moments[3]+"M4="+moments[4]+"M5="+moments[5]+"M6="+moments[6]+"M7="+moments[7]+"M8="+moments[8]);
-		// print, nr_master, auc_master
-		// auc_master = mx.linearTrans(mx.setZero(nr_master+1,2), 1, -1);
-		// auc_master(indexr,0) = auc(*,0);
-		// auc_master(nr_master,0) = auc_a / total_wada;
-		// auc_master(indexr,1) = auc(*,1);
-		// auc_master(nr_master,1) = auc_b / total_wbdb;
-		// auc = auc_master;
-
-		// print, nr_master, auc_master
-		// var = total(c*m)
-
 	}
 }

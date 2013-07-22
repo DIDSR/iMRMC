@@ -1,9 +1,11 @@
-/*
- * statTest.java
+/**
+ * StatTest.java
  * 
- * v2.0b
+ * @version 2.0b
  * 
- * @Author Xin He, Phd, Brandon D. Gallas, PhD, Rohan Pathare
+ * @author Xin He, Ph.D
+ * @author Brandon D. Gallas, Ph.D
+ * @author Rohan Pathare
  * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
@@ -31,9 +33,9 @@ import umontreal.iro.lecuyer.probdist.FisherFDist;
 import umontreal.iro.lecuyer.probdist.NormalDist;
 
 public class StatTest {
-	final int INFINITY = 500;
-	final int PRECISION = 6;
-	final double ZERO = 1E-300;
+	private final int INFINITY = 500;
+	private final int PRECISION = 6;
+	private final double ZERO = 1E-300;
 	private double powerF;
 	private double powerZ;
 	private double DOF = 0;
@@ -41,7 +43,6 @@ public class StatTest {
 	private double tStat = 0;
 	private double effSize;
 	private double sigLevel;
-	private double pValZ;
 	private double pValF;
 	private double ciBot, ciTop;
 	private double f0;
@@ -49,34 +50,65 @@ public class StatTest {
 	private double df2;
 	private double fStat;
 
+	/**
+	 * Gets the lower range of the confidence interval
+	 * 
+	 * @return Lower range of confidence interval
+	 */
 	public double getciBot() {
 		return ciBot;
 	}
 
+	/**
+	 * Gets the upper range of the confidence interval
+	 * 
+	 * @return Upper range of confidence interval
+	 */
 	public double getciTop() {
 		return ciTop;
 	}
 
+	/**
+	 * Gets the power according to Hillis 2011 calculation
+	 * 
+	 * @return Power calculation
+	 */
 	public double getHillisPower() {
 		return powerF;
 	}
 
+	/**
+	 * Gets the power according to Z test
+	 * 
+	 * @return Power calculation
+	 */
 	public double getZPower() {
 		return powerZ;
 	}
 
+	/**
+	 * Gets the degrees of freedom according to Hillis 2008 calculation
+	 * 
+	 * @return Degrees of freedom
+	 */
 	public double getDOF() {
 		return DOF;
 	}
 
+	/**
+	 * Gets the t-statistic
+	 * 
+	 * @return T-statistic
+	 */
 	public double gettStat() {
 		return tStat;
 	}
 
-	public double getpValZ() {
-		return pValZ;
-	}
-
+	/**
+	 * Gets the p-value
+	 * 
+	 * @return P-value
+	 */
 	public double getpValF() {
 		return pValF;
 	}
@@ -85,25 +117,45 @@ public class StatTest {
 		return f0;
 	}
 
+	/**
+	 * Gets the delta
+	 * 
+	 * @return Delta (f-statistic)
+	 */
 	public double getDelta() {
 		return fStat;
 	}
 
+	/**
+	 * Gets the denominator degrees of freedom (Hillis 2008 method)
+	 * 
+	 * @return Degrees of freedom
+	 */
 	public double getDDF() {
 		return df2;
 	}
 
+	/**
+	 * Gets the degrees of freedom (Obuchowski, BDG method)
+	 * 
+	 * @return Degrees of freedom
+	 */
 	public double getDfBDG() {
 		return dfBDG;
 	}
 
-	/*
-	 * Constructor used for stats in sizing panel
+	/**
+	 * Constructor used for calculating statistics when sizing a new trial
 	 * 
-	 * @param DBMvar 3 elements, components for a given modality in DBM
-	 * representation or total if difference in modalities
-	 * 
-	 * @param totalVar Summed total variance
+	 * @param DBMvar Subset of DBM variance components for the selected
+	 *            modality/difference
+	 * @param r Number of readers
+	 * @param n Number of normal cases
+	 * @param d Number of disease cases
+	 * @param sig Significance level
+	 * @param eff Effect size
+	 * @param totalVar Total variance of components
+	 * @param BCKbias Biased BCK variance components
 	 */
 	public StatTest(double[] DBMvar, int r, int n, int d, double sig,
 			double eff, double totalVar, double[][] BCKbias) {
@@ -115,7 +167,16 @@ public class StatTest {
 		dfBDG = calcDFBDG(BCKbias, r, n, d, totalVar);
 	}
 
-	/* Constructor used for stats in variance analysis panel */
+	/**
+	 * Constructor used for calculating statistics when performing initial
+	 * variance analysis
+	 * 
+	 * @param curRecord The database record for which to calculate statistics
+	 * @param selectedMod Which modality/difference
+	 * @param useBiasM Whether or not to use biased variance components
+	 * @param sig Significance level
+	 * @param eff Effect size
+	 */
 	public StatTest(DBRecord curRecord, int selectedMod, int useBiasM,
 			double sig, double eff) {
 		double mst = 0, denom = 0, statT = 0, ddf = 0;
@@ -199,12 +260,29 @@ public class StatTest {
 				+ "std" + Math.sqrt(var[selectedMod]));
 	}
 
+	/**
+	 * Finds the variance of two doubles
+	 * 
+	 * @param a First number
+	 * @param b Second number
+	 * @return Variance of the two numbers
+	 */
 	public double doVar(double a, double b) {
 		double mean = (a + b) / 2.0;
 		double var = (a - mean) * (a - mean) + (b - mean) * (b - mean);
 		return var;
 	}
 
+	/**
+	 * Calculates the denominator degrees of freedom by Hillis 2008 method
+	 * 
+	 * @param var Subset of DBM variance components for the selected
+	 *            modality/difference
+	 * @param r Number of readers
+	 * @param c Number of cases
+	 * @param totalVar Total variance of components
+	 * @return Denominator degrees of freedom
+	 */
 	public double DDF_Hillis(double[] var, int r, int c, double totalVar) {
 		double SigTR = var[0];
 		double SigTC = var[1];
@@ -239,6 +317,16 @@ public class StatTest {
 		return ddf_hillis;
 	}
 
+	/**
+	 * Calculates the statistical power by f-test
+	 * 
+	 * @param var Subset of DBM variance components for the selected
+	 *            modality/difference
+	 * @param r Number of readers
+	 * @param c Number of cases
+	 * @param totalVar Total variance of components
+	 * @return Statistical power
+	 */
 	public double FTest_power(double[] var, int r, int c, double totalVar) {
 		double SigTR = var[0];
 		double SigTC = var[1];
@@ -295,6 +383,15 @@ public class StatTest {
 		return fTestPower;
 	}
 
+	/**
+	 * Calculates the cumulative distribution function for a beta distribution
+	 * 
+	 * @param df1 First degrees of freedom parameter
+	 * @param df2 Second degrees of freedom parameter
+	 * @param delta f-statistic
+	 * @param x f0/CVF
+	 * @return CDF value
+	 */
 	public double cdfNonCentralF(int df1, int df2, double delta, double x) {
 		double cdf = 0;
 		for (int j = 0; j < INFINITY; j++) {
@@ -313,6 +410,16 @@ public class StatTest {
 		return cdf;
 	}
 
+	/**
+	 * Calculates statistical power via z-test
+	 * 
+	 * @param var Subset of DBM variance components for the selected
+	 *            modality/difference
+	 * @param r Number of readers
+	 * @param c Number of cases
+	 * @param totalVar Total variance of components
+	 * @return Statistical power
+	 */
 	public double ZTest(double[] var, int r, int c, double totalVar) {
 		double sigma = Math.sqrt(totalVar);
 		double v = NormalDist.inverseF(0, sigma, 1 - sigLevel / 2.0);
@@ -323,8 +430,19 @@ public class StatTest {
 	}
 
 	// TODO verify correctness
+	/**
+	 * Calculates degrees of freedom by Obuchowsku, BDG method
+	 * 
+	 * @param BCKbias Biased components of variance for BCK decomposition
+	 * @param r Number of readers
+	 * @param n Number of normal cases
+	 * @param d Number of disease cases
+	 * @param totalVar Total variance of components
+	 * @return Degrees of freedom
+	 */
 	private double calcDFBDG(double[][] BCKbias, int r, int n, int d,
 			double totalVar) {
+		System.out.println("total var " + totalVar);
 		double s2br = BCKbias[0][3] + BCKbias[1][3] - (2 * BCKbias[2][3]);
 		double s2b0 = BCKbias[0][0] + BCKbias[1][0] - (2 * BCKbias[2][0]);
 		double s2b1 = BCKbias[0][1] + BCKbias[1][1] - (2 * BCKbias[2][1]);

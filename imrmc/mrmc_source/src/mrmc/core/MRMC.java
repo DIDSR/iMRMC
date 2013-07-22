@@ -1,9 +1,11 @@
-/*
+/**
  * MRMC.java
  * 
- * v2.0b
+ * @version 2.0b
  * 
- * @Author Xin He, Phd, Brandon D. Gallas, PhD, Rohan Pathare
+ * @author Xin He, Ph.D
+ * @author Brandon D. Gallas, Ph.D
+ * @author Rohan Pathare
  * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
@@ -40,18 +42,36 @@ public class MRMC extends JApplet {
 	GUImenubar menuBar;
 	MrmcDB db;
 
+	/**
+	 * Gets the number of entries in the database
+	 * 
+	 * @return Number of entries in the database
+	 */
 	public int getDBSize() {
 		return db.getNoOfItems();
 	}
 
+	/**
+	 * Gets the database object
+	 * 
+	 * @return MrmcDB object for this instance of the application
+	 */
 	public MrmcDB getDB() {
 		return db;
 	}
 
+	/**
+	 * Gets the application frame, used when launching dialog boxes
+	 * 
+	 * @return Application JFrame
+	 */
 	public JFrame getFrame() {
 		return mrmcFrame;
 	}
 
+	/**
+	 * Creates the GUI and top-level menu bar
+	 */
 	public void init() {
 
 		super.init();
@@ -59,7 +79,7 @@ public class MRMC extends JApplet {
 		resize(6, 6);
 
 		// create the database
-		db = new MrmcDB(this);
+		db = new MrmcDB();
 
 		Container cp = getContentPane();
 		// Create the interface
@@ -69,18 +89,37 @@ public class MRMC extends JApplet {
 
 	}
 
+	/**
+	 * Entry point of the application. Sets the look-and-feel to match that of
+	 * the user's OS and starts the application with the specified frame size.
+	 * 
+	 * @param args Command-line arguments, not used
+	 */
 	public static void main(String[] args) {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (UnsupportedLookAndFeelException e) {
+			e.printStackTrace();
+		}
 
-		/*
-		 * test whether the user is using it as a command line application or
-		 * load it with a web browser The main function is not called in a
-		 * applet. the program enters from init() so isApplet remains true in
-		 * that case. if it is a command line application, the program enters
-		 * here
-		 */
-		run(new MRMC(), 1000, 650);
+		int width = 1000, height = 650;
+		run(new MRMC(), width, height);
 	}
 
+	/**
+	 * Creates the frame for the application, starts it and displays it
+	 * 
+	 * @param applet This application. It is called "applet" but we only run
+	 *            from a standalone jar so it is more of an "application"
+	 * @param width Width of the application frame in pixels
+	 * @param height Height of the application frame in pixels
+	 */
 	public static void run(JApplet applet, int width, int height) {
 		mrmcFrame = new JFrame("iMRMC 2.0b");
 		mrmcFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -1,9 +1,9 @@
-/*
+/**
  * RoeMetz.java
  * 
- * v2.0b
+ * @version 1.0b
  * 
- * @Author Rohan Pathare
+ * @author Rohan Pathare
  * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
@@ -31,30 +31,59 @@ import roemetz.gui.RMGUInterface;
 
 public class RoeMetz extends JApplet {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private static JFrame iRMFrame;
-	private RMGUInterface gui;
 
+	/**
+	 * Gets the application frame, used when launching dialog boxes
+	 * 
+	 * @return Application JFrame
+	 */
 	public JFrame getFrame() {
 		return iRMFrame;
 	}
 
+	/**
+	 * Creates the GUI
+	 */
 	public void init() {
 		super.init();
 		setLayout(null);
 		resize(6, 6);
 
 		Container cp = getContentPane();
-		gui = new RMGUInterface(this, cp);
+		new RMGUInterface(this, cp);
 	}
 
+	/**
+	 * Entry point of application. Sets the look-and-feel to match that of the
+	 * user's OS and starts the application with specified frame size.
+	 * 
+	 * @param args Command-line arguments, not used
+	 */
 	public static void main(String[] args) {
-		run(new RoeMetz(), 1000, 550);
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (UnsupportedLookAndFeelException e) {
+			e.printStackTrace();
+		}
+		run(new RoeMetz(), 900, 450);
 	}
 
+	/**
+	 * Creates the frame for the application, starts it and displays it
+	 * 
+	 * @param applet This application. Is called "applet" but we only run from
+	 *            standalone jar so it is more of an "application"
+	 * @param width Width of the application frame in pixels
+	 * @param height Height of the application frame in pixels
+	 */
 	public static void run(JApplet applet, int width, int height) {
 		iRMFrame = new JFrame("iRoeMetz 2.0b");
 		iRMFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

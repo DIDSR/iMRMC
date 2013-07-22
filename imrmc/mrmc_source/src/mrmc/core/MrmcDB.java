@@ -1,9 +1,11 @@
-/*
+/**
  * MrmcDB.java
  * 
- * v2.0b
+ * @version 2.0b
  * 
- * @Author Xin He, Phd, Brandon D. Gallas, PhD, Rohan Pathare
+ * @author Xin He, Ph.D
+ * @author Brandon D. Gallas, Ph.D
+ * @author Rohan Pathare
  * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
@@ -34,16 +36,30 @@ public class MrmcDB {
 	private DBRecord[] Records;
 	private ArrayList<String> dbFilenamesInJar = new ArrayList<String>();
 
+	/**
+	 * Gets the number of entries in the database
+	 * 
+	 * @return Number of entries in the database
+	 */
 	public int getNoOfItems() {
 		return noOfItems;
 	}
 
+	/**
+	 * Gets all the records in the database
+	 * 
+	 * @return Array of DBRecords
+	 */
 	public DBRecord[] getRecords() {
 		return Records;
 	}
 
-	/* constructor */
-	public MrmcDB(MRMC mrmc) {
+	/**
+	 * Sole constructor. Checks the application directory for the presence of DB
+	 * files and loads them
+	 * 
+	 */
+	public MrmcDB() {
 		FilenameFilter filefilter = new FilenameFilter() {
 			public boolean accept(File dir, String name) {
 				// if the file extension is .jdb return true, else false
@@ -58,10 +74,14 @@ public class MrmcDB {
 		loadDB();
 	}
 
-	/*
-	 * generate record summary. This function is called when the buttons in
-	 * record summary Panel are clicked. The summary will be displayed in a pop
-	 * up text editor
+	/**
+	 * Generates a textual summary of the database contents
+	 * 
+	 * @param selectedSummary Chooses between single modality or difference
+	 *            summary
+	 * @param SummaryUseMLE Use biased components for summary
+	 * @param method Which decomposition is being used
+	 * @return String with description of contents of the database
 	 */
 	public String recordsSummary(int selectedSummary, int SummaryUseMLE,
 			String method) {
@@ -100,7 +120,6 @@ public class MrmcDB {
 				for (int j = 0; j < 2; j++) // two modalities
 				{
 					each = each + Records[i].getFilename() + "\t";
-					// each=each+"Modality"+Integer.toString(j+1)+"\t";
 					each = each + Records[i].getModality(j) + "\t";
 					each = each + Records[i].getTask() + "\t";
 					for (int k = 0; k < K; k++) {
@@ -125,14 +144,21 @@ public class MrmcDB {
 	}
 
 	/* Read one DB file from the ./DB/ folder */
-	public void readRecord(String filename, InputStreamReader isr, int i) {
+	/**
+	 * Reads a single DB file from the database folder
+	 * 
+	 * @param filename Filename of database file
+	 * @param isr Stream reader containing DB file
+	 * @param recordNum Identifying number for where to place record in internal
+	 *            list of records
+	 */
+	public void readRecord(String filename, InputStreamReader isr, int recordNum) {
 		int j;
 		BufferedReader br = new BufferedReader(isr);
 		String[] strLine = new String[8];
 		ArrayList<String> dbDesp = new ArrayList<String>();
 		String strtemp;
 		String AUCstr = new String();
-		;
 		j = 0;
 		try {
 			while ((strtemp = br.readLine()) != null) {
@@ -146,7 +172,7 @@ public class MrmcDB {
 				}
 
 			}
-			Records[i] = new DBRecord(filename, strLine, dbDesp, AUCstr);
+			Records[recordNum] = new DBRecord(filename, strLine, dbDesp, AUCstr);
 		} catch (Exception e) {
 			System.err
 					.println("read record Error in function readRecord in mrmcDB.java: "
@@ -154,8 +180,8 @@ public class MrmcDB {
 		}
 	}
 
-	/*
-	 * load the database.
+	/**
+	 * Loads all files in database folder into internal database
 	 */
 	public void loadDB() {
 
@@ -182,32 +208,14 @@ public class MrmcDB {
 
 	}
 
-	/*
-	 * In the DB folder, there is a file named TableOfContent.txt, which
-	 * contains the files names of all the DB files. The program will read
-	 * TableOfContent.txt file, and count how many database files are there in
-	 * this DB folder. I commented out the code to automatically count the
-	 * database files from the Jar file. Because that results in Permission
-	 * denied error due to the security features of java applet.
+	/**
+	 * Reads in the table of contents file from the database folder and uses it
+	 * to build list of all the database files
+	 * 
+	 * @return Number of database files
 	 */
 	public int countDBFilesInJar() {
-		int i = 0;
-
-		// JarFile jf;
-		// try {
-		// jf = new JarFile("List.jar");
-		// Enumeration<JarEntry> e = jf.entries();
-		// while (e.hasMoreElements()) {
-		// JarEntry je = e.nextElement();
-		// String nam = je.getName();
-		// if (nam.endsWith(".jdb")) {
-		// dbFilenamesInJar.add(nam);
-		// i++;
-		// }
-		// }
-		// } catch (IOException ioe) {
-		// System.out.println("danger...");
-		// }
+		int numFiles = 0;
 
 		String tablefile = "DB/TableOfContent.txt";
 		String strtemp;
@@ -217,7 +225,7 @@ public class MrmcDB {
 			BufferedReader br = new BufferedReader(isr);
 			while ((strtemp = br.readLine()) != null) {
 				dbFilenamesInJar.add("DB/" + strtemp);
-				i++;
+				numFiles++;
 
 			}
 			in.close();
@@ -227,7 +235,7 @@ public class MrmcDB {
 							+ e.getMessage());
 		}
 
-		return i;
+		return numFiles;
 	}
 
 }

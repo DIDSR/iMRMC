@@ -1,9 +1,11 @@
-/*
+/**
  * ManualCard.java
  * 
- * v2.0b
+ * @version 2.0b
  * 
- * @Author Xin He, Phd, Brandon D. Gallas, PhD, Rohan Pathare
+ * @author Xin He, Ph.D
+ * @author Brandon D. Gallas, Ph.D
+ * @author Rohan Pathare
  * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
@@ -56,14 +58,28 @@ public class ManualCard {
 	private String[] mod = new String[] { "Single Modality", "Difference" };
 	private int SingleOrDiff = 0;
 
+	/**
+	 * Gets which decomposition of the variance components is being used
+	 * 
+	 * @return Which decomposition is being used
+	 */
 	public int getSelectedManualComp() {
 		return selectedManualComp;
 	}
 
+	/**
+	 * Gets whether single modality or difference between modalities is being
+	 * analyzed when using manually input components
+	 * 
+	 * @return Whether single modality or difference
+	 */
 	public int getSingleOrDiff() {
 		return SingleOrDiff;
 	}
 
+	/**
+	 * Resets the Manual input panel to default values
+	 */
 	public void reset() {
 		com1Button.setSelected(true);
 		gui.enableTabs();
@@ -77,26 +93,49 @@ public class ManualCard {
 		compText.setText(" 0.116943691, 0.071012127, 0.046916759, 0.022056021, 0.051145786, 0.044660693, 0.027096782, 0.022590056");
 	}
 
-	public int getSelectedComp() {
-		return selectedManualComp;
-	}
-
+	/**
+	 * Gets the DBRecord created from analysis of the manual components
+	 * 
+	 * @return Record of current analysis
+	 */
 	public DBRecord getManualRecord() {
 		return record;
 	}
 
+	/**
+	 * Gets the number of readers
+	 * 
+	 * @return number of readers
+	 */
 	public int getReader() {
 		return Reader;
 	}
 
+	/**
+	 * Gets the number of normal cases
+	 * 
+	 * @return Number of normal cases
+	 */
 	public int getNormal() {
 		return Normal;
 	}
 
+	/**
+	 * Gets the number of disease cases
+	 * 
+	 * @return Number of disease cases
+	 */
 	public int getDisease() {
 		return Disease;
 	}
 
+	/**
+	 * Sole constructor. Initializes GUI elements.
+	 * 
+	 * @param manualCard Panel containing the elements of the manual input card
+	 * @param guitemp Application's instance of the GUI
+	 * @param lsttemp Application frame.
+	 */
 	public ManualCard(JPanel manualCard, GUInterface guitemp, MRMC lsttemp) {
 		lst = lsttemp;
 		gui = guitemp;
@@ -105,14 +144,14 @@ public class ManualCard {
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(true);
 
-		JLabel l1 = new JLabel("Information of the study\t");
-		JLabel l2 = new JLabel("# Readers");
+		JLabel studyInfoLabel = new JLabel("Information of the study\t");
+		JLabel readerLabel = new JLabel("# Readers");
 		manualInReader = new JTextField(5);
-		JLabel l3 = new JLabel("# Normal");
+		JLabel normalLabel = new JLabel("# Normal");
 		manualInNormal = new JTextField(5);
-		JLabel l4 = new JLabel("# Disease");
+		JLabel diseaseLabel = new JLabel("# Disease");
 		manualInDisease = new JTextField(5);
-		JLabel l5 = new JLabel("Which components are you using?");
+		JLabel componentsLabel = new JLabel("Which components are you using?");
 		// Create the radio buttons.
 		com1Button = new JRadioButton(com[0]);
 		com1Button.setActionCommand(com[0]);
@@ -150,8 +189,8 @@ public class ManualCard {
 		SingleMod.addActionListener(modListener);
 		DiffMod.addActionListener(modListener);
 
-		JButton comOKBtn = new JButton("MRMC Variance Analysis");
-		comOKBtn.addActionListener(new comOKListner());
+		JButton varAnalysisButton = new JButton("MRMC Variance Analysis");
+		varAnalysisButton.addActionListener(new VarAnalysisBtnListner());
 
 		JLabel aucLabel1 = new JLabel("AUC1 ");
 		AUCText1 = new JTextField(10);
@@ -167,12 +206,13 @@ public class ManualCard {
 		layout.setHorizontalGroup(layout.createSequentialGroup().addGroup(
 				layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 						.addGroup(
-								layout.createSequentialGroup().addComponent(l1)
-										.addComponent(l2)
+								layout.createSequentialGroup()
+										.addComponent(studyInfoLabel)
+										.addComponent(readerLabel)
 										.addComponent(manualInReader)
-										.addComponent(l3)
+										.addComponent(normalLabel)
 										.addComponent(manualInNormal)
-										.addComponent(l4)
+										.addComponent(diseaseLabel)
 										.addComponent(manualInDisease))
 						.addGroup(
 								layout.createSequentialGroup()
@@ -182,7 +222,8 @@ public class ManualCard {
 										.addComponent(AUCText2)
 										.addComponent(space2))
 						.addGroup(
-								layout.createSequentialGroup().addComponent(l5)
+								layout.createSequentialGroup()
+										.addComponent(componentsLabel)
 										.addComponent(com1Button)
 										.addComponent(com2Button)
 										.addComponent(com3Button)
@@ -190,7 +231,7 @@ public class ManualCard {
 										.addComponent(space)
 										.addComponent(SingleMod)
 										.addComponent(DiffMod)
-										.addComponent(comOKBtn))
+										.addComponent(varAnalysisButton))
 						.addGroup(
 								layout.createSequentialGroup()
 										.addComponent(compLabel)
@@ -201,9 +242,12 @@ public class ManualCard {
 				.addGroup(
 						layout.createParallelGroup(
 								GroupLayout.Alignment.BASELINE)
-								.addComponent(l1).addComponent(l2)
-								.addComponent(manualInReader).addComponent(l3)
-								.addComponent(manualInNormal).addComponent(l4)
+								.addComponent(studyInfoLabel)
+								.addComponent(readerLabel)
+								.addComponent(manualInReader)
+								.addComponent(normalLabel)
+								.addComponent(manualInNormal)
+								.addComponent(diseaseLabel)
 								.addComponent(manualInDisease))
 				.addGroup(
 						layout.createParallelGroup(
@@ -214,12 +258,13 @@ public class ManualCard {
 				.addGroup(
 						layout.createParallelGroup(
 								GroupLayout.Alignment.BASELINE)
-								.addComponent(l5).addComponent(com1Button)
+								.addComponent(componentsLabel)
+								.addComponent(com1Button)
 								.addComponent(com2Button)
 								.addComponent(com3Button)
 								.addComponent(com4Button).addComponent(space)
 								.addComponent(SingleMod).addComponent(DiffMod)
-								.addComponent(comOKBtn))
+								.addComponent(varAnalysisButton))
 				.addGroup(
 						layout.createParallelGroup(
 								GroupLayout.Alignment.LEADING)
@@ -227,7 +272,10 @@ public class ManualCard {
 
 	}
 
-	/* radio buttons to select which components are being used (BDG, BCK, etc) */
+	/**
+	 * Handler for radio buttons to select which type of components are being
+	 * used
+	 */
 	class comSelListner implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			String str;
@@ -254,9 +302,9 @@ public class ManualCard {
 		}
 	}
 
-	/*
-	 * radio buttons stating whether components are for single modality or
-	 * difference
+	/**
+	 * Handler for radio buttons to select whether components are used for
+	 * single modality or difference
 	 */
 	class modSelListner implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
@@ -275,29 +323,30 @@ public class ManualCard {
 		}
 	}
 
-	/*
-	 * button to confirm manual input entry. verifies that input is properly
-	 * formatted
+	/**
+	 * Handler for button to confirm entry of manual input. Verfies that input
+	 * is properly formatted and performs variance analysis
 	 */
-	class comOKListner implements ActionListener {
-		public int checkinput() {
-			String temp1 = manualInReader.getText();
-			String temp2 = manualInNormal.getText();
-			String temp3 = manualInDisease.getText();
-			String temp4 = compText.getText();
-			String temp5 = AUCText1.getText();
-			String temp6 = AUCText2.getText();
+	class VarAnalysisBtnListner implements ActionListener {
+		public boolean checkinput() {
+			String readerInput = manualInReader.getText();
+			String normalInput = manualInNormal.getText();
+			String diseaseInput = manualInDisease.getText();
+			String componentsInput = compText.getText();
+			String auc1Input = AUCText1.getText();
+			String auc2Input = AUCText2.getText();
 
-			if (temp1.equals("") || temp2.equals("") || temp3.equals("")
-					|| temp4.equals("") || temp5.equals("")
-					|| (temp6.equals("") && SingleOrDiff == 1)) {
+			if (readerInput.equals("") || normalInput.equals("")
+					|| diseaseInput.equals("") || componentsInput.equals("")
+					|| auc1Input.equals("")
+					|| (auc2Input.equals("") && SingleOrDiff == 1)) {
 				JFrame frame = lst.getFrame();
 				JOptionPane.showMessageDialog(frame,
 						"The input is not complete", "Error",
 						JOptionPane.ERROR_MESSAGE);
-				return 0;
+				return false;
 			} else {
-				String[] tempComp = temp4.split(",");
+				String[] tempComp = componentsInput.split(",");
 				if (tempComp.length != numberOfComps[selectedManualComp]) {
 					JFrame frame = lst.getFrame();
 					String strtemp = "The "
@@ -308,16 +357,15 @@ public class ManualCard {
 							+ " elements!\n";
 					JOptionPane.showMessageDialog(frame, strtemp, "Error",
 							JOptionPane.ERROR_MESSAGE);
-					return 0;
+					return false;
 				}
 			}
-			return 1;
+			return true;
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			int pass = checkinput();
 
-			if (pass == 0)
+			if (!checkinput())
 				return;
 			Reader = Integer.parseInt(manualInReader.getText());
 			Normal = Integer.parseInt(manualInNormal.getText());
@@ -334,9 +382,9 @@ public class ManualCard {
 				auc[1] = Double.valueOf(AUCText2.getText());
 			record = new DBRecord(data, selectedManualComp, Reader, Normal,
 					Disease, auc);
-			gui.setTab1();
+			gui.setTable1();
 			gui.setAUCoutput();
-			gui.setSPanel();
+			gui.setSizePanel();
 			gui.set1stStatPanel();
 		}
 	}
