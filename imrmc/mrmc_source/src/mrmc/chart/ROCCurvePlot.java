@@ -1,9 +1,9 @@
-/*
+/**
  * ROCCurvePlot.java
  * 
- * v2.0b
+ * @version 2.0b
  * 
- * @Author Brandon D. Gallas, PhD, Rohan Pathare
+ * @author Rohan Pathare
  * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
@@ -62,6 +62,14 @@ public class ROCCurvePlot extends JFrame {
 	private JCheckBox diag;
 	private JCheckBox pooled;
 
+	/**
+	 * Sole constructor. Creates a line plot display ROC curves
+	 * 
+	 * @param title Title of the chart
+	 * @param xaxis x-axis label
+	 * @param yaxis y-axis label
+	 * @param data Mapping of readers to a set of points defining an ROC curve
+	 */
 	public ROCCurvePlot(final String title, String xaxis, String yaxis,
 			TreeMap<Integer, TreeSet<XYPair>> data) {
 		super(title);
@@ -90,7 +98,7 @@ public class ROCCurvePlot extends JFrame {
 			JCheckBox aBox = new JCheckBox("" + r);
 			aBox.setSelected(false);
 			aBox.addItemListener(new SeriesSelectListner());
-			hideSeries("" + r, true);
+			hideSeries("" + r);
 			readerSeriesBoxes.add(aBox);
 			readerSelect.add(aBox);
 		}
@@ -146,6 +154,12 @@ public class ROCCurvePlot extends JFrame {
 
 	}
 
+	/**
+	 * Converts the mapping of readers to curve points into a collection of
+	 * separate XY data.
+	 * 
+	 * @param data Mapping of readers to points defining a curve
+	 */
 	private void createDataset(TreeMap<Integer, TreeSet<XYPair>> data) {
 		seriesCollection = new XYSeriesCollection();
 		readerSeriesTitles = new ArrayList<String>();
@@ -175,12 +189,25 @@ public class ROCCurvePlot extends JFrame {
 
 	}
 
+	/**
+	 * Adds a set of XY points to the collection of ROC curves
+	 * 
+	 * @param newData Set of XY coordinates
+	 * @param type Name for this set of points
+	 */
 	public void addData(TreeSet<XYPair> newData, String type) {
 		for (XYPair point : newData) {
 			seriesCollection.getSeries(type).add(point.x, point.y);
 		}
 	}
 
+	/**
+	 * Creates an ROC curve that averages together the scores for all readers in
+	 * the diagonal direction
+	 * 
+	 * @param data Mapping of readers to points defining a curve
+	 * @return Series containing the ROC curve points
+	 */
 	private XYSeries generateDiagonalROC(TreeMap<Integer, TreeSet<XYPair>> data) {
 		XYSeries diagAvg = new XYSeries("Diagonal Average", false);
 		TreeMap<Integer, TreeSet<XYPair>> rotatedData = new TreeMap<Integer, TreeSet<XYPair>>();
@@ -224,6 +251,12 @@ public class ROCCurvePlot extends JFrame {
 		return diagAvg;
 	}
 
+	/**
+	 * Creates an ROC curve that averages together the scores for all readers in
+	 * the horizontal direction
+	 * 
+	 * @return Series containing the ROC curve points
+	 */
 	private XYSeries generateHorizontalROC() {
 		XYSeries horizAvg = new XYSeries("Horizontal Average", false);
 		for (double i = 0; i <= 1.01; i += 0.01) {
@@ -238,6 +271,12 @@ public class ROCCurvePlot extends JFrame {
 		return horizAvg;
 	}
 
+	/**
+	 * Creates an ROC curve that averages together the scores for all readers in
+	 * the vertical direction
+	 * 
+	 * @return Series containing the ROC curve points
+	 */
 	private XYSeries generateVerticalROC() {
 		XYSeries vertAvg = new XYSeries("Vertical Average", false);
 		for (double i = 0; i <= 1.01; i += 0.01) {
@@ -252,7 +291,12 @@ public class ROCCurvePlot extends JFrame {
 		return vertAvg;
 	}
 
-	private void hideSeries(String series, boolean shapes) {
+	/**
+	 * Hides the specified series from the chart
+	 * 
+	 * @param series Which series to hide
+	 */
+	private void hideSeries(String series) {
 		renderer.setSeriesLinesVisible(
 				(seriesCollection.getSeriesIndex(series)), false);
 		renderer.setSeriesShapesVisible(
@@ -261,6 +305,13 @@ public class ROCCurvePlot extends JFrame {
 				(seriesCollection.getSeriesIndex(series)), false);
 	}
 
+	/**
+	 * Displays the specified series on the chart
+	 * 
+	 * @param series Which series to display
+	 * @param shapes Whether or not to display shapes indicating individual data
+	 *            points
+	 */
 	private void showSeries(String series, boolean shapes) {
 		renderer.setSeriesLinesVisible(
 				(seriesCollection.getSeriesIndex(series)), true);
@@ -272,6 +323,9 @@ public class ROCCurvePlot extends JFrame {
 				(seriesCollection.getSeriesIndex(series)), true);
 	}
 
+	/**
+	 * Handler for checkbox to show or hide all readers from chart
+	 */
 	class ReadersSelectListner implements ItemListener {
 		public void itemStateChanged(ItemEvent e) {
 			if (e.getStateChange() == ItemEvent.DESELECTED) {
@@ -279,7 +333,7 @@ public class ROCCurvePlot extends JFrame {
 					readerBox.setSelected(false);
 				}
 				for (String title : readerSeriesTitles) {
-					hideSeries(title, true);
+					hideSeries(title);
 				}
 			} else if (e.getStateChange() == ItemEvent.SELECTED) {
 				for (JCheckBox readerBox : readerSeriesBoxes) {
@@ -292,6 +346,9 @@ public class ROCCurvePlot extends JFrame {
 		}
 	}
 
+	/**
+	 * Handler for checkbox to show or hide all averages from chart
+	 */
 	class AverageSelectListner implements ItemListener {
 		public void itemStateChanged(ItemEvent e) {
 			if (e.getStateChange() == ItemEvent.DESELECTED) {
@@ -299,10 +356,10 @@ public class ROCCurvePlot extends JFrame {
 				horiz.setSelected(false);
 				diag.setSelected(false);
 				pooled.setSelected(false);
-				hideSeries("Vertical Average", false);
-				hideSeries("Horizontal Average", false);
-				hideSeries("Diagonal Average", false);
-				hideSeries("Pooled Average", true);
+				hideSeries("Vertical Average");
+				hideSeries("Horizontal Average");
+				hideSeries("Diagonal Average");
+				hideSeries("Pooled Average");
 			} else if (e.getStateChange() == ItemEvent.SELECTED) {
 				vert.setSelected(true);
 				horiz.setSelected(true);
@@ -317,6 +374,9 @@ public class ROCCurvePlot extends JFrame {
 		}
 	}
 
+	/**
+	 * Handler for checkboxes to show/hide a specific series
+	 */
 	class SeriesSelectListner implements ItemListener {
 		public void itemStateChanged(ItemEvent e) {
 			if (e.getStateChange() == ItemEvent.DESELECTED) {
@@ -326,9 +386,9 @@ public class ROCCurvePlot extends JFrame {
 								"Horizontal Average")
 						|| ((JCheckBox) e.getItem()).getText().equals(
 								"Diagonal Average")) {
-					hideSeries(((JCheckBox) e.getItem()).getText(), false);
+					hideSeries(((JCheckBox) e.getItem()).getText());
 				} else {
-					hideSeries(((JCheckBox) e.getItem()).getText(), true);
+					hideSeries(((JCheckBox) e.getItem()).getText());
 				}
 			} else if (e.getStateChange() == ItemEvent.SELECTED) {
 				if (((JCheckBox) e.getItem()).getText().equals(

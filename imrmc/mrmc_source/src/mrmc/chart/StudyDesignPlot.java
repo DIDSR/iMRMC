@@ -1,9 +1,9 @@
-/*
+/**
  * StudyDesignPlot.java
  * 
- * v2.0b
+ * @version 2.0b
  * 
- * @Author Brandon D. Gallas, PhD, Rohan Pathare
+ * @author Rohan Pathare
  * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
@@ -23,6 +23,7 @@
  */
 
 package mrmc.chart;
+
 import javax.swing.JFrame;
 import java.awt.Color;
 import java.awt.Rectangle;
@@ -39,11 +40,16 @@ import org.jfree.data.xy.DefaultXYDataset;
 
 public class StudyDesignPlot extends JFrame {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Sole constructor. Creates a plot to show study design
+	 * 
+	 * @param title Title of chart
+	 * @param xaxis Label for x-axis
+	 * @param yaxis Label for y-axis
+	 * @param data Mapping of x-y data
+	 */
 	public StudyDesignPlot(final String title, String xaxis, String yaxis,
 			boolean[][] data) {
 		super(title);
@@ -54,6 +60,12 @@ public class StudyDesignPlot extends JFrame {
 		setContentPane(chartPanel);
 	}
 
+	/**
+	 * Converts data mapping into format for used by chart
+	 * 
+	 * @param data Mapping of x-y data
+	 * @return Chart data in XYDataset format
+	 */
 	private DefaultXYDataset createDataset(boolean[][] data) {
 		int t = 0;
 		int f = 0;
@@ -89,6 +101,15 @@ public class StudyDesignPlot extends JFrame {
 		return dataset;
 	}
 
+	/**
+	 * Constructs the chart
+	 * 
+	 * @param dataset Representation of x-y data
+	 * @param title Title of chart
+	 * @param xaxis Label for x-axis
+	 * @param yaxis Label for y-axis
+	 * @return The chart
+	 */
 	private JFreeChart createChart(final DefaultXYDataset dataset,
 			String title, String xaxis, String yaxis) {
 		final JFreeChart chart = ChartFactory.createScatterPlot(title, xaxis,
@@ -97,11 +118,11 @@ public class StudyDesignPlot extends JFrame {
 		NumberAxis range = (NumberAxis) xyplot.getRangeAxis();
 		range.setTickUnit(new NumberTickUnit(1));
 		XYItemRenderer renderer = xyplot.getRenderer();
-		Rectangle square = new Rectangle(5,5);
+		Rectangle square = new Rectangle(5, 5);
 		renderer.setSeriesShape(0, square);
 		renderer.setSeriesShape(1, square);
 		renderer.setSeriesPaint(0, Color.white);
-		renderer.setSeriesPaint(1,Color.black);
+		renderer.setSeriesPaint(1, Color.black);
 		return chart;
 
 	}

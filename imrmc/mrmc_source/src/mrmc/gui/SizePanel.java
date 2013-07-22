@@ -1,9 +1,11 @@
-/*
+/**
  * SizePanel.java
  * 
- * v2.0b
+ * @version 2.0b
  * 
- * @Author Xin He, Phd, Brandon D. Gallas, PhD, Rohan Pathare
+ * @author Xin He, Ph.D
+ * @author Brandon D. Gallas, Ph.D
+ * @author Rohan Pathare
  * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
@@ -48,7 +50,16 @@ public class SizePanel {
 	private int pairedCs = 1;
 	private int pairedRs = 1;
 
-	public SizePanel(int[] Parms, JPanel sizingPanel, GUInterface guitemp) {
+	/**
+	 * Sole constructor for sizing panel. Creates and initializes related GUI
+	 * elements.
+	 * 
+	 * @param expSizes Experiment size parameters. Taken from study which was
+	 *            analyzed
+	 * @param sizingPanel Panel containing elements for trial sizing
+	 * @param guitemp Application's instance of the GUI
+	 */
+	public SizePanel(int[] expSizes, JPanel sizingPanel, GUInterface guitemp) {
 		gui = guitemp;
 
 		JPanel innerSizingPanel = new JPanel();
@@ -112,7 +123,7 @@ public class SizePanel {
 		sizeTrialInput.add(new Label("#Diseased"));
 		sizeD = new JTextField(3);
 		sizeTrialInput.add(sizeD);
-		setNumbers(Parms);
+		setNumbers(expSizes);
 		JButton sizeTrial = new JButton("Size a Trial");
 		sizeTrial.addActionListener(new sizeTrialListner());
 		sizeTrialInput.add(sizeTrial);
@@ -126,17 +137,35 @@ public class SizePanel {
 		sizingPanel.add(innerSizingPanel);
 	}
 
+	/**
+	 * Sets text boxes for experiment size
+	 * 
+	 * @param Parms Array containing size parameters
+	 */
 	public void setNumbers(int[] Parms) {
 		sizeR.setText(Integer.toString(Parms[0]));
 		sizeN.setText(Integer.toString(Parms[1]));
 		sizeD.setText(Integer.toString(Parms[2]));
 	}
 
+	/**
+	 * Sets text box and label for effect size
+	 * 
+	 * @param text Effect size label text
+	 * @param val Value for effect size input box
+	 */
 	public void setEff(String text, String val) {
 		effSizeLabel.setText(text);
 		effSize.setText(val);
 	}
 
+	/**
+	 * Creates a textual representation of the current record analysis and trial
+	 * sizing results
+	 * 
+	 * @return String containing experiment parameters, components, trial size
+	 *         info
+	 */
 	public String genReport() {
 		int useBiasM = gui.getuseBiasM();
 
@@ -149,20 +178,14 @@ public class SizePanel {
 		double[][] DBMcoeff = curRecord.getDBMcoeff();
 		double[][] ORcoeff = curRecord.getORcoeff();
 
-		// statParms = gui.getSiglevel();
 		statParms[0] = Double.parseDouble(sigLevel.getText());
 		statParms[1] = Double.parseDouble(effSize.getText());
-		// double[] results = sizeTrial(DBM, OR, statParms[0], statParms[1],
-		// curRecord.getReader(),
-		// curRecord.getNormal(), curRecord.getDisease());
 		String result = gui.getStat1();
 
 		int newR = Integer.parseInt(sizeR.getText());
 		int newN = Integer.parseInt(sizeN.getText());
 		int newD = Integer.parseInt(sizeD.getText());
-		
-		// double[] resultsNew = sizeTrial(DBMnew, ORnew, statParms[0],
-		// statParms[1], newR, newN, newD);
+
 		String resultnew = gui.getStat2();
 
 		String str = "";
@@ -254,9 +277,8 @@ public class SizePanel {
 				+ "\n*****************************************************************";
 		str = str
 				+ "\n*****************************************************************";
-		str = str + "\n" + "Effective Size = "
-				+ twoDec.format(statParms[1]) + SEPA
-				+ "Significance Level = " + twoDec.format(statParms[0]);
+		str = str + "\n" + "Effective Size = " + twoDec.format(statParms[1])
+				+ SEPA + "Significance Level = " + twoDec.format(statParms[0]);
 
 		str = str
 				+ "\n*****************************************************************";
@@ -268,7 +290,17 @@ public class SizePanel {
 		return str;
 	}
 
+	// TODO consolidate with other genReport
+	/**
+	 * Creates a textual representation of the current record analysis and trial
+	 * sizing results. Used when manual component input is selected
+	 * 
+	 * @param flag Indicates manual component input is being used
+	 * @return String containing experiment parameters, components, trial size
+	 *         info
+	 */
 	public String genReport(int flag) {
+
 		double[][] BDG = curRecord.getBDG(0);
 		double[][] DBM = curRecord.getDBM(0);
 		double[][] BCK = curRecord.getBCK(0);
@@ -277,7 +309,7 @@ public class SizePanel {
 		double[][] BCKcoeff = curRecord.getBCKcoeff();
 		double[][] DBMcoeff = curRecord.getDBMcoeff();
 		double[][] ORcoeff = curRecord.getORcoeff();
-		// statParms = gui.getSiglevel();
+
 		statParms[0] = Double.parseDouble(sigLevel.getText());
 		statParms[1] = Double.parseDouble(effSize.getText());
 		String results = gui.getStat1();
@@ -367,9 +399,8 @@ public class SizePanel {
 				+ "\n*****************************************************************";
 		str = str
 				+ "\n*****************************************************************";
-		str = str + "\n" + "Effective Size = "
-				+ twoDec.format(statParms[1]) + SEPA
-				+ "Significance Level = " + twoDec.format(statParms[0]);
+		str = str + "\n" + "Effective Size = " + twoDec.format(statParms[1])
+				+ SEPA + "Significance Level = " + twoDec.format(statParms[0]);
 
 		str = str
 				+ "\n*****************************************************************";
@@ -381,8 +412,8 @@ public class SizePanel {
 		return str;
 	}
 
-	/*
-	 * radio buttons to choose if study design has paired readers
+	/**
+	 * Handler for radio buttons to select if study design has paired readers
 	 */
 	class PairedRListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
@@ -397,8 +428,8 @@ public class SizePanel {
 		}
 	}
 
-	/*
-	 * radio buttons to choose if study design has paired cases
+	/**
+	 * Handler for radio buttons to select if study design has paired cases
 	 */
 	class PairedCListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
@@ -413,7 +444,9 @@ public class SizePanel {
 		}
 	}
 
-	/* button to generate report from dataset */
+	/**
+	 * Handler for button to generate report of analysis
+	 */
 	class genReportListner implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			curRecord = gui.getCurrentRecord();
@@ -423,7 +456,7 @@ public class SizePanel {
 			reportFrame.getRootPane().setWindowDecorationStyle(
 					JRootPane.PLAIN_DIALOG);
 			String str = "";
-			if (gui.getSelectedInput() == 2)
+			if (gui.getSelectedInput() == GUInterface.SELECT_MAN)
 				str = genReport(1);
 			else
 				str = genReport();
@@ -438,7 +471,9 @@ public class SizePanel {
 		}
 	}
 
-	/* button to size a trial from dataset */
+	/**
+	 * Handler for button to size trial based on specified parameters
+	 */
 	class sizeTrialListner implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			try {

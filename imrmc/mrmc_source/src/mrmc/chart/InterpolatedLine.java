@@ -1,9 +1,9 @@
-/*
+/**
  * InterpolatedLine.java
  * 
- * v2.0b
+ * @version 2.0b
  * 
- * @Author Brandon D. Gallas, PhD, Rohan Pathare
+ * @author Rohan Pathare
  * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
@@ -23,7 +23,6 @@
  *     a given x or y position. 
  */
 
-
 package mrmc.chart;
 
 import java.util.Iterator;
@@ -31,11 +30,16 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.HashMap;
 
-
 public class InterpolatedLine {
 	private HashMap<XYPair, double[]> allLineEqs;
 	private TreeSet<XYPair> actualPoints;
 
+	/**
+	 * Sole constructor. Given set of XY coordinates, creates a set of linear
+	 * equations describing lines between said coordinates
+	 * 
+	 * @param series Set of XY coordinates describing a curve
+	 */
 	public InterpolatedLine(TreeSet<XYPair> series) {
 		TreeMap<Double, TreeSet<Double>> allDistinctXs = new TreeMap<Double, TreeSet<Double>>();
 		for (XYPair point : series) {
@@ -78,24 +82,12 @@ public class InterpolatedLine {
 
 	}
 
-	/* 
-	 * When determining a diagonally averaged ROC curve, the points are rotated
-	 * such that they lie along the x axis. Since they will be rotated back to 
-	 * the diagonal (x = y) direction, x values go up to sqrt(2) rather than 1. 
+	/**
+	 * Gets the Y coordinate for a given X along the set of interpolated lines
+	 * 
+	 * @param x The X position
+	 * @return The Y position
 	 */
-	public double getYatDiag(double x){
-		if (x > Math.sqrt(2)) {
-			return 0;
-		} else if (x <= 0) {
-			return 0;
-		} else {
-			XYPair currCeiling = actualPoints.ceiling(new XYPair(x, 0));
-			double m = allLineEqs.get(currCeiling)[0];
-			double b = allLineEqs.get(currCeiling)[1];
-			return (m * x) + b;
-		}
-	}
-	
 	public double getYat(double x) {
 		if (x > 1) {
 			return 1;
@@ -109,6 +101,12 @@ public class InterpolatedLine {
 		}
 	}
 
+	/**
+	 * Gets the X coordinate for given Y along the set of interpolated lines. 
+	 * 
+	 * @param y The Y position
+	 * @return The X position
+	 */
 	public double getXat(double y) {
 		if (y > 1) {
 			return 1;
@@ -134,11 +132,33 @@ public class InterpolatedLine {
 			if (returnX > 1) {
 				return 1;
 			}
-			if (returnX < 0){
+			if (returnX < 0) {
 				return 0;
 			}
 			return returnX;
 
+		}
+	}
+
+	/**
+	 * Gets the Y coordinate for a given X along the set of interpolated lines.
+	 * When determining a diagonally averaged ROC curve, the points are roated
+	 * such taht they lie along the x axis. Since they will be rotated back to
+	 * the diagonal (x=y) direction, x values go up to sqrt(2) instead of 1.
+	 * 
+	 * @param x The X position
+	 * @return The Y position
+	 */
+	public double getYatDiag(double x) {
+		if (x > Math.sqrt(2)) {
+			return 0;
+		} else if (x <= 0) {
+			return 0;
+		} else {
+			XYPair currCeiling = actualPoints.ceiling(new XYPair(x, 0));
+			double m = allLineEqs.get(currCeiling)[0];
+			double b = allLineEqs.get(currCeiling)[1];
+			return (m * x) + b;
 		}
 	}
 }

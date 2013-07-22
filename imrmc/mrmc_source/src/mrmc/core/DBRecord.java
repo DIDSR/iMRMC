@@ -1,9 +1,11 @@
-/*
- * dbRecord.java
+/**
+ * DBRecord.java
  * 
- * v2.0b
+ * @version 2.0b
  * 
- * @Author Xin He, Phd, Brandon D. Gallas, PhD, Rohan Pathare
+ * @author Xin He, Ph.D
+ * @author Brandon D. Gallas, Ph.D
+ * @author Rohan Pathare
  * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
@@ -61,43 +63,99 @@ public class DBRecord {
 	private boolean fullyCrossed;
 	private int[][][] mod0StudyDesign;
 	private int[][][] mod1StudyDesign;
+	private InputFile inputFile;
+	private int currentModality0;
+	private int currentModality1;
 
+	/**
+	 * Gets a description of the task
+	 * 
+	 * @return String describing task performed
+	 */
 	public String getTask() {
 		return Task;
 	}
 
+	/**
+	 * Gets description of a particular modality
+	 * 
+	 * @param i Number of the modality specified
+	 * @return String describing the specified modality
+	 */
 	public String getModality(int i) {
 		return Modality[i];
 	}
 
+	/**
+	 * Gets the filename of the raw data file or database file used to create
+	 * the record
+	 * 
+	 * @return String containing filename path
+	 */
 	public String getFilename() {
 		return filename;
 	}
 
+	/**
+	 * Gets the number of readers in the record
+	 * 
+	 * @return Number of readers
+	 */
 	public int getReader() {
 		return nReader;
 	}
 
+	/**
+	 * Gets the number of normal cases in the record
+	 * 
+	 * @return Number of normal cases
+	 */
 	public int getNormal() {
 		return nNormal;
 	}
 
+	/**
+	 * Gets the number of disease cases in the record
+	 * 
+	 * @return Number of disease cases
+	 */
 	public int getDisease() {
 		return nDisease;
 	}
 
+	/**
+	 * Gets the title of the study record
+	 * 
+	 * @return String with title of the record
+	 */
 	public String getRecordTitle() {
 		return recordTitle;
 	}
 
+	/**
+	 * Gets a textual description of the study record
+	 * 
+	 * @return String with description of the record
+	 */
 	public String getRecordDesp() {
 		return recordDesc;
 	}
 
+	/**
+	 * Gets whether the record is fully-crossed or not
+	 * 
+	 * @return True if fully crossed, false otherwise
+	 */
 	public boolean getFullyCrossedStatus() {
 		return fullyCrossed;
 	}
 
+	/**
+	 * Gets the BDG components decomposition with bias or not
+	 * 
+	 * @param useBiasM Whether to get biased decomposition or not
+	 * @return Matrix of BDG component decomposition
+	 */
 	public double[][] getBDG(int useBiasM) {
 		if (useBiasM == 1)
 			return BDGbias;
@@ -105,14 +163,21 @@ public class DBRecord {
 			return BDG;
 	}
 
+	/**
+	 * Gets the coefficient matrix for BDG decomposition
+	 * 
+	 * @return Coefficients matrix
+	 */
 	public double[][] getBDGcoeff() {
 		return BDGcoeff;
 	}
 
-	public double[][] getMScoeff() {
-		return MScoeff;
-	}
-
+	/**
+	 * Gets the BCK components decomposition with bias or not
+	 * 
+	 * @param useBiasM Whether to get biased decomposition or not
+	 * @return Matrix of BCK component decomposition
+	 */
 	public double[][] getBCK(int useBiasM) {
 		if (useBiasM == 1)
 			return BCKbias;
@@ -120,10 +185,21 @@ public class DBRecord {
 			return BCK;
 	}
 
+	/**
+	 * Gets the coefficient matrix for BCK decomposition
+	 * 
+	 * @return Coefficients matrix
+	 */
 	public double[][] getBCKcoeff() {
 		return BCKcoeff;
 	}
 
+	/**
+	 * Gets the DBM components decomposition with bias or not
+	 * 
+	 * @param useBias Whether to get biased decomposition or not
+	 * @return Matrix of DBM component decomposition
+	 */
 	public double[][] getDBM(int useBias) {
 		if (useBias == 1)
 			return DBMbias;
@@ -131,10 +207,21 @@ public class DBRecord {
 			return DBM;
 	}
 
+	/**
+	 * Gets the coefficient matrix for DBM decomposition
+	 * 
+	 * @return Coefficients matrix
+	 */
 	public double[][] getDBMcoeff() {
 		return DBMcoeff;
 	}
 
+	/**
+	 * Gets the OR components decomposition with bias or not
+	 * 
+	 * @param useBias Whether to get biased decomposition or not
+	 * @return Matrix of OR component decomposition
+	 */
 	public double[][] getOR(int useBias) {
 		if (useBias == 1)
 			return ORbias;
@@ -142,6 +229,21 @@ public class DBRecord {
 			return OR;
 	}
 
+	/**
+	 * Gets the coefficient matrix for OR decomposition
+	 * 
+	 * @return Coefficients matrix
+	 */
+	public double[][] getORcoeff() {
+		return ORcoeff;
+	}
+
+	/**
+	 * Gets the MS components decomposition with bias or not
+	 * 
+	 * @param useBias Whether to get biased decomposition or not
+	 * @return Matrix of MS component decomposition
+	 */
 	public double[][] getMS(int useBias) {
 		if (useBias == 1)
 			return MSbias;
@@ -149,26 +251,56 @@ public class DBRecord {
 			return MS;
 	}
 
-	public double[][] getORcoeff() {
-		return ORcoeff;
+	/**
+	 * Gets the coefficient matrix for MS decomposition
+	 * 
+	 * @return Coefficients matrix
+	 */
+	public double[][] getMScoeff() {
+		return MScoeff;
 	}
 
+	/**
+	 * Gets the study design for modality 0
+	 * 
+	 * @return Study design for modality 0, where first dimension is readers,
+	 *         second dimension is normal cases, and third dimension is disease
+	 *         cases. A one at a particular position indicates that the specific
+	 *         reader scored both the normal and disease case, and a zero
+	 *         indicates otherwise.
+	 */
 	public int[][][] getMod0StudyDesign() {
 		return mod0StudyDesign;
 	}
 
+	/**
+	 * Gets the study design for modality 1
+	 * 
+	 * @return Study design for modality 1, where first dimension is readers,
+	 *         second dimension is normal cases, and third dimension is disease
+	 *         cases. A one at a particular position indicates that the specific
+	 *         reader scored both the normal and disease case, and a zero
+	 *         indicates otherwise.
+	 */
 	public int[][][] getMod1StudyDesign() {
 		return mod1StudyDesign;
 	}
 
-	/* constructor 1, create a record from database file */
-	public DBRecord(String fname, String[] str, ArrayList<String> desp,
-			String AUCstr) {
+	/**
+	 * Constructor for creating a record from the internal database
+	 * 
+	 * @param fname Filename of the database file
+	 * @param componentStrings Array of strings containing component information
+	 * @param desp Study info description
+	 * @param AUCstr AUCs in string form
+	 */
+	public DBRecord(String fname, String[] componentStrings,
+			ArrayList<String> desp, String AUCstr) {
 		int i, j;
 		recordTitle = desp.get(0).substring(2);
 		filename = fname;
-		fullyCrossed = true; // currently all files in DB are fully crossed, may
-								// change
+		// Currently all files in DB are fully crossed, but this may change
+		fullyCrossed = true;
 
 		for (i = 0; i < 7; i++) {
 			String tempStr = desp.get(i);
@@ -190,56 +322,40 @@ public class DBRecord {
 		nReader = Integer.valueOf(tempAUC[3]);
 		nNormal = Integer.valueOf(tempAUC[4]);
 		nDisease = Integer.valueOf(tempAUC[5]);
-		mod0StudyDesign = new int[nReader][nNormal][nDisease];
-		for (int m = 0; m < mod0StudyDesign.length; m++) {
-			for (int n = 0; n < mod0StudyDesign[m].length; n++) {
-				Arrays.fill(mod0StudyDesign[m][n], 1);
-			}
-		}
-		mod1StudyDesign = new int[nReader][nNormal][nDisease];
-		for (int m = 0; m < mod1StudyDesign.length; m++) {
-			for (int n = 0; n < mod1StudyDesign[m].length; n++) {
-				Arrays.fill(mod1StudyDesign[m][n], 1);
-			}
-		}
+
+		checkStudyDesign();
 
 		for (i = 0; i < desp.size(); i++) {
 			recordDesc = recordDesc + desp.get(i) + "\n";
 		}
 
-		for (i = 0; i < str.length / 2; i++) {
-			String[] temp = str[i].split(",");
+		// Grab BDG components from file string
+		for (i = 0; i < componentStrings.length / 2; i++) {
+			String[] temp = componentStrings[i].split(",");
 			for (j = 0; j < 8; j++) {
 				BDG[i][j] = Double.valueOf(temp[j]);
 			}
 		}
-		for (i = str.length / 2; i < str.length; i++) {
-			String[] temp = str[i].split(",");
+		for (i = componentStrings.length / 2; i < componentStrings.length; i++) {
+			String[] temp = componentStrings[i].split(",");
 			for (j = 0; j < 8; j++) {
-				BDGbias[i - str.length / 2][j] = Double.valueOf(temp[j]);
+				BDGbias[i - componentStrings.length / 2][j] = Double
+						.valueOf(temp[j]);
 			}
 		}
 
-		BDGcoeff = genBDGCoeff(nReader, nNormal, nDisease);
-		DBMcoeff = genDBMCoeff(nReader, nNormal, nDisease);
-		BCKcoeff = genBCKCoeff(nReader, nNormal, nDisease);
-		ORcoeff = genORCoeff(nReader, nNormal, nDisease);
-		MScoeff = genMSCoeff(nReader, nNormal, nDisease);
-
-		BCK = BDG2BCK(BDG);
-		DBM = BCK2DBM(BCK, nReader, nNormal, nDisease);
-		OR = DBM2OR(0, DBM, nReader, nNormal, nDisease);
-		MS = DBM2MS(DBM, nReader, nNormal, nDisease);
-
-		BCKbias = BDG2BCK(BDGbias);
-		DBMbias = BCK2DBM(BCKbias, nReader, nNormal, nDisease);
-		ORbias = DBM2OR(0, DBMbias, nReader, nNormal, nDisease);
-		MSbias = DBM2MS(DBMbias, nReader, nNormal, nDisease);
+		generateDecompositions();
 	}
 
-	/* Constructor 2: generate a DB record from raw datafile */
-	public DBRecord(InputFile input, int currMod1, int currMod2) {
-
+	/**
+	 * Constructor for creating a record from raw study data input file
+	 * 
+	 * @param input InputFile containing information about the study
+	 * @param currMod0 Which modality within the study we are using as Mod0
+	 * @param currMod1 Which modality within the study we are using as Mod1
+	 */
+	public DBRecord(InputFile input, int currMod0, int currMod1) {
+		inputFile = input;
 		recordTitle = input.getTitle();
 		recordDesc = input.getDesc();
 		filename = input.getFilename();
@@ -248,30 +364,17 @@ public class DBRecord {
 		nDisease = input.getDisease();
 		AUC = input.getaucMod();
 		fullyCrossed = input.getFullyCrossedStatus();
-		if (fullyCrossed) {
-			mod0StudyDesign = new int[nReader][nNormal][nDisease];
-			for (int m = 0; m < mod0StudyDesign.length; m++) {
-				for (int n = 0; n < mod0StudyDesign[m].length; n++) {
-					Arrays.fill(mod0StudyDesign[m][n], 1);
-				}
-			}
-			mod1StudyDesign = new int[nReader][nNormal][nDisease];
-			for (int m = 0; m < mod1StudyDesign.length; m++) {
-				for (int n = 0; n < mod1StudyDesign[m].length; n++) {
-					Arrays.fill(mod1StudyDesign[m][n], 1);
-				}
-			}
-		} else {
-			mod0StudyDesign = input.getStudyDesignSeparated(currMod1);
-			mod1StudyDesign = input.getStudyDesignSeparated(currMod2);
-		}
-
-		String[] descLines = recordDesc.split("\n");
-		int i = 0;
-
 		Modality[0] = "Mod1";
 		Modality[1] = "Mod2";
+		currentModality0 = currMod0;
+		currentModality1 = currMod1;
 		Task = "task unspecified";
+
+		checkStudyDesign();
+
+		String[] descLines = recordDesc.split("\n");
+
+		int i = 0;
 		while (descLines[i].equals("BEGIN DATA")) {
 			String descLine = descLines[i];
 			if (descLine.startsWith("*  Modal")
@@ -288,34 +391,24 @@ public class DBRecord {
 			i++;
 		}
 
-		if (fullyCrossed) {
-			BDGcoeff = genBDGCoeff(nReader, nNormal, nDisease);
-			BCKcoeff = genBCKCoeff(nReader, nNormal, nDisease);
-		} else {
-			BDGcoeff = genBDGCoeff(nReader, nNormal, nDisease,
-					input.getStudyDesignSeparated(currMod1),
-					input.getStudyDesignSeparated(currMod2));
-			BCKcoeff = genBCKCoeff(nReader, nNormal, nDisease, BDGcoeff[0]);
-		}
+		BDG = inputFile.getBDG();
+		BDGbias = inputFile.getBDGbias();
 
-		DBMcoeff = genDBMCoeff(nReader, nNormal, nDisease);
-		ORcoeff = genORCoeff(nReader, nNormal, nDisease);
-		MScoeff = genMSCoeff(nReader, nNormal, nDisease);
-
-		BDG = input.getBDG();
-		BCK = BDG2BCK(BDG);
-		DBM = BCK2DBM(BCK, nReader, nNormal, nDisease);
-		OR = DBM2OR(0, DBM, nReader, nNormal, nDisease);
-		MS = DBM2MS(DBM, nReader, nNormal, nDisease);
-		BDGbias = input.getBDGbias();
-		BCKbias = BDG2BCK(BDGbias);
-		DBMbias = BCK2DBM(BCKbias, nReader, nNormal, nDisease);
-		ORbias = DBM2OR(0, DBMbias, nReader, nNormal, nDisease);
-		MSbias = DBM2MS(DBMbias, nReader, nNormal, nDisease);
+		generateDecompositions();
 	}
 
-	/* constructor 3: generate a record from manually input information. */
-	public DBRecord(double[] data, int flag, int Reader, int Normal,
+	/**
+	 * Constructor for creating a record from manual input of components of
+	 * variance
+	 * 
+	 * @param components Components of variance entered from GUI
+	 * @param whichComp Specifies with decomposition of components are entered
+	 * @param Reader Number of readers
+	 * @param Normal Number of normal cases
+	 * @param Disease Number of disease cases
+	 * @param auc AUCs
+	 */
+	public DBRecord(double[] components, int whichComp, int Reader, int Normal,
 			int Disease, double[] auc) {
 		AUC = auc;
 		nReader = Reader;
@@ -323,23 +416,14 @@ public class DBRecord {
 		nDisease = Disease;
 
 		fullyCrossed = true;
-		mod0StudyDesign = new int[nReader][nNormal][nDisease];
-		for (int m = 0; m < mod0StudyDesign.length; m++) {
-			for (int n = 0; n < mod0StudyDesign[m].length; n++) {
-				Arrays.fill(mod0StudyDesign[m][n], 1);
-			}
-		}
-		mod1StudyDesign = new int[nReader][nNormal][nDisease];
-		for (int m = 0; m < mod1StudyDesign.length; m++) {
-			for (int n = 0; n < mod1StudyDesign[m].length; n++) {
-				Arrays.fill(mod1StudyDesign[m][n], 1);
-			}
-		}
-		switch (flag) {
+
+		checkStudyDesign();
+
+		switch (whichComp) {
 		case 0: // BDG
 			for (int i = 0; i < 4; i++) {
-				BDG[i] = data;
-				BDGbias[i] = data;
+				BDG[i] = components;
+				BDGbias[i] = components;
 			}
 			BDGcoeff = genBDGCoeff(nReader, nNormal, nDisease);
 			BCKcoeff = genBCKCoeff(nReader, nNormal, nDisease);
@@ -368,8 +452,8 @@ public class DBRecord {
 			break;
 		case 1: // BCK
 			for (int i = 0; i < 4; i++) {
-				BCK[i] = data;
-				BCKbias[i] = data;
+				BCK[i] = components;
+				BCKbias[i] = components;
 			}
 			BCKcoeff = genBCKCoeff(nReader, nNormal, nDisease);
 			DBMcoeff = genDBMCoeff(nReader, nNormal, nDisease);
@@ -393,8 +477,8 @@ public class DBRecord {
 			break;
 		case 2: // DBM
 			for (int i = 0; i < 4; i++) {
-				DBM[i] = data;
-				DBMbias[i] = data;
+				DBM[i] = components;
+				DBMbias[i] = components;
 			}
 			OR = DBM2OR(0, DBM, nReader, nNormal, nDisease);
 			MS = DBM2MS(DBM, nReader, nNormal, nDisease);
@@ -405,8 +489,8 @@ public class DBRecord {
 			break;
 		case 3: // OR
 			for (int i = 0; i < 4; i++) {
-				OR[i] = data;
-				ORbias[i] = data;
+				OR[i] = components;
+				ORbias[i] = components;
 			}
 			DBM = DBM2OR(1, OR, nReader, nNormal, nDisease);
 			MS = DBM2MS(DBM, nReader, nNormal, nDisease);
@@ -421,12 +505,74 @@ public class DBRecord {
 		}
 	}
 
-	public String getAUC(int i) {
+	/**
+	 * Defines mod0StudyDesign and mod1StudyDesign fields with design for
+	 * current study. If study is fully crossed simply fills study design with
+	 * 1's
+	 */
+	private void checkStudyDesign() {
+		if (fullyCrossed) {
+			mod0StudyDesign = new int[nReader][nNormal][nDisease];
+			for (int m = 0; m < mod0StudyDesign.length; m++) {
+				for (int n = 0; n < mod0StudyDesign[m].length; n++) {
+					Arrays.fill(mod0StudyDesign[m][n], 1);
+				}
+			}
+			mod1StudyDesign = new int[nReader][nNormal][nDisease];
+			for (int m = 0; m < mod1StudyDesign.length; m++) {
+				for (int n = 0; n < mod1StudyDesign[m].length; n++) {
+					Arrays.fill(mod1StudyDesign[m][n], 1);
+				}
+			}
+		} else {
+			mod0StudyDesign = inputFile
+					.getStudyDesignSeparated(currentModality0);
+			mod1StudyDesign = inputFile
+					.getStudyDesignSeparated(currentModality1);
+		}
+	}
+
+	/**
+	 * Derives all decompositions and coefficient matrices from predefined BDG
+	 * components and experiment size
+	 */
+	private void generateDecompositions() {
+		if (fullyCrossed) {
+			BDGcoeff = genBDGCoeff(nReader, nNormal, nDisease);
+			BCKcoeff = genBCKCoeff(nReader, nNormal, nDisease);
+		} else {
+			BDGcoeff = genBDGCoeff(nReader, nNormal, nDisease, mod0StudyDesign,
+					mod1StudyDesign);
+			BCKcoeff = genBCKCoeff(nReader, nNormal, nDisease, BDGcoeff[0]);
+		}
+
+		DBMcoeff = genDBMCoeff(nReader, nNormal, nDisease);
+		ORcoeff = genORCoeff(nReader, nNormal, nDisease);
+		MScoeff = genMSCoeff(nReader, nNormal, nDisease);
+
+		BCK = BDG2BCK(BDG);
+		DBM = BCK2DBM(BCK, nReader, nNormal, nDisease);
+		OR = DBM2OR(0, DBM, nReader, nNormal, nDisease);
+		MS = DBM2MS(DBM, nReader, nNormal, nDisease);
+
+		BCKbias = BDG2BCK(BDGbias);
+		DBMbias = BCK2DBM(BCKbias, nReader, nNormal, nDisease);
+		ORbias = DBM2OR(0, DBMbias, nReader, nNormal, nDisease);
+		MSbias = DBM2MS(DBMbias, nReader, nNormal, nDisease);
+	}
+
+	/**
+	 * Gets the AUCs of the record in String format
+	 * 
+	 * @param whichMod specifies modality 0, 1, or difference
+	 * @return String containing AUCs
+	 */
+	public String getAUC(int whichMod) {
 		DecimalFormat threeDec = new DecimalFormat("0.000");
 		threeDec.setGroupingUsed(false);
 
 		String temp = "";
-		switch (i) {
+		switch (whichMod) {
 		case 0:
 			temp = "AUC1=" + threeDec.format(AUC[0]) + "       ";
 			break;
@@ -441,21 +587,47 @@ public class DBRecord {
 		return temp;
 	}
 
-	public double getAUCinNumber(int i) {
-		return AUC[i];
+	/**
+	 * Gets the AUCs of the record as a double
+	 * 
+	 * @param whichMod specifies modality 0, 1, or difference
+	 * @return Double representation of AUC
+	 */
+	public double getAUCinNumber(int whichMod) {
+		return AUC[whichMod];
 	}
 
-	public String getParm() {
+	/**
+	 * Gets the experiment sizes in string format
+	 * 
+	 * @return String containing experiment sizes
+	 */
+	public String getSizes() {
 		return (Integer.toString(nReader) + " Readers,  "
 				+ Integer.toString(nNormal) + " Normal cases,  "
 				+ Integer.toString(nDisease) + " Disease cases.");
 	}
 
-	public int[] getParmInt() {
+	/**
+	 * Gets the experiment sizes in int representation
+	 * 
+	 * @return Array containing experiment sizes
+	 */
+	public int[] getSizesInt() {
 		int[] c = { nReader, nNormal, nDisease };
 		return c;
 	}
 
+	/**
+	 * Gets the components, coefficients, and total variance for BDG
+	 * representation in format corresponding to display table
+	 * 
+	 * @param selectedMod Which modality the analysis is performed on, or
+	 *            difference
+	 * @param BDGtemp BDG decomposition of variance components
+	 * @param BDGc Coefficient matrix for BDG decomposition
+	 * @return Matrix of data for display in table
+	 */
 	public static double[][] getBDGTab(int selectedMod, double[][] BDGtemp,
 			double[][] BDGc) {
 		double[][] BDGTab1 = new double[7][8];
@@ -481,6 +653,16 @@ public class DBRecord {
 		return BDGTab1;
 	}
 
+	/**
+	 * Gets the components, coefficients, and total variance for BCK
+	 * representation in format corresponding to display table
+	 * 
+	 * @param selectedMod Which modality the analysis is performed on, or
+	 *            difference
+	 * @param BCKtemp BCK decomposition of variance components
+	 * @param BCKc Coefficient matrix for BCK decomposition
+	 * @return Matrix of data for display in table
+	 */
 	public static double[][] getBCKTab(int selectedMod, double[][] BCKtemp,
 			double[][] BCKc) {
 		double[][] BCKTab1 = new double[7][7];
@@ -506,31 +688,71 @@ public class DBRecord {
 		return BCKTab1;
 	}
 
-	public static double[][] getDBMTab(int i, double[][] DBMtemp,
+	/**
+	 * Gets the components, coefficients, and total variance for DBM
+	 * representation in format corresponding to display table
+	 * 
+	 * @param selectedMod Which modality the analysis is performed on, or
+	 *            difference
+	 * @param DBMtemp DBM decomposition of variance components
+	 * @param DBMc Coefficient matrix for DBM decomposition
+	 * @return Matrix of data for display in table
+	 */
+	public static double[][] getDBMTab(int selectedMod, double[][] DBMtemp,
 			double[][] DBMc) {
 		double[][] DBMTab1 = new double[3][6];
-		DBMTab1[0] = DBMtemp[i];
-		DBMTab1[1] = DBMc[i];
+		DBMTab1[0] = DBMtemp[selectedMod];
+		DBMTab1[1] = DBMc[selectedMod];
 		DBMTab1[2] = Matrix.dotProduct(DBMTab1[0], DBMTab1[1]);
 		return DBMTab1;
 	}
 
-	public static double[][] getORTab(int i, double[][] ORtemp, double[][] ORc) {
+	/**
+	 * Gets the components, coefficients, and total variance for OR
+	 * representation in format corresponding to display table
+	 * 
+	 * @param selectedMod Which modality the analysis is performed on, or
+	 *            difference
+	 * @param ORtemp OR decomposition of variance components
+	 * @param ORc Coefficient matrix for OR decomposition
+	 * @return Matrix of data for display in table
+	 */
+	public static double[][] getORTab(int selectedMod, double[][] ORtemp, double[][] ORc) {
 		double[][] ORTab1 = new double[3][6];
-		ORTab1[0] = ORtemp[i];
-		ORTab1[1] = ORc[i];
+		ORTab1[0] = ORtemp[selectedMod];
+		ORTab1[1] = ORc[selectedMod];
 		ORTab1[2] = Matrix.dotProduct(ORTab1[0], ORTab1[1]);
 		return ORTab1;
 	}
 
-	public static double[][] getMSTab(int i, double[][] MStemp, double[][] MSc) {
+	/**
+	 * Gets the components, coefficients, and total variance for MS
+	 * representation in format corresponding to display table
+	 * 
+	 * @param selectedMod Which modality the analysis is performed on, or
+	 *            difference
+	 * @param MStemp MS decomposition of variance components
+	 * @param MSc Coefficient matrix for MS decomposition
+	 * @return Matrix of data for display in table
+	 */
+	public static double[][] getMSTab(int selectedMod, double[][] MStemp, double[][] MSc) {
 		double[][] MSTab1 = new double[3][6];
-		MSTab1[0] = MStemp[i];
-		MSTab1[1] = MSc[i];
+		MSTab1[0] = MStemp[selectedMod];
+		MSTab1[1] = MSc[selectedMod];
 		MSTab1[2] = Matrix.dotProduct(MSTab1[0], MSTab1[1]);
 		return MSTab1;
 	}
 
+	/**
+	 * Transform DBM representation of variance components into MS
+	 * representation of variance components
+	 * 
+	 * @param DBM Matrix of DBM variance components
+	 * @param NR Number of readers
+	 * @param N0 Number of normal cases
+	 * @param N1 Number of disease cases
+	 * @return Matrix of MS representation of variance components
+	 */
 	public static double[][] DBM2MS(double[][] DBM, int NR, int N0, int N1) {
 		double[][] c = new double[4][6];
 		double[][] BAlpha = new double[][] {
@@ -551,6 +773,16 @@ public class DBRecord {
 
 	}
 
+	/**
+	 * Transforms BCK representation of variance components into DBM
+	 * representation of variance components
+	 * 
+	 * @param BCK Matrix of BCK variance components
+	 * @param NR Number of readers
+	 * @param N0 Number of normal cases
+	 * @param N1 Number of disease cases
+	 * @return Matrix of DBM representation of variance components
+	 */
 	public static double[][] BCK2DBM(double[][] BCK, int NR, int N0, int N1) {
 		double[] c = new double[7];
 		double[][] tmp = new double[4][7];
@@ -613,7 +845,40 @@ public class DBRecord {
 		return results;
 	}
 
-	// To determine BDG coefficient for non-fully-crossed study design
+	/**
+	 * Transforms BDG representation of variance components into BCK
+	 * representation of variance components
+	 * 
+	 * @param BDG Matrix of BDG variance components
+	 * @return Matrix of BCK representation of variance components
+	 */
+	public static double[][] BDG2BCK(double[][] BDG) {
+		double[][] c = new double[4][7];
+		double[][] BAlpha = new double[][] { { 0, 0, 0, 0, 0, 0, 1, -1 },
+				{ 0, 0, 0, 0, 0, 1, 0, -1 }, { 0, 0, 0, 0, 1, -1, -1, 1 },
+				{ 0, 0, 0, 1, 0, 0, 0, -1 }, { 0, 0, 1, -1, 0, 0, -1, 1 },
+				{ 0, 1, 0, -1, 0, -1, 0, 1 }, { 1, -1, -1, 1, -1, 1, 1, -1 } };
+		for (int i = 0; i < 4; i++)
+			for (int j = 0; j < 7; j++)
+				c[i][j] = 0;
+		c = Matrix.matrixTranspose(Matrix.multiply(BAlpha,
+				Matrix.matrixTranspose(BDG)));
+
+		return c;
+	}
+
+	/**
+	 * Determines the coefficient matrix for BDG variance components given a
+	 * non-fully crossed study design
+	 * 
+	 * @param NR Number of readers
+	 * @param N0 Number of normal cases
+	 * @param N1 Number of disease cases
+	 * @param mod0design Study design for modality 0
+	 * @param mod1design Study design for modality 1
+	 * @return Matrix containing coefficients corresponding to BDG variance
+	 *         components
+	 */
 	public static double[][] genBDGCoeff(int NR, int N0, int N1,
 			int[][][] mod0design, int[][][] mod1design) {
 		double[][] c = new double[4][8];
@@ -732,7 +997,16 @@ public class DBRecord {
 		return c;
 	}
 
-	// To determine BDG coefficient for fully-crossed data
+	/**
+	 * Determines the coefficient matrix for BDG variance components given a
+	 * fully crossed study design
+	 * 
+	 * @param NR Number of readers
+	 * @param N0 Number of normal cases
+	 * @param N1 Number of disease cases
+	 * @return Matrix containing coefficients corresponding to BDG variance
+	 *         components
+	 */
 	public static double[][] genBDGCoeff(int NR, int N0, int N1) {
 		double[][] c = new double[4][8];
 		c[0][0] = 1.0 / (NR * N0 * N1);
@@ -751,7 +1025,17 @@ public class DBRecord {
 		return c;
 	}
 
-	// Determines BCK coefficients for non-fully-crossed data
+	/**
+	 * Determines the coefficient matrix for BCK variance components given a
+	 * non-fully crossed study design
+	 * 
+	 * @param NR Number of readers
+	 * @param N0 Number of normal cases
+	 * @param N1 Number of disease cases
+	 * @param c BDG coefficient matrix
+	 * @return Matrix containing coefficients corresponding to BCK variance
+	 *         components
+	 */
 	public static double[][] genBCKCoeff(int NR, int N0, int N1, double[] c) {
 		double[][] c2ca = new double[][] {
 				{ 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0 },
@@ -766,7 +1050,16 @@ public class DBRecord {
 		return new double[][] { cAlpha, cAlpha, cAlpha, cAlpha };
 	}
 
-	// Determines BCK coefficients for fully-crossed data
+	/**
+	 * Determines the coefficient matrix for BCK variance components given a
+	 * fully crossed study design
+	 * 
+	 * @param NR Number of readers
+	 * @param N0 Number of normal cases
+	 * @param N1 Number of disease cases
+	 * @return Matrix containing coefficients corresponding to BCK variance
+	 *         components
+	 */
 	public static double[][] genBCKCoeff(int NR, int N0, int N1) {
 		double[][] c = new double[4][7];
 		c[0][0] = 1.0 / N0;
@@ -783,6 +1076,16 @@ public class DBRecord {
 		return c;
 	}
 
+	/**
+	 * Determines the coefficient matrix for DBM variance components given a
+	 * fully crossed study design
+	 * 
+	 * @param NR Number of readers
+	 * @param N0 Number of normal cases
+	 * @param N1 Number of disease cases
+	 * @return Matrix containing coefficients corresponding to DBM variance
+	 *         components
+	 */
 	public static double[][] genDBMCoeff(int NR, int N0, int N1) {
 		double[][] c = new double[4][6];
 		/*
@@ -813,6 +1116,16 @@ public class DBRecord {
 		return c;
 	}
 
+	/**
+	 * Determines the coefficient matrix for MS variance components given a
+	 * fully crossed study design
+	 * 
+	 * @param NR Number of readers
+	 * @param N0 Number of normal cases
+	 * @param N1 Number of disease cases
+	 * @return Matrix containing coefficients corresponding to MS variance
+	 *         components
+	 */
 	public static double[][] genMSCoeff(int NR, int N0, int N1) {
 		double[][] c = new double[4][6];
 		double tmp = 1.0 / (NR * (N0 + N1));
@@ -833,6 +1146,16 @@ public class DBRecord {
 		return c;
 	}
 
+	/**
+	 * Determines the coefficient matrix for OR variance components given a
+	 * fully crossed study design
+	 * 
+	 * @param NR Number of readers
+	 * @param N0 Number of normal cases
+	 * @param N1 Number of disease cases
+	 * @return Matrix containing coefficients corresponding to OR variance
+	 *         components
+	 */
 	public static double[][] genORCoeff(int NR, int N0, int N1) {
 		double[][] c = new double[4][6];
 		c[0][0] = 1.0 / NR;
@@ -853,21 +1176,15 @@ public class DBRecord {
 		return c;
 	}
 
-	public static double[][] BDG2BCK(double[][] BDG) {
-		double[][] c = new double[4][7];
-		double[][] BAlpha = new double[][] { { 0, 0, 0, 0, 0, 0, 1, -1 },
-				{ 0, 0, 0, 0, 0, 1, 0, -1 }, { 0, 0, 0, 0, 1, -1, -1, 1 },
-				{ 0, 0, 0, 1, 0, 0, 0, -1 }, { 0, 0, 1, -1, 0, 0, -1, 1 },
-				{ 0, 1, 0, -1, 0, -1, 0, 1 }, { 1, -1, -1, 1, -1, 1, 1, -1 } };
-		for (int i = 0; i < 4; i++)
-			for (int j = 0; j < 7; j++)
-				c[i][j] = 0;
-		c = Matrix.matrixTranspose(Matrix.multiply(BAlpha,
-				Matrix.matrixTranspose(BDG)));
-
-		return c;
-	}
-
+	/**
+	 * Creates temporary DBM matrix to be used in BDG2BM and BDG2OR methods
+	 * 
+	 * @param BDG Matrix of BDG variance components
+	 * @param NR Number of readers
+	 * @param N0 Number of normal cases
+	 * @param N1 Number of disease cases
+	 * @return Matrix of DBM components
+	 */
 	public double[][] computeTempDBM(double[][] BDG, int NR, int N0, int N1) {
 		double[][] B25 = new double[][] {
 				{ 1.0, 0, 0, 0 },
@@ -911,6 +1228,16 @@ public class DBRecord {
 		return c;
 	}
 
+	/**
+	 * Transforms matrix of BDG variance components into matrix of DBM variance
+	 * components
+	 * 
+	 * @param BDG Matrix of BDG variance components
+	 * @param NR Number of readers
+	 * @param N0 Number of normal cases
+	 * @param N1 Number of disease cases
+	 * @return Matrix of DBM variance components
+	 */
 	public double[][] BDG2DBM(double[][] BDG, int NR, int N0, int N1) {
 		double[][] c = new double[4][6];
 		double[][] tempDBM = computeTempDBM(BDG, NR, N0, N1);
@@ -948,6 +1275,16 @@ public class DBRecord {
 		return c;
 	}
 
+	/**
+	 * Transforms matrix of BDG variance components into matrix of OR variance
+	 * components
+	 * 
+	 * @param BDG Matrix of BDG variance components
+	 * @param NR Number of readers
+	 * @param N0 Number of normal cases
+	 * @param N1 Number of disease cases
+	 * @return Matrix of OR variance components
+	 */
 	public double[][] BDG2OR(double[][] BDG, int NR, int N0, int N1) {
 		double[][] c = new double[4][6];
 		double[][] tempDBM = computeTempDBM(BDG, NR, N0, N1);
@@ -979,6 +1316,17 @@ public class DBRecord {
 		return c;
 	}
 
+	/**
+	 * Transforms matrix of DBM variance components into matrix of OR variance
+	 * components, or vice versa
+	 * 
+	 * @param index Whether the in[][] parameter is DBM or OR components
+	 * @param in Matrix of DBM or OR variance components
+	 * @param NR Number of readers
+	 * @param N0 Number of normal cases
+	 * @param N1 Number of disease cases
+	 * @return Matrix of OR or DBM variance components
+	 */
 	public static double[][] DBM2OR(int index, double[][] in, int NR, int N0,
 			int N1) {
 		double[][] toReturn = new double[4][6];
@@ -1028,11 +1376,30 @@ public class DBRecord {
 		return toReturn;
 	}
 
-	// TODO is this implemented correctly? what's the point?
+	/**
+	 * Resizes BCK variance components matrix, but actually currently does
+	 * nothing
+	 * 
+	 * @param bck BCK variance components matrix
+	 * @param newR Number of readers
+	 * @param newN Number of normal cases
+	 * @param newD Number of disease cases
+	 * @return BCK variance components matrix
+	 */
 	public double[][] BCKresize(double[][] bck, int newR, int newN, int newD) {
 		return bck;
 	}
 
+	/**
+	 * Scales/resizes parts of DBM variance components matrix according to
+	 * number of normal/disease cases
+	 * 
+	 * @param dbm DBM variance components matrix
+	 * @param newR Number of readers
+	 * @param newN Number of normal cases
+	 * @param newD Number of disease cases
+	 * @return Resized DBM variance components matrix
+	 */
 	public double[][] DBMresize(double[][] dbm, int newR, int newN, int newD) {
 		double[][] DBMnew = new double[4][6];
 		double lamda = 1.0 / Double.valueOf(newN + newD);

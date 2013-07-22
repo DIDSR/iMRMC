@@ -1,9 +1,11 @@
-/*
+/**
  * DataFormat.java
  * 
- * v2.0b
+ * @version 2.0b
  * 
- * @Author Xin He, Phd, Brandon D. Gallas, PhD, Rohan Pathare
+ * @author Xin He, Ph,D
+ * @author Brandon D. Gallas, Ph.D
+ * @author Rohan Pathare
  * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
@@ -26,16 +28,20 @@ package mrmc.gui;
 public class DataFormat {
 
 	private String fmtHelp;
-	private String sampleFmt;
 
+	/**
+	 * Gets the description of how to format data for raw study input
+	 * 
+	 * @return The description
+	 */
 	public String getInfo() {
 		return fmtHelp;
 	}
 
-	public String getSample() {
-		return sampleFmt;
-	}
-
+	/**
+	 * Sole constructor. Initializes fmtHelp with String description of data
+	 * format for raw study input files.
+	 */
 	public DataFormat() {
 		fmtHelp = "The file format has two parts: the study description at the top followed by a list of the ROC ratings. The\n"
 				+ "study description can include any information as free text. It must include four lines corresponding to the\n"
@@ -48,16 +54,16 @@ public class DataFormat {
 				+ "NM: 5\n"
 				+ "BEGIN DATA\n"
 				+ "... ...\n"
-				
+
 				+ "The list of ROC ratings has a row for each reader scoring each case for each modality in the study, in any order. It also has rows \n"
 				+ "specifying the truth value of each case. iMRMC can handle non-fully-crossed data for any number of modalities, though only two of \n"
 				+ "those modalities may be used at a time for variance analysis. Each row has four fields: the reader id (integer), case id (integer), \n"
 				+ "modality index (-1 = truth, 1 = modality 1, 2 = modality 2, etc.), and the score correspending to the value for a particular modality. \n"
-				+ "The score would be 0 or 1 for a truth modality index (indicating normal or diseased) or a value (integer or float) for a particular \n" 
+				+ "The score would be 0 or 1 for a truth modality index (indicating normal or diseased) or a value (integer or float) for a particular \n"
 				+ "modality. Higher scores should indicate higher likelihood or confidence of disease and low ratings should indicate lesser likelihood or \n"
 				+ "confidence of disease. Otherwise, AUC calculations and ROC curve displays will be incorrect. Each field should be separated by only a \n"
 				+ "comma and each row terminated by a newline. For example, the first few rows could look like the following: \n"
-				
+
 				+ "-1,1,0,1\n"
 				+ "-1,2,0,0\n"
 				+ "1,1,1,3\n"
@@ -77,8 +83,6 @@ public class DataFormat {
 				+ "is a diseased (N1) case. The second line indicates that case 2 is a normal (N0) case. The third through fifth lines show reader 1's scores \n"
 				+ "for modalities 1 through 3 on case 1. The sixth through eighth lines indicate the same, but for reader 2 instead. The remaining lines repeat \n"
 				+ "the pattern with readers 1 and 2 scoring the modalities of case 2. \n";
-
-		sampleFmt = "\n";
 
 	}
 }

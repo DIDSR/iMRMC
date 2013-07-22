@@ -1,9 +1,11 @@
-/*
+/**
  * GUImenubar.java
  * 
- * v2.0b
+ * @version 2.0b
  * 
- * @Author Xin He, Phd, Brandon D. Gallas, PhD, Rohan Pathare
+ * @author Xin He, Ph.D
+ * @author Brandon D. Gallas, Ph.D
+ * @author Rohan Pathare
  * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
@@ -31,9 +33,9 @@ public class GUImenubar {
 	private MRMC lst;
 	private JMenuBar menuBar = new JMenuBar();
 	private String Manual = "Dowload manual, sample file, source code and database at\n"
-			+ "http://js.cx/~xin/download.html\n";
-	private String About = "MRMC 1.0\n"
-			+ "Developed by Xin He and Brandon Gallas\n"
+			+ "https://code.google.com/p/imrmc/\n";
+	private String About = "iMRMC 2.0b\n"
+			+ "Developed by Xin He, Brandon Gallas, and Rohan Pathare\n"
 			+ "http://www.fda.gov\n";
 	private String Ref = "1. A Probabilistic Development of the MRMC Method, Eric Clarkson, Matthew A.Kupinski,\n"
 			+ "   Harrison H. Barrett, Academic Radiology. 2006 Mar;13(3):353-62.\n"
@@ -56,15 +58,28 @@ public class GUImenubar {
 			+ "   readers and patients with the jackknife method, D. D. Dorfman, K. S. Berbaum, and C. E.\n"
 			+ "   Metz, Invest. Radiol. 27, 723-731 (1992).\n";
 
+	/**
+	 * Sole constructor. Creates top level menu bar with drop down menus
+	 * 
+	 * @param lsttemp This application frame
+	 */
 	public GUImenubar(MRMC lsttemp) {
 		lst = lsttemp;
 		createMenuBar();
 	}
 
+	/**
+	 * Gets the menubar object
+	 * 
+	 * @return The menubar object
+	 */
 	public JMenuBar getMenuBar() {
 		return menuBar;
 	}
 
+	/**
+	 * Handler for "Reference" menu button
+	 */
 	class menuRefListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
 			System.out.println("Menu Ref clicked");
@@ -74,6 +89,9 @@ public class GUImenubar {
 		}
 	}
 
+	/**
+	 * Handler for "About iMRMC" menu button.
+	 */
 	class menuAboutListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
 			System.out.println("Menu about clicked");
@@ -81,9 +99,11 @@ public class GUImenubar {
 			JOptionPane.showMessageDialog(frame, About, "About",
 					JOptionPane.INFORMATION_MESSAGE);
 		}
-
 	}
 
+	/**
+	 * Handler for "Manual" menu button
+	 */
 	class menuManualListener implements ActionListener {
 		JFrame frame2 = new JFrame("diaglog manual");
 
@@ -92,42 +112,13 @@ public class GUImenubar {
 			JFrame frame = lst.getFrame();
 			JOptionPane.showMessageDialog(frame, Manual, "Download",
 					JOptionPane.INFORMATION_MESSAGE);
-			/*
-			 * frame2.setSize(200, 200); JPanel ps=new JPanel();
-			 * 
-			 * try { URI uri = new
-			 * URI("http://www.batan.go.id/ppin/lokakarya/LKSTN_12/Arko.pdf");
-			 * JButton button = new JButton("OKOK"); button.setText(
-			 * "<HTML>Click the <FONT color=\"#000099\"><U>link</U></FONT>" +
-			 * " to go to the Java website.</HTML>");
-			 * button.setHorizontalAlignment(SwingConstants.LEFT);
-			 * button.setBorderPainted(false); button.setOpaque(false);
-			 * button.setBackground(Color.WHITE);
-			 * button.setToolTipText(uri.toString());
-			 * button.addActionListener(new OpenUrlAction(uri)); ps.add(button);
-			 * } catch (URISyntaxException e) { }
-			 * 
-			 * JButton buttonOK= new JButton("close");
-			 * buttonOK.addActionListener(new ButtonOKListner());
-			 * ps.add(buttonOK); frame2.add(ps); frame2.setVisible(true);
-			 */
-		}
-		/*
-		 * class ButtonOKListner implements ActionListener { public void
-		 * actionPerformed(ActionEvent event) {frame2.dispose();} } private void
-		 * open(URI uri) { if (Desktop.isDesktopSupported()) { try {
-		 * Desktop.getDesktop().browse(uri); } catch (IOException e) { } } else
-		 * { } }
-		 * 
-		 * class OpenUrlAction implements ActionListener { URI localURI; public
-		 * OpenUrlAction(URI uri) { localURI=uri; }
-		 * 
-		 * @Override public void actionPerformed(ActionEvent e) {
-		 * open(localURI); } }
-		 */
 
+		}
 	}
 
+	/**
+	 * Creates and initializes the menubar items
+	 */
 	private void createMenuBar() {
 		JMenu menu;
 		JMenuItem menuItem;

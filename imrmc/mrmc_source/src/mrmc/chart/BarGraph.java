@@ -1,9 +1,9 @@
-/*
+/**
  * BarGraph.java
  * 
- * v2.0b
+ * @version 2.0b
  * 
- * @Author Brandon D. Gallas, PhD, Rohan Pathare
+ * @author Rohan Pathare
  * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
@@ -38,16 +38,21 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 public class BarGraph extends JFrame {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Sole constructor. Creates a bar-graph style chart
+	 * 
+	 * @param title Title of chart
+	 * @param xaxis Label for x-axis
+	 * @param yaxis Label for y-axis
+	 * @param data Mapping of x-y data
+	 */
 	public BarGraph(final String title, String xaxis, String yaxis,
 			TreeMap<Integer, Double> data) {
 		super(title);
 		CategoryDataset dataset = createDataset(data, xaxis);
-		JFreeChart chart = createChart(dataset, title, yaxis, xaxis);
+		JFreeChart chart = createChart(dataset, title, xaxis, yaxis);
 		LegendTitle legend = chart.getLegend();
 		legend.setVisible(false);
 		ChartPanel chartPanel = new ChartPanel(chart);
@@ -55,6 +60,13 @@ public class BarGraph extends JFrame {
 		setContentPane(chartPanel);
 	}
 
+	/**
+	 * Converts data mapping into format for used by chart
+	 * 
+	 * @param data Mapping of x-y data
+	 * @param xaxis Label for x-axis
+	 * @return Chart data in CategoryDataset format
+	 */
 	private CategoryDataset createDataset(TreeMap<Integer, Double> data,
 			String xaxis) {
 		final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
@@ -67,8 +79,17 @@ public class BarGraph extends JFrame {
 		return dataset;
 	}
 
+	/**
+	 * Constructs the chart
+	 * 
+	 * @param dataset Representation of x-y data
+	 * @param title Title of chart
+	 * @param xaxis Label for x-axis
+	 * @param yaxis Label for y-axis
+	 * @return The chart
+	 */
 	private JFreeChart createChart(final CategoryDataset dataset, String title,
-			String yaxis, String xaxis) {
+			String xaxis, String yaxis) {
 
 		final JFreeChart chart = ChartFactory.createBarChart(title, xaxis,
 				yaxis, dataset, PlotOrientation.VERTICAL, true, true, false);

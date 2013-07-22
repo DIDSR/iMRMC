@@ -1,9 +1,9 @@
-/*
+/**
  * SimRoeMetz.java
  * 
- * v1.0b
+ * @version 1.0b
  * 
- * @Author Rohan Pathare
+ * @author Rohan Pathare
  * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
@@ -46,16 +46,23 @@ public class SimRoeMetz {
 	private int nr;
 	private double u0;
 	private double u1;
+	private int useBiasM;
 
-	/*
-	 * @param u size 2, contains means
+	/**
+	 * Sole constructor. Upon invocation, verifies the parameters, initializes
+	 * class members, performs simulation experiment, and processes the results.
 	 * 
-	 * @param var_t size 18, contains variance components
-	 * 
-	 * @param n size 3, contains experiment sizes
+	 * @param u Contains experiment means. Has 2 elements.
+	 * @param var_t Contains variance components. Has 18 elements.
+	 * @param n Contains experiment sizes. Has 3 elements.
+	 * @param rand Random number generator initialized with seed from GUI. No
+	 *            guarantee that the generator is at any particular position
+	 *            within its sequence for a given seed.
+	 * @param useBias Indicates whether to used biased estimates in the results
+	 *            of the simulation
 	 */
 	public SimRoeMetz(double[] u, double[] var_t, int[] n, Random rand,
-			int useBiasM) {
+			int useBias) {
 		if (u.length != 2) {
 			System.out.println("input u is of incorrect size");
 			return;
@@ -74,12 +81,19 @@ public class SimRoeMetz {
 		nr = n[2];
 		u0 = u[0];
 		u1 = u[1];
-		doSim(var_t, rand, useBiasM);
-		calculateStuff(useBiasM);
+		useBiasM = useBias;
+		doSim(var_t, rand);
+		processSimExperiment();
 	}
 
-	/*
-	 * Can be executed from command-line, or used as closed-box library function
+	/**
+	 * Used when calling SimRoeMetz as a standalone application via
+	 * command-line.
+	 * 
+	 * @param args command-line arguments. First element is experiment means,
+	 *            second element is components of variance, third element is
+	 *            experiment sizes, fourth element is seed for RNG, fifth
+	 *            element specifies whether biased estimates will be used.
 	 */
 	public static void main(String[] args) {
 		try {
@@ -126,11 +140,17 @@ public class SimRoeMetz {
 		} catch (ArrayIndexOutOfBoundsException e) {
 			System.out.println("Missing Arguments");
 			System.out
-					.println("Format is: SimRoeMetz [u0,u1] [R00,C00,RC00,R10,C10,RC10,R01,C01,RC01,R11,C11,RC11,R0,C0,RC0,R1,C1,RC1] [n0,n1,nr] seed useBias");
+					.println("Format is: SimRoeMetz [u0,u1] [R00,C00,RC00,R10,"
+							+ "C10,RC10,R01,C01,RC01,R11,C11,RC11,R0,C0,RC0,R1,"
+							+ "C1,RC1] [n0,n1,nr] seed useBias");
 			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * Prints the results of a simulation experiment to standard out. Only used
+	 * when main method for this class is invoked.
+	 */
 	private void printResults() {
 		System.out.println("BDG:");
 		Matrix.printMatrix(BDG);
@@ -140,54 +160,106 @@ public class SimRoeMetz {
 		System.out.println();
 	}
 
+	/**
+	 * Get the AUCs for this experiment
+	 * 
+	 * @return AUCs for this experiment
+	 */
 	public double[] getAUC() {
 		return auc;
 	}
 
+	/**
+	 * Get the BDG decomposition for this experiment
+	 * 
+	 * @return BDG decomposition of experiment results
+	 */
 	public double[][] getBDGdata() {
 		return BDG;
 	}
 
+	/**
+	 * Get the BCK decomposition for this experiment
+	 * 
+	 * @return BCK decomposition of experiment results
+	 */
 	public double[][] getBCKdata() {
 		return BCK;
 	}
 
+	/**
+	 * Get the DBM decomposition for this experiment
+	 * 
+	 * @return DBM decomposition of experiment results
+	 */
 	public double[][] getDBMdata() {
 		return DBM;
 	}
 
+	/**
+	 * Get the OR decomposition for this experiment
+	 * 
+	 * @return OR decomposition of experiment results
+	 */
 	public double[][] getORdata() {
 		return OR;
 	}
 
+	/**
+	 * Get the MS decomposition for this experiment
+	 * 
+	 * @return MS decomposition of experiment results
+	 */
 	public double[][] getMSdata() {
 		return MS;
 	}
 
+	/**
+	 * Get the simulated scores for normal cases, modality 0
+	 * 
+	 * @return Simulated scores for truth=0, modality=0
+	 */
 	public double[][] gett00() {
 		return t00;
 	}
 
-	public double[][] gett01() {
-		return t01;
-	}
-
+	/**
+	 * Get the simulated scores for disease cases, modality 0
+	 * 
+	 * @return Simulated scores for truth=1, modality=0
+	 */
 	public double[][] gett10() {
 		return t10;
 	}
 
+	/**
+	 * Get the simulated scores for normal cases, modality 1
+	 * 
+	 * @return Simulated scores for truth=0, modality=1
+	 */
+	public double[][] gett01() {
+		return t01;
+	}
+
+	/**
+	 * Get the simulated scores for disease cases, modality 1
+	 * 
+	 * @return Simulated scores for truth=1, modality=1
+	 */
 	public double[][] gett11() {
 		return t11;
 	}
 
-	/*
-	 * @param u size 2, contains means *
+	/**
+	 * Performs one simulation experiment based on the Roe & Metz model
+	 * generalized for 18 variances. Fills four t-matrices (class members t00,
+	 * t01, t10, t11) with results
 	 * 
-	 * @param var_t size 18, contains variance components
-	 * 
-	 * @param n size 3, contains experiment sizes
+	 * @param rand Random number generator initialized with seed from GUI. No
+	 *            guarantee that the generator is at any particular position
+	 *            within its sequence for a given seed.
 	 */
-	private void doSim(double[] var_t, Random rand, int useBiasM) {
+	private void doSim(double[] var_t, Random rand) {
 		double[] stdDevs = new double[var_t.length];
 		for (int i = 0; i < var_t.length; i++) {
 			stdDevs[i] = Math.sqrt(var_t[i]);
@@ -258,9 +330,41 @@ public class SimRoeMetz {
 		t11 = Matrix.matrixAdd(t11, RC11);
 	}
 
-	private void calculateStuff(int useBiasM) {
+	/**
+	 * Performs conversions on results of the simulation experiment so that
+	 * decompositions and AUC can be determined.
+	 */
+	private void processSimExperiment() {
+		double[][][][] newTMatrices = convertTMatrices();
+		int[][][][] dMatrices = createDMatrices();
 
-		// convert t-matrices to correct shape and create t0,t1
+		// Creates an "InputFile" of the scores from simulated experiment so
+		// that we can perform variance analysis on them.
+		InputFile toCalc = new InputFile(newTMatrices, dMatrices, nr, n0, n1,
+				"SimExp", "Simulated Experiment");
+		toCalc.calculateCovMRMC();
+		// Creates a record of the variance analysis so decompositions can be
+		// accessed
+		DBRecord rec = new DBRecord(toCalc, 1, 2);
+
+		BDG = rec.getBDG(useBiasM);
+		BCK = rec.getBCK(useBiasM);
+		DBM = rec.getDBM(useBiasM);
+		OR = rec.getOR(useBiasM);
+		MS = rec.getMS(useBiasM);
+		auc = new double[] { rec.getAUCinNumber(0), rec.getAUCinNumber(1),
+				(rec.getAUCinNumber(0) - rec.getAUCinNumber(1)) };
+	}
+
+	/**
+	 * Reorganizes the t-matrices into format that is convenient for variance
+	 * analysis by iMRMC methods. Additionally creates the t0 and t1 matrices
+	 * which are modality-independent
+	 * 
+	 * @return Array consisting of all converted t-matrices necessary for
+	 *         variance analysis
+	 */
+	private double[][][][] convertTMatrices() {
 		double[][][] newt00 = new double[n0][nr][2];
 		double[][][] newt01 = new double[n0][nr][2];
 		double[][][] newt10 = new double[n1][nr][2];
@@ -297,10 +401,23 @@ public class SimRoeMetz {
 			}
 		}
 
-		// design matrices are all 1 because data is simulated, therefore all
-		// present
+		return new double[][][][] { newt00, newt01, newt10, newt11, newt0,
+				newt1 };
+	}
+
+	/**
+	 * Creates design matrices for the simulated experiment. The design matrices
+	 * for both normal and disease cases both indicate a fully-crossed design
+	 * (consist of all 1's), since a simulated experiment does not have any
+	 * missing scores.
+	 * 
+	 * @return Array containing design matrices for normal cases and disease
+	 *         cases.
+	 */
+	private int[][][][] createDMatrices() {
 		int[][][] d0 = new int[n0][nr][2];
 		int[][][] d1 = new int[n1][nr][2];
+
 		for (int i = 0; i < nr; i++) {
 			for (int j = 0; j < n1; j++) {
 				Arrays.fill(d1[j][i], 1);
@@ -309,22 +426,20 @@ public class SimRoeMetz {
 				Arrays.fill(d0[j][i], 1);
 			}
 		}
-
-		InputFile toCalc = new InputFile(newt0, newt1, newt00, newt01, newt10,
-				newt11, d0, d1, nr, n0, n1, "", "");
-
-		toCalc.calculateCovMRMC();
-		DBRecord rec = new DBRecord(toCalc, 1, 2);
-
-		BDG = rec.getBDG(useBiasM);
-		BCK = rec.getBCK(useBiasM);
-		DBM = rec.getDBM(useBiasM);
-		OR = rec.getOR(useBiasM);
-		MS = rec.getMS(useBiasM);
-		auc = new double[] { rec.getAUCinNumber(0), rec.getAUCinNumber(1),
-				(rec.getAUCinNumber(0) - rec.getAUCinNumber(1)) };
+		return new int[][][][] { d0, d1 };
 	}
 
+	/**
+	 * Fills a vector with x random numbers according to a Gaussian
+	 * distribution.
+	 * 
+	 * @param scalar Width of distribution
+	 * @param rand Random number generator initialized with seed from GUI. No
+	 *            guarantee that the generator is at any particular position
+	 *            within its sequence for a given seed.
+	 * @param x length of vector to fill
+	 * @return 1-d array containing random gaussian numbers
+	 */
 	public static double[] fillGaussian(double scalar, Random rand, int x) {
 		double[] toReturn = new double[x];
 		for (int i = 0; i < x; i++) {
@@ -333,6 +448,18 @@ public class SimRoeMetz {
 		return toReturn;
 	}
 
+	/**
+	 * Fills a matrix with x * y random numbers according to a Gaussian
+	 * distribution.
+	 * 
+	 * @param scalar Width of distribution
+	 * @param rand Random number generator initialized with seed from GUI. No
+	 *            guarantee that the generator is at any particular position
+	 *            within its sequence for a given seed.
+	 * @param x length of array to fill
+	 * @param y width of array to fill
+	 * @return 2-d array containing random gaussian numbers
+	 */
 	public static double[][] fillGaussian(double scalar, Random rand, int x,
 			int y) {
 		double[][] toReturn = new double[x][y];

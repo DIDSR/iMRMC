@@ -1,9 +1,9 @@
-/*
+/**
  * CalcGenRoeMetz.java
  * 
- * v1.0b
+ * @version 1.0b
  * 
- * @Author Rohan Pathare
+ * @author Rohan Pathare
  * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
@@ -38,8 +38,13 @@ public class CalcGenRoeMetz {
 	private static double[][] OR;
 	private static double[][] MS;
 
-	/*
-	 * Can be executed from command-line, or used as closed-box library function
+	/**
+	 * Used when calling CalGenRoeMetz as a standalone application via
+	 * command-line.
+	 * 
+	 * @param args command-line arguments. First element is experiment means,
+	 *            second element is components of variance, third element is
+	 *            experiment sizes
 	 */
 	public static void main(String[] args) {
 		try {
@@ -66,7 +71,7 @@ public class CalcGenRoeMetz {
 				}
 			}
 			int[] n = new int[3];
-			String[] ns = args[0].substring(args[0].lastIndexOf("[") + 1,
+			String[] ns = args[2].substring(args[2].lastIndexOf("[") + 1,
 					args[0].indexOf("]")).split(",");
 			if (ns.length != 2) {
 				System.out.println("Expected input n to contain 3 elements");
@@ -83,12 +88,15 @@ public class CalcGenRoeMetz {
 		} catch (ArrayIndexOutOfBoundsException e) {
 			System.out.println("Missing Arguments");
 			System.out
-					.println("Format is: CofVGenRoeMetz [u0,u1] [R00,C00,RC00,R10,C10,RC10,R01,C01,RC01,R11,C11,RC11,R0,C0,RC0,R1,C1,RC1] numSamples");
-			e.printStackTrace();
+					.println("Format is: CofVGenRoeMetz [u0,u1] [R00,C00,RC00,R10,C10,RC10,R01,C01,RC01,R11,C11,RC11,R0,C0,RC0,R1,C1,RC1] [n0,n1,nr]");
 		}
 	}
 
-	public static void printResults() {
+	/**
+	 * Prints the results of a simulation experiment to standard out. Only used
+	 * when main method for this class is invoked.
+	 */
+	private static void printResults() {
 		System.out.println("cofv_auc:");
 		for (int i = 0; i < cofv_auc.length; i++) {
 			Matrix.printMatrix(cofv_auc[i]);
@@ -115,27 +123,61 @@ public class CalcGenRoeMetz {
 		System.out.println();
 	}
 
+	/**
+	 * Get BDG decomposition of calculated variance components
+	 * 
+	 * @return BDG decomposition
+	 */
 	public static double[][] getBDGdata() {
 		return BDG;
 	}
 
+	/**
+	 * Get BCK decomposition of calculated variance components
+	 * 
+	 * @return BCK decomposition
+	 */
 	public static double[][] getBCKdata() {
 		return BCK;
 	}
 
+	/**
+	 * Get DBM decomposition of calculated variance components
+	 * 
+	 * @return DBM decomposition
+	 */
 	public static double[][] getDBMdata() {
 		return DBM;
 	}
 
+	/**
+	 * Get OR decomposition of calculated variance components
+	 * 
+	 * @return OR decomposition
+	 */
 	public static double[][] getORdata() {
 		return OR;
 	}
 
+	/**
+	 * Get MS decomposition of calculated variance components
+	 * 
+	 * @return MS decomposition
+	 */
 	public static double[][] getMSdata() {
 		return MS;
 	}
 
-	public static double prodMoment1(double[] u, double[] scale, int n) {
+	/**
+	 * Numerically integrates a one dimensional gaussian pdf times two normal
+	 * cdfs
+	 * 
+	 * @param u Contains experiment means
+	 * @param scale Contains one 1-D gaussian pdf and two 2-D normal cdfs
+	 * @param numSamples Number of samples for numerical integration
+	 * @return Integrated product moment
+	 */
+	public static double prodMoment1(double[] u, double[] scale, int numSamples) {
 		NormalDistribution gauss = new NormalDistribution();
 
 		double scale1 = scale[0];
@@ -143,37 +185,46 @@ public class CalcGenRoeMetz {
 		double scale21 = scale[2];
 
 		double lx = 10 * Math.sqrt(scale1);
-		double dx = lx / (double) n;
-		double[] x = new double[n];
-		for (int i = 0; i < n; i++) {
+		double dx = lx / (double) numSamples;
+		double[] x = new double[numSamples];
+		for (int i = 0; i < numSamples; i++) {
 			x[i] = ((double) i * dx) - (0.5 * lx);
 		}
 
-		double f[] = new double[n];
-		for (int i = 0; i < n; i++) {
+		double f[] = new double[numSamples];
+		for (int i = 0; i < numSamples; i++) {
 			f[i] = Math.exp((-(x[i] * x[i])) / 2.0 / scale1);
 		}
 
-		for (int i = 0; i < n; i++) {
+		for (int i = 0; i < numSamples; i++) {
 			f[i] = f[i] / Math.sqrt(Math.PI * 2.0 * scale1);
 		}
 
-		double[] phi = new double[n];
-		for (int i = 0; i < n; i++) {
+		double[] phi = new double[numSamples];
+		for (int i = 0; i < numSamples; i++) {
 			phi[i] = gauss.cumulativeProbability((u[0] + x[i])
 					/ Math.sqrt(scale20))
 					* gauss.cumulativeProbability((u[1] + x[i])
 							/ Math.sqrt(scale21));
 		}
 
-		double[] toTotal = new double[n];
-		for (int i = 0; i < n; i++) {
+		double[] toTotal = new double[numSamples];
+		for (int i = 0; i < numSamples; i++) {
 			toTotal[i] = dx * f[i] * phi[i];
 		}
 		return Matrix.total(toTotal);
 	}
 
-	public static double prodMoment(double[] u, double[] scale, int n) {
+	/**
+	 * Numerically integrates a two dimensional gaussian pdf times a gaussian
+	 * cdf
+	 * 
+	 * @param u Contains experiment means.
+	 * @param scale Contains 2-D gaussian pdf and cdf
+	 * @param numSamples Number of samples for numerical integration
+	 * @return Integrated product moment
+	 */
+	public static double prodMoment(double[] u, double[] scale, int numSamples) {
 		NormalDistribution gauss = new NormalDistribution();
 		double scale1 = scale[0];
 		double scale20 = scale[1];
@@ -182,30 +233,30 @@ public class CalcGenRoeMetz {
 		double scale31 = scale[4];
 
 		double lx = 10.0 * Math.sqrt(scale1);
-		double dx = lx / (double) n;
-		double[] x = new double[n];
+		double dx = lx / (double) numSamples;
+		double[] x = new double[numSamples];
 
 		double ly0 = 10.0 * Math.sqrt(scale20);
-		double dy0 = ly0 / (double) n;
-		double[] y0 = new double[n];
+		double dy0 = ly0 / (double) numSamples;
+		double[] y0 = new double[numSamples];
 
 		double ly1 = 10.0 * Math.sqrt(scale21);
-		double dy1 = ly1 / (double) n;
-		double[] y1 = new double[n];
+		double dy1 = ly1 / (double) numSamples;
+		double[] y1 = new double[numSamples];
 
-		for (int i = 0; i < n; i++) {
+		for (int i = 0; i < numSamples; i++) {
 			x[i] = ((double) i * dx) - (0.5 * lx);
 			y0[i] = ((double) i * dy0) - (0.5 * ly0);
 			y1[i] = ((double) i * dy1) - (0.5 * ly1);
 		}
 
-		double[] f0 = new double[n];
-		double[] f1 = new double[n];
+		double[] f0 = new double[numSamples];
+		double[] f1 = new double[numSamples];
 
-		double[] dy0xf0 = new double[n];
-		double[] dy1xf1 = new double[n];
+		double[] dy0xf0 = new double[numSamples];
+		double[] dy1xf1 = new double[numSamples];
 
-		for (int i = 0; i < n; i++) {
+		for (int i = 0; i < numSamples; i++) {
 			f0[i] = Math.exp(-(y0[i] * y0[i]) / 2.0 / scale20)
 					/ Math.sqrt(Math.PI * 2.0 * scale20);
 			dy0xf0[i] = dy0 * f0[i];
@@ -214,14 +265,14 @@ public class CalcGenRoeMetz {
 			dy1xf1[i] = dy1 * f1[i];
 		}
 
-		double[] ff = new double[n];
-		for (int i = 0; i < n; i++) {
-			double[] phi0 = new double[n];
-			double[] phi1 = new double[n];
-			double[] dy0xf0xphi0 = new double[n];
-			double[] dy1xf1xphi1 = new double[n];
+		double[] ff = new double[numSamples];
+		for (int i = 0; i < numSamples; i++) {
+			double[] phi0 = new double[numSamples];
+			double[] phi1 = new double[numSamples];
+			double[] dy0xf0xphi0 = new double[numSamples];
+			double[] dy1xf1xphi1 = new double[numSamples];
 
-			for (int j = 0; j < n; j++) {
+			for (int j = 0; j < numSamples; j++) {
 				phi0[j] = gauss.cumulativeProbability((u[0] + x[j] + y0[i])
 						/ Math.sqrt(scale30));
 				dy0xf0xphi0[j] = dy0xf0[j] * phi0[j];
@@ -232,9 +283,9 @@ public class CalcGenRoeMetz {
 			ff[i] = Matrix.total(dy0xf0xphi0) * Matrix.total(dy1xf1xphi1);
 		}
 
-		double[] f = new double[n];
-		double[] toTotal = new double[n];
-		for (int i = 0; i < n; i++) {
+		double[] f = new double[numSamples];
+		double[] toTotal = new double[numSamples];
+		for (int i = 0; i < numSamples; i++) {
 			f[i] = Math.exp(-(x[i] * x[i]) / 2.0 / scale1)
 					/ Math.sqrt(Math.PI * 2.0 * scale1);
 			toTotal[i] = dx * f[i] * ff[i];
@@ -243,13 +294,19 @@ public class CalcGenRoeMetz {
 		return Matrix.total(toTotal);
 	}
 
+	/**
+	 * Calculates AUC components of variance for given experiment parameters via
+	 * numerical integration
+	 * 
+	 * @param u Contains experiment means. Has 2 elements.
+	 * @param var_t Contains variance components. Has 18 elements.
+	 * @param n Contains experiment sizes. Has 3 elements.
+	 */
 	public static void genRoeMetz(double[] u, double[] var_t, int[] n) {
 		NormalDistribution gauss = new NormalDistribution();
-		if (var_t.length != 18) {
-			System.out
-					.println("var_t should contain 18 components of variance");
-			return;
-		}
+
+		// number of samples for numerical integration, can change
+		final int numSamples = 256;
 
 		double v00r = var_t[0];
 		double v00c = var_t[1];
@@ -269,13 +326,9 @@ public class CalcGenRoeMetz {
 		double v1r = var_t[15];
 		double v1c = var_t[16];
 		double v1rc = var_t[17];
-
 		int n0 = n[0];
 		int n1 = n[1];
 		int nr = n[2];
-
-		// default value of n could be 256
-		int numSamples = 256;
 
 		m = new double[2][2][9];
 
@@ -466,11 +519,19 @@ public class CalcGenRoeMetz {
 		m[1][0][8] = m[0][0][0] * m[1][1][0];
 		m[0][1][8] = m[1][0][8];
 
-		calculateStuff(n0, n1, nr);
+		calcAUCsAndDecomps(n0, n1, nr);
 
 	}
 
-	public static void calculateStuff(int n0, int n1, int nr) {
+	/**
+	 * Calculates AUCs and decompositions of components of variance from moment
+	 * matrix according to experiment size
+	 * 
+	 * @param n0 Number of normal cases
+	 * @param n1 Number of disease cases
+	 * @param nr Number of readers
+	 */
+	public static void calcAUCsAndDecomps(int n0, int n1, int nr) {
 		double[][] Bauc = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, -1.0 },
 				{ 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, -1.0 },
 				{ 0.0, 0.0, 0.0, 0.0, 1.0, -1.0, -1.0, 1.0 },

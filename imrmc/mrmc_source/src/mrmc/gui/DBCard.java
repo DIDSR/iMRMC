@@ -1,9 +1,11 @@
-/*
+/**
  * DBModSelect.java
  * 
- * v2.0b
+ * @version 2.0b
  * 
- * @Author Xin He, Phd, Brandon D. Gallas, PhD, Rohan Pathare
+ * @author Xin He, Ph.D
+ * @author Brandon D. Gallas, Ph.D
+ * @author Rohan Pathare
  * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
@@ -36,6 +38,12 @@ public class DBCard {
 	private JRadioButton mod2Button;
 	private JRadioButton modDButton;
 
+	/**
+	 * Sole constructor. Builds the DBCard gui panel
+	 * 
+	 * @param mPanel Panel containing different input type cards
+	 * @param guitemp GUInterface for which mPanel is attached
+	 */
 	public DBCard(JPanel mPanel, GUInterface guitemp) {
 		gui = guitemp;
 		// create the checkbox for allowing negative components
@@ -74,23 +82,32 @@ public class DBCard {
 		mPanel.add(mod2Button);
 		mPanel.add(modDButton);
 
-		JButton okButton = new JButton("MRMC variance analysis"); // used to be
-																	// the ok
-																	// button
-		mPanel.add(okButton);
-		okButton.addActionListener(new okButtonListner());
+		JButton varAnalysisBtn = new JButton("MRMC variance analysis");
+		mPanel.add(varAnalysisBtn);
+		varAnalysisBtn.addActionListener(new VarAnalysisListner());
 	}
 
-	public void setUseBiasM(int temp) {
-		if (temp == 1) {
-			useBiasM = 1;
+	/**
+	 * Sets if bias is used for variance components
+	 * 
+	 * @param biasSetting Whether or not to use bias
+	 */
+	public void setUseBiasM(int biasSetting) {
+		if (biasSetting == 1) {
+			useBiasM = GUInterface.USE_BIAS;
 			cb.setSelected(true);
 		} else {
-			useBiasM = 0;
+			useBiasM = GUInterface.NO_BIAS;
 			cb.setSelected(false);
 		}
 	}
 
+	/**
+	 * Sets which modality/difference is being used, updates GUI elements to
+	 * reflect choise
+	 * 
+	 * @param input Which modality/difference is being used
+	 */
 	public void setSelectedMod(int input) {
 		if (input == 0)
 			mod1Button.setSelected(true);
@@ -102,27 +119,29 @@ public class DBCard {
 		gui.setSelectedMod(selectedMod);
 	}
 
-	/*
-	 * checkbox to select whether to use MLE estimates of moments to avoid
-	 * negatives
+	/**
+	 * Updates GUI elements based on whether check-box indicates bias is being
+	 * used
+	 * 
 	 */
 	class allNegativeListner implements ItemListener {
 		public void itemStateChanged(ItemEvent e) {
 			if (cb.isSelected()) {
-				useBiasM = 1;
+				useBiasM = GUInterface.USE_BIAS;
 			} else {
-				useBiasM = 0;
+				useBiasM = GUInterface.NO_BIAS;
 			}
 			gui.setUseBiasM(useBiasM);
 		}
-
 	}
 
-	/* radio buttons to select the type of modality when reading from database */
+	/**
+	 * Handler for modality selection radio buttons, updates GUI accordingly
+	 * 
+	 */
 	class modSelListner implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			String str;
-			str = e.getActionCommand();
+			String str = e.getActionCommand();
 			System.out.println(str + "radiobutton selected");
 			if (str == "Modality 1") {
 				selectedMod = 0;
@@ -137,15 +156,20 @@ public class DBCard {
 		}
 	}
 
-	/* "MRMC variance analysis" button to perform analysis on dataset */
-	class okButtonListner implements ActionListener {
+	/**
+	 * Handler for "MRMC Variance Analysis" button, updates GUI
+	 * 
+	 * @author rpathare
+	 * 
+	 */
+	class VarAnalysisListner implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("OK button clicked");
-			int check = gui.checkNegative();
-			if (check == 1) {
-				gui.setTab1();
+			System.out.println("Variance analysis button clicked");
+			boolean check = gui.checkNegative();
+			if (check) {
+				gui.setTable1();
 				gui.setAUCoutput();
-				gui.setSPanel();
+				gui.setSizePanel();
 				gui.set1stStatPanel();
 			}
 		}

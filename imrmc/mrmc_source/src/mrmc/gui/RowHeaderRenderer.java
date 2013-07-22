@@ -1,9 +1,11 @@
-/*
+/**
  * RowHeaderRenderer.java
  * 
- * v2.0b
+ * @version 2.0b
  * 
- * @Author Xin He, Phd, Brandon D. Gallas, PhD, Rohan Pathare
+ * @author Xin He, Ph.D
+ * @author Brandon D. Gallas, Ph.D
+ * @author Rohan Pathare
  * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
@@ -37,11 +39,14 @@ import javax.swing.table.JTableHeader;
 
 public class RowHeaderRenderer extends JLabel implements ListCellRenderer {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Sole constructor. Creates a row header for a table so that each row can
+	 * be labeled
+	 * 
+	 * @param table Table for which the row header is being created
+	 */
 	public RowHeaderRenderer(JTable table) {
 		JTableHeader header = table.getTableHeader();
 		setOpaque(true);
@@ -52,6 +57,9 @@ public class RowHeaderRenderer extends JLabel implements ListCellRenderer {
 		setFont(header.getFont());
 	}
 
+	/**
+	 * Gets the individual row header
+	 */
 	public Component getListCellRendererComponent(JList list, Object value,
 			int index, boolean isSelected, boolean cellHasFocus) {
 		setText((value == null) ? "" : value.toString());
