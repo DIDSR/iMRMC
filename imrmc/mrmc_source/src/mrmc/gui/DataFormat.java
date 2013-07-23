@@ -19,7 +19,7 @@
 package mrmc.gui;
 
 /**
- * Verbal description of the formatting necessary to input raw study data *
+ * Verbal description of the formatting necessary to input raw study data
  * 
  * @author Xin He, Ph.D,
  * @author Brandon D. Gallas, Ph.D
