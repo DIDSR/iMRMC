@@ -1,12 +1,6 @@
 /**
  * ManualCard.java
  * 
- * @version 2.0b
- * 
- * @author Xin He, Ph.D
- * @author Brandon D. Gallas, Ph.D
- * @author Rohan Pathare
- * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
  * 105 of the United States Code, this work is not subject to copyright protection and is in the public domain. 
@@ -20,7 +14,6 @@
  * can be redistributed and/or modified freely, we ask that any derivative works bear some notice that they 
  * are derived from it, and any modified versions bear some notice that they have been modified.
  *     
- *     Card handling manual input of data components (different from raw study data input files)
  */
 
 package mrmc.gui;
@@ -30,6 +23,14 @@ import java.awt.event.*;
 import mrmc.core.MRMC;
 import mrmc.core.DBRecord;
 
+/**
+ * Card handling manual input of data components
+ * 
+ * @author Xin He, Ph.D,
+ * @author Brandon D. Gallas, Ph.D
+ * @author Rohan Pathare
+ * @version 2.0b
+ */
 public class ManualCard {
 	private GUInterface gui;
 	private MRMC lst;

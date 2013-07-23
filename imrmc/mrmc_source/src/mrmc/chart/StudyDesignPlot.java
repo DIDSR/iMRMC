@@ -1,10 +1,6 @@
 /**
  * StudyDesignPlot.java
  * 
- * @version 2.0b
- * 
- * @author Rohan Pathare
- * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
  * 105 of the United States Code, this work is not subject to copyright protection and is in the public domain. 
@@ -17,9 +13,6 @@
  * implies endorsement by the FDA or confers any advantage in regulatory decisions.  Although this software 
  * can be redistributed and/or modified freely, we ask that any derivative works bear some notice that they 
  * are derived from it, and any modified versions bear some notice that they have been modified.
- *     
- *     Creates chart displaying presence of score data for a particular case/reader 
- *     combination at a given modality
  */
 
 package mrmc.chart;
@@ -38,6 +31,13 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.xy.DefaultXYDataset;
 
+/**
+ * Creates chart displaying presence of score data for a particular case/reader
+ * combination at a given modality
+ * 
+ * @author Rohan Pathare
+ * @version 2.0b
+ */
 public class StudyDesignPlot extends JFrame {
 
 	private static final long serialVersionUID = 1L;

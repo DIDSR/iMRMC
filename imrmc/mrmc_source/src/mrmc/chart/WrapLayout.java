@@ -1,10 +1,6 @@
 /**
  * WrapLayout.java
  * 
- * FlowLayout subclass that fully supports wrapping of components.
- * 
- * @author Rob Camick
- * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
  * 105 of the United States Code, this work is not subject to copyright protection and is in the public domain. 
@@ -20,7 +16,6 @@
  * 
  * sourced from http://tips4java.wordpress.com/2008/11/06/wrap-layout/
  * no claim to copyright.
- * 
  */
 
 package mrmc.chart;
@@ -29,6 +24,12 @@ import java.awt.*;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
+/**
+ * FlowLayout subclass that fully supports wrapping of components.
+ * 
+ * @author Rob Camick
+ * 
+ */
 public class WrapLayout extends FlowLayout {
 	/**
 	 * 

@@ -1,12 +1,6 @@
 /**
  * GUInterface.java
  * 
- * @version 2.0b
- * 
- * @author Xin He, Ph.D
- * @author Brandon D. Gallas, Ph.D
- * @author Rohan Pathare
- * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
  * 105 of the United States Code, this work is not subject to copyright protection and is in the public domain. 
@@ -19,21 +13,7 @@
  * implies endorsement by the FDA or confers any advantage in regulatory decisions.  Although this software 
  * can be redistributed and/or modified freely, we ask that any derivative works bear some notice that they 
  * are derived from it, and any modified versions bear some notice that they have been modified.
- * 
- * This class describes the graphic interface. From top
- * to bottom, the GUI includes
- * 1. Menu bar
- * 2. Input Panel, which uses card layout and has 3 cards 
- *    1) database as input
- *    2) pilot study or raw data input
- *    3) manual input components 
- * 3. a label of AUC values, size of the study, etc.
- * 4. a table with all components of variance for the origianl study
- * 5. Sizing panel   
- * 6. a table with all components of variance for the resulting study
- * 7. a label of statistical analysis resutls 
- * 8. database summary panel
- * 
+ *     
  */
 
 package mrmc.gui;
@@ -62,6 +42,26 @@ import mrmc.core.StatTest;
 
 import org.jfree.ui.RefineryUtilities;
 
+/**
+ * This class describes the graphic interface. From top to bottom, the GUI
+ * includes <br>
+ * 1. Menu bar <br>
+ * 2. Input Panel, which uses card layout and has 3 cards <br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;1) database as input <br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;2) pilot study or raw data input <br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;3) manual input components <br>
+ * 3. a label of AUC values, size of the study, etc. <br>
+ * 4. a table with all components of variance for the origianl study <br>
+ * 5. Sizing panel <br>
+ * 6. a table with all components of variance for the resulting study <br>
+ * 7. a label of statistical analysis resutls <br>
+ * 8. database summary panel <br>
+ * 
+ * @author Xin He, Ph.D,
+ * @author Brandon D. Gallas, Ph.D
+ * @author Rohan Pathare
+ * @version 2.0b
+ */
 public class GUInterface {
 	JPanel inputCards; // the panel that uses CardLayout, there are three cards
 						// for three different input
