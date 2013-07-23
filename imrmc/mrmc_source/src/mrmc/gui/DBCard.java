@@ -1,5 +1,5 @@
 /**
- * DBModSelect.java
+ * DBCard.java
  * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
@@ -22,7 +22,7 @@ import javax.swing.*;
 import java.awt.event.*;
 
 /**
- * Performs variance analysis over two modalities, determines AUC
+ * Card handling input of study data components from internal database
  * 
  * @author Xin He, Ph.D,
  * @author Brandon D. Gallas, Ph.D
