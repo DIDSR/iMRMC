@@ -1,12 +1,6 @@
 /**
  * GUImenubar.java
  * 
- * @version 2.0b
- * 
- * @author Xin He, Ph.D
- * @author Brandon D. Gallas, Ph.D
- * @author Rohan Pathare
- * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
  * 105 of the United States Code, this work is not subject to copyright protection and is in the public domain. 
@@ -20,7 +14,6 @@
  * can be redistributed and/or modified freely, we ask that any derivative works bear some notice that they 
  * are derived from it, and any modified versions bear some notice that they have been modified.
  *     
- *     Top menu bar with drop-down menu button displaying information about application.
  */
 
 package mrmc.gui;
@@ -29,6 +22,15 @@ import javax.swing.*;
 import java.awt.event.*;
 import mrmc.core.MRMC;
 
+/**
+ * Top menu bar with drop-down menu button displaying information about
+ * application.
+ * 
+ * @author Xin He, Ph.D,
+ * @author Brandon D. Gallas, Ph.D
+ * @author Rohan Pathare
+ * @version 2.0b
+ */
 public class GUImenubar {
 	private MRMC lst;
 	private JMenuBar menuBar = new JMenuBar();

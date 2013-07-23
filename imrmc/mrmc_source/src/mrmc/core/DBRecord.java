@@ -1,12 +1,6 @@
 /**
  * DBRecord.java
  * 
- * @version 2.0b
- * 
- * @author Xin He, Ph.D
- * @author Brandon D. Gallas, Ph.D
- * @author Rohan Pathare
- * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
  * 105 of the United States Code, this work is not subject to copyright protection and is in the public domain. 
@@ -20,14 +14,6 @@
  * can be redistributed and/or modified freely, we ask that any derivative works bear some notice that they 
  * are derived from it, and any modified versions bear some notice that they have been modified.
  *     
- * one entry in the database
- * This class includes all the information on one study.
- * it also includes all the formulas to convert one decomposition to the other
- * The conversion formulas are based on 
- * Gallas BD, Bandos A, Samuelson F, Wagner RF. A Framework 
- * for random-effects ROC analsysis: Biases with the Bootstrap 
- * and other variance estimators�, Commun Stat A-Theory 38(15), 
- * 2586-2603 (2009).
  */
 
 package mrmc.core;
@@ -35,6 +21,19 @@ package mrmc.core;
 import java.util.*;
 import java.text.DecimalFormat;
 
+/**
+ * One entry in the database. This class includes all the information on one
+ * study. it also includes all the formulas to convert one decomposition to the
+ * other The conversion formulas are based on Gallas BD, Bandos A, Samuelson F,
+ * Wagner RF. A Framework for random-effects ROC analsysis: Biases with the
+ * Bootstrap and other variance estimators�, Commun Stat A-Theory 38(15),
+ * 2586-2603 (2009).
+ * 
+ * @author Xin He, Ph.D,
+ * @author Brandon D. Gallas, Ph.D
+ * @author Rohan Pathare
+ * @version 2.0b
+ */
 public class DBRecord {
 	private String recordDesc = "";
 	private String recordTitle = "";
@@ -717,7 +716,8 @@ public class DBRecord {
 	 * @param ORc Coefficient matrix for OR decomposition
 	 * @return Matrix of data for display in table
 	 */
-	public static double[][] getORTab(int selectedMod, double[][] ORtemp, double[][] ORc) {
+	public static double[][] getORTab(int selectedMod, double[][] ORtemp,
+			double[][] ORc) {
 		double[][] ORTab1 = new double[3][6];
 		ORTab1[0] = ORtemp[selectedMod];
 		ORTab1[1] = ORc[selectedMod];
@@ -735,7 +735,8 @@ public class DBRecord {
 	 * @param MSc Coefficient matrix for MS decomposition
 	 * @return Matrix of data for display in table
 	 */
-	public static double[][] getMSTab(int selectedMod, double[][] MStemp, double[][] MSc) {
+	public static double[][] getMSTab(int selectedMod, double[][] MStemp,
+			double[][] MSc) {
 		double[][] MSTab1 = new double[3][6];
 		MSTab1[0] = MStemp[selectedMod];
 		MSTab1[1] = MSc[selectedMod];

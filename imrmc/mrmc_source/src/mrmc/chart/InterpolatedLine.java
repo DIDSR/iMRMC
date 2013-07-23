@@ -1,10 +1,6 @@
 /**
  * InterpolatedLine.java
  * 
- * @version 2.0b
- * 
- * @author Rohan Pathare
- * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
  * 105 of the United States Code, this work is not subject to copyright protection and is in the public domain. 
@@ -17,10 +13,6 @@
  * implies endorsement by the FDA or confers any advantage in regulatory decisions.  Although this software 
  * can be redistributed and/or modified freely, we ask that any derivative works bear some notice that they 
  * are derived from it, and any modified versions bear some notice that they have been modified.
- *     
- *     Given a set of XY coordinates, creates a set of linear equations describing lines
- *     between said coordinates. Allows one to determine a linearly interpolated point for
- *     a given x or y position. 
  */
 
 package mrmc.chart;
@@ -30,6 +22,14 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.HashMap;
 
+/**
+ * Given a set of XY coordinates, creates a set of linear equations describing
+ * lines between said coordinates. Allows one to determine a linearly
+ * interpolated point for a given x or y position.
+ * 
+ * @author Rohan Pathare
+ * @version 2.0b
+ */
 public class InterpolatedLine {
 	private HashMap<XYPair, double[]> allLineEqs;
 	private TreeSet<XYPair> actualPoints;
@@ -102,7 +102,7 @@ public class InterpolatedLine {
 	}
 
 	/**
-	 * Gets the X coordinate for given Y along the set of interpolated lines. 
+	 * Gets the X coordinate for given Y along the set of interpolated lines.
 	 * 
 	 * @param y The Y position
 	 * @return The X position

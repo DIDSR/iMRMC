@@ -1,10 +1,6 @@
 /**
  * RoeMetz.java
  * 
- * @version 1.0b
- * 
- * @author Rohan Pathare
- * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
  * 105 of the United States Code, this work is not subject to copyright protection and is in the public domain. 
@@ -18,7 +14,6 @@
  * can be redistributed and/or modified freely, we ask that any derivative works bear some notice that they 
  * are derived from it, and any modified versions bear some notice that they have been modified.
  *     
- *     Entry point of iRoeMetz application
  */
 
 package roemetz.core;
@@ -29,6 +24,12 @@ import javax.swing.*;
 
 import roemetz.gui.RMGUInterface;
 
+/**
+ * Entry point of iRoeMetz application
+ * 
+ * @author Rohan Pathare
+ * @version 2.0b
+ */
 public class RoeMetz extends JApplet {
 
 	private static final long serialVersionUID = 1L;

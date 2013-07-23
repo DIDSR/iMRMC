@@ -1,12 +1,6 @@
 /**
  * CovMRMC.java
  * 
- * @version 2.0b
- * 
- * @author Xin He, Ph.D, 
- * @author Brandon D. Gallas, Ph.D
- * @author Rohan Pathare
- * 
  * This software and documentation (the "Software") were developed at the Food and Drug Administration (FDA) 
  * by employees of the Federal Government in the course of their official duties. Pursuant to Title 17, Section 
  * 105 of the United States Code, this work is not subject to copyright protection and is in the public domain. 
@@ -20,11 +14,18 @@
  * can be redistributed and/or modified freely, we ask that any derivative works bear some notice that they 
  * are derived from it, and any modified versions bear some notice that they have been modified.
  *     
- *     Performs variance analysis over two modalities, determines AUC
  */
 
 package mrmc.core;
 
+/**
+ * Performs variance analysis over two modalities, determines AUC
+ * 
+ * @author Xin He, Ph.D,
+ * @author Brandon D. Gallas, Ph.D
+ * @author Rohan Pathare
+ * @version 2.0b
+ */
 public class CovMRMC {
 	private int Reader, Normal, Disease;
 	private int nmod = 2;
@@ -256,8 +257,7 @@ public class CovMRMC {
 			}
 
 		} // end reader loop
-		
-		
+
 		bdenom[5] = Matrix.total(Matrix.elementMultiply(wadaSumr, wbdbSumr));
 		bdenom[6] = Matrix.total(Matrix.elementMultiply(wadaSumir, wbdbSumir));
 		bdenom[7] = Matrix.total(Matrix.elementMultiply(wadaSumjr, wbdbSumjr));
