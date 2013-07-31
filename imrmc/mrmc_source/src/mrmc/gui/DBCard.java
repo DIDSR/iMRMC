@@ -32,7 +32,7 @@ import java.awt.event.*;
 public class DBCard {
 	private GUInterface gui;
 	private int selectedMod = 0;
-	private int useBiasM = 0;
+	private int useMLE = 0;
 	private JCheckBox cb;
 	private JRadioButton mod1Button;
 	private JRadioButton mod2Button;
@@ -88,23 +88,23 @@ public class DBCard {
 	}
 
 	/**
-	 * Sets if bias is used for variance components
+	 * Sets if MLE (bias) is used for variance components
 	 * 
-	 * @param biasSetting Whether or not to use bias
+	 * @param MLEsetting Whether or not to use bias
 	 */
-	public void setUseBiasM(int biasSetting) {
-		if (biasSetting == 1) {
-			useBiasM = GUInterface.USE_BIAS;
+	public void setUseMLE(int MLEsetting) {
+		if (MLEsetting == 1) {
+			useMLE = GUInterface.USE_MLE;
 			cb.setSelected(true);
 		} else {
-			useBiasM = GUInterface.NO_BIAS;
+			useMLE = GUInterface.NO_MLE;
 			cb.setSelected(false);
 		}
 	}
 
 	/**
 	 * Sets which modality/difference is being used, updates GUI elements to
-	 * reflect choise
+	 * reflect choice
 	 * 
 	 * @param input Which modality/difference is being used
 	 */
@@ -120,18 +120,18 @@ public class DBCard {
 	}
 
 	/**
-	 * Updates GUI elements based on whether check-box indicates bias is being
+	 * Updates GUI elements based on whether check-box indicates MLE is being
 	 * used
 	 * 
 	 */
 	class allNegativeListener implements ItemListener {
 		public void itemStateChanged(ItemEvent e) {
 			if (cb.isSelected()) {
-				useBiasM = GUInterface.USE_BIAS;
+				useMLE = GUInterface.USE_MLE;
 			} else {
-				useBiasM = GUInterface.NO_BIAS;
+				useMLE = GUInterface.NO_MLE;
 			}
-			gui.setUseBiasM(useBiasM);
+			gui.setUseMLE(useMLE);
 		}
 	}
 

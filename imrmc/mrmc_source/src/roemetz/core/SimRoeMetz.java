@@ -47,7 +47,7 @@ public class SimRoeMetz {
 	private int nr;
 	private double u0;
 	private double u1;
-	private int useBiasM;
+	private int useMLE;
 
 	/**
 	 * Sole constructor. Upon invocation, verifies the parameters, initializes
@@ -59,11 +59,11 @@ public class SimRoeMetz {
 	 * @param rand Random number generator initialized with seed from GUI. No
 	 *            guarantee that the generator is at any particular position
 	 *            within its sequence for a given seed.
-	 * @param useBias Indicates whether to used biased estimates in the results
+	 * @param useMLEs Indicates whether to used biased estimates in the results
 	 *            of the simulation
 	 */
 	public SimRoeMetz(double[] u, double[] var_t, int[] n, Random rand,
-			int useBias) {
+			int useMLEs) {
 		if (u.length != 2) {
 			System.out.println("input u is of incorrect size");
 			return;
@@ -82,7 +82,7 @@ public class SimRoeMetz {
 		nr = n[2];
 		u0 = u[0];
 		u1 = u[1];
-		useBiasM = useBias;
+		useMLE = useMLEs;
 		doSim(var_t, rand);
 		processSimExperiment();
 	}
@@ -132,8 +132,8 @@ public class SimRoeMetz {
 				}
 			}
 			Random rand = new Random(Long.parseLong(args[3]));
-			int useBias = Integer.parseInt(args[4]);
-			SimRoeMetz exp = new SimRoeMetz(u, var_t, n, rand, useBias);
+			int useMLE = Integer.parseInt(args[4]);
+			SimRoeMetz exp = new SimRoeMetz(u, var_t, n, rand, useMLE);
 			exp.printResults();
 		} catch (NumberFormatException e) {
 			System.out.println("Incorrectly Formatted Input");
@@ -143,7 +143,7 @@ public class SimRoeMetz {
 			System.out
 					.println("Format is: SimRoeMetz [u0,u1] [R00,C00,RC00,R10,"
 							+ "C10,RC10,R01,C01,RC01,R11,C11,RC11,R0,C0,RC0,R1,"
-							+ "C1,RC1] [n0,n1,nr] seed useBias");
+							+ "C1,RC1] [n0,n1,nr] seed useMLE");
 			e.printStackTrace();
 		}
 	}
@@ -348,11 +348,11 @@ public class SimRoeMetz {
 		// accessed
 		DBRecord rec = new DBRecord(toCalc, 1, 2);
 
-		BDG = rec.getBDG(useBiasM);
-		BCK = rec.getBCK(useBiasM);
-		DBM = rec.getDBM(useBiasM);
-		OR = rec.getOR(useBiasM);
-		MS = rec.getMS(useBiasM);
+		BDG = rec.getBDG(useMLE);
+		BCK = rec.getBCK(useMLE);
+		DBM = rec.getDBM(useMLE);
+		OR = rec.getOR(useMLE);
+		MS = rec.getMS(useMLE);
 		auc = new double[] { rec.getAUCinNumber(0), rec.getAUCinNumber(1),
 				(rec.getAUCinNumber(0) - rec.getAUCinNumber(1)) };
 	}

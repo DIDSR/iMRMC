@@ -36,45 +36,74 @@ public class StatTest {
 	private final int INFINITY = 500;
 	private final int PRECISION = 6;
 	private final double ZERO = 1E-300;
-	private double powerF;
+	private final static int USE_MLE = 1;
+	private final static int NO_MLE = 0;
+	private double powerWithHillisDF;
 	private double powerZ;
 	private double DOF = 0;
 	private double dfBDG; // degrees of freedom based on Obuchowski/BDG method
-	private double tStat = 0;
+	private double tStatEst = 0;
 	private double effSize;
 	private double sigLevel;
 	private double pValF;
 	private double ciBot, ciTop;
 	private double f0;
 	private double df1 = 1.0; // future versions may account for greater df1
-	private double df2;
-	private double fStat;
+	private double dfHillis;
+	private double tStatCalc;
+	private double pValFBDG;
+	private double pValFHillis;
+	private double powerWithBDGDF;
+	private double ciBotDfBDG, ciTopDfBDG;
+	private double ciBotDfHillis, ciTopDfHillis;
 
 	/**
-	 * Gets the lower range of the confidence interval
+	 * Gets the confidence interval
 	 * 
-	 * @return Lower range of confidence interval
+	 * @return Lower and upper range of confidence interval
 	 */
-	public double getciBot() {
-		return ciBot;
+	public double[] getCI() {
+		return new double[] { ciBot, ciTop };
 	}
 
 	/**
-	 * Gets the upper range of the confidence interval
+	 * Gets confidence interval calculated with degrees of freedom via BDG
+	 * method
 	 * 
-	 * @return Upper range of confidence interval
+	 * @return Lower and upper range of confidence interval
 	 */
-	public double getciTop() {
-		return ciTop;
+	public double[] getCIDFBDG() {
+		return new double[] { ciBotDfBDG, ciTopDfBDG };
 	}
 
 	/**
-	 * Gets the power according to Hillis 2011 calculation
+	 * Gets confidence interval calculated with degrees of freedom via Hillis
+	 * 2008 method
+	 * 
+	 * @return Lower and upper range of confidence interval
+	 */
+	public double[] getCIDFHillis() {
+		return new double[] { ciBotDfHillis, ciTopDfHillis };
+	}
+
+	/**
+	 * Gets the power according to Hillis 2011 calculation with degrees of
+	 * freedom via BDG method.
 	 * 
 	 * @return Power calculation
 	 */
-	public double getHillisPower() {
-		return powerF;
+	public double getHillisPowerWithBDGDF() {
+		return powerWithBDGDF;
+	}
+
+	/**
+	 * Gets the power according to Hillis 2011 calculation with degrees of
+	 * freedom via Hillis 2008 method.
+	 * 
+	 * @return Power calculation
+	 */
+	public double getHillisPowerWithHillisDF() {
+		return powerWithHillisDF;
 	}
 
 	/**
@@ -96,12 +125,12 @@ public class StatTest {
 	}
 
 	/**
-	 * Gets the t-statistic
+	 * Gets the estimated t-statistic
 	 * 
-	 * @return T-statistic
+	 * @return Estimated t-statistic
 	 */
-	public double gettStat() {
-		return tStat;
+	public double getTStatEst() {
+		return tStatEst;
 	}
 
 	/**
@@ -113,17 +142,40 @@ public class StatTest {
 		return pValF;
 	}
 
+	/**
+	 * Gets the p-value using degrees of freedom via BDG calculation
+	 * 
+	 * @return P-value
+	 */
+	public double getpValFBDG() {
+		return pValFBDG;
+	}
+
+	/**
+	 * Gets the p-value using degrees of freedom via Hillis calculation
+	 * 
+	 * @return P-value
+	 */
+	public double getpValFHillis() {
+		return pValFHillis;
+	}
+
+	/**
+	 * Gets the CVF
+	 * 
+	 * @return CVF
+	 */
 	public double getCVF() {
 		return f0;
 	}
 
 	/**
-	 * Gets the delta
+	 * Gets the calculated t-statistic
 	 * 
-	 * @return Delta (f-statistic)
+	 * @return Calculated t-statistic
 	 */
-	public double getDelta() {
-		return fStat;
+	public double getTStatCalc() {
+		return tStatCalc;
 	}
 
 	/**
@@ -132,7 +184,7 @@ public class StatTest {
 	 * @return Degrees of freedom
 	 */
 	public double getDDF() {
-		return df2;
+		return dfHillis;
 	}
 
 	/**
@@ -152,19 +204,51 @@ public class StatTest {
 	 * @param r Number of readers
 	 * @param n Number of normal cases
 	 * @param d Number of disease cases
-	 * @param sig Significance level
+	 * @param sig Significance level=
 	 * @param eff Effect size
 	 * @param totalVar Total variance of components
 	 * @param BCKbias Biased BCK variance components
 	 */
 	public StatTest(double[] DBMvar, int r, int n, int d, double sig,
-			double eff, double totalVar, double[][] BCKbias) {
+			double eff, double totalVar, double[][] BCKbias, double[] aucs,
+			int selectedMod) {
 		sigLevel = sig;
 		effSize = eff;
-		df2 = DDF_Hillis(DBMvar, r, n + d, totalVar);
-		powerF = FTest_power(DBMvar, r, n + d, totalVar);
-		powerZ = ZTest(DBMvar, r, n + d, totalVar);
+		dfHillis = DDF_Hillis(DBMvar, r, n + d, totalVar);
 		dfBDG = calcDFBDG(BCKbias, r, n, d, totalVar);
+		powerWithHillisDF = FTest_power(DBMvar, r, n + d, totalVar, dfHillis);
+		powerWithBDGDF = FTest_power(DBMvar, r, n + d, totalVar, dfBDG);
+		powerZ = ZTest(DBMvar, r, n + d, totalVar);
+
+		double fVal, fValBDG, fValHillis;
+		NormalDist ndist = new NormalDist();
+		fVal = ndist.inverseF(1 - sig);
+
+		if (dfBDG >= 50) {
+			fValBDG = ndist.inverseF(1 - sig);
+		} else {
+			FisherFDist fdist = new FisherFDist(1, (int) dfBDG);
+			fValBDG = fdist.inverseF(1 - sig);
+		}
+		if (dfHillis >= 50) {
+			fValHillis = ndist.inverseF(1 - sig);
+		} else {
+			FisherFDist fdist = new FisherFDist(1, (int) dfHillis);
+			fValHillis = fdist.inverseF(1 - sig);
+		}
+
+		double meanCI;
+		if (selectedMod == 0 || selectedMod == 1) {
+			meanCI = aucs[selectedMod];
+		} else {
+			meanCI = aucs[0] - aucs[1];
+		}
+		ciBot = meanCI - Math.sqrt(totalVar) * Math.sqrt(fVal); // bdg
+		ciTop = meanCI + Math.sqrt(totalVar) * Math.sqrt(fVal); // bdg
+		ciBotDfBDG = meanCI - Math.sqrt(totalVar) * Math.sqrt(fValBDG);
+		ciTopDfBDG = meanCI + Math.sqrt(totalVar) * Math.sqrt(fValBDG);
+		ciBotDfHillis = meanCI - Math.sqrt(totalVar) * Math.sqrt(fValHillis);
+		ciTopDfHillis = meanCI + Math.sqrt(totalVar) * Math.sqrt(fValHillis);
 	}
 
 	/**
@@ -173,13 +257,13 @@ public class StatTest {
 	 * 
 	 * @param curRecord The database record for which to calculate statistics
 	 * @param selectedMod Which modality/difference
-	 * @param useBiasM Whether or not to use biased variance components
+	 * @param useMLE Whether or not to use biased variance components
 	 * @param sig Significance level
 	 * @param eff Effect size
 	 */
-	public StatTest(DBRecord curRecord, int selectedMod, int useBiasM,
+	public StatTest(DBRecord curRecord, int selectedMod, int useMLE,
 			double sig, double eff) {
-		double mst = 0, denom = 0, statT = 0, ddf = 0;
+		double mst = 0, denom = 0, statT = 0;
 		double[] aucs = { 0, 0 };
 		double[][] coeff;
 		if (curRecord.getFullyCrossedStatus()) {
@@ -191,8 +275,8 @@ public class StatTest {
 					curRecord.getMod0StudyDesign(),
 					curRecord.getMod1StudyDesign());
 		}
-		double[][] BDG = curRecord.getBDG(useBiasM);
-		double[][] MS = curRecord.getMS(useBiasM);
+		double[][] BDG = curRecord.getBDG(useMLE);
+		double[][] MS = curRecord.getMS(useMLE);
 		double dn0 = curRecord.getNormal();
 		double dn1 = curRecord.getDisease();
 		double dnr = curRecord.getReader();
@@ -204,11 +288,26 @@ public class StatTest {
 			var0 = var0 + var[j];
 		}
 
+		dfBDG = calcDFBDG(curRecord.getBCK(USE_MLE), curRecord.getReader(),
+				curRecord.getNormal(), curRecord.getDisease(), var0);
+		double[] DBMvar = new double[3];
+		if (selectedMod == 1 || selectedMod == 0) {
+			DBMvar[0] = curRecord.getDBM(NO_MLE)[selectedMod][0];
+			DBMvar[1] = curRecord.getDBM(NO_MLE)[selectedMod][1];
+			DBMvar[2] = curRecord.getDBM(NO_MLE)[selectedMod][2];
+		} else {
+			DBMvar[0] = curRecord.getDBM(NO_MLE)[3][3];
+			DBMvar[1] = curRecord.getDBM(NO_MLE)[3][4];
+			DBMvar[2] = curRecord.getDBM(NO_MLE)[3][5];
+		}
+		dfHillis = DDF_Hillis(var, curRecord.getReader(), curRecord.getNormal()
+				+ curRecord.getDisease(), var0);
+
 		aucs[0] = curRecord.getAUCinNumber(0);
 		aucs[1] = curRecord.getAUCinNumber(1);
 		double meanCI = 0;
-		// TODO these calculations are meaningless when non-fully crossed
-		// because MS is not correct
+
+		// TODO So is this DOF z stat or what?
 		if (selectedMod == 0 || selectedMod == 1) {
 			meanCI = aucs[selectedMod];
 			// mst=dnr*dnc*(aucs[selectedMod]-eff)*(aucs[selectedMod]-eff);
@@ -216,7 +315,7 @@ public class StatTest {
 			denom = MS[selectedMod][0]
 					+ Math.max(0.0, (MS[selectedMod][1] - MS[selectedMod][4]));
 			statT = Math.sqrt(mst / denom);
-			ddf = denom * denom
+			DOF = denom * denom
 					/ (MS[selectedMod][0] * MS[selectedMod][0] / (dnr - 1));
 		} else {
 			meanCI = aucs[0] - aucs[1];
@@ -224,31 +323,59 @@ public class StatTest {
 			denom = MS[selectedMod][2]
 					+ Math.max(0.0, (MS[selectedMod][3] - MS[selectedMod][5]));
 			statT = Math.sqrt(mst / denom);
-			ddf = denom * denom
+			DOF = denom * denom
 					/ (MS[selectedMod][2] * MS[selectedMod][2] / (dnr - 1));
 			System.out.println("R=" + dnr + "N0=" + dn0 + "N1=" + dn1 + "eff="
 					+ eff + "sig" + sig + "auc0=" + aucs[0] + "auc1=" + aucs[1]
-					+ "df=" + ddf);
+					+ "df=" + DOF);
 			System.out.println("denom=" + denom + "mst=" + mst);
 		}
-		tStat = statT;
-		DOF = ddf;
+		tStatEst = statT;
+
 		// Use normal distribution if DOF > 50, since they are approximately
 		// equal at that point, and FisherFDist can't handle large DOFs
-		double Fval;
-		if (ddf >= 50) {
-			NormalDist ndist = new NormalDist();
+		double fVal, fValBDG, fValHillis;
+		if (DOF >= 50) {
 			pValF = NormalDist.cdf(0, 1, statT * statT);
-			Fval = ndist.inverseF(1 - sig);
+			NormalDist ndist = new NormalDist();
+			fVal = ndist.inverseF(1 - sig);
 		} else {
-			FisherFDist fdist = new FisherFDist(1, (int) ddf);
-			pValF = FisherFDist.cdf(1, (int) ddf, 5, statT * statT);
-			Fval = fdist.inverseF(1 - sig);
+			pValF = FisherFDist.cdf(1, (int) DOF, 5, statT * statT);
+			FisherFDist fdist = new FisherFDist(1, (int) DOF);
+			fVal = fdist.inverseF(1 - sig);
 		}
 		pValF = 1 - pValF;
 
-		ciBot = meanCI - Math.sqrt(var0) * Math.sqrt(Fval); // bdg
-		ciTop = meanCI + Math.sqrt(var0) * Math.sqrt(Fval); // bdg
+		// calculate p-value with dfbdg
+		if (dfBDG >= 50) {
+			pValFBDG = NormalDist.cdf(0, 1, statT * statT);
+			NormalDist ndist = new NormalDist();
+			fValBDG = ndist.inverseF(1 - sig);
+		} else {
+			pValFBDG = FisherFDist.cdf(1, (int) dfBDG, 5, statT * statT);
+			FisherFDist fdist = new FisherFDist(1, (int) dfBDG);
+			fValBDG = fdist.inverseF(1 - sig);
+		}
+		pValFBDG = 1 - pValFBDG;
+
+		// calculate p-value with dfHillis
+		if (dfHillis >= 50) {
+			pValFHillis = NormalDist.cdf(0, 1, statT * statT);
+			NormalDist ndist = new NormalDist();
+			fValHillis = ndist.inverseF(1 - sig);
+		} else {
+			pValFHillis = FisherFDist.cdf(1, (int) dfHillis, 5, statT * statT);
+			FisherFDist fdist = new FisherFDist(1, (int) dfHillis);
+			fValHillis = fdist.inverseF(1 - sig);
+		}
+		pValFHillis = 1 - pValFHillis;
+
+		ciBot = meanCI - Math.sqrt(var0) * Math.sqrt(fVal); // bdg
+		ciTop = meanCI + Math.sqrt(var0) * Math.sqrt(fVal); // bdg
+		ciBotDfBDG = meanCI - Math.sqrt(var0) * Math.sqrt(fValBDG);
+		ciTopDfBDG = meanCI + Math.sqrt(var0) * Math.sqrt(fValBDG);
+		ciBotDfHillis = meanCI - Math.sqrt(var0) * Math.sqrt(fValHillis);
+		ciTopDfHillis = meanCI + Math.sqrt(var0) * Math.sqrt(fValHillis);
 		// ***
 		// StudentDist tdist = StudentDist((int)ddf);
 		// double pValT=tdist.inverse((int)ddf, 1-sig/2); //
@@ -256,7 +383,7 @@ public class StatTest {
 		// ciTop=meanCI+Math.sqrt(var[selectedMod])*pValT; //bdg
 		// ***
 
-		System.out.println("auc(0)=" + meanCI + "Fval=" + Math.sqrt(Fval)
+		System.out.println("auc(0)=" + meanCI + "Fval=" + Math.sqrt(fVal)
 				+ "std" + Math.sqrt(var[selectedMod]));
 	}
 
@@ -327,7 +454,8 @@ public class StatTest {
 	 * @param totalVar Total variance of components
 	 * @return Statistical power
 	 */
-	public double FTest_power(double[] var, int r, int c, double totalVar) {
+	public double FTest_power(double[] var, int r, int c, double totalVar,
+			double df) {
 		double SigTR = var[0];
 		double SigTC = var[1];
 		double SigTRC = var[2];
@@ -343,21 +471,19 @@ public class StatTest {
 			SigTRC = 0;
 		}
 
-		fStat = c * SigTR + r * SigTC + SigTRC;
-		System.out.println("delta=" + fStat);
-		fStat = 2.0 * fStat / r / c;
-		System.out.println("delta=" + fStat);
-		// double denom=Delta;
-		fStat = effSize * effSize / fStat;
-
-		fStat = effSize * effSize / totalVar;
-		System.out.println("delta=" + fStat);
+		tStatCalc = c * SigTR + r * SigTC + SigTRC;
+		System.out.println("delta=" + tStatCalc);
+		tStatCalc = 2.0 * tStatCalc / r / c;
+		System.out.println("delta=" + tStatCalc);
+		tStatCalc = effSize * effSize / tStatCalc;
+		tStatCalc = effSize * effSize / totalVar;
+		System.out.println("delta=" + tStatCalc);
 
 		// we use normal distribution for DOF > 50 since it is close to Fisher F
 		// and fisherF fails for DOF > 2000
 		double cdftemp;
-		if (df2 >= 50) {
-			fStat = Math.sqrt(fStat);
+		if (df >= 50) {
+			tStatCalc = Math.sqrt(tStatCalc);
 			// Inverse normal cumulative d.f.
 			// return = NormalDist.inverseF(mean, var, prob);
 			// prob = integral(-inf, return) normal_pdf(mean, var)
@@ -365,20 +491,20 @@ public class StatTest {
 			// Normal cumulative d.f.
 			// return = NormalDist.cdf(mean, var, x0);
 			// return = integral(-inf, x0) normal.pdf(mean, var)
-			cdftemp = NormalDist.cdf(fStat, 1, f0);
+			cdftemp = NormalDist.cdf(tStatCalc, 1, f0);
 		} else {
-			FisherFDist fdist = new FisherFDist((int) df1, (int) df2);
+			tStatCalc = Math.sqrt(tStatCalc);
+			FisherFDist fdist = new FisherFDist((int) df1, (int) df);
 			f0 = fdist.inverseF(1 - sigLevel);
-			cdftemp = cdfNonCentralF((int) df1, (int) df2, fStat, f0);
+			cdftemp = cdfNonCentralF((int) df1, (int) df, tStatCalc, f0);
 			// Rescale Delta, CVF to correspond to t-distribution ~= normal
 			// distribution
-			fStat = Math.sqrt(fStat);
 			f0 = Math.sqrt(f0);
 		}
 
 		fTestPower = 1 - cdftemp;
-		System.out.println("delta=" + fStat + " df2=" + df2 + " CVF=" + f0
-				+ " powerF= " + fTestPower + " totalVar= " + totalVar);
+		System.out.println("delta=" + tStatCalc + " df2=" + dfHillis + " CVF="
+				+ f0 + " powerF= " + fTestPower + " totalVar= " + totalVar);
 
 		return fTestPower;
 	}
@@ -431,7 +557,7 @@ public class StatTest {
 
 	// TODO verify correctness
 	/**
-	 * Calculates degrees of freedom by Obuchowsku, BDG method
+	 * Calculates degrees of freedom by Obuchowski, BDG method
 	 * 
 	 * @param BCKbias Biased components of variance for BCK decomposition
 	 * @param r Number of readers
@@ -450,6 +576,7 @@ public class StatTest {
 				/ ((Math.pow(s2br, 2) / Math.pow(r - 1, 3))
 						+ (Math.pow(s2b0, 2) / Math.pow(n - 1, 3)) + (Math.pow(
 						s2b1, 2) / Math.pow(d - 1, 3)));
+		System.out.println("calcdfbdg totalVar = " + totalVar);
 		return df;
 	}
 	/*

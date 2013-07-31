@@ -27,6 +27,7 @@ import java.lang.Math;
 
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.*;
+import javax.swing.text.JTextComponent;
 
 import java.text.DecimalFormat;
 
@@ -69,8 +70,8 @@ public class GUInterface {
 	private final static String DB = "Input from database ... ";
 	private final static String Pilot = "Input raw data...";
 	private final static String Manual = "Manual input...";
-	final static int USE_BIAS = 1;
-	final static int NO_BIAS = 0;
+	final static int USE_MLE = 1;
+	final static int NO_MLE = 0;
 	final static int NO_MOD = -1;
 	final static int SELECT_DB = 0;
 	final static int SELECT_FILE = 1;
@@ -99,42 +100,51 @@ public class GUInterface {
 	private JLabel BCKvar1, BCKvar2;
 	private JLabel DBMvar1, DBMvar2;
 	private JLabel ORvar1, ORvar2;
-	private JLabel MSvar1, MSvar2;
+	private JLabel MSvar1, sizedSqrtVar;
 
 	int currMod0; // Chosen mod A when reading raw data
 	int currMod1; // Chosen mod B when reading raw data
 
-	private JLabel HillisPower;
+	private JLabel HillisPowerWithdfHillis;
 	private JLabel ZPower;
-	private JLabel Delta;
+	private JLabel sizedStat;
 	private JLabel sizedDFHillis;
 	private JLabel CVF;
-	private JLabel tStat;
+	private JLabel stat;
 	private JLabel sqrtTotalVar;
 	private JLabel dfHillis;
 	private JLabel pVal;
 	private JLabel confInt;
+	private JLabel dfBDG;
 	private JLabel sizedDFBDG;
 	private int selectedDB = 0;
 	private int selectedMod = 0;
 	private int selectedInput = 0;
 	private int selectedSummary = 0;
 	private boolean hasNegative = false;
-	private int useBiasM = 0;
+	private int useMLE = 0;
 	private int SummaryUseMLE = 0;
 
 	DecimalFormat twoDec = new DecimalFormat("0.00");
 	DecimalFormat threeDec = new DecimalFormat("0.000");
 	DecimalFormat threeDecE = new DecimalFormat("0.000E0");
 	DecimalFormat fourDec = new DecimalFormat("0.0000");
+	private JLabel pValWithDFBDG;
+	private JLabel confIntWithDFBDG;
+	private JLabel pValWithDFHillis;
+	private JLabel confIntWithDFHillis;
+	private JLabel HillisPowerWithdfBDG;
+	private JLabel sizedCIzTest;
+	private JLabel sizedCIWithDFBDG;
+	private JLabel sizedCIWithDFHillis;
 
 	/**
-	 * Gets whether bias is being used for variance components
+	 * Gets whether MLE (bias) is being used for variance components
 	 * 
-	 * @return Whether bias is used
+	 * @return Whether MLE is used
 	 */
-	public int getuseBiasM() {
-		return useBiasM;
+	public int getUseMLE() {
+		return useMLE;
 	}
 
 	/**
@@ -180,11 +190,19 @@ public class GUInterface {
 	 * @return String of statistics for variance analysis
 	 */
 	public String getStat1() {
-		String results = tStat.getText();
-		results = results + "\t" + dfHillis.getText();
+		String results = stat.getText();
+		results = results + "\t" + sqrtTotalVar.getText();
 		results = results + "\t" + pVal.getText();
 		results = results + "\t" + confInt.getText();
-		results = results + "\t" + sqrtTotalVar.getText();
+		results = results + "\n";
+		results = results + "\t" + dfBDG.getText();
+		results = results + "\t" + pValWithDFBDG.getText();
+		results = results + "\t" + confIntWithDFBDG.getText();
+		results = results + "\n";
+		results = results + "\t" + dfHillis.getText();
+		results = results + "\t" + pValWithDFHillis.getText();
+		results = results + "\t" + confIntWithDFHillis.getText();
+
 		return results;
 	}
 
@@ -194,13 +212,20 @@ public class GUInterface {
 	 * @return String of statistics for new trial sizing
 	 */
 	public String getStat2() {
-		String results = MSvar2.getText();
-		results = results + "\t" + Delta.getText();
-		results = results + "\t" + sizedDFHillis.getText();
-		results = results + "\t" + sizedDFBDG.getText();
+		String results = sizedSqrtVar.getText();
+		results = results + "\t" + sizedStat.getText();
 		results = results + "\t" + CVF.getText();
-		results = results + "\t" + HillisPower.getText();
 		results = results + "\t" + ZPower.getText();
+		results = results + "\t" + sizedCIzTest.getText();
+		results = results + "\n";
+		results = results + "\t" + sizedDFBDG.getText();
+		results = results + "\t" + HillisPowerWithdfBDG.getText();
+		results = results + "\t" + sizedCIWithDFBDG.getText();
+		results = results + "\n";
+		results = results + "\t" + sizedDFHillis.getText();
+		results = results + "\t" + HillisPowerWithdfHillis.getText();
+		results = results + "\t" + sizedCIWithDFHillis.getText();
+
 		return results;
 	}
 
@@ -215,9 +240,9 @@ public class GUInterface {
 		// Selections
 		currMod0 = NO_MOD;
 		currMod1 = NO_MOD;
-		setUseBiasM(NO_BIAS);
-		DBC.setUseBiasM(NO_BIAS);
-		RSC.setUseBiasM(NO_BIAS);
+		setUseMLE(NO_MLE);
+		DBC.setUseMLE(NO_MLE);
+		RSC.setUseMLE(NO_MLE);
 		RSC.resetModPanel();
 		setTabTitlesBiased(1, false);
 		setTabTitlesBiased(2, false);
@@ -234,27 +259,36 @@ public class GUInterface {
 	 */
 	private void clearFields() {
 		aucOutput.setText("");
-		BDGvar1.setText("");
-		BDGvar2.setText("");
-		BCKvar1.setText("");
-		BCKvar2.setText("");
-		DBMvar1.setText("");
-		DBMvar2.setText("");
-		ORvar1.setText("");
-		ORvar2.setText("");
-		MSvar1.setText("");
-		MSvar2.setText("");
-		ZPower.setText("");
-		Delta.setText("");
-		sizedDFHillis.setText("");
-		sizedDFBDG.setText("");
-		CVF.setText("");
-		tStat.setText("");
-		sqrtTotalVar.setText("");
-		dfHillis.setText("");
-		pVal.setText("");
-		confInt.setText("");
-		HillisPower.setText("");
+		BDGvar1.setText("sqrt(Var)=");
+		BDGvar2.setText("sqrt(Var)=");
+		BCKvar1.setText("sqrt(Var)=");
+		BCKvar2.setText("sqrt(Var)=");
+		DBMvar1.setText("sqrt(Var)=");
+		DBMvar2.setText("sqrt(Var)=");
+		ORvar1.setText("sqrt(Var)=");
+		ORvar2.setText("sqrt(Var)=");
+		MSvar1.setText("sqrt(Var)=");
+		sizedSqrtVar.setText("sqrt(Var)=");
+		ZPower.setText("Power(Z test)=");
+		sizedStat.setText("Stat=");
+		sizedDFHillis.setText("df(Hillis 2008)=");
+		sizedDFBDG.setText("df(BDG)=");
+		CVF.setText("CVF=");
+		stat.setText("Stat=");
+		sqrtTotalVar.setText("sqrt(total var)=");
+		dfHillis.setText("df(Hillis 2008)=");
+		pVal.setText("p-Value=");
+		confInt.setText("Conf. Int.=");
+		HillisPowerWithdfHillis.setText("Power(Hillis 2011)=");
+		HillisPowerWithdfBDG.setText("Power(Hillis 2011)=");
+		dfBDG.setText("df(BDG)=");
+		pValWithDFBDG.setText("p-Value=");
+		confIntWithDFBDG.setText("Conf. Int.=");
+		pValWithDFHillis.setText("p-Value=");
+		confIntWithDFHillis.setText("Conf. Int.=");
+		sizedCIzTest.setText("Conf. Int.=");
+		sizedCIWithDFBDG.setText("Conf. Int.=");
+		sizedCIWithDFHillis.setText("Conf. Int.=");
 		pilotFile.setText("");
 	}
 
@@ -344,10 +378,10 @@ public class GUInterface {
 	/**
 	 * Sets whether bias is being used in variance analysis
 	 * 
-	 * @param useBias Whether to use bias or not
+	 * @param MLEuse Whether to use bias or not
 	 */
-	public void setUseBiasM(int useBias) {
-		useBiasM = useBias;
+	public void setUseMLE(int MLEuse) {
+		useMLE = MLEuse;
 	}
 
 	/**
@@ -367,7 +401,7 @@ public class GUInterface {
 	public void set1stStatPanel() {
 		DBRecord tempRecord = getCurrentRecord();
 		double eff;
-		double[][] BDGtmp = tempRecord.getBDG(useBiasM);
+		double[][] BDGtmp = tempRecord.getBDG(useMLE);
 		double sum = 0;
 		for (int i = 1; i < 8; i++)
 			sum += (BDGtmp[0][i] - BDGtmp[1][i]);
@@ -381,27 +415,49 @@ public class GUInterface {
 		if (sum != 0 || sum == 0 && selectedMod != 3) // two modalities are
 														// different
 		{
-			StatTest stat2 = new StatTest(tempRecord, selectedMod, useBiasM,
-					0.05, eff);
-			// DOF
-			String output = twoDec.format(stat2.getDOF());
-			dfHillis.setText("  df(Hillis 2008)= " + output);
+			StatTest varAnalStat = new StatTest(tempRecord, selectedMod,
+					useMLE, 0.05, eff);
 			// tStat
-			output = twoDec.format(stat2.gettStat());
-			tStat.setText("  tStat= " + output);
-			// pVal
-			output = fourDec.format(stat2.getpValF());
+			String output = threeDecE.format(varAnalStat.getTStatEst());
+			stat.setText("  Stat= " + output);
+			output = fourDec.format(varAnalStat.getpValF());
 			pVal.setText("  p-Value= " + output);
-			// ci
-			output = twoDec.format(stat2.getciTop());
-			String output2 = twoDec.format(stat2.getciBot());
-			confInt.setText("Conf. Int.=(" + output2 + ", " + output + ")");
+			output = fourDec.format(varAnalStat.getCI()[0]);
+			String output2 = fourDec.format(varAnalStat.getCI()[1]);
+			confInt.setText("Conf. Int.=(" + output + ", " + output2 + ")");
+			output = twoDec.format(varAnalStat.getDfBDG());
+			dfBDG.setText("  df(BDG) = " + output);
+			output = fourDec.format(varAnalStat.getpValFBDG());
+			pValWithDFBDG.setText("  p-Value= " + output);
+			output = fourDec.format(varAnalStat.getCIDFBDG()[0]);
+			output2 = fourDec.format(varAnalStat.getCIDFBDG()[1]);
+			confIntWithDFBDG.setText("Conf. Int.=(" + output + ", " + output2
+					+ ")");
+
+			if (tempRecord.getFullyCrossedStatus()) {
+				output = twoDec.format(varAnalStat.getDOF());
+				dfHillis.setText("  df(Hillis 2008)= " + output);
+				output = fourDec.format(varAnalStat.getpValFHillis());
+				pValWithDFHillis.setText("  p-Value= " + output);
+				output = fourDec.format(varAnalStat.getCIDFHillis()[0]);
+				output2 = fourDec.format(varAnalStat.getCIDFHillis()[1]);
+				confIntWithDFHillis.setText("Conf. Int.=(" + output + ", "
+						+ output2 + ")");
+			} else {
+				dfHillis.setText("");
+				pValWithDFHillis.setText("");
+				confIntWithDFHillis.setText("");
+			}
+
 		} else {
-			dfHillis.setText("  df(Hillis 2008)= ");
-			tStat.setText("  tStat= ");
 			sqrtTotalVar.setText("  sqrt(total var)= ");
+			stat.setText("  Stat= ");
+			dfHillis.setText("  df(Hillis 2008)= ");
 			pVal.setText("  p-Value= ");
 			confInt.setText("Conf. Int.=");
+
+			dfBDG.setText("  df(BDG)= ");
+			pValWithDFBDG.setText("  p-Value= ");
 
 		}
 	}
@@ -431,6 +487,8 @@ public class GUInterface {
 			return;
 		}
 
+		double[] aucs = { tempRecord.getAUCinNumber(0),
+				tempRecord.getAUCinNumber(1) };
 		int[][][][] design = createSplitPlotDesign(newR, newN, newD,
 				numSplitPlots, pairedReaders, pairedCases);
 
@@ -448,7 +506,7 @@ public class GUInterface {
 		double[][] OR = new double[4][6];
 		double[][] MS = new double[4][6];
 		if (selectedInput == SELECT_MAN && MC.getSelectedManualComp() != 0) {
-			BDG = tempRecord.getBDG(NO_BIAS);
+			BDG = tempRecord.getBDG(NO_MLE);
 			if (MC.getSelectedManualComp() == 1) {
 				// ******* Brandon's new formula
 				// BCK = tempRecord.getBCK(0);
@@ -458,34 +516,34 @@ public class GUInterface {
 				// "error",
 				// JOptionPane.ERROR_MESSAGE);
 				// return ;
-				BCK = tempRecord.BCKresize(tempRecord.getBCK(useBiasM), newR,
+				BCK = tempRecord.BCKresize(tempRecord.getBCK(useMLE), newR,
 						newN, newD);
-				DBM = tempRecord.DBMresize(tempRecord.getDBM(useBiasM), newR,
+				DBM = tempRecord.DBMresize(tempRecord.getDBM(useMLE), newR,
 						newN, newD);
 				OR = DBRecord.DBM2OR(0, DBM, newR, newN, newD);
 				MS = DBRecord.DBM2MS(DBM, newR, newN, newD);
 			} else if (MC.getSelectedManualComp() == 2) {// DBM input is used
-				DBM = tempRecord.DBMresize(tempRecord.getDBM(useBiasM), newR,
+				DBM = tempRecord.DBMresize(tempRecord.getDBM(useMLE), newR,
 						newN, newD);
 				OR = DBRecord.DBM2OR(0, DBM, newR, newN, newD);
 				MS = DBRecord.DBM2MS(DBM, newR, newN, newD);
 			} else if (MC.getSelectedManualComp() == 3) // OR input is used
 			{
-				DBM = DBRecord.DBM2OR(1, tempRecord.getOR(useBiasM), newR,
-						newN, newD);
+				DBM = DBRecord.DBM2OR(1, tempRecord.getOR(useMLE), newR, newN,
+						newD);
 				DBM = tempRecord.DBMresize(DBM, newR, newN, newD);
 				OR = DBRecord.DBM2OR(0, DBM, newR, newN, newD);
 				MS = DBRecord.DBM2MS(DBM, newR, newN, newD);
 			} else if (MC.getSelectedManualComp() == 4) // MS input is used
 			{
-				DBM = DBRecord.DBM2OR(1, tempRecord.getOR(useBiasM), newR,
-						newN, newD);
+				DBM = DBRecord.DBM2OR(1, tempRecord.getOR(useMLE), newR, newN,
+						newD);
 				DBM = tempRecord.DBMresize(DBM, newR, newN, newD);
 				MS = DBRecord.DBM2MS(DBM, newR, newN, newD);
 			}
 
 		} else {
-			BDG = tempRecord.getBDG(useBiasM);
+			BDG = tempRecord.getBDG(useMLE);
 			BCK = DBRecord.BDG2BCK(BDG);
 			DBM = DBRecord.BCK2DBM(BCK, newR, newN, newD);
 			OR = DBRecord.DBM2OR(0, DBM, newR, newN, newD);
@@ -531,7 +589,7 @@ public class GUInterface {
 		output = threeDec.format(Math.sqrt(ORv));
 		ORvar2.setText("sqrt(Var)=" + output);
 		output = threeDec.format(Math.sqrt(MSv));
-		MSvar2.setText("sqrt(Var)=" + output);
+		sizedSqrtVar.setText("sqrt(Var)=" + output);
 
 		double[] var = new double[3];
 		double sig = sigEffParams[0];
@@ -550,24 +608,47 @@ public class GUInterface {
 			var[2] = DBM[3][5];
 		}
 
-		StatTest stat = new StatTest(var, newR, newN, newD, sig, eff, BDGv,
-				tempRecord.getBCK(USE_BIAS));
-		output = twoDec.format(stat.getHillisPower());
-		HillisPower.setText("      Power(Hillis 2011) = " + output);
-		output = twoDec.format(stat.getZPower());
+		StatTest sizingStat = new StatTest(var, newR, newN, newD, sig, eff,
+				BDGv, tempRecord.getBCK(USE_MLE), aucs, selectedMod);
+		output = twoDec.format(sizingStat.getZPower());
 		ZPower.setText("  Power(Z test)= " + output);
-		output = threeDecE.format(stat.getDelta());
-		Delta.setText("  Delta= " + output);
-		output = twoDec.format(stat.getDDF());
-		sizedDFHillis.setText("  df(Hillis 2008)= " + output);
-		output = twoDec.format(stat.getDfBDG());
+		output = fourDec.format(sizingStat.getCI()[0]);
+		String output2 = fourDec.format(sizingStat.getCI()[1]);
+		sizedCIzTest.setText("Conf. Int.=(" + output + ", " + output2 + ")");
+		output = twoDec.format(sizingStat.getHillisPowerWithBDGDF());
+		HillisPowerWithdfBDG.setText("      Power(Hillis 2011) = " + output);
+		output = fourDec.format(sizingStat.getCIDFBDG()[0]);
+		output2 = fourDec.format(sizingStat.getCIDFBDG()[1]);
+		sizedCIWithDFBDG
+				.setText("Conf. Int.=(" + output + ", " + output2 + ")");
+
+		output = threeDecE.format(sizingStat.getTStatCalc());
+		sizedStat.setText("  Stat= " + output);
+		output = twoDec.format(sizingStat.getDfBDG());
 		sizedDFBDG.setText("  df(BDG) = " + output);
-		output = twoDec.format(stat.getCVF());
+		output = twoDec.format(sizingStat.getCVF());
 		CVF.setText("  CVF= " + output);
 
-		if (useBiasM == USE_BIAS) {
+		// Hillis DoF is not applicable for non-fully crossed studies
+		if (tempRecord.getFullyCrossedStatus()) {
+			output = twoDec.format(sizingStat.getDDF());
+			sizedDFHillis.setText("  df(Hillis 2008)= " + output);
+			output = twoDec.format(sizingStat.getHillisPowerWithHillisDF());
+			HillisPowerWithdfHillis.setText("      Power(Hillis 2011) = "
+					+ output);
+			output = fourDec.format(sizingStat.getCIDFHillis()[0]);
+			output2 = fourDec.format(sizingStat.getCIDFHillis()[1]);
+			sizedCIWithDFHillis.setText("Conf. Int.=(" + output + ", "
+					+ output2 + ")");
+		} else {
+			sizedDFHillis.setText("");
+			HillisPowerWithdfHillis.setText("");
+			sizedCIWithDFHillis.setText("");
+		}
+
+		if (useMLE == USE_MLE) {
 			setTabTitlesBiased(2, true);
-		} else if (useBiasM == NO_BIAS) {
+		} else if (useMLE == NO_MLE) {
 			setTabTitlesBiased(2, false);
 		}
 
@@ -758,12 +839,37 @@ public class GUInterface {
 	 */
 	public void setSelectedMod(int sel) {
 		selectedMod = sel;
-		ZPower.setText("Power(Z test) = ");
-		HillisPower.setText("Power(Hillis 2011) = ");
-		Delta.setText("Delta = ");
-		CVF.setText("CVF = ");
-		sizedDFHillis.setText("df(Hillis 2008) = ");
-		sizedDFBDG.setText("df(BDG) = ");
+		aucOutput.setText("");
+		BDGvar1.setText("sqrt(Var)=");
+		BDGvar2.setText("sqrt(Var)=");
+		BCKvar1.setText("sqrt(Var)=");
+		BCKvar2.setText("sqrt(Var)=");
+		DBMvar1.setText("sqrt(Var)=");
+		DBMvar2.setText("sqrt(Var)=");
+		ORvar1.setText("sqrt(Var)=");
+		ORvar2.setText("sqrt(Var)=");
+		MSvar1.setText("sqrt(Var)=");
+		sizedSqrtVar.setText("sqrt(Var)=");
+		ZPower.setText("Power(Z test)=");
+		sizedStat.setText("Stat=");
+		sizedDFHillis.setText("df(Hillis 2008)=");
+		sizedDFBDG.setText("df(BDG)=");
+		CVF.setText("CVF=");
+		stat.setText("Stat=");
+		sqrtTotalVar.setText("sqrt(total var)=");
+		dfHillis.setText("df(Hillis 2008)=");
+		pVal.setText("p-Value=");
+		confInt.setText("Conf. Int.=");
+		HillisPowerWithdfHillis.setText("Power(Hillis 2011)=");
+		HillisPowerWithdfBDG.setText("Power(Hillis 2011)=");
+		dfBDG.setText("df(BDG)=");
+		pValWithDFBDG.setText("p-Value=");
+		confIntWithDFBDG.setText("Conf. Int.=");
+		pValWithDFHillis.setText("p-Value=");
+		confIntWithDFHillis.setText("Conf. Int.=");
+		sizedCIzTest.setText("Conf. Int.=");
+		sizedCIWithDFBDG.setText("Conf. Int.=");
+		sizedCIWithDFHillis.setText("Conf. Int.=");
 		genSP.setEff("Effect Size", "0.05");
 	}
 
@@ -841,15 +947,15 @@ public class GUInterface {
 		}
 
 		double[][] BDGdata1 = DBRecord.getBDGTab(selectedMod,
-				tempRecord.getBDG(useBiasM), tempRecord.getBDGcoeff());
+				tempRecord.getBDG(useMLE), tempRecord.getBDGcoeff());
 		double[][] BCKdata1 = DBRecord.getBCKTab(selectedMod,
-				tempRecord.getBCK(useBiasM), tempRecord.getBCKcoeff());
+				tempRecord.getBCK(useMLE), tempRecord.getBCKcoeff());
 		double[][] DBMdata1 = DBRecord.getDBMTab(selectedMod,
-				tempRecord.getDBM(useBiasM), tempRecord.getDBMcoeff());
+				tempRecord.getDBM(useMLE), tempRecord.getDBMcoeff());
 		double[][] ORdata1 = DBRecord.getORTab(selectedMod,
-				tempRecord.getOR(useBiasM), tempRecord.getORcoeff());
+				tempRecord.getOR(useMLE), tempRecord.getORcoeff());
 		double[][] MSdata1 = DBRecord.getMSTab(selectedMod,
-				tempRecord.getMS(useBiasM), tempRecord.getMScoeff());
+				tempRecord.getMS(useMLE), tempRecord.getMScoeff());
 		double BDGv = Matrix.total(BDGdata1[6]);
 		double BCKv = Matrix.total(BCKdata1[6]);
 		double DBMv = Matrix.total(DBMdata1[2]);
@@ -874,24 +980,24 @@ public class GUInterface {
 		MSvar1.setText("sqrt(Var)=" + output);
 		sqrtTotalVar.setText("   sqrt(total var)=" + output);
 
-		if (useBiasM == USE_BIAS) {
+		if (useMLE == USE_MLE) {
 			setTabTitlesBiased(1, true);
-		} else if (useBiasM == NO_BIAS) {
+		} else if (useMLE == NO_MLE) {
 			setTabTitlesBiased(1, false);
 		}
 	}
 
 	/**
 	 * Sets labels of tabs on variance analysis/trial sizing tables to indicate
-	 * whether bias is being used
+	 * whether MLE (bias) is being used
 	 * 
-	 * @param paneNum Indicates whether variance analysis or trial sizing tabels
+	 * @param paneNum Indicates whether variance analysis or trial sizing tables
 	 *            should be altered
-	 * @param biased Whether or not bias is being used
+	 * @param MLE Whether or not MLE is being used
 	 */
-	private void setTabTitlesBiased(int paneNum, boolean biased) {
+	private void setTabTitlesBiased(int paneNum, boolean MLE) {
 		if (paneNum == 1) {
-			if (biased) {
+			if (MLE) {
 				tabbedPane1.setTitleAt(0, "BDG**");
 				tabbedPane1.setTitleAt(1, "BCK**");
 				tabbedPane1.setTitleAt(2, "DBM**");
@@ -905,7 +1011,7 @@ public class GUInterface {
 				tabbedPane1.setTitleAt(4, "MS");
 			}
 		} else if (paneNum == 2) {
-			if (biased) {
+			if (MLE) {
 				tabbedPane2.setTitleAt(0, "BDG**");
 				tabbedPane2.setTitleAt(1, "BCK**");
 				tabbedPane2.setTitleAt(2, "DBM**");
@@ -1069,31 +1175,34 @@ public class GUInterface {
 		// *******************************************************************
 		// *************statistical analysis ********************************
 		// ********************************************************************
-		// JPanel panelStat11 = new JPanel();
-		JPanel panelStat12 = new JPanel();
-		// sigLevel = new JTextField ("0.05",3);
-		// effSizeLabel = new JLabel("Effect Size");
-		// effSize = new JTextField ("0.5",3);
-		Delta = new JLabel("  Delta= 0.00");
-		sizedDFHillis = new JLabel("  df(Hillis 2008)= 0.00");
-		sizedDFBDG = new JLabel("  df(BDG) = 0.00");
-		CVF = new JLabel("  CVF= 0.00");
-		ZPower = new JLabel("  Power(Z test)= 0.00");
-		HillisPower = new JLabel("      Power(Hillis 2011) = 0.00");
-		MSvar2 = new JLabel("sqrt(Var)=0.00");
+		JPanel sizeStatRow1 = new JPanel();
+		sizedSqrtVar = new JLabel("sqrt(Var)=");
+		sizedStat = new JLabel("  Stat=");
+		CVF = new JLabel("  CVF=");
+		ZPower = new JLabel("  Power(Z test)=");
+		sizedCIzTest = new JLabel("Conf. Int.=");
+		sizeStatRow1.add(new JLabel("Sizing Results (t or z):   "));
+		sizeStatRow1.add(sizedSqrtVar);
+		sizeStatRow1.add(sizedStat);
+		sizeStatRow1.add(CVF);
+		sizeStatRow1.add(ZPower);
+		sizeStatRow1.add(sizedCIzTest);
 
-		// panelStat11.add(new JLabel("Significance Level"));
-		// panelStat11.add(sigLevel);
-		// panelStat11.add(effSizeLabel);
-		// panelStat11.add(effSize);
-		panelStat12.add(new JLabel("Sizing Results (t or z):   "));
-		panelStat12.add(MSvar2);
-		panelStat12.add(Delta);
-		panelStat12.add(sizedDFHillis);
-		panelStat12.add(sizedDFBDG);
-		panelStat12.add(CVF);
-		panelStat12.add(HillisPower);
-		panelStat12.add(ZPower);
+		JPanel sizeStatRow2 = new JPanel();
+		sizedDFBDG = new JLabel("  df(BDG) =");
+		HillisPowerWithdfBDG = new JLabel("      Power(Hillis 2011) =");
+		sizedCIWithDFBDG = new JLabel("Conf. Int.=");
+		sizeStatRow2.add(sizedDFBDG);
+		sizeStatRow2.add(HillisPowerWithdfBDG);
+		sizeStatRow2.add(sizedCIWithDFBDG);
+
+		JPanel sizeStatRow3 = new JPanel();
+		sizedDFHillis = new JLabel("  df(Hillis 2008)=");
+		HillisPowerWithdfHillis = new JLabel("      Power(Hillis 2011) =");
+		sizedCIWithDFHillis = new JLabel("Conf. Int.=");
+		sizeStatRow3.add(sizedDFHillis);
+		sizeStatRow3.add(HillisPowerWithdfHillis);
+		sizeStatRow3.add(sizedCIWithDFHillis);
 
 		// *******************************************************************
 		// *************Generate Sizing panel*********************************
@@ -1102,19 +1211,35 @@ public class GUInterface {
 		int[] Parms = Records[selectedDB].getSizesInt();
 		genSP = new SizePanel(Parms, sizingPanel, this);
 
-		JPanel panelStat2 = new JPanel();
+		JPanel statsRow1 = new JPanel();
 		JLabel StatResults = new JLabel("Statistical Analysis:");
-		dfHillis = new JLabel("  df(Hillis 2008)=0.00");
-		pVal = new JLabel("  p-value=0.00");
-		tStat = new JLabel("  t-Stat=0.00");
-		confInt = new JLabel("  confInt=0.00");
 		sqrtTotalVar = new JLabel("  sqrt(total var)=0.00");
-		panelStat2.add(StatResults);
-		panelStat2.add(sqrtTotalVar);
-		panelStat2.add(tStat);
-		panelStat2.add(dfHillis);
-		panelStat2.add(pVal);
-		panelStat2.add(confInt);
+		stat = new JLabel("  Stat=0.00");
+		pVal = new JLabel("  p-value=0.00");
+		confInt = new JLabel("  Conf. Int.=(0.0000,0.0000)");
+		statsRow1.add(StatResults);
+		statsRow1.add(sqrtTotalVar);
+		statsRow1.add(stat);
+		statsRow1.add(pVal);
+		statsRow1.add(confInt);
+
+		JPanel statsRow2 = new JPanel();
+		dfBDG = new JLabel("  df(BDG)=0.00");
+		pValWithDFBDG = new JLabel("  p-Value=0.00");
+		confIntWithDFBDG = new JLabel("  Conf. Int.=(0.0000,0.0000)");
+		statsRow2.add(dfBDG);
+		statsRow2.add(pValWithDFBDG);
+		statsRow2.add(confIntWithDFBDG);
+
+		JPanel statsRow3 = new JPanel();
+		dfHillis = new JLabel("  df(Hillis 2008)=0.00");
+		pValWithDFHillis = new JLabel("  p-Value=0.00");
+		confIntWithDFHillis = new JLabel("  Conf. Int.=(0.0000,0.0000)");
+		statsRow3.add(dfHillis);
+		statsRow3.add(pValWithDFHillis);
+		statsRow3.add(confIntWithDFHillis);
+
+		clearFields();
 
 		JPanel panelSep = new JPanel(new BorderLayout());
 		panelSep.setBorder(BorderFactory.createEmptyBorder(1, // top
@@ -1139,6 +1264,11 @@ public class GUInterface {
 
 		// *******************************************************************
 		JPanel panelSummary = new JPanel();
+		panelSummary.add(new JLabel("GUI Summary:"));
+		JButton saveGUI = new JButton("Save to File");
+		saveGUI.addActionListener(new SaveGUIButtonListener());
+		panelSummary.add(saveGUI);
+
 		panelSummary.add(new JLabel("Database Summary:"));
 
 		// Create the radio buttons.
@@ -1197,14 +1327,18 @@ public class GUInterface {
 		cp.add(inputCards);
 		cp.add(panelSep);
 		cp.add(outPane);
-		cp.add(panelStat2);
+		cp.add(statsRow1);
+		cp.add(statsRow2);
+		cp.add(statsRow3);
 		cp.add(tabbedPane1);
 		// Hides the trial sizing table
 		// cp.add(tabbedPane2);
 		// cp.add(panelStat11);
 		cp.add(panelSep2);
 		cp.add(sizingPanel);
-		cp.add(panelStat12);
+		cp.add(sizeStatRow1);
+		cp.add(sizeStatRow2);
+		cp.add(sizeStatRow3);
 		cp.add(panelSep3);
 		cp.add(panelSummary);
 	}
@@ -1378,8 +1512,8 @@ public class GUInterface {
 			MStable2.setPreferredScrollableViewportSize(new Dimension(500,
 					height * 4));
 			MStable2.setFillsViewportHeight(true);
-			MSvar2 = new JLabel("sqrt(Var)=0.00");
-			panelMS.add(MSvar2);
+			sizedSqrtVar = new JLabel("sqrt(Var)=0.00");
+			panelMS.add(sizedSqrtVar);
 		}
 		return panelMS;
 	}
@@ -1510,12 +1644,12 @@ public class GUInterface {
 		hasNegative = false;
 
 		DBRecord tempRecord = getCurrentRecord();
-		double[][] tempBDG = tempRecord.getBDG(NO_BIAS);
+		double[][] tempBDG = tempRecord.getBDG(NO_MLE);
 		for (int i = 0; i < 8; i++) {
 			if (tempBDG[selectedMod][i] < 0)
 				hasNegative = true;
 		}
-		if (hasNegative && useBiasM == NO_BIAS) {
+		if (hasNegative && useMLE == NO_MLE) {
 			JFrame frame = lst.getFrame();
 			int result = JOptionPane
 					.showConfirmDialog(
@@ -1524,13 +1658,13 @@ public class GUInterface {
 			if (JOptionPane.CANCEL_OPTION == result) {
 				System.out.println("cancel");
 			} else if (JOptionPane.YES_OPTION == result) {
-				DBC.setUseBiasM(USE_BIAS);
-				RSC.setUseBiasM(USE_BIAS);
-				useBiasM = USE_BIAS;
+				DBC.setUseMLE(USE_MLE);
+				RSC.setUseMLE(USE_MLE);
+				useMLE = USE_MLE;
 			} else if (JOptionPane.NO_OPTION == result) {
-				DBC.setUseBiasM(NO_BIAS);
-				RSC.setUseBiasM(NO_BIAS);
-				useBiasM = NO_BIAS;
+				DBC.setUseMLE(NO_MLE);
+				RSC.setUseMLE(NO_MLE);
+				useMLE = NO_MLE;
 			}
 
 		}
@@ -1563,10 +1697,6 @@ public class GUInterface {
 		return true;
 	}
 
-	/*
-	 * generate a table, call this function to generate the table for each set
-	 * of components. This function sets the format and headers of each table
-	 */
 	/**
 	 * Generates a table with the specified row and column names
 	 * 
@@ -1635,6 +1765,42 @@ public class GUInterface {
 		descFrame.pack();
 		descFrame.setVisible(true);
 		return desc;
+	}
+
+	/**
+	 * Handler for button to save current GUI state to file
+	 */
+	class SaveGUIButtonListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
+			String report = "";
+			if (selectedInput == SELECT_MAN) {
+				report = genSP.genReport(1);
+			} else {
+				report = genSP.genReport();
+			}
+
+			try {
+				JFileChooser fc = new JFileChooser();
+				int fcReturn = fc.showOpenDialog((Component) e.getSource());
+				if (fcReturn == JFileChooser.APPROVE_OPTION) {
+					File f = fc.getSelectedFile();
+					if (!f.exists()) {
+						f.createNewFile();
+					}
+					FileWriter fw = new FileWriter(f.getAbsoluteFile());
+					BufferedWriter bw = new BufferedWriter(fw);
+					bw.write(report);
+					bw.close();
+				}
+			} catch (HeadlessException e1) {
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
 	}
 
 	/**
@@ -1761,10 +1927,10 @@ public class GUInterface {
 		public void actionPerformed(ActionEvent e) {
 			String str = e.getActionCommand();
 			if (str.equals("Yes")) {
-				SummaryUseMLE = USE_BIAS;
+				SummaryUseMLE = USE_MLE;
 			}
 			if (str.equals("No")) {
-				SummaryUseMLE = NO_BIAS;
+				SummaryUseMLE = NO_MLE;
 			}
 		}
 	}

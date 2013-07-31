@@ -109,7 +109,7 @@ public class MRMC extends JApplet {
 			e.printStackTrace();
 		}
 
-		int width = 1000, height = 650;
+		int width = 1000, height = 750;
 		run(new MRMC(), width, height);
 	}
 

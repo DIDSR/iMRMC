@@ -128,9 +128,6 @@ public class SizePanel {
 		JButton sizeTrial = new JButton("Size a Trial");
 		sizeTrial.addActionListener(new sizeTrialListener());
 		sizeTrialInput.add(sizeTrial);
-		JButton genReport = new JButton("Generate Report");
-		genReport.addActionListener(new genReportListener());
-		sizeTrialInput.add(genReport);
 
 		innerSizingPanel.add(studyDesignInput);
 		innerSizingPanel.add(sizeTrialInput);
@@ -168,12 +165,13 @@ public class SizePanel {
 	 *         info
 	 */
 	public String genReport() {
-		int useBiasM = gui.getuseBiasM();
+		curRecord = gui.getCurrentRecord();
+		int useMLE = gui.getUseMLE();
 
-		double[][] BDG = curRecord.getBDG(useBiasM);
-		double[][] DBM = curRecord.getDBM(useBiasM);
-		double[][] BCK = curRecord.getBCK(useBiasM);
-		double[][] OR = curRecord.getOR(useBiasM);
+		double[][] BDG = curRecord.getBDG(useMLE);
+		double[][] DBM = curRecord.getDBM(useMLE);
+		double[][] BCK = curRecord.getBCK(useMLE);
+		double[][] OR = curRecord.getOR(useMLE);
 		double[][] BDGcoeff = curRecord.getBDGcoeff();
 		double[][] BCKcoeff = curRecord.getBCKcoeff();
 		double[][] DBMcoeff = curRecord.getDBMcoeff();
@@ -196,7 +194,7 @@ public class SizePanel {
 				+ "Normal=" + Integer.toString(curRecord.getNormal()) + SEPA
 				+ "Disease=" + Integer.toString(curRecord.getDisease())
 				+ "\n\n";
-		if (useBiasM == 1)
+		if (useMLE == 1)
 			str = str + "this report uses MLE estimate of components.\n";
 		str = str
 				+ "**********************BDG Results***************************\n";
@@ -283,7 +281,7 @@ public class SizePanel {
 
 		str = str
 				+ "\n*****************************************************************";
-		str = str + "\n Sizing Results";
+		str = str + "\n Sizing Results: ";
 		str = str + resultnew;
 		str = str
 				+ "\n*****************************************************************\n\n\n";
