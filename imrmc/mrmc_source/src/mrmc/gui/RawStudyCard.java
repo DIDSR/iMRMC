@@ -51,9 +51,9 @@ public class RawStudyCard {
 	 * 
 	 * @param bias Whether bias is used
 	 */
-	public void setUseBiasM(int bias) {
+	public void setUseMLE(int bias) {
 		useBiasM = bias;
-		if (bias == GUInterface.NO_BIAS) {
+		if (bias == GUInterface.NO_MLE) {
 			negBox.setSelected(false);
 		} else {
 			negBox.setSelected(true);
@@ -195,11 +195,11 @@ public class RawStudyCard {
 	class UseMLEListener implements ItemListener {
 		public void itemStateChanged(ItemEvent e) {
 			if (negBox.isSelected()) {
-				useBiasM = GUInterface.USE_BIAS;
+				useBiasM = GUInterface.USE_MLE;
 			} else {
-				useBiasM = GUInterface.NO_BIAS;
+				useBiasM = GUInterface.NO_MLE;
 			}
-			gui.setUseBiasM(useBiasM);
+			gui.setUseMLE(useBiasM);
 		}
 	}
 

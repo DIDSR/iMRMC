@@ -46,11 +46,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+
 import org.uncommons.maths.random.MersenneTwisterRNG;
+
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
 import mrmc.core.DBRecord;
 import mrmc.core.Matrix;
 import roemetz.core.CalcGenRoeMetz;
@@ -67,8 +71,8 @@ import roemetz.core.SimRoeMetz;
  * @version 2.0b
  */
 public class RMGUInterface {
-	private final int USE_BIAS = 1;
-	private final int NO_BIAS = 0;
+	private final int USE_MLE = 1;
+	private final int NO_MLE = 0;
 	private static RoeMetz appl;
 	private JTextField vR00;
 	private JTextField vC00;
@@ -119,13 +123,15 @@ public class RMGUInterface {
 	private JLabel n1Label;
 	private JLabel nrLabel;
 	private JDialog progDialog;
-	private JCheckBox useBiasBox = new JCheckBox("Use Bias");
-	private int useBiasM = NO_BIAS;
+	private JCheckBox useMLEbox = new JCheckBox("Use MLE?");
+	private int useMLE = NO_MLE;
 	private String simSaveDirectory;
 	private static JProgressBar simProgress;
+	public String calcSaveDirectory;
 	private DecimalFormat threeDecOpt = new DecimalFormat("0.###");
 	private DecimalFormat threeDecOptE = new DecimalFormat("0.###E0");
 	private DecimalFormat threeDec = new DecimalFormat("0.000");
+	private DecimalFormat threeDecE = new DecimalFormat("0.000E0");
 
 	/**
 	 * Sole constructor for GUI, only invoked by RoeMetz driver class
@@ -280,7 +286,7 @@ public class RMGUInterface {
 		JLabel seedLabel = new JLabel("Seed for RNG");
 		seed = new JTextField(9);
 		seed.setText(Long.toString(System.currentTimeMillis()));
-		useBiasBox.addItemListener(new UseBiasListener());
+		useMLEbox.addItemListener(new UseMLEListener());
 		JButton saveLoc = new JButton("Output Location");
 		saveLoc.addActionListener(new SaveSimulationListener());
 
@@ -288,7 +294,7 @@ public class RMGUInterface {
 		simulationExperiment.add(seed);
 		simulationExperiment.add(numExpLabel);
 		simulationExperiment.add(numExp);
-		simulationExperiment.add(useBiasBox);
+		simulationExperiment.add(useMLEbox);
 		simulationExperiment.add(saveLoc);
 		simulationExperiment.add(doSimExp);
 
@@ -316,7 +322,10 @@ public class RMGUInterface {
 
 		JButton doGenRoeMetz = new JButton("Perform Calculation");
 		doGenRoeMetz.addActionListener(new DoGenRoeMetzBtnListener());
+		JButton saveCalcResults = new JButton("Output Location");
+		saveCalcResults.addActionListener(new saveCalcResultsListener());
 
+		cofvResults.add(saveCalcResults);
 		cofvResults.add(doGenRoeMetz);
 
 		calculatePanel.add(cofvResultsDesc);
@@ -704,15 +713,15 @@ public class RMGUInterface {
 	}
 
 	/**
-	 * Handler for "Use Bias" check box.
+	 * Handler for "Use MLE" check box.
 	 * 
 	 */
-	class UseBiasListener implements ItemListener {
+	class UseMLEListener implements ItemListener {
 		public void itemStateChanged(ItemEvent e) {
-			if (useBiasBox.isSelected()) {
-				useBiasM = USE_BIAS;
+			if (useMLEbox.isSelected()) {
+				useMLE = USE_MLE;
 			} else {
-				useBiasM = NO_BIAS;
+				useMLE = NO_MLE;
 			}
 		}
 	}
@@ -734,6 +743,22 @@ public class RMGUInterface {
 			} else {
 				System.out.println("No save directory selected");
 				simSaveDirectory = null;
+			}
+		}
+	}
+
+	class saveCalcResultsListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JFileChooser fc = new JFileChooser();
+			fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			int fcReturn = fc.showSaveDialog((JComponent) e.getSource());
+			if (fcReturn == JFileChooser.APPROVE_OPTION) {
+				calcSaveDirectory = fc.getSelectedFile().toString();
+				System.out.println(calcSaveDirectory);
+			} else {
+				System.out.println("No save directory selected");
+				calcSaveDirectory = null;
 			}
 		}
 	}
@@ -798,7 +823,7 @@ public class RMGUInterface {
 			double[] avgAUC = new double[3];
 
 			for (int i = 0; i < numTimes; i++) {
-				SimRoeMetz currSim = new SimRoeMetz(u, var_t, n, rand, useBiasM);
+				SimRoeMetz currSim = new SimRoeMetz(u, var_t, n, rand, useMLE);
 
 				if (simSaveDirectory != null && !simSaveDirectory.equals("")) {
 					writeMRMCFile(currSim.gett00(), currSim.gett01(),
@@ -873,7 +898,7 @@ public class RMGUInterface {
 				// filename
 				DateFormat dateForm = new SimpleDateFormat("yy-MM-dd-HH-mm-ss");
 				Date currDate = new Date();
-				String filenameTime = dateForm.format(currDate);
+				final String filenameTime = dateForm.format(currDate);
 
 				// create global RNG which is used across all experiments
 				byte[] byteSeed = ByteBuffer.allocate(16).putLong(seedVar)
@@ -907,7 +932,9 @@ public class RMGUInterface {
 											finishedTasks++;
 											if (finishedTasks == numTasks) {
 												finishedTasks = 0;
-												processResults();
+												processResults(
+														simSaveDirectory,
+														filenameTime);
 											}
 										} catch (InterruptedException e) {
 											e.printStackTrace();
@@ -955,7 +982,7 @@ public class RMGUInterface {
 		 * Called after all groups of simulation experiments are completed.
 		 * Averages together their results and calls method to display them.
 		 */
-		public void processResults() {
+		public void processResults(String simSaveDirectory, String filenameTime) {
 			progDialog.setVisible(false);
 
 			double[][] avgdBDG = new double[4][8];
@@ -993,6 +1020,10 @@ public class RMGUInterface {
 					avgdDBM, avgdOR, avgdMS };
 
 			showSimOutput(allDecomps, allCoeffs, avgdAUC);
+
+			writeSummaryFile(simSaveDirectory, "Summary of Simulation Results",
+					"results-simulation-" + filenameTime, allDecomps,
+					allCoeffs, avgdAUC);
 
 		}
 
@@ -1044,8 +1075,8 @@ public class RMGUInterface {
 			group.add(mod2SimButton);
 			group.add(modDSimButton);
 			// Register a listener for the radio buttons.
-			ModSimListener gListener = new ModSimListener(tabTables, allDecomps,
-					allCoeffs);
+			ModSimListener gListener = new ModSimListener(tabTables,
+					allDecomps, allCoeffs);
 			mod1SimButton.addActionListener(gListener);
 			mod2SimButton.addActionListener(gListener);
 			modDSimButton.addActionListener(gListener);
@@ -1223,6 +1254,16 @@ public class RMGUInterface {
 			double[][][] allDecomps = new double[][][] { BDG, BCK, DBM, OR, MS };
 
 			showCalcOutput(allDecomps, allCoeffs);
+
+			double[] AUCs = { allDecomps[0][0][0], allDecomps[0][1][0],
+					allDecomps[0][0][0] - allDecomps[0][1][0] };
+			DateFormat dateForm = new SimpleDateFormat("yy-MM-dd-HH-mm-ss");
+			Date currDate = new Date();
+			final String filenameTime = dateForm.format(currDate);
+
+			writeSummaryFile(calcSaveDirectory,
+					"Summary of Calculation Results", "calc-results-"
+							+ filenameTime, allDecomps, allCoeffs, AUCs);
 		}
 
 		/**
@@ -1380,8 +1421,8 @@ public class RMGUInterface {
 	public void writeMRMCFile(double[][] t00, double[][] t01, double[][] t10,
 			double[][] t11, double[] auc, String filename, int fileNum) {
 		try {
-			File file = new File(simSaveDirectory + "/" + filename + "-"
-					+ String.format("%05d", fileNum) + ".imrmc");
+			File file = new File(simSaveDirectory + "/" + "sim-" + filename
+					+ "-" + String.format("%05d", fileNum) + ".imrmc");
 			if (!file.exists()) {
 				file.createNewFile();
 			}
@@ -1425,6 +1466,290 @@ public class RMGUInterface {
 				}
 			}
 			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Writes the results of a simulation (averaged results) or calculation to
+	 * file, consisting of components and AUCs.
+	 * 
+	 * @param summaryTitle Header of summary file
+	 * @param filename identifier file name
+	 * @param allDecomps All decompositions of analysis
+	 * @param allCoeffs All coefficients for components
+	 * @param AUCs AUCs for both modalities and difference
+	 */
+	public void writeSummaryFile(String saveDirectory, String summaryTitle,
+			String filename, double[][][] allDecomps, double[][][] allCoeffs,
+			double[] AUCs) {
+		try {
+			System.out.println("filename: " + filename);
+			File file = new File(saveDirectory + "/" + filename + ".txt");
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			FileWriter fw = new FileWriter(file.getAbsoluteFile());
+			BufferedWriter bw = new BufferedWriter(fw);
+
+			bw.write(summaryTitle + "\n\n");
+			bw.write("AUC1: " + AUCs[0] + " AUC2: " + AUCs[1] + " AUC1-AUC2: "
+					+ AUCs[2] + "\n\n");
+
+			double[][] BDGTab = DBRecord.getBDGTab(3, allDecomps[0],
+					allCoeffs[0]);
+			double[][] BCKTab = DBRecord.getBCKTab(3, allDecomps[1],
+					allCoeffs[1]);
+			double[][] DBMTab0 = DBRecord.getDBMTab(0, allDecomps[2],
+					allCoeffs[2]);
+			double[][] DBMTab1 = DBRecord.getDBMTab(0, allDecomps[2],
+					allCoeffs[2]);
+			double[][] DBMTabDiff = DBRecord.getDBMTab(0, allDecomps[2],
+					allCoeffs[2]);
+			double[][] ORTab0 = DBRecord.getORTab(0, allDecomps[2],
+					allCoeffs[2]);
+			double[][] ORTab1 = DBRecord.getORTab(0, allDecomps[2],
+					allCoeffs[2]);
+			double[][] ORTabDiff = DBRecord.getORTab(0, allDecomps[2],
+					allCoeffs[2]);
+			double[][] MSTab0 = DBRecord.getMSTab(0, allDecomps[2],
+					allCoeffs[2]);
+			double[][] MSTab1 = DBRecord.getMSTab(0, allDecomps[2],
+					allCoeffs[2]);
+			double[][] MSTabDiff = DBRecord.getMSTab(0, allDecomps[2],
+					allCoeffs[2]);
+
+			bw.write("BDG:\n");
+
+			bw.write("components M0: \t\t");
+			for (int i = 0; i < 8; i++) {
+				bw.write(threeDecE.format(BDGTab[0][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("coefficients M0: \t");
+			for (int i = 0; i < 8; i++) {
+				bw.write(threeDecE.format(BDGTab[1][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("components M1: \t\t");
+			for (int i = 0; i < 8; i++) {
+				bw.write(threeDecE.format(BDGTab[2][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("coefficients M1: \t");
+			for (int i = 0; i < 8; i++) {
+				bw.write(threeDecE.format(BDGTab[3][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("product M0,M1: \t\t");
+			for (int i = 0; i < 8; i++) {
+				bw.write(threeDecE.format(BDGTab[4][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("2*coeff M0-M1: \t\t");
+			for (int i = 0; i < 8; i++) {
+				bw.write(threeDecE.format(BDGTab[5][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("total: \t\t\t");
+			for (int i = 0; i < 8; i++) {
+				bw.write(threeDecE.format(BDGTab[6][i]) + "\t");
+			}
+			bw.write("\n\n");
+
+			bw.write("BCK:\n");
+			bw.write("components M0: \t\t");
+			for (int i = 0; i < 7; i++) {
+				bw.write(threeDecE.format(BCKTab[0][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("coefficients M0: \t");
+			for (int i = 0; i < 7; i++) {
+				bw.write(threeDecE.format(BCKTab[1][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("components M1: \t\t");
+			for (int i = 0; i < 7; i++) {
+				bw.write(threeDecE.format(BCKTab[2][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("coefficients M1: \t");
+			for (int i = 0; i < 7; i++) {
+				bw.write(threeDecE.format(BCKTab[3][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("product M0,M1: \t\t");
+			for (int i = 0; i < 7; i++) {
+				bw.write(threeDecE.format(BCKTab[4][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("2*coeff M0-M1: \t\t");
+			for (int i = 0; i < 7; i++) {
+				bw.write(threeDecE.format(BCKTab[5][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("total: \t\t\t");
+			for (int i = 0; i < 7; i++) {
+				bw.write(threeDecE.format(BCKTab[6][i]) + "\t");
+			}
+			bw.write("\n\n");
+
+			bw.write("DBM Modality 0: \n");
+			bw.write("components: \t");
+			for (int i = 0; i < 6; i++) {
+				bw.write(threeDecE.format(DBMTab0[0][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("coefficients: \t");
+			for (int i = 0; i < 6; i++) {
+				bw.write(threeDecE.format(DBMTab0[1][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("total: \t\t");
+			for (int i = 0; i < 6; i++) {
+				bw.write(threeDecE.format(DBMTab0[2][i]) + "\t");
+			}
+			bw.write("\n\n");
+
+			bw.write("DBM Modality 1: \n");
+			bw.write("components: \t");
+			for (int i = 0; i < 6; i++) {
+				bw.write(threeDecE.format(DBMTab1[0][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("coefficients: \t");
+			for (int i = 0; i < 6; i++) {
+				bw.write(threeDecE.format(DBMTab1[1][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("total: \t\t");
+			for (int i = 0; i < 6; i++) {
+				bw.write(threeDecE.format(DBMTab1[2][i]) + "\t");
+			}
+			bw.write("\n\n");
+
+			bw.write("DBM Difference: \n");
+			bw.write("components: \t");
+			for (int i = 0; i < 6; i++) {
+				bw.write(threeDecE.format(DBMTabDiff[0][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("coefficients: \t");
+			for (int i = 0; i < 6; i++) {
+				bw.write(threeDecE.format(DBMTabDiff[1][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("total: \t\t");
+			for (int i = 0; i < 6; i++) {
+				bw.write(threeDecE.format(DBMTabDiff[2][i]) + "\t");
+			}
+			bw.write("\n\n");
+
+			bw.write("OR Modality 0: \n");
+			bw.write("components: \t");
+			for (int i = 0; i < 6; i++) {
+				bw.write(threeDecE.format(ORTab0[0][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("coefficients: \t");
+			for (int i = 0; i < 6; i++) {
+				bw.write(threeDecE.format(ORTab0[1][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("total: \t\t");
+			for (int i = 0; i < 6; i++) {
+				bw.write(threeDecE.format(ORTab0[2][i]) + "\t");
+			}
+			bw.write("\n\n");
+
+			bw.write("OR Modality 1: \n");
+			bw.write("components: \t");
+			for (int i = 0; i < 6; i++) {
+				bw.write(threeDecE.format(ORTab1[0][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("coefficients: \t");
+			for (int i = 0; i < 6; i++) {
+				bw.write(threeDecE.format(ORTab1[1][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("total: \t\t");
+			for (int i = 0; i < 6; i++) {
+				bw.write(threeDecE.format(ORTab1[2][i]) + "\t");
+			}
+			bw.write("\n\n");
+
+			bw.write("OR Difference: \n");
+			bw.write("components: \t");
+			for (int i = 0; i < 6; i++) {
+				bw.write(threeDecE.format(ORTabDiff[0][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("coefficients: \t");
+			for (int i = 0; i < 6; i++) {
+				bw.write(threeDecE.format(ORTabDiff[1][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("total: \t\t");
+			for (int i = 0; i < 6; i++) {
+				bw.write(threeDecE.format(ORTabDiff[2][i]) + "\t");
+			}
+			bw.write("\n\n");
+
+			bw.write("MS Modality 0: \n");
+			bw.write("components: \t");
+			for (int i = 0; i < 6; i++) {
+				bw.write(threeDecE.format(MSTab0[0][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("coefficients: \t");
+			for (int i = 0; i < 6; i++) {
+				bw.write(threeDecE.format(MSTab0[1][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("total: \t\t");
+			for (int i = 0; i < 6; i++) {
+				bw.write(threeDecE.format(MSTab0[2][i]) + "\t");
+			}
+			bw.write("\n\n");
+
+			bw.write("MS Modality 1: \n");
+			bw.write("components: \t");
+			for (int i = 0; i < 6; i++) {
+				bw.write(threeDecE.format(MSTab1[0][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("coefficients: \t");
+			for (int i = 0; i < 6; i++) {
+				bw.write(threeDecE.format(MSTab1[1][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("total: \t\t");
+			for (int i = 0; i < 6; i++) {
+				bw.write(threeDecE.format(MSTab1[2][i]) + "\t");
+			}
+			bw.write("\n\n");
+
+			bw.write("MS Difference: \n");
+			bw.write("components: \t");
+			for (int i = 0; i < 6; i++) {
+				bw.write(threeDecE.format(MSTabDiff[0][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("coefficients: \t");
+			for (int i = 0; i < 6; i++) {
+				bw.write(threeDecE.format(MSTabDiff[1][i]) + "\t");
+			}
+			bw.write("\n");
+			bw.write("total: \t\t");
+			for (int i = 0; i < 6; i++) {
+				bw.write(threeDecE.format(MSTabDiff[2][i]) + "\t");
+			}
+			bw.write("\n\n");
+
+			bw.close();
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
