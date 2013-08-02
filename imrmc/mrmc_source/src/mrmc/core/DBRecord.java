@@ -406,7 +406,7 @@ public class DBRecord {
 	 * @param Disease Number of disease cases
 	 * @param auc AUCs
 	 */
-	public DBRecord(double[] components, int whichComp, int Reader, int Normal,
+	public DBRecord(double[][] components, int whichComp, int Reader, int Normal,
 			int Disease, double[] auc) {
 		AUC = auc;
 		nReader = Reader;
@@ -419,10 +419,8 @@ public class DBRecord {
 
 		switch (whichComp) {
 		case 0: // BDG
-			for (int i = 0; i < 4; i++) {
-				BDG[i] = components;
-				BDGbias[i] = components;
-			}
+			BDG = components;
+			BDGbias = components;
 			BDGcoeff = genBDGCoeff(nReader, nNormal, nDisease);
 			BCKcoeff = genBCKCoeff(nReader, nNormal, nDisease);
 			DBMcoeff = genDBMCoeff(nReader, nNormal, nDisease);
@@ -449,10 +447,8 @@ public class DBRecord {
 			OR = DBM2OR(0, DBM, nReader, nNormal, nDisease);
 			break;
 		case 1: // BCK
-			for (int i = 0; i < 4; i++) {
-				BCK[i] = components;
-				BCKbias[i] = components;
-			}
+			BDG = components;
+			BCK = components;
 			BCKcoeff = genBCKCoeff(nReader, nNormal, nDisease);
 			DBMcoeff = genDBMCoeff(nReader, nNormal, nDisease);
 			ORcoeff = genORCoeff(nReader, nNormal, nDisease);
@@ -474,10 +470,8 @@ public class DBRecord {
 			MS = DBM2MS(DBM, nReader, nNormal, nDisease);
 			break;
 		case 2: // DBM
-			for (int i = 0; i < 4; i++) {
-				DBM[i] = components;
-				DBMbias[i] = components;
-			}
+			DBM = components;
+			DBMbias = components;
 			OR = DBM2OR(0, DBM, nReader, nNormal, nDisease);
 			MS = DBM2MS(DBM, nReader, nNormal, nDisease);
 			ORbias = OR;
@@ -486,10 +480,8 @@ public class DBRecord {
 			MScoeff = genMSCoeff(nReader, nNormal, nDisease);
 			break;
 		case 3: // OR
-			for (int i = 0; i < 4; i++) {
-				OR[i] = components;
-				ORbias[i] = components;
-			}
+			OR = components;
+			ORbias = components;
 			DBM = DBM2OR(1, OR, nReader, nNormal, nDisease);
 			MS = DBM2MS(DBM, nReader, nNormal, nDisease);
 			DBMbias = DBM;

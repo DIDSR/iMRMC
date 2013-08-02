@@ -380,7 +380,8 @@ public class ManualCard {
 			auc[1] = auc[0];
 			if (SingleOrDiff == 1)
 				auc[1] = Double.valueOf(AUCText2.getText());
-			record = new DBRecord(data, selectedManualComp, Reader, Normal,
+			double[][] tempData = new double[][]{data, data, data, data};
+			record = new DBRecord(tempData, selectedManualComp, Reader, Normal,
 					Disease, auc);
 			gui.setTable1();
 			gui.setAUCoutput();
