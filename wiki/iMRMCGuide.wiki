@@ -14,4 +14,4 @@ The primary objective of this application, iMRMC, is to assist investigators wit
 
 ====View the Javadoc for the source code [http://imrmc.googlecode.com/svn/javadoc/index.html here]====
 
-[http://imrmc.googlecode.com/svn/wiki/gadgets/printwikis.html?_gnpi_subversion="svn"&_gnpi_wikilist="TableOfContents|iMRMCReferences" Print Me]
+[http://imrmc.googlecode.com/svn/wiki/gadgets/printwikis.html?_gnpi_subversion="svn"&_gnpi_wikilist="TableOfContents|IntroToROCReaderStudies	|iMRMCMethods|iMRMCDatabase|DatasetSummaryInfo|iMRMCUsage|ROCStudyDataFormat|iMRMCReferences" Print Me]
