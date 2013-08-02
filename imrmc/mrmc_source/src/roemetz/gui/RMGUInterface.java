@@ -727,9 +727,8 @@ public class RMGUInterface {
 	}
 
 	/**
-	 * Handler for "Output Location" Button. Displays a file browser and
+	 * Handler for "Output Location" button. Displays a file browser and
 	 * designates selected directory as path to save simulation output.
-	 * 
 	 */
 	class SaveSimulationListener implements ActionListener {
 		@Override
@@ -747,6 +746,11 @@ public class RMGUInterface {
 		}
 	}
 
+	/**
+	 * Handler for "Output Location" button in calculation panel. Displays a
+	 * file browser and designates selected directory as path to save
+	 * calculation output
+	 */
 	class saveCalcResultsListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -1316,7 +1320,7 @@ public class RMGUInterface {
 			groupEst.add(modDEstButton);
 
 			// Register a listener for the radio buttons.
-			ModEstListener gListenerEst = new ModEstListener(tabTables,
+			ModCalcListener gListenerEst = new ModCalcListener(tabTables,
 					allDecomps, allCoeffs);
 			mod1EstButton.addActionListener(gListenerEst);
 			mod2EstButton.addActionListener(gListenerEst);
@@ -1337,9 +1341,8 @@ public class RMGUInterface {
 		/**
 		 * Handler for "Modality 1", "Modality 2", and "Difference" radio
 		 * buttons in pop-up table of calculation results.
-		 * 
 		 */
-		class ModEstListener implements ActionListener {
+		class ModCalcListener implements ActionListener {
 			JTabbedPane tabTables;
 			double[][] BDG;
 			double[][] BCK;
@@ -1352,7 +1355,7 @@ public class RMGUInterface {
 			double[][] ORcoeff;
 			double[][] MScoeff;
 
-			public ModEstListener(JTabbedPane tabTables,
+			public ModCalcListener(JTabbedPane tabTables,
 					double[][][] allDecomps, double[][][] allCoeffs) {
 				this.tabTables = tabTables;
 				this.BDG = allDecomps[0];
@@ -1485,270 +1488,274 @@ public class RMGUInterface {
 			String filename, double[][][] allDecomps, double[][][] allCoeffs,
 			double[] AUCs) {
 		try {
-			System.out.println("filename: " + filename);
-			File file = new File(saveDirectory + "/" + filename + ".txt");
-			if (!file.exists()) {
-				file.createNewFile();
-			}
-			FileWriter fw = new FileWriter(file.getAbsoluteFile());
-			BufferedWriter bw = new BufferedWriter(fw);
+			if (saveDirectory == null || saveDirectory.equals("")) {
+				System.out.println("No save directory specified.");
+			} else {
+				System.out.println("filename: " + filename);
+				File file = new File(saveDirectory + "/" + filename + ".txt");
+				if (!file.exists()) {
+					file.createNewFile();
+				}
+				FileWriter fw = new FileWriter(file.getAbsoluteFile());
+				BufferedWriter bw = new BufferedWriter(fw);
 
-			bw.write(summaryTitle + "\n\n");
-			bw.write("AUC1: " + AUCs[0] + " AUC2: " + AUCs[1] + " AUC1-AUC2: "
-					+ AUCs[2] + "\n\n");
+				bw.write(summaryTitle + "\n\n");
+				bw.write("AUC1: " + AUCs[0] + " AUC2: " + AUCs[1]
+						+ " AUC1-AUC2: " + AUCs[2] + "\n\n");
 
-			double[][] BDGTab = DBRecord.getBDGTab(3, allDecomps[0],
-					allCoeffs[0]);
-			double[][] BCKTab = DBRecord.getBCKTab(3, allDecomps[1],
-					allCoeffs[1]);
-			double[][] DBMTab0 = DBRecord.getDBMTab(0, allDecomps[2],
-					allCoeffs[2]);
-			double[][] DBMTab1 = DBRecord.getDBMTab(0, allDecomps[2],
-					allCoeffs[2]);
-			double[][] DBMTabDiff = DBRecord.getDBMTab(0, allDecomps[2],
-					allCoeffs[2]);
-			double[][] ORTab0 = DBRecord.getORTab(0, allDecomps[2],
-					allCoeffs[2]);
-			double[][] ORTab1 = DBRecord.getORTab(0, allDecomps[2],
-					allCoeffs[2]);
-			double[][] ORTabDiff = DBRecord.getORTab(0, allDecomps[2],
-					allCoeffs[2]);
-			double[][] MSTab0 = DBRecord.getMSTab(0, allDecomps[2],
-					allCoeffs[2]);
-			double[][] MSTab1 = DBRecord.getMSTab(0, allDecomps[2],
-					allCoeffs[2]);
-			double[][] MSTabDiff = DBRecord.getMSTab(0, allDecomps[2],
-					allCoeffs[2]);
+				double[][] BDGTab = DBRecord.getBDGTab(3, allDecomps[0],
+						allCoeffs[0]);
+				double[][] BCKTab = DBRecord.getBCKTab(3, allDecomps[1],
+						allCoeffs[1]);
+				double[][] DBMTab0 = DBRecord.getDBMTab(0, allDecomps[2],
+						allCoeffs[2]);
+				double[][] DBMTab1 = DBRecord.getDBMTab(0, allDecomps[2],
+						allCoeffs[2]);
+				double[][] DBMTabDiff = DBRecord.getDBMTab(0, allDecomps[2],
+						allCoeffs[2]);
+				double[][] ORTab0 = DBRecord.getORTab(0, allDecomps[2],
+						allCoeffs[2]);
+				double[][] ORTab1 = DBRecord.getORTab(0, allDecomps[2],
+						allCoeffs[2]);
+				double[][] ORTabDiff = DBRecord.getORTab(0, allDecomps[2],
+						allCoeffs[2]);
+				double[][] MSTab0 = DBRecord.getMSTab(0, allDecomps[2],
+						allCoeffs[2]);
+				double[][] MSTab1 = DBRecord.getMSTab(0, allDecomps[2],
+						allCoeffs[2]);
+				double[][] MSTabDiff = DBRecord.getMSTab(0, allDecomps[2],
+						allCoeffs[2]);
 
-			bw.write("BDG:\n");
+				bw.write("BDG:\n");
 
-			bw.write("components M0: \t\t");
-			for (int i = 0; i < 8; i++) {
-				bw.write(threeDecE.format(BDGTab[0][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("coefficients M0: \t");
-			for (int i = 0; i < 8; i++) {
-				bw.write(threeDecE.format(BDGTab[1][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("components M1: \t\t");
-			for (int i = 0; i < 8; i++) {
-				bw.write(threeDecE.format(BDGTab[2][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("coefficients M1: \t");
-			for (int i = 0; i < 8; i++) {
-				bw.write(threeDecE.format(BDGTab[3][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("product M0,M1: \t\t");
-			for (int i = 0; i < 8; i++) {
-				bw.write(threeDecE.format(BDGTab[4][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("2*coeff M0-M1: \t\t");
-			for (int i = 0; i < 8; i++) {
-				bw.write(threeDecE.format(BDGTab[5][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("total: \t\t\t");
-			for (int i = 0; i < 8; i++) {
-				bw.write(threeDecE.format(BDGTab[6][i]) + "\t");
-			}
-			bw.write("\n\n");
+				bw.write("components M0: \t\t");
+				for (int i = 0; i < 8; i++) {
+					bw.write(threeDecE.format(BDGTab[0][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("coefficients M0: \t");
+				for (int i = 0; i < 8; i++) {
+					bw.write(threeDecE.format(BDGTab[1][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("components M1: \t\t");
+				for (int i = 0; i < 8; i++) {
+					bw.write(threeDecE.format(BDGTab[2][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("coefficients M1: \t");
+				for (int i = 0; i < 8; i++) {
+					bw.write(threeDecE.format(BDGTab[3][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("product M0,M1: \t\t");
+				for (int i = 0; i < 8; i++) {
+					bw.write(threeDecE.format(BDGTab[4][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("2*coeff M0-M1: \t\t");
+				for (int i = 0; i < 8; i++) {
+					bw.write(threeDecE.format(BDGTab[5][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("total: \t\t\t");
+				for (int i = 0; i < 8; i++) {
+					bw.write(threeDecE.format(BDGTab[6][i]) + "\t");
+				}
+				bw.write("\n\n");
 
-			bw.write("BCK:\n");
-			bw.write("components M0: \t\t");
-			for (int i = 0; i < 7; i++) {
-				bw.write(threeDecE.format(BCKTab[0][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("coefficients M0: \t");
-			for (int i = 0; i < 7; i++) {
-				bw.write(threeDecE.format(BCKTab[1][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("components M1: \t\t");
-			for (int i = 0; i < 7; i++) {
-				bw.write(threeDecE.format(BCKTab[2][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("coefficients M1: \t");
-			for (int i = 0; i < 7; i++) {
-				bw.write(threeDecE.format(BCKTab[3][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("product M0,M1: \t\t");
-			for (int i = 0; i < 7; i++) {
-				bw.write(threeDecE.format(BCKTab[4][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("2*coeff M0-M1: \t\t");
-			for (int i = 0; i < 7; i++) {
-				bw.write(threeDecE.format(BCKTab[5][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("total: \t\t\t");
-			for (int i = 0; i < 7; i++) {
-				bw.write(threeDecE.format(BCKTab[6][i]) + "\t");
-			}
-			bw.write("\n\n");
+				bw.write("BCK:\n");
+				bw.write("components M0: \t\t");
+				for (int i = 0; i < 7; i++) {
+					bw.write(threeDecE.format(BCKTab[0][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("coefficients M0: \t");
+				for (int i = 0; i < 7; i++) {
+					bw.write(threeDecE.format(BCKTab[1][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("components M1: \t\t");
+				for (int i = 0; i < 7; i++) {
+					bw.write(threeDecE.format(BCKTab[2][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("coefficients M1: \t");
+				for (int i = 0; i < 7; i++) {
+					bw.write(threeDecE.format(BCKTab[3][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("product M0,M1: \t\t");
+				for (int i = 0; i < 7; i++) {
+					bw.write(threeDecE.format(BCKTab[4][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("2*coeff M0-M1: \t\t");
+				for (int i = 0; i < 7; i++) {
+					bw.write(threeDecE.format(BCKTab[5][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("total: \t\t\t");
+				for (int i = 0; i < 7; i++) {
+					bw.write(threeDecE.format(BCKTab[6][i]) + "\t");
+				}
+				bw.write("\n\n");
 
-			bw.write("DBM Modality 0: \n");
-			bw.write("components: \t");
-			for (int i = 0; i < 6; i++) {
-				bw.write(threeDecE.format(DBMTab0[0][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("coefficients: \t");
-			for (int i = 0; i < 6; i++) {
-				bw.write(threeDecE.format(DBMTab0[1][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("total: \t\t");
-			for (int i = 0; i < 6; i++) {
-				bw.write(threeDecE.format(DBMTab0[2][i]) + "\t");
-			}
-			bw.write("\n\n");
+				bw.write("DBM Modality 0: \n");
+				bw.write("components: \t");
+				for (int i = 0; i < 6; i++) {
+					bw.write(threeDecE.format(DBMTab0[0][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("coefficients: \t");
+				for (int i = 0; i < 6; i++) {
+					bw.write(threeDecE.format(DBMTab0[1][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("total: \t\t");
+				for (int i = 0; i < 6; i++) {
+					bw.write(threeDecE.format(DBMTab0[2][i]) + "\t");
+				}
+				bw.write("\n\n");
 
-			bw.write("DBM Modality 1: \n");
-			bw.write("components: \t");
-			for (int i = 0; i < 6; i++) {
-				bw.write(threeDecE.format(DBMTab1[0][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("coefficients: \t");
-			for (int i = 0; i < 6; i++) {
-				bw.write(threeDecE.format(DBMTab1[1][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("total: \t\t");
-			for (int i = 0; i < 6; i++) {
-				bw.write(threeDecE.format(DBMTab1[2][i]) + "\t");
-			}
-			bw.write("\n\n");
+				bw.write("DBM Modality 1: \n");
+				bw.write("components: \t");
+				for (int i = 0; i < 6; i++) {
+					bw.write(threeDecE.format(DBMTab1[0][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("coefficients: \t");
+				for (int i = 0; i < 6; i++) {
+					bw.write(threeDecE.format(DBMTab1[1][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("total: \t\t");
+				for (int i = 0; i < 6; i++) {
+					bw.write(threeDecE.format(DBMTab1[2][i]) + "\t");
+				}
+				bw.write("\n\n");
 
-			bw.write("DBM Difference: \n");
-			bw.write("components: \t");
-			for (int i = 0; i < 6; i++) {
-				bw.write(threeDecE.format(DBMTabDiff[0][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("coefficients: \t");
-			for (int i = 0; i < 6; i++) {
-				bw.write(threeDecE.format(DBMTabDiff[1][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("total: \t\t");
-			for (int i = 0; i < 6; i++) {
-				bw.write(threeDecE.format(DBMTabDiff[2][i]) + "\t");
-			}
-			bw.write("\n\n");
+				bw.write("DBM Difference: \n");
+				bw.write("components: \t");
+				for (int i = 0; i < 6; i++) {
+					bw.write(threeDecE.format(DBMTabDiff[0][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("coefficients: \t");
+				for (int i = 0; i < 6; i++) {
+					bw.write(threeDecE.format(DBMTabDiff[1][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("total: \t\t");
+				for (int i = 0; i < 6; i++) {
+					bw.write(threeDecE.format(DBMTabDiff[2][i]) + "\t");
+				}
+				bw.write("\n\n");
 
-			bw.write("OR Modality 0: \n");
-			bw.write("components: \t");
-			for (int i = 0; i < 6; i++) {
-				bw.write(threeDecE.format(ORTab0[0][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("coefficients: \t");
-			for (int i = 0; i < 6; i++) {
-				bw.write(threeDecE.format(ORTab0[1][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("total: \t\t");
-			for (int i = 0; i < 6; i++) {
-				bw.write(threeDecE.format(ORTab0[2][i]) + "\t");
-			}
-			bw.write("\n\n");
+				bw.write("OR Modality 0: \n");
+				bw.write("components: \t");
+				for (int i = 0; i < 6; i++) {
+					bw.write(threeDecE.format(ORTab0[0][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("coefficients: \t");
+				for (int i = 0; i < 6; i++) {
+					bw.write(threeDecE.format(ORTab0[1][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("total: \t\t");
+				for (int i = 0; i < 6; i++) {
+					bw.write(threeDecE.format(ORTab0[2][i]) + "\t");
+				}
+				bw.write("\n\n");
 
-			bw.write("OR Modality 1: \n");
-			bw.write("components: \t");
-			for (int i = 0; i < 6; i++) {
-				bw.write(threeDecE.format(ORTab1[0][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("coefficients: \t");
-			for (int i = 0; i < 6; i++) {
-				bw.write(threeDecE.format(ORTab1[1][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("total: \t\t");
-			for (int i = 0; i < 6; i++) {
-				bw.write(threeDecE.format(ORTab1[2][i]) + "\t");
-			}
-			bw.write("\n\n");
+				bw.write("OR Modality 1: \n");
+				bw.write("components: \t");
+				for (int i = 0; i < 6; i++) {
+					bw.write(threeDecE.format(ORTab1[0][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("coefficients: \t");
+				for (int i = 0; i < 6; i++) {
+					bw.write(threeDecE.format(ORTab1[1][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("total: \t\t");
+				for (int i = 0; i < 6; i++) {
+					bw.write(threeDecE.format(ORTab1[2][i]) + "\t");
+				}
+				bw.write("\n\n");
 
-			bw.write("OR Difference: \n");
-			bw.write("components: \t");
-			for (int i = 0; i < 6; i++) {
-				bw.write(threeDecE.format(ORTabDiff[0][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("coefficients: \t");
-			for (int i = 0; i < 6; i++) {
-				bw.write(threeDecE.format(ORTabDiff[1][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("total: \t\t");
-			for (int i = 0; i < 6; i++) {
-				bw.write(threeDecE.format(ORTabDiff[2][i]) + "\t");
-			}
-			bw.write("\n\n");
+				bw.write("OR Difference: \n");
+				bw.write("components: \t");
+				for (int i = 0; i < 6; i++) {
+					bw.write(threeDecE.format(ORTabDiff[0][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("coefficients: \t");
+				for (int i = 0; i < 6; i++) {
+					bw.write(threeDecE.format(ORTabDiff[1][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("total: \t\t");
+				for (int i = 0; i < 6; i++) {
+					bw.write(threeDecE.format(ORTabDiff[2][i]) + "\t");
+				}
+				bw.write("\n\n");
 
-			bw.write("MS Modality 0: \n");
-			bw.write("components: \t");
-			for (int i = 0; i < 6; i++) {
-				bw.write(threeDecE.format(MSTab0[0][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("coefficients: \t");
-			for (int i = 0; i < 6; i++) {
-				bw.write(threeDecE.format(MSTab0[1][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("total: \t\t");
-			for (int i = 0; i < 6; i++) {
-				bw.write(threeDecE.format(MSTab0[2][i]) + "\t");
-			}
-			bw.write("\n\n");
+				bw.write("MS Modality 0: \n");
+				bw.write("components: \t");
+				for (int i = 0; i < 6; i++) {
+					bw.write(threeDecE.format(MSTab0[0][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("coefficients: \t");
+				for (int i = 0; i < 6; i++) {
+					bw.write(threeDecE.format(MSTab0[1][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("total: \t\t");
+				for (int i = 0; i < 6; i++) {
+					bw.write(threeDecE.format(MSTab0[2][i]) + "\t");
+				}
+				bw.write("\n\n");
 
-			bw.write("MS Modality 1: \n");
-			bw.write("components: \t");
-			for (int i = 0; i < 6; i++) {
-				bw.write(threeDecE.format(MSTab1[0][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("coefficients: \t");
-			for (int i = 0; i < 6; i++) {
-				bw.write(threeDecE.format(MSTab1[1][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("total: \t\t");
-			for (int i = 0; i < 6; i++) {
-				bw.write(threeDecE.format(MSTab1[2][i]) + "\t");
-			}
-			bw.write("\n\n");
+				bw.write("MS Modality 1: \n");
+				bw.write("components: \t");
+				for (int i = 0; i < 6; i++) {
+					bw.write(threeDecE.format(MSTab1[0][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("coefficients: \t");
+				for (int i = 0; i < 6; i++) {
+					bw.write(threeDecE.format(MSTab1[1][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("total: \t\t");
+				for (int i = 0; i < 6; i++) {
+					bw.write(threeDecE.format(MSTab1[2][i]) + "\t");
+				}
+				bw.write("\n\n");
 
-			bw.write("MS Difference: \n");
-			bw.write("components: \t");
-			for (int i = 0; i < 6; i++) {
-				bw.write(threeDecE.format(MSTabDiff[0][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("coefficients: \t");
-			for (int i = 0; i < 6; i++) {
-				bw.write(threeDecE.format(MSTabDiff[1][i]) + "\t");
-			}
-			bw.write("\n");
-			bw.write("total: \t\t");
-			for (int i = 0; i < 6; i++) {
-				bw.write(threeDecE.format(MSTabDiff[2][i]) + "\t");
-			}
-			bw.write("\n\n");
+				bw.write("MS Difference: \n");
+				bw.write("components: \t");
+				for (int i = 0; i < 6; i++) {
+					bw.write(threeDecE.format(MSTabDiff[0][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("coefficients: \t");
+				for (int i = 0; i < 6; i++) {
+					bw.write(threeDecE.format(MSTabDiff[1][i]) + "\t");
+				}
+				bw.write("\n");
+				bw.write("total: \t\t");
+				for (int i = 0; i < 6; i++) {
+					bw.write(threeDecE.format(MSTabDiff[2][i]) + "\t");
+				}
+				bw.write("\n\n");
 
-			bw.close();
+				bw.close();
+			}
 
 		} catch (IOException e) {
 			e.printStackTrace();
