@@ -845,5 +845,4 @@ public class InputFile {
 			k++;
 		}
 	}
-
 }

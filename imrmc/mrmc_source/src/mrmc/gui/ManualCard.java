@@ -270,7 +270,6 @@ public class ManualCard {
 						layout.createParallelGroup(
 								GroupLayout.Alignment.LEADING)
 								.addComponent(compLabel).addComponent(compText)));
-
 	}
 
 	/**

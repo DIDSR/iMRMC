@@ -197,61 +197,6 @@ public class StatTest {
 	}
 
 	/**
-	 * Constructor used for calculating statistics when sizing a new trial
-	 * 
-	 * @param DBMvar Subset of DBM variance components for the selected
-	 *            modality/difference
-	 * @param r Number of readers
-	 * @param n Number of normal cases
-	 * @param d Number of disease cases
-	 * @param sig Significance level=
-	 * @param eff Effect size
-	 * @param totalVar Total variance of components
-	 * @param BCKbias Biased BCK variance components
-	 */
-	public StatTest(double[] DBMvar, int r, int n, int d, double sig,
-			double eff, double totalVar, double[][] BCKbias, double[] aucs,
-			int selectedMod) {
-		sigLevel = sig;
-		effSize = eff;
-		dfHillis = DDF_Hillis(DBMvar, r, n + d, totalVar);
-		dfBDG = calcDFBDG(BCKbias, r, n, d, totalVar);
-		powerWithHillisDF = FTest_power(DBMvar, r, n + d, totalVar, dfHillis);
-		powerWithBDGDF = FTest_power(DBMvar, r, n + d, totalVar, dfBDG);
-		powerZ = ZTest(DBMvar, r, n + d, totalVar);
-
-		double fVal, fValBDG, fValHillis;
-		NormalDist ndist = new NormalDist();
-		fVal = ndist.inverseF(1 - sig);
-
-		if (dfBDG >= 50) {
-			fValBDG = ndist.inverseF(1 - sig);
-		} else {
-			FisherFDist fdist = new FisherFDist(1, (int) dfBDG);
-			fValBDG = fdist.inverseF(1 - sig);
-		}
-		if (dfHillis >= 50) {
-			fValHillis = ndist.inverseF(1 - sig);
-		} else {
-			FisherFDist fdist = new FisherFDist(1, (int) dfHillis);
-			fValHillis = fdist.inverseF(1 - sig);
-		}
-
-		double meanCI;
-		if (selectedMod == 0 || selectedMod == 1) {
-			meanCI = aucs[selectedMod];
-		} else {
-			meanCI = aucs[0] - aucs[1];
-		}
-		ciBot = meanCI - Math.sqrt(totalVar) * Math.sqrt(fVal); // bdg
-		ciTop = meanCI + Math.sqrt(totalVar) * Math.sqrt(fVal); // bdg
-		ciBotDfBDG = meanCI - Math.sqrt(totalVar) * Math.sqrt(fValBDG);
-		ciTopDfBDG = meanCI + Math.sqrt(totalVar) * Math.sqrt(fValBDG);
-		ciBotDfHillis = meanCI - Math.sqrt(totalVar) * Math.sqrt(fValHillis);
-		ciTopDfHillis = meanCI + Math.sqrt(totalVar) * Math.sqrt(fValHillis);
-	}
-
-	/**
 	 * Constructor used for calculating statistics when performing initial
 	 * variance analysis
 	 * 
@@ -385,6 +330,61 @@ public class StatTest {
 
 		System.out.println("auc(0)=" + meanCI + "Fval=" + Math.sqrt(fVal)
 				+ "std" + Math.sqrt(var[selectedMod]));
+	}
+
+	/**
+	 * Constructor used for calculating statistics when sizing a new trial
+	 * 
+	 * @param DBMvar Subset of DBM variance components for the selected
+	 *            modality/difference
+	 * @param r Number of readers
+	 * @param n Number of normal cases
+	 * @param d Number of disease cases
+	 * @param sig Significance level=
+	 * @param eff Effect size
+	 * @param totalVar Total variance of components
+	 * @param BCKbias Biased BCK variance components
+	 */
+	public StatTest(double[] DBMvar, int r, int n, int d, double sig,
+			double eff, double totalVar, double[][] BCKbias, double[] aucs,
+			int selectedMod) {
+		sigLevel = sig;
+		effSize = eff;
+		dfHillis = DDF_Hillis(DBMvar, r, n + d, totalVar);
+		dfBDG = calcDFBDG(BCKbias, r, n, d, totalVar);
+		powerWithHillisDF = FTest_power(DBMvar, r, n + d, totalVar, dfHillis);
+		powerWithBDGDF = FTest_power(DBMvar, r, n + d, totalVar, dfBDG);
+		powerZ = ZTest(DBMvar, r, n + d, totalVar);
+
+		double fVal, fValBDG, fValHillis;
+		NormalDist ndist = new NormalDist();
+		fVal = ndist.inverseF(1 - sig);
+
+		if (dfBDG >= 50) {
+			fValBDG = ndist.inverseF(1 - sig);
+		} else {
+			FisherFDist fdist = new FisherFDist(1, (int) dfBDG);
+			fValBDG = fdist.inverseF(1 - sig);
+		}
+		if (dfHillis >= 50) {
+			fValHillis = ndist.inverseF(1 - sig);
+		} else {
+			FisherFDist fdist = new FisherFDist(1, (int) dfHillis);
+			fValHillis = fdist.inverseF(1 - sig);
+		}
+
+		double meanCI;
+		if (selectedMod == 0 || selectedMod == 1) {
+			meanCI = aucs[selectedMod];
+		} else {
+			meanCI = aucs[0] - aucs[1];
+		}
+		ciBot = meanCI - Math.sqrt(totalVar) * Math.sqrt(fVal); // bdg
+		ciTop = meanCI + Math.sqrt(totalVar) * Math.sqrt(fVal); // bdg
+		ciBotDfBDG = meanCI - Math.sqrt(totalVar) * Math.sqrt(fValBDG);
+		ciTopDfBDG = meanCI + Math.sqrt(totalVar) * Math.sqrt(fValBDG);
+		ciBotDfHillis = meanCI - Math.sqrt(totalVar) * Math.sqrt(fValHillis);
+		ciTopDfHillis = meanCI + Math.sqrt(totalVar) * Math.sqrt(fValHillis);
 	}
 
 	/**
