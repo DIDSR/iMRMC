@@ -57,6 +57,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import mrmc.core.DBRecord;
 import mrmc.core.Matrix;
+import mrmc.core.StatTest;
 import roemetz.core.CalcGenRoeMetz;
 import roemetz.core.RoeMetz;
 import roemetz.core.SimRoeMetz;
@@ -834,6 +835,9 @@ public class RMGUInterface {
 							currSim.gett10(), currSim.gett11(),
 							currSim.getAUC(), filenameTime,
 							((whichTask * numTimes) + i));
+					writeComponentsFile(currSim.getBDGdata(), n,
+							currSim.getAUC(), useMLE, filenameTime,
+							((whichTask * numTimes) + i));
 				}
 
 				avgBDGdata = Matrix.matrixAdd(avgBDGdata, currSim.getBDGdata());
@@ -1472,6 +1476,65 @@ public class RMGUInterface {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Writes component info, p-values, and confidence interval of a single study to file
+	 * @param BDGdata BDG components of study
+	 * @param n Experiment size
+	 * @param auc AUC of experiment
+	 * @param useMLE whether or not to use MLE
+	 * @param filename Timestamp based filename to identify group of experiments
+	 * @param fileNum Individual experiment number
+	 */
+	public void writeComponentsFile(double[][] BDGdata, int[] n, double[] auc,
+			int useMLE, String filename, int fileNum) {
+		DBRecord tempRecord = new DBRecord(BDGdata, 0, n[2], n[0], n[1],
+				new double[] { auc[0], auc[1] });
+		StatTest tempStat = new StatTest(tempRecord, 3, useMLE, 0.05,
+				Math.abs(auc[0] - auc[1]));
+		System.out.println("p-val = " + tempStat.getpValF());
+		System.out.println("CI = " + tempStat.getCI()[0] + ", "
+				+ tempStat.getCI()[1]);
+
+		try {
+			File file = new File(simSaveDirectory + "/" + "sim-comp-"
+					+ filename + "-" + String.format("%05d", fileNum) + ".txt");
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			FileWriter fw = new FileWriter(file.getAbsoluteFile());
+			BufferedWriter bw = new BufferedWriter(fw);
+
+			bw.write("BDG components from simulated study " + filename + "-"
+					+ fileNum + "\n");
+
+			int col = BDGdata[0].length;
+			int row = BDGdata.length;
+			DecimalFormat df = new DecimalFormat("0.###E0");
+			for (int i = 0; i < row; i++) {
+				String temp = "";
+				for (int j = 0; j < col; j++) {
+					int totalWidth = 14;
+					int numWidth = df.format(BDGdata[i][j]).length();
+					int numSpaces = totalWidth - numWidth;
+					temp = temp + df.format(BDGdata[i][j]);
+					for (int x = 0; x < numSpaces; x++) {
+						temp = temp + " ";
+					}
+				}
+				temp = temp + "\n";
+				bw.write(temp);
+			}
+
+			bw.write("p-value: " + tempStat.getpValF() + "\n");
+			bw.write("Confidence Interval: (" + tempStat.getCI()[0] + ", "
+					+ tempStat.getCI()[1] + ")\n");
+			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	/**
