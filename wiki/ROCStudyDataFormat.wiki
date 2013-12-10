@@ -4,18 +4,26 @@ Here we describe a properly formatted file of ROC ratings. These instructions ca
 http://imrmc.googlecode.com/svn/images/format%20button.png
  
 
-The file format has two parts: the study description at the top followed by a list of ROC ratings. The study description can include any information as free text. It must include four lines corresponding to the size of the experiment and then conclude with a line stating “BEGIN DATA”. We demonstrate the formatting of these lines in an example. If the study has 9 readers, 55 diseased patients, and 75 non-diseased patients, and 5 modalities, then a legitimate study description can be nothing more than the following lines:
+The file format has two parts: the study description at the top followed by a list of ROC ratings. The *study description* can include any information as free text, or no information at all. iMRMC looks for four lines corresponding to the size of the experiment.
+
+N0 = number of cases without disease
+N1 = number of cases with disease
+NR = number of readers
+NM = number of modalities
+
+If it finds this information (formatting shown below), it shows these numbers next to the numbers derived by reading in the data; this is a simple data input check. The *study description* ends with a line stating “BEGIN DATA:”.
+
+We demonstrate the formatting of these lines in an example. If the study has 9 readers, 55 diseased patients, and 75 non-diseased patients, and 5 modalities, then a legitimate study description can be nothing more than the following lines:
 
 {{{
 N0: 75
 N1: 55
 NR: 9
 NM: 5
-BEGIN DATA
-… …
+BEGIN DATA:
 }}}
 
-The list of ROC ratings has a row for each reader scoring each case for each modality in the study, in any order. It also has rows specifying the truth state of each case (given by the reference gold-standard reader = truth). iMRMC can handle data that is not fully-crossed for any number of modalities, though only two of those modalities may be used at a time for variance analysis.
+The *list of ROC ratings* has a row for each reader scoring each case for each modality in the study, in any order. It also has rows specifying the truth state of each case (given by the reference gold-standard reader = truth). iMRMC can handle data that is not fully-crossed for any number of modalities, though only two of those modalities may be used at a time for variance analysis.
 
 For rows recording reader scores, there are four fields in the following order ( *no* *spaces* *allowed* ):
   * the reader id  (integer)
@@ -49,3 +57,9 @@ The truth state 0 indicates normal or no disease. The truth state 1 indicates ab
 }}}
 
 In the example, we see the ROC ratings from two readers reading two cases with three modalities each. The first two lines specify truth (reader = -1; modality = 0): line 1 indicates that case 1 has disease (score = 1), line 2 indicates that case 2 does not have diseased (score = 0). Rows 3-5 show reader 1’s score for modalities 1 through 3 on case 1. The sixth through eighth lines indicate the same but for reader 2 instead. The remaining lines repeat the pattern with readers 1 and 2 scoring the modalities of case 2.
+
+Typical errors in formatting are as follows:
+  # ERROR: "BEGIN DATA:" not all upper-case. It must be all upper-case.
+  # ERROR: "BEGIN DATA:" not terminated with a colon. The colon is required.
+  # ERROR: Spaces or tabs separate the data in the list of ROC ratings. Only commas should be used.
+  # ERROR: Truth states not defined for all the cases. The truth state of every case must be defined once and only once.
