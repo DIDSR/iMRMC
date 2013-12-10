@@ -15,15 +15,21 @@ BEGIN DATA
 … …
 }}}
 
-The list of ROC ratings has a row for each reader scoring each case for each modality in the study, in any order. It also has rows specifying the truth value of each case (given by the reference gold-standard reader = truth). iMRMC can handle data that is not fully-crossed for any number of modalities, though only two of those modalities may be used at a time for variance analysis.
+The list of ROC ratings has a row for each reader scoring each case for each modality in the study, in any order. It also has rows specifying the truth state of each case (given by the reference gold-standard reader = truth). iMRMC can handle data that is not fully-crossed for any number of modalities, though only two of those modalities may be used at a time for variance analysis.
 
-Each row has four fields in the following order ( *no* *spaces* *allowed* ):
-  * the reader id  (integer; must be -1     when specifying truth)
+For rows recording reader scores, there are four fields in the following order ( *no* *spaces* *allowed* ):
+  * the reader id  (integer)
   * case id        (integer)
-  * modality index (integer; must be 0      when specifying truth)
-  * score (integer or float; must be 0 or 1 when specifying truth)
+  * modality index (integer)
+  * score (integer or float)
 
-The score is 0 or 1 for a truth modality index (indicating normal or diseased) or a value (integer or float) for a particular modality. Higher scores should indicate higher likelihood or confidence of disease and low ratings should indicate lesser likelihood or confidence of disease. Otherwise, AUC calculations and ROC curve displays will be incorrect. Each field should be separated by only a comma and each row terminated by a newline character. For example, the first few rows could look like the following:
+For rows recording truth states, there are also four fields in the following order ( *no* *spaces* *allowed* ):
+  * -1
+  * case id        (integer)
+  * 0
+  * truth state (0 or 1)
+
+The truth state 0 indicates normal or no disease. The truth state 1 indicates abnormal or disease. Higher reader scores should indicate higher likelihood or confidence of disease and low ratings should indicate lesser likelihood or confidence of disease. Otherwise, AUC calculations and ROC curve displays will be incorrect. Each field should be separated by only a comma and each row terminated by a newline character. For example, the first few rows could look like the following:
 
 {{{
 -1,1,0,1
