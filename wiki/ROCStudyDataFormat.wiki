@@ -1,10 +1,5 @@
 =Data Format for ROC Ratings=
-Here we describe a properly formatted file of ROC ratings. These instructions can also be accessed via the “Format Info.” button. 
-
-http://imrmc.googlecode.com/svn/images/format%20button.png
-
-FDA internal link ftp://172.31.150.37/eedap
-FDA external link ftp://taxp2.cdrh.fda.gov/eedap
+Here we describe a properly formatted file of ROC ratings.
 
 The file format has two parts: the study description at the top followed by a list of ROC ratings. The *study description* can include any information as free text, or no information at all. iMRMC looks for four lines corresponding to the size of the experiment.
 
