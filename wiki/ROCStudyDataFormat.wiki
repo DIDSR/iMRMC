@@ -3,7 +3,8 @@ Here we describe a properly formatted file of ROC ratings. These instructions ca
 
 http://imrmc.googlecode.com/svn/images/format%20button.png
 
-ftp://taxp2.cdrh.fda.gov/cluster5/anonymous
+FDA internal link ftp://172.31.150.37/eedap
+FDA external link ftp://taxp2.cdrh.fda.gov/eedap
 
 The file format has two parts: the study description at the top followed by a list of ROC ratings. The *study description* can include any information as free text, or no information at all. iMRMC looks for four lines corresponding to the size of the experiment.
 
