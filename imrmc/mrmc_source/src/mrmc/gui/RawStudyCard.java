@@ -77,8 +77,8 @@ public class RawStudyCard {
 	public void updateStudyPanel() {
 		chooseA.removeAllItems();
 		chooseB.removeAllItems();
-		chooseA.addItem("none");
-		chooseB.addItem("none");
+		chooseA.addItem("Choose Modality A");
+		chooseB.addItem("Choose Modality B");
 		for (int i = 1; i <= gui.usr.getModality(); i++) {
 			chooseA.addItem("" + i);
 			chooseB.addItem("" + i);
@@ -104,8 +104,10 @@ public class RawStudyCard {
 	 */
 	public RawStudyCard(JPanel studyPanel, GUInterface guitemp) {
 		gui = guitemp;
+//		negBox = new JCheckBox(
+//				"use MLE estimates of moments to avoid negatives    ");
 		negBox = new JCheckBox(
-				"use MLE estimates of moments to avoid negatives    ");
+				"MLE (avoid negatives)");
 		negBox.setSelected(false);
 		negBox.addItemListener(new UseMLEListener());
 
@@ -119,9 +121,9 @@ public class RawStudyCard {
 		chooseB.addItemListener(new ModSelectListener());
 
 		studyPanel.add(negBox);
-		studyPanel.add(new JLabel("Modality A: "));
+//		studyPanel.add(new JLabel("Modality A: "));
 		studyPanel.add(chooseA);
-		studyPanel.add(new JLabel("Modality B: "));
+//		studyPanel.add(new JLabel("Modality B: "));
 		studyPanel.add(chooseB);
 
 		varAnalysisButton = new JButton("MRMC Variance Analysis");
@@ -142,9 +144,9 @@ public class RawStudyCard {
 				if (chooseA.getSelectedItem() != null
 						&& chooseB.getSelectedItem() != null) {
 					modA = (!chooseA.getSelectedItem().equals("n/a"))
-							&& (!chooseA.getSelectedItem().equals("none"));
+							&& (!chooseA.getSelectedItem().equals("Choose Modality A"));
 					modB = (!chooseB.getSelectedItem().equals("n/a"))
-							&& (!chooseB.getSelectedItem().equals("none"));
+							&& (!chooseB.getSelectedItem().equals("Choose Modality B"));
 					if (modA && !modB) {
 						gui.currMod0 = Integer.parseInt(chooseA
 								.getSelectedItem().toString());

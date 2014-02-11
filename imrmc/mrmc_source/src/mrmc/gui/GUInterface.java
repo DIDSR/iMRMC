@@ -24,6 +24,8 @@ import java.awt.event.*;
 import java.awt.*;
 import java.io.*;
 import java.lang.Math;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.*;
@@ -410,11 +412,10 @@ public class GUInterface {
 		else
 			eff = Math.abs(tempRecord.getAUCinNumber(0)
 					- tempRecord.getAUCinNumber(1));
-		System.out.println("selectedMod" + selectedMod + "eff=" + eff + "sum"
-				+ sum);
-		if (sum != 0 || sum == 0 && selectedMod != 3) // two modalities are
-														// different
-		{
+		System.out.println("selectedMod=" + selectedMod + "  eff=" + eff + "  sum"	+ sum);
+
+		// two modalities are different
+		if (sum != 0 || sum == 0 && selectedMod != 3) {
 			StatTest varAnalStat = new StatTest(tempRecord, selectedMod,
 					useMLE, 0.05, eff);
 			// tStat
@@ -435,7 +436,7 @@ public class GUInterface {
 					+ ")");
 
 			if (tempRecord.getFullyCrossedStatus()) {
-				output = twoDec.format(varAnalStat.getDOF());
+				output = twoDec.format(varAnalStat.getdfHillis());
 				dfHillis.setText("  df(Hillis 2008)= " + output);
 				output = fourDec.format(varAnalStat.getpValFHillis());
 				pValWithDFHillis.setText("  p-Value= " + output);
@@ -631,7 +632,7 @@ public class GUInterface {
 
 		// Hillis DoF is not applicable for non-fully crossed studies
 		if (tempRecord.getFullyCrossedStatus()) {
-			output = twoDec.format(sizingStat.getDDF());
+			output = twoDec.format(sizingStat.getdfHillis());
 			sizedDFHillis.setText("  df(Hillis 2008)= " + output);
 			output = twoDec.format(sizingStat.getHillisPowerWithHillisDF());
 			HillisPowerWithdfHillis.setText("      Power(Hillis 2011) = "
@@ -1088,6 +1089,7 @@ public class GUInterface {
 		inputSelectPane.setLayout(new FlowLayout());
 		JLabel inLabel = new JLabel("Select an input method: ");
 		String comboBoxItems[] = { DB, Pilot, Manual };
+		
 		JComboBox cb = new JComboBox(comboBoxItems);
 		cb.setEditable(false);
 		cb.setSelectedIndex(0);
@@ -2006,9 +2008,24 @@ public class GUInterface {
 	 */
 	class fmtHelpButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			DataFormat fmt = new DataFormat();
-			JOptionPane.showMessageDialog(lst.getFrame(), fmt.getInfo(),
-					"Information", JOptionPane.INFORMATION_MESSAGE);
+			
+			// DataFormat fmt = new DataFormat();
+			// JOptionPane.showMessageDialog(lst.getFrame(), fmt.getInfo(),
+			//		"Information", JOptionPane.INFORMATION_MESSAGE);
+			
+			// Create Desktop object
+			Desktop d=Desktop.getDesktop();
+
+			// Browse a URL, say google.com
+			try {
+				d.browse(new URI("ftp://taxp2.cdrh.fda.gov/imrmc/imrmcuserguide.pdf"));
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (URISyntaxException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 	}
 
