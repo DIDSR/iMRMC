@@ -20,6 +20,7 @@ package mrmc.core;
 
 import umontreal.iro.lecuyer.probdist.BetaDist;
 import umontreal.iro.lecuyer.probdist.FisherFDist;
+import umontreal.iro.lecuyer.probdist.StudentDist;
 import umontreal.iro.lecuyer.probdist.NormalDist;
 
 /**
@@ -38,24 +39,28 @@ public class StatTest {
 	private final double ZERO = 1E-300;
 	private final static int USE_MLE = 1;
 	private final static int NO_MLE = 0;
-	private double powerWithHillisDF;
-	private double powerZ;
-	private double DOF = 0;
-	private double dfBDG; // degrees of freedom based on Obuchowski/BDG method
+
 	private double tStatEst = 0;
 	private double effSize;
 	private double sigLevel;
-	private double pValF;
-	private double ciBot, ciTop;
+	private double tStatCalc;
 	private double f0;
 	private double df1 = 1.0; // future versions may account for greater df1
+
+	private double dfBDG;
 	private double dfHillis;
-	private double tStatCalc;
+	
+	private double pValF;
 	private double pValFBDG;
 	private double pValFHillis;
-	private double powerWithBDGDF;
+
+	private double ciBot, ciTop;
 	private double ciBotDfBDG, ciTopDfBDG;
 	private double ciBotDfHillis, ciTopDfHillis;
+
+	private double powerZ;
+	private double powerWithBDGDF;
+	private double powerWithHillisDF;
 
 	/**
 	 * Gets the confidence interval
@@ -113,15 +118,6 @@ public class StatTest {
 	 */
 	public double getZPower() {
 		return powerZ;
-	}
-
-	/**
-	 * Gets the degrees of freedom according to Hillis 2008 calculation
-	 * 
-	 * @return Degrees of freedom
-	 */
-	public double getDOF() {
-		return DOF;
 	}
 
 	/**
@@ -183,7 +179,7 @@ public class StatTest {
 	 * 
 	 * @return Degrees of freedom
 	 */
-	public double getDDF() {
+	public double getdfHillis() {
 		return dfHillis;
 	}
 
@@ -208,128 +204,135 @@ public class StatTest {
 	 */
 	public StatTest(DBRecord curRecord, int selectedMod, int useMLE,
 			double sig, double eff) {
-		double mst = 0, denom = 0, statT = 0;
+
+		double dn0 = curRecord.getNormal();
+		double dn1 = curRecord.getDisease();
+		double dnr = curRecord.getReader();
+
+		double ms_t = 0, ms_tr, denom = 0;
 		double[] aucs = { 0, 0 };
 		double[][] coeff;
 		if (curRecord.getFullyCrossedStatus()) {
-			coeff = DBRecord.genBDGCoeff(curRecord.getReader(),
-					curRecord.getNormal(), curRecord.getDisease());
+			coeff = DBRecord.genBDGCoeff((int) dnr, (int) dn0, (int) dn1);
 		} else {
-			coeff = DBRecord.genBDGCoeff(curRecord.getReader(),
-					curRecord.getNormal(), curRecord.getDisease(),
+			coeff = DBRecord.genBDGCoeff((int) dnr, (int) dn0, (int) dn1,
 					curRecord.getMod0StudyDesign(),
 					curRecord.getMod1StudyDesign());
 		}
 		double[][] BDG = curRecord.getBDG(useMLE);
-		double[][] MS = curRecord.getMS(useMLE);
-		double dn0 = curRecord.getNormal();
-		double dn1 = curRecord.getDisease();
-		double dnr = curRecord.getReader();
-		double dnc = dn0 + dn1;
+		
+		aucs[0] = curRecord.getAUCinNumber(0);
+		aucs[1] = curRecord.getAUCinNumber(1);
+		double meanCI = 0;
 
+		double cutoffZ, cutoffBDG, cutoffHillis;
+		NormalDist ndist = new NormalDist();
+
+		// This function returns all the content appearing in the BDG tab
+		// It keeps only the the seventh row (index = 6 b.c. indices start at zero)
+		// The seventh row contains the weighted contribution to the total variance 
 		double[] var = DBRecord.getBDGTab(selectedMod, BDG, coeff)[6];
 		double var0 = 0;
 		for (int j = 0; j < 8; j++) {
 			var0 = var0 + var[j];
 		}
 
-		dfBDG = calcDFBDG(curRecord.getBCK(USE_MLE), curRecord.getReader(),
-				curRecord.getNormal(), curRecord.getDisease(), var0);
 		double[] DBMvar = new double[3];
+		double[] ORvar = new double[6];
+		double[] ORcoeff = new double[6];
 		if (selectedMod == 1 || selectedMod == 0) {
 			DBMvar[0] = curRecord.getDBM(NO_MLE)[selectedMod][0];
 			DBMvar[1] = curRecord.getDBM(NO_MLE)[selectedMod][1];
 			DBMvar[2] = curRecord.getDBM(NO_MLE)[selectedMod][2];
-		} else {
-			DBMvar[0] = curRecord.getDBM(NO_MLE)[3][3];
-			DBMvar[1] = curRecord.getDBM(NO_MLE)[3][4];
-			DBMvar[2] = curRecord.getDBM(NO_MLE)[3][5];
-		}
-		dfHillis = DDF_Hillis(var, curRecord.getReader(), curRecord.getNormal()
-				+ curRecord.getDisease(), var0);
 
-		aucs[0] = curRecord.getAUCinNumber(0);
-		aucs[1] = curRecord.getAUCinNumber(1);
-		double meanCI = 0;
+			for(int j=0; j<6; j++){
+				ORvar[j] = curRecord.getOR(useMLE)[selectedMod][j];
+				ORcoeff[j] = curRecord.getORcoeff()[selectedMod][j];
+			}
 
-		// TODO So is this DOF z stat or what?
-		if (selectedMod == 0 || selectedMod == 1) {
 			meanCI = aucs[selectedMod];
-			// mst=dnr*dnc*(aucs[selectedMod]-eff)*(aucs[selectedMod]-eff);
-			mst = dnr * dnc * eff * eff;
-			denom = MS[selectedMod][0]
-					+ Math.max(0.0, (MS[selectedMod][1] - MS[selectedMod][4]));
-			statT = Math.sqrt(mst / denom);
-			DOF = denom * denom
-					/ (MS[selectedMod][0] * MS[selectedMod][0] / (dnr - 1));
+			ms_t = dnr * doVar(aucs[selectedMod], eff); // Following Eq. 3, Hillis 2007
+//			denom = MS[selectedMod][0]
+//					+ Math.max(0.0, (MS[selectedMod][1] - MS[selectedMod][4]));
+//			tStatEst = Math.sqrt(mst / denom);
+//			dfHillis = denom * denom
+//					/ (MS[selectedMod][0] * MS[selectedMod][0] / (dnr - 1));
+
 		} else {
+			DBMvar[0] = curRecord.getDBM(NO_MLE)[selectedMod][3];
+			DBMvar[1] = curRecord.getDBM(NO_MLE)[selectedMod][4];
+			DBMvar[2] = curRecord.getDBM(NO_MLE)[selectedMod][5];
+
+			for(int j=0; j<6; j++){
+				ORvar[j] = curRecord.getOR(useMLE)[selectedMod][j];
+				ORcoeff[j] = curRecord.getORcoeff()[selectedMod][j];
+			}
+
 			meanCI = aucs[0] - aucs[1];
-			mst = dnr * dnc * doVar(aucs[0], aucs[1]);
-			denom = MS[selectedMod][2]
-					+ Math.max(0.0, (MS[selectedMod][3] - MS[selectedMod][5]));
-			statT = Math.sqrt(mst / denom);
-			DOF = denom * denom
-					/ (MS[selectedMod][2] * MS[selectedMod][2] / (dnr - 1));
-			System.out.println("R=" + dnr + "N0=" + dn0 + "N1=" + dn1 + "eff="
-					+ eff + "sig" + sig + "auc0=" + aucs[0] + "auc1=" + aucs[1]
-					+ "df=" + DOF);
-			System.out.println("denom=" + denom + "mst=" + mst);
-		}
-		tStatEst = statT;
+			ms_t = dnr * doVar(aucs[0], aucs[1]); // Following Eq. 3, Hillis 2007
+//			denom = MS[selectedMod][2]
+//					+ Math.max(0.0, (MS[selectedMod][3] - MS[selectedMod][5]));
+//			tStatEst = Math.sqrt(mst / denom);
+//			dfHillis = denom * denom
+//					/ (MS[selectedMod][2] * MS[selectedMod][2] / (dnr - 1));
+		}	
 
-		// Use normal distribution if DOF > 50, since they are approximately
-		// equal at that point, and FisherFDist can't handle large DOFs
-		double fVal, fValBDG, fValHillis;
-		if (DOF >= 50) {
-			pValF = NormalDist.cdf(0, 1, statT * statT);
-			NormalDist ndist = new NormalDist();
-			fVal = ndist.inverseF(1 - sig);
-		} else {
-			pValF = FisherFDist.cdf(1, (int) DOF, 5, statT * statT);
-			FisherFDist fdist = new FisherFDist(1, (int) DOF);
-			fVal = fdist.inverseF(1 - sig);
-		}
-		pValF = 1 - pValF;
+		System.out.println("R=" + dnr + "  N0=" + dn0 + "  N1=" + dn1);
+		System.out.println("eff=" + eff + "  sig" + sig);
+		System.out.println("auc0=" + aucs[0] + "  auc1=" + aucs[1]);
 
-		// calculate p-value with dfbdg
+		dfBDG = calcDFBDG(curRecord.getBCK(USE_MLE), curRecord.getReader(),
+				curRecord.getNormal(), curRecord.getDisease(), var0);
+
+		dfHillis = DDF_Hillis(DBMvar, curRecord.getReader(), curRecord.getNormal()
+		 + curRecord.getDisease(), var0);
+
+		ms_tr = ORvar[1] + ORvar[5] - ORvar[2] - ORvar[3] + ORvar[4]; // Table 1, Hillis 2007
+
+		denom = (ms_tr + dnr * Math.max(0.0, (ORvar[3]-ORvar[4])));
+		tStatEst = Math.sqrt(ms_t / denom);
+		dfHillis = (dnr - 1) * denom * denom / ms_tr / ms_tr;
+				
+		// calculate p-value and cutoff assuming normality
+		pValF = 2*(1 - NormalDist.cdf(0, 1, tStatEst));
+		cutoffZ = ndist.inverseF(1 - sig/2);
+
+		// calculate p-value and cutoff assuming t-distribution with dfbdg
+		// Use normal distribution if df > 50, since they are approximately
+		// equal at that point, and StudentDist can't handle large dfs
 		if (dfBDG >= 50) {
-			pValFBDG = NormalDist.cdf(0, 1, statT * statT);
-			NormalDist ndist = new NormalDist();
-			fValBDG = ndist.inverseF(1 - sig);
+			pValFBDG = pValF;
+			cutoffBDG = cutoffZ;
 		} else {
-			pValFBDG = FisherFDist.cdf(1, (int) dfBDG, 5, statT * statT);
-			FisherFDist fdist = new FisherFDist(1, (int) dfBDG);
-			fValBDG = fdist.inverseF(1 - sig);
+			StudentDist tdist = new StudentDist((int) dfBDG );
+			pValFBDG = 2*(1 - tdist.cdf( tStatEst ));
+			cutoffBDG = tdist.inverseF( 1-sig/2 );
 		}
-		pValFBDG = 1 - pValFBDG;
 
-		// calculate p-value with dfHillis
+		// calculate p-value and cutoff assuming t-distribution with dfHillis
+		// Use normal distribution if df > 50, since they are approximately
+		// equal at that point, and FisherFDist can't handle large dfs
 		if (dfHillis >= 50) {
-			pValFHillis = NormalDist.cdf(0, 1, statT * statT);
-			NormalDist ndist = new NormalDist();
-			fValHillis = ndist.inverseF(1 - sig);
+			pValFHillis = pValF;
+			cutoffHillis = cutoffZ;
 		} else {
-			pValFHillis = FisherFDist.cdf(1, (int) dfHillis, 5, statT * statT);
-			FisherFDist fdist = new FisherFDist(1, (int) dfHillis);
-			fValHillis = fdist.inverseF(1 - sig);
+			StudentDist tdist = new StudentDist((int) dfHillis );
+			pValFHillis = 2*(1 - tdist.cdf( tStatEst ));
+			cutoffHillis = tdist.inverseF( 1-sig/2 );
 		}
-		pValFHillis = 1 - pValFHillis;
+		
+		ciBot = meanCI - Math.sqrt(var0) * cutoffZ; // bdg
+		ciTop = meanCI + Math.sqrt(var0) * cutoffZ; // bdg
+		ciBotDfBDG = meanCI - Math.sqrt(var0) * cutoffBDG;
+		ciTopDfBDG = meanCI + Math.sqrt(var0) * cutoffBDG;
+		ciBotDfHillis = meanCI - Math.sqrt(var0) * cutoffHillis;
+		ciTopDfHillis = meanCI + Math.sqrt(var0) * cutoffHillis;
 
-		ciBot = meanCI - Math.sqrt(var0) * Math.sqrt(fVal); // bdg
-		ciTop = meanCI + Math.sqrt(var0) * Math.sqrt(fVal); // bdg
-		ciBotDfBDG = meanCI - Math.sqrt(var0) * Math.sqrt(fValBDG);
-		ciTopDfBDG = meanCI + Math.sqrt(var0) * Math.sqrt(fValBDG);
-		ciBotDfHillis = meanCI - Math.sqrt(var0) * Math.sqrt(fValHillis);
-		ciTopDfHillis = meanCI + Math.sqrt(var0) * Math.sqrt(fValHillis);
-		// ***
-		// StudentDist tdist = StudentDist((int)ddf);
-		// double pValT=tdist.inverse((int)ddf, 1-sig/2); //
-		// ciBot=meanCI-Math.sqrt(var[selectedMod])*pValT; //bdg
-		// ciTop=meanCI+Math.sqrt(var[selectedMod])*pValT; //bdg
-		// ***
-
-		System.out.println("auc(0)=" + meanCI + "Fval=" + Math.sqrt(fVal)
-				+ "std" + Math.sqrt(var[selectedMod]));
+		System.out.println("mean=" + meanCI);
+		System.out.println("tStatEst=" + tStatEst);
+		System.out.println("Normal approx:" + "  pValF=" + pValF + "  cutoffZ=" + cutoffZ + "  ci=" + ciBot + ","  + ciTop);
+		System.out.println("dfBDG=" + dfBDG + "  pValBDG=" + pValFBDG + "  cutoffBDG=" + cutoffBDG + "  ci=" + ciBotDfBDG + ","  + ciTopDfBDG);
+		System.out.println("dfHillis=" + dfHillis + "  pValHillis=" + pValFHillis + "  cutoffHillis=" + cutoffHillis + "  ci=" + ciBotDfHillis + ","  + ciTopDfHillis);
 	}
 
 	/**
@@ -348,6 +351,7 @@ public class StatTest {
 	public StatTest(double[] DBMvar, int r, int n, int d, double sig,
 			double eff, double totalVar, double[][] BCKbias, double[] aucs,
 			int selectedMod) {
+
 		sigLevel = sig;
 		effSize = eff;
 		dfHillis = DDF_Hillis(DBMvar, r, n + d, totalVar);
@@ -356,21 +360,21 @@ public class StatTest {
 		powerWithBDGDF = FTest_power(DBMvar, r, n + d, totalVar, dfBDG);
 		powerZ = ZTest(DBMvar, r, n + d, totalVar);
 
-		double fVal, fValBDG, fValHillis;
+		double cutoffZ, cutoffBDG, cutoffHillis;
 		NormalDist ndist = new NormalDist();
-		fVal = ndist.inverseF(1 - sig);
+		cutoffZ = ndist.inverseF(1 - sig);
 
 		if (dfBDG >= 50) {
-			fValBDG = ndist.inverseF(1 - sig);
+			cutoffBDG = ndist.inverseF(1 - sig);
 		} else {
 			FisherFDist fdist = new FisherFDist(1, (int) dfBDG);
-			fValBDG = fdist.inverseF(1 - sig);
+			cutoffBDG = fdist.inverseF(1 - sig);
 		}
 		if (dfHillis >= 50) {
-			fValHillis = ndist.inverseF(1 - sig);
+			cutoffHillis = ndist.inverseF(1 - sig);
 		} else {
 			FisherFDist fdist = new FisherFDist(1, (int) dfHillis);
-			fValHillis = fdist.inverseF(1 - sig);
+			cutoffHillis = fdist.inverseF(1 - sig);
 		}
 
 		double meanCI;
@@ -379,12 +383,12 @@ public class StatTest {
 		} else {
 			meanCI = aucs[0] - aucs[1];
 		}
-		ciBot = meanCI - Math.sqrt(totalVar) * Math.sqrt(fVal); // bdg
-		ciTop = meanCI + Math.sqrt(totalVar) * Math.sqrt(fVal); // bdg
-		ciBotDfBDG = meanCI - Math.sqrt(totalVar) * Math.sqrt(fValBDG);
-		ciTopDfBDG = meanCI + Math.sqrt(totalVar) * Math.sqrt(fValBDG);
-		ciBotDfHillis = meanCI - Math.sqrt(totalVar) * Math.sqrt(fValHillis);
-		ciTopDfHillis = meanCI + Math.sqrt(totalVar) * Math.sqrt(fValHillis);
+		ciBot = meanCI - Math.sqrt(totalVar) * cutoffZ; // bdg
+		ciTop = meanCI + Math.sqrt(totalVar) * cutoffZ; // bdg
+		ciBotDfBDG = meanCI - Math.sqrt(totalVar) * cutoffBDG;
+		ciTopDfBDG = meanCI + Math.sqrt(totalVar) * cutoffBDG;
+		ciBotDfHillis = meanCI - Math.sqrt(totalVar) * cutoffHillis;
+		ciTopDfHillis = meanCI + Math.sqrt(totalVar) * cutoffHillis;
 	}
 
 	/**
@@ -403,17 +407,17 @@ public class StatTest {
 	/**
 	 * Calculates the denominator degrees of freedom by Hillis 2008 method
 	 * 
-	 * @param var Subset of DBM variance components for the selected
+	 * @param varDBM Subset of DBM variance components for the selected
 	 *            modality/difference
 	 * @param r Number of readers
 	 * @param c Number of cases
 	 * @param totalVar Total variance of components
 	 * @return Denominator degrees of freedom
 	 */
-	public double DDF_Hillis(double[] var, int r, int c, double totalVar) {
-		double SigTR = var[0];
-		double SigTC = var[1];
-		double SigTRC = var[2];
+	public double DDF_Hillis(double[] varDBM, int r, int c, double totalVar) {
+		double SigTR = varDBM[0];
+		double SigTC = varDBM[1];
+		double SigTRC = varDBM[2];
 		double ddf_hillis;
 
 		if (SigTR < 0) {
@@ -441,6 +445,7 @@ public class StatTest {
 			ddf_hillis = Nu / (De1 + De2 + De3);
 			ddf_hillis = Nu / (De1);
 		}
+		
 		return ddf_hillis;
 	}
 
@@ -471,19 +476,14 @@ public class StatTest {
 			SigTRC = 0;
 		}
 
-		tStatCalc = c * SigTR + r * SigTC + SigTRC;
-		System.out.println("delta=" + tStatCalc);
-		tStatCalc = 2.0 * tStatCalc / r / c;
-		System.out.println("delta=" + tStatCalc);
-		tStatCalc = effSize * effSize / tStatCalc;
 		tStatCalc = effSize * effSize / totalVar;
 		System.out.println("delta=" + tStatCalc);
+		tStatCalc = Math.sqrt(tStatCalc);
 
-		// we use normal distribution for DOF > 50 since it is close to Fisher F
+		// we use normal distribution for df > 50 since it is close to Fisher F
 		// and fisherF fails for DOF > 2000
 		double cdftemp;
 		if (df >= 50) {
-			tStatCalc = Math.sqrt(tStatCalc);
 			// Inverse normal cumulative d.f.
 			// return = NormalDist.inverseF(mean, var, prob);
 			// prob = integral(-inf, return) normal_pdf(mean, var)
@@ -493,13 +493,9 @@ public class StatTest {
 			// return = integral(-inf, x0) normal.pdf(mean, var)
 			cdftemp = NormalDist.cdf(tStatCalc, 1, f0);
 		} else {
-			tStatCalc = Math.sqrt(tStatCalc);
 			FisherFDist fdist = new FisherFDist((int) df1, (int) df);
 			f0 = fdist.inverseF(1 - sigLevel);
-			cdftemp = cdfNonCentralF((int) df1, (int) df, tStatCalc, f0);
-			// Rescale Delta, CVF to correspond to t-distribution ~= normal
-			// distribution
-			f0 = Math.sqrt(f0);
+			cdftemp = cdfNonCentralF((int) df1, (int) df, tStatCalc*tStatCalc, f0);
 		}
 
 		fTestPower = 1 - cdftemp;

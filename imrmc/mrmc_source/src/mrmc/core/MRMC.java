@@ -73,6 +73,7 @@ public class MRMC extends JApplet {
 	/**
 	 * Creates the GUI and top-level menu bar
 	 */
+	@Override
 	public void init() {
 
 		super.init();

@@ -797,48 +797,48 @@ public class InputFile {
 			m = 0; // number of false cases
 			n = 0; // number of true cases
 			for (Integer c : keyedData.get(r).keySet()) {
+				double currScoreMod0;
 				double currScoreMod1;
-				double currScoreMod2;
-				int mod1Present = 1;
-				int mod2Present = 1;
+				int PresentMod0 = 1;
+				int PresentMod1 = 1;
 				if (keyedData.get(r).containsKey(c)) {
 					if (keyedData.get(r).get(c).containsKey(modality0)) {
-						currScoreMod1 = keyedData.get(r).get(c).get(modality0);
+						currScoreMod0 = keyedData.get(r).get(c).get(modality0);
 					} else {
-						currScoreMod1 = 0;
-						mod1Present = 0;
+						currScoreMod0 = 0;
+						PresentMod0 = 0;
 					}
 					if (keyedData.get(r).get(c).containsKey(modality1)) {
-						currScoreMod2 = keyedData.get(r).get(c).get(modality1);
+						currScoreMod1 = keyedData.get(r).get(c).get(modality1);
 					} else {
-						currScoreMod2 = 0;
-						mod2Present = 0;
+						currScoreMod1 = 0;
+						PresentMod1 = 0;
 					}
 				} else {
+					currScoreMod0 = 0;
 					currScoreMod1 = 0;
-					currScoreMod2 = 0;
-					mod1Present = 0;
-					mod2Present = 0;
+					PresentMod0 = 0;
+					PresentMod1 = 0;
 				}
 				if (truthVals.get(c) == 0) {
-					t0[m][k][0] = currScoreMod1;
-					t0[m][k][1] = currScoreMod2;
-					t00[m][k][0] = currScoreMod1;
-					t00[m][k][1] = currScoreMod1;
-					t01[m][k][0] = currScoreMod2;
-					t01[m][k][1] = currScoreMod2;
-					d0[m][k][0] = mod1Present;
-					d0[m][k][1] = mod2Present;
+					t0[m][k][0] = currScoreMod0;
+					t0[m][k][1] = currScoreMod1;
+					t00[m][k][0] = currScoreMod0;
+					t00[m][k][1] = currScoreMod0;
+					t01[m][k][0] = currScoreMod1;
+					t01[m][k][1] = currScoreMod1;
+					d0[m][k][0] = PresentMod0;
+					d0[m][k][1] = PresentMod1;
 					m++;
 				} else {
-					t1[n][k][0] = currScoreMod1;
-					t1[n][k][1] = currScoreMod2;
-					t10[n][k][0] = currScoreMod1;
-					t10[n][k][1] = currScoreMod1;
-					t11[n][k][0] = currScoreMod2;
-					t11[n][k][1] = currScoreMod2;
-					d1[n][k][0] = mod1Present;
-					d1[n][k][1] = mod2Present;
+					t1[n][k][0] = currScoreMod0;
+					t1[n][k][1] = currScoreMod1;
+					t10[n][k][0] = currScoreMod0;
+					t10[n][k][1] = currScoreMod0;
+					t11[n][k][0] = currScoreMod1;
+					t11[n][k][1] = currScoreMod1;
+					d1[n][k][0] = PresentMod0;
+					d1[n][k][1] = PresentMod1;
 					n++;
 				}
 			}

@@ -22,6 +22,10 @@ import java.io.*;
 import java.util.*;
 import java.io.FileInputStream;
 
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+
+
 /**
  * Handles accessing files/data from database folder. Generates textual summary
  * for a given database record. *
@@ -32,6 +36,7 @@ import java.io.FileInputStream;
  * @version 2.0b
  */
 public class MrmcDB {
+	private String path; 					// path to db directory
 	private int noOfItems;
 	private File[] dbFiles;
 	private DBRecord[] Records;
@@ -66,9 +71,53 @@ public class MrmcDB {
 				return name.endsWith(".jdb");
 			}
 		};
-
-		dbFiles = new File("DB").listFiles(filefilter);
-		noOfItems = dbFiles.length;
+		
+		path = "DB";
+		
+		File f = new File(path);
+		if (!(f.exists() && f.isDirectory())) {
+			JFileChooser j = new JFileChooser();
+			j.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			j.setDialogTitle("Select a directory where jdb files are located");
+			
+			Integer opt ;
+			noOfItems = 0 ;
+			do 
+			{
+				opt = j.showOpenDialog(null);
+				if (opt == JFileChooser.APPROVE_OPTION) 
+				{
+					path=j.getSelectedFile().getPath() ;
+					dbFiles = new File(path).listFiles(filefilter);
+					noOfItems = dbFiles.length;
+					if (noOfItems == 0) 
+					{
+						JOptionPane.showMessageDialog(null,"The slected directory does not contain any JDB files. Try again.");
+					}
+				}
+				else 
+				{
+					int dialogButton = JOptionPane.YES_NO_OPTION;
+					int dialogResult = JOptionPane.showConfirmDialog (null, "Terminate?","Warning",dialogButton);
+					if(dialogResult == JOptionPane.YES_OPTION)
+					{
+						System.exit(0);
+					}
+				}
+				
+			} while ((opt != JFileChooser.APPROVE_OPTION) || (noOfItems == 0) )  ;
+			
+			// path=j.getSelectedFile().getPath() ;
+		
+		}
+		else 
+		{
+			dbFiles = new File(path).listFiles(filefilter);
+			noOfItems = dbFiles.length;
+		}
+		
+		// dbFiles = new File(path).listFiles(filefilter);
+		// noOfItems = dbFiles.length;
 		// System.out.println("a total of "+noOfItems+"files in DB");
 		Records = new DBRecord[noOfItems];
 		loadDB();
@@ -191,8 +240,9 @@ public class MrmcDB {
 				InputStreamReader isr;
 				DataInputStream din;
 
-				filename = "DB/" + dbFiles[i].getName();
-				// System.out.println(filename);
+				// filename = "DB/" + dbFiles[i].getName();
+				filename = path + "/" + dbFiles[i].getName();
+								// System.out.println(filename);
 				FileInputStream fstream = new FileInputStream(filename);
 				din = new DataInputStream(fstream);
 				isr = new InputStreamReader(din);
@@ -216,14 +266,17 @@ public class MrmcDB {
 	public int countDBFilesInJar() {
 		int numFiles = 0;
 
-		String tablefile = "DB/TableOfContent.txt";
+		// String tablefile = "DB/TableOfContent.txt";
+		String tablefile = path + "/TableOfContent.txt";
+		
 		String strtemp;
 		try {
 			InputStream in = getClass().getResourceAsStream(tablefile);
 			InputStreamReader isr = new InputStreamReader(in);
 			BufferedReader br = new BufferedReader(isr);
 			while ((strtemp = br.readLine()) != null) {
-				dbFilenamesInJar.add("DB/" + strtemp);
+				// dbFilenamesInJar.add("DB/" + strtemp);
+				dbFilenamesInJar.add(path + "/" + strtemp);
 				numFiles++;
 
 			}

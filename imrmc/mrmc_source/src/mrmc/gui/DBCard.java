@@ -47,8 +47,10 @@ public class DBCard {
 	public DBCard(JPanel mPanel, GUInterface guitemp) {
 		gui = guitemp;
 		// create the checkbox for allowing negative components
+//		cb = new JCheckBox(
+//				"use MLE estimates of moments to avoid negatives          \t\t");
 		cb = new JCheckBox(
-				"use MLE estimates of moments to avoid negatives          \t\t");
+				"use MLE (avoid negatives)");
 		cb.setSelected(false);
 		cb.addItemListener(new allNegativeListener());
 		// Create the radio buttons.
