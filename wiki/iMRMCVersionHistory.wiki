@@ -1,0 +1,16 @@
+# iMRMC: Previous versions and main changes
+
+The previous versions and release dates are provided here from most recent to the oldest.
+
+When accessing links, make sure that you refresh your browser.
+
+= Version 2.1     posted 2014-01-15 =
+
+*[ftp://taxp2.cdrh.fda.gov/imrmc/imrmc-java-2p1.jar Click to download application (imrmc-java-2p1.jar)]* <br>
+This version fixes p-values and confidence intervals in the statistical analysis. <br>
+Power for sizing to come.
+
+*[ftp://taxp2.cdrh.fda.gov/imrmc/DB Click to download simulated .jdb files]* <br>
+This version requires a database folder named "DB" with .jdb files in the application startup directory.
+
+*[ftp://taxp2.cdrh.fda.gov/imrmc/20120811imrmcuserguide.pdf Click to download user manual]* <br>
