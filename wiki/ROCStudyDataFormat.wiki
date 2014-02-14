@@ -60,7 +60,13 @@ For example, the first few rows could look like the following:
 2,2,3,15.8
 }}}
 
-In the example, we see the ROC ratings from two readers reading two cases with three modalities each. The first two lines specify truth (reader = -1; modality = 0): line 1 indicates that case 1 has disease (score = 1), line 2 indicates that case 2 does not have diseased (score = 0). Rows 3-5 show reader 1’s score for modalities 1 through 3 on case 1. The sixth through eighth lines indicate the same but for reader 2 instead. The remaining lines repeat the pattern with readers 1 and 2 scoring the modalities of case 2.
+In the example, we see the ROC ratings from two readers reading two cases with three modalities each.
+  * The first line specifies case 1 is abnormal <br> (reader id = reference = -1; case id = 1; modality = 0; score = truth state = 1)
+  * The second line specifies case 2 is normal <br> (reader id = reference = -1; case id = 2; modality = 0; score = truth state = 0)
+  * Rows 3-5 show reader 1’s scores for case 1 on modalities 1, 2, and 3.
+  * Rows 6-8 show reader 2’s scores for case 1 on modalities 1, 2, and 3.
+  * Rows 9-11 show reader 1’s scores for case 2 on modalities 1, 2, and 3.
+  * Rows 12-14 show reader 2’s scores for case 1 on modalities 1, 2, and 3.
 
 ==  Formatting Errors ==
 
