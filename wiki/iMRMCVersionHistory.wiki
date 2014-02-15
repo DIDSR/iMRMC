@@ -13,8 +13,24 @@ This version fixes p-values and confidence intervals in the statistical analysis
 Power for sizing to come. <br>
 This version requires a database folder named "DB" with .jdb files in the application startup directory.
 
-*[ftp://taxp2.cdrh.fda.gov/imrmc/imrmc-java-v2p1.jar Click to download application (imrmc-java-v2p1.jar)]*
+*[ftp://taxp2.cdrh.fda.gov/imrmc/imrmc-v2p1.jar Click to download application (imrmc-v2p1.jar)]*
 
 *[ftp://taxp2.cdrh.fda.gov/imrmc/imrmcuserguide-v2p1.pdf Click to download user manual (imrmcuserguide-v2p1.pdf)]* <br>
+
+*[ftp://taxp2.cdrh.fda.gov/imrmc/DB Click to download simulated .jdb files]* <br>
+
+<br>
+<br>
+
+=Version 2.0 =
+posted 2013-08-28
+
+This version includes graphics to check data input and plots of ROC curves. <br>
+This version also allows for arbitrary study designs. <br>
+This version requires a database folder named "DB" with .jdb files in the application startup directory.
+
+*[ftp://taxp2.cdrh.fda.gov/imrmc/imrmc-v2p0.jar Click to download application (imrmc-v2p0.jar)]*
+
+*[ftp://taxp2.cdrh.fda.gov/imrmc/imrmcuserguide-v2p0.pdf Click to download user manual (imrmcuserguide-v2p0.pdf)]* <br>
 
 *[ftp://taxp2.cdrh.fda.gov/imrmc/DB Click to download simulated .jdb files]* <br>
