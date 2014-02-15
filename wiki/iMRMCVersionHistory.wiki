@@ -1,6 +1,4 @@
-# iMRMC: Previous versions and main changes
-
-The previous versions and release dates are provided here from most recent to the oldest.
+The previous versions are provided here from most recent to the oldest.
 
 When accessing links, make sure that you refresh your browser.
 
@@ -8,7 +6,9 @@ When accessing links, make sure that you refresh your browser.
 <br>
 <br>
 
-= Version 2.1     posted 2014-01-15 =
+=Version 2.1 =
+posted 2014-01-15
+
 This version fixes p-values and confidence intervals in the statistical analysis. <br>
 Power for sizing to come. <br>
 This version requires a database folder named "DB" with .jdb files in the application startup directory.
