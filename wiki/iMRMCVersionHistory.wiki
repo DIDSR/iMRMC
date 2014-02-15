@@ -15,6 +15,6 @@ This version requires a database folder named "DB" with .jdb files in the applic
 
 *[ftp://taxp2.cdrh.fda.gov/imrmc/imrmc-java-v2p1.jar Click to download application (imrmc-java-v2p1.jar)]*
 
-*[ftp://taxp2.cdrh.fda.gov/imrmc/20120811imrmcuserguide-v2p1.pdf Click to download user manual (imrmcuserguide-v2p1.pdf)]* <br>
+*[ftp://taxp2.cdrh.fda.gov/imrmc/imrmcuserguide-v2p1.pdf Click to download user manual (imrmcuserguide-v2p1.pdf)]* <br>
 
 *[ftp://taxp2.cdrh.fda.gov/imrmc/DB Click to download simulated .jdb files]* <br>
