@@ -13,8 +13,8 @@ This version fixes p-values and confidence intervals in the statistical analysis
 Power for sizing to come. <br>
 This version requires a database folder named "DB" with .jdb files in the application startup directory.
 
-*[ftp://taxp2.cdrh.fda.gov/imrmc/imrmc-java-2p1.jar Click to download application (imrmc-java-v2p1.jar)]*
+*[ftp://taxp2.cdrh.fda.gov/imrmc/imrmc-java-v2p1.jar Click to download application (imrmc-java-v2p1.jar)]*
 
-*[ftp://taxp2.cdrh.fda.gov/imrmc/20120811imrmcuserguide.pdf Click to download user manual (imrmcusermanual-v2p1.pdf)]* <br>
+*[ftp://taxp2.cdrh.fda.gov/imrmc/20120811imrmcuserguide-v2p1.pdf Click to download user manual (imrmcuserguide-v2p1.pdf)]* <br>
 
 *[ftp://taxp2.cdrh.fda.gov/imrmc/DB Click to download simulated .jdb files]* <br>
