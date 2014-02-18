@@ -1,14 +1,45 @@
+=iMRMC Summary=
 The primary objective of this application, iMRMC, is to assist investigators with analyzing and sizing multi-reader multi-case (MRMC) reader studies that compare the difference in the area under Receiver Operating Characteristic curves (AUCs) from two modalities. The core features of this java application include the ability to do MRMC variance analysis, the ability to size an MRMC trial, and a database containing components of variance from past MRMC studies.
 
-  * [IntroToROCReaderStudies Introduction to ROC Reader Studies] In-depth explanation of MRMC/ROC reader studies
+When publishing results using our software, please reference with one of the following:
+  * Gallas, B. D.; Bandos, A.; Samuelson, F. & Wagner, R. F. (2009), 'A Framework for Random-Effects ROC Analysis: Biases with the Bootstrap and Other Variance Estimators', _Commun Stat A-Theory_ *38* (15), 2586-2603.
+  * Gallas, B. D. (2006), 'One-Shot Estimate of MRMC Variance: AUC.' _Acad Radiol_, *13* (3), 353-362.
 
-  * [iMRMCMethods Technical details]: How iMRMC is implemented
+===_Status_===
+_This software is still a work in progress. We believe the variances and components of variance are very robust. We believe the p-values and confidence intervals are correct, and intend a comprehensive validation study with accompanying paper. We know there are some bugs with the sizing analysis. Please contact us with any issues via the issues page._
 
-  * [iMRMCDatabase Previous study database]: About the internal database of existing studies
+<br>
+=User Manual=
+Please refer to the user manual for useful information. See below for the current version of the user manual. The user manual contains
 
-  * [iMRMCUsage How to use the iMRMC application]
+  * Introduction to ROC Reader Studies
 
-  * [iMRMCReferences References for iMRMC]
+  * How iMRMC is implemented
+
+  * How to use the iMRMC application
+
+  * References for iMRMC
+
+<br>
+=Current Version=
+Version 2.1 posted 2014-01-15
+
+This version fixes p-values and confidence intervals in the statistical analysis. <br>
+Power for sizing to come. <br>
+This version requires a database folder named "DB" with .jdb files in the application startup directory.
+
+*[ftp://taxp2.cdrh.fda.gov/imrmc/imrmc-v2p1.jar Click to download application (imrmc-v2p1.jar)]*
+
+*[ftp://taxp2.cdrh.fda.gov/imrmc/imrmcuserguide-v2p1.pdf Click to download user manual (imrmcuserguide-v2p1.pdf)]* <br>
+
+*[ftp://taxp2.cdrh.fda.gov/imrmc/DB Click to download simulated .jdb files]* <br>
+
+<br>
+=[iMRMCVersionHistory Download Previous Versions]=
+
+<br>
+<br>
+<br>
 
 
 ====View the Javadoc for the source code [http://imrmc.googlecode.com/svn/javadoc/index.html here]====
