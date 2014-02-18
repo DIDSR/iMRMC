@@ -1,4 +1,4 @@
-=iMRMC Summary=
+===Summary===
 The primary objective of this application, iMRMC, is to assist investigators with analyzing and sizing multi-reader multi-case (MRMC) reader studies that compare the difference in the area under Receiver Operating Characteristic curves (AUCs) from two modalities. The core features of this java application include the ability to do MRMC variance analysis, the ability to size an MRMC trial, and a database containing components of variance from past MRMC studies.
 
 When publishing results using our software, please reference with one of the following:
@@ -6,7 +6,7 @@ When publishing results using our software, please reference with one of the fol
   * Gallas, B. D. (2006), 'One-Shot Estimate of MRMC Variance: AUC.' _Acad Radiol_, *13* (3), 353-362.
 
 ===_Status_===
-_This software is still a work in progress. We believe the variances and components of variance are very robust. We believe the p-values and confidence intervals are correct, and intend a comprehensive validation study with accompanying paper. We know there are some bugs with the sizing analysis. Please contact us with any issues via the issues page._
+_This software is still a work in progress. We believe the variances and components of variance are very robust. We believe the p-values and confidence intervals are correct, and intend a comprehensive validation study with accompanying paper. We know there are some bugs with the sizing analysis. Please contact us with any issues by email or via the issues page._
 
 <br>
 =User Manual=
