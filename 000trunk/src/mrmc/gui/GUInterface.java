@@ -65,6 +65,7 @@ import org.jfree.ui.RefineryUtilities;
  * @author Rohan Pathare
  * @version 2.0b
  */
+@SuppressWarnings("unused")
 public class GUInterface {
 	JPanel inputCards; // the panel that uses CardLayout, there are three cards
 						// for three different input
@@ -1090,7 +1091,8 @@ public class GUInterface {
 		JLabel inLabel = new JLabel("Select an input method: ");
 		String comboBoxItems[] = { DB, Pilot, Manual };
 		
-		JComboBox cb = new JComboBox(comboBoxItems);
+//		JComboBox cb = new JComboBox(comboBoxItems);
+		JComboBox<String> cb = new JComboBox<String>(comboBoxItems);
 		cb.setEditable(false);
 		cb.setSelectedIndex(0);
 		cb.addActionListener(new inputModListener());
@@ -1601,7 +1603,7 @@ public class GUInterface {
 		layout.setAutoCreateContainerGaps(true);
 
 		JLabel studyLabel = new JLabel("Database ");
-		JComboBox dbCB = new JComboBox(dbBoxItems);
+		JComboBox<String> dbCB = new JComboBox<String>(dbBoxItems);
 		dbCB.setEditable(false);
 		dbCB.addActionListener(new dbActionListener());
 		dbCB.setSelectedIndex(0);
@@ -1713,10 +1715,12 @@ public class GUInterface {
 		for (int i = 0; i < colNames.length; i++)
 			table.getColumnModel().getColumn(i).setHeaderValue(colNames[i]);
 
-		JList rowHeader = new JList(rowNames);
+//		JList rowHeader = new JList(rowNames);
+		JList<String> rowHeader = new JList<String>(rowNames);
 		rowHeader.setFixedCellWidth(80);
 
 		rowHeader.setFixedCellHeight(table.getRowHeight());
+//		rowHeader.setCellRenderer(new RowHeaderRenderer(table));
 		rowHeader.setCellRenderer(new RowHeaderRenderer(table));
 
 		JScrollPane scroll = new JScrollPane(table);
@@ -1854,7 +1858,7 @@ public class GUInterface {
 	 */
 	class inputModListener implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
-			JComboBox cb = (JComboBox) evt.getSource();
+			JComboBox<?> cb = (JComboBox<?>) evt.getSource();
 			CardLayout cl = (CardLayout) (inputCards.getLayout());
 			cl.show(inputCards, (String) cb.getSelectedItem());
 			selectedInput = cb.getSelectedIndex();
@@ -1900,7 +1904,7 @@ public class GUInterface {
 	 */
 	class dbActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
-			JComboBox cb = (JComboBox) evt.getSource();
+			JComboBox<?> cb = (JComboBox<?>) evt.getSource();
 			selectedDB = (int) cb.getSelectedIndex();
 		}
 	}
@@ -2038,7 +2042,7 @@ public class GUInterface {
 		public void actionPerformed(ActionEvent e) {
 			// System.out.println("roc button pressed");
 			if (usr != null && usr.isLoaded()) {
-				JComboBox chooseMod = new JComboBox();
+				JComboBox<Integer> chooseMod = new JComboBox<Integer>();
 				for (int i = 1; i <= usr.getModality(); i++) {
 					chooseMod.addItem(i);
 				}
@@ -2104,7 +2108,7 @@ public class GUInterface {
 		public void actionPerformed(ActionEvent e) {
 			// System.out.println("study design button pressed");
 			if (usr != null && usr.isLoaded()) {
-				JComboBox choose1 = new JComboBox();
+				JComboBox<Integer> choose1 = new JComboBox<Integer>();
 				for (int i = 1; i <= usr.getModality(); i++) {
 					choose1.addItem(i);
 				}

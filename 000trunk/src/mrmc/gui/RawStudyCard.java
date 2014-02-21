@@ -43,7 +43,7 @@ public class RawStudyCard {
 	private int selectedMod = 0;
 	private int useBiasM = 0;
 	private JCheckBox negBox;
-	private JComboBox chooseA, chooseB;
+	private JComboBox<String> chooseA, chooseB;
 	private JButton varAnalysisButton;
 
 	/**
@@ -112,8 +112,8 @@ public class RawStudyCard {
 		negBox.addItemListener(new UseMLEListener());
 
 		// Drop down menus to select modality
-		chooseA = new JComboBox();
-		chooseB = new JComboBox();
+		chooseA = new JComboBox<String>();
+		chooseB = new JComboBox<String>();
 		chooseA.addItem("n/a");
 		chooseB.addItem("n/a");
 

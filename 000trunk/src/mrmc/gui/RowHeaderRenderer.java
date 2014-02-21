@@ -19,6 +19,7 @@
 package mrmc.gui;
 
 import java.awt.Component;
+
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JTable;
@@ -35,7 +36,7 @@ import javax.swing.table.JTableHeader;
  * 
  * @version 1.0 11/09/98
  */
-public class RowHeaderRenderer extends JLabel implements ListCellRenderer {
+public class RowHeaderRenderer extends JLabel implements ListCellRenderer<Object> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -58,7 +59,7 @@ public class RowHeaderRenderer extends JLabel implements ListCellRenderer {
 	/**
 	 * Gets the individual row header
 	 */
-	public Component getListCellRendererComponent(JList list, Object value,
+	public Component getListCellRendererComponent(JList<?> list, Object value,
 			int index, boolean isSelected, boolean cellHasFocus) {
 		setText((value == null) ? "" : value.toString());
 		return this;
