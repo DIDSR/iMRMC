@@ -2022,7 +2022,7 @@ public class GUInterface {
 
 			// Browse a URL, say google.com
 			try {
-				d.browse(new URI("ftp://taxp2.cdrh.fda.gov/imrmc/imrmcuserguide.pdf"));
+				d.browse(new URI("http://imrmc.googlecode.com/svn/user_manual/iMRMCUserGuide-current.pdf"));
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
