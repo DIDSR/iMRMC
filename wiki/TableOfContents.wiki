@@ -1,4 +1,5 @@
   * [http://code.google.com/p/imrmc/ Project Home]
   * [iMRMCGuide iMRMCGuide]
-    * [iMRMCVersionHistory Downloads, Version History]
+    * [iMRMCVersionHistory Downloads]
   * [iRoeMetzGuide iRoeMetzGuide]
+    * [iRoeMetzVersionHistory Downloads]
