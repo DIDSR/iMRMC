@@ -1,5 +1,7 @@
   * [http://code.google.com/p/imrmc/ Project Home]
   
+  * [DownloadPackages Downloads]
+
   * [iMRMCGuide iMRMCGuide]
   * [iMRMCVersionHistory Downloads]
 
