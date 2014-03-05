@@ -63,8 +63,8 @@ public class DBRecord {
 	private int[][][] mod0StudyDesign;
 	private int[][][] mod1StudyDesign;
 	private InputFile inputFile;
-	private int currentModality0;
-	private int currentModality1;
+	private String currentModality0;
+	private String currentModality1;
 
 	/**
 	 * Gets a description of the task
@@ -82,7 +82,12 @@ public class DBRecord {
 	 * @return String describing the specified modality
 	 */
 	public String getModality(int i) {
-		return Modality[i];
+		
+		if ( i==0 ) {
+			return currentModality0;
+		} else {
+			return currentModality1;
+		}
 	}
 
 	/**
@@ -348,11 +353,11 @@ public class DBRecord {
 	/**
 	 * Constructor for creating a record from raw study data input file
 	 * 
-	 * @param input InputFile containing information about the study
+	 * @param input InputFile object containing information about the study
 	 * @param currMod0 Which modality within the study we are using as Mod0
-	 * @param currMod1 Which modality within the study we are using as Mod1
+	 * @param currMod02 Which modality within the study we are using as Mod1
 	 */
-	public DBRecord(InputFile input, int currMod0, int currMod1) {
+	public DBRecord(InputFile input, String currMod0, String currMod02) {
 		inputFile = input;
 		recordTitle = input.getTitle();
 		recordDesc = input.getDesc();
@@ -365,7 +370,7 @@ public class DBRecord {
 		Modality[0] = "Mod1";
 		Modality[1] = "Mod2";
 		currentModality0 = currMod0;
-		currentModality1 = currMod1;
+		currentModality1 = currMod02;
 		Task = "task unspecified";
 
 		checkStudyDesign();
@@ -391,6 +396,7 @@ public class DBRecord {
 
 		BDG = inputFile.getBDG();
 		BDGbias = inputFile.getBDGbias();
+		BDGcoeff = inputFile.getBDGcoeff();
 
 		generateDecompositions();
 	}
@@ -527,14 +533,8 @@ public class DBRecord {
 	 * components and experiment size
 	 */
 	private void generateDecompositions() {
-		if (fullyCrossed) {
-			BDGcoeff = genBDGCoeff(nReader, nNormal, nDisease);
-			BCKcoeff = genBCKCoeff(nReader, nNormal, nDisease);
-		} else {
-			BDGcoeff = genBDGCoeff(nReader, nNormal, nDisease, mod0StudyDesign,
-					mod1StudyDesign);
-			BCKcoeff = genBCKCoeff(nReader, nNormal, nDisease, BDGcoeff[0]);
-		}
+
+		BCKcoeff = genBCKCoeff(nReader, nNormal, nDisease, BDGcoeff[0]);
 
 		DBMcoeff = genDBMCoeff(nReader, nNormal, nDisease);
 		ORcoeff = genORCoeff(nReader, nNormal, nDisease);
@@ -633,7 +633,7 @@ public class DBRecord {
 			BDGTab1[2] = BDGtemp[1];
 			BDGTab1[3] = BDGc[1];
 			BDGTab1[4] = BDGtemp[2]; // covariance
-			BDGTab1[5] = Matrix.scaleVector(BDGc[3], 2);
+			BDGTab1[5] = Matrix.scaleVector(BDGc[2], 2);
 		}
 		for (int i = 0; i < 8; i++) {
 			BDGTab1[6][i] = (BDGTab1[0][i] * BDGTab1[1][i])
@@ -859,135 +859,7 @@ public class DBRecord {
 		return c;
 	}
 
-	/**
-	 * Determines the coefficient matrix for BDG variance components given a
-	 * non-fully crossed study design
-	 * 
-	 * @param NR Number of readers
-	 * @param N0 Number of normal cases
-	 * @param N1 Number of disease cases
-	 * @param mod0design Study design for modality 0
-	 * @param mod1design Study design for modality 1
-	 * @return Matrix containing coefficients corresponding to BDG variance
-	 *         components
-	 */
-	public static double[][] genBDGCoeff(int NR, int N0, int N1,
-			int[][][] mod0design, int[][][] mod1design) {
-		double[][] c = new double[4][8];
-		double nStarM0 = 0;
-		double nStarM1 = 0;
-		double coeffM1 = 0;
-		double coeffM2 = 0;
-		double coeffM3 = 0;
-		double coeffM4 = 0;
-		double coeffM5 = 0;
-		double coeffM6 = 0;
-		double coeffM7 = 0;
-		double coeffM8 = 0;
-		// M1, N*m, N*m'
-		for (int r = 0; r < NR; r++) {
-			for (int i = 0; i < N0; i++) {
-				for (int j = 0; j < N1; j++) {
-					nStarM0 += (double) mod0design[r][i][j];
-					nStarM1 += (double) mod1design[r][i][j];
-					coeffM1 += ((double) mod0design[r][i][j] * (double) mod1design[r][i][j]);
-				}
-			}
-		}
-		// M2
-		for (int j = 0; j < N1; j++) {
-			for (int r = 0; r < NR; r++) {
-				double iSum = 0, iprSum = 0;
-				for (int i = 0; i < N0; i++) {
-					iSum += (double) mod0design[r][i][j];
-					iprSum += (double) mod1design[r][i][j];
-				}
-				coeffM2 += iSum * iprSum;
-			}
-		}
-		// M3
-		for (int i = 0; i < N0; i++) {
-			for (int r = 0; r < NR; r++) {
-				double jSum = 0, jprSum = 0;
-				for (int j = 0; j < N1; j++) {
-					jSum += (double) mod0design[r][i][j];
-					jprSum += (double) mod1design[r][i][j];
-				}
-				coeffM3 += jSum * jprSum;
-			}
-		}
-		// M4
-		for (int r = 0; r < NR; r++) {
-			double ijSum = 0, iprJprSum = 0;
-			for (int i = 0; i < N0; i++) {
-				for (int j = 0; j < N1; j++) {
-					ijSum += (double) mod0design[r][i][j];
-					iprJprSum += (double) mod1design[r][i][j];
-				}
-			}
-			coeffM4 += ijSum * iprJprSum;
-		}
-		// M5
-		for (int i = 0; i < N0; i++) {
-			for (int j = 0; j < N1; j++) {
-				double rSum = 0, rprSum = 0;
-				for (int r = 0; r < NR; r++) {
-					rSum += (double) mod0design[r][i][j];
-					rprSum += (double) mod1design[r][i][j];
-				}
-				coeffM5 += rSum * rprSum;
-			}
-		}
-		// M6
-		for (int j = 0; j < N1; j++) {
-			double irSum = 0, iprRprSum = 0;
-			for (int i = 0; i < N0; i++) {
-				for (int r = 0; r < NR; r++) {
-					irSum += (double) mod0design[r][i][j];
-					iprRprSum += (double) mod1design[r][i][j];
-				}
-			}
-			coeffM6 += irSum * iprRprSum;
-		}
-		// M7
-		for (int i = 0; i < N0; i++) {
-			double jrSum = 0, jprRprSum = 0;
-			for (int j = 0; j < N1; j++) {
-				for (int r = 0; r < NR; r++) {
-					jrSum += (double) mod0design[r][i][j];
-					jprRprSum += (double) mod1design[r][i][j];
-				}
-			}
-			coeffM7 += jrSum * jprRprSum;
-		}
-		// M8
-		double ijrSum = 0, iprJprRprSum = 0;
-		for (int i = 0; i < N0; i++) {
-			for (int j = 0; j < N1; j++) {
-				for (int r = 0; r < NR; r++) {
-					ijrSum += (double) mod0design[r][i][j];
-					iprJprRprSum += (double) mod1design[r][i][j];
-				}
-			}
-		}
-		coeffM8 = ijrSum * iprJprRprSum;
-		double[] cBiased = new double[] { coeffM1, coeffM2, coeffM3, coeffM4,
-				coeffM5, coeffM6, coeffM7, coeffM8 };
-		double[][] bias2unbias = new double[][] { { 1, 0, 0, 0, 0, 0, 0, 0 },
-				{ -1, 1, 0, 0, 0, 0, 0, 0 }, { -1, 0, 1, 0, 0, 0, 0, 0 },
-				{ 1, -1, -1, 1, 0, 0, 0, 0 }, { -1, 0, 0, 0, 1, 0, 0, 0 },
-				{ 1, -1, 0, 0, -1, 1, 0, 0 }, { 1, 0, -1, 0, -1, 0, 1, 0 },
-				{ -1, 1, 1, -1, 1, -1, -1, 1 } };
 
-		double[] cUnbiased = Matrix.multiply(bias2unbias, cBiased);
-		cUnbiased = Matrix.scaleVector(cUnbiased, 1.0 / (nStarM0 * nStarM1));
-		cUnbiased[7]--;
-		c[0] = cUnbiased;
-		c[1] = c[0];
-		c[2] = c[0];
-		c[3] = c[0];
-		return c;
-	}
 
 	/**
 	 * Determines the coefficient matrix for BDG variance components given a

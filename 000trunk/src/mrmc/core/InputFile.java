@@ -19,9 +19,14 @@
 package mrmc.core;
 
 import java.util.*;
+import java.awt.Component;
 import java.io.*;
 
+import javax.swing.JOptionPane;
+
 import mrmc.chart.XYPair;
+import mrmc.gui.GUInterface;
+
 
 /**
  * Handles input of a raw study data file. Parses all information from file,
@@ -32,13 +37,17 @@ import mrmc.chart.XYPair;
  * @author Rohan Pathare
  * @version 2.0b
  */
+
+@SuppressWarnings("unused")
 public class InputFile {
 	private String filename;
-	private String desc = "";
+	private String Header = "";
+	private int RowsInHeader = 0;	
 	private String recordTitle = "";
 	private int Reader, Normal, Disease, Modality;
-	private double[][][] t0, t1, t00, t10, t01, t11;
-	private int[][][] d0, d1;
+
+	private double[][][] t0_mod01, t1_mod01, t0_mod00, t1_mod00, t0_mod11, t1_mod11;
+	private int[][][] d0_mod01, d1_mod01, d0_mod00, d1_mod00, d0_mod11, d1_mod11;
 	private boolean isFullyCrossed;
 	private boolean verified = false;
 	private boolean isLoaded = false;
@@ -47,9 +56,18 @@ public class InputFile {
 	private double[][] BDGbias;
 	private double[][] BDGcoeff;
 	private double[] aucMod;
+
 	// contains all score data organized as <Reader<Case<Modality, Score>>>
-	private TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Double>>> keyedData = new TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Double>>>();
-	private TreeMap<Integer, Integer> truthVals; // truth status for each case
+	private TreeMap<String, TreeMap<String, TreeMap<String, Double>>> keyedData;
+	// truth status for each case
+	private TreeMap<String, Integer> truthVals;
+
+	private TreeMap<String, Integer> readerIDs = new TreeMap<String, Integer>();
+	private TreeMap<String, Integer> normalIDs = new TreeMap<String, Integer>();
+	private TreeMap<String, Integer> diseaseIDs = new TreeMap<String, Integer>();
+	private TreeMap<String, Integer> caseIDs = new TreeMap<String, Integer>();
+	private TreeMap<String, Integer> modalityIDs = new TreeMap<String, Integer>();
+	//readerIDs, normalIDs, diseaseIDs, modalityIDs;
 
 	/**
 	 * Gets completed status of loading input
@@ -114,7 +132,7 @@ public class InputFile {
 	 * @return String with description of the study
 	 */
 	public String getDesc() {
-		return desc;
+		return Header;
 	}
 
 	/**
@@ -162,6 +180,78 @@ public class InputFile {
 		return Modality;
 	}
 
+
+	
+	
+	/**
+	 * Gets readers in the study
+	 * 
+	 * @return readerIDs
+	 */
+	public ArrayList<String> getReaderIDs() {
+		
+		ArrayList<String> desc = new ArrayList<String>();
+		for(String desc_temp : readerIDs.keySet() ) {
+			desc.add(desc_temp);
+		}
+
+		return desc;
+
+	}
+
+	/**
+	 * Gets normal cases in the study
+	 * 
+	 * @return normalIDs
+	 */
+	public ArrayList<String> getNormalIDs() {
+		
+		ArrayList<String> desc = new ArrayList<String>();
+		for(String desc_temp : normalIDs.keySet() ) {
+			desc.add(desc_temp);
+		}
+
+		return desc;
+
+	}
+
+	/**
+	 * Gets disease cases in the study
+	 * 
+	 * @return diseaseIDs
+	 */
+	public ArrayList<String> getDiseaseIDs() {
+		
+		ArrayList<String> desc = new ArrayList<String>();
+		for(String desc_temp : diseaseIDs.keySet() ) {
+			desc.add(desc_temp);
+		}
+
+		return desc;
+
+	}
+
+	/**
+	 * Gets modalities in the study
+	 * 
+	 * @return modalityIDs
+	 */
+	public ArrayList<String> getModalityIDs() {
+		
+		ArrayList<String> desc = new ArrayList<String>();
+		for(String desc_temp : modalityIDs.keySet() ) {
+			desc.add(desc_temp);
+		}
+
+		return desc;
+	}
+
+	
+	
+	
+	
+	
+	
 	/**
 	 * Gets the matrix of BDG variance components
 	 * 
@@ -179,6 +269,15 @@ public class InputFile {
 	public double[][] getBDGbias() {
 		return BDGbias;
 	}
+	
+	/**
+	 * Gets the matrix of coefficients of BDG variance components
+	 * 
+	 * @return coefficients of BDG variance components matrix
+	 */
+	public double[][] getBDGcoeff() {
+		return BDGcoeff;
+	}
 
 	/**
 	 * Constructor used for reading in a raw study file locally
@@ -187,8 +286,10 @@ public class InputFile {
 	 * @throws IOException
 	 */
 	public InputFile(String file) throws IOException {
+
 		filename = file;
 		ArrayList<String> fileContent = new ArrayList<String>();
+		
 		try {
 			fileContent = readFile();
 		} catch (Exception e) {
@@ -210,24 +311,29 @@ public class InputFile {
 	 * @param n1 Number of disease cases
 	 * @param title Simulated study title
 	 * @param desc Simulated study description
+	 * @throws IOException 
 	 */
 	public InputFile(double[][][][] tMatrices, int[][][][] dMatrices, int nr,
-			int n0, int n1, String title, String desc) {
-		this.t00 = tMatrices[0];
-		this.t01 = tMatrices[1];
-		this.t10 = tMatrices[2];
-		this.t11 = tMatrices[3];
-		this.t0 = tMatrices[4];
-		this.t1 = tMatrices[5];
-		this.d0 = dMatrices[0];
-		this.d1 = dMatrices[1];
+			int n0, int n1, String title, String desc) throws IOException {
+		this.t0_mod00 = tMatrices[0];
+		this.t0_mod11 = tMatrices[1];
+		this.t1_mod00 = tMatrices[2];
+		this.t1_mod11 = tMatrices[3];
+		this.t0_mod01 = tMatrices[4];
+		this.t1_mod01 = tMatrices[5];
+		
+		throw new IOException ("currently, design matrices is identical for each modality.");
+/*
+		this.d0_mod00 = dMatrices[0];
+		this.d1_mod00 = dMatrices[1];
 		this.Reader = nr;
 		this.Normal = n0;
 		this.Disease = n1;
 		this.recordTitle = title;
-		this.desc = desc;
+		this.Header = desc;
 		this.isFullyCrossed = true;
-	}
+*/
+		}
 
 	/**
 	 * Cycles through all scores in study and determines the maximum score for a
@@ -237,10 +343,10 @@ public class InputFile {
 	 * @param mod The modality for which to find the maximum score.
 	 * @return Maximum score found for the given modality
 	 */
-	public double getMaxScore(int mod) {
+	public double getMaxScore(String mod) {
 		double max = Double.MIN_VALUE;
-		for (Integer r : keyedData.keySet()) {
-			for (Integer c : keyedData.get(r).keySet()) {
+		for (String r : keyedData.keySet()) {
+			for (String c : keyedData.get(r).keySet()) {
 				if (keyedData.get(r).get(c).get(mod) != null) {
 					if (keyedData.get(r).get(c).get(mod) > max) {
 						max = keyedData.get(r).get(c).get(mod);
@@ -259,10 +365,10 @@ public class InputFile {
 	 * @param mod The modality for which to find the minimum score.
 	 * @return Minimum score found for the given modality
 	 */
-	public double getMinScore(int mod) {
+	public double getMinScore(String mod) {
 		double min = Double.MAX_VALUE;
-		for (Integer r : keyedData.keySet()) {
-			for (Integer c : keyedData.get(r).keySet()) {
+		for (String r : keyedData.keySet()) {
+			for (String c : keyedData.get(r).keySet()) {
 				if (keyedData.get(r).get(c).get(mod) != null) {
 					if (keyedData.get(r).get(c).get(mod) < min) {
 						min = keyedData.get(r).get(c).get(mod);
@@ -283,21 +389,21 @@ public class InputFile {
 	 * @return TreeMap where the key identifies a reader and the corresponding
 	 *         value is a set of XY coordinates of ROC points
 	 */
-	public TreeMap<Integer, TreeSet<XYPair>> generateROCpoints(int mod) {
+	public TreeMap<String, TreeSet<XYPair>> generateROCpoints(String mod) {
 		int samples = 100;
 		double min = getMinScore(mod);
 		double max = getMaxScore(mod);
 		double inc = (max - min) / samples;
-		TreeMap<Integer, TreeSet<XYPair>> rocPoints = new TreeMap<Integer, TreeSet<XYPair>>();
-		for (int r = 1; r <= Reader; r++) {
+		TreeMap<String, TreeSet<XYPair>> rocPoints = new TreeMap<String, TreeSet<XYPair>>();
+		for (String r : keyedData.keySet()) {
 			for (double thresh = min - inc; thresh <= max + inc; thresh += inc) {
 				int fp = 0;
 				int tp = 0;
 				int normCount = 0;
 				int disCount = 0;
-				for (Integer c : keyedData.get(r).keySet()) {
+				for (String c : keyedData.get(r).keySet()) {
 					if (!keyedData.get(r).get(c).isEmpty()
-							&& (keyedData.get(r).get(c).get(mod) != null)) {
+							&& (keyedData.get(r).get(c).get(mod) != null )) {
 						double score = keyedData.get(r).get(c).get(mod);
 						int caseTruth = truthVals.get(c);
 						if (caseTruth == 0) {
@@ -334,13 +440,13 @@ public class InputFile {
 	 * maximum score and calculates false positive fraction and true positive
 	 * fraction at each sample.
 	 * 
-	 * @param mod Modality for which ROC curve is being determined
+	 * @param rocMod Modality for which ROC curve is being determined
 	 * @return Set of XY coordinates of ROC points
 	 */
-	public TreeSet<XYPair> generatePooledROC(int mod) {
+	public TreeSet<XYPair> generatePooledROC(String rocMod) {
 		int samples = 100;
-		double min = getMinScore(mod);
-		double max = getMaxScore(mod);
+		double min = getMinScore(rocMod);
+		double max = getMaxScore(rocMod);
 		double inc = (max - min) / samples;
 		TreeSet<XYPair> pooledCurve = new TreeSet<XYPair>();
 		for (double thresh = min - inc; thresh <= max + inc; thresh += inc) {
@@ -348,11 +454,11 @@ public class InputFile {
 			int tp = 0;
 			int normCount = 0;
 			int disCount = 0;
-			for (Integer r : keyedData.keySet()) {
-				for (Integer c : keyedData.get(r).keySet()) {
+			for (String r : keyedData.keySet()) {
+				for (String c : keyedData.get(r).keySet()) {
 					if (!keyedData.get(r).get(c).isEmpty()
-							&& (keyedData.get(r).get(c).get(mod) != null)) {
-						double score = keyedData.get(r).get(c).get(mod);
+							&& (keyedData.get(r).get(c).get(rocMod) != null)) {
+						double score = keyedData.get(r).get(c).get(rocMod);
 						int caseTruth = truthVals.get(c);
 						if (caseTruth == 0) {
 							normCount++;
@@ -381,10 +487,10 @@ public class InputFile {
 	 * @return Mapping of each case, to the number of readers that scored that
 	 *         particular case
 	 */
-	public TreeMap<Integer, Double> readersPerCase() {
-		TreeMap<Integer, Double> rpc = new TreeMap<Integer, Double>();
-		for (Integer r : keyedData.keySet()) {
-			for (Integer c : keyedData.get(r).keySet()) {
+	public TreeMap<String, Double> readersPerCase() {
+		TreeMap<String, Double> rpc = new TreeMap<String, Double>();
+		for (String r : keyedData.keySet()) {
+			for (String c : keyedData.get(r).keySet()) {
 				if (!keyedData.get(r).get(c).isEmpty()) {
 					if (rpc.get(c) == null) {
 						rpc.put(c, 1.0);
@@ -404,10 +510,10 @@ public class InputFile {
 	 * @return Mapping of each reader, to the number of cases that the reader
 	 *         scored.
 	 */
-	public TreeMap<Integer, Double> casesPerReader() {
-		TreeMap<Integer, Double> cpr = new TreeMap<Integer, Double>();
-		for (Integer r : keyedData.keySet()) {
-			for (Integer c : keyedData.get(r).keySet()) {
+	public TreeMap<String, Double> casesPerReader() {
+		TreeMap<String, Double> cpr = new TreeMap<String, Double>();
+		for (String r : keyedData.keySet()) {
+			for (String c : keyedData.get(r).keySet()) {
 				if (!keyedData.get(r).get(c).isEmpty()) {
 					if (cpr.get(r) == null) {
 						cpr.put(r, 1.0);
@@ -426,19 +532,10 @@ public class InputFile {
 	 * 
 	 * @return ArrayList consisting of two ArrayLists with case numbers
 	 */
-	public ArrayList<ArrayList<Integer>> getN0N1CaseNums() {
-		ArrayList<Integer> diseaseCases = new ArrayList<Integer>();
-		ArrayList<Integer> normalCases = new ArrayList<Integer>();
-		for (Integer caseNum : keyedData.get(keyedData.firstKey()).keySet()) {
-			if (truthVals.get(caseNum) == 0) {
-				normalCases.add(caseNum);
-			} else {
-				diseaseCases.add(caseNum);
-			}
-		}
-		ArrayList<ArrayList<Integer>> toReturn = new ArrayList<ArrayList<Integer>>();
-		toReturn.add(normalCases);
-		toReturn.add(diseaseCases);
+	public ArrayList<ArrayList<String>> getN0N1CaseNums() {
+		ArrayList<ArrayList<String>> toReturn = new ArrayList<ArrayList<String>>();
+		toReturn.add(getNormalIDs());
+		toReturn.add(getDiseaseIDs());
 		return toReturn;
 	}
 
@@ -450,13 +547,13 @@ public class InputFile {
 	 * @param modality Modality for which to determine the study design
 	 * @return 2-D array of readers by cases
 	 */
-	public boolean[][] getStudyDesign(int modality) {
+	public boolean[][] getStudyDesign(String modalityID) {
 		boolean[][] design = new boolean[Reader][Normal + Disease];
 		int r = 0, i = 0;
-		for (Integer reader : keyedData.keySet()) {
+		for (String readerID : keyedData.keySet()) {
 			i = 0;
-			for (Integer caseNum : keyedData.get(reader).keySet()) {
-				if (keyedData.get(reader).get(caseNum).get(modality) != null) {
+			for (String caseID : keyedData.get(readerID).keySet()) {
+				if (keyedData.get(readerID).get(caseID).get(modalityID) != null) {
 					design[r][i] = true;
 				} else {
 					design[r][i] = false;
@@ -473,23 +570,23 @@ public class InputFile {
 	 * Determines the full study design, such that design is fully crossed only
 	 * if reader has scored all normal cases against all disease cases
 	 * 
-	 * @param modality Modality for which to determine the study design
+	 * @param currentModality0 Modality for which to determine the study design
 	 * @return 3-D array of readers by normal cases by disease cases
 	 */
-	public int[][][] getStudyDesignSeparated(int modality) {
+	public int[][][] getStudyDesignSeparated(String currentModality0) {
 		int[][][] design = new int[Reader][Normal][Disease];
-		ArrayList<ArrayList<Integer>> n0n1CaseNums = getN0N1CaseNums();
-		ArrayList<Integer> normalCases = n0n1CaseNums.get(0);
-		ArrayList<Integer> diseaseCases = n0n1CaseNums.get(1);
+		ArrayList<ArrayList<String>> n0n1CaseNums = getN0N1CaseNums();
+		ArrayList<String> normalCases = n0n1CaseNums.get(0);
+		ArrayList<String> diseaseCases = n0n1CaseNums.get(1);
 		int r = 0, i, j;
-		for (Integer reader : keyedData.keySet()) {
+		for (String reader : keyedData.keySet()) {
 			i = 0;
-			for (Integer normCase : normalCases) {
+			for (String normCase : normalCases) {
 				j = 0;
-				for (Integer disCase : diseaseCases) {
-					if ((keyedData.get(reader).get(normCase).get(modality) != null)
+				for (String disCase : diseaseCases) {
+					if ((keyedData.get(reader).get(normCase).get(currentModality0) != null)
 							&& (keyedData.get(reader).get(disCase)
-									.get(modality) != null)) {
+									.get(currentModality0) != null)) {
 						design[r][i][j] = 1;
 					} else {
 						design[r][i][j] = 0;
@@ -507,34 +604,33 @@ public class InputFile {
 	 * Perform variance analysis with scores, study design, experiment size
 	 */
 	public void calculateCovMRMC() {
-		CovMRMC mod1 = new CovMRMC(t00, d0, t10, d1, Reader, Normal, Disease);
-		CovMRMC mod2 = new CovMRMC(t01, d0, t11, d1, Reader, Normal, Disease);
-		CovMRMC covMod12 = new CovMRMC(t0, d0, t1, d1, Reader, Normal, Disease);
-		double[] M1 = mod1.getMoments();
-		double[] M2 = mod2.getMoments();
-		double[] Mcov = covMod12.getMoments();
-		double[] Coeff = mod1.getC();
-		double[] Mb1 = mod1.getBiasedMoments();
-		double[] Mb2 = mod2.getBiasedMoments();
-		double[] Mbcov = covMod12.getBiasedMoments();
+		CovMRMC var0 = new CovMRMC(t0_mod00, d0_mod00, t1_mod00, d1_mod00, Reader, Normal, Disease);
+		CovMRMC var1 = new CovMRMC(t0_mod11, d0_mod11, t1_mod11, d1_mod11, Reader, Normal, Disease);
+		CovMRMC cov = new CovMRMC(t0_mod01, d0_mod01, t1_mod01, d1_mod01, Reader, Normal, Disease);
+		double[] M0 = var0.getMoments();
+		double[] M1 = var1.getMoments();
+		double[] Mcov = cov.getMoments();
+		double[] C0 = var0.getC();
+		double[] C1 = var1.getC();
+		double[] Ccov = cov.getC();
+		double[] Mb0 = var0.getBiasedMoments();
+		double[] Mb1 = var1.getBiasedMoments();
+		double[] Mbcov = cov.getBiasedMoments();
 
-		aucMod = covMod12.getaucMod();
+		aucMod = cov.getaucMod();
 		BDG = new double[4][8];
 		BDGbias = new double[4][8];
 		BDGcoeff = new double[4][8];
 		for (int i = 0; i < 8; i++) {
-			BDG[0][i] = M1[i + 1];
-			BDG[1][i] = M2[i + 1];
+			BDG[0][i] = M0[i + 1];
+			BDG[1][i] = M1[i + 1];
 			BDG[2][i] = Mcov[i + 1];
-			BDG[3][i] = M1[i + 1] + M2[i + 1] - 2 * Mcov[i + 1];
-			BDGbias[0][i] = Mb1[i + 1];
-			BDGbias[1][i] = Mb2[i + 1];
+			BDGbias[0][i] = Mb0[i + 1];
+			BDGbias[1][i] = Mb1[i + 1];
 			BDGbias[2][i] = Mbcov[i + 1];
-			BDGbias[3][i] = Mb1[i + 1] + Mb2[i + 1] - 2 * Mbcov[i + 1];
-			BDGcoeff[0][i] = Coeff[i + 1];
-			BDGcoeff[1][i] = Coeff[i + 1];
-			BDGcoeff[2][i] = Coeff[i + 1];
-			BDGcoeff[3][i] = Coeff[i + 1];
+			BDGcoeff[0][i] = C0[i + 1];
+			BDGcoeff[1][i] = C1[i + 1];
+			BDGcoeff[2][i] = Ccov[i + 1];
 		}
 	}
 
@@ -548,14 +644,10 @@ public class InputFile {
 	private void organizeData(ArrayList<String> fileContent) throws IOException {
 		recordTitle = fileContent.get(0);
 		int counter = getExperimentSizeFromHeader(fileContent);
-		double[][] fData = parseContent(fileContent, counter);
+		String[][] fData = parseContent(fileContent, counter);
 
-		ArrayList<Integer> readerIDs = new ArrayList<Integer>();
-		ArrayList<Integer> normalIDs = new ArrayList<Integer>();
-		ArrayList<Integer> diseaseIDs = new ArrayList<Integer>();
-		ArrayList<Integer> modalityIDs = new ArrayList<Integer>();
-		verificationDetails = verifySizesAndGetIDs(fData, readerIDs, normalIDs,
-				diseaseIDs, modalityIDs);
+		// fills readerIDs, normalIDs, diseaseIDs, modalityIDs
+		verificationDetails = verifySizesAndGetIDs(fData);
 
 		if (verificationDetails.isEmpty()) {
 			verified = true;
@@ -563,50 +655,75 @@ public class InputFile {
 			verified = false;
 		}
 
-		keyedData = new TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Double>>>();
-		truthVals = new TreeMap<Integer, Integer>();
+		keyedData = new TreeMap<String, TreeMap<String, TreeMap<String, Double>>>();
+		truthVals = new TreeMap<String, Integer>();		
 		// fills keyedData and truthVals structures with proper values
-		processScoresAndTruth(fData, readerIDs, normalIDs, diseaseIDs);
+		processScoresAndTruth(fData);
 
 		isFullyCrossed = true;
-		for (Integer m : modalityIDs) {
-			getStudyDesign(m); // sets isFullyCrossed to false if finds missing
-								// data
+		// check if isFullyCrossed is true
+		for (String m : modalityIDs.keySet()) {
+			getStudyDesign(m); 
 		}
+		
+		System.out.println("Input File Successfully Read!");
 	}
 
 	/**
-	 * Categorizes score data into structure organized by reader, normal,
-	 * disease, and structure of truth status
+	 * Create the core data structure keyedData. <br>
+	 * keyedData is a TreeMap corresponding to a fully-crossed experiment <br>
+	 * the structure is keyedData.readerID.CaseID.(modalityID, score)
 	 * 
 	 * @param fData Individual scores with reader, case information
-	 * @param readerIDs List of each reader
-	 * @param normalIDs List of all normal cases
-	 * @param diseaseIDs List of all disease cases
+	 * @param readerIDs2 List of each reader
+	 * @param normalIDs2 List of all normal cases
+	 * @param diseaseIDs2 List of all disease cases
+	 * @throws IOException 
 	 */
-	private void processScoresAndTruth(double[][] fData,
-			ArrayList<Integer> readerIDs, ArrayList<Integer> normalIDs,
-			ArrayList<Integer> diseaseIDs) {
-		for (Integer r : readerIDs) {
-			keyedData.put(r, new TreeMap<Integer, TreeMap<Integer, Double>>());
-			for (Integer n : normalIDs) {
-				keyedData.get(r).put(n, new TreeMap<Integer, Double>());
+	private void processScoresAndTruth(String[][] fData) 
+					throws IOException {
+		
+		// Create a data structure corresponding to a fully-crossed experiment
+		for (String r : readerIDs.keySet()) {
+			keyedData.put(r, new TreeMap<String, TreeMap<String, Double>>());
+			for (String n : normalIDs.keySet()) {
+				keyedData.get(r).put(n, new TreeMap<String, Double>());
 			}
-			for (Integer d : diseaseIDs) {
-				keyedData.get(r).put(d, new TreeMap<Integer, Double>());
+			for (String d : diseaseIDs.keySet()) {
+				keyedData.get(r).put(d, new TreeMap<String, Double>());
 			}
 		}
+		
+		Integer ic=0;
+		for ( String desc : keyedData.get(keyedData.firstKey()).keySet() ) {
+			caseIDs.put(desc, ic++);
+		}
+		System.out.println("caseIDs: " + caseIDs);
 
 		for (int i = 0; i < fData.length; i++) {
-			int readerId = (int) (fData[i][0]);
-			int caseId = (int) (fData[i][1]);
-			int modalityIndex = (int) fData[i][2];
-			double score = fData[i][3];
-			if (readerId == -1) {
-				truthVals.put(caseId, (int) fData[i][3]);
+			String readerID   = fData[i][0];
+			String caseID     = fData[i][1];
+			String modalityID = fData[i][2];
+			double score = Double.valueOf(fData[i][3]).doubleValue();
+			if (readerID.equals("-1")) {
+				truthVals.put(caseID, Integer.valueOf(fData[i][3]).intValue());
 			} else {
-				keyedData.get(readerId).get(caseId).put(modalityIndex, score);
+				if (keyedData.get(readerID).get(caseID).containsKey(modalityID)	){
+					String toReturn = "ERROR: Replicate observation found"    + " \n";
+					toReturn = toReturn + "      row = " + (RowsInHeader+i+2) + " \n";
+					toReturn = toReturn + "Check for an earlier occurrence: " + " \n";
+					toReturn = toReturn + "      readerID = " + fData[i][0]   + " \n";
+					toReturn = toReturn + "      caseID = " + fData[i][1]     + " \n";
+					toReturn = toReturn + "      modalityID = " + fData[i][2] + " \n";
+
+					throw new IOException(toReturn);
+
+				}
+				else {
+					keyedData.get(readerID).get(caseID).put(modalityID, score);
+				}
 			}
+
 		}
 	}
 
@@ -619,24 +736,27 @@ public class InputFile {
 	 *         dimension is reader, case, modality, score information
 	 * @throws IOException
 	 */
-	private double[][] parseContent(ArrayList<String> fileContent, int counter)
+	private String[][] parseContent(ArrayList<String> fileContent, int counter)
 			throws IOException {
 		int totalLine = fileContent.size();
 		String[] tempNumbers;
-		double[][] fData = new double[totalLine - (counter + 1)][4];
+		String[][] fData = new String[totalLine - (counter + 1)][4];
 
 		// parse each line of input into its separate fields (still ordered by
 		// line)
 		for (int i = 0; i < totalLine - (counter + 1); i++) {
 			tempNumbers = fileContent.get((counter + 1) + i).split(",");
 			try {
-				fData[i][0] = Integer.valueOf(tempNumbers[0]); // Reader
-				fData[i][1] = Integer.valueOf(tempNumbers[1]); // Case
-				fData[i][2] = Integer.valueOf(tempNumbers[2]); // Modality id
-				fData[i][3] = Double.valueOf(tempNumbers[3]); // Score
+				fData[i][0] = String.valueOf(tempNumbers[0]).replaceAll("\\s",""); // Reader
+				fData[i][1] = String.valueOf(tempNumbers[1]).replaceAll("\\s",""); // Case
+				fData[i][2] = String.valueOf(tempNumbers[2]).replaceAll("\\s",""); // Modality id
+				fData[i][3] = String.valueOf(tempNumbers[3]).replaceAll("\\s",""); // Score
 			} catch (Exception e) {
-				throw new IOException("Invalid input at line "
-						+ (i + counter + 2), e);
+				String toReturn = "ERROR: Invalid input";
+				toReturn = toReturn + "      row = " +    (RowsInHeader+i+2) + " \n";
+				toReturn = toReturn + fileContent.get(counter+1+i) + " \n";
+
+				throw new IOException(toReturn, e);
 			}
 		}
 		return fData;
@@ -644,44 +764,79 @@ public class InputFile {
 
 	/**
 	 * Parses experiment size data from file header information
+	 * 		(the number of normal and disease cases, 
+	 * 		the number of readers and the number of modalities)
 	 * 
-	 * @param fileContent ArrayList of each line from file as a String
+	 * @param fileContent (input) = ArrayList of each line from file as a String
+	 * @param Normal (public) = the number of normal cases
+	 * @param Disease (public) = the number of disease cases
+	 * @param Reader (public) = the number of readers
+	 * @param Modality (public) = the number of modalities
 	 * @return Position in file where header information ends/score data begins
+	 * @throws IOException 
 	 */
-	private int getExperimentSizeFromHeader(ArrayList<String> fileContent) {
+	private int getExperimentSizeFromHeader(ArrayList<String> fileContent) throws IOException {
 		String tempstr = fileContent.get(0).toUpperCase();
-		int dataloc = tempstr.indexOf("BEGIN DATA");
+		int dataloc = tempstr.indexOf("BEGIN DATA:");
 		int counter = 0;
+		String toReturn = "";
 		while (dataloc != 0) {
-			desc = desc + fileContent.get(counter) + "\n";
+			Header = Header + fileContent.get(counter) + "\n";
 			tempstr = fileContent.get(counter).toUpperCase();
-			int loc = tempstr.indexOf("N0");
+
+			int loc = tempstr.indexOf("N0:");
 			if (loc != -1) {
-				int tmploc = tempstr.indexOf(":");
-				Normal = Integer.valueOf(tempstr.substring(tmploc + 1).trim());
+				System.out.println("Found N0: in header. N0="+tempstr.substring(3));
+
+				try {
+					Normal = Integer.valueOf(tempstr.substring(3).trim());
+				} catch(NumberFormatException e) {
+					toReturn = "Found N0: Text following is not an integer \n"+tempstr;
+					throw new IOException(toReturn);
+				}
 			}
-			loc = tempstr.indexOf("N1");
+			loc = tempstr.indexOf("N1:");
 			if (loc != -1) {
-				int tmploc = tempstr.indexOf(":");
-				Disease = Integer.valueOf(tempstr.substring(tmploc + 1).trim());
+				System.out.println("Found N1: in header. N1="+tempstr.substring(3));
+
+				try {
+					Disease = Integer.valueOf(tempstr.substring(3).trim());
+				} catch(NumberFormatException e) {
+					toReturn = "Found N1: Text following is not an integer \n"+tempstr;
+					throw new IOException(toReturn);
+				}
 			}
-			loc = tempstr.indexOf("NR");
+			loc = tempstr.indexOf("NR:");
 			if (loc != -1) {
-				int tmploc = tempstr.indexOf(":");
-				Reader = Integer.valueOf(tempstr.substring(tmploc + 1).trim());
+				System.out.println("Found NR: in header. NR="+tempstr.substring(3));
+
+				try {
+					Reader = Integer.valueOf(tempstr.substring(3).trim());
+				} catch(NumberFormatException e) {
+					toReturn = "Found NR: Text following is not an integer \n"+tempstr;
+					throw new IOException(toReturn);
+				}
+			}
+			loc = tempstr.indexOf("NM:");
+			if (loc != -1) {
+				System.out.println("Found NM: in header. NM="+tempstr.substring(3));
+
+				try {
+					Modality = Integer.valueOf(tempstr.substring(3).trim());
+				} catch(NumberFormatException e) {
+					toReturn = "Found NM: Text following is not an integer \n"+tempstr;
+					throw new IOException(toReturn);
+				}
 			}
 
-			loc = tempstr.indexOf("NM");
-			if (loc != -1) {
-				int tmploc = tempstr.indexOf(":");
-				Modality = Integer
-						.valueOf(tempstr.substring(tmploc + 1).trim());
-			}
 			counter++;
 			tempstr = fileContent.get(counter).toUpperCase();
-			dataloc = tempstr.indexOf("BEGIN DATA");
+			dataloc = tempstr.indexOf("BEGIN DATA:");
 		}
-		System.out.println("a total of " + counter + " lines in header");
+
+		RowsInHeader = counter;
+		System.out.println("a total of " + RowsInHeader + " lines in header");
+
 		return counter;
 	}
 
@@ -691,58 +846,109 @@ public class InputFile {
 	 * 
 	 * @param fData 2-D array where first dimension is line number from file,
 	 *            second dimension is reader, case, modality, score information
-	 * @param readerIDs List of all readers
-	 * @param normalIDs List of all normal cases
-	 * @param diseaseIDs List of all disease cases
-	 * @param modalityIDs List of all modalities
+	 * @param readerIDs2 List of all readers
+	 * @param normalIDs2 List of all normal cases
+	 * @param diseaseIDs2 List of all disease cases
+	 * @param modalityIDs2 List of all modalities
 	 * @return String describing inconsistencies between header info and actual
 	 *         study info
+	 * @throws IOException 
 	 */
-	private String verifySizesAndGetIDs(double[][] fData,
-			ArrayList<Integer> readerIDs, ArrayList<Integer> normalIDs,
-			ArrayList<Integer> diseaseIDs, ArrayList<Integer> modalityIDs) {
+	private String verifySizesAndGetIDs(String[][] fData)
+					throws IOException {
+		
 		String toReturn = new String();
-
+		Integer in0=-1, in1=-1, inr=-1, inm=-1;
+		
+		// Find the rows corresponding to truth
+		// Check for duplicate cases
+		// Create normalIDs and diseaseIDs
 		for (int i = 0; i < fData.length; i++) {
-			if ((!readerIDs.contains((int) fData[i][0])) && (fData[i][0] != -1)) {
-				readerIDs.add((int) fData[i][0]);
-			}
-			if (fData[i][2] == 0 && fData[i][3] == 0) {
-				if (!normalIDs.contains(fData[i][1])) {
-					normalIDs.add((int) fData[i][1]);
+			if ( fData[i][0].equals("-1")){
+				if ( normalIDs.containsKey(fData[i][1]) || diseaseIDs.containsKey(fData[i][1]) ){
+					toReturn = "ERROR: Duplicate case found"                 + " \n";
+					toReturn = toReturn + "      row = " + (RowsInHeader+i+2)+ " \n";
+					toReturn = toReturn + "Check for an earlier occurrence:" + " \n";
+					toReturn = toReturn + "      readerID = " + fData[i][0]   + " \n";
+					toReturn = toReturn + "      caseID = " + fData[i][1]     + " \n";
+					toReturn = toReturn + "      modalityID = " + fData[i][2] + " \n";
+					
+					throw new IOException(toReturn);
+
+				}
+				// New normal ID?
+				if ( !normalIDs.containsKey(fData[i][1])  && fData[i][3].equals("0")) {
+					normalIDs.put(fData[i][1], in0);
+				}
+				// New disease ID?
+				if ( !diseaseIDs.containsKey(fData[i][1]) && fData[i][3].equals("1")) {
+					diseaseIDs.put(fData[i][1], in1);
 				}
 			}
-			if (fData[i][2] == 0 && fData[i][3] == 1) {
-				if (!diseaseIDs.contains(fData[i][1])) {
-					diseaseIDs.add((int) fData[i][1]);
+		}
+		
+		// Find all the rows not corresponding to truth
+		// Check that cases have truth, find readers and modalities
+		for (int i = 0; i < fData.length; i++) {
+			if ( !fData[i][0].equals("-1")){
+
+				if ( !normalIDs.containsKey(fData[i][1]) && !diseaseIDs.containsKey(fData[i][1]) ){
+					toReturn = "ERROR: No truth for case"                     + " \n";
+					toReturn = toReturn + "      row = " + (RowsInHeader+i+2) + " \n";
+					toReturn = toReturn + "      readerID = " + fData[i][0]   + " \n";
+					toReturn = toReturn + "      caseID = " + fData[i][1]     + " \n";
+					toReturn = toReturn + "      modalityID = " + fData[i][2] + " \n";
+					
+					throw new IOException(toReturn);
+
 				}
-			}
-			if (!modalityIDs.contains((int) fData[i][2]) && fData[i][2] != 0) {
-				modalityIDs.add((int) fData[i][2]);
+				// New reader ID?
+				if ( !readerIDs.containsKey(fData[i][0])  ) {
+					readerIDs.put(fData[i][0], inr);
+				}
+				// New modality ID?
+				if ( !modalityIDs.containsKey(fData[i][2])) {
+					modalityIDs.put(fData[i][2], inm);
+				}
 			}
 		}
 
+		//keyedData.get(readerID).get(caseID).containsKey(modalityID)
+		//keyedData.get(r).put(n, new TreeMap<String, Double>());
+		//for (String r : readerIDs2.keySet())
+		
+
+		for(String ID : readerIDs.keySet()) { readerIDs.put(ID, ++inr); }
+		System.out.println("readerIDs: " + readerIDs);
 		if (Reader != readerIDs.size()) {
 			toReturn = toReturn + "NR Given = " + Reader + " NR Found = "
 					+ readerIDs.size() + " \n";
 			Reader = readerIDs.size();
 		}
+		for(String ID : normalIDs.keySet()) { normalIDs.put(ID, ++in0); }
+		System.out.println("normalIDs: " + normalIDs);
 		if (Normal != normalIDs.size()) {
 			toReturn = toReturn + "N0 Given = " + Normal + " N0 Found = "
 					+ normalIDs.size() + " \n";
 			Normal = normalIDs.size();
 		}
+		for(String ID : diseaseIDs.keySet()) { diseaseIDs.put(ID, ++in1); }
+		System.out.println("diseaseIDs: " + diseaseIDs);
 		if (Disease != diseaseIDs.size()) {
 			toReturn = toReturn + "N1 Given = " + Disease + " N1 Found = "
 					+ diseaseIDs.size() + " \n";
 			Disease = diseaseIDs.size();
 		}
+		for(String ID : modalityIDs.keySet()) { modalityIDs.put(ID, ++inm); }
+		System.out.println("modalityIDs: " + modalityIDs);
 		if (Modality != (modalityIDs.size())) {
 			toReturn = toReturn + "NM Given = " + Modality + " NM Found = "
 					+ (modalityIDs.size());
 			Modality = modalityIDs.size();
 		}
+		
 		return toReturn;
+		
 	}
 
 	/**
@@ -752,11 +958,11 @@ public class InputFile {
 	 * @throws FileNotFoundException
 	 */
 	private ArrayList<String> readFile() throws FileNotFoundException {
-		InputStreamReader isr;
-		DataInputStream din;
+		//InputStreamReader isr;
+		//DataInputStream din;
 		FileInputStream fstream = new FileInputStream(filename);
-		din = new DataInputStream(fstream);
-		isr = new InputStreamReader(din);
+		DataInputStream din = new DataInputStream(fstream);
+		InputStreamReader isr = new InputStreamReader(din);
 		BufferedReader br = new BufferedReader(isr);
 		ArrayList<String> content = new ArrayList<String>();
 		String strtemp;
@@ -782,21 +988,25 @@ public class InputFile {
 	 * @param modality0 Modality to be used as mod 0
 	 * @param modality1 Modality to be used as mod 1
 	 */
-	public void makeTMatrices(int modality0, int modality1) {
-		t0 = new double[Normal][Reader][2];
-		t1 = new double[Disease][Reader][2];
-		t00 = new double[Normal][Reader][2];
-		t01 = new double[Normal][Reader][2];
-		t10 = new double[Disease][Reader][2];
-		t11 = new double[Disease][Reader][2];
-		d0 = new int[Normal][Reader][2];
-		d1 = new int[Disease][Reader][2];
+	public void makeTMatrices(String modality0, String modality1) {
+		t0_mod01 = new double[Normal][Reader][2];
+		t1_mod01 = new double[Disease][Reader][2];
+		t0_mod00 = new double[Normal][Reader][2];
+		t0_mod11 = new double[Normal][Reader][2];
+		t1_mod00 = new double[Disease][Reader][2];
+		t1_mod11 = new double[Disease][Reader][2];
+		d0_mod00 = new int[Normal][Reader][2];
+		d1_mod00 = new int[Disease][Reader][2];
+		d0_mod11 = new int[Normal][Reader][2];
+		d1_mod11 = new int[Disease][Reader][2];
+		d0_mod01 = new int[Normal][Reader][2];
+		d1_mod01 = new int[Disease][Reader][2];
 		int m, n;
-		int k = 0;
-		for (Integer r : keyedData.keySet()) {
-			m = 0; // number of false cases
-			n = 0; // number of true cases
-			for (Integer c : keyedData.get(r).keySet()) {
+		int k = 0; // reader index
+		for (String r : keyedData.keySet()) {
+			m = 0; // false case index
+			n = 0; // true cases index
+			for (String c : keyedData.get(r).keySet()) {
 				double currScoreMod0;
 				double currScoreMod1;
 				int PresentMod0 = 1;
@@ -821,24 +1031,36 @@ public class InputFile {
 					PresentMod1 = 0;
 				}
 				if (truthVals.get(c) == 0) {
-					t0[m][k][0] = currScoreMod0;
-					t0[m][k][1] = currScoreMod1;
-					t00[m][k][0] = currScoreMod0;
-					t00[m][k][1] = currScoreMod0;
-					t01[m][k][0] = currScoreMod1;
-					t01[m][k][1] = currScoreMod1;
-					d0[m][k][0] = PresentMod0;
-					d0[m][k][1] = PresentMod1;
+					t0_mod01[m][k][0] = currScoreMod0;
+					t0_mod01[m][k][1] = currScoreMod1;
+					t0_mod00[m][k][0] = currScoreMod0;
+					t0_mod00[m][k][1] = currScoreMod0;
+					t0_mod11[m][k][0] = currScoreMod1;
+					t0_mod11[m][k][1] = currScoreMod1;
+					
+					d0_mod01[m][k][0] = PresentMod0;
+					d0_mod01[m][k][1] = PresentMod1;
+					d0_mod00[m][k][0] = PresentMod0;
+					d0_mod00[m][k][1] = PresentMod0;
+					d0_mod11[m][k][0] = PresentMod1;
+					d0_mod11[m][k][1] = PresentMod1;
+
 					m++;
 				} else {
-					t1[n][k][0] = currScoreMod0;
-					t1[n][k][1] = currScoreMod1;
-					t10[n][k][0] = currScoreMod0;
-					t10[n][k][1] = currScoreMod0;
-					t11[n][k][0] = currScoreMod1;
-					t11[n][k][1] = currScoreMod1;
-					d1[n][k][0] = PresentMod0;
-					d1[n][k][1] = PresentMod1;
+					t1_mod01[n][k][0] = currScoreMod0;
+					t1_mod01[n][k][1] = currScoreMod1;
+					t1_mod00[n][k][0] = currScoreMod0;
+					t1_mod00[n][k][1] = currScoreMod0;
+					t1_mod11[n][k][0] = currScoreMod1;
+					t1_mod11[n][k][1] = currScoreMod1;
+
+					d1_mod01[n][k][0] = PresentMod0;
+					d1_mod01[n][k][1] = PresentMod1;
+					d1_mod00[n][k][0] = PresentMod0;
+					d1_mod00[n][k][1] = PresentMod0;
+					d1_mod11[n][k][0] = PresentMod1;
+					d1_mod11[n][k][1] = PresentMod1;
+
 					n++;
 				}
 			}

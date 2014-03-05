@@ -346,7 +346,7 @@ public class SimRoeMetz {
 		toCalc.calculateCovMRMC();
 		// Creates a record of the variance analysis so decompositions can be
 		// accessed
-		DBRecord rec = new DBRecord(toCalc, 1, 2);
+		DBRecord rec = new DBRecord(toCalc, "1", "2");
 
 		BDG = rec.getBDG(useMLE);
 		BCK = rec.getBCK(useMLE);

@@ -39,7 +39,7 @@ public class MRMC extends JApplet {
 	 */
 	private static final long serialVersionUID = 1L;
 	private static JFrame mrmcFrame;
-	GUInterface gui;
+	static GUInterface gui;
 	GUImenubar menuBar;
 	MrmcDB db;
 
@@ -123,7 +123,7 @@ public class MRMC extends JApplet {
 	 * @param height Height of the application frame in pixels
 	 */
 	public static void run(JApplet applet, int width, int height) {
-		mrmcFrame = new JFrame("iMRMC 2.0b");
+		mrmcFrame = new JFrame("iMRMC 2.3");
 		mrmcFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mrmcFrame.getContentPane().add(applet);
 		mrmcFrame.pack();

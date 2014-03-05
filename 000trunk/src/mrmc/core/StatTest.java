@@ -195,7 +195,6 @@ public class StatTest {
 	/**
 	 * Constructor used for calculating statistics when performing initial
 	 * variance analysis
-	 * 
 	 * @param curRecord The database record for which to calculate statistics
 	 * @param selectedMod Which modality/difference
 	 * @param useMLE Whether or not to use biased variance components
@@ -212,13 +211,8 @@ public class StatTest {
 		double ms_t = 0, ms_tr, denom = 0;
 		double[] aucs = { 0, 0 };
 		double[][] coeff;
-		if (curRecord.getFullyCrossedStatus()) {
-			coeff = DBRecord.genBDGCoeff((int) dnr, (int) dn0, (int) dn1);
-		} else {
-			coeff = DBRecord.genBDGCoeff((int) dnr, (int) dn0, (int) dn1,
-					curRecord.getMod0StudyDesign(),
-					curRecord.getMod1StudyDesign());
-		}
+		
+		coeff = curRecord.getBDGcoeff();
 		double[][] BDG = curRecord.getBDG(useMLE);
 		
 		aucs[0] = curRecord.getAUCinNumber(0);

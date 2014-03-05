@@ -18,6 +18,7 @@
 package mrmc.chart;
 
 import javax.swing.JFrame;
+
 import java.awt.Color;
 import java.awt.Rectangle;
 
@@ -67,31 +68,33 @@ public class StudyDesignPlot extends JFrame {
 	 * @return Chart data in XYDataset format
 	 */
 	private DefaultXYDataset createDataset(boolean[][] data) {
-		int t = 0;
-		int f = 0;
+
+		int nBlack = 0;
+		int nWhite = 0;
+		// Find how many points are black and white
 		for (int i = 0; i < data.length; i++) {
 			for (int j = 0; j < data[i].length; j++) {
 				if (data[i][j]) {
-					t++;
+					nBlack++;
 				} else {
-					f++;
+					nWhite++;
 				}
 			}
 		}
-		double[][] trueVals = new double[2][t];
-		double[][] falseVals = new double[2][f];
+		double[][] trueVals = new double[2][nBlack];
+		double[][] falseVals = new double[2][nWhite];
 		final DefaultXYDataset dataset = new DefaultXYDataset();
 		int tCount = 0;
 		int fCount = 0;
 		for (int i = 0; i < data.length; i++) {
 			for (int j = 0; j < data[i].length; j++) {
 				if (data[i][j]) {
-					trueVals[0][tCount] = j;
-					trueVals[1][tCount] = i + 1;
+					trueVals[0][tCount] = j;     // x-axis
+					trueVals[1][tCount] = i; // y-axis
 					tCount++;
 				} else {
-					falseVals[0][fCount] = j;
-					falseVals[1][fCount] = i + 1;
+					falseVals[0][fCount] = j;     // x-axis
+					falseVals[1][fCount] = i; // y-axis
 					fCount++;
 				}
 			}
@@ -115,8 +118,11 @@ public class StudyDesignPlot extends JFrame {
 		final JFreeChart chart = ChartFactory.createScatterPlot(title, xaxis,
 				yaxis, dataset, PlotOrientation.VERTICAL, true, true, false);
 		XYPlot xyplot = (XYPlot) chart.getPlot();
-		NumberAxis range = (NumberAxis) xyplot.getRangeAxis();
-		range.setTickUnit(new NumberTickUnit(1));
+		NumberAxis rangeAxis = (NumberAxis) xyplot.getRangeAxis();;
+		
+		rangeAxis.setLowerBound(-.5);
+		
+		rangeAxis.setTickUnit(new NumberTickUnit(1));
 		XYItemRenderer renderer = xyplot.getRenderer();
 		Rectangle square = new Rectangle(5, 5);
 		renderer.setSeriesShape(0, square);
