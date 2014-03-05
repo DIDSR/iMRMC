@@ -22,6 +22,7 @@ import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import javax.swing.JFrame;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -47,12 +48,12 @@ public class BarGraph extends JFrame {
 	 * @param title Title of chart
 	 * @param xaxis Label for x-axis
 	 * @param yaxis Label for y-axis
-	 * @param data Mapping of x-y data
+	 * @param treeMap Mapping of x-y data
 	 */
 	public BarGraph(final String title, String xaxis, String yaxis,
-			TreeMap<Integer, Double> data) {
+			TreeMap<String, Double> treeMap) {
 		super(title);
-		CategoryDataset dataset = createDataset(data, xaxis);
+		CategoryDataset dataset = createDataset(treeMap, xaxis);
 		JFreeChart chart = createChart(dataset, title, xaxis, yaxis);
 		LegendTitle legend = chart.getLegend();
 		legend.setVisible(false);
@@ -64,15 +65,15 @@ public class BarGraph extends JFrame {
 	/**
 	 * Converts data mapping into format for used by chart
 	 * 
-	 * @param data Mapping of x-y data
+	 * @param treeMap Mapping of x-y data
 	 * @param xaxis Label for x-axis
 	 * @return Chart data in CategoryDataset format
 	 */
-	private CategoryDataset createDataset(TreeMap<Integer, Double> data,
+	private CategoryDataset createDataset(TreeMap<String, Double> treeMap,
 			String xaxis) {
 		final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-		for (Entry<Integer, Double> e : data.entrySet()) {
-			int key = e.getKey();
+		for (Entry<String, Double> e : treeMap.entrySet()) {
+			String key = e.getKey();
 			double value = e.getValue();
 			dataset.addValue(value, key + "", xaxis);
 		}

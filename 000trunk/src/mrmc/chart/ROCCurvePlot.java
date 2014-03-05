@@ -68,13 +68,13 @@ public class ROCCurvePlot extends JFrame {
 	 * @param title Title of the chart
 	 * @param xaxis x-axis label
 	 * @param yaxis y-axis label
-	 * @param data Mapping of readers to a set of points defining an ROC curve
+	 * @param treeMap Mapping of readers to a set of points defining an ROC curve
 	 */
 	public ROCCurvePlot(final String title, String xaxis, String yaxis,
-			TreeMap<Integer, TreeSet<XYPair>> data) {
+			TreeMap<String, TreeSet<XYPair>> treeMap) {
 		super(title);
 
-		createDataset(data);
+		createDataset(treeMap);
 		final JFreeChart chart = ChartFactory.createScatterPlot(title, xaxis,
 				yaxis, seriesCollection, PlotOrientation.VERTICAL, true, true,
 				false);
@@ -94,7 +94,7 @@ public class ROCCurvePlot extends JFrame {
 		JPanel readerSelect = new JPanel(new WrapLayout());
 		readerSeriesBoxes = new ArrayList<JCheckBox>();
 
-		for (Integer r : data.keySet()) {
+		for (String r : treeMap.keySet()) {
 			JCheckBox aBox = new JCheckBox("" + r);
 			aBox.setSelected(false);
 			aBox.addItemListener(new SeriesSelectListener());
@@ -158,31 +158,31 @@ public class ROCCurvePlot extends JFrame {
 	 * Converts the mapping of readers to curve points into a collection of
 	 * separate XY data.
 	 * 
-	 * @param data Mapping of readers to points defining a curve
+	 * @param treeMap Mapping of readers to points defining a curve
 	 */
-	private void createDataset(TreeMap<Integer, TreeSet<XYPair>> data) {
+	private void createDataset(TreeMap<String, TreeSet<XYPair>> treeMap) {
 		seriesCollection = new XYSeriesCollection();
 		readerSeriesTitles = new ArrayList<String>();
 
-		for (Integer r : data.keySet()) {
+		for (String r : treeMap.keySet()) {
 			XYSeries series = new XYSeries("" + r, false);
 			readerSeriesTitles.add("" + r);
-			for (XYPair point : data.get(r)) {
+			for (XYPair point : treeMap.get(r)) {
 				series.add(point.x, point.y);
 			}
 			seriesCollection.addSeries(series);
 		}
 
 		allLines = new ArrayList<InterpolatedLine>();
-		for (Integer r : data.keySet()) {
-			allLines.add(new InterpolatedLine(data.get(r)));
+		for (String r : treeMap.keySet()) {
+			allLines.add(new InterpolatedLine(treeMap.get(r)));
 		}
 
 		XYSeries vertAvg = generateVerticalROC();
 		seriesCollection.addSeries(vertAvg);
 		XYSeries horizAvg = generateHorizontalROC();
 		seriesCollection.addSeries(horizAvg);
-		XYSeries diagAvg = generateDiagonalROC(data);
+		XYSeries diagAvg = generateDiagonalROC(treeMap);
 		seriesCollection.addSeries(diagAvg);
 		XYSeries pooledAvg = new XYSeries("Pooled Average", false);
 		seriesCollection.addSeries(pooledAvg);
@@ -205,17 +205,17 @@ public class ROCCurvePlot extends JFrame {
 	 * Creates an ROC curve that averages together the scores for all readers in
 	 * the diagonal direction
 	 * 
-	 * @param data Mapping of readers to points defining a curve
+	 * @param treeMap Mapping of readers to points defining a curve
 	 * @return Series containing the ROC curve points
 	 */
-	private XYSeries generateDiagonalROC(TreeMap<Integer, TreeSet<XYPair>> data) {
+	private XYSeries generateDiagonalROC(TreeMap<String, TreeSet<XYPair>> treeMap) {
 		XYSeries diagAvg = new XYSeries("Diagonal Average", false);
-		TreeMap<Integer, TreeSet<XYPair>> rotatedData = new TreeMap<Integer, TreeSet<XYPair>>();
+		TreeMap<String, TreeSet<XYPair>> rotatedData = new TreeMap<String, TreeSet<XYPair>>();
 
 		// rotate all points in data 45 degrees clockwise about origin
-		for (Integer r : data.keySet()) {
+		for (String r : treeMap.keySet()) {
 			rotatedData.put(r, new TreeSet<XYPair>());
-			for (XYPair point : data.get(r)) {
+			for (XYPair point : treeMap.get(r)) {
 				double x2 = (point.x + point.y) / Math.sqrt(2.0);
 				double y2 = (point.y - point.x) / Math.sqrt(2.0);
 				rotatedData.get(r).add(new XYPair(x2, y2));
@@ -224,7 +224,7 @@ public class ROCCurvePlot extends JFrame {
 
 		// generate linear interpolation with new points
 		ArrayList<InterpolatedLine> rotatedLines = new ArrayList<InterpolatedLine>();
-		for (Integer r : rotatedData.keySet()) {
+		for (String r : rotatedData.keySet()) {
 			rotatedLines.add(new InterpolatedLine(rotatedData.get(r)));
 		}
 

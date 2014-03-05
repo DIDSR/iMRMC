@@ -32,6 +32,7 @@ import javax.swing.table.*;
 import javax.swing.text.JTextComponent;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 import mrmc.chart.BarGraph;
 import mrmc.chart.StudyDesignPlot;
@@ -75,7 +76,7 @@ public class GUInterface {
 	private final static String Manual = "Manual input...";
 	final static int USE_MLE = 1;
 	final static int NO_MLE = 0;
-	final static int NO_MOD = -1;
+	final static String NO_MOD = "NO_MOD";
 	final static int SELECT_DB = 0;
 	final static int SELECT_FILE = 1;
 	final static int SELECT_MAN = 2;
@@ -105,8 +106,8 @@ public class GUInterface {
 	private JLabel ORvar1, ORvar2;
 	private JLabel MSvar1, sizedSqrtVar;
 
-	int currMod0; // Chosen mod A when reading raw data
-	int currMod1; // Chosen mod B when reading raw data
+	public String currMod0; // Chosen mod A when reading raw data
+	public String currMod1; // Chosen mod B when reading raw data
 
 	private JLabel HillisPowerWithdfHillis;
 	private JLabel ZPower;
@@ -402,7 +403,9 @@ public class GUInterface {
 	 * current record that has been analyzed
 	 */
 	public void set1stStatPanel() {
+		
 		DBRecord tempRecord = getCurrentRecord();
+		
 		double eff;
 		double[][] BDGtmp = tempRecord.getBDG(useMLE);
 		double sum = 0;
@@ -494,8 +497,7 @@ public class GUInterface {
 		int[][][][] design = createSplitPlotDesign(newR, newN, newD,
 				numSplitPlots, pairedReaders, pairedCases);
 
-		double[][] BDGcoeff = DBRecord.genBDGCoeff(newR, newN, newD, design[0],
-				design[1]);
+		double[][] BDGcoeff = usrFile.getBDGcoeff();
 		double[][] BCKcoeff = DBRecord.genBCKCoeff(newR, newN, newD,
 				BDGcoeff[0]);
 		double[][] DBMcoeff = DBRecord.genDBMCoeff(newR, newN, newD);
@@ -1133,7 +1135,7 @@ public class GUInterface {
 		// *************tabbed panel 1*********************************
 		// *********************************************************************
 		String[] rowNamesDiff = new String[] { "comp M0", "coeff M0",
-				"comp M1", "coeff M1", "product M0,M1", "2*coeff M0-M1",
+				"comp M1", "coeff M1", "comp product", "- coeff product",
 				"total" };
 		String[] rowNamesSingle = new String[] { "components", "coeff", "total" };
 
@@ -1536,7 +1538,7 @@ public class GUInterface {
 		JLabel studyLabel = new JLabel("pilot study...");
 		JPanel pilotCard2 = new JPanel();
 		RSC = new RawStudyCard(pilotCard2, this);
-		JButton fmtHelpButton = new JButton("Format Info.");
+		JButton fmtHelpButton = new JButton("User Manual");
 		JButton readerCasesButton = new JButton("Input Statistics Charts");
 		JButton designButton = new JButton("Show Study Design");
 		JButton ROCcurveButton = new JButton("Show ROC Curve");
@@ -1947,17 +1949,25 @@ public class GUInterface {
 	 */
 	class brwsButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
+			
+			resetGUI();
+			
 			// System.out.println("browse pressed");
+			// Prepare and open file-choser dialog
 			JFileChooser fc = new JFileChooser();
 			FileNameExtensionFilter filter = new FileNameExtensionFilter(
 					"iMRMC Input Files (.imrmc)", "imrmc");
 			fc.setFileFilter(filter);
-			// Don't get rid of this despite being unused
 			int returnVal = fc.showOpenDialog((Component) e.getSource());
+			
+			// Get a pointer to the input file
 			File f = fc.getSelectedFile();
+
+			// Read the input file
 			if (f != null) {
 				filename = f.getPath();
 				pilotFile.setText(filename);
+				
 				// check the input format
 				try {
 					usr = new InputFile(filename);
@@ -1966,6 +1976,7 @@ public class GUInterface {
 					JOptionPane.showMessageDialog(lst.getFrame(),
 							except.getMessage(), "Error",
 							JOptionPane.ERROR_MESSAGE);
+					resetGUI();
 					pilotFile.setText("");
 					return;
 				}
@@ -1979,11 +1990,11 @@ public class GUInterface {
 				} else {
 					JOptionPane.showMessageDialog(
 							lst.getFrame(),
-							"NR = " + usr.getReader() + " N0 = "
-									+ usr.getNormal() + " N1 = "
-									+ usr.getDisease() + " NM = "
-									+ usr.getModality(), "Study Info",
-							JOptionPane.INFORMATION_MESSAGE);
+							"NR = " + usr.getReader() + 
+							" N0 = "+ usr.getNormal() +
+							" N1 = "+ usr.getDisease() +
+							" NM = "+ usr.getModality(), 
+							"Study Info", JOptionPane.INFORMATION_MESSAGE);
 				}
 				if (!usr.getFullyCrossedStatus()) {
 					JOptionPane.showMessageDialog(lst.getFrame(),
@@ -2037,22 +2048,29 @@ public class GUInterface {
 	 * Handler for "Show ROC Curve" button, displays interactive ROC charts
 	 */
 	class ROCButtonListener implements ActionListener {
-		int rocMod = 1;
+		String rocMod = "";
 
 		public void actionPerformed(ActionEvent e) {
 			// System.out.println("roc button pressed");
 			if (usr != null && usr.isLoaded()) {
-				JComboBox<Integer> chooseMod = new JComboBox<Integer>();
+				JComboBox<String> chooseMod = new JComboBox<String>();
+				
+/*				
 				for (int i = 1; i <= usr.getModality(); i++) {
 					chooseMod.addItem(i);
 				}
-				chooseMod.setSelectedItem((Integer) rocMod);
+*/
+				for (String Modality : usr.getModalityIDs()){
+					chooseMod.addItem(Modality);
+				}
+
+				chooseMod.setSelectedIndex(0);
 				Object[] message = { "Which modality would you like view?\n",
 						chooseMod };
 				JOptionPane.showMessageDialog(lst.getFrame(), message,
 						"Choose Modality and Reader",
 						JOptionPane.INFORMATION_MESSAGE, null);
-				rocMod = (Integer) chooseMod.getSelectedItem();
+				rocMod = (String) chooseMod.getSelectedItem();
 				final ROCCurvePlot roc = new ROCCurvePlot(
 						"ROC Curve: Modality " + rocMod,
 						"FPF (1 - Specificity)", "TPF (Sensitivity)",
@@ -2103,24 +2121,32 @@ public class GUInterface {
 	 * study design for a given modality
 	 */
 	class designButtonListener implements ActionListener {
-		int designMod1 = 1;
+		String designMod1 = "empty";
 
 		public void actionPerformed(ActionEvent e) {
 			// System.out.println("study design button pressed");
 			if (usr != null && usr.isLoaded()) {
-				JComboBox<Integer> choose1 = new JComboBox<Integer>();
+				JComboBox<String> choose1 = new JComboBox<String>();
+/*
 				for (int i = 1; i <= usr.getModality(); i++) {
 					choose1.addItem(i);
 				}
-				choose1.setSelectedItem((Integer) designMod1);
+*/
+				ArrayList<String> temp;
+				temp = usr.getModalityIDs();
+
+				for (String Modality : usr.getModalityIDs()){
+					choose1.addItem(Modality);
+				}
+				choose1.setSelectedIndex(0);
 				Object[] message = { "Which modality would you like view?\n",
 						choose1 };
 				JOptionPane.showMessageDialog(lst.getFrame(), message,
 						"Choose Modality", JOptionPane.INFORMATION_MESSAGE,
 						null);
-				boolean[][] design = usr.getStudyDesign((Integer) choose1
+				boolean[][] design = usr.getStudyDesign( (String) choose1
 						.getSelectedItem());
-				designMod1 = (Integer) choose1.getSelectedItem();
+				designMod1 = (String) choose1.getSelectedItem();
 				final StudyDesignPlot chart = new StudyDesignPlot(
 						"Study Design: Modality " + designMod1, "Case",
 						"Reader", design);

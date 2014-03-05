@@ -79,10 +79,17 @@ public class RawStudyCard {
 		chooseB.removeAllItems();
 		chooseA.addItem("Choose Modality A");
 		chooseB.addItem("Choose Modality B");
+		
+		for (String ModalityID : gui.usr.getModalityIDs()) {
+			chooseA.addItem(ModalityID);
+			chooseB.addItem(ModalityID);
+		}
+/*		
 		for (int i = 1; i <= gui.usr.getModality(); i++) {
 			chooseA.addItem("" + i);
 			chooseB.addItem("" + i);
 		}
+		*/
 	}
 
 	/**
@@ -148,8 +155,7 @@ public class RawStudyCard {
 					modB = (!chooseB.getSelectedItem().equals("n/a"))
 							&& (!chooseB.getSelectedItem().equals("Choose Modality B"));
 					if (modA && !modB) {
-						gui.currMod0 = Integer.parseInt(chooseA
-								.getSelectedItem().toString());
+						gui.currMod0 = (String) chooseA.getSelectedItem();
 						gui.currMod1 = GUInterface.NO_MOD;
 						varAnalysisButton.setText("MRMC Variance Analysis (A)");
 						gui.usr.makeTMatrices(gui.currMod0, gui.currMod0);
@@ -158,8 +164,7 @@ public class RawStudyCard {
 								gui.currMod0);
 						setSelectedMod(0);
 					} else if (!modA && modB) {
-						gui.currMod1 = Integer.parseInt(chooseB
-								.getSelectedItem().toString());
+						gui.currMod1 = (String) chooseB.getSelectedItem();
 						gui.currMod0 = GUInterface.NO_MOD;
 						varAnalysisButton.setText("MRMC Variance Analysis (B)");
 						gui.usr.makeTMatrices(gui.currMod1, gui.currMod1);
@@ -168,10 +173,8 @@ public class RawStudyCard {
 								gui.currMod1);
 						setSelectedMod(1);
 					} else if (modA && modB) {
-						gui.currMod0 = Integer.parseInt(chooseA
-								.getSelectedItem().toString());
-						gui.currMod1 = Integer.parseInt(chooseB
-								.getSelectedItem().toString());
+						gui.currMod0 = (String) chooseA.getSelectedItem();
+						gui.currMod1 = (String) chooseB.getSelectedItem();
 						varAnalysisButton
 								.setText("MRMC Variance Analysis (Difference)");
 						gui.usr.makeTMatrices(gui.currMod0, gui.currMod1);
