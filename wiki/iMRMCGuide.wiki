@@ -10,7 +10,7 @@ _This software is still a work in progress. We believe the variances and compone
 
 <br>
 =User Manual=
-Please refer to the user manual for useful information. See below for the current version of the user manual. The user manual contains
+Please *read* the user manual for useful information. See below for the current version of the user manual. The user manual contains
 
   * Introduction to ROC Reader Studies
 
@@ -24,7 +24,7 @@ Please refer to the user manual for useful information. See below for the curren
 =Current Version=
 Version 2p3 posted 2014-03-05
 
-This version provides robust data check and error reporting during the reading of the InputFile.imrmc (Identify missing truth, duplicate cases, replicated observations). Additionally, readerIDs, caseIDs, and modalityIDs can be strings. These changes should help the user determine problems with the file format. There was a bug that was found and fixed: the coefficients were incorrectly calculated when the data was *not* fully-crossed. <br>
+This version provides robust data check and error reporting during the reading of the InputFile.imrmc (Identify missing truth, duplicate cases, replicated observations). Additionally, readerIDs, caseIDs, and modalityIDs can be strings. These changes allow for more flexibility and should help the user determine problems with the file format. There was a bug that was found and fixed: the coefficients were incorrectly calculated when the data was *not* fully-crossed. <br>
 Power for sizing to come. <br>
 This version requires a database folder named "DB" with .jdb files in the application startup directory.
 
@@ -32,9 +32,18 @@ This version requires a database folder named "DB" with .jdb files in the applic
 
 *[http://imrmc.googlecode.com/svn/user_manual/iMRMCUserGuide-v2p1.pdf Click to download user manual (iMRMCUserGuide-v2p1.pdf)]* <br>
 
-*[http://imrmc.googlecode.com/svn/000trunk/DB Click to download simulated .jdb files]* <br>
+<br>
+
+==Sample Files ({{{*}}}.jdb and {{{*}}}.imrmc)==
+
+Currently, iMRMC expects to be run in a directory with a folder named "DB" that has at least one {{{*.jdb}}} summary database file.<br>
+*[http://imrmc.googlecode.com/svn/standalone_application/DB Click to download summary database files (*.jdb)]*
+
+Here are some sample {{{*}}}.imrmc input files that you can use to try the software. Some of the sample input files have common formatting errors that are detected and reported. <br>
+*[http://imrmc.googlecode.com/svn/standalone_application/FilesTest-iMRMC Click to download raw data input files (*.imrmc)]* <br>
 
 <br>
+
 =[iMRMCVersionHistory Download Previous Versions]= 
 <br>
 
