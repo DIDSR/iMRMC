@@ -1,36 +1,52 @@
 The previous versions are provided here from most recent to the oldest.
-
+ 
 When accessing links, make sure that you refresh your browser.
 
 <br>
-<br>
-<br>
+=Sample Files ({{{*}}}.jdb and {{{*}}}.imrmc)=
 
-=Version 2.1 =
+Currently, iMRMC expects to be run in a directory with a folder named "DB" that has at least one {{{*.jdb}}} summary database file.<br>
+*[http://imrmc.googlecode.com/svn/standalone_application/DB Click to download summary database files (*.jdb)]*
+
+Here are some sample {{{*}}}.imrmc input files that you can use to try the software. Some of the sample input files have common formatting errors that are detected and reported. <br>
+*[http://imrmc.googlecode.com/svn/standalone_application/FilesTest-iMRMC Click to download raw data input files (*.imrmc)]* <br>
+
+<br>
+=Version 2p3=
+posted 2014-03-05
+
+This version provides robust data check and error reporting during the reading of the InputFile.imrmc (Identify missing truth, duplicate cases, replicated observations). Additionally, readerIDs, caseIDs, and modalityIDs can be strings. These changes allow for more flexibility and should help the user determine problems with the file format. <br>
+There was a bug that was found and fixed: the coefficients were incorrectly calculated when the data was *not* fully-crossed. <br>
+Power for sizing to come. <br>
+Sample files are now provided. <br>
+This version requires a database folder named "DB" with .jdb files in the application startup directory.
+
+*[http://imrmc.googlecode.com/svn/standalone_application_archive/iMRMC/iMRMC-v2p3.jar Click to download application (imrmc-v2p3.jar)]*
+
+*[http://imrmc.googlecode.com/svn/standalone_application_archive/iMRMC/iMRMCuserguide-v2p1.pdf Click to download user manual (iMRMCUserGuide-v2p1.pdf)]* <br>
+
+<br>
+=Version 2p1 =
 posted 2014-01-15
 
 This version fixes p-values and confidence intervals in the statistical analysis. <br>
 Power for sizing to come. <br>
 This version requires a database folder named "DB" with .jdb files in the application startup directory.
 
-*[ftp://taxp2.cdrh.fda.gov/imrmc/imrmc-v2p1.jar Click to download application (imrmc-v2p1.jar)]*
+*[http://imrmc.googlecode.com/svn/standalone_application_archive/iMRMC/iMRMC-v2p1.jar Click to download application (iMRMC-v2p1.jar)]*
 
-*[ftp://taxp2.cdrh.fda.gov/imrmc/imrmcuserguide-v2p1.pdf Click to download user manual (imrmcuserguide-v2p1.pdf)]* <br>
-
-*[ftp://taxp2.cdrh.fda.gov/imrmc/DB Click to download simulated .jdb files]* <br>
+*[http://imrmc.googlecode.com/svn/standalone_application_archive/iMRMC/iMRMCuserguide-v2p1.pdf Click to download user manual (iMRMCuserguide-v2p1.pdf)]* <br>
 
 <br>
 <br>
 
-=Version 2.0 =
+=Version 2p0 =
 posted 2013-08-28
 
 This version includes graphics to check data input and plots of ROC curves. <br>
 This version also allows for arbitrary study designs. <br>
 This version requires a database folder named "DB" with .jdb files in the application startup directory.
 
-*[ftp://taxp2.cdrh.fda.gov/imrmc/imrmc-v2p0.jar Click to download application (imrmc-v2p0.jar)]*
+*[http://imrmc.googlecode.com/svn/standalone_application_archive/iMRMC/iMRMC-v2p0.jar Click to download application (imrmc-v2p0.jar)]*
 
-*[ftp://taxp2.cdrh.fda.gov/imrmc/imrmcuserguide-v2p0.pdf Click to download user manual (imrmcuserguide-v2p0.pdf)]* <br>
-
-*[ftp://taxp2.cdrh.fda.gov/imrmc/DB Click to download simulated .jdb files]* <br>
+*[http://imrmc.googlecode.com/svn/standalone_application_archive/iMRMC/iMRMCuserguide-v2p0.pdf Click to download user manual (imrmcuserguide-v2p0.pdf)]* <br>
