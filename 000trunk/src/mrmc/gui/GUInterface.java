@@ -2024,16 +2024,12 @@ public class GUInterface {
 	class fmtHelpButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			
-			// DataFormat fmt = new DataFormat();
-			// JOptionPane.showMessageDialog(lst.getFrame(), fmt.getInfo(),
-			//		"Information", JOptionPane.INFORMATION_MESSAGE);
-			
 			// Create Desktop object
 			Desktop d=Desktop.getDesktop();
 
 			// Browse a URL, say google.com
 			try {
-				d.browse(new URI("http://imrmc.googlecode.com/svn/user_manual/iMRMCUserGuide-current.pdf"));
+				d.browse(new URI("http://imrmc.googlecode.com/svn/standalone_application/iMRMCuserguide-current.pdf"));
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
