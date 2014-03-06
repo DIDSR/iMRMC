@@ -30,7 +30,7 @@ This version requires a database folder named "DB" with .jdb files in the applic
 
 *[http://imrmc.googlecode.com/svn/standalone_application/iMRMC-v2p3.jar Click to download application (imrmc-v2p3.jar)]*
 
-*[http://imrmc.googlecode.com/svn/user_manual/iMRMCUserGuide-v2p1.pdf Click to download user manual (iMRMCUserGuide-v2p1.pdf)]* <br>
+*[http://imrmc.googlecode.com/svn/standalone_application/iMRMCuserguide-v2p1.pdf Click to download user manual (iMRMCUserGuide-v2p1.pdf)]* <br>
 
 <br>
 
