@@ -322,18 +322,21 @@ public class InputFile {
 		this.t0_mod01 = tMatrices[4];
 		this.t1_mod01 = tMatrices[5];
 		
-		throw new IOException ("currently, design matrices is identical for each modality.");
-/*
 		this.d0_mod00 = dMatrices[0];
+		this.d0_mod11 = dMatrices[0];
+		this.d0_mod01 = dMatrices[0];
 		this.d1_mod00 = dMatrices[1];
+		this.d1_mod11 = dMatrices[1];
+		this.d1_mod01 = dMatrices[1];
+		
 		this.Reader = nr;
 		this.Normal = n0;
 		this.Disease = n1;
 		this.recordTitle = title;
 		this.Header = desc;
 		this.isFullyCrossed = true;
-*/
-		}
+
+	}
 
 	/**
 	 * Cycles through all scores in study and determines the maximum score for a
