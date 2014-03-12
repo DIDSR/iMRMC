@@ -818,8 +818,9 @@ public class RMGUInterface {
 		 * 
 		 * @return Averaged components of variance decompositions and AUCs for
 		 *         this group of simulation experiments
+		 * @throws IOException 
 		 */
-		public double[][][] doInBackground() {
+		public double[][][] doInBackground() throws IOException {
 			double[][] avgBDGdata = new double[4][8];
 			double[][] avgBCKdata = new double[4][7];
 			double[][] avgDBMdata = new double[4][6];

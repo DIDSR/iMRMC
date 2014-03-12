@@ -18,8 +18,10 @@
 
 package roemetz.core;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Random;
+
 import mrmc.core.DBRecord;
 import mrmc.core.InputFile;
 import mrmc.core.Matrix;
@@ -61,9 +63,10 @@ public class SimRoeMetz {
 	 *            within its sequence for a given seed.
 	 * @param useMLEs Indicates whether to used biased estimates in the results
 	 *            of the simulation
+	 * @throws IOException 
 	 */
 	public SimRoeMetz(double[] u, double[] var_t, int[] n, Random rand,
-			int useMLEs) {
+			int useMLEs) throws IOException {
 		if (u.length != 2) {
 			System.out.println("input u is of incorrect size");
 			return;
@@ -95,8 +98,9 @@ public class SimRoeMetz {
 	 *            second element is components of variance, third element is
 	 *            experiment sizes, fourth element is seed for RNG, fifth
 	 *            element specifies whether biased estimates will be used.
+	 * @throws IOException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		try {
 			double[] u = new double[2];
 			String[] us = args[0].substring(args[0].lastIndexOf("[") + 1,
@@ -334,8 +338,9 @@ public class SimRoeMetz {
 	/**
 	 * Performs conversions on results of the simulation experiment so that
 	 * decompositions and AUC can be determined.
+	 * @throws IOException 
 	 */
-	private void processSimExperiment() {
+	private void processSimExperiment() throws IOException {
 		double[][][][] newTMatrices = convertTMatrices();
 		int[][][][] dMatrices = createDMatrices();
 
