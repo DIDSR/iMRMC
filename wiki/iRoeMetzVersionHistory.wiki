@@ -11,4 +11,4 @@ posted 2013-08-02
 
 *[http://imrmc.googlecode.com/svn/standalone_application/iRoeMetz-v1p0.jar Click to download application (iRoeMetz-v1p0.jar)]*
 
-*[iRoeMetzGuide Click to browse iRoeMetzGuide.wiki user manual]* <br>
+*[http://imrmc.googlecode.com/svn/standalone_application/iRoeMetzUserManual-v1p0.pdf Click to download user manual (iRoeMetz-v1p0.pdf)]* <br>
