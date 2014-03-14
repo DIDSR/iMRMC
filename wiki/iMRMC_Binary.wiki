@@ -1,4 +1,4 @@
-#summary One-sentence summary of this page.
+#summary a Matlab software package for simulating, analyzing, and sizing a multi-reader multi-case reader study with binary assessments.
 
 = Introduction =
 
