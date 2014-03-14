@@ -3,7 +3,7 @@
 = Summary =
 This software package provides tools that allow you:
 
-  * Simulate a binary MRMC dataset
+  * Simulate binary MRMC datasets
 
   * Analyze a binary MRMC dataset
 
@@ -14,16 +14,16 @@ Please read the user manual for useful information. See below for the current ve
 
 	
 
-  * Using the software
+  * How to use the software
 	
-  * Simulation model
+  * Description of the simulation model
 	
-  * Summary of methods for data analysis and sizing in the literature
+  * Summary of methods for data analysis and sizing 
 
   * References
 
 
-= Download =
+= Downloads =
 
 [http://imrmc.googlecode.com/svn/standalone_application/iMRMC_Binary_pkg.exe Click to download self-extracting package (iMRMC_Binary_pkg.exe)]  
 
