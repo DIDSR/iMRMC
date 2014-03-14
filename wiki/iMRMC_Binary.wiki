@@ -1,13 +1,10 @@
 #summary a Matlab software package for simulating, analyzing, and sizing a multi-reader multi-case reader study with binary assessments.
 
-= Introduction =
-
-Add your content here.
+= Summary =
 
 
-= Details =
+= User Manual =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+= Download =
+Click to download application (imrmc-v2p3.jar) 
+Click to download user manual (iMRMCUserGuide-v2p1.pdf) 
