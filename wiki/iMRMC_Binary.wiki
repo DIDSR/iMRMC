@@ -1,8 +1,10 @@
 #summary A Matlab software package for simulating, analyzing, and sizing a multi-reader multi-case reader study with binary assessments.
 
 = Summary =
-Many medical diagnostic devices, especially those for medical imaging, are evaluated in the hands of physicians who use the device to make diagnostic assessments of patients. The effectiveness of a new device modality is typically established by showing that the performance of physicians using the new modality is non-inferior or superior to that using a conventional modality on a defined set of diagnostic tasks. Such studies are called multi-reader, multi-case(MRMC) studies, because they are based on a sample of representative physicians, or “readers”, who read the output (e.g., images) from the device for a sample of representative patients, or “cases.”  
-In certain MRMC reader studies, the reader’s diagnostic assessment on a case is or can be converted in some meaningful way to a binary assessment, for example, whether the reader’s assessment is in agreement with a reference standard.  This software package provides computer programs for simulating binary MRMC study data, validating statistical analysis methods, and sizing a reader study.
+This software package provide tools that allow you:
+*Simulate a binary MRMC dataset
+*Analyze a binary MRMC dataset
+*Size a binary MRMC study
 
 = User Manual =
 
