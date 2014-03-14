@@ -10,7 +10,7 @@ This software package provides tools that allow you:
   * Size a binary MRMC study
 
 = User Manual =
-Please read the user manual for useful information. See below for the current version of the user manual. The user manual contains 
+Please read the user manual for useful information. The user manual contains 
 
 	
 
