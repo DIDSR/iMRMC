@@ -1,4 +1,4 @@
-A Matlab software package for simulating, analyzing, and sizing a multi-reader multi-case reader study with binary assessments.
+#Summary A Matlab software package for simulating, analyzing, and sizing a multi-reader multi-case reader study with binary assessments.
 
 = Summary =
 This software package provides tools that allow you:
