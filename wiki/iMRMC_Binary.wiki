@@ -2,11 +2,12 @@ A Matlab software package for simulating, analyzing, and sizing a multi-reader m
 
 = Summary =
 This software package provide tools that allow you:
-*Simulate a binary MRMC dataset
 
-*Analyze a binary MRMC dataset
+  *Simulate a binary MRMC dataset
 
-*Size a binary MRMC study
+  *Analyze a binary MRMC dataset
+
+  *Size a binary MRMC study
 
 = User Manual =
 
