@@ -1,4 +1,4 @@
-#Summary A Matlab software package for simulating, analyzing, and sizing a multi-reader multi-case reader study with binary assessments.
+#summary A Matlab software package for simulating, analyzing, and sizing a multi-reader multi-case reader study with binary assessments.
 
 = Summary =
 This software package provides tools that allow you:
@@ -23,9 +23,8 @@ Please read the user manual for useful information. See below for the current ve
   * References
 
 
-
 = Download =
 
-Click to download application (imrmc-v2p3.jar) 
+Click to download self-extracting package [http://imrmc.googlecode.com/svn/standalone_application/iMRMC_Binary_pkg.exe] (iMRMC_Binary_pkg.exe) 
 
 Click to download user manual (iMRMCUserGuide-v2p1.pdf) 
