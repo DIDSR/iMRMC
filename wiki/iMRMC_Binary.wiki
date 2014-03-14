@@ -27,4 +27,4 @@ Please read the user manual for useful information. See below for the current ve
 
 [http://imrmc.googlecode.com/svn/standalone_application/iMRMC_Binary_pkg.exe Click to download self-extracting package (iMRMC_Binary_pkg.exe)]  
 
-[http://imrmc.googlecode.com/svn/standalone_application/iMRMC_Binary_UserManual.pdf Click to download user manual (iMRMCUserGuide-v2p1.pdf)] 
+[http://imrmc.googlecode.com/svn/standalone_application/iMRMC_Binary_UserManual.pdf Click to download user manual (iMRMC_Binary_UserManual.pdf)] 
