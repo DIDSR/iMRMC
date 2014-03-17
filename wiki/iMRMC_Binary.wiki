@@ -10,7 +10,7 @@ This software package provides tools that allow you:
   * Size a binary MRMC study
 
 = User Manual =
-Please read the user manual for useful information. The user manual contains 
+Please read the [http://imrmc.googlecode.com/svn/standalone_application/iMRMC_Binary_UserManual.pdf user manual] for useful information. The user manual contains 
 
 	
 
@@ -21,6 +21,14 @@ Please read the user manual for useful information. The user manual contains
   * Summary of methods for data analysis and sizing 
 
   * References
+
+= Current Version =
+
+Version 1.0 Beta posted on March 16, 2014.
+
+The current version of the software package provieds functions for a fully-crossed design, i.e., every reader reads every case for both modalities under comparison. References are given in the user manual for alternative study designs.
+
+The software package can run in Matlab or Octave (free).
 
 
 = Downloads =
