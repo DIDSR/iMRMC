@@ -12,6 +12,17 @@ Here are some sample {{{*}}}.imrmc input files that you can use to try the softw
 *[http://imrmc.googlecode.com/svn/standalone_application/FilesTest-iMRMC Click to download raw data input files (*.imrmc)]* <br>
 
 <br>
+=Version 2p4=
+posted 2014-03-28
+
+Power and sizing analysis disabled while it goes through a detailed validation. <br>
+Database input method disabled as it undergoes a remake. Consequently, this version does not require a database folder or .jdb files.
+
+*[http://imrmc.googlecode.com/svn/standalone_application/iMRMC-v2p4.jar Click to download application (imrmc-v2p4.jar)]*
+
+*[http://imrmc.googlecode.com/svn/standalone_application/iMRMCuserguide-v2p1.pdf Click to download user manual (iMRMCUserGuide-v2p1.pdf)]* <br>
+
+<br>
 =Version 2p3=
 posted 2014-03-05
 
