@@ -32,7 +32,6 @@ import java.text.DecimalFormat;
  * @author Xin He, Ph.D,
  * @author Brandon D. Gallas, Ph.D
  * @author Rohan Pathare
- * @version 2.0b
  */
 public class DBRecord {
 	private String recordDesc = "";
@@ -375,25 +374,6 @@ public class DBRecord {
 
 		checkStudyDesign();
 
-		String[] descLines = recordDesc.split("\n");
-
-		int i = 0;
-		while (descLines[i].equals("BEGIN DATA")) {
-			String descLine = descLines[i];
-			if (descLine.startsWith("*  Modal")
-					|| descLine.startsWith("*  MODAL")) {
-				String[] tempStr2 = descLine.split(",");
-				Modality[0] = tempStr2[1];
-				Modality[1] = tempStr2[2];
-			}
-			if (descLine.startsWith("*  Task")
-					|| descLine.startsWith("*  TASK")) {
-				String[] tempStr2 = descLine.split(",");
-				Task = tempStr2[1];
-			}
-			i++;
-		}
-
 		BDG = inputFile.getBDG();
 		BDGbias = inputFile.getBDGbias();
 		BDGcoeff = inputFile.getBDGcoeff();
@@ -441,8 +421,6 @@ public class DBRecord {
 			BCKbias = BCK;
 			DBMbias = DBM;
 			ORbias = OR;
-			BDG[3] = BDG[0];
-			BCK[3] = BCK[0];
 			DBM[3][0] = 0;
 			DBM[3][1] = 0;
 			DBM[3][2] = 0;
@@ -464,8 +442,6 @@ public class DBRecord {
 			BCKbias = BCK;
 			DBMbias = DBM;
 			ORbias = OR;
-			BDG[3] = BDG[0];
-			BCK[3] = BCK[0];
 			DBM[3][0] = 0;
 			DBM[3][1] = 0;
 			DBM[3][2] = 0;
@@ -789,7 +765,7 @@ public class DBRecord {
 		c[5] = 1.0 / (N1 * NR);
 		c[6] = 1.0 / (N0 * N1 * NR);
 
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 3; i++)
 			tmp[i] = Matrix.dotProduct(BCK[i], c);
 
 		double[][] alpha = new double[][] { { 0, 1, 0 }, { 0, 1, 0 },
@@ -801,26 +777,15 @@ public class DBRecord {
 		for (int i = 0; i < 4; i++)
 			for (int j = 0; j < 6; j++)
 				results[i][j] = 0;
-		/*
-		 * results[0][0]=tmp1[0][0]; results[0][1]=tmp1[0][1];
-		 * results[0][2]=tmp1[0][2]; results[1][0]=tmp1[1][0];
-		 * results[1][1]=tmp1[1][1]; results[1][2]=tmp1[1][2];
-		 * results[3][0]=(tmp1[0][0]+tmp1[1][0])/2.0;
-		 * results[3][1]=(tmp1[0][1]+tmp1[1][1])/2.0;
-		 * results[3][2]=(tmp1[0][2]+tmp1[1][2])/2.0;
-		 * results[3][3]=(tmp1[0][0]+tmp1[1][0])/2.0-tmp1[2][0];
-		 * results[3][4]=(tmp1[0][1]+tmp1[1][1])/2.0-tmp1[2][1];
-		 * results[3][5]=(tmp1[0][2]+tmp1[1][2])/2.0-tmp1[2][2];
-		 */
+
 		results[0][0] = tmp1[0][0];
 		results[0][1] = tmp1[0][1] * (N0 + N1);
 		results[0][2] = tmp1[0][2] * (N0 + N1);
+
 		results[1][0] = tmp1[1][0];
 		results[1][1] = tmp1[1][1] * (N0 + N1);
 		results[1][2] = tmp1[1][2] * (N0 + N1);
-		// results[3][0]=(tmp1[0][0]+tmp1[1][0])/2.0;
-		// results[3][1]=(tmp1[0][1]+tmp1[1][1])/2.0*(N0+N1);
-		// results[3][2]=(tmp1[0][2]+tmp1[1][2])/2.0*(N0+N1);
+
 		results[3][0] = tmp1[2][0];
 		results[3][1] = tmp1[2][1] * (N0 + N1);
 		results[3][2] = tmp1[2][2] * (N0 + N1);
@@ -845,12 +810,12 @@ public class DBRecord {
 	 * @return Matrix of BCK representation of variance components
 	 */
 	public static double[][] BDG2BCK(double[][] BDG) {
-		double[][] c = new double[4][7];
+		double[][] c = new double[3][7];
 		double[][] BAlpha = new double[][] { { 0, 0, 0, 0, 0, 0, 1, -1 },
 				{ 0, 0, 0, 0, 0, 1, 0, -1 }, { 0, 0, 0, 0, 1, -1, -1, 1 },
 				{ 0, 0, 0, 1, 0, 0, 0, -1 }, { 0, 0, 1, -1, 0, 0, -1, 1 },
 				{ 0, 1, 0, -1, 0, -1, 0, 1 }, { 1, -1, -1, 1, -1, 1, 1, -1 } };
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 3; i++)
 			for (int j = 0; j < 7; j++)
 				c[i][j] = 0;
 		c = Matrix.matrixTranspose(Matrix.multiply(BAlpha,

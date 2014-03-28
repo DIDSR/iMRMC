@@ -31,13 +31,12 @@ import mrmc.core.Matrix;
  * sim_roemetz.pro (Brandon D. Gallas, PhD)
  * 
  * @author Rohan Pathare
- * @version 2.0b
  */
 public class SimRoeMetz {
-	private double[][] t00;
-	private double[][] t01;
-	private double[][] t10;
-	private double[][] t11;
+	private double[][] tA0;
+	private double[][] tB0;
+	private double[][] tA1;
+	private double[][] tB1;
 	private double[] auc;
 	private double[][] BDG;
 	private double[][] BCK;
@@ -224,17 +223,17 @@ public class SimRoeMetz {
 	 * 
 	 * @return Simulated scores for truth=0, modality=0
 	 */
-	public double[][] gett00() {
-		return t00;
+	public double[][] gettA0() {
+		return tA0;
 	}
 
 	/**
 	 * Get the simulated scores for disease cases, modality 0
 	 * 
-	 * @return Simulated scores for truth=1, modality=0
+	 * @return Simulated scores for modality=A, truth=1 
 	 */
-	public double[][] gett10() {
-		return t10;
+	public double[][] gettA1() {
+		return tA1;
 	}
 
 	/**
@@ -242,8 +241,8 @@ public class SimRoeMetz {
 	 * 
 	 * @return Simulated scores for truth=0, modality=1
 	 */
-	public double[][] gett01() {
-		return t01;
+	public double[][] gettB0() {
+		return tB0;
 	}
 
 	/**
@@ -251,14 +250,14 @@ public class SimRoeMetz {
 	 * 
 	 * @return Simulated scores for truth=1, modality=1
 	 */
-	public double[][] gett11() {
-		return t11;
+	public double[][] gettB1() {
+		return tB1;
 	}
 
 	/**
 	 * Performs one simulation experiment based on the Roe & Metz model
-	 * generalized for 18 variances. Fills four t-matrices (class members t00,
-	 * t01, t10, t11) with results
+	 * generalized for 18 variances. Fills four t-matrices (class members tA0,
+	 * tB0, tA1, tB1) with results
 	 * 
 	 * @param rand Random number generator initialized with seed from GUI. No
 	 *            guarantee that the generator is at any particular position
@@ -270,18 +269,18 @@ public class SimRoeMetz {
 			stdDevs[i] = Math.sqrt(var_t[i]);
 		}
 
-		double[] R00 = fillGaussian(stdDevs[0], rand, nr);
-		double[] C00 = fillGaussian(stdDevs[1], rand, n0);
-		double[][] RC00 = fillGaussian(stdDevs[2], rand, nr, n0);
-		double[] R10 = fillGaussian(stdDevs[3], rand, nr);
-		double[] C10 = fillGaussian(stdDevs[4], rand, n1);
-		double[][] RC10 = fillGaussian(stdDevs[5], rand, nr, n1);
-		double[] R01 = fillGaussian(stdDevs[6], rand, nr);
-		double[] C01 = fillGaussian(stdDevs[7], rand, n0);
-		double[][] RC01 = fillGaussian(stdDevs[8], rand, nr, n0);
-		double[] R11 = fillGaussian(stdDevs[9], rand, nr);
-		double[] C11 = fillGaussian(stdDevs[10], rand, n1);
-		double[][] RC11 = fillGaussian(stdDevs[11], rand, nr, n1);
+		double[] RA0 = fillGaussian(stdDevs[0], rand, nr);
+		double[] CA0 = fillGaussian(stdDevs[1], rand, n0);
+		double[][] RCA0 = fillGaussian(stdDevs[2], rand, nr, n0);
+		double[] RA1 = fillGaussian(stdDevs[3], rand, nr);
+		double[] CA1 = fillGaussian(stdDevs[4], rand, n1);
+		double[][] RCA1 = fillGaussian(stdDevs[5], rand, nr, n1);
+		double[] RB0 = fillGaussian(stdDevs[6], rand, nr);
+		double[] CB0 = fillGaussian(stdDevs[7], rand, n0);
+		double[][] RCB0 = fillGaussian(stdDevs[8], rand, nr, n0);
+		double[] RB1 = fillGaussian(stdDevs[9], rand, nr);
+		double[] CB1 = fillGaussian(stdDevs[10], rand, n1);
+		double[][] RCB1 = fillGaussian(stdDevs[11], rand, nr, n1);
 		double[] R0 = fillGaussian(stdDevs[12], rand, nr);
 		double[] C0 = fillGaussian(stdDevs[13], rand, n0);
 		double[][] RC0 = fillGaussian(stdDevs[14], rand, nr, n0);
@@ -289,50 +288,36 @@ public class SimRoeMetz {
 		double[] C1 = fillGaussian(stdDevs[16], rand, n1);
 		double[][] RC1 = fillGaussian(stdDevs[17], rand, nr, n1);
 
-		t00 = new double[nr][n0];
-		t01 = new double[nr][n0];
-		t10 = new double[nr][n1];
-		t11 = new double[nr][n1];
+		tA0 = new double[nr][n0];
+		tB0 = new double[nr][n0];
+		tA1 = new double[nr][n1];
+		tB1 = new double[nr][n1];
 
 		for (int i = 0; i < nr; i++) {
-			Arrays.fill(t10[i], u0);
-			Arrays.fill(t11[i], u1);
+			Arrays.fill(tA1[i], u0);
+			Arrays.fill(tB1[i], u1);
 		}
 
 		for (int r = 0; r < nr; r++) {
 			for (int i = 0; i < n0; i++) {
-				t00[r][i] += R0[r];
-				t00[r][i] += R00[r];
-				t01[r][i] += R0[r];
-				t01[r][i] += R01[r];
-
-				t00[r][i] += C0[i];
-				t00[r][i] += C00[i];
-				t01[r][i] += C0[i];
-				t01[r][i] += C01[i];
+				tA0[r][i] += R0[r] + C0[i] + RA0[r] + CA0[i];
+				tB0[r][i] += R0[r] + C0[i] + RB0[r] + CB0[i];
 			}
 			for (int j = 0; j < n1; j++) {
-				t10[r][j] += R1[r];
-				t10[r][j] += R10[r];
-				t11[r][j] += R1[r];
-				t11[r][j] += R11[r];
-
-				t10[r][j] += C1[j];
-				t10[r][j] += C10[j];
-				t11[r][j] += C1[j];
-				t11[r][j] += C11[j];
+				tA1[r][j] += R1[r] + C1[j] + RA1[r] + CA1[j];
+				tB1[r][j] += R1[r] + C1[j] + RB1[r] + CB1[j];
 			}
 		}
 
-		t00 = Matrix.matrixAdd(t00, RC0);
-		t01 = Matrix.matrixAdd(t01, RC0);
-		t00 = Matrix.matrixAdd(t00, RC00);
-		t01 = Matrix.matrixAdd(t01, RC01);
+		tA0 = Matrix.matrixAdd(tA0, RC0);
+		tB0 = Matrix.matrixAdd(tB0, RC0);
+		tA0 = Matrix.matrixAdd(tA0, RCA0);
+		tB0 = Matrix.matrixAdd(tB0, RCB0);
 
-		t10 = Matrix.matrixAdd(t10, RC1);
-		t11 = Matrix.matrixAdd(t11, RC1);
-		t10 = Matrix.matrixAdd(t10, RC10);
-		t11 = Matrix.matrixAdd(t11, RC11);
+		tA1 = Matrix.matrixAdd(tA1, RC1);
+		tB1 = Matrix.matrixAdd(tB1, RC1);
+		tA1 = Matrix.matrixAdd(tA1, RCA1);
+		tB1 = Matrix.matrixAdd(tB1, RCB1);
 	}
 
 	/**
@@ -371,43 +356,43 @@ public class SimRoeMetz {
 	 *         variance analysis
 	 */
 	private double[][][][] convertTMatrices() {
-		double[][][] newt00 = new double[n0][nr][2];
-		double[][][] newt01 = new double[n0][nr][2];
-		double[][][] newt10 = new double[n1][nr][2];
-		double[][][] newt11 = new double[n1][nr][2];
+		double[][][] newtA0 = new double[n0][nr][2];
+		double[][][] newtB0 = new double[n0][nr][2];
+		double[][][] newtA1 = new double[n1][nr][2];
+		double[][][] newtB1 = new double[n1][nr][2];
 		double[][][] newt0 = new double[n0][nr][2];
 		double[][][] newt1 = new double[n1][nr][2];
 
-		for (int reader = 0; reader < t00.length; reader++) {
-			for (int cases = 0; cases < t00[reader].length; cases++) {
-				newt00[cases][reader][0] = t00[reader][cases];
-				newt00[cases][reader][1] = t00[reader][cases];
-				newt0[cases][reader][0] = t00[reader][cases];
+		for (int reader = 0; reader < tA0.length; reader++) {
+			for (int cases = 0; cases < tA0[reader].length; cases++) {
+				newtA0[cases][reader][0] = tA0[reader][cases];
+				newtA0[cases][reader][1] = tA0[reader][cases];
+				newt0[cases][reader][0] = tA0[reader][cases];
 			}
 		}
-		for (int reader = 0; reader < t01.length; reader++) {
-			for (int cases = 0; cases < t01[reader].length; cases++) {
-				newt01[cases][reader][0] = t01[reader][cases];
-				newt01[cases][reader][1] = t01[reader][cases];
-				newt0[cases][reader][1] = t01[reader][cases];
+		for (int reader = 0; reader < tB0.length; reader++) {
+			for (int cases = 0; cases < tB0[reader].length; cases++) {
+				newtB0[cases][reader][0] = tB0[reader][cases];
+				newtB0[cases][reader][1] = tB0[reader][cases];
+				newt0[cases][reader][1] = tB0[reader][cases];
 			}
 		}
-		for (int reader = 0; reader < t10.length; reader++) {
-			for (int cases = 0; cases < t10[reader].length; cases++) {
-				newt10[cases][reader][0] = t10[reader][cases];
-				newt10[cases][reader][1] = t10[reader][cases];
-				newt1[cases][reader][0] = t10[reader][cases];
+		for (int reader = 0; reader < tA1.length; reader++) {
+			for (int cases = 0; cases < tA1[reader].length; cases++) {
+				newtA1[cases][reader][0] = tA1[reader][cases];
+				newtA1[cases][reader][1] = tA1[reader][cases];
+				newt1[cases][reader][0] = tA1[reader][cases];
 			}
 		}
-		for (int reader = 0; reader < t11.length; reader++) {
-			for (int cases = 0; cases < t11[reader].length; cases++) {
-				newt11[cases][reader][0] = t11[reader][cases];
-				newt11[cases][reader][1] = t11[reader][cases];
-				newt1[cases][reader][1] = t11[reader][cases];
+		for (int reader = 0; reader < tB1.length; reader++) {
+			for (int cases = 0; cases < tB1[reader].length; cases++) {
+				newtB1[cases][reader][0] = tB1[reader][cases];
+				newtB1[cases][reader][1] = tB1[reader][cases];
+				newt1[cases][reader][1] = tB1[reader][cases];
 			}
 		}
 
-		return new double[][][][] { newt00, newt01, newt10, newt11, newt0,
+		return new double[][][][] { newtA0, newtB0, newtA1, newtB1, newt0,
 				newt1 };
 	}
 

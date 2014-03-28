@@ -29,15 +29,13 @@ import mrmc.core.MRMC;
  * @author Xin He, Ph.D,
  * @author Brandon D. Gallas, Ph.D
  * @author Rohan Pathare
- * @version 2.0b
  */
 public class GUImenubar {
 	private MRMC lst;
 	private JMenuBar menuBar = new JMenuBar();
 	private String Manual = "Dowload manual, sample file, source code and database at\n"
 			+ "https://code.google.com/p/imrmc/\n";
-	private String About = "iMRMC 2.0b\n"
-			+ "Developed by Xin He, Brandon Gallas, and Rohan Pathare\n"
+	private String About = "Developed by Xin He, Brandon Gallas, and Rohan Pathare\n"
 			+ "http://www.fda.gov\n";
 	private String Ref = "1. A Probabilistic Development of the MRMC Method, Eric Clarkson, Matthew A.Kupinski,\n"
 			+ "   Harrison H. Barrett, Academic Radiology. 2006 Mar;13(3):353-62.\n"

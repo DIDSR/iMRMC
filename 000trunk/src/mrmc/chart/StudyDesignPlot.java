@@ -37,7 +37,6 @@ import org.jfree.data.xy.DefaultXYDataset;
  * combination at a given modality
  * 
  * @author Rohan Pathare
- * @version 2.0b
  */
 public class StudyDesignPlot extends JFrame {
 

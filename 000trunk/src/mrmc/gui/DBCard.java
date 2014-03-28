@@ -27,7 +27,6 @@ import java.awt.event.*;
  * @author Xin He, Ph.D,
  * @author Brandon D. Gallas, Ph.D
  * @author Rohan Pathare
- * @version 2.0b
  */
 public class DBCard {
 	private GUInterface gui;

@@ -69,60 +69,27 @@ import roemetz.core.SimRoeMetz;
  * last panel estimates the components of variance for the given input.
  * 
  * @author Rohan Pathare
- * @version 2.0b
  */
 public class RMGUInterface {
 	private final int USE_MLE = 1;
 	private final int NO_MLE = 0;
 	private static RoeMetz appl;
-	private JTextField vR00;
-	private JTextField vC00;
-	private JTextField vRC00;
-	private JTextField vR10;
-	private JTextField vC10;
-	private JTextField vRC10;
-	private JTextField vR01;
-	private JTextField vC01;
-	private JTextField vRC01;
-	private JTextField vR11;
-	private JTextField vC11;
-	private JTextField vRC11;
-	private JTextField vR0;
-	private JTextField vC0;
-	private JTextField vRC0;
-	private JTextField vR1;
-	private JTextField vC1;
-	private JTextField vRC1;
-	private JTextField mu0;
-	private JTextField mu1;
-	private JTextField n0;
-	private JTextField n1;
-	private JTextField nr;
+
+	private JTextField mu0, mu1;
+	private JTextField  v_R0,  v_C0,  v_RC0,  v_R1,  v_C1,  v_RC1;
+	private JTextField v_AR0, v_AC0, v_ARC0, v_AR1, v_AC1, v_ARC1;
+	private JTextField v_BR0, v_BC0, v_BRC0, v_BR1, v_BC1, v_BRC1;
+	private JTextField n0, n1, nr;
+	
+	private JLabel mu0Label, mu1Label;
+	private JLabel n0Label, n1Label, nrLabel;
+	private JLabel  v_R0Label,  v_C0Label,  v_RC0Label,  v_R1Label,  v_C1Label,  v_RC1Label;
+	private JLabel v_AR0Label, v_AC0Label, v_ARC0Label, v_AR1Label, v_AC1Label, v_ARC1Label;
+	private JLabel v_BR0Label, v_BC0Label, v_BRC0Label, v_BR1Label, v_BC1Label, v_BRC1Label;
+	
 	private JTextField numExp;
 	private JTextField seed;
-	private JLabel vR00Label;
-	private JLabel vC00Label;
-	private JLabel vRC00Label;
-	private JLabel vR10Label;
-	private JLabel vC10Label;
-	private JLabel vRC10Label;
-	private JLabel vR01Label;
-	private JLabel vC01Label;
-	private JLabel vRC01Label;
-	private JLabel vR11Label;
-	private JLabel vC11Label;
-	private JLabel vRC11Label;
-	private JLabel vR0Label;
-	private JLabel vC0Label;
-	private JLabel vRC0Label;
-	private JLabel vR1Label;
-	private JLabel vC1Label;
-	private JLabel vRC1Label;
-	private JLabel mu0Label;
-	private JLabel mu1Label;
-	private JLabel n0Label;
-	private JLabel n1Label;
-	private JLabel nrLabel;
+	
 	private JDialog progDialog;
 	private JCheckBox useMLEbox = new JCheckBox("Use MLE?");
 	private int useMLE = NO_MLE;
@@ -133,6 +100,53 @@ public class RMGUInterface {
 	private DecimalFormat threeDecOptE = new DecimalFormat("0.###E0");
 	private DecimalFormat threeDec = new DecimalFormat("0.000");
 	private DecimalFormat threeDecE = new DecimalFormat("0.000E0");
+
+	/**
+	 * Gets the experiment means parameters from the text fields
+	 * 
+	 * @return Array of experiment means parameters
+	 */
+	public double[] getMeans() {
+		return new double[] { Double.valueOf(mu0.getText()),
+				Double.valueOf(mu1.getText()) };
+	}
+
+	/**
+	 * Gets the components of variance from the text fields
+	 * 
+	 * @return Array of components of variance
+	 */
+	public double[] getVariances() {
+		return new double[] { 
+				Double.valueOf(v_AR0.getText()),
+				Double.valueOf(v_AC0.getText()),
+				Double.valueOf(v_ARC0.getText()),
+				Double.valueOf(v_AR1.getText()), 
+				Double.valueOf(v_AC1.getText()),
+				Double.valueOf(v_ARC1.getText()),
+				Double.valueOf(v_BR0.getText()), 
+				Double.valueOf(v_BC0.getText()),
+				Double.valueOf(v_BRC0.getText()),
+				Double.valueOf(v_BR1.getText()), 
+				Double.valueOf(v_BC1.getText()),
+				Double.valueOf(v_BRC1.getText()), 
+				Double.valueOf(v_R0.getText()),
+				Double.valueOf(v_C0.getText()), 
+				Double.valueOf(v_RC0.getText()),
+				Double.valueOf(v_R1.getText()), 
+				Double.valueOf(v_C1.getText()),
+				Double.valueOf(v_RC1.getText()) };
+	}
+
+	/**
+	 * Gets the experiment size parameters from the text fields
+	 * 
+	 * @return Array of experiment size parameters
+	 */
+	public int[] getSizes() {
+		return new int[] { Integer.valueOf(n0.getText()),
+				Integer.valueOf(n1.getText()), Integer.valueOf(nr.getText()) };
+	}
 
 	/**
 	 * Sole constructor for GUI, only invoked by RoeMetz driver class
@@ -154,79 +168,121 @@ public class RMGUInterface {
 		/*
 		 * Panel within cofvInputPanel with description of input, type
 		 */
-		JPanel inputHeader = new JPanel(new FlowLayout());
+		JPanel inputHeaderMeans = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-		JLabel inputDesc = new JLabel(
-				"Input Means, Variances, and Experiment Size: ");
-		inputHeader.add(inputDesc);
+		JLabel inputDescMeans = new JLabel(
+				"Input Means: ");
+		inputHeaderMeans.add(inputDescMeans);
+//		inputHeaderMeans.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+		/*
+		 * Panel within cofvInputPanel with description of input, type
+		 */
+		JPanel inputHeaderVarsO = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+		JLabel inputDescVars = new JLabel(
+				"Input Variances Invariant to Modality: ");
+		inputHeaderVarsO.add(inputDescVars);
+
+		/*
+		 * Panel within cofvInputPanel with description of input, type
+		 */
+		JPanel inputHeaderVarsA = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+		JLabel inputDescVarsA = new JLabel(
+				"Input Variances Specific to Modality A: ");
+		inputHeaderVarsA.add(inputDescVarsA);
+
+		/*
+		 * Panel within cofvInputPanel with description of input, type
+		 */
+		JPanel inputHeaderVarsB = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+		JLabel inputDescVarsB= new JLabel(
+				"Input Variances Specific to Modality B: ");
+		inputHeaderVarsB.add(inputDescVarsB);
+
+		/*
+		 * Panel within cofvInputPanel with description of input, type
+		 */
+		JPanel inputHeaderSize = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+		JLabel inputDescSize= new JLabel(
+				"Input Experiment Size: ");
+		inputHeaderSize.add(inputDescSize);
 
 		initializeInputLabels();
 		initalizeInputFields();
 
 		/*
-		 * Panel within cofvInputPanel with fields to input variances (row 1)
-		 */
-		JPanel varianceFields1 = new JPanel(new FlowLayout());
-		varianceFields1.add(vR00Label);
-		varianceFields1.add(vR00);
-		varianceFields1.add(vC00Label);
-		varianceFields1.add(vC00);
-		varianceFields1.add(vRC00Label);
-		varianceFields1.add(vRC00);
-		varianceFields1.add(vR10Label);
-		varianceFields1.add(vR10);
-		varianceFields1.add(vC10Label);
-		varianceFields1.add(vC10);
-		varianceFields1.add(vRC10Label);
-		varianceFields1.add(vRC10);
-
-		/*
-		 * Panel within cofvInputPanel with fields to input variances (row 2)
-		 */
-		JPanel varianceFields2 = new JPanel(new FlowLayout());
-		varianceFields2.add(vR01Label);
-		varianceFields2.add(vR01);
-		varianceFields2.add(vC01Label);
-		varianceFields2.add(vC01);
-		varianceFields2.add(vRC01Label);
-		varianceFields2.add(vRC01);
-		varianceFields2.add(vR11Label);
-		varianceFields2.add(vR11);
-		varianceFields2.add(vC11Label);
-		varianceFields2.add(vC11);
-		varianceFields2.add(vRC11Label);
-		varianceFields2.add(vRC11);
-
-		/*
-		 * Panel within cofvInputPanel with fields to input variances (row 3)
-		 */
-		JPanel varianceFields3 = new JPanel(new FlowLayout());
-		varianceFields3.add(vR0Label);
-		varianceFields3.add(vR0);
-		varianceFields3.add(vC0Label);
-		varianceFields3.add(vC0);
-		varianceFields3.add(vRC0Label);
-		varianceFields3.add(vRC0);
-		varianceFields3.add(vR1Label);
-		varianceFields3.add(vR1);
-		varianceFields3.add(vC1Label);
-		varianceFields3.add(vC1);
-		varianceFields3.add(vRC1Label);
-		varianceFields3.add(vRC1);
-
-		/*
 		 * Panel to input means
 		 */
-		JPanel meansFields = new JPanel(new FlowLayout());
+		JPanel meansFields = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		meansFields.add(Box.createHorizontalStrut(20));
 		meansFields.add(mu0Label);
 		meansFields.add(mu0);
 		meansFields.add(mu1Label);
 		meansFields.add(mu1);
 
 		/*
+		 * Panel within cofvInputPanel with fields to input variances (row 3)
+		 */
+		JPanel varianceFieldsO = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		varianceFieldsO.add(Box.createHorizontalStrut(20));
+		varianceFieldsO.add(v_R0Label);
+		varianceFieldsO.add(v_R0);
+		varianceFieldsO.add(v_C0Label);
+		varianceFieldsO.add(v_C0);
+		varianceFieldsO.add(v_RC0Label);
+		varianceFieldsO.add(v_RC0);
+		varianceFieldsO.add(v_R1Label);
+		varianceFieldsO.add(v_R1);
+		varianceFieldsO.add(v_C1Label);
+		varianceFieldsO.add(v_C1);
+		varianceFieldsO.add(v_RC1Label);
+		varianceFieldsO.add(v_RC1);
+
+		/*
+		 * Panel within cofvInputPanel with fields to input variances (row 1)
+		 */
+		JPanel varianceFieldsA = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		varianceFieldsA.add(Box.createHorizontalStrut(20));
+		varianceFieldsA.add(v_AR0Label);
+		varianceFieldsA.add(v_AR0);
+		varianceFieldsA.add(v_AC0Label);
+		varianceFieldsA.add(v_AC0);
+		varianceFieldsA.add(v_ARC0Label);
+		varianceFieldsA.add(v_ARC0);
+		varianceFieldsA.add(v_AR1Label);
+		varianceFieldsA.add(v_AR1);
+		varianceFieldsA.add(v_AC1Label);
+		varianceFieldsA.add(v_AC1);
+		varianceFieldsA.add(v_ARC1Label);
+		varianceFieldsA.add(v_ARC1);
+
+		/*
+		 * Panel within cofvInputPanel with fields to input variances (row 2)
+		 */
+		JPanel varianceFieldsB = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		varianceFieldsB.add(Box.createHorizontalStrut(20));
+		varianceFieldsB.add(v_BR0Label);
+		varianceFieldsB.add(v_BR0);
+		varianceFieldsB.add(v_BC0Label);
+		varianceFieldsB.add(v_BC0);
+		varianceFieldsB.add(v_BRC0Label);
+		varianceFieldsB.add(v_BRC0);
+		varianceFieldsB.add(v_BR1Label);
+		varianceFieldsB.add(v_BR1);
+		varianceFieldsB.add(v_BC1Label);
+		varianceFieldsB.add(v_BC1);
+		varianceFieldsB.add(v_BRC1Label);
+		varianceFieldsB.add(v_BRC1);
+
+		/*
 		 * Panel to input experiment size
 		 */
-		JPanel sizeFields = new JPanel(new FlowLayout());
+		JPanel sizeFields = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		sizeFields.add(Box.createHorizontalStrut(20));
 		sizeFields.add(n0Label);
 		sizeFields.add(n0);
 		sizeFields.add(n1Label);
@@ -235,9 +291,9 @@ public class RMGUInterface {
 		sizeFields.add(nr);
 
 		/*
-		 * Panel to populate fields with values
+		 * Panel of buttons controlling input fields
 		 */
-		JPanel populateFields = new JPanel(new FlowLayout());
+		JPanel populateFields = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
 		JButton clearButton = new JButton("Clear Fields");
 		clearButton.addActionListener(new ClearBtnListener());
@@ -246,6 +302,7 @@ public class RMGUInterface {
 		JButton saveFields = new JButton("Save Components to File");
 		saveFields.addActionListener(new SaveFieldsListener());
 
+		populateFields.add(Box.createHorizontalStrut(20));
 		populateFields.add(clearButton);
 		populateFields.add(popFromFile);
 		populateFields.add(saveFields);
@@ -253,11 +310,15 @@ public class RMGUInterface {
 		/*
 		 * Add sub-panels to cofvInputPanel
 		 */
-		cofvInputPanel.add(inputHeader);
-		cofvInputPanel.add(varianceFields1);
-		cofvInputPanel.add(varianceFields2);
-		cofvInputPanel.add(varianceFields3);
+		cofvInputPanel.add(inputHeaderMeans);
 		cofvInputPanel.add(meansFields);
+		cofvInputPanel.add(inputHeaderVarsO);
+		cofvInputPanel.add(varianceFieldsO);
+		cofvInputPanel.add(inputHeaderVarsA);
+		cofvInputPanel.add(varianceFieldsA);
+		cofvInputPanel.add(inputHeaderVarsB);
+		cofvInputPanel.add(varianceFieldsB);
+		cofvInputPanel.add(inputHeaderSize);
 		cofvInputPanel.add(sizeFields);
 		cofvInputPanel.add(populateFields);
 
@@ -270,7 +331,7 @@ public class RMGUInterface {
 		/*
 		 * Panel within simExpPanel to describe function
 		 */
-		JPanel simExpDesc = new JPanel(new FlowLayout());
+		JPanel simExpDesc = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
 		JLabel expLabel = new JLabel("Simulation Experiments:");
 		simExpDesc.add(expLabel);
@@ -278,29 +339,42 @@ public class RMGUInterface {
 		/*
 		 * Panel within simExpPanel to show simulation experiment results
 		 */
-		JPanel simulationExperiment = new JPanel(new FlowLayout());
+		JPanel simulationExperiment = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-		numExp = new JTextField(4);
-		JLabel numExpLabel = new JLabel("# of Experiments");
-		JButton doSimExp = new JButton("Perform Simulation Experiments");
-		doSimExp.addActionListener(new DoSimBtnListener());
 		JLabel seedLabel = new JLabel("Seed for RNG");
 		seed = new JTextField(9);
 		seed.setText(Long.toString(System.currentTimeMillis()));
-		useMLEbox.addItemListener(new UseMLEListener());
-		JButton saveLoc = new JButton("Output Location");
-		saveLoc.addActionListener(new SaveSimulationListener());
 
+		JLabel numExpLabel = new JLabel("# of Experiments");
+		numExp = new JTextField(4);
+		
+		useMLEbox.addItemListener(new UseMLEListener());
+
+		simulationExperiment.add(Box.createHorizontalStrut(20));
 		simulationExperiment.add(seedLabel);
 		simulationExperiment.add(seed);
 		simulationExperiment.add(numExpLabel);
 		simulationExperiment.add(numExp);
 		simulationExperiment.add(useMLEbox);
-		simulationExperiment.add(saveLoc);
-		simulationExperiment.add(doSimExp);
+
+		/*
+		 * Panel within simExpPanel to show simulation experiment results
+		 */
+		JPanel simulationButtonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+		JButton doSimExp = new JButton("Perform Simulation Experiments");
+		doSimExp.addActionListener(new DoSimBtnListener());
+
+		JButton saveLoc = new JButton("Output Location");
+		saveLoc.addActionListener(new SaveSimulationListener());
+
+		simulationButtonsPanel.add(Box.createHorizontalStrut(20));
+		simulationButtonsPanel.add(saveLoc);
+		simulationButtonsPanel.add(doSimExp);
 
 		simExpPanel.add(simExpDesc);
 		simExpPanel.add(simulationExperiment);
+		simExpPanel.add(simulationButtonsPanel);
 
 		/*
 		 * Panel to calculate moments/components of variance
@@ -312,20 +386,21 @@ public class RMGUInterface {
 		/*
 		 * Panel within calculatePanel to describe function
 		 */
-		JPanel cofvResultsDesc = new JPanel(new FlowLayout());
+		JPanel cofvResultsDesc = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		JLabel cofvLabel = new JLabel("Calculate Components of Variance:");
 		cofvResultsDesc.add(cofvLabel);
 
 		/*
 		 * Panel within calculatePanel to display calc Results
 		 */
-		JPanel cofvResults = new JPanel(new FlowLayout());
+		JPanel cofvResults = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
 		JButton doGenRoeMetz = new JButton("Perform Calculation");
 		doGenRoeMetz.addActionListener(new DoGenRoeMetzBtnListener());
 		JButton saveCalcResults = new JButton("Output Location");
 		saveCalcResults.addActionListener(new saveCalcResultsListener());
 
+		cofvResults.add(Box.createHorizontalStrut(20));
 		cofvResults.add(saveCalcResults);
 		cofvResults.add(doGenRoeMetz);
 
@@ -339,47 +414,49 @@ public class RMGUInterface {
 		cp.add(calculatePanel);
 	}
 
+
+
 	/**
 	 * Initialize all text input fields with default placeholder values and
 	 * designate size within GUI
 	 */
 	private void initalizeInputFields() {
-		vR00 = new JTextField("0.166", 4);
-		vR00.setMaximumSize(vR00.getPreferredSize());
-		vC00 = new JTextField("0.166", 4);
-		vC00.setMaximumSize(vC00.getPreferredSize());
-		vRC00 = new JTextField("0.166", 4);
-		vRC00.setMaximumSize(vRC00.getPreferredSize());
-		vR10 = new JTextField("0.166", 4);
-		vR10.setMaximumSize(vR10.getPreferredSize());
-		vC10 = new JTextField("0.166", 4);
-		vC10.setMaximumSize(vC10.getPreferredSize());
-		vRC10 = new JTextField("0.166", 4);
-		vRC10.setMaximumSize(vRC10.getPreferredSize());
-		vR01 = new JTextField("0.166", 4);
-		vR01.setMaximumSize(vR01.getPreferredSize());
-		vC01 = new JTextField("0.166", 4);
-		vC01.setMaximumSize(vC01.getPreferredSize());
-		vRC01 = new JTextField("0.166", 4);
-		vRC01.setMaximumSize(vRC01.getPreferredSize());
-		vR11 = new JTextField("0.166", 4);
-		vR11.setMaximumSize(vR11.getPreferredSize());
-		vC11 = new JTextField("0.166", 4);
-		vC11.setMaximumSize(vC11.getPreferredSize());
-		vRC11 = new JTextField("0.166", 4);
-		vRC11.setMaximumSize(vRC11.getPreferredSize());
-		vR0 = new JTextField("0.166", 4);
-		vR0.setMaximumSize(vR0.getPreferredSize());
-		vC0 = new JTextField("0.166", 4);
-		vC0.setMaximumSize(vC0.getPreferredSize());
-		vRC0 = new JTextField("0.166", 4);
-		vRC0.setMaximumSize(vRC0.getPreferredSize());
-		vR1 = new JTextField("0.166", 4);
-		vR1.setMaximumSize(vR1.getPreferredSize());
-		vC1 = new JTextField("0.166", 4);
-		vC1.setMaximumSize(vC1.getPreferredSize());
-		vRC1 = new JTextField("0.166", 4);
-		vRC1.setMaximumSize(vRC1.getPreferredSize());
+		v_AR0 = new JTextField("0.166", 4);
+		v_AR0.setMaximumSize(v_AR0.getPreferredSize());
+		v_AC0 = new JTextField("0.166", 4);
+		v_AC0.setMaximumSize(v_AC0.getPreferredSize());
+		v_ARC0 = new JTextField("0.166", 4);
+		v_ARC0.setMaximumSize(v_ARC0.getPreferredSize());
+		v_AR1 = new JTextField("0.166", 4);
+		v_AR1.setMaximumSize(v_AR1.getPreferredSize());
+		v_AC1 = new JTextField("0.166", 4);
+		v_AC1.setMaximumSize(v_AC1.getPreferredSize());
+		v_ARC1 = new JTextField("0.166", 4);
+		v_ARC1.setMaximumSize(v_ARC1.getPreferredSize());
+		v_BR0 = new JTextField("0.166", 4);
+		v_BR0.setMaximumSize(v_BR0.getPreferredSize());
+		v_BC0 = new JTextField("0.166", 4);
+		v_BC0.setMaximumSize(v_BC0.getPreferredSize());
+		v_BRC0 = new JTextField("0.166", 4);
+		v_BRC0.setMaximumSize(v_BRC0.getPreferredSize());
+		v_BR1 = new JTextField("0.166", 4);
+		v_BR1.setMaximumSize(v_BR1.getPreferredSize());
+		v_BC1 = new JTextField("0.166", 4);
+		v_BC1.setMaximumSize(v_BC1.getPreferredSize());
+		v_BRC1 = new JTextField("0.166", 4);
+		v_BRC1.setMaximumSize(v_BRC1.getPreferredSize());
+		v_R0 = new JTextField("0.166", 4);
+		v_R0.setMaximumSize(v_R0.getPreferredSize());
+		v_C0 = new JTextField("0.166", 4);
+		v_C0.setMaximumSize(v_C0.getPreferredSize());
+		v_RC0 = new JTextField("0.166", 4);
+		v_RC0.setMaximumSize(v_RC0.getPreferredSize());
+		v_R1 = new JTextField("0.166", 4);
+		v_R1.setMaximumSize(v_R1.getPreferredSize());
+		v_C1 = new JTextField("0.166", 4);
+		v_C1.setMaximumSize(v_C1.getPreferredSize());
+		v_RC1 = new JTextField("0.166", 4);
+		v_RC1.setMaximumSize(v_RC1.getPreferredSize());
 		mu0 = new JTextField("1.5", 4);
 		mu1 = new JTextField("1.0", 4);
 		n0 = new JTextField("20", 4);
@@ -391,26 +468,26 @@ public class RMGUInterface {
 	 * Set text for all labels next to text input fields
 	 */
 	private void initializeInputLabels() {
-		vR00Label = new JLabel("vR00: ");
-		vC00Label = new JLabel("vC00: ");
-		vRC00Label = new JLabel("vRC00: ");
-		vR10Label = new JLabel("vR10: ");
-		vC10Label = new JLabel("vC10: ");
-		vRC10Label = new JLabel("vRC10: ");
-		vR01Label = new JLabel("vR01: ");
-		vC01Label = new JLabel("vC01: ");
-		vRC01Label = new JLabel("vRC01: ");
-		vR11Label = new JLabel("vR11: ");
-		vC11Label = new JLabel("vC11: ");
-		vRC11Label = new JLabel("vRC11: ");
-		vR0Label = new JLabel("vR0: ");
-		vC0Label = new JLabel("vC0: ");
-		vRC0Label = new JLabel("vRC0: ");
-		vR1Label = new JLabel("vR1: ");
-		vC1Label = new JLabel("vC1: ");
-		vRC1Label = new JLabel("vRC1: ");
-		mu0Label = new JLabel("\u00B50: ");
-		mu1Label = new JLabel("\u00B51: ");
+		v_AR0Label = new JLabel("v_AR0: ");
+		v_AC0Label = new JLabel("v_AC0: ");
+		v_ARC0Label = new JLabel("v_ARC0: ");
+		v_AR1Label = new JLabel("v_AR1: ");
+		v_AC1Label = new JLabel("v_AC1: ");
+		v_ARC1Label = new JLabel("v_ARC1: ");
+		v_BR0Label = new JLabel("v_BR0: ");
+		v_BC0Label = new JLabel("v_BC0: ");
+		v_BRC0Label = new JLabel("v_BRC0: ");
+		v_BR1Label = new JLabel("v_BR1: ");
+		v_BC1Label = new JLabel("v_BC1: ");
+		v_BRC1Label = new JLabel("v_BRC1: ");
+		v_R0Label = new JLabel("  v_R0: ");
+		v_C0Label = new JLabel("  v_C0: ");
+		v_RC0Label = new JLabel("  v_RC0: ");
+		v_R1Label = new JLabel("  v_R1: ");
+		v_C1Label = new JLabel("  v_C1: ");
+		v_RC1Label = new JLabel("  v_RC1: ");
+		mu0Label = new JLabel("\u00B5_A: ");
+		mu1Label = new JLabel("\u00B5_B: ");
 		n0Label = new JLabel("n0: ");
 		n1Label = new JLabel("n1: ");
 		nrLabel = new JLabel("nr: ");
@@ -420,24 +497,24 @@ public class RMGUInterface {
 	 * Empty out all text input fields
 	 */
 	private void clearInputs() {
-		vR00.setText("");
-		vC00.setText("");
-		vRC00.setText("");
-		vR10.setText("");
-		vC10.setText("");
-		vRC10.setText("");
-		vR01.setText("");
-		vC01.setText("");
-		vRC01.setText("");
-		vR11.setText("");
-		vC11.setText("");
-		vRC11.setText("");
-		vR0.setText("");
-		vC0.setText("");
-		vRC0.setText("");
-		vR1.setText("");
-		vC1.setText("");
-		vRC1.setText("");
+		v_AR0.setText("");
+		v_AC0.setText("");
+		v_ARC0.setText("");
+		v_AR1.setText("");
+		v_AC1.setText("");
+		v_ARC1.setText("");
+		v_BR0.setText("");
+		v_BC0.setText("");
+		v_BRC0.setText("");
+		v_BR1.setText("");
+		v_BC1.setText("");
+		v_BRC1.setText("");
+		v_R0.setText("");
+		v_C0.setText("");
+		v_RC0.setText("");
+		v_R1.setText("");
+		v_C1.setText("");
+		v_RC1.setText("");
 		mu0.setText("");
 		mu1.setText("");
 		n0.setText("");
@@ -477,122 +554,147 @@ public class RMGUInterface {
 		int counter = 0;
 		while (counter < totalLine) {
 			String tempstr = fileContent.get(counter).toUpperCase();
-			int loc = tempstr.indexOf("R00:");
+			counter++;
+			int loc;
+			
+			loc = tempstr.indexOf("ARC0:");
 			if (loc != -1) {
 				int tmploc = tempstr.indexOf(":");
-				vR00.setText(tempstr.substring(tmploc + 1).trim());
+				v_ARC0.setText(tempstr.substring(tmploc + 1).trim());
+				continue;
 			}
-			loc = tempstr.indexOf("C00:");
+			loc = tempstr.indexOf("ARC1:");
 			if (loc != -1) {
 				int tmploc = tempstr.indexOf(":");
-				vC00.setText(tempstr.substring(tmploc + 1).trim());
+				v_ARC1.setText(tempstr.substring(tmploc + 1).trim());
+				continue;
 			}
-			loc = tempstr.indexOf("RC00:");
+			loc = tempstr.indexOf("BRC0:");
 			if (loc != -1) {
 				int tmploc = tempstr.indexOf(":");
-				vRC00.setText(tempstr.substring(tmploc + 1).trim());
+				v_BRC0.setText(tempstr.substring(tmploc + 1).trim());
+				continue;
 			}
-			loc = tempstr.indexOf("R10:");
+			loc = tempstr.indexOf("BRC1:");
 			if (loc != -1) {
 				int tmploc = tempstr.indexOf(":");
-				vR10.setText(tempstr.substring(tmploc + 1).trim());
-			}
-			loc = tempstr.indexOf("C10:");
-			if (loc != -1) {
-				int tmploc = tempstr.indexOf(":");
-				vC10.setText(tempstr.substring(tmploc + 1).trim());
-			}
-			loc = tempstr.indexOf("RC10:");
-			if (loc != -1) {
-				int tmploc = tempstr.indexOf(":");
-				vRC10.setText(tempstr.substring(tmploc + 1).trim());
-			}
-			loc = tempstr.indexOf("R01:");
-			if (loc != -1) {
-				int tmploc = tempstr.indexOf(":");
-				vR01.setText(tempstr.substring(tmploc + 1).trim());
-			}
-			loc = tempstr.indexOf("C01:");
-			if (loc != -1) {
-				int tmploc = tempstr.indexOf(":");
-				vC01.setText(tempstr.substring(tmploc + 1).trim());
-			}
-			loc = tempstr.indexOf("RC01:");
-			if (loc != -1) {
-				int tmploc = tempstr.indexOf(":");
-				vRC01.setText(tempstr.substring(tmploc + 1).trim());
-			}
-			loc = tempstr.indexOf("R11:");
-			if (loc != -1) {
-				int tmploc = tempstr.indexOf(":");
-				vR11.setText(tempstr.substring(tmploc + 1).trim());
-			}
-			loc = tempstr.indexOf("C11:");
-			if (loc != -1) {
-				int tmploc = tempstr.indexOf(":");
-				vC11.setText(tempstr.substring(tmploc + 1).trim());
-			}
-			loc = tempstr.indexOf("RC11:");
-			if (loc != -1) {
-				int tmploc = tempstr.indexOf(":");
-				vRC11.setText(tempstr.substring(tmploc + 1).trim());
-			}
-			loc = tempstr.indexOf("R0:");
-			if (loc != -1) {
-				int tmploc = tempstr.indexOf(":");
-				vR0.setText(tempstr.substring(tmploc + 1).trim());
-			}
-			loc = tempstr.indexOf("C0:");
-			if (loc != -1) {
-				int tmploc = tempstr.indexOf(":");
-				vC0.setText(tempstr.substring(tmploc + 1).trim());
+				v_BRC1.setText(tempstr.substring(tmploc + 1).trim());
+				continue;
 			}
 			loc = tempstr.indexOf("RC0:");
 			if (loc != -1) {
 				int tmploc = tempstr.indexOf(":");
-				vRC0.setText(tempstr.substring(tmploc + 1).trim());
-			}
-			loc = tempstr.indexOf("R1:");
-			if (loc != -1) {
-				int tmploc = tempstr.indexOf(":");
-				vR1.setText(tempstr.substring(tmploc + 1).trim());
-			}
-			loc = tempstr.indexOf("C1:");
-			if (loc != -1) {
-				int tmploc = tempstr.indexOf(":");
-				vC1.setText(tempstr.substring(tmploc + 1).trim());
+				v_RC0.setText(tempstr.substring(tmploc + 1).trim());
+				continue;
 			}
 			loc = tempstr.indexOf("RC1:");
 			if (loc != -1) {
 				int tmploc = tempstr.indexOf(":");
-				vRC1.setText(tempstr.substring(tmploc + 1).trim());
+				v_RC1.setText(tempstr.substring(tmploc + 1).trim());
+				continue;
 			}
-			loc = tempstr.indexOf("U0:");
+			loc = tempstr.indexOf("AR0:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				v_AR0.setText(tempstr.substring(tmploc + 1).trim());
+				continue;
+			}
+			loc = tempstr.indexOf("AC0:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				v_AC0.setText(tempstr.substring(tmploc + 1).trim());
+				continue;
+			}
+			loc = tempstr.indexOf("AR1:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				v_AR1.setText(tempstr.substring(tmploc + 1).trim());
+				continue;
+			}
+			loc = tempstr.indexOf("AC1:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				v_AC1.setText(tempstr.substring(tmploc + 1).trim());
+				continue;
+			}
+			loc = tempstr.indexOf("BR0:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				v_BR0.setText(tempstr.substring(tmploc + 1).trim());
+				continue;
+			}
+			loc = tempstr.indexOf("BC0:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				v_BC0.setText(tempstr.substring(tmploc + 1).trim());
+				continue;
+			}
+			loc = tempstr.indexOf("BR1:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				v_BR1.setText(tempstr.substring(tmploc + 1).trim());
+				continue;
+			}
+			loc = tempstr.indexOf("BC1:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				v_BC1.setText(tempstr.substring(tmploc + 1).trim());
+				continue;
+			}
+			loc = tempstr.indexOf("R0:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				v_R0.setText(tempstr.substring(tmploc + 1).trim());
+				continue;
+			}
+			loc = tempstr.indexOf("C0:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				v_C0.setText(tempstr.substring(tmploc + 1).trim());
+				continue;
+			}
+			loc = tempstr.indexOf("R1:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				v_R1.setText(tempstr.substring(tmploc + 1).trim());
+				continue;
+			}
+			loc = tempstr.indexOf("C1:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				v_C1.setText(tempstr.substring(tmploc + 1).trim());
+				continue;
+			}
+			loc = tempstr.indexOf("UA:");
 			if (loc != -1) {
 				int tmploc = tempstr.indexOf(":");
 				mu0.setText(tempstr.substring(tmploc + 1).trim());
+				continue;
 			}
-			loc = tempstr.indexOf("U1:");
+			loc = tempstr.indexOf("UB:");
 			if (loc != -1) {
 				int tmploc = tempstr.indexOf(":");
 				mu1.setText(tempstr.substring(tmploc + 1).trim());
+				continue;
 			}
 			loc = tempstr.indexOf("N0:");
 			if (loc != -1) {
 				int tmploc = tempstr.indexOf(":");
 				n0.setText(tempstr.substring(tmploc + 1).trim());
+				continue;
 			}
 			loc = tempstr.indexOf("N1:");
 			if (loc != -1) {
 				int tmploc = tempstr.indexOf(":");
 				n1.setText(tempstr.substring(tmploc + 1).trim());
+				continue;
 			}
 			loc = tempstr.indexOf("NR:");
 			if (loc != -1) {
 				int tmploc = tempstr.indexOf(":");
 				nr.setText(tempstr.substring(tmploc + 1).trim());
+				continue;
 			}
-			counter++;
 		}
 	}
 
@@ -680,26 +782,26 @@ public class RMGUInterface {
 					}
 					FileWriter fw = new FileWriter(f.getAbsoluteFile());
 					BufferedWriter bw = new BufferedWriter(fw);
-					bw.write("R00: " + vR00.getText() + "\n");
-					bw.write("C00: " + vC00.getText() + "\n");
-					bw.write("RC00: " + vRC00.getText() + "\n");
-					bw.write("R10: " + vR10.getText() + "\n");
-					bw.write("C10: " + vC10.getText() + "\n");
-					bw.write("RC10: " + vRC10.getText() + "\n");
-					bw.write("R01: " + vR01.getText() + "\n");
-					bw.write("C01: " + vC01.getText() + "\n");
-					bw.write("RC01: " + vRC01.getText() + "\n");
-					bw.write("R11: " + vR11.getText() + "\n");
-					bw.write("C11: " + vC11.getText() + "\n");
-					bw.write("RC11: " + vRC11.getText() + "\n");
-					bw.write("R0: " + vR0.getText() + "\n");
-					bw.write("C0: " + vC0.getText() + "\n");
-					bw.write("RC0: " + vRC0.getText() + "\n");
-					bw.write("R1: " + vR1.getText() + "\n");
-					bw.write("C1: " + vC1.getText() + "\n");
-					bw.write("RC1: " + vRC1.getText() + "\n");
-					bw.write("u0: " + mu0.getText() + "\n");
-					bw.write("u1: " + mu1.getText() + "\n");
+					bw.write("AR0: " + v_AR0.getText() + "\n");
+					bw.write("AC0: " + v_AC0.getText() + "\n");
+					bw.write("ARC0: " + v_ARC0.getText() + "\n");
+					bw.write("AR1: " + v_AR1.getText() + "\n");
+					bw.write("AC1: " + v_AC1.getText() + "\n");
+					bw.write("ARC1: " + v_ARC1.getText() + "\n");
+					bw.write("BR0: " + v_BR0.getText() + "\n");
+					bw.write("BC0: " + v_BC0.getText() + "\n");
+					bw.write("BRC0: " + v_BRC0.getText() + "\n");
+					bw.write("BR1: " + v_BR1.getText() + "\n");
+					bw.write("BC1: " + v_BC1.getText() + "\n");
+					bw.write("BRC1: " + v_BRC1.getText() + "\n");
+					bw.write("R0: " + v_R0.getText() + "\n");
+					bw.write("C0: " + v_C0.getText() + "\n");
+					bw.write("RC0: " + v_RC0.getText() + "\n");
+					bw.write("R1: " + v_R1.getText() + "\n");
+					bw.write("C1: " + v_C1.getText() + "\n");
+					bw.write("RC1: " + v_RC1.getText() + "\n");
+					bw.write("uA: " + mu0.getText() + "\n");
+					bw.write("uB: " + mu1.getText() + "\n");
 					bw.write("n0: " + n0.getText() + "\n");
 					bw.write("n1: " + n1.getText() + "\n");
 					bw.write("nr: " + nr.getText() + "\n");
@@ -821,8 +923,8 @@ public class RMGUInterface {
 		 * @throws IOException 
 		 */
 		public double[][][] doInBackground() throws IOException {
-			double[][] avgBDGdata = new double[4][8];
-			double[][] avgBCKdata = new double[4][7];
+			double[][] avgBDGdata = new double[3][8];
+			double[][] avgBCKdata = new double[3][7];
 			double[][] avgDBMdata = new double[4][6];
 			double[][] avgORdata = new double[4][6];
 			double[][] avgMSdata = new double[4][6];
@@ -832,8 +934,8 @@ public class RMGUInterface {
 				SimRoeMetz currSim = new SimRoeMetz(u, var_t, n, rand, useMLE);
 
 				if (simSaveDirectory != null && !simSaveDirectory.equals("")) {
-					writeMRMCFile(currSim.gett00(), currSim.gett01(),
-							currSim.gett10(), currSim.gett11(),
+					writeMRMCFile(currSim.gettA0(), currSim.gettB0(),
+							currSim.gettA1(), currSim.gettB1(),
 							currSim.getAUC(), filenameTime,
 							((whichTask * numTimes) + i));
 					writeComponentsFile(currSim.getBDGdata(), n,
@@ -994,8 +1096,8 @@ public class RMGUInterface {
 		public void processResults(String simSaveDirectory, String filenameTime) {
 			progDialog.setVisible(false);
 
-			double[][] avgdBDG = new double[4][8];
-			double[][] avgdBCK = new double[4][7];
+			double[][] avgdBDG = new double[3][8];
+			double[][] avgdBCK = new double[3][7];
 			double[][] avgdDBM = new double[4][6];
 			double[][] avgdOR = new double[4][6];
 			double[][] avgdMS = new double[4][6];
@@ -1192,9 +1294,11 @@ public class RMGUInterface {
 		 */
 		public double[][][] doInBackground() {
 			CalcGenRoeMetz.genRoeMetz(u, var_t, n);
-			return new double[][][] { CalcGenRoeMetz.getBDGdata(),
+			double[][][] results_temp = new double[][][] { CalcGenRoeMetz.getBDGdata(),
 					CalcGenRoeMetz.getBCKdata(), CalcGenRoeMetz.getDBMdata(),
 					CalcGenRoeMetz.getORdata(), CalcGenRoeMetz.getMSdata() };
+			
+			return results_temp;
 		}
 
 		protected void done() {
@@ -1243,7 +1347,8 @@ public class RMGUInterface {
 		}
 
 		/**
-		 * Gets calculation results, calculates decomposition coefficients and
+		 * Gets calculation results, 
+		 * calculates decomposition coefficients and
 		 * calls method to display them in pop-up table
 		 */
 		public void processResults() {
@@ -1855,51 +1960,12 @@ public class RMGUInterface {
 		tabTables.addTab("MS", MSpane);
 		updateBDGpane(BDGpane, 0, allDecomps[0], allCoeffs[0]);
 		updateBCKpane(BCKpane, 0, allDecomps[1], allCoeffs[1]);
-		updateDBMpane(DBMpane, 0, allDecomps[2], allCoeffs[2]);
-		updateORpane(ORpane, 0, allDecomps[3], allCoeffs[3]);
-		updateMSpane(MSpane, 0, allDecomps[4], allCoeffs[4]);
+// TODO
+//		updateDBMpane(DBMpane, 0, allDecomps[2], allCoeffs[2]);
+//		updateORpane(ORpane, 0, allDecomps[3], allCoeffs[3]);
+//		updateMSpane(MSpane, 0, allDecomps[4], allCoeffs[4]);
 
 		return tabTables;
-	}
-
-	/**
-	 * Gets the experiment size parameters from the text fields
-	 * 
-	 * @return Array of experiment size parameters
-	 */
-	public int[] getSizes() {
-		return new int[] { Integer.valueOf(n0.getText()),
-				Integer.valueOf(n1.getText()), Integer.valueOf(nr.getText()) };
-	}
-
-	/**
-	 * Gets the experiment means parameters from the text fields
-	 * 
-	 * @return Array of experiment means parameters
-	 */
-	public double[] getMeans() {
-		return new double[] { Double.valueOf(mu0.getText()),
-				Double.valueOf(mu1.getText()) };
-	}
-
-	/**
-	 * Gets the components of variance from the text fields
-	 * 
-	 * @return Array of components of variance
-	 */
-	public double[] getVariances() {
-		return new double[] { Double.valueOf(vR00.getText()),
-				Double.valueOf(vC00.getText()),
-				Double.valueOf(vRC00.getText()),
-				Double.valueOf(vR10.getText()), Double.valueOf(vC10.getText()),
-				Double.valueOf(vRC10.getText()),
-				Double.valueOf(vR01.getText()), Double.valueOf(vC01.getText()),
-				Double.valueOf(vRC01.getText()),
-				Double.valueOf(vR11.getText()), Double.valueOf(vC11.getText()),
-				Double.valueOf(vRC11.getText()), Double.valueOf(vR0.getText()),
-				Double.valueOf(vC0.getText()), Double.valueOf(vRC0.getText()),
-				Double.valueOf(vR1.getText()), Double.valueOf(vC1.getText()),
-				Double.valueOf(vRC1.getText()) };
 	}
 
 	/**
@@ -1932,10 +1998,13 @@ public class RMGUInterface {
 	 */
 	private void updateBDGpane(JComponent BDGpane, int mod, double[][] BDG,
 			double[][] BDGcoeff) {
+		
 		JTable table = (JTable) BDGpane.getComponent(1);
 		JLabel varLabel = (JLabel) BDGpane.getComponent(2);
-		double[][] BDGdata = new double[3][8];
+		double[][] BDGdata = new double[7][8];
 		double[][] tempBDGTab = DBRecord.getBDGTab(mod, BDG, BDGcoeff);
+		String output1 = "sqrt(Var) = ";
+		
 		if (mod == 0) {
 			BDGdata[0] = tempBDGTab[0];
 			BDGdata[1] = tempBDGTab[1];
@@ -1945,16 +2014,21 @@ public class RMGUInterface {
 		} else if (mod == 3) {
 			BDGdata[0] = tempBDGTab[4];
 			BDGdata[1] = Matrix.scaleVector(tempBDGTab[5], 0.5);
+			output1 = "sqrt(Cov) = ";
 		}
-		BDGdata[2] = tempBDGTab[6];
-		double currVar = Matrix.total(tempBDGTab[6]);
+
+		double currVar = 0.0;
+		for (int j = 0; j < 8; j++) {
+			BDGdata[2][j] = BDGdata[0][j]*BDGdata[1][j];
+			currVar = currVar + BDGdata[2][j];
+		}
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 8; j++) {
 				table.setValueAt(threeDecOptE.format(BDGdata[i][j]), i, j + 1);
 			}
 		}
 		String output = threeDec.format(Math.sqrt(currVar));
-		varLabel.setText("sqrt(Var) = " + output);
+		varLabel.setText(output1 + output);
 	}
 
 	/**
@@ -1971,6 +2045,8 @@ public class RMGUInterface {
 		JLabel varLabel = (JLabel) BCKpane.getComponent(2);
 		double[][] BCKdata = new double[3][7];
 		double[][] tempBCKTab = DBRecord.getBCKTab(mod, BCK, BCKcoeff);
+		String output1 = "sqrt(Var) = ";
+		
 		if (mod == 0) {
 			BCKdata[0] = tempBCKTab[0];
 			BCKdata[1] = tempBCKTab[1];
@@ -1980,16 +2056,31 @@ public class RMGUInterface {
 		} else if (mod == 3) {
 			BCKdata[0] = tempBCKTab[4];
 			BCKdata[1] = Matrix.scaleVector(tempBCKTab[5], 0.5);
+			output1 = "sqrt(Cov) = ";
 		}
-		BCKdata[2] = tempBCKTab[6];
-		double currVar = Matrix.total(tempBCKTab[6]);
+
+		double currVar = 0.0;
+		for (int j = 0; j < 7; j++) {
+			BCKdata[2][j] = BCKdata[0][j]*BCKdata[1][j];
+			currVar = currVar + BCKdata[2][j];
+		}
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 7; j++) {
 				table.setValueAt(threeDecOptE.format(BCKdata[i][j]), i, j + 1);
 			}
 		}
 		String output = threeDec.format(Math.sqrt(currVar));
-		varLabel.setText("sqrt(Var) = " + output);
+		varLabel.setText(output1 + output);
+		
+//		BCKdata[2] = tempBCKTab[6];
+//		double currVar = Matrix.total(tempBCKTab[6]);
+//		for (int i = 0; i < 3; i++) {
+//			for (int j = 0; j < 7; j++) {
+//				table.setValueAt(threeDecOptE.format(BCKdata[i][j]), i, j + 1);
+//			}
+//		}
+//		String output = threeDec.format(Math.sqrt(currVar));
+//		varLabel.setText(output1 + output);
 	}
 
 	/**

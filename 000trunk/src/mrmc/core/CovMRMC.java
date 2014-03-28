@@ -24,7 +24,6 @@ package mrmc.core;
  * @author Xin He, Ph.D,
  * @author Brandon D. Gallas, Ph.D
  * @author Rohan Pathare
- * @version 2.0b
  */
 public class CovMRMC {
 	private int Reader, Normal, Disease;

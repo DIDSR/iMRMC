@@ -31,7 +31,6 @@ import java.awt.*;
  * @author Xin He, Ph.D,
  * @author Brandon D. Gallas, Ph.D
  * @author Rohan Pathare
- * @version 2.0b
  */
 public class MRMC extends JApplet {
 	/**
@@ -81,7 +80,7 @@ public class MRMC extends JApplet {
 		resize(6, 6);
 
 		// create the database
-		db = new MrmcDB();
+//		db = new MrmcDB();
 
 		Container cp = getContentPane();
 		// Create the interface
@@ -123,7 +122,7 @@ public class MRMC extends JApplet {
 	 * @param height Height of the application frame in pixels
 	 */
 	public static void run(JApplet applet, int width, int height) {
-		mrmcFrame = new JFrame("iMRMC 2.3");
+		mrmcFrame = new JFrame("iMRMC Version 2p4");
 		mrmcFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mrmcFrame.getContentPane().add(applet);
 		mrmcFrame.pack();

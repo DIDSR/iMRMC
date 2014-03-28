@@ -33,7 +33,6 @@ import javax.swing.JOptionPane;
  * @author Xin He, Ph.D,
  * @author Brandon D. Gallas, Ph.D
  * @author Rohan Pathare
- * @version 2.0b
  */
 public class MrmcDB {
 	private String path; 					// path to db directory

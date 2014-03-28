@@ -28,7 +28,6 @@ import roemetz.gui.RMGUInterface;
  * Entry point of iRoeMetz application
  * 
  * @author Rohan Pathare
- * @version 2.0b
  */
 public class RoeMetz extends JApplet {
 
@@ -74,7 +73,7 @@ public class RoeMetz extends JApplet {
 		} catch (UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
 		}
-		run(new RoeMetz(), 900, 450);
+		run(new RoeMetz(), 900, 500);
 	}
 
 	/**
@@ -86,7 +85,7 @@ public class RoeMetz extends JApplet {
 	 * @param height Height of the application frame in pixels
 	 */
 	public static void run(JApplet applet, int width, int height) {
-		iRMFrame = new JFrame("iRoeMetz 2.0b");
+		iRMFrame = new JFrame("iRoeMetz 2.0");
 		iRMFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		iRMFrame.getContentPane().add(applet);
 		iRMFrame.pack();

@@ -64,7 +64,6 @@ import org.jfree.ui.RefineryUtilities;
  * @author Xin He, Ph.D,
  * @author Brandon D. Gallas, Ph.D
  * @author Rohan Pathare
- * @version 2.0b
  */
 @SuppressWarnings("unused")
 public class GUInterface {
@@ -77,12 +76,20 @@ public class GUInterface {
 	final static int USE_MLE = 1;
 	final static int NO_MLE = 0;
 	final static String NO_MOD = "NO_MOD";
-	final static int SELECT_DB = 0;
-	final static int SELECT_FILE = 1;
-	final static int SELECT_MAN = 2;
+	final static String SELECT_DB = "DB";
+	final static String SELECT_FILE = "FILE";
+	final static String SELECT_MANUAL = "MAN";
+	private int selectedDB = 0;
+	private int selectedMod = 0;
+	private String selectedInput = "FILE";
+	private int selectedSummary = 0;
+	private boolean hasNegative = false;
+	private int useMLE = 0;
+	private int SummaryUseMLE = 0;
+
 	private JTextField pilotFile;
 	private String filename = "";
-	private MRMC lst;
+	private MRMC MRMCobject;
 	private MrmcDB fdaDB;
 	InputFile usr;
 	private DBRecord[] Records;
@@ -121,13 +128,6 @@ public class GUInterface {
 	private JLabel confInt;
 	private JLabel dfBDG;
 	private JLabel sizedDFBDG;
-	private int selectedDB = 0;
-	private int selectedMod = 0;
-	private int selectedInput = 0;
-	private int selectedSummary = 0;
-	private boolean hasNegative = false;
-	private int useMLE = 0;
-	private int SummaryUseMLE = 0;
 
 	DecimalFormat twoDec = new DecimalFormat("0.00");
 	DecimalFormat threeDec = new DecimalFormat("0.000");
@@ -184,7 +184,7 @@ public class GUInterface {
 	 * 
 	 * @return Input source
 	 */
-	public int getSelectedInput() {
+	public String getSelectedInput() {
 		return selectedInput;
 	}
 
@@ -245,13 +245,13 @@ public class GUInterface {
 		currMod0 = NO_MOD;
 		currMod1 = NO_MOD;
 		setUseMLE(NO_MLE);
-		DBC.setUseMLE(NO_MLE);
+//		DBC.setUseMLE(NO_MLE);
 		RSC.setUseMLE(NO_MLE);
 		RSC.resetModPanel();
 		setTabTitlesBiased(1, false);
 		setTabTitlesBiased(2, false);
 		// Modality on MS
-		DBC.setSelectedMod(0);
+//		DBC.setSelectedMod(0);
 		RSC.setSelectedMod(0);
 		enableTabs();
 		MC.reset();
@@ -373,7 +373,7 @@ public class GUInterface {
 			tempRecord = Records[selectedDB];
 		else if (selectedInput == SELECT_FILE)
 			tempRecord = usrFile;
-		else if (selectedInput == SELECT_MAN) {
+		else if (selectedInput == SELECT_MANUAL) {
 			tempRecord = MC.getManualRecord();
 		}
 		return tempRecord;
@@ -484,9 +484,11 @@ public class GUInterface {
 		int numSplitPlots = splitPlotPairParms[0];
 		int pairedReaders = splitPlotPairParms[1];
 		int pairedCases = splitPlotPairParms[2];
+		
 		DBRecord tempRecord = getCurrentRecord();
+
 		if (tempRecord == null) {
-			JOptionPane.showMessageDialog(lst.getFrame(),
+			JOptionPane.showMessageDialog(MRMCobject.getFrame(),
 					"Must perform variance analysis first.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
@@ -497,7 +499,8 @@ public class GUInterface {
 		int[][][][] design = createSplitPlotDesign(newR, newN, newD,
 				numSplitPlots, pairedReaders, pairedCases);
 
-		double[][] BDGcoeff = usrFile.getBDGcoeff();
+//		double[][] BDGcoeff = usrFile.getBDGcoeff();
+		double[][] BDGcoeff = DBRecord.genBDGCoeff(newR,  newN,  newD);
 		double[][] BCKcoeff = DBRecord.genBCKCoeff(newR, newN, newD,
 				BDGcoeff[0]);
 		double[][] DBMcoeff = DBRecord.genDBMCoeff(newR, newN, newD);
@@ -509,12 +512,12 @@ public class GUInterface {
 		double[][] DBM = new double[4][6];
 		double[][] OR = new double[4][6];
 		double[][] MS = new double[4][6];
-		if (selectedInput == SELECT_MAN && MC.getSelectedManualComp() != 0) {
+		if (selectedInput == SELECT_MANUAL && MC.getSelectedManualComp() != 0) {
 			BDG = tempRecord.getBDG(NO_MLE);
 			if (MC.getSelectedManualComp() == 1) {
 				// ******* Brandon's new formula
 				// BCK = tempRecord.getBCK(0);
-				// JFrame frame = lst.getFrame();
+				// JFrame frame = MRMCobject.getFrame();
 				// JOptionPane.showMessageDialog(frame,
 				// "This function is not implemented for BCK manual input",
 				// "error",
@@ -554,7 +557,7 @@ public class GUInterface {
 			MS = DBRecord.DBM2MS(DBM, newR, newN, newD);
 		}
 
-		if (selectedInput == SELECT_MAN) {
+		if (selectedInput == SELECT_MANUAL) {
 			BDG[3] = BDG[0];
 			BCK[3] = BCK[0];
 			DBM[3][0] = 0;
@@ -612,8 +615,9 @@ public class GUInterface {
 			var[2] = DBM[3][5];
 		}
 
+//		double[][] BCKbias = DBRecord.getBCKTab(selectedMod, BCK, BCKcoeff);
 		StatTest sizingStat = new StatTest(var, newR, newN, newD, sig, eff,
-				BDGv, tempRecord.getBCK(USE_MLE), aucs, selectedMod);
+				BDGv, tempRecord.getBCK(NO_MLE), aucs, selectedMod);
 		output = twoDec.format(sizingStat.getZPower());
 		ZPower.setText("  Power(Z test)= " + output);
 		output = fourDec.format(sizingStat.getCI()[0]);
@@ -1081,17 +1085,19 @@ public class GUInterface {
 	/**
 	 * Sole constructor, builds and displays the GUI
 	 * 
-	 * @param lsttemp Application frame
+	 * @param MRMCobjectTemp Application frame
 	 * @param cp Container for GUI elements
 	 */
-	public GUInterface(MRMC lsttemp, Container cp) {
-		lst = lsttemp;
+	public GUInterface(MRMC MRMCobjectTemp, Container cp) {
+		MRMCobject = MRMCobjectTemp;
 		cp.setLayout(new BoxLayout(cp, BoxLayout.Y_AXIS));
 
 		JPanel inputSelectPane = new JPanel();
 		inputSelectPane.setLayout(new FlowLayout());
 		JLabel inLabel = new JLabel("Select an input method: ");
-		String comboBoxItems[] = { DB, Pilot, Manual };
+//		String comboBoxItems[] = { DB, Pilot, Manual };
+//		String comboBoxItems[] = { Pilot, Manual };
+		String comboBoxItems[] = { Pilot };
 		
 //		JComboBox cb = new JComboBox(comboBoxItems);
 		JComboBox<String> cb = new JComboBox<String>(comboBoxItems);
@@ -1104,22 +1110,22 @@ public class GUInterface {
 		inputSelectPane.add(cb);
 		inputSelectPane.add(buttonReset);
 
-		// create DB panel
-		JPanel dbCard = createDBPanel();
 
 		// create pilot/raw study panel
 		JPanel pilotCard = createPilotPanel();
 
 		// create manual panel
 		JPanel manualCard = new JPanel();
-		MC = new ManualCard(manualCard, this, lst);
+		MC = new ManualCard(manualCard, this, MRMCobject);
 
 		// ***********************************************************************
 		// ***********Create the panel that contains the
 		// "cards".*****************
 		// ***********************************************************************
+		// create DB panel
+//		JPanel dbCard = createDBPanel();
 		inputCards = new JPanel(new CardLayout());
-		inputCards.add(dbCard, DB);
+//		inputCards.add(dbCard, DB);
 		inputCards.add(pilotCard, Pilot);
 		inputCards.add(manualCard, Manual);
 
@@ -1214,7 +1220,7 @@ public class GUInterface {
 		// *************Generate Sizing panel*********************************
 		// *******************************************************************
 		JPanel sizingPanel = new JPanel();
-		int[] Parms = Records[selectedDB].getSizesInt();
+		int[] Parms = {0, 0, 0};
 		genSP = new SizePanel(Parms, sizingPanel, this);
 
 		JPanel statsRow1 = new JPanel();
@@ -1341,12 +1347,14 @@ public class GUInterface {
 		// cp.add(tabbedPane2);
 		// cp.add(panelStat11);
 		cp.add(panelSep2);
-		cp.add(sizingPanel);
-		cp.add(sizeStatRow1);
-		cp.add(sizeStatRow2);
-		cp.add(sizeStatRow3);
+		
+		// TODO
+//		cp.add(sizingPanel);
+//		cp.add(sizeStatRow1);
+//		cp.add(sizeStatRow2);
+//		cp.add(sizeStatRow3);
 		cp.add(panelSep3);
-		cp.add(panelSummary);
+//		cp.add(panelSummary);
 	}
 
 	/**
@@ -1590,7 +1598,7 @@ public class GUInterface {
 	 * @return Panel containing database input card
 	 */
 	private JPanel createDBPanel() {
-		fdaDB = lst.getDB();
+		fdaDB = MRMCobject.getDB();
 		int DBsize = fdaDB.getNoOfItems();
 		String[] dbBoxItems = new String[DBsize];
 		Records = fdaDB.getRecords();
@@ -1651,12 +1659,13 @@ public class GUInterface {
 
 		DBRecord tempRecord = getCurrentRecord();
 		double[][] tempBDG = tempRecord.getBDG(NO_MLE);
-		for (int i = 0; i < 8; i++) {
+		double[] temp = tempBDG[selectedMod];
+		for (int i = 0; i < 7; i++) {
 			if (tempBDG[selectedMod][i] < 0)
 				hasNegative = true;
 		}
 		if (hasNegative && useMLE == NO_MLE) {
-			JFrame frame = lst.getFrame();
+			JFrame frame = MRMCobject.getFrame();
 			int result = JOptionPane
 					.showConfirmDialog(
 							frame,
@@ -1664,11 +1673,11 @@ public class GUInterface {
 			if (JOptionPane.CANCEL_OPTION == result) {
 				System.out.println("cancel");
 			} else if (JOptionPane.YES_OPTION == result) {
-				DBC.setUseMLE(USE_MLE);
+//				DBC.setUseMLE(USE_MLE);
 				RSC.setUseMLE(USE_MLE);
 				useMLE = USE_MLE;
 			} else if (JOptionPane.NO_OPTION == result) {
-				DBC.setUseMLE(NO_MLE);
+//				DBC.setUseMLE(NO_MLE);
 				RSC.setUseMLE(NO_MLE);
 				useMLE = NO_MLE;
 			}
@@ -1688,13 +1697,13 @@ public class GUInterface {
 		String name = pilotFile.getText();
 		System.out.println("name=" + name);
 		if (name.equals(null) || name.equals("")) {
-			JFrame frame = lst.getFrame();
+			JFrame frame = MRMCobject.getFrame();
 			JOptionPane.showMessageDialog(frame, "invalid input", " Error",
 					JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		if (currMod0 == NO_MOD && currMod1 == NO_MOD) {
-			JFrame frame = lst.getFrame();
+			JFrame frame = MRMCobject.getFrame();
 			JOptionPane.showMessageDialog(frame,
 					"You must select at least one modality", "Error",
 					JOptionPane.ERROR_MESSAGE);
@@ -1784,7 +1793,7 @@ public class GUInterface {
 		public void actionPerformed(ActionEvent e) {
 
 			String report = "";
-			if (selectedInput == SELECT_MAN) {
+			if (selectedInput == SELECT_MANUAL) {
 				report = genSP.genReport(1);
 			} else {
 				report = genSP.genReport();
@@ -1857,13 +1866,18 @@ public class GUInterface {
 
 	/**
 	 * Handler for drop down menu to select data input source
+	 * This changes the pane, what the user sees
+	 * It can either be the pane for DB, FILE, MANUAL
 	 */
 	class inputModListener implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
+
 			JComboBox<?> cb = (JComboBox<?>) evt.getSource();
+			selectedInput = (String) cb.getSelectedItem();
+
 			CardLayout cl = (CardLayout) (inputCards.getLayout());
-			cl.show(inputCards, (String) cb.getSelectedItem());
-			selectedInput = cb.getSelectedIndex();
+			cl.show(inputCards, selectedInput);
+			
 			resetGUI();
 		}
 	}
@@ -1973,7 +1987,7 @@ public class GUInterface {
 					usr = new InputFile(filename);
 				} catch (IOException except) {
 					except.printStackTrace();
-					JOptionPane.showMessageDialog(lst.getFrame(),
+					JOptionPane.showMessageDialog(MRMCobject.getFrame(),
 							except.getMessage(), "Error",
 							JOptionPane.ERROR_MESSAGE);
 					resetGUI();
@@ -1983,13 +1997,13 @@ public class GUInterface {
 				if (!usr.numsVerified()) {
 					JOptionPane
 							.showMessageDialog(
-									lst.getFrame(),
+									MRMCobject.getFrame(),
 									usr.showUnverified(),
 									"Warning: Input Header Values Do Not Match Actual Values",
 									JOptionPane.WARNING_MESSAGE);
 				} else {
 					JOptionPane.showMessageDialog(
-							lst.getFrame(),
+							MRMCobject.getFrame(),
 							"NR = " + usr.getReader() + 
 							" N0 = "+ usr.getNormal() +
 							" N1 = "+ usr.getDisease() +
@@ -1997,7 +2011,7 @@ public class GUInterface {
 							"Study Info", JOptionPane.INFORMATION_MESSAGE);
 				}
 				if (!usr.getFullyCrossedStatus()) {
-					JOptionPane.showMessageDialog(lst.getFrame(),
+					JOptionPane.showMessageDialog(MRMCobject.getFrame(),
 							"The study is not fully crossed", "Warning",
 							JOptionPane.WARNING_MESSAGE);
 					tabbedPane1.setEnabledAt(2, false);
@@ -2063,7 +2077,7 @@ public class GUInterface {
 				chooseMod.setSelectedIndex(0);
 				Object[] message = { "Which modality would you like view?\n",
 						chooseMod };
-				JOptionPane.showMessageDialog(lst.getFrame(), message,
+				JOptionPane.showMessageDialog(MRMCobject.getFrame(), message,
 						"Choose Modality and Reader",
 						JOptionPane.INFORMATION_MESSAGE, null);
 				rocMod = (String) chooseMod.getSelectedItem();
@@ -2077,7 +2091,7 @@ public class GUInterface {
 				roc.setVisible(true);
 
 			} else {
-				JOptionPane.showMessageDialog(lst.getFrame(),
+				JOptionPane.showMessageDialog(MRMCobject.getFrame(),
 						"Pilot study data has not yet been input.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
@@ -2105,7 +2119,7 @@ public class GUInterface {
 				RefineryUtilities.positionFrameOnScreen(rpc, 0.6, 0.6);
 				rpc.setVisible(true);
 			} else {
-				JOptionPane.showMessageDialog(lst.getFrame(),
+				JOptionPane.showMessageDialog(MRMCobject.getFrame(),
 						"Pilot study data has not yet been input.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
@@ -2137,7 +2151,7 @@ public class GUInterface {
 				choose1.setSelectedIndex(0);
 				Object[] message = { "Which modality would you like view?\n",
 						choose1 };
-				JOptionPane.showMessageDialog(lst.getFrame(), message,
+				JOptionPane.showMessageDialog(MRMCobject.getFrame(), message,
 						"Choose Modality", JOptionPane.INFORMATION_MESSAGE,
 						null);
 				boolean[][] design = usr.getStudyDesign( (String) choose1
@@ -2151,7 +2165,7 @@ public class GUInterface {
 				chart.setVisible(true);
 
 			} else {
-				JOptionPane.showMessageDialog(lst.getFrame(),
+				JOptionPane.showMessageDialog(MRMCobject.getFrame(),
 						"Pilot study data has not yet been input.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
