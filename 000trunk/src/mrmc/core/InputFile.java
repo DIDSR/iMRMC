@@ -35,7 +35,6 @@ import mrmc.gui.GUInterface;
  * @author Xin He, Ph.D,
  * @author Brandon D. Gallas, Ph.D
  * @author Rohan Pathare
- * @version 2.0b
  */
 
 @SuppressWarnings("unused")
@@ -46,8 +45,8 @@ public class InputFile {
 	private String recordTitle = "";
 	private int Reader, Normal, Disease, Modality;
 
-	private double[][][] t0_mod01, t1_mod01, t0_mod00, t1_mod00, t0_mod11, t1_mod11;
-	private int[][][] d0_mod01, d1_mod01, d0_mod00, d1_mod00, d0_mod11, d1_mod11;
+	private double[][][] t0_modAB, t1_modAB, t0_modAA, t1_modAA, t0_modBB, t1_modBB;
+	private int[][][] d0_modAB, d1_modAB, d0_modAA, d1_modAA, d0_modBB, d1_modBB;
 	private boolean isFullyCrossed;
 	private boolean verified = false;
 	private boolean isLoaded = false;
@@ -315,19 +314,19 @@ public class InputFile {
 	 */
 	public InputFile(double[][][][] tMatrices, int[][][][] dMatrices, int nr,
 			int n0, int n1, String title, String desc) throws IOException {
-		this.t0_mod00 = tMatrices[0];
-		this.t0_mod11 = tMatrices[1];
-		this.t1_mod00 = tMatrices[2];
-		this.t1_mod11 = tMatrices[3];
-		this.t0_mod01 = tMatrices[4];
-		this.t1_mod01 = tMatrices[5];
+		this.t0_modAA = tMatrices[0];
+		this.t0_modBB = tMatrices[1];
+		this.t1_modAA = tMatrices[2];
+		this.t1_modBB = tMatrices[3];
+		this.t0_modAB = tMatrices[4];
+		this.t1_modAB = tMatrices[5];
 		
-		this.d0_mod00 = dMatrices[0];
-		this.d0_mod11 = dMatrices[0];
-		this.d0_mod01 = dMatrices[0];
-		this.d1_mod00 = dMatrices[1];
-		this.d1_mod11 = dMatrices[1];
-		this.d1_mod01 = dMatrices[1];
+		this.d0_modAA = dMatrices[0];
+		this.d0_modBB = dMatrices[0];
+		this.d0_modAB = dMatrices[0];
+		this.d1_modAA = dMatrices[1];
+		this.d1_modBB = dMatrices[1];
+		this.d1_modAB = dMatrices[1];
 		
 		this.Reader = nr;
 		this.Normal = n0;
@@ -607,33 +606,40 @@ public class InputFile {
 	 * Perform variance analysis with scores, study design, experiment size
 	 */
 	public void calculateCovMRMC() {
-		CovMRMC var0 = new CovMRMC(t0_mod00, d0_mod00, t1_mod00, d1_mod00, Reader, Normal, Disease);
-		CovMRMC var1 = new CovMRMC(t0_mod11, d0_mod11, t1_mod11, d1_mod11, Reader, Normal, Disease);
-		CovMRMC cov = new CovMRMC(t0_mod01, d0_mod01, t1_mod01, d1_mod01, Reader, Normal, Disease);
-		double[] M0 = var0.getMoments();
-		double[] M1 = var1.getMoments();
-		double[] Mcov = cov.getMoments();
-		double[] C0 = var0.getC();
-		double[] C1 = var1.getC();
-		double[] Ccov = cov.getC();
-		double[] Mb0 = var0.getBiasedMoments();
-		double[] Mb1 = var1.getBiasedMoments();
-		double[] Mbcov = cov.getBiasedMoments();
+		CovMRMC cov_AA = new CovMRMC(t0_modAA, d0_modAA, t1_modAA, d1_modAA, Reader, Normal, Disease);
+		CovMRMC cov_BB = new CovMRMC(t0_modBB, d0_modBB, t1_modBB, d1_modBB, Reader, Normal, Disease);
+		CovMRMC cov_AB = new CovMRMC(t0_modAB, d0_modAB, t1_modAB, d1_modAB, Reader, Normal, Disease);
+		double[] M_AA = cov_AA.getMoments();
+		double[] M_BB = cov_BB.getMoments();
+		double[] M_AB = cov_AB.getMoments();
+		double[] Mb_AA = cov_AA.getBiasedMoments();
+		double[] Mb_BB = cov_BB.getBiasedMoments();
+		double[] Mb_AB = cov_AB.getBiasedMoments();
+		double[] C_AA = cov_AA.getC();
+		double[] C_BB = cov_BB.getC();
+		double[] C_AB = cov_AB.getC();
 
-		aucMod = cov.getaucMod();
+		aucMod = cov_AB.getaucMod();
 		BDG = new double[4][8];
 		BDGbias = new double[4][8];
-		BDGcoeff = new double[4][8];
+		BDGcoeff = new double[3][8];
 		for (int i = 0; i < 8; i++) {
-			BDG[0][i] = M0[i + 1];
-			BDG[1][i] = M1[i + 1];
-			BDG[2][i] = Mcov[i + 1];
-			BDGbias[0][i] = Mb0[i + 1];
-			BDGbias[1][i] = Mb1[i + 1];
-			BDGbias[2][i] = Mbcov[i + 1];
-			BDGcoeff[0][i] = C0[i + 1];
-			BDGcoeff[1][i] = C1[i + 1];
-			BDGcoeff[2][i] = Ccov[i + 1];
+			BDG[0][i] = M_AA[i + 1];
+			BDG[1][i] = M_BB[i + 1];
+			BDG[2][i] = M_AB[i + 1];
+			BDGbias[0][i] = Mb_AA[i + 1];
+			BDGbias[1][i] = Mb_BB[i + 1];
+			BDGbias[2][i] = Mb_AB[i + 1];
+			BDGcoeff[0][i] = C_AA[i + 1];
+			BDGcoeff[1][i] = C_BB[i + 1];
+			BDGcoeff[2][i] = C_AB[i + 1];
+			
+			BDG[3][i] = BDGcoeff[0][i]*BDG[0][i]
+					  + BDGcoeff[1][i]*BDG[1][i]
+					- 2*BDGcoeff[2][i]*BDG[2][i];
+			BDGbias[3][i] = BDGcoeff[0][i]*BDGbias[0][i]
+					     + BDGcoeff[1][i]*BDGbias[1][i]
+					   - 2*BDGcoeff[2][i]*BDGbias[2][i];
 		}
 	}
 
@@ -992,18 +998,18 @@ public class InputFile {
 	 * @param modality1 Modality to be used as mod 1
 	 */
 	public void makeTMatrices(String modality0, String modality1) {
-		t0_mod01 = new double[Normal][Reader][2];
-		t1_mod01 = new double[Disease][Reader][2];
-		t0_mod00 = new double[Normal][Reader][2];
-		t0_mod11 = new double[Normal][Reader][2];
-		t1_mod00 = new double[Disease][Reader][2];
-		t1_mod11 = new double[Disease][Reader][2];
-		d0_mod00 = new int[Normal][Reader][2];
-		d1_mod00 = new int[Disease][Reader][2];
-		d0_mod11 = new int[Normal][Reader][2];
-		d1_mod11 = new int[Disease][Reader][2];
-		d0_mod01 = new int[Normal][Reader][2];
-		d1_mod01 = new int[Disease][Reader][2];
+		t0_modAB = new double[Normal][Reader][2];
+		t1_modAB = new double[Disease][Reader][2];
+		t0_modAA = new double[Normal][Reader][2];
+		t0_modBB = new double[Normal][Reader][2];
+		t1_modAA = new double[Disease][Reader][2];
+		t1_modBB = new double[Disease][Reader][2];
+		d0_modAA = new int[Normal][Reader][2];
+		d1_modAA = new int[Disease][Reader][2];
+		d0_modBB = new int[Normal][Reader][2];
+		d1_modBB = new int[Disease][Reader][2];
+		d0_modAB = new int[Normal][Reader][2];
+		d1_modAB = new int[Disease][Reader][2];
 		int m, n;
 		int k = 0; // reader index
 		for (String r : keyedData.keySet()) {
@@ -1034,35 +1040,35 @@ public class InputFile {
 					PresentMod1 = 0;
 				}
 				if (truthVals.get(c) == 0) {
-					t0_mod01[m][k][0] = currScoreMod0;
-					t0_mod01[m][k][1] = currScoreMod1;
-					t0_mod00[m][k][0] = currScoreMod0;
-					t0_mod00[m][k][1] = currScoreMod0;
-					t0_mod11[m][k][0] = currScoreMod1;
-					t0_mod11[m][k][1] = currScoreMod1;
+					t0_modAB[m][k][0] = currScoreMod0;
+					t0_modAB[m][k][1] = currScoreMod1;
+					t0_modAA[m][k][0] = currScoreMod0;
+					t0_modAA[m][k][1] = currScoreMod0;
+					t0_modBB[m][k][0] = currScoreMod1;
+					t0_modBB[m][k][1] = currScoreMod1;
 					
-					d0_mod01[m][k][0] = PresentMod0;
-					d0_mod01[m][k][1] = PresentMod1;
-					d0_mod00[m][k][0] = PresentMod0;
-					d0_mod00[m][k][1] = PresentMod0;
-					d0_mod11[m][k][0] = PresentMod1;
-					d0_mod11[m][k][1] = PresentMod1;
+					d0_modAB[m][k][0] = PresentMod0;
+					d0_modAB[m][k][1] = PresentMod1;
+					d0_modAA[m][k][0] = PresentMod0;
+					d0_modAA[m][k][1] = PresentMod0;
+					d0_modBB[m][k][0] = PresentMod1;
+					d0_modBB[m][k][1] = PresentMod1;
 
 					m++;
 				} else {
-					t1_mod01[n][k][0] = currScoreMod0;
-					t1_mod01[n][k][1] = currScoreMod1;
-					t1_mod00[n][k][0] = currScoreMod0;
-					t1_mod00[n][k][1] = currScoreMod0;
-					t1_mod11[n][k][0] = currScoreMod1;
-					t1_mod11[n][k][1] = currScoreMod1;
+					t1_modAB[n][k][0] = currScoreMod0;
+					t1_modAB[n][k][1] = currScoreMod1;
+					t1_modAA[n][k][0] = currScoreMod0;
+					t1_modAA[n][k][1] = currScoreMod0;
+					t1_modBB[n][k][0] = currScoreMod1;
+					t1_modBB[n][k][1] = currScoreMod1;
 
-					d1_mod01[n][k][0] = PresentMod0;
-					d1_mod01[n][k][1] = PresentMod1;
-					d1_mod00[n][k][0] = PresentMod0;
-					d1_mod00[n][k][1] = PresentMod0;
-					d1_mod11[n][k][0] = PresentMod1;
-					d1_mod11[n][k][1] = PresentMod1;
+					d1_modAB[n][k][0] = PresentMod0;
+					d1_modAB[n][k][1] = PresentMod1;
+					d1_modAA[n][k][0] = PresentMod0;
+					d1_modAA[n][k][1] = PresentMod0;
+					d1_modBB[n][k][0] = PresentMod1;
+					d1_modBB[n][k][1] = PresentMod1;
 
 					n++;
 				}

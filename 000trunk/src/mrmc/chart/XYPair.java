@@ -24,7 +24,6 @@ package mrmc.chart;
  * comparison is determined by the y value.
  * 
  * @author Rohan Pathare
- * @version 2.0b
  */
 public class XYPair implements Comparable<XYPair> {
 	public double x;

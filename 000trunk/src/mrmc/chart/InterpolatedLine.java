@@ -28,7 +28,6 @@ import java.util.HashMap;
  * interpolated point for a given x or y position.
  * 
  * @author Rohan Pathare
- * @version 2.0b
  */
 public class InterpolatedLine {
 	private HashMap<XYPair, double[]> allLineEqs;

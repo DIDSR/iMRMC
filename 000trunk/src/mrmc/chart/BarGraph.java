@@ -35,8 +35,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
  * Creates a chart displaying a bar graph for a particular dataset. Currently
  * used to display charts for readers per case and cases per reader.
  * 
- * @author Rohan Pathare
- * @version 2.0b.
+ * @author Rohan Pathare.
  */
 public class BarGraph extends JFrame {
 

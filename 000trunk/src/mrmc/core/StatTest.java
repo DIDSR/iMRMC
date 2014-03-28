@@ -31,13 +31,12 @@ import umontreal.iro.lecuyer.probdist.NormalDist;
  * @author Xin He, Ph.D,
  * @author Brandon D. Gallas, Ph.D
  * @author Rohan Pathare
- * @version 2.0b
  */
 public class StatTest {
 	private final int INFINITY = 500;
 	private final int PRECISION = 6;
 	private final double ZERO = 1E-300;
-	private final static int USE_MLE = 1;
+//	private final static int USE_MLE = 1;
 	private final static int NO_MLE = 0;
 
 	private double tStatEst = 0;
@@ -275,7 +274,7 @@ public class StatTest {
 		System.out.println("eff=" + eff + "  sig" + sig);
 		System.out.println("auc0=" + aucs[0] + "  auc1=" + aucs[1]);
 
-		dfBDG = calcDFBDG(curRecord.getBCK(USE_MLE), curRecord.getReader(),
+		dfBDG = calcDFBDG(curRecord.getBCK(NO_MLE), curRecord.getReader(),
 				curRecord.getNormal(), curRecord.getDisease(), var0);
 
 		dfHillis = DDF_Hillis(DBMvar, curRecord.getReader(), curRecord.getNormal()
@@ -343,13 +342,13 @@ public class StatTest {
 	 * @param BCKbias Biased BCK variance components
 	 */
 	public StatTest(double[] DBMvar, int r, int n, int d, double sig,
-			double eff, double totalVar, double[][] BCKbias, double[] aucs,
+			double eff, double totalVar, double[][] BCK, double[] aucs,
 			int selectedMod) {
 
 		sigLevel = sig;
 		effSize = eff;
 		dfHillis = DDF_Hillis(DBMvar, r, n + d, totalVar);
-		dfBDG = calcDFBDG(BCKbias, r, n, d, totalVar);
+		dfBDG = calcDFBDG(BCK, r, n, d, totalVar);
 		powerWithHillisDF = FTest_power(DBMvar, r, n + d, totalVar, dfHillis);
 		powerWithBDGDF = FTest_power(DBMvar, r, n + d, totalVar, dfBDG);
 		powerZ = ZTest(DBMvar, r, n + d, totalVar);
@@ -470,9 +469,9 @@ public class StatTest {
 			SigTRC = 0;
 		}
 
-		tStatCalc = effSize * effSize / totalVar;
-		System.out.println("delta=" + tStatCalc);
-		tStatCalc = Math.sqrt(tStatCalc);
+//		tStatCalc = effSize * effSize / totalVar;
+//		System.out.println("delta=" + tStatCalc);
+//		tStatCalc = Math.sqrt(tStatCalc);
 
 		// we use normal distribution for df > 50 since it is close to Fisher F
 		// and fisherF fails for DOF > 2000
@@ -485,11 +484,15 @@ public class StatTest {
 			// Normal cumulative d.f.
 			// return = NormalDist.cdf(mean, var, x0);
 			// return = integral(-inf, x0) normal.pdf(mean, var)
+			tStatCalc = effSize / Math.sqrt(totalVar);
 			cdftemp = NormalDist.cdf(tStatCalc, 1, f0);
 		} else {
 			FisherFDist fdist = new FisherFDist((int) df1, (int) df);
 			f0 = fdist.inverseF(1 - sigLevel);
-			cdftemp = cdfNonCentralF((int) df1, (int) df, tStatCalc*tStatCalc, f0);
+			
+			tStatCalc = effSize / Math.sqrt(totalVar);
+			
+			cdftemp = cdfNonCentralF((int) df1, (int) df-1, tStatCalc*tStatCalc, f0);
 		}
 
 		fTestPower = 1 - cdftemp;
@@ -547,26 +550,48 @@ public class StatTest {
 
 	// TODO verify correctness
 	/**
-	 * Calculates degrees of freedom by Obuchowski, BDG method
+	 * Calculates degrees of freedom by Obuchowski, BCK method
 	 * 
-	 * @param BCKbias Biased components of variance for BCK decomposition
+	 * @param BCK Components of variance for BCK decomposition
 	 * @param r Number of readers
 	 * @param n Number of normal cases
 	 * @param d Number of disease cases
 	 * @param totalVar Total variance of components
 	 * @return Degrees of freedom
 	 */
-	private double calcDFBDG(double[][] BCKbias, int r, int n, int d,
+	private double calcDFBDG(double[][] BCK, int r, int n, int d,
 			double totalVar) {
 		System.out.println("total var " + totalVar);
-		double s2br = BCKbias[0][3] + BCKbias[1][3] - (2 * BCKbias[2][3]);
-		double s2b0 = BCKbias[0][0] + BCKbias[1][0] - (2 * BCKbias[2][0]);
-		double s2b1 = BCKbias[0][1] + BCKbias[1][1] - (2 * BCKbias[2][1]);
-		double df = Math.pow(totalVar, 2)
-				/ ((Math.pow(s2br, 2) / Math.pow(r - 1, 3))
-						+ (Math.pow(s2b0, 2) / Math.pow(n - 1, 3)) + (Math.pow(
-						s2b1, 2) / Math.pow(d - 1, 3)));
-		System.out.println("calcdfbdg totalVar = " + totalVar);
+		double s2b0 = 0.0;
+		s2b0 = s2b0 + r*  d*(BCK[0][0] + BCK[1][0] - 2*BCK[2][0]);
+		s2b0 = s2b0 +     d*(BCK[0][4] + BCK[1][4] - 2*BCK[2][4]);
+		s2b0 = s2b0 + r*    (BCK[0][2] + BCK[1][2] - 2*BCK[2][2]);
+		s2b0 = s2b0 +       (BCK[0][6] + BCK[1][6] - 2*BCK[2][6]);
+		s2b0 = s2b0  /r/n/d;
+		
+		double s2b1 = 0.0;
+		s2b1 = s2b1 + r*n*  (BCK[0][1] + BCK[1][1] - (2 * BCK[2][1]));
+		s2b1 = s2b1 +   n*  (BCK[0][5] + BCK[1][5] - (2 * BCK[2][5]));
+		s2b1 = s2b1 + r*    (BCK[0][2] + BCK[1][2] - (2 * BCK[2][2]));
+		s2b1 = s2b1 +       (BCK[0][6] + BCK[1][6] - (2 * BCK[2][6]));
+		s2b1 = s2b1  /r/n/d;
+
+		double s2br = 0.0;
+		s2br = s2br +   n*d*(BCK[0][3] + BCK[1][3] - (2 * BCK[2][3]));
+		s2br = s2br +     d*(BCK[0][4] + BCK[1][4] - (2 * BCK[2][4]));
+		s2br = s2br +   n*  (BCK[0][5] + BCK[1][5] - (2 * BCK[2][5]));
+		s2br = s2br +       (BCK[0][6] + BCK[1][6] - (2 * BCK[2][6]));
+		s2br = s2br  /r/n/d;
+
+//		double balanceR = (Math.pow(s2br, 2) / Math.pow(r - 1, 3));
+//		double balance0 = (Math.pow(s2b0, 2) / Math.pow(n - 1, 3));
+//		double balance1 = (Math.pow(s2b1, 2) / Math.pow(d - 1, 3));
+
+		double balanceR = (Math.pow(s2br, 2) / (r - 1));
+		double balance0 = (Math.pow(s2b0, 2) / (n - 1));
+		double balance1 = (Math.pow(s2b1, 2) / (d - 1));
+		double df = Math.pow(totalVar, 2) / (balanceR + balance0 + balance1);
+		System.out.println("calc df = " + df);
 		return df;
 	}
 	/*

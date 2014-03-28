@@ -28,7 +28,6 @@ import org.apache.commons.math3.distribution.NormalDistribution;
  * from cofv_genroemetz.pro (Brandon D. Gallas, PhD)
  * 
  * @author Rohan Pathare
- * @version 2.0b
  */
 public class CalcGenRoeMetz {
 	private static double[][][] cofv_auc;
@@ -228,72 +227,36 @@ public class CalcGenRoeMetz {
 	 */
 	public static double prodMoment(double[] u, double[] scale, int numSamples) {
 		NormalDistribution gauss = new NormalDistribution();
-		double scale1 = scale[0];
-		double scale20 = scale[1];
-		double scale21 = scale[2];
-		double scale30 = scale[3];
-		double scale31 = scale[4];
+		double scaleFixed = scale[0];
+		double scaleIndependentA = scale[1] + scale[3];
+		double scaleIndependentB = scale[2] + scale[4];
 
-		double lx = 10.0 * Math.sqrt(scale1);
+		double lx = 10.0;
 		double dx = lx / (double) numSamples;
 		double[] x = new double[numSamples];
-
-		double ly0 = 10.0 * Math.sqrt(scale20);
-		double dy0 = ly0 / (double) numSamples;
-		double[] y0 = new double[numSamples];
-
-		double ly1 = 10.0 * Math.sqrt(scale21);
-		double dy1 = ly1 / (double) numSamples;
-		double[] y1 = new double[numSamples];
-
+		double Integral = 0.0;
+		
 		for (int i = 0; i < numSamples; i++) {
 			x[i] = ((double) i * dx) - (0.5 * lx);
-			y0[i] = ((double) i * dy0) - (0.5 * ly0);
-			y1[i] = ((double) i * dy1) - (0.5 * ly1);
 		}
 
-		double[] f0 = new double[numSamples];
-		double[] f1 = new double[numSamples];
-
-		double[] dy0xf0 = new double[numSamples];
-		double[] dy1xf1 = new double[numSamples];
+		double[] phi_x = new double[numSamples];
+		double[] cdf_A = new double[numSamples];
+		double[] cdf_B = new double[numSamples];
 
 		for (int i = 0; i < numSamples; i++) {
-			f0[i] = Math.exp(-(y0[i] * y0[i]) / 2.0 / scale20)
-					/ Math.sqrt(Math.PI * 2.0 * scale20);
-			dy0xf0[i] = dy0 * f0[i];
-			f1[i] = Math.exp(-(y1[i] * y1[i]) / 2.0 / scale21)
-					/ Math.sqrt(Math.PI * 2.0 * scale21);
-			dy1xf1[i] = dy1 * f1[i];
+			phi_x[i] = Math.exp(-(x[i] * x[i]) / 2.0 )
+					/ Math.sqrt(Math.PI * 2.0);
+			cdf_A[i] = gauss.cumulativeProbability(
+					(u[0] + x[i]*Math.sqrt(scaleFixed))
+					/ Math.sqrt(scaleIndependentA));
+			cdf_B[i] = gauss.cumulativeProbability(
+					(u[1] + x[i]*Math.sqrt(scaleFixed))
+					/ Math.sqrt(scaleIndependentB));
+			Integral = Integral + dx*phi_x[i]*cdf_A[i]*cdf_B[i];
 		}
 
-		double[] ff = new double[numSamples];
-		for (int i = 0; i < numSamples; i++) {
-			double[] phi0 = new double[numSamples];
-			double[] phi1 = new double[numSamples];
-			double[] dy0xf0xphi0 = new double[numSamples];
-			double[] dy1xf1xphi1 = new double[numSamples];
-
-			for (int j = 0; j < numSamples; j++) {
-				phi0[j] = gauss.cumulativeProbability((u[0] + x[j] + y0[i])
-						/ Math.sqrt(scale30));
-				dy0xf0xphi0[j] = dy0xf0[j] * phi0[j];
-				phi1[j] = gauss.cumulativeProbability((u[1] + x[j] + y1[i])
-						/ Math.sqrt(scale31));
-				dy1xf1xphi1[j] = dy1xf1[j] * phi1[j];
-			}
-			ff[i] = Matrix.total(dy0xf0xphi0) * Matrix.total(dy1xf1xphi1);
-		}
-
-		double[] f = new double[numSamples];
-		double[] toTotal = new double[numSamples];
-		for (int i = 0; i < numSamples; i++) {
-			f[i] = Math.exp(-(x[i] * x[i]) / 2.0 / scale1)
-					/ Math.sqrt(Math.PI * 2.0 * scale1);
-			toTotal[i] = dx * f[i] * ff[i];
-		}
-
-		return Matrix.total(toTotal);
+		return Integral;
 	}
 
 	/**
@@ -310,24 +273,24 @@ public class CalcGenRoeMetz {
 		// number of samples for numerical integration, can change
 		final int numSamples = 256;
 
-		double v00r = var_t[0];
-		double v00c = var_t[1];
-		double v00rc = var_t[2];
-		double v10r = var_t[3];
-		double v10c = var_t[4];
-		double v10rc = var_t[5];
-		double v01r = var_t[6];
-		double v01c = var_t[7];
-		double v01rc = var_t[8];
-		double v11r = var_t[9];
-		double v11c = var_t[10];
-		double v11rc = var_t[11];
-		double v0r = var_t[12];
-		double v0c = var_t[13];
-		double v0rc = var_t[14];
-		double v1r = var_t[15];
-		double v1c = var_t[16];
-		double v1rc = var_t[17];
+		double v_AR0 = var_t[0];
+		double v_AC0 = var_t[1];
+		double v_ARC0 = var_t[2];
+		double v_AR1 = var_t[3];
+		double v_AC1 = var_t[4];
+		double v_ARC1 = var_t[5];
+		double v_BR0 = var_t[6];
+		double v_BC0 = var_t[7];
+		double v_BRC0 = var_t[8];
+		double v_BR1 = var_t[9];
+		double v_BC1 = var_t[10];
+		double v_BRC1 = var_t[11];
+		double v_R0 = var_t[12];
+		double v_C0 = var_t[13];
+		double v_RC0 = var_t[14];
+		double v_R1 = var_t[15];
+		double v_C1 = var_t[16];
+		double v_RC1 = var_t[17];
 		int n0 = n[0];
 		int n1 = n[1];
 		int nr = n[2];
@@ -335,9 +298,9 @@ public class CalcGenRoeMetz {
 		m = new double[2][2][9];
 
 		// AUC
-		double scale1 = v0r + v0c + v0rc + v1r + v1c + v1rc;
-		double scale20 = v00r + v00c + v00rc + v10r + v10c + v10rc;
-		double scale21 = v01r + v01c + v01rc + v11r + v11c + v11rc;
+		double scale1 = v_R0 + v_C0 + v_RC0 + v_R1 + v_C1 + v_RC1;
+		double scale20 = v_AR0 + v_AC0 + v_ARC0 + v_AR1 + v_AC1 + v_ARC1;
+		double scale21 = v_BR0 + v_BC0 + v_BRC0 + v_BR1 + v_BC1 + v_BRC1;
 		m[0][0][0] = gauss.cumulativeProbability(u[0]
 				/ Math.sqrt(scale1 + scale20));
 		m[1][1][0] = gauss.cumulativeProbability(u[1]
@@ -353,11 +316,11 @@ public class CalcGenRoeMetz {
 		m[0][1][1] = m[1][0][1];
 
 		// M2
-		double scale30 = v0c + v0rc + v00c + v00rc;
-		double scale31 = v0c + v0rc + v01c + v01rc;
-		scale20 = v10r + v10c + v10rc + v00r;
-		scale21 = v11r + v11c + v11rc + v01r;
-		scale1 = v1r + v1c + v1rc + v0r;
+		double scale30 = v_C0 + v_RC0 + v_AC0 + v_ARC0;
+		double scale31 = v_C0 + v_RC0 + v_BC0 + v_BRC0;
+		scale20 = v_AR1 + v_AC1 + v_ARC1 + v_AR0;
+		scale21 = v_BR1 + v_BC1 + v_BRC1 + v_BR0;
+		scale1 = v_R1 + v_C1 + v_RC1 + v_R0;
 
 		scaleM1[0] = scale1 + scale20;
 		scaleM1[1] = scale30;
@@ -376,11 +339,11 @@ public class CalcGenRoeMetz {
 		m[0][1][2] = m[1][0][2];
 
 		// M3
-		scale30 = v1c + v1rc + v10c + v10rc;
-		scale31 = v1c + v1rc + v11c + v11rc;
-		scale20 = v10r + v00r + v00c + v00rc;
-		scale21 = v11r + v01r + v01c + v01rc;
-		scale1 = v1r + v0r + v0c + v0rc;
+		scale30 = v_C1 + v_RC1 + v_AC1 + v_ARC1;
+		scale31 = v_C1 + v_RC1 + v_BC1 + v_BRC1;
+		scale20 = v_AR1 + v_AR0 + v_AC0 + v_ARC0;
+		scale21 = v_BR1 + v_BR0 + v_BC0 + v_BRC0;
+		scale1 = v_R1 + v_R0 + v_C0 + v_RC0;
 
 		scaleM1[0] = scale1 + scale20;
 		scaleM1[1] = scale30;
@@ -403,11 +366,11 @@ public class CalcGenRoeMetz {
 		m[0][1][3] = m[1][0][3];
 
 		// M4
-		scale30 = v1c + v1rc + v10c + v10rc + v0c + v0rc + v00c + v00rc;
-		scale31 = v1c + v1rc + v11c + v11rc + v0c + v0rc + v01c + v01rc;
-		scale20 = v10r + v00r;
-		scale21 = v11r + v01r;
-		scale1 = v1r + v0r;
+		scale30 = v_C1 + v_RC1 + v_AC1 + v_ARC1 + v_C0 + v_RC0 + v_AC0 + v_ARC0;
+		scale31 = v_C1 + v_RC1 + v_BC1 + v_BRC1 + v_C0 + v_RC0 + v_BC0 + v_BRC0;
+		scale20 = v_AR1 + v_AR0;
+		scale21 = v_BR1 + v_BR0;
+		scale1 = v_R1 + v_R0;
 
 		scaleM1[0] = scale1 + scale20;
 		scaleM1[1] = scale30;
@@ -430,11 +393,11 @@ public class CalcGenRoeMetz {
 		m[0][1][4] = m[1][0][4];
 
 		// M5
-		scale30 = v0r + v1r + v0rc + v1rc + v00r + v10r + v00rc + v10rc;
-		scale31 = v0r + v1r + v0rc + v1rc + v01r + v11r + v01rc + v11rc;
-		scale20 = v00c + v10c;
-		scale21 = v01c + v11c;
-		scale1 = v1c + v0c;
+		scale30 = v_R0 + v_R1 + v_RC0 + v_RC1 + v_AR0 + v_AR1 + v_ARC0 + v_ARC1;
+		scale31 = v_R0 + v_R1 + v_RC0 + v_RC1 + v_BR0 + v_BR1 + v_BRC0 + v_BRC1;
+		scale20 = v_AC0 + v_AC1;
+		scale21 = v_BC0 + v_BC1;
+		scale1 = v_C1 + v_C0;
 
 		scaleM1[0] = scale1 + scale20;
 		scaleM1[1] = scale30;
@@ -457,13 +420,13 @@ public class CalcGenRoeMetz {
 		m[0][1][5] = m[1][0][5];
 
 		// M6
-		scale30 = v0r + v1r + v0c + v0rc + v1rc + v00r + v10r + v00c + v00rc
-				+ v10rc;
-		scale31 = v0r + v1r + v0c + v0rc + v1rc + v01r + v11r + v01c + v01rc
-				+ v11rc;
-		scale20 = v10c;
-		scale21 = v11c;
-		scale1 = v1c;
+		scale30 = v_R0 + v_R1 + v_C0 + v_RC0 + v_RC1 + v_AR0 + v_AR1 + v_AC0 + v_ARC0
+				+ v_ARC1;
+		scale31 = v_R0 + v_R1 + v_C0 + v_RC0 + v_RC1 + v_BR0 + v_BR1 + v_BC0 + v_BRC0
+				+ v_BRC1;
+		scale20 = v_AC1;
+		scale21 = v_BC1;
+		scale1 = v_C1;
 
 		scaleM1[0] = scale1 + scale20;
 		scaleM1[1] = scale30;
@@ -486,13 +449,13 @@ public class CalcGenRoeMetz {
 		m[0][1][6] = m[1][0][6];
 
 		// M7
-		scale30 = v0r + v1r + v1c + v0rc + v1rc + v00r + v10r + v10c + v00rc
-				+ v10rc;
-		scale31 = v0r + v1r + v1c + v0rc + v1rc + v01r + v11r + v11c + v01rc
-				+ v11rc;
-		scale20 = v00c;
-		scale21 = v01c;
-		scale1 = v0c;
+		scale30 = v_R0 + v_R1 + v_C1 + v_RC0 + v_RC1 + v_AR0 + v_AR1 + v_AC1 + v_ARC0
+				+ v_ARC1;
+		scale31 = v_R0 + v_R1 + v_C1 + v_RC0 + v_RC1 + v_BR0 + v_BR1 + v_BC1 + v_BRC0
+				+ v_BRC1;
+		scale20 = v_AC0;
+		scale21 = v_BC0;
+		scale1 = v_C0;
 
 		scaleM1[0] = scale1 + scale20;
 		scaleM1[1] = scale30;

@@ -31,7 +31,6 @@ import java.text.DecimalFormat;
  * @author Xin He, Ph.D,
  * @author Brandon D. Gallas, Ph.D
  * @author Rohan Pathare
- * @version 2.0b
  */
 public class SizePanel {
 	private GUInterface gui;
@@ -69,14 +68,13 @@ public class SizePanel {
 		JPanel studyDesignInput = new JPanel(new FlowLayout());
 		JPanel sizeTrialInput = new JPanel(new FlowLayout());
 
-		JLabel studyDesignLabel = new JLabel("Study Design:  ");
-		numSplitPlot = new JTextField("1", 3);
-
 		JRadioButton pairedRYes = new JRadioButton("Yes");
 		pairedRYes.setActionCommand("Yes");
-		pairedRYes.setSelected(true);
 		JRadioButton pairedRNo = new JRadioButton("No");
 		pairedRNo.setActionCommand("No");
+		if( pairedRs==1 ) pairedRYes.setSelected(true);
+		else pairedRNo.setSelected(true);
+
 		ButtonGroup pairedRGroup = new ButtonGroup();
 		pairedRGroup.add(pairedRYes);
 		pairedRGroup.add(pairedRNo);
@@ -86,9 +84,11 @@ public class SizePanel {
 
 		JRadioButton pairedCYes = new JRadioButton("Yes");
 		pairedCYes.setActionCommand("Yes");
-		pairedCYes.setSelected(true);
 		JRadioButton pairedCNo = new JRadioButton("No");
 		pairedCNo.setActionCommand("No");
+		if( pairedCs==1 ) pairedCYes.setSelected(true);
+		else pairedCNo.setSelected(true);
+
 		ButtonGroup pairedCGroup = new ButtonGroup();
 		pairedCGroup.add(pairedCYes);
 		pairedCGroup.add(pairedCNo);
@@ -96,7 +96,8 @@ public class SizePanel {
 		pairedCYes.addActionListener(pairedCases);
 		pairedCNo.addActionListener(pairedCases);
 
-		studyDesignInput.add(studyDesignLabel);
+		numSplitPlot = new JTextField("1", 3);
+		studyDesignInput.add(new JLabel("Study Design:  "));
 		studyDesignInput.add(new JLabel("# of Split-Plot Groups"));
 		studyDesignInput.add(numSplitPlot);
 		studyDesignInput.add(new JLabel("    Paired Readers? "));
@@ -455,7 +456,7 @@ public class SizePanel {
 			reportFrame.getRootPane().setWindowDecorationStyle(
 					JRootPane.PLAIN_DIALOG);
 			String str = "";
-			if (gui.getSelectedInput() == GUInterface.SELECT_MAN)
+			if (gui.getSelectedInput() == GUInterface.SELECT_MANUAL)
 				str = genReport(1);
 			else
 				str = genReport();
@@ -476,6 +477,10 @@ public class SizePanel {
 	class sizeTrialListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			try {
+//				JOptionPane.showMessageDialog(reportFrame, "Under Construction",
+//						"Error", JOptionPane.ERROR_MESSAGE);
+//				return;
+
 				int[] parms1 = { Integer.parseInt(sizeR.getText()),
 						Integer.parseInt(sizeN.getText()),
 						Integer.parseInt(sizeD.getText()) };

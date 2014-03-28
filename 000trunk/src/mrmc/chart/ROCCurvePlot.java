@@ -47,7 +47,6 @@ import org.jfree.data.xy.XYSeriesCollection;
  * curve is determined, creating a "pooled average"
  * 
  * @author Rohan Pathare
- * @version 2.0b
  */
 public class ROCCurvePlot extends JFrame {
 
