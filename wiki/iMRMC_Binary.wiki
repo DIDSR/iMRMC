@@ -36,3 +36,9 @@ The software package can run in Matlab or Octave (free).
 [http://imrmc.googlecode.com/svn/standalone_application/iMRMC_Binary_pkg.exe Click to download self-extracting package (iMRMC_Binary_pkg.exe)]  
 
 [http://imrmc.googlecode.com/svn/standalone_application/iMRMC_Binary_UserManual.pdf Click to download user manual (iMRMC_Binary_UserManual.pdf)] 
+
+
+==_Authors_==
+  * Rohan Pathare
+  * Brandon D. Gallas, PhD
+  * Xin He, PhD
