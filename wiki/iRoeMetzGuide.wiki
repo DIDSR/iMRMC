@@ -15,6 +15,13 @@ Please *read* the user manual for useful information. See below for the current 
   * References
 
 <br>
+
+===_Authors_===
+  * Rohan Pathare
+  * Brandon D. Gallas, PhD
+  * Xin He, PhD
+
+<br>
 =Current Version=
 Version v1p1 posted 2014-03-28
 
