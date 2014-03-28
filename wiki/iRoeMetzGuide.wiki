@@ -16,9 +16,11 @@ Please *read* the user manual for useful information. See below for the current 
 
 <br>
 =Current Version=
-Version 1p0 posted 2014-08-02
+Version v1p1 posted 2014-03-28
 
-*[http://imrmc.googlecode.com/svn/standalone_application/iRoeMetz-v1p0.jar Click to download application (iRoeMetz-v1p0.jar)]*
+The precision of the numerical integration method to calculate the moments of the Roe and Metz simulation model was increased. Some formatting of the GUI was changed to make the expected contents of the input boxes more clear.
+
+*[http://imrmc.googlecode.com/svn/standalone_application/iRoeMetz-v1p1.jar Click to download application (iRoeMetz-v1p1.jar)]*
 
 *[http://imrmc.googlecode.com/svn/standalone_application/iRoeMetzUserManual-v1p0.pdf Click to download user manual (iRoeMetzUserManual-v1p0.pdf)]* <br>
 
