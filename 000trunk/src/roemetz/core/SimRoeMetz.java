@@ -43,9 +43,9 @@ public class SimRoeMetz {
 	private double[][] DBM;
 	private double[][] OR;
 	private double[][] MS;
-	private int n0;
-	private int n1;
-	private int nr;
+	private long n0;
+	private long n1;
+	private long nr;
 	private double u0;
 	private double u1;
 	private int useMLE;
@@ -64,7 +64,7 @@ public class SimRoeMetz {
 	 *            of the simulation
 	 * @throws IOException 
 	 */
-	public SimRoeMetz(double[] u, double[] var_t, int[] n, Random rand,
+	public SimRoeMetz(double[] u, double[] var_t, long[] n, Random rand,
 			int useMLEs) throws IOException {
 		if (u.length != 2) {
 			System.out.println("input u is of incorrect size");
@@ -85,8 +85,7 @@ public class SimRoeMetz {
 		u0 = u[0];
 		u1 = u[1];
 		useMLE = useMLEs;
-		doSim(var_t, rand);
-		processSimExperiment();
+
 	}
 
 	/**
@@ -123,7 +122,7 @@ public class SimRoeMetz {
 					var_t[i] = Double.parseDouble(var_ts[i]);
 				}
 			}
-			int[] n = new int[3];
+			long[] n = new long[3];
 			String[] ns = args[2].substring(args[2].indexOf("[") + 1,
 					args[2].indexOf("]")).split(",");
 			if (ns.length != 3) {
@@ -263,7 +262,7 @@ public class SimRoeMetz {
 	 *            guarantee that the generator is at any particular position
 	 *            within its sequence for a given seed.
 	 */
-	private void doSim(double[] var_t, Random rand) {
+	public void doSim(double[] var_t, Random rand) {
 		double[] stdDevs = new double[var_t.length];
 		for (int i = 0; i < var_t.length; i++) {
 			stdDevs[i] = Math.sqrt(var_t[i]);
@@ -288,10 +287,10 @@ public class SimRoeMetz {
 		double[] C1 = fillGaussian(stdDevs[16], rand, n1);
 		double[][] RC1 = fillGaussian(stdDevs[17], rand, nr, n1);
 
-		tA0 = new double[nr][n0];
-		tB0 = new double[nr][n0];
-		tA1 = new double[nr][n1];
-		tB1 = new double[nr][n1];
+		tA0 = new double[(int) nr][(int) n0];
+		tB0 = new double[(int) nr][(int) n0];
+		tA1 = new double[(int) nr][(int) n1];
+		tB1 = new double[(int) nr][(int) n1];
 
 		for (int i = 0; i < nr; i++) {
 			Arrays.fill(tA1[i], u0);
@@ -325,7 +324,7 @@ public class SimRoeMetz {
 	 * decompositions and AUC can be determined.
 	 * @throws IOException 
 	 */
-	private void processSimExperiment() throws IOException {
+	public void processSimExperiment() throws IOException {
 		double[][][][] newTMatrices = convertTMatrices();
 		int[][][][] dMatrices = createDMatrices();
 
@@ -356,12 +355,12 @@ public class SimRoeMetz {
 	 *         variance analysis
 	 */
 	private double[][][][] convertTMatrices() {
-		double[][][] newtA0 = new double[n0][nr][2];
-		double[][][] newtB0 = new double[n0][nr][2];
-		double[][][] newtA1 = new double[n1][nr][2];
-		double[][][] newtB1 = new double[n1][nr][2];
-		double[][][] newt0 = new double[n0][nr][2];
-		double[][][] newt1 = new double[n1][nr][2];
+		double[][][] newtA0 = new double[(int) n0][(int) nr][2];
+		double[][][] newtB0 = new double[(int) n0][(int) nr][2];
+		double[][][] newtA1 = new double[(int) n1][(int) nr][2];
+		double[][][] newtB1 = new double[(int) n1][(int) nr][2];
+		double[][][] newt0 = new double[(int) n0][(int) nr][2];
+		double[][][] newt1 = new double[(int) n1][(int) nr][2];
 
 		for (int reader = 0; reader < tA0.length; reader++) {
 			for (int cases = 0; cases < tA0[reader].length; cases++) {
@@ -406,8 +405,8 @@ public class SimRoeMetz {
 	 *         cases.
 	 */
 	private int[][][][] createDMatrices() {
-		int[][][] d0 = new int[n0][nr][2];
-		int[][][] d1 = new int[n1][nr][2];
+		int[][][] d0 = new int[(int) n0][(int) nr][2];
+		int[][][] d1 = new int[(int) n1][(int) nr][2];
 
 		for (int i = 0; i < nr; i++) {
 			for (int j = 0; j < n1; j++) {
@@ -428,12 +427,12 @@ public class SimRoeMetz {
 	 * @param rand Random number generator initialized with seed from GUI. No
 	 *            guarantee that the generator is at any particular position
 	 *            within its sequence for a given seed.
-	 * @param x length of vector to fill
+	 * @param nr2 length of vector to fill
 	 * @return 1-d array containing random gaussian numbers
 	 */
-	public static double[] fillGaussian(double scalar, Random rand, int x) {
-		double[] toReturn = new double[x];
-		for (int i = 0; i < x; i++) {
+	public static double[] fillGaussian(double scalar, Random rand, long nr2) {
+		double[] toReturn = new double[(int) nr2];
+		for (int i = 0; i < nr2; i++) {
 			toReturn[i] = scalar * rand.nextGaussian();
 		}
 		return toReturn;
@@ -447,15 +446,15 @@ public class SimRoeMetz {
 	 * @param rand Random number generator initialized with seed from GUI. No
 	 *            guarantee that the generator is at any particular position
 	 *            within its sequence for a given seed.
-	 * @param x length of array to fill
-	 * @param y width of array to fill
+	 * @param nr2 length of array to fill
+	 * @param n02 width of array to fill
 	 * @return 2-d array containing random gaussian numbers
 	 */
-	public static double[][] fillGaussian(double scalar, Random rand, int x,
-			int y) {
-		double[][] toReturn = new double[x][y];
-		for (int i = 0; i < x; i++) {
-			for (int j = 0; j < y; j++) {
+	public static double[][] fillGaussian(double scalar, Random rand, long nr2,
+			long n02) {
+		double[][] toReturn = new double[(int) nr2][(int) n02];
+		for (int i = 0; i < nr2; i++) {
+			for (int j = 0; j < n02; j++) {
 				toReturn[i][j] = scalar * rand.nextGaussian();
 			}
 		}

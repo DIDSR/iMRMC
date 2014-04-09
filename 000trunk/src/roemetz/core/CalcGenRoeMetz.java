@@ -71,14 +71,14 @@ public class CalcGenRoeMetz {
 					var_t[i] = Double.parseDouble(var_ts[i]);
 				}
 			}
-			int[] n = new int[3];
+			long[] n = new long[3];
 			String[] ns = args[2].substring(args[2].lastIndexOf("[") + 1,
 					args[0].indexOf("]")).split(",");
 			if (ns.length != 2) {
 				System.out.println("Expected input n to contain 3 elements");
 				return;
 			} else {
-				n = new int[] { Integer.parseInt(ns[0]),
+				n = new long[] { Integer.parseInt(ns[0]),
 						Integer.parseInt(ns[1]), Integer.parseInt(ns[2]) };
 			}
 			genRoeMetz(u, var_t, n);
@@ -267,7 +267,7 @@ public class CalcGenRoeMetz {
 	 * @param var_t Contains variance components. Has 18 elements.
 	 * @param n Contains experiment sizes. Has 3 elements.
 	 */
-	public static void genRoeMetz(double[] u, double[] var_t, int[] n) {
+	public static void genRoeMetz(double[] u, double[] var_t, long[] n) {
 		NormalDistribution gauss = new NormalDistribution();
 
 		// number of samples for numerical integration, can change
@@ -291,9 +291,9 @@ public class CalcGenRoeMetz {
 		double v_R1 = var_t[15];
 		double v_C1 = var_t[16];
 		double v_RC1 = var_t[17];
-		int n0 = n[0];
-		int n1 = n[1];
-		int nr = n[2];
+		long n0 = n[0];
+		long n1 = n[1];
+		long nr = n[2];
 
 		m = new double[2][2][9];
 
@@ -496,7 +496,7 @@ public class CalcGenRoeMetz {
 	 * @param n1 Number of disease cases
 	 * @param nr Number of readers
 	 */
-	public static void calcAUCsAndDecomps(int n0, int n1, int nr) {
+	public static void calcAUCsAndDecomps(long n0, long n1, long nr) {
 		double[][] Bauc = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, -1.0 },
 				{ 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, -1.0 },
 				{ 0.0, 0.0, 0.0, 0.0, 1.0, -1.0, -1.0, 1.0 },
