@@ -55,9 +55,9 @@ public class DBRecord {
 	private double[][] MSbias = new double[4][6];
 	private double[][] MScoeff = new double[4][6];
 	private double[] AUC = new double[2];
-	private int nReader;
-	private int nNormal;
-	private int nDisease;
+	private long nReader;
+	private long nNormal;
+	private long nDisease;
 	private boolean fullyCrossed;
 	private int[][][] mod0StudyDesign;
 	private int[][][] mod1StudyDesign;
@@ -104,7 +104,7 @@ public class DBRecord {
 	 * 
 	 * @return Number of readers
 	 */
-	public int getReader() {
+	public long getReader() {
 		return nReader;
 	}
 
@@ -113,7 +113,7 @@ public class DBRecord {
 	 * 
 	 * @return Number of normal cases
 	 */
-	public int getNormal() {
+	public long getNormal() {
 		return nNormal;
 	}
 
@@ -122,7 +122,7 @@ public class DBRecord {
 	 * 
 	 * @return Number of disease cases
 	 */
-	public int getDisease() {
+	public long getDisease() {
 		return nDisease;
 	}
 
@@ -387,17 +387,17 @@ public class DBRecord {
 	 * 
 	 * @param components Components of variance entered from GUI
 	 * @param whichComp Specifies with decomposition of components are entered
-	 * @param Reader Number of readers
-	 * @param Normal Number of normal cases
-	 * @param Disease Number of disease cases
+	 * @param n Number of readers
+	 * @param n2 Number of normal cases
+	 * @param n3 Number of disease cases
 	 * @param auc AUCs
 	 */
-	public DBRecord(double[][] components, int whichComp, int Reader, int Normal,
-			int Disease, double[] auc) {
+	public DBRecord(double[][] components, int whichComp, long n, long n2,
+			long n3, double[] auc) {
 		AUC = auc;
-		nReader = Reader;
-		nNormal = Normal;
-		nDisease = Disease;
+		nReader = n;
+		nNormal = n2;
+		nDisease = n3;
 
 		fullyCrossed = true;
 
@@ -484,13 +484,13 @@ public class DBRecord {
 	 */
 	private void checkStudyDesign() {
 		if (fullyCrossed) {
-			mod0StudyDesign = new int[nReader][nNormal][nDisease];
+			mod0StudyDesign = new int[(int) nReader][(int) nNormal][(int) nDisease];
 			for (int m = 0; m < mod0StudyDesign.length; m++) {
 				for (int n = 0; n < mod0StudyDesign[m].length; n++) {
 					Arrays.fill(mod0StudyDesign[m][n], 1);
 				}
 			}
-			mod1StudyDesign = new int[nReader][nNormal][nDisease];
+			mod1StudyDesign = new int[(int) nReader][(int) nNormal][(int) nDisease];
 			for (int m = 0; m < mod1StudyDesign.length; m++) {
 				for (int n = 0; n < mod1StudyDesign[m].length; n++) {
 					Arrays.fill(mod1StudyDesign[m][n], 1);
@@ -569,9 +569,9 @@ public class DBRecord {
 	 * @return String containing experiment sizes
 	 */
 	public String getSizes() {
-		return (Integer.toString(nReader) + " Readers,  "
-				+ Integer.toString(nNormal) + " Normal cases,  "
-				+ Integer.toString(nDisease) + " Disease cases.");
+		return (Long.toString(nReader) + " Readers,  "
+				+ Long.toString(nNormal) + " Normal cases,  "
+				+ Long.toString(nDisease) + " Disease cases.");
 	}
 
 	/**
@@ -579,8 +579,8 @@ public class DBRecord {
 	 * 
 	 * @return Array containing experiment sizes
 	 */
-	public int[] getSizesInt() {
-		int[] c = { nReader, nNormal, nDisease };
+	public long[] getSizesInt() {
+		long[] c = { nReader, nNormal, nDisease };
 		return c;
 	}
 
@@ -716,17 +716,17 @@ public class DBRecord {
 	 * representation of variance components
 	 * 
 	 * @param DBM Matrix of DBM variance components
-	 * @param NR Number of readers
-	 * @param N0 Number of normal cases
-	 * @param N1 Number of disease cases
+	 * @param nReader2 Number of readers
+	 * @param nNormal2 Number of normal cases
+	 * @param nDisease2 Number of disease cases
 	 * @return Matrix of MS representation of variance components
 	 */
-	public static double[][] DBM2MS(double[][] DBM, int NR, int N0, int N1) {
+	public static double[][] DBM2MS(double[][] DBM, long nReader2, long nNormal2, long nDisease2) {
 		double[][] c = new double[4][6];
 		double[][] BAlpha = new double[][] {
-				{ 2 * (N0 + N1), 0, 2, (N0 + N1), 0, 1 },
-				{ 0, 2 * NR, 2, 0, NR, 1 }, { 0, 0, 0, (N0 + N1), 0, 1 },
-				{ 0, 0, 0, 0, NR, 1 }, { 0, 0, 2, 0, 0, 1 },
+				{ 2 * (nNormal2 + nDisease2), 0, 2, (nNormal2 + nDisease2), 0, 1 },
+				{ 0, 2 * nReader2, 2, 0, nReader2, 1 }, { 0, 0, 0, (nNormal2 + nDisease2), 0, 1 },
+				{ 0, 0, 0, 0, nReader2, 1 }, { 0, 0, 2, 0, 0, 1 },
 				{ 0, 0, 0, 0, 0, 1 } };
 		for (int i = 0; i < 4; i++)
 			for (int j = 0; j < 6; j++)
@@ -746,31 +746,31 @@ public class DBRecord {
 	 * representation of variance components
 	 * 
 	 * @param BCK Matrix of BCK variance components
-	 * @param NR Number of readers
-	 * @param N0 Number of normal cases
-	 * @param N1 Number of disease cases
+	 * @param nReader2 Number of readers
+	 * @param nNormal2 Number of normal cases
+	 * @param nDisease2 Number of disease cases
 	 * @return Matrix of DBM representation of variance components
 	 */
-	public static double[][] BCK2DBM(double[][] BCK, int NR, int N0, int N1) {
+	public static double[][] BCK2DBM(double[][] BCK, long nReader2, long nNormal2, long nDisease2) {
 		double[] c = new double[7];
 		double[][] tmp = new double[4][7];
 		double[][] tmp1 = new double[4][3];
 		double[][] results = new double[4][6];
 
-		c[0] = 1.0 / N0;
-		c[1] = 1.0 / N1;
-		c[2] = 1.0 / (N0 * N1);
-		c[3] = 1.0 / NR;
-		c[4] = 1.0 / (N0 * NR);
-		c[5] = 1.0 / (N1 * NR);
-		c[6] = 1.0 / (N0 * N1 * NR);
+		c[0] = 1.0 / nNormal2;
+		c[1] = 1.0 / nDisease2;
+		c[2] = 1.0 / (nNormal2 * nDisease2);
+		c[3] = 1.0 / nReader2;
+		c[4] = 1.0 / (nNormal2 * nReader2);
+		c[5] = 1.0 / (nDisease2 * nReader2);
+		c[6] = 1.0 / (nNormal2 * nDisease2 * nReader2);
 
 		for (int i = 0; i < 3; i++)
 			tmp[i] = Matrix.dotProduct(BCK[i], c);
 
 		double[][] alpha = new double[][] { { 0, 1, 0 }, { 0, 1, 0 },
-				{ 0, 1, 0 }, { NR, 0, 0 }, { 0, 0, NR }, { 0, 0, NR },
-				{ 0, 0, NR } };
+				{ 0, 1, 0 }, { nReader2, 0, 0 }, { 0, 0, nReader2 }, { 0, 0, nReader2 },
+				{ 0, 0, nReader2 } };
 
 		tmp1 = Matrix.multiply(tmp, alpha);
 
@@ -779,22 +779,22 @@ public class DBRecord {
 				results[i][j] = 0;
 
 		results[0][0] = tmp1[0][0];
-		results[0][1] = tmp1[0][1] * (N0 + N1);
-		results[0][2] = tmp1[0][2] * (N0 + N1);
+		results[0][1] = tmp1[0][1] * (nNormal2 + nDisease2);
+		results[0][2] = tmp1[0][2] * (nNormal2 + nDisease2);
 
 		results[1][0] = tmp1[1][0];
-		results[1][1] = tmp1[1][1] * (N0 + N1);
-		results[1][2] = tmp1[1][2] * (N0 + N1);
+		results[1][1] = tmp1[1][1] * (nNormal2 + nDisease2);
+		results[1][2] = tmp1[1][2] * (nNormal2 + nDisease2);
 
 		results[3][0] = tmp1[2][0];
-		results[3][1] = tmp1[2][1] * (N0 + N1);
-		results[3][2] = tmp1[2][2] * (N0 + N1);
+		results[3][1] = tmp1[2][1] * (nNormal2 + nDisease2);
+		results[3][2] = tmp1[2][2] * (nNormal2 + nDisease2);
 
 		results[3][3] = (tmp1[0][0] + tmp1[1][0]) / 2.0 - tmp1[2][0];
 		results[3][4] = ((tmp1[0][1] + tmp1[1][1]) / 2.0 - tmp1[2][1])
-				* (N0 + N1);
+				* (nNormal2 + nDisease2);
 		results[3][5] = ((tmp1[0][2] + tmp1[1][2]) / 2.0 - tmp1[2][2])
-				* (N0 + N1);
+				* (nNormal2 + nDisease2);
 
 		// System.out.println("tmp1[2][0]=" + tmp1[2][0] +" tmp1[2][1]=" +
 		// tmp1[2][1] +" tmp1[2][2]=" +tmp1[2][2]);
@@ -830,22 +830,22 @@ public class DBRecord {
 	 * Determines the coefficient matrix for BDG variance components given a
 	 * fully crossed study design
 	 * 
-	 * @param NR Number of readers
-	 * @param N0 Number of normal cases
-	 * @param N1 Number of disease cases
+	 * @param nReader2 Number of readers
+	 * @param nNormal2 Number of normal cases
+	 * @param nDisease2 Number of disease cases
 	 * @return Matrix containing coefficients corresponding to BDG variance
 	 *         components
 	 */
-	public static double[][] genBDGCoeff(int NR, int N0, int N1) {
+	public static double[][] genBDGCoeff(long nReader2, long nNormal2, long nDisease2) {
 		double[][] c = new double[4][8];
-		c[0][0] = 1.0 / (NR * N0 * N1);
-		c[0][1] = c[0][0] * (N0 - 1.0);
-		c[0][2] = c[0][0] * (N1 - 1.0);
-		c[0][3] = c[0][0] * (N0 - 1.0) * (N1 - 1.0);
-		c[0][4] = c[0][0] * (NR - 1.0);
-		c[0][5] = c[0][0] * (N0 - 1.0) * (NR - 1.0);
-		c[0][6] = c[0][0] * (N1 - 1.0) * (NR - 1.0);
-		c[0][7] = c[0][0] * (N1 - 1.0) * (N0 - 1.0) * (NR - 1.0);
+		c[0][0] = 1.0 / (nReader2 * nNormal2 * nDisease2);
+		c[0][1] = c[0][0] * (nNormal2 - 1.0);
+		c[0][2] = c[0][0] * (nDisease2 - 1.0);
+		c[0][3] = c[0][0] * (nNormal2 - 1.0) * (nDisease2 - 1.0);
+		c[0][4] = c[0][0] * (nReader2 - 1.0);
+		c[0][5] = c[0][0] * (nNormal2 - 1.0) * (nReader2 - 1.0);
+		c[0][6] = c[0][0] * (nDisease2 - 1.0) * (nReader2 - 1.0);
+		c[0][7] = c[0][0] * (nDisease2 - 1.0) * (nNormal2 - 1.0) * (nReader2 - 1.0);
 		c[0][7] = c[0][7] - 1;
 		c[1] = c[0];
 		c[2] = c[0];
@@ -858,14 +858,14 @@ public class DBRecord {
 	 * Determines the coefficient matrix for BCK variance components given a
 	 * non-fully crossed study design
 	 * 
-	 * @param NR Number of readers
-	 * @param N0 Number of normal cases
-	 * @param N1 Number of disease cases
+	 * @param nReader2 Number of readers
+	 * @param nNormal2 Number of normal cases
+	 * @param nDisease2 Number of disease cases
 	 * @param c BDG coefficient matrix
 	 * @return Matrix containing coefficients corresponding to BCK variance
 	 *         components
 	 */
-	public static double[][] genBCKCoeff(int NR, int N0, int N1, double[] c) {
+	public static double[][] genBCKCoeff(long nReader2, long nNormal2, long nDisease2, double[] c) {
 		double[][] c2ca = new double[][] {
 				{ 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0 },
 				{ 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0 },
@@ -883,21 +883,21 @@ public class DBRecord {
 	 * Determines the coefficient matrix for BCK variance components given a
 	 * fully crossed study design
 	 * 
-	 * @param NR Number of readers
-	 * @param N0 Number of normal cases
-	 * @param N1 Number of disease cases
+	 * @param nReader2 Number of readers
+	 * @param nNormal2 Number of normal cases
+	 * @param nDisease2 Number of disease cases
 	 * @return Matrix containing coefficients corresponding to BCK variance
 	 *         components
 	 */
-	public static double[][] genBCKCoeff(int NR, int N0, int N1) {
+	public static double[][] genBCKCoeff(long nReader2, long nNormal2, long nDisease2) {
 		double[][] c = new double[4][7];
-		c[0][0] = 1.0 / N0;
-		c[0][1] = 1.0 / N1;
-		c[0][2] = 1.0 / (N0 * N1);
-		c[0][3] = 1.0 / NR;
-		c[0][4] = 1.0 / (N0 * NR);
-		c[0][5] = 1.0 / (N1 * NR);
-		c[0][6] = 1.0 / (N1 * N0 * NR);
+		c[0][0] = 1.0 / nNormal2;
+		c[0][1] = 1.0 / nDisease2;
+		c[0][2] = 1.0 / (nNormal2 * nDisease2);
+		c[0][3] = 1.0 / nReader2;
+		c[0][4] = 1.0 / (nNormal2 * nReader2);
+		c[0][5] = 1.0 / (nDisease2 * nReader2);
+		c[0][6] = 1.0 / (nDisease2 * nNormal2 * nReader2);
 
 		c[1] = c[0];
 		c[2] = c[0];
@@ -909,25 +909,25 @@ public class DBRecord {
 	 * Determines the coefficient matrix for DBM variance components given a
 	 * fully crossed study design
 	 * 
-	 * @param NR Number of readers
-	 * @param N0 Number of normal cases
-	 * @param N1 Number of disease cases
+	 * @param nReader2 Number of readers
+	 * @param nNormal2 Number of normal cases
+	 * @param nDisease2 Number of disease cases
 	 * @return Matrix containing coefficients corresponding to DBM variance
 	 *         components
 	 */
-	public static double[][] genDBMCoeff(int NR, int N0, int N1) {
+	public static double[][] genDBMCoeff(long nReader2, long nNormal2, long nDisease2) {
 		double[][] c = new double[4][6];
 		/*
 		 * c[0][0] = 1.0/N2; c[0][1] = 1.0; c[0][2]= 1.0/N2; c[0][3] = 1.0/N2;
 		 * c[0][4]= 1.0; c[0][5]= 1.0/N2;
 		 */
 		/* per unit */
-		c[0][0] = 1.0 / NR;
-		c[0][1] = 1.0 / (N0 + N1);
-		c[0][2] = 1.0 / NR / (N0 + N1);
-		c[0][3] = 1.0 / NR;
-		c[0][4] = 1.0 / (N0 + N1);
-		c[0][5] = 1.0 / NR / (N0 + N1);
+		c[0][0] = 1.0 / nReader2;
+		c[0][1] = 1.0 / (nNormal2 + nDisease2);
+		c[0][2] = 1.0 / nReader2 / (nNormal2 + nDisease2);
+		c[0][3] = 1.0 / nReader2;
+		c[0][4] = 1.0 / (nNormal2 + nDisease2);
+		c[0][5] = 1.0 / nReader2 / (nNormal2 + nDisease2);
 
 		c[1] = c[0];
 		c[2] = Matrix.scaleVector(c[0], 0);
@@ -949,15 +949,15 @@ public class DBRecord {
 	 * Determines the coefficient matrix for MS variance components given a
 	 * fully crossed study design
 	 * 
-	 * @param NR Number of readers
-	 * @param N0 Number of normal cases
-	 * @param N1 Number of disease cases
+	 * @param nReader2 Number of readers
+	 * @param nNormal2 Number of normal cases
+	 * @param nDisease2 Number of disease cases
 	 * @return Matrix containing coefficients corresponding to MS variance
 	 *         components
 	 */
-	public static double[][] genMSCoeff(int NR, int N0, int N1) {
+	public static double[][] genMSCoeff(long nReader2, long nNormal2, long nDisease2) {
 		double[][] c = new double[4][6];
-		double tmp = 1.0 / (NR * (N0 + N1));
+		double tmp = 1.0 / (nReader2 * (nNormal2 + nDisease2));
 		c[0][0] = tmp;
 		c[0][1] = tmp;
 		c[0][2] = 0;
@@ -979,28 +979,28 @@ public class DBRecord {
 	 * Determines the coefficient matrix for OR variance components given a
 	 * fully crossed study design
 	 * 
-	 * @param NR Number of readers
-	 * @param N0 Number of normal cases
-	 * @param N1 Number of disease cases
+	 * @param nReader2 Number of readers
+	 * @param nNormal2 Number of normal cases
+	 * @param nDisease2 Number of disease cases
 	 * @return Matrix containing coefficients corresponding to OR variance
 	 *         components
 	 */
-	public static double[][] genORCoeff(int NR, int N0, int N1) {
+	public static double[][] genORCoeff(long nReader2, long nNormal2, long nDisease2) {
 		double[][] c = new double[4][6];
-		c[0][0] = 1.0 / NR;
+		c[0][0] = 1.0 / nReader2;
 		c[0][1] = 0;
 		c[0][2] = 0;
-		c[0][3] = 1.0 / NR * (NR - 1);
+		c[0][3] = 1.0 / nReader2 * (nReader2 - 1);
 		c[0][4] = 0;
-		c[0][5] = 1.0 / NR;
+		c[0][5] = 1.0 / nReader2;
 		c[1] = c[0];
 		c[2] = Matrix.scaleVector(c[0], 0);
 		c[3][0] = 0;
-		c[3][1] = 2.0 / NR;
-		c[3][2] = -2.0 / NR;
-		c[3][3] = 2.0 / NR * (NR - 1);
-		c[3][4] = -2.0 / NR * (NR - 1);
-		c[3][5] = 2.0 / NR;
+		c[3][1] = 2.0 / nReader2;
+		c[3][2] = -2.0 / nReader2;
+		c[3][3] = 2.0 / nReader2 * (nReader2 - 1);
+		c[3][4] = -2.0 / nReader2 * (nReader2 - 1);
+		c[3][5] = 2.0 / nReader2;
 
 		return c;
 	}
@@ -1151,13 +1151,13 @@ public class DBRecord {
 	 * 
 	 * @param index Whether the in[][] parameter is DBM or OR components
 	 * @param in Matrix of DBM or OR variance components
-	 * @param NR Number of readers
-	 * @param N0 Number of normal cases
-	 * @param N1 Number of disease cases
+	 * @param nReader2 Number of readers
+	 * @param nNormal2 Number of normal cases
+	 * @param nDisease2 Number of disease cases
 	 * @return Matrix of OR or DBM variance components
 	 */
-	public static double[][] DBM2OR(int index, double[][] in, int NR, int N0,
-			int N1) {
+	public static double[][] DBM2OR(int index, double[][] in, long nReader2, long nNormal2,
+			long nDisease2) {
 		double[][] toReturn = new double[4][6];
 		double[][] dbm = new double[4][6];
 		double[][] orVar = new double[4][6];
@@ -1173,11 +1173,11 @@ public class DBRecord {
 
 				orVar[i][0] = dbm[i][0];
 				orVar[i][1] = dbm[i][3];
-				orVar[i][2] = (dbm[i][1] + dbm[i][2]) / (N0 + N1);
-				orVar[i][3] = (dbm[i][1] + dbm[i][4]) / (N0 + N1);
-				orVar[i][4] = dbm[i][1] / (N0 + N1);
+				orVar[i][2] = (dbm[i][1] + dbm[i][2]) / (nNormal2 + nDisease2);
+				orVar[i][3] = (dbm[i][1] + dbm[i][4]) / (nNormal2 + nDisease2);
+				orVar[i][4] = dbm[i][1] / (nNormal2 + nDisease2);
 				orVar[i][5] = (dbm[i][1] + dbm[i][2] + dbm[i][4] + dbm[i][5])
-						/ (N0 + N1);
+						/ (nNormal2 + nDisease2);
 
 			}
 			toReturn = orVar;
@@ -1192,12 +1192,12 @@ public class DBRecord {
 				 */
 
 				dbm[i][0] = orVar[i][0];
-				dbm[i][1] = orVar[i][4] * (N0 + N1);
-				dbm[i][2] = (orVar[i][2] - orVar[i][4]) * (N0 + N1);
+				dbm[i][1] = orVar[i][4] * (nNormal2 + nDisease2);
+				dbm[i][2] = (orVar[i][2] - orVar[i][4]) * (nNormal2 + nDisease2);
 				dbm[i][3] = orVar[i][1];
-				dbm[i][4] = (orVar[i][3] - orVar[i][4]) * (N0 + N1);
+				dbm[i][4] = (orVar[i][3] - orVar[i][4]) * (nNormal2 + nDisease2);
 				dbm[i][5] = (orVar[i][5] - orVar[i][2] - orVar[i][3] + orVar[i][4])
-						* (N0 + N1);
+						* (nNormal2 + nDisease2);
 			}
 			toReturn = dbm;
 

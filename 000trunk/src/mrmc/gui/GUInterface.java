@@ -394,7 +394,7 @@ public class GUInterface {
 	 */
 	public void setSizePanel() {
 		DBRecord tempRecord = getCurrentRecord();
-		int[] params = tempRecord.getSizesInt();
+		long[] params = tempRecord.getSizesInt();
 		genSP.setNumbers(params);
 	}
 
@@ -1220,7 +1220,7 @@ public class GUInterface {
 		// *************Generate Sizing panel*********************************
 		// *******************************************************************
 		JPanel sizingPanel = new JPanel();
-		int[] Parms = {0, 0, 0};
+		long[] Parms = {0, 0, 0};
 		genSP = new SizePanel(Parms, sizingPanel, this);
 
 		JPanel statsRow1 = new JPanel();

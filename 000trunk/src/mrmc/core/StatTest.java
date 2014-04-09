@@ -402,12 +402,12 @@ public class StatTest {
 	 * 
 	 * @param varDBM Subset of DBM variance components for the selected
 	 *            modality/difference
-	 * @param r Number of readers
-	 * @param c Number of cases
+	 * @param l Number of readers
+	 * @param m Number of cases
 	 * @param totalVar Total variance of components
 	 * @return Denominator degrees of freedom
 	 */
-	public double DDF_Hillis(double[] varDBM, int r, int c, double totalVar) {
+	public double DDF_Hillis(double[] varDBM, long l, long m, double totalVar) {
 		double SigTR = varDBM[0];
 		double SigTC = varDBM[1];
 		double SigTRC = varDBM[2];
@@ -426,15 +426,15 @@ public class StatTest {
 		// F statistics Hillis 2004
 		double Nu, De1, De2, De3;
 		if (SigTC == 0) {
-			ddf_hillis = r - 1;
+			ddf_hillis = l - 1;
 		} else {
-			Nu = c * SigTR + r * SigTC + SigTRC;
+			Nu = m * SigTR + l * SigTC + SigTRC;
 			Nu = Nu * Nu;
-			De1 = c * SigTR + SigTRC;
-			De1 = De1 * De1 / (r - 1);
-			De2 = r * SigTC + SigTRC;
-			De2 = De2 * De2 / (c - 1);
-			De3 = SigTRC * SigTRC / (r - 1) / (c - 1);
+			De1 = m * SigTR + SigTRC;
+			De1 = De1 * De1 / (l - 1);
+			De2 = l * SigTC + SigTRC;
+			De2 = De2 * De2 / (m - 1);
+			De3 = SigTRC * SigTRC / (l - 1) / (m - 1);
 			ddf_hillis = Nu / (De1 + De2 + De3);
 			ddf_hillis = Nu / (De1);
 		}
@@ -553,43 +553,43 @@ public class StatTest {
 	 * Calculates degrees of freedom by Obuchowski, BCK method
 	 * 
 	 * @param BCK Components of variance for BCK decomposition
-	 * @param r Number of readers
-	 * @param n Number of normal cases
-	 * @param d Number of disease cases
+	 * @param l Number of readers
+	 * @param m Number of normal cases
+	 * @param n Number of disease cases
 	 * @param totalVar Total variance of components
 	 * @return Degrees of freedom
 	 */
-	private double calcDFBDG(double[][] BCK, int r, int n, int d,
+	private double calcDFBDG(double[][] BCK, long l, long m, long n,
 			double totalVar) {
 		System.out.println("total var " + totalVar);
 		double s2b0 = 0.0;
-		s2b0 = s2b0 + r*  d*(BCK[0][0] + BCK[1][0] - 2*BCK[2][0]);
-		s2b0 = s2b0 +     d*(BCK[0][4] + BCK[1][4] - 2*BCK[2][4]);
-		s2b0 = s2b0 + r*    (BCK[0][2] + BCK[1][2] - 2*BCK[2][2]);
+		s2b0 = s2b0 + l*  n*(BCK[0][0] + BCK[1][0] - 2*BCK[2][0]);
+		s2b0 = s2b0 +     n*(BCK[0][4] + BCK[1][4] - 2*BCK[2][4]);
+		s2b0 = s2b0 + l*    (BCK[0][2] + BCK[1][2] - 2*BCK[2][2]);
 		s2b0 = s2b0 +       (BCK[0][6] + BCK[1][6] - 2*BCK[2][6]);
-		s2b0 = s2b0  /r/n/d;
+		s2b0 = s2b0  /l/m/n;
 		
 		double s2b1 = 0.0;
-		s2b1 = s2b1 + r*n*  (BCK[0][1] + BCK[1][1] - (2 * BCK[2][1]));
-		s2b1 = s2b1 +   n*  (BCK[0][5] + BCK[1][5] - (2 * BCK[2][5]));
-		s2b1 = s2b1 + r*    (BCK[0][2] + BCK[1][2] - (2 * BCK[2][2]));
+		s2b1 = s2b1 + l*m*  (BCK[0][1] + BCK[1][1] - (2 * BCK[2][1]));
+		s2b1 = s2b1 +   m*  (BCK[0][5] + BCK[1][5] - (2 * BCK[2][5]));
+		s2b1 = s2b1 + l*    (BCK[0][2] + BCK[1][2] - (2 * BCK[2][2]));
 		s2b1 = s2b1 +       (BCK[0][6] + BCK[1][6] - (2 * BCK[2][6]));
-		s2b1 = s2b1  /r/n/d;
+		s2b1 = s2b1  /l/m/n;
 
 		double s2br = 0.0;
-		s2br = s2br +   n*d*(BCK[0][3] + BCK[1][3] - (2 * BCK[2][3]));
-		s2br = s2br +     d*(BCK[0][4] + BCK[1][4] - (2 * BCK[2][4]));
-		s2br = s2br +   n*  (BCK[0][5] + BCK[1][5] - (2 * BCK[2][5]));
+		s2br = s2br +   m*n*(BCK[0][3] + BCK[1][3] - (2 * BCK[2][3]));
+		s2br = s2br +     n*(BCK[0][4] + BCK[1][4] - (2 * BCK[2][4]));
+		s2br = s2br +   m*  (BCK[0][5] + BCK[1][5] - (2 * BCK[2][5]));
 		s2br = s2br +       (BCK[0][6] + BCK[1][6] - (2 * BCK[2][6]));
-		s2br = s2br  /r/n/d;
+		s2br = s2br  /l/m/n;
 
 //		double balanceR = (Math.pow(s2br, 2) / Math.pow(r - 1, 3));
 //		double balance0 = (Math.pow(s2b0, 2) / Math.pow(n - 1, 3));
 //		double balance1 = (Math.pow(s2b1, 2) / Math.pow(d - 1, 3));
 
-		double balanceR = (Math.pow(s2br, 2) / (r - 1));
-		double balance0 = (Math.pow(s2b0, 2) / (n - 1));
-		double balance1 = (Math.pow(s2b1, 2) / (d - 1));
+		double balanceR = (Math.pow(s2br, 2) / (l - 1));
+		double balance0 = (Math.pow(s2b0, 2) / (m - 1));
+		double balance1 = (Math.pow(s2b1, 2) / (n - 1));
 		double df = Math.pow(totalVar, 2) / (balanceR + balance0 + balance1);
 		System.out.println("calc df = " + df);
 		return df;
