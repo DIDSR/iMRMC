@@ -143,9 +143,9 @@ public class RMGUInterface {
 	 * 
 	 * @return Array of experiment size parameters
 	 */
-	public int[] getSizes() {
-		return new int[] { Integer.valueOf(n0.getText()),
-				Integer.valueOf(n1.getText()), Integer.valueOf(nr.getText()) };
+	public long[] getSizes() {
+		return new long[] { Long.valueOf(n0.getText()),
+				Long.valueOf(n1.getText()), Long.valueOf(nr.getText()) };
 	}
 
 	/**
@@ -870,17 +870,83 @@ public class RMGUInterface {
 		}
 	}
 
+	private class SimExperiments {
+
+		/**
+		 * Constructor for group of simulation experiments.
+		 * 
+		 * @param u Contains experiment means
+		 * @param var_t Contains components of variance
+		 * @param n Contains experiment size
+		 * @param rand Random number generator, no guarantee on current position
+		 *            in sequence
+		 * @param numTimes Number of simulation experiments to perform.
+		 * @param progVal Shared counter of number of experiments performed
+		 *            across all threads
+		 * @param filenameTime Timestamp when this set of experiments was
+		 *            started, to categorize output files
+		 * @param whichTask Indentifier for this group of simulation experiments
+		 *            (this thread)
+		 * @throws IOException 
+		 */
+		public double [][][] do_SimExperiments(double[] u, double[] var_t, long[] n, Random rand,
+				long numTimes, AtomicInteger progVal, String filenameTime) throws IOException {
+
+			double[][] avgBDGdata = new double[3][8];
+			double[][] avgBCKdata = new double[3][7];
+			double[][] avgDBMdata = new double[4][6];
+			double[][] avgORdata = new double[4][6];
+			double[][] avgMSdata = new double[4][6];
+			double[] avgAUC = new double[3];
+
+			SimRoeMetz currSim = new SimRoeMetz(u, var_t, n, rand, useMLE);
+			for (long i = 0; i < numTimes; i++) {
+
+				currSim.doSim(var_t, rand);
+				currSim.processSimExperiment();
+				
+				if (simSaveDirectory != null && !simSaveDirectory.equals("")) {
+					writeMRMCFile(currSim.gettA0(), currSim.gettB0(),
+							currSim.gettA1(), currSim.gettB1(),
+							currSim.getAUC(), filenameTime, i);
+					writeComponentsFile(currSim.getBDGdata(), n,
+							currSim.getAUC(), useMLE, filenameTime, i);
+				}
+
+				avgBDGdata = Matrix.matrixAdd(avgBDGdata, currSim.getBDGdata());
+				avgBCKdata = Matrix.matrixAdd(avgBCKdata, currSim.getBCKdata());
+				avgDBMdata = Matrix.matrixAdd(avgDBMdata, currSim.getDBMdata());
+				avgORdata = Matrix.matrixAdd(avgORdata, currSim.getORdata());
+				avgMSdata = Matrix.matrixAdd(avgMSdata, currSim.getMSdata());
+				avgAUC = Matrix.matrixAdd(avgAUC, currSim.getAUC());
+
+			}
+
+			double scaleFactor = 1.0 / (double) numTimes;
+			avgBDGdata = Matrix.scaleMatrix(avgBDGdata, scaleFactor);
+			avgBCKdata = Matrix.scaleMatrix(avgBCKdata, scaleFactor);
+			avgDBMdata = Matrix.scaleMatrix(avgDBMdata, scaleFactor);
+			avgORdata = Matrix.scaleMatrix(avgORdata, scaleFactor);
+			avgMSdata = Matrix.scaleMatrix(avgMSdata, scaleFactor);
+			avgAUC = Matrix.scaleVector(avgAUC, scaleFactor);
+
+			return new double[][][] { avgBDGdata, avgBCKdata, avgDBMdata,
+					avgORdata, avgMSdata, { avgAUC } };
+		}
+
+	}
+	
 	/**
 	 * Performs multiple consecutive simulation experiments in a separate
 	 * thread. Enables multi-threading to take advantage of multi-core systems
 	 * and keep GUI responsive during heavy calculations.
 	 * 
 	 */
-	private class SimExperiments extends SwingWorker<double[][][], Integer> {
+	private class SimExperiments_thread extends SwingWorker<double[][][], Integer> {
 		double[] u; // experiment means
 		double[] var_t; // components of variance
-		int[] n; // experiment sizes
-		int numTimes;
+		long[] n; // experiment sizes
+		long numTimes;
 		Random rand;
 		AtomicInteger progVal;
 		String filenameTime;
@@ -902,8 +968,8 @@ public class RMGUInterface {
 		 * @param whichTask Indentifier for this group of simulation experiments
 		 *            (this thread)
 		 */
-		public SimExperiments(double[] u, double[] var_t, int[] n, Random rand,
-				int numTimes, AtomicInteger progVal, String filenameTime,
+		public SimExperiments_thread(double[] u, double[] var_t, long[] n, Random rand,
+				long numTimes, AtomicInteger progVal, String filenameTime,
 				int whichTask) {
 			this.u = u;
 			this.var_t = var_t;
@@ -930,9 +996,12 @@ public class RMGUInterface {
 			double[][] avgMSdata = new double[4][6];
 			double[] avgAUC = new double[3];
 
+			SimRoeMetz currSim = new SimRoeMetz(u, var_t, n, rand, useMLE);
 			for (int i = 0; i < numTimes; i++) {
-				SimRoeMetz currSim = new SimRoeMetz(u, var_t, n, rand, useMLE);
 
+				currSim.doSim(var_t, rand);
+				currSim.processSimExperiment();
+				
 				if (simSaveDirectory != null && !simSaveDirectory.equals("")) {
 					writeMRMCFile(currSim.gettA0(), currSim.gettB0(),
 							currSim.gettA1(), currSim.gettB1(),
@@ -951,7 +1020,7 @@ public class RMGUInterface {
 				avgAUC = Matrix.matrixAdd(avgAUC, currSim.getAUC());
 
 				publish(progVal.getAndIncrement());
-				setProgress(100 * i / numTimes);
+				setProgress((int) (100 * i / numTimes));
 			}
 
 			double scaleFactor = 1.0 / (double) numTimes;
@@ -984,9 +1053,10 @@ public class RMGUInterface {
 	class DoSimBtnListener implements ActionListener {
 		int finishedTasks = 0;
 		final int numCores = Runtime.getRuntime().availableProcessors();
-		int numTasks;
+		// final int numCores = 1;
+		int numCoresToUse;
 		double[][][][] results = new double[numCores][][][];
-		int[] n;
+		long[] n;
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -995,7 +1065,7 @@ public class RMGUInterface {
 				double[] var_t = getVariances();
 				n = getSizes();
 				long seedVar = Long.parseLong(seed.getText());
-				final int numOfExper = Integer.valueOf(numExp.getText());
+				final long numOfExper = Integer.valueOf(numExp.getText());
 
 				if (simSaveDirectory == null || simSaveDirectory.equals("")) {
 					JOptionPane
@@ -1018,49 +1088,62 @@ public class RMGUInterface {
 
 				final AtomicInteger progVal = new AtomicInteger(0);
 
-				createProgressBar(numOfExper, progVal.get());
+				createProgressBar((int) numOfExper, progVal.get());
 
 				// divide simulations into separate tasks
 				if (numOfExper < numCores) {
-					numTasks = numOfExper;
+					numCoresToUse = (int) numOfExper;
 				} else {
-					numTasks = numCores;
-				}
-				final SimExperiments[] allTasks = new SimExperiments[numTasks];
-				for (int i = 0; i < numTasks; i++) {
-					final int taskNum = i;
-					allTasks[i] = new SimExperiments(u, var_t, n, rand,
-							numOfExper / numTasks, progVal, filenameTime, i);
-					// Check to see when each task finishes and get its results
-					allTasks[i]
-							.addPropertyChangeListener(new PropertyChangeListener() {
-								public void propertyChange(
-										PropertyChangeEvent evt) {
-									if (evt.getPropertyName().equals("done")) {
-										try {
-											results[taskNum] = allTasks[taskNum]
-													.get();
-											finishedTasks++;
-											if (finishedTasks == numTasks) {
-												finishedTasks = 0;
-												processResults(
-														simSaveDirectory,
-														filenameTime);
-											}
-										} catch (InterruptedException e) {
-											e.printStackTrace();
-										} catch (ExecutionException e) {
-											e.printStackTrace();
-										}
-									}
-								}
-							});
-				}
-				// run each task in its own thread, to spread across cores
-				for (int i = 0; i < numTasks; i++) {
-					allTasks[i].execute();
+					numCoresToUse = numCores;
 				}
 
+				if ( numCoresToUse == 1) {
+					final SimExperiments oneCore = new SimExperiments();
+					try {
+						results[0] = oneCore.do_SimExperiments(u, var_t, n, rand, numOfExper, progVal, filenameTime);
+						processResults( simSaveDirectory, filenameTime);
+
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				
+				} else {
+					final SimExperiments_thread[] allTasks = new SimExperiments_thread[numCoresToUse];
+					for (int i = 0; i < numCoresToUse; i++) {
+						final int taskNum = i;
+						allTasks[i] = new SimExperiments_thread(u, var_t, n, rand,
+								numOfExper / numCoresToUse, progVal, filenameTime, i);
+						// Check to see when each task finishes and get its results
+						allTasks[i]
+								.addPropertyChangeListener(new PropertyChangeListener() {
+									public void propertyChange(
+											PropertyChangeEvent evt) {
+										if (evt.getPropertyName().equals("done")) {
+											try {
+												results[taskNum] = allTasks[taskNum]
+														.get();
+												finishedTasks++;
+												if (finishedTasks == numCoresToUse) {
+													finishedTasks = 0;
+													processResults(
+															simSaveDirectory,
+															filenameTime);
+												}
+											} catch (InterruptedException e) {
+												e.printStackTrace();
+											} catch (ExecutionException e) {
+												e.printStackTrace();
+											}
+										}
+									}
+								});
+					}
+					// run each task in its own thread, to spread across cores
+					for (int i = 0; i < numCoresToUse; i++) {
+						allTasks[i].execute();
+					}
+				}
 			} catch (NumberFormatException e1) {
 				System.out.println(e1.toString());
 				JOptionPane.showMessageDialog(appl.getFrame(),
@@ -1068,6 +1151,7 @@ public class RMGUInterface {
 						JOptionPane.ERROR_MESSAGE);
 
 			}
+			
 		}
 
 		/**
@@ -1103,7 +1187,7 @@ public class RMGUInterface {
 			double[][] avgdMS = new double[4][6];
 			double[] avgdAUC = new double[3];
 
-			for (int i = 0; i < numTasks; i++) {
+			for (int i = 0; i < numCoresToUse; i++) {
 				avgdBDG = Matrix.matrixAdd(avgdBDG, results[i][0]);
 				avgdBCK = Matrix.matrixAdd(avgdBCK, results[i][1]);
 				avgdDBM = Matrix.matrixAdd(avgdDBM, results[i][2]);
@@ -1112,12 +1196,12 @@ public class RMGUInterface {
 				avgdAUC = Matrix.matrixAdd(avgdAUC, results[i][5][0]);
 			}
 
-			avgdBDG = Matrix.scaleMatrix(avgdBDG, 1.0 / (double) numTasks);
-			avgdBCK = Matrix.scaleMatrix(avgdBCK, 1.0 / (double) numTasks);
-			avgdDBM = Matrix.scaleMatrix(avgdDBM, 1.0 / (double) numTasks);
-			avgdOR = Matrix.scaleMatrix(avgdOR, 1.0 / (double) numTasks);
-			avgdMS = Matrix.scaleMatrix(avgdMS, 1.0 / (double) numTasks);
-			avgdAUC = Matrix.scaleVector(avgdAUC, 1.0 / (double) numTasks);
+			avgdBDG = Matrix.scaleMatrix(avgdBDG, 1.0 / (double) numCoresToUse);
+			avgdBCK = Matrix.scaleMatrix(avgdBCK, 1.0 / (double) numCoresToUse);
+			avgdDBM = Matrix.scaleMatrix(avgdDBM, 1.0 / (double) numCoresToUse);
+			avgdOR = Matrix.scaleMatrix(avgdOR, 1.0 / (double) numCoresToUse);
+			avgdMS = Matrix.scaleMatrix(avgdMS, 1.0 / (double) numCoresToUse);
+			avgdAUC = Matrix.scaleVector(avgdAUC, 1.0 / (double) numCoresToUse);
 
 			double[][] BDGcoeff = DBRecord.genBDGCoeff(n[2], n[0], n[1]);
 			double[][] BCKcoeff = DBRecord.genBCKCoeff(n[2], n[0], n[1]);
@@ -1280,12 +1364,12 @@ public class RMGUInterface {
 	private class CalculateCofV extends SwingWorker<double[][][], Integer> {
 		double[] u; // experiment means
 		double[] var_t; // components of variance
-		int[] n; // experiment sizes
+		long[] n; // experiment sizes
 
-		public CalculateCofV(double[] u, double[] var_t, int[] n) {
+		public CalculateCofV(double[] u, double[] var_t, long[] n2) {
 			this.u = u;
 			this.var_t = var_t;
-			this.n = n;
+			this.n = n2;
 		}
 
 		/**
@@ -1313,7 +1397,7 @@ public class RMGUInterface {
 	 */
 	class DoGenRoeMetzBtnListener implements ActionListener {
 		double[][][] results; // averaged decompositions of cofv
-		int[] n; // experiment size
+		long[] n; // experiment size
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -1529,13 +1613,13 @@ public class RMGUInterface {
 	 * @param auc AUCs of experiment1
 	 * @param filename Filename prefix (is a timestamp) for a particular batch
 	 *            of output files
-	 * @param fileNum The number of this particular experiment in the batch
+	 * @param l The number of this particular experiment in the batch
 	 */
 	public void writeMRMCFile(double[][] t00, double[][] t01, double[][] t10,
-			double[][] t11, double[] auc, String filename, int fileNum) {
+			double[][] t11, double[] auc, String filename, long l) {
 		try {
 			File file = new File(simSaveDirectory + "/" + "sim-" + filename
-					+ "-" + String.format("%05d", fileNum) + ".imrmc");
+					+ "-" + String.format("%05d", l) + ".imrmc");
 			if (!file.exists()) {
 				file.createNewFile();
 			}
@@ -1591,10 +1675,10 @@ public class RMGUInterface {
 	 * @param auc AUC of experiment
 	 * @param useMLE whether or not to use MLE
 	 * @param filename Timestamp based filename to identify group of experiments
-	 * @param fileNum Individual experiment number
+	 * @param l Individual experiment number
 	 */
-	public void writeComponentsFile(double[][] BDGdata, int[] n, double[] auc,
-			int useMLE, String filename, int fileNum) {
+	public void writeComponentsFile(double[][] BDGdata, long[] n, double[] auc,
+			int useMLE, String filename, long l) {
 		DBRecord tempRecord = new DBRecord(BDGdata, 0, n[2], n[0], n[1],
 				new double[] { auc[0], auc[1] });
 		StatTest tempStat = new StatTest(tempRecord, 3, useMLE, 0.05,
@@ -1605,7 +1689,7 @@ public class RMGUInterface {
 
 		try {
 			File file = new File(simSaveDirectory + "/" + "sim-comp-"
-					+ filename + "-" + String.format("%05d", fileNum) + ".txt");
+					+ filename + "-" + String.format("%05d", l) + ".txt");
 			if (!file.exists()) {
 				file.createNewFile();
 			}
@@ -1613,7 +1697,7 @@ public class RMGUInterface {
 			BufferedWriter bw = new BufferedWriter(fw);
 
 			bw.write("BDG components from simulated study " + filename + "-"
-					+ fileNum + "\n");
+					+ l + "\n");
 
 			int col = BDGdata[0].length;
 			int row = BDGdata.length;
