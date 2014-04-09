@@ -59,7 +59,7 @@ public class SizePanel {
 	 * @param sizingPanel Panel containing elements for trial sizing
 	 * @param guitemp Application's instance of the GUI
 	 */
-	public SizePanel(int[] expSizes, JPanel sizingPanel, GUInterface guitemp) {
+	public SizePanel(long[] expSizes, JPanel sizingPanel, GUInterface guitemp) {
 		gui = guitemp;
 
 		JPanel innerSizingPanel = new JPanel();
@@ -139,12 +139,12 @@ public class SizePanel {
 	/**
 	 * Sets text boxes for experiment size
 	 * 
-	 * @param Parms Array containing size parameters
+	 * @param params Array containing size parameters
 	 */
-	public void setNumbers(int[] Parms) {
-		sizeR.setText(Integer.toString(Parms[0]));
-		sizeN.setText(Integer.toString(Parms[1]));
-		sizeD.setText(Integer.toString(Parms[2]));
+	public void setNumbers(long[] params) {
+		sizeR.setText(Long.toString(params[0]));
+		sizeN.setText(Long.toString(params[1]));
+		sizeD.setText(Long.toString(params[2]));
 	}
 
 	/**
@@ -191,9 +191,9 @@ public class SizePanel {
 		String str = "";
 		str = str + "Filename: " + curRecord.getFilename() + "\n";
 		str = str + curRecord.getRecordDesp();
-		str = str + "Reader=" + Integer.toString(curRecord.getReader()) + SEPA
-				+ "Normal=" + Integer.toString(curRecord.getNormal()) + SEPA
-				+ "Disease=" + Integer.toString(curRecord.getDisease())
+		str = str + "Reader=" + Long.toString(curRecord.getReader()) + SEPA
+				+ "Normal=" + Long.toString(curRecord.getNormal()) + SEPA
+				+ "Disease=" + Long.toString(curRecord.getDisease())
 				+ "\n\n";
 		if (useMLE == 1)
 			str = str + "this report uses MLE estimate of components.\n";
@@ -321,9 +321,9 @@ public class SizePanel {
 		String resultnew = gui.getStat2();
 
 		String str = "";
-		str = str + "Reader=" + Integer.toString(curRecord.getReader()) + SEPA
-				+ "Normal=" + Integer.toString(curRecord.getNormal()) + SEPA
-				+ "Disease=" + Integer.toString(curRecord.getDisease())
+		str = str + "Reader=" + Long.toString(curRecord.getReader()) + SEPA
+				+ "Normal=" + Long.toString(curRecord.getNormal()) + SEPA
+				+ "Disease=" + Long.toString(curRecord.getDisease())
 				+ "\n\n";
 		int singleOrDiff = gui.getSingleOrDiff();
 		if (singleOrDiff == 0)

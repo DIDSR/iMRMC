@@ -43,7 +43,8 @@ public class InputFile {
 	private String Header = "";
 	private int RowsInHeader = 0;	
 	private String recordTitle = "";
-	private int Reader, Normal, Disease, Modality;
+	private long Reader, Normal, Disease;
+	private int Modality;
 
 	private double[][][] t0_modAB, t1_modAB, t0_modAA, t1_modAA, t0_modBB, t1_modBB;
 	private int[][][] d0_modAB, d1_modAB, d0_modAA, d1_modAA, d0_modBB, d1_modBB;
@@ -148,7 +149,7 @@ public class InputFile {
 	 * 
 	 * @return Number of readers
 	 */
-	public int getReader() {
+	public long getReader() {
 		return Reader;
 	}
 
@@ -157,7 +158,7 @@ public class InputFile {
 	 * 
 	 * @return Number of normal cases
 	 */
-	public int getNormal() {
+	public long getNormal() {
 		return Normal;
 	}
 
@@ -166,7 +167,7 @@ public class InputFile {
 	 * 
 	 * @return Number of disease cases
 	 */
-	public int getDisease() {
+	public long getDisease() {
 		return Disease;
 	}
 
@@ -312,8 +313,8 @@ public class InputFile {
 	 * @param desc Simulated study description
 	 * @throws IOException 
 	 */
-	public InputFile(double[][][][] tMatrices, int[][][][] dMatrices, int nr,
-			int n0, int n1, String title, String desc) throws IOException {
+	public InputFile(double[][][][] tMatrices, int[][][][] dMatrices, long nr,
+			long n0, long n1, String title, String desc) throws IOException {
 		this.t0_modAA = tMatrices[0];
 		this.t0_modBB = tMatrices[1];
 		this.t1_modAA = tMatrices[2];
@@ -550,7 +551,7 @@ public class InputFile {
 	 * @return 2-D array of readers by cases
 	 */
 	public boolean[][] getStudyDesign(String modalityID) {
-		boolean[][] design = new boolean[Reader][Normal + Disease];
+		boolean[][] design = new boolean[(int) Reader][(int) (Normal + Disease)];
 		int r = 0, i = 0;
 		for (String readerID : keyedData.keySet()) {
 			i = 0;
@@ -576,7 +577,7 @@ public class InputFile {
 	 * @return 3-D array of readers by normal cases by disease cases
 	 */
 	public int[][][] getStudyDesignSeparated(String currentModality0) {
-		int[][][] design = new int[Reader][Normal][Disease];
+		int[][][] design = new int[(int) Reader][(int) Normal][(int) Disease];
 		ArrayList<ArrayList<String>> n0n1CaseNums = getN0N1CaseNums();
 		ArrayList<String> normalCases = n0n1CaseNums.get(0);
 		ArrayList<String> diseaseCases = n0n1CaseNums.get(1);
@@ -998,18 +999,18 @@ public class InputFile {
 	 * @param modality1 Modality to be used as mod 1
 	 */
 	public void makeTMatrices(String modality0, String modality1) {
-		t0_modAB = new double[Normal][Reader][2];
-		t1_modAB = new double[Disease][Reader][2];
-		t0_modAA = new double[Normal][Reader][2];
-		t0_modBB = new double[Normal][Reader][2];
-		t1_modAA = new double[Disease][Reader][2];
-		t1_modBB = new double[Disease][Reader][2];
-		d0_modAA = new int[Normal][Reader][2];
-		d1_modAA = new int[Disease][Reader][2];
-		d0_modBB = new int[Normal][Reader][2];
-		d1_modBB = new int[Disease][Reader][2];
-		d0_modAB = new int[Normal][Reader][2];
-		d1_modAB = new int[Disease][Reader][2];
+		t0_modAB = new double[(int) Normal][(int) Reader][2];
+		t1_modAB = new double[(int) Disease][(int) Reader][2];
+		t0_modAA = new double[(int) Normal][(int) Reader][2];
+		t0_modBB = new double[(int) Normal][(int) Reader][2];
+		t1_modAA = new double[(int) Disease][(int) Reader][2];
+		t1_modBB = new double[(int) Disease][(int) Reader][2];
+		d0_modAA = new int[(int) Normal][(int) Reader][2];
+		d1_modAA = new int[(int) Disease][(int) Reader][2];
+		d0_modBB = new int[(int) Normal][(int) Reader][2];
+		d1_modBB = new int[(int) Disease][(int) Reader][2];
+		d0_modAB = new int[(int) Normal][(int) Reader][2];
+		d1_modAB = new int[(int) Disease][(int) Reader][2];
 		int m, n;
 		int k = 0; // reader index
 		for (String r : keyedData.keySet()) {

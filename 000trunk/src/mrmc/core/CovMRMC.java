@@ -26,7 +26,8 @@ package mrmc.core;
  * @author Rohan Pathare
  */
 public class CovMRMC {
-	private int Reader, Normal, Disease;
+	
+	private long Reader, Normal, Disease;
 	private int nmod = 2;
 	private double[] moments = new double[9];
 	private double[] biasM = new double[9];
@@ -78,39 +79,39 @@ public class CovMRMC {
 	 * @param d0 Design matrix for modality 0
 	 * @param t1 Scores for modality 1
 	 * @param d1 Design matrix for modality 1
-	 * @param R Number of readers
-	 * @param N Number of normal cases
-	 * @param D Number of disease cases
+	 * @param reader2 Number of readers
+	 * @param normal2 Number of normal cases
+	 * @param disease2 Number of disease cases
 	 */
 	public CovMRMC(double[][][] t0, int[][][] d0, double[][][] t1,
-			int[][][] d1, int R, int N, int D) {
-		Reader = R;
-		Normal = N;
-		Disease = D;
+			int[][][] d1, long reader2, long normal2, long disease2) {
+		Reader = reader2;
+		Normal = normal2;
+		Disease = disease2;
 		double aucA = 0.0;
 		double aucB = 0.0;
-		double[][] w = new double[Reader][nmod];
+		double[][] w = new double[(int) Reader][nmod];
 		int[] pairs = new int[3];
 		double totalwada = 0;
 		double totalwbdb = 0;
-		auc = new double[Reader][2];
+		auc = new double[(int) Reader][2];
 		double[] bnumer = new double[9];
-		double[][] wadasaSumr = new double[Normal][Disease];
-		double[][] wbdbsbSumr = new double[Normal][Disease];
-		double[] wadasaSumir = new double[Disease];
-		double[] wbdbsbSumir = new double[Disease];
-		double[] wadasaSumjr = new double[Normal];
-		double[] wbdbsbSumjr = new double[Normal];
+		double[][] wadasaSumr = new double[(int) Normal][(int) Disease];
+		double[][] wbdbsbSumr = new double[(int) Normal][(int) Disease];
+		double[] wadasaSumir = new double[(int) Disease];
+		double[] wbdbsbSumir = new double[(int) Disease];
+		double[] wadasaSumjr = new double[(int) Normal];
+		double[] wbdbsbSumjr = new double[(int) Normal];
 		double wadasaSumijr = 0.0;
 		double wbdbsbSumijr = 0.0;
 
 		double[] bdenom = new double[9];
-		double[][] wadaSumr = new double[Normal][Disease];
-		double[][] wbdbSumr = new double[Normal][Disease];
-		double[] wadaSumir = new double[Disease];
-		double[] wbdbSumir = new double[Disease];
-		double[] wadaSumjr = new double[Normal];
-		double[] wbdbSumjr = new double[Normal];
+		double[][] wadaSumr = new double[(int) Normal][(int) Disease];
+		double[][] wbdbSumr = new double[(int) Normal][(int) Disease];
+		double[] wadaSumir = new double[(int) Disease];
+		double[] wbdbSumir = new double[(int) Disease];
+		double[] wadaSumjr = new double[(int) Normal];
+		double[] wbdbSumjr = new double[(int) Normal];
 		double wadaSumijr = 0.0;
 		double wbdbSumijr = 0.0;
 
