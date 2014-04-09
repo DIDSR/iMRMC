@@ -26,6 +26,7 @@ Please *read* the user manual for useful information. See below for the current 
 Version v1p2 posted 2014-04-08
 
 Simulation configuration files were created to replicate the simulations in Roe1997_Acad-Radiol_v4p298 and are now available. When 10,000 simulations were run, the application crashed. The corresponding memory problem was fixed.
+
 *[http://imrmc.googlecode.com/svn/standalone_application/iRoeMetz-v1p2.jar Click to download application (iRoeMetz-v1p2.jar)]*
 
 *[http://imrmc.googlecode.com/svn/standalone_application/iRoeMetzUserManual-v1p0.pdf Click to download user manual (iRoeMetzUserManual-v1p0.pdf)]* <br>
@@ -33,8 +34,10 @@ Simulation configuration files were created to replicate the simulations in Roe1
 <br>
 
 == Simulation Configurations ==
-iRoeMetz allows for using simulation configuration files. Here are the simulation configurations that replicate the original Roe and Metz simulations (Roe1997_Acad-Radiol_v4p298). <br>
-[http://imrmc.googlecode.com/svn/standalone_application/FilesTest-iRoeMetz/ Click to download simulation configuration files (*.irm)]
+iRoeMetz allows for using simulation configuration files. Here are the simulation configurations that replicate the original Roe and Metz simulations (Roe, Acad Radiol, 1997, v4 p298).
+
+
+*[http://imrmc.googlecode.com/svn/standalone_application/FilesTest-iRoeMetz/ Click to download simulation configuration files (*.irm)]*
 
 <br>
 
