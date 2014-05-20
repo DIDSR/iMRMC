@@ -37,6 +37,9 @@ The software package can run in Matlab or Octave (free).
 
 [http://imrmc.googlecode.com/svn/standalone_application/iMRMC_Binary_UserManual.pdf Click to download user manual (iMRMC_Binary_UserManual.pdf)] 
 
+= Presentations and papers =
+
+[http://imrmc.googlecode.com/svn/standalone_application/docs/20140514Chen-PathInfoV4.pdf Invited talk at Pathology Informatics Summit 2014 (Pittsburgh, PA, May 13, 2014)]  
 
 ==_Authors_==
   * Weijie Chen, PhD
