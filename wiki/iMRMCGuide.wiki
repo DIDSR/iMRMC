@@ -26,6 +26,8 @@ Please *read* the user manual for useful information. See below for the current 
 
   * References for iMRMC
 
+*[http://imrmc.googlecode.com/svn/standalone_application/iMRMCuserguide-v2p2.pdf Click to download user manual (iMRMCUserGuide-v2p2.pdf)]* <br>
+
 <br>
 
 =Current Version=
@@ -35,8 +37,6 @@ Power and sizing analysis disabled while it goes through a detailed validation. 
 Database input method disabled as it undergoes a remake. Consequently, this version does not require a database folder or .jdb files.
 
 *[http://imrmc.googlecode.com/svn/standalone_application/iMRMC-v2p4.jar Click to download application (imrmc-v2p4.jar)]*
-
-*[http://imrmc.googlecode.com/svn/standalone_application/iMRMCuserguide-v2p1.pdf Click to download user manual (iMRMCUserGuide-v2p1.pdf)]* <br>
 
 <br>
 
