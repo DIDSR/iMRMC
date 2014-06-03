@@ -12,7 +12,15 @@ Here are some sample {{{*}}}.imrmc input files that you can use to try the softw
 *[http://imrmc.googlecode.com/svn/standalone_application/FilesTest-iMRMC Click to download raw data input files (*.imrmc)]* <br>
 
 <br>
-=Version 2p4=
+=iMRMC User Manual Version 2p2=
+posted 2014-06-03
+
+Updated some instructions on data input files and fixed a misspelling related to the BCK representation of variance components(Krupinski -> Kupinski).
+
+*[http://imrmc.googlecode.com/svn/standalone_application/iMRMCuserguide-v2p2.pdf Click to download user manual (iMRMCUserGuide-v2p2.pdf)]* <br>
+
+<br>
+=iMRMC Application Version 2p4=
 posted 2014-03-28
 
 Power and sizing analysis disabled while it goes through a detailed validation. <br>
@@ -20,10 +28,8 @@ Database input method disabled as it undergoes a remake. Consequently, this vers
 
 *[http://imrmc.googlecode.com/svn/standalone_application/iMRMC-v2p4.jar Click to download application (imrmc-v2p4.jar)]*
 
-*[http://imrmc.googlecode.com/svn/standalone_application/iMRMCuserguide-v2p1.pdf Click to download user manual (iMRMCUserGuide-v2p1.pdf)]* <br>
-
 <br>
-=Version 2p3=
+=iMRMC Application Version 2p3=
 posted 2014-03-05
 
 This version provides robust data check and error reporting during the reading of the InputFile.imrmc (Identify missing truth, duplicate cases, replicated observations). Additionally, readerIDs, caseIDs, and modalityIDs can be strings. These changes allow for more flexibility and should help the user determine problems with the file format. <br>
@@ -34,10 +40,8 @@ This version requires a database folder named "DB" with .jdb files in the applic
 
 *[http://imrmc.googlecode.com/svn/standalone_application_archive/iMRMC/iMRMC-v2p3.jar Click to download application (imrmc-v2p3.jar)]*
 
-*[http://imrmc.googlecode.com/svn/standalone_application_archive/iMRMC/iMRMCuserguide-v2p1.pdf Click to download user manual (iMRMCUserGuide-v2p1.pdf)]* <br>
-
 <br>
-=Version 2p1 =
+=iMRMC Application Version 2p1 =
 posted 2014-01-15
 
 This version fixes p-values and confidence intervals in the statistical analysis. <br>
@@ -46,12 +50,16 @@ This version requires a database folder named "DB" with .jdb files in the applic
 
 *[http://imrmc.googlecode.com/svn/standalone_application_archive/iMRMC/iMRMC-v2p1.jar Click to download application (iMRMC-v2p1.jar)]*
 
+<br>
+=iMRMC User Manual Version 2p1 =
+posted 2014-01-15
+
 *[http://imrmc.googlecode.com/svn/standalone_application_archive/iMRMC/iMRMCuserguide-v2p1.pdf Click to download user manual (iMRMCuserguide-v2p1.pdf)]* <br>
 
 <br>
 <br>
 
-=Version 2p0 =
+=iMRMC Application Version 2p0 =
 posted 2013-08-28
 
 This version includes graphics to check data input and plots of ROC curves. <br>
@@ -59,5 +67,9 @@ This version also allows for arbitrary study designs. <br>
 This version requires a database folder named "DB" with .jdb files in the application startup directory.
 
 *[http://imrmc.googlecode.com/svn/standalone_application_archive/iMRMC/iMRMC-v2p0.jar Click to download application (imrmc-v2p0.jar)]*
+
+<br>
+=iMRMC User Manual Version 2p0 =
+posted 2013-08-28
 
 *[http://imrmc.googlecode.com/svn/standalone_application_archive/iMRMC/iMRMCuserguide-v2p0.pdf Click to download user manual (imrmcuserguide-v2p0.pdf)]* <br>
