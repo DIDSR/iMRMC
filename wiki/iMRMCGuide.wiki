@@ -15,7 +15,7 @@ _This software is still a work in progress. We believe the variances and compone
   * Xin He, PhD
 
 <br>
-=User Manual=
+=User Manual Current Version=
 Please *read* the user manual for useful information. See below for the current version of the user manual. The user manual contains
 
   * Introduction to ROC Reader Studies
@@ -30,7 +30,7 @@ Please *read* the user manual for useful information. See below for the current 
 
 <br>
 
-=Current Version=
+=Application Current Version=
 Version 2p4 posted 2014-03-28
 
 Power and sizing analysis disabled while it goes through a detailed validation. <br>
