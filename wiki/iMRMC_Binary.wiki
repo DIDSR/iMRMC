@@ -22,7 +22,7 @@ Please read the [http://imrmc.googlecode.com/svn/standalone_application/iMRMC_Bi
 
   * References
 
-= Current Version =
+= Downloads =
 
 Version 1.0 Beta posted on March 16, 2014.
 
@@ -30,8 +30,6 @@ The current version of the software package provieds functions for a fully-cross
 
 The software package can run in Matlab or Octave (free).
 
-
-= Downloads =
 
 [http://imrmc.googlecode.com/svn/standalone_application/iMRMC_Binary_pkg.exe Click to download self-extracting package (iMRMC_Binary_pkg.exe)]  
 
