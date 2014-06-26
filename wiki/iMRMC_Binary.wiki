@@ -24,21 +24,28 @@ Please read the [http://imrmc.googlecode.com/svn/standalone_application/iMRMC_Bi
 
 = Downloads =
 
-Version 1.0 Beta posted on March 16, 2014.
+Version 1.0 Beta 1 posted on June 26, 2014.
 
-The current version of the software package provieds functions for a fully-crossed design, i.e., every reader reads every case for both modalities under comparison. References are given in the user manual for alternative study designs.
+_What's new from previous version?_
+Minor bug fix.
+
+The current version of the software package provides functions for a fully-crossed design, i.e., every reader reads every case for both modalities under comparison. References are given in the user manual for alternative study designs.
 
 The software package can run in Matlab or Octave (free).
 
 
-[http://imrmc.googlecode.com/svn/standalone_application/iMRMC_Binary_pkg_exe Click to download self-extracting package (iMRMC_Binary_pkg_exe)] 
+[http://imrmc.googlecode.com/svn/standalone_application/iMRMC_Binary1p0B1.zip Click to download zip package] 
 
-*Note: After download, you need to change the last underscore in the file name to dot such that the file name is iMRMC_Binary_pkg.exe*  
+
 
 [http://imrmc.googlecode.com/svn/standalone_application/iMRMC_Binary_UserManual.pdf Click to download user manual (iMRMC_Binary_UserManual.pdf)] 
 
 
 = Previous versions =
+*Version 1.0 Beta posted on March 16, 2014.*
+[http://imrmc.googlecode.com/svn/standalone_application/iMRMC_Binary_pkg_exe Click to download self-extracting package (iMRMC_Binary_pkg_exe)] 
+
+*Note: After download, you need to change the last underscore in the file name to dot such that the file name is iMRMC_Binary_pkg.exe*  
 
 = Presentations and papers =
 
@@ -49,4 +56,4 @@ The software package can run in Matlab or Octave (free).
   * Adam Wunderlich, PhD
 
 ==_Contributors_==
-Brandon D. Gallas, PhD
+* Brandon D. Gallas, PhD
