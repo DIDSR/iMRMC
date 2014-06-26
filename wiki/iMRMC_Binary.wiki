@@ -57,4 +57,4 @@ The software package can run in Matlab or Octave (free).
   * Adam Wunderlich, PhD
 
 ==_Contributors_==
-* Brandon D. Gallas, PhD
+  * Brandon D. Gallas, PhD
