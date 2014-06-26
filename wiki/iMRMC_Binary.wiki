@@ -47,3 +47,6 @@ The software package can run in Matlab or Octave (free).
 ==_Authors_==
   * Weijie Chen, PhD
   * Adam Wunderlich, PhD
+
+==_Contributors_==
+Brandon D. Gallas, PhD
