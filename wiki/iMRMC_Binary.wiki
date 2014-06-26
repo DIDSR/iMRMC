@@ -31,7 +31,7 @@ The current version of the software package provieds functions for a fully-cross
 The software package can run in Matlab or Octave (free).
 
 
-[http://imrmc.googlecode.com/svn/standalone_application/iMRMC_Binary_pkg_exe Click to download self-extracting package (iMRMC_Binary_pkg_exe)]  
+[http://imrmc.googlecode.com/svn/standalone_application/iMRMC_Binary_pkg_exe Click to download self-extracting package (iMRMC_Binary_pkg_exe) *Note: you need to change the last underscore in the file name to dot such that the file name is iMRMC_Binary_pkg.exe*]  
 
 [http://imrmc.googlecode.com/svn/standalone_application/iMRMC_Binary_UserManual.pdf Click to download user manual (iMRMC_Binary_UserManual.pdf)] 
 
