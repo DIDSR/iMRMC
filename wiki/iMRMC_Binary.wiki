@@ -27,6 +27,7 @@ Please read the [http://imrmc.googlecode.com/svn/standalone_application/iMRMC_Bi
 Version 1.0 Beta 1 posted on June 26, 2014.
 
 _What's new from previous version?_
+
 Minor bug fix.
 
 The current version of the software package provides functions for a fully-crossed design, i.e., every reader reads every case for both modalities under comparison. References are given in the user manual for alternative study designs.
