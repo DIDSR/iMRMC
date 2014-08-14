@@ -3,15 +3,22 @@ The previous versions are provided here from most recent to the oldest.
 When accessing links, make sure that you refresh your browser.
 
 <br>
-=Sample Files ({{{*}}}.jdb and {{{*}}}.imrmc)=
-
-Currently, iMRMC expects to be run in a directory with a folder named "DB" that has at least one {{{*.jdb}}} summary database file.<br>
-*[http://imrmc.googlecode.com/svn/standalone_application/DB Click to download summary database files (*.jdb)]*
+==Sample Input Files ({{{*}}}.imrmc)==
 
 Here are some sample {{{*}}}.imrmc input files that you can use to try the software. Some of the sample input files have common formatting errors that are detected and reported. <br>
 *[http://imrmc.googlecode.com/svn/standalone_application/FilesTest-iMRMC Click to download raw data input files (*.imrmc)]* <br>
 
 <br>
+
+=iMRMC Application Version 2p5=
+posted 2014-08-14
+
+Fixed bug that was causing iMRMC to crash when executing statistical analysis of a single modality AUC. <br>
+
+*[http://imrmc.googlecode.com/svn/standalone_application/iMRMC-v2p5.jar Click to download application (imrmc-v2p5.jar)]*
+
+<br>
+
 =iMRMC User Manual Version 2p2=
 posted 2014-06-03
 
