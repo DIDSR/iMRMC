@@ -332,10 +332,9 @@ public class SimRoeMetz {
 		// that we can perform variance analysis on them.
 		InputFile toCalc = new InputFile(newTMatrices, dMatrices, nr, n0, n1,
 				"SimExp", "Simulated Experiment");
-		toCalc.calculateCovMRMC();
 		// Creates a record of the variance analysis so decompositions can be
 		// accessed
-		DBRecord rec = new DBRecord(toCalc, "1", "2");
+		DBRecord rec = new DBRecord(toCalc, 3, "1", "2");
 
 		BDG = rec.getBDG(useMLE);
 		BCK = rec.getBCK(useMLE);

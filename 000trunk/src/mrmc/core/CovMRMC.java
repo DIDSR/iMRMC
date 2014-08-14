@@ -19,7 +19,14 @@
 package mrmc.core;
 
 /**
- * Performs variance analysis over two modalities, determines AUC
+ * Estimates covariance statistics given reader data for two modalities <br>
+ * <ul>
+ *   <li> {@link #getAUCsReaderAvg getAUCsReaderAvg},
+ *   <li> {@link #getAUCs getAUCs},
+ *   <li> {@link #getMoments getMoments},
+ *   <li> {@link #getMomentsBiased getMomentsBiased},
+ *   <li> {@link #getCoefficients getCoefficients},
+ * </ul>
  * 
  * @author Xin He, Ph.D,
  * @author Brandon D. Gallas, Ph.D
@@ -27,96 +34,108 @@ package mrmc.core;
  */
 public class CovMRMC {
 	
-	private long Reader, Normal, Disease;
-	private int nmod = 2;
+	/**
+	 * The reader-averaged auc for each modality
+	 */
+	private double[] AUCsReaderAvg = new double[2];
+	/**
+	 * The AUCs for each reader and modality [Nreader][2]
+	 */
+	private double[][] AUCs;
+	/**
+	 * The U-statistic moments according to Gallas2009_Commun-Stat-A-Theor_v38p2586 (first element is empty).
+	 */
 	private double[] moments = new double[9];
-	private double[] biasM = new double[9];
-	private double[] c = new double[9];
-	private double[][] auc; // auc for each reader each modality
-	private double[] aucMod = new double[2];
+	/**
+	 * The MLE moments according to Gallas2009_Commun-Stat-A-Theor_v38p2586 (first element is empty).
+	 */
+	private double[] momentsBiased = new double[9];
+	/**
+	 * The coefficients according to Gallas2009_Commun-Stat-A-Theor_v38p2586 (first element is empty)
+	 */
+	private double[] coefficients = new double[9];
 
 	/**
-	 * Gets the matrix of moments
+	 * Gets the reader-averaged AUCs for both modalities
 	 * 
-	 * @return Moments matrix
+	 * @return {@link #AUCsReaderAvg}
+	 */
+	public double[] getAUCsReaderAvg() {
+		return AUCsReaderAvg;
+	}
+	/**
+	 * Gets the AUCs for each reader and modality [Nreader][2]
+	 * 
+	 * @return {@link #AUCs}
+	 */
+	public double[][] getAUCs() {
+		return AUCs;
+	}
+	/**
+	 * @return {@link #moments}
 	 */
 	public double[] getMoments() {
 		return moments;
 	}
-
 	/**
-	 * Gets the matrix of moments with bias applied
-	 * 
-	 * @return Biased moments matrix
+	 * @return {@link #momentsBiased}
 	 */
-	public double[] getBiasedMoments() {
-		return biasM;
+	public double[] getMomentsBiased() {
+		return momentsBiased;
 	}
-
 	/**
 	 * Gets the coefficients vector
 	 * 
 	 * @return Coefficients vector
 	 */
-	public double[] getC() {
-		return c;
+	public double[] getCoefficients() {
+		return coefficients;
 	}
 
 	/**
-	 * Gets the AUCs for both modalities
+	 * Sole constructor for CovMRMC.
 	 * 
-	 * @return Array of AUCs for both modalities
-	 */
-	public double[] getaucMod() {
-		return aucMod;
-	}
-
-	/**
-	 * Sole constructor for CovMRMC. Performs variance analysis on experiment
-	 * data and parameters.
-	 * 
-	 * @param t0 Scores for modality 0
-	 * @param d0 Design matrix for modality 0
-	 * @param t1 Scores for modality 1
-	 * @param d1 Design matrix for modality 1
-	 * @param reader2 Number of readers
-	 * @param normal2 Number of normal cases
-	 * @param disease2 Number of disease cases
+	 * @param t0 Normal scores for all readers and both modalities [Nnormal][Nreader][2]
+	 * @param d0 Design matrix for all readers and both modalities [Nnormal][Nreader][2]
+	 * @param t1 Scores scores for all readers and both modalities [Ndisease][Nreader][2] 
+	 * @param d1 Design matrix for all readers and both modalities [Ndisease][Nreader][2]
+	 * @param Nreader Number of readers
+	 * @param Nnormal Number of normal cases
+	 * @param Ndisease Number of disease cases
 	 */
 	public CovMRMC(double[][][] t0, int[][][] d0, double[][][] t1,
-			int[][][] d1, long reader2, long normal2, long disease2) {
-		Reader = reader2;
-		Normal = normal2;
-		Disease = disease2;
+			int[][][] d1, long Nreader, long Nnormal, long Ndisease) {
+
+		AUCs = new double[(int) Nreader][2];
 		double aucA = 0.0;
 		double aucB = 0.0;
-		double[][] w = new double[(int) Reader][nmod];
+		
+		double[][] w = new double[(int) Nreader][2];
 		int[] pairs = new int[3];
 		double totalwada = 0;
 		double totalwbdb = 0;
-		auc = new double[(int) Reader][2];
 		double[] bnumer = new double[9];
-		double[][] wadasaSumr = new double[(int) Normal][(int) Disease];
-		double[][] wbdbsbSumr = new double[(int) Normal][(int) Disease];
-		double[] wadasaSumir = new double[(int) Disease];
-		double[] wbdbsbSumir = new double[(int) Disease];
-		double[] wadasaSumjr = new double[(int) Normal];
-		double[] wbdbsbSumjr = new double[(int) Normal];
+		double[][] wadasaSumr = new double[(int) Nnormal][(int) Ndisease];
+		double[][] wbdbsbSumr = new double[(int) Nnormal][(int) Ndisease];
+		double[] wadasaSumir = new double[(int) Ndisease];
+		double[] wbdbsbSumir = new double[(int) Ndisease];
+		double[] wadasaSumjr = new double[(int) Nnormal];
+		double[] wbdbsbSumjr = new double[(int) Nnormal];
 		double wadasaSumijr = 0.0;
 		double wbdbsbSumijr = 0.0;
 
 		double[] bdenom = new double[9];
-		double[][] wadaSumr = new double[(int) Normal][(int) Disease];
-		double[][] wbdbSumr = new double[(int) Normal][(int) Disease];
-		double[] wadaSumir = new double[(int) Disease];
-		double[] wbdbSumir = new double[(int) Disease];
-		double[] wadaSumjr = new double[(int) Normal];
-		double[] wbdbSumjr = new double[(int) Normal];
+		double[][] wadaSumr = new double[(int) Nnormal][(int) Ndisease];
+		double[][] wbdbSumr = new double[(int) Nnormal][(int) Ndisease];
+		double[] wadaSumir = new double[(int) Ndisease];
+		double[] wbdbSumir = new double[(int) Ndisease];
+		double[] wadaSumjr = new double[(int) Nnormal];
+		double[] wbdbSumjr = new double[(int) Nnormal];
 		double wadaSumijr = 0.0;
 		double wbdbSumijr = 0.0;
 
-		for (int i = 0; i < Reader; i++) {
-			for (int j = 0; j < nmod; j++) {
+		for (int i = 0; i < Nreader; i++) {
+			for (int j = 0; j < 2; j++) {
 				w[i][j] = 1.0;
 			}
 		}
@@ -124,7 +143,7 @@ public class CovMRMC {
 			pairs[i] = 0;
 		}
 
-		for (int ir = 0; ir < Reader; ir++) {
+		for (int ir = 0; ir < Nreader; ir++) {
 			// ***************for the first modality******************
 			int[][] designA0 = Matrix.extractFirstDimension(d0, ir, 0);
 			int[][] designA1 = Matrix.extractFirstDimension(d1, ir, 0);
@@ -132,18 +151,20 @@ public class CovMRMC {
 					Matrix.matrixTranspose(designA1));
 			int totalda = Matrix.total(da);
 			double wa = w[ir][0];
-			double[][] ta0 = Matrix.extractFirstDimension(t0, ir, 0);
-			double[][] ta0temp = Matrix.linearTrans(ta0, 0.0, 1.0);
-			double[][] ta1 = Matrix.extractFirstDimension(t1, ir, 0);
-			double[][] ta1temp = Matrix.linearTrans(ta1, 0.0, 1.0);
+			double[][] t0A_ir = Matrix.extractFirstDimension(t0, ir, 0);
+			double[][] t1A_ir = Matrix.extractFirstDimension(t1, ir, 0);
 
-			double[][] sa0 = Matrix.multiply(ta0,
-					Matrix.matrixTranspose(ta1temp));
-			double[][] sa1 = Matrix.multiply(ta0temp,
-					Matrix.matrixTranspose(ta1));
+			// make vectors of ones
+			double[][] ones_vect0 = Matrix.linearTrans(t0A_ir, 0.0, 1.0);
+			double[][] ones_vect1 = Matrix.linearTrans(t1A_ir, 0.0, 1.0);
+
+			double[][] sa0 = Matrix.multiply(t0A_ir,
+					Matrix.matrixTranspose(ones_vect1));
+			double[][] sa1 = Matrix.multiply(ones_vect0,
+					Matrix.matrixTranspose(t1A_ir));
 			double[][] sa = Matrix.subtract(sa1, sa0);
-			for (int i = 0; i < Normal; i++)
-				for (int j = 0; j < Disease; j++) {
+			for (int i = 0; i < Nnormal; i++)
+				for (int j = 0; j < Ndisease; j++) {
 					if (sa[i][j] < 0)
 						sa[i][j] = 0.0;
 					else if (sa[i][j] == 0)
@@ -160,18 +181,16 @@ public class CovMRMC {
 					Matrix.matrixTranspose(designB1));
 			int totaldb = Matrix.total(db);
 			double wb = w[ir][1];
-			double[][] tb0 = Matrix.extractFirstDimension(t0, ir, 1);
-			double[][] tb0temp = Matrix.linearTrans(tb0, 0.0, 1.0);
-			double[][] tb1 = Matrix.extractFirstDimension(t1, ir, 1);
-			double[][] tb1temp = Matrix.linearTrans(tb1, 0.0, 1.0);
+			double[][] t0B_ir = Matrix.extractFirstDimension(t0, ir, 1);
+			double[][] t1B_ir = Matrix.extractFirstDimension(t1, ir, 1);
 
-			double[][] sb0 = Matrix.multiply(tb0,
-					Matrix.matrixTranspose(tb1temp));
-			double[][] sb1 = Matrix.multiply(tb0temp,
-					Matrix.matrixTranspose(tb1));
+			double[][] sb0 = Matrix.multiply(t0B_ir,
+					Matrix.matrixTranspose(ones_vect1));
+			double[][] sb1 = Matrix.multiply(ones_vect0,
+					Matrix.matrixTranspose(t1B_ir));
 			double[][] sb = Matrix.subtract(sb1, sb0);
-			for (int i = 0; i < Normal; i++)
-				for (int j = 0; j < Disease; j++) {
+			for (int i = 0; i < Nnormal; i++)
+				for (int j = 0; j < Ndisease; j++) {
 					if (sb[i][j] < 0)
 						sb[i][j] = 0.0;
 					else if (sb[i][j] == 0)
@@ -243,17 +262,17 @@ public class CovMRMC {
 			// ------------------------------------------
 			// calculate AUCs
 			// ------------------------------------------
-			// evaluate auc modality a
+			// evaluate AUCs modality a
 			if (totalda > 0) {
 				totalwada = totalwada + wa * totalda;
-				auc[ir][0] = Matrix.total(wadasa) / totalda;
-				aucA = aucA + totalda * auc[ir][0];
+				AUCs[ir][0] = Matrix.total(wadasa) / totalda;
+				aucA = aucA + totalda * AUCs[ir][0];
 			}
-			// evaluate auc modality b
+			// evaluate AUCs modality b
 			if (totaldb > 0) {
 				totalwbdb = totalwbdb + wb * totaldb;
-				auc[ir][1] = Matrix.total(wbdbsb) / totaldb;
-				aucB = aucB + totaldb * auc[ir][1];
+				AUCs[ir][1] = Matrix.total(wbdbsb) / totaldb;
+				aucB = aucB + totaldb * AUCs[ir][1];
 			}
 
 		} // end reader loop
@@ -283,10 +302,10 @@ public class CovMRMC {
 		double[] denom = Matrix.multiply(bias2unbias, bdenom);
 		double[] numer = Matrix.multiply(bias2unbias, bnumer);
 		// biased moments
-		biasM = bnumer;
-		for (int i = 0; i < biasM.length; i++) {
+		momentsBiased = bnumer;
+		for (int i = 0; i < momentsBiased.length; i++) {
 			if (bdenom[i] > Matrix.min(w) / 2.0)
-				biasM[i] = biasM[i] / bdenom[i];
+				momentsBiased[i] = momentsBiased[i] / bdenom[i];
 		}
 
 		// unbiased moment
@@ -298,10 +317,10 @@ public class CovMRMC {
 		}
 
 		// coefficients
-		c = Matrix.linearTrans(denom, 1.0 / (totalwada * totalwbdb), 0);
-		c[8] = c[8] - 1.0;
+		coefficients = Matrix.linearTrans(denom, 1.0 / (totalwada * totalwbdb), 0);
+		coefficients[8] = coefficients[8] - 1.0;
 
-		aucMod[0] = aucA / totalwada;
-		aucMod[1] = aucB / totalwbdb;
+		AUCsReaderAvg[0] = aucA / totalwada;
+		AUCsReaderAvg[1] = aucB / totalwbdb;
 	}
 }

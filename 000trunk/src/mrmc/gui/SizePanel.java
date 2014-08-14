@@ -166,8 +166,8 @@ public class SizePanel {
 	 *         info
 	 */
 	public String genReport() {
-		curRecord = gui.getCurrentRecord();
-		int useMLE = gui.getUseMLE();
+		curRecord = gui.setCurrentRecord();
+		int useMLE = gui.getFlagMLE();
 
 		double[][] BDG = curRecord.getBDG(useMLE);
 		double[][] DBM = curRecord.getDBM(useMLE);
@@ -190,7 +190,7 @@ public class SizePanel {
 
 		String str = "";
 		str = str + "Filename: " + curRecord.getFilename() + "\n";
-		str = str + curRecord.getRecordDesp();
+		str = str + curRecord.getRecordDesc();
 		str = str + "Reader=" + Long.toString(curRecord.getReader()) + SEPA
 				+ "Normal=" + Long.toString(curRecord.getNormal()) + SEPA
 				+ "Disease=" + Long.toString(curRecord.getDisease())
@@ -449,14 +449,14 @@ public class SizePanel {
 	 */
 	class genReportListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			curRecord = gui.getCurrentRecord();
+			curRecord = gui.setCurrentRecord();
 			reportFrame = new JFrame(
 					" please copy and paste the report to your own editor");
 
 			reportFrame.getRootPane().setWindowDecorationStyle(
 					JRootPane.PLAIN_DIALOG);
 			String str = "";
-			if (gui.getSelectedInput() == GUInterface.SELECT_MANUAL)
+			if (gui.getSelectedInput() == GUInterface.DescInputModeManual)
 				str = genReport(1);
 			else
 				str = genReport();

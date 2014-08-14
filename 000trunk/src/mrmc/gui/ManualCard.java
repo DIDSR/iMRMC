@@ -310,11 +310,11 @@ public class ManualCard {
 			String str;
 			str = e.getActionCommand();
 			if (str.equals(mod[0])) {
-				gui.setSelectedMod(0);
+				gui.selectedMod=0;
 				AUCText2.setEnabled(false);
 				SingleOrDiff = 0;
 			} else if (str.equals(mod[1])) {
-				gui.setSelectedMod(3);
+				gui.selectedMod=3;
 				AUCText2.setEnabled(true);
 				SingleOrDiff = 1;
 
@@ -382,10 +382,9 @@ public class ManualCard {
 			double[][] tempData = new double[][]{data, data, data, data};
 			record = new DBRecord(tempData, selectedManualComp, Reader, Normal,
 					Disease, auc);
-			gui.setTable1();
-			gui.setAUCoutput();
-			gui.setSizePanel();
 			gui.set1stStatPanel();
+			gui.setTable1();
+			gui.setSizePanel();
 		}
 	}
 

@@ -885,8 +885,6 @@ public class RMGUInterface {
 		 *            across all threads
 		 * @param filenameTime Timestamp when this set of experiments was
 		 *            started, to categorize output files
-		 * @param whichTask Indentifier for this group of simulation experiments
-		 *            (this thread)
 		 * @throws IOException 
 		 */
 		public double [][][] do_SimExperiments(double[] u, double[] var_t, long[] n, Random rand,

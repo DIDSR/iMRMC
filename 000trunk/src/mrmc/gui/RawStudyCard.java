@@ -22,11 +22,20 @@
 
 package mrmc.gui;
 
-import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import mrmc.core.DBRecord;
-
-import java.awt.event.*;
 
 /**
  * Panel for selecting modalities, displaying charts of data statistics, and
@@ -39,9 +48,9 @@ import java.awt.event.*;
  */
 public class RawStudyCard {
 	private GUInterface gui;
-	private int selectedMod = 0;
+	int selectedMod = 0;
 	private int useBiasM = 0;
-	private JCheckBox negBox;
+	private JCheckBox mleCheckBox;
 	private JComboBox<String> chooseA, chooseB;
 	private JButton varAnalysisButton;
 
@@ -50,23 +59,13 @@ public class RawStudyCard {
 	 * 
 	 * @param bias Whether bias is used
 	 */
-	public void setUseMLE(int bias) {
+	public void setFlagMLE(int bias) {
 		useBiasM = bias;
 		if (bias == GUInterface.NO_MLE) {
-			negBox.setSelected(false);
+			mleCheckBox.setSelected(false);
 		} else {
-			negBox.setSelected(true);
+			mleCheckBox.setSelected(true);
 		}
-	}
-
-	/**
-	 * Sets which modality is being analyzed, or difference between them
-	 * 
-	 * @param input Which modality/difference is to be analyzed
-	 */
-	public void setSelectedMod(int input) {
-		selectedMod = input;
-		gui.setSelectedMod(selectedMod);
 	}
 
 	/**
@@ -79,16 +78,10 @@ public class RawStudyCard {
 		chooseA.addItem("Choose Modality A");
 		chooseB.addItem("Choose Modality B");
 		
-		for (String ModalityID : gui.usr.getModalityIDs()) {
+		for (String ModalityID : gui.currentInputFile.getModalityIDs()) {
 			chooseA.addItem(ModalityID);
 			chooseB.addItem(ModalityID);
 		}
-/*		
-		for (int i = 1; i <= gui.usr.getModality(); i++) {
-			chooseA.addItem("" + i);
-			chooseB.addItem("" + i);
-		}
-		*/
 	}
 
 	/**
@@ -103,93 +96,141 @@ public class RawStudyCard {
 	}
 
 	/**
-	 * Sole constructor. Creates and initializes GUI elements
+	 * Sole constructor. Creates and initializes GUI elements <br>
+	 * <br>
+	 * CALLED BY: {@link mrmc.gui.GUInterface#GUInterface GUInterface constructor}
 	 * 
-	 * @param studyPanel Panel containing elements for raw study input card
+	 * @param CardInputModeImrmc Panel containing elements for raw study input card
 	 * @param guitemp Application's instance of the GUI
 	 */
-	public RawStudyCard(JPanel studyPanel, GUInterface guitemp) {
+	public RawStudyCard(JPanel CardInputModeImrmc, GUInterface guitemp) {
 		gui = guitemp;
-//		negBox = new JCheckBox(
-//				"use MLE estimates of moments to avoid negatives    ");
-		negBox = new JCheckBox(
-				"MLE (avoid negatives)");
-		negBox.setSelected(false);
-		negBox.addItemListener(new UseMLEListener());
+
+		GroupLayout layout = new GroupLayout(CardInputModeImrmc);
+		CardInputModeImrmc.setLayout(layout);
+		layout.setAutoCreateGaps(true);
+		layout.setAutoCreateContainerGaps(true);
+
+		JLabel studyLabel = new JLabel(".imrmc file  ");
+		gui.pilotFile = new JTextField(20);
+		JButton fmtHelpButton = new JButton("User Manual");
+		JButton readerCasesButton = new JButton("Input Statistics Charts");
+		JButton designButton = new JButton("Show Study Design");
+		JButton ROCcurveButton = new JButton("Show ROC Curve");
+	
+		JPanel CardInputModeImrmc2 = new JPanel();
+		// MLE Checkbox
+		mleCheckBox = new JCheckBox("MLE (avoid negatives)");
+		mleCheckBox.setSelected(false);
+		mleCheckBox.addItemListener(new UseMLEListener());
 
 		// Drop down menus to select modality
 		chooseA = new JComboBox<String>();
 		chooseB = new JComboBox<String>();
 		chooseA.addItem("n/a");
 		chooseB.addItem("n/a");
-
 		chooseA.addItemListener(new ModSelectListener());
 		chooseB.addItemListener(new ModSelectListener());
 
-		studyPanel.add(negBox);
-//		studyPanel.add(new JLabel("Modality A: "));
-		studyPanel.add(chooseA);
-//		studyPanel.add(new JLabel("Modality B: "));
-		studyPanel.add(chooseB);
-
+		// execute variance analysis button
 		varAnalysisButton = new JButton("MRMC Variance Analysis");
-		studyPanel.add(varAnalysisButton);
 		varAnalysisButton.addActionListener(new varAnalysisListener());
 
+		CardInputModeImrmc2.add(mleCheckBox);
+		CardInputModeImrmc2.add(chooseA);
+		CardInputModeImrmc2.add(chooseB);
+		CardInputModeImrmc2.add(varAnalysisButton);
+
+		JButton browseButton = new JButton("Browse...");
+		browseButton.addActionListener(gui.new brwsButtonListener());
+		fmtHelpButton.addActionListener(gui.new fmtHelpButtonListener());
+		readerCasesButton.addActionListener(gui.new ReadersCasesButtonListener());
+		designButton.addActionListener(gui.new designButtonListener());
+		ROCcurveButton.addActionListener(gui.new ROCButtonListener());
+		layout.setHorizontalGroup(layout.createSequentialGroup().addGroup(
+				layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addGroup(
+								layout.createSequentialGroup()
+										.addComponent(studyLabel)
+										.addComponent(gui.pilotFile)
+										.addComponent(browseButton)
+										.addComponent(fmtHelpButton)
+										.addComponent(readerCasesButton)
+										.addComponent(designButton)
+										.addComponent(ROCcurveButton))
+						.addGroup(
+								layout.createSequentialGroup().addComponent(
+										CardInputModeImrmc2))));
+	
+		layout.setVerticalGroup(layout.createSequentialGroup().addGroup(
+				layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+								.addComponent(studyLabel)
+								.addComponent(gui.pilotFile)
+								.addComponent(browseButton)
+								.addComponent(fmtHelpButton)
+								.addComponent(readerCasesButton)
+								.addComponent(designButton)
+								.addComponent(ROCcurveButton))
+				.addGroup(
+						layout.createParallelGroup(
+								GroupLayout.Alignment.LEADING).addComponent(
+								CardInputModeImrmc2)));
+
+
+		
 	}
 
 	/**
 	 * Handler for drop down menus to select Modality A and Modality B. Changes
 	 * variance analysis button text to reflect which type of analysis is being
-	 * performed
+	 * performed. <br>
+	 * ----Creates ({@link mrmc.core.DBRecord}) <br>
 	 */
 	class ModSelectListener implements ItemListener {
 		public void itemStateChanged(ItemEvent e) {
-			if (e.getStateChange() == ItemEvent.DESELECTED) {
-				boolean modA, modB;
-				if (chooseA.getSelectedItem() != null
-						&& chooseB.getSelectedItem() != null) {
-					modA = (!chooseA.getSelectedItem().equals("n/a"))
-							&& (!chooseA.getSelectedItem().equals("Choose Modality A"));
-					modB = (!chooseB.getSelectedItem().equals("n/a"))
-							&& (!chooseB.getSelectedItem().equals("Choose Modality B"));
-					if (modA && !modB) {
-						gui.currMod0 = (String) chooseA.getSelectedItem();
-						gui.currMod1 = GUInterface.NO_MOD;
-						varAnalysisButton.setText("MRMC Variance Analysis (A)");
-						gui.usr.makeTMatrices(gui.currMod0, gui.currMod0);
-						gui.usr.calculateCovMRMC();
-						gui.usrFile = new DBRecord(gui.usr, gui.currMod0,
-								gui.currMod0);
-						setSelectedMod(0);
-					} else if (!modA && modB) {
-						gui.currMod1 = (String) chooseB.getSelectedItem();
-						gui.currMod0 = GUInterface.NO_MOD;
-						varAnalysisButton.setText("MRMC Variance Analysis (B)");
-						gui.usr.makeTMatrices(gui.currMod1, gui.currMod1);
-						gui.usr.calculateCovMRMC();
-						gui.usrFile = new DBRecord(gui.usr, gui.currMod1,
-								gui.currMod1);
-						setSelectedMod(1);
-					} else if (modA && modB) {
-						gui.currMod0 = (String) chooseA.getSelectedItem();
-						gui.currMod1 = (String) chooseB.getSelectedItem();
-						varAnalysisButton
-								.setText("MRMC Variance Analysis (Difference)");
-						gui.usr.makeTMatrices(gui.currMod0, gui.currMod1);
-						gui.usr.calculateCovMRMC();
-						gui.usrFile = new DBRecord(gui.usr, gui.currMod0,
-								gui.currMod1);
-						setSelectedMod(3);
-					} else {
-						varAnalysisButton.setText("MRMC Variance Analysis");
-						gui.currMod0 = GUInterface.NO_MOD;
-						gui.currMod1 = GUInterface.NO_MOD;
-					}
-				}
+
+			if (e.getStateChange() != ItemEvent.DESELECTED) { return; }
+			if (chooseA.getSelectedItem() == null
+				|| chooseB.getSelectedItem() == null) { return; }
+			
+			gui.selectedMod = selectedMod;
+			gui.reset1stStatPanel();
+			gui.resetTable1();
+			gui.resetSizePanel();
+			gui.resetTable2();
+			
+			boolean modA, modB;
+			modA = (!chooseA.getSelectedItem().equals("n/a"))
+				&& (!chooseA.getSelectedItem().equals("Choose Modality A"));
+			modB = (!chooseB.getSelectedItem().equals("n/a"))
+				&& (!chooseB.getSelectedItem().equals("Choose Modality B"));
+			
+			if (modA && !modB) {
+				gui.selectedMod = 0;
+				gui.currModA = (String) chooseA.getSelectedItem();
+				gui.currModB = GUInterface.NO_MOD;
+				varAnalysisButton.setText("MRMC Variance Analysis (A)");
+				gui.currentDBrecord = new DBRecord(gui.currentInputFile, gui.selectedMod, gui.currModA);
+			} else if (!modA && modB) {
+				gui.selectedMod = 1;
+				gui.currModA = GUInterface.NO_MOD;
+				gui.currModB = (String) chooseB.getSelectedItem();
+				varAnalysisButton.setText("MRMC Variance Analysis (B)");
+				gui.currentDBrecord = new DBRecord(gui.currentInputFile, gui.selectedMod, gui.currModB);
+			} else if (modA && modB) {
+				gui.selectedMod = 3;
+				gui.currModA = (String) chooseA.getSelectedItem();
+				gui.currModB = (String) chooseB.getSelectedItem();
+				varAnalysisButton.setText("MRMC Variance Analysis (Difference)");
+				gui.currentDBrecord = new DBRecord(gui.currentInputFile, gui.selectedMod, gui.currModA, gui.currModB);
+			} else {
+				varAnalysisButton.setText("MRMC Variance Analysis");
+				gui.currModA = GUInterface.NO_MOD;
+				gui.currModB = GUInterface.NO_MOD;
 			}
-		}
-	}
+			
+		} // method
+	} // class
 
 	/**
 	 * Handler for checkbox to
@@ -198,28 +239,27 @@ public class RawStudyCard {
 	 */
 	class UseMLEListener implements ItemListener {
 		public void itemStateChanged(ItemEvent e) {
-			if (negBox.isSelected()) {
+			if (mleCheckBox.isSelected()) {
 				useBiasM = GUInterface.USE_MLE;
 			} else {
 				useBiasM = GUInterface.NO_MLE;
 			}
-			gui.setUseMLE(useBiasM);
+			gui.setFlagMLE(useBiasM);
 		}
 	}
 
 	/**
 	 * Handler for MRMC variance analysis button. Verifies that input is valid
-	 * and updates statistical analysis pane
+	 * and updates statistical analysis panel
 	 */
 	class varAnalysisListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			// System.out.println("MRMC Variance analysis button clicked");
-
-			if (gui.checkRawInput() && gui.checkNegative()) {
-				gui.setTable1();
-				gui.setAUCoutput();
-				gui.setSizePanel();
+			System.out.println("MRMC Variance analysis button clicked. RawStudyCard.varAnalysisListener");
+			
+			if ( gui.checkRawInput() && gui.checkNegative()) {
 				gui.set1stStatPanel();
+				gui.setTable1();
+				gui.setSizePanel();
 			}
 		}
 	}
