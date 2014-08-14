@@ -33,6 +33,9 @@ import umontreal.iro.lecuyer.probdist.NormalDist;
  * @author Rohan Pathare
  */
 public class StatTest {
+	
+	DBRecord curRecord;
+
 	private final int INFINITY = 500;
 	private final int PRECISION = 6;
 	private final double ZERO = 1E-300;
@@ -46,16 +49,16 @@ public class StatTest {
 	private double f0;
 	private double df1 = 1.0; // future versions may account for greater df1
 
-	private double dfBDG;
-	private double dfHillis;
+	private double DF_BDG;
+	private double DF_Hillis;
 	
 	private double pValF;
 	private double pValFBDG;
 	private double pValFHillis;
 
 	private double ciBot, ciTop;
-	private double ciBotDfBDG, ciTopDfBDG;
-	private double ciBotDfHillis, ciTopDfHillis;
+	private double ciBotDF_BDG, ciTopDF_BDG;
+	private double ciBotDF_Hillis, ciTopDF_Hillis;
 
 	private double powerZ;
 	private double powerWithBDGDF;
@@ -76,8 +79,8 @@ public class StatTest {
 	 * 
 	 * @return Lower and upper range of confidence interval
 	 */
-	public double[] getCIDFBDG() {
-		return new double[] { ciBotDfBDG, ciTopDfBDG };
+	public double[] getCIDF_BDG() {
+		return new double[] { ciBotDF_BDG, ciTopDF_BDG };
 	}
 
 	/**
@@ -86,8 +89,8 @@ public class StatTest {
 	 * 
 	 * @return Lower and upper range of confidence interval
 	 */
-	public double[] getCIDFHillis() {
-		return new double[] { ciBotDfHillis, ciTopDfHillis };
+	public double[] getCIDF_Hillis() {
+		return new double[] { ciBotDF_Hillis, ciTopDF_Hillis };
 	}
 
 	/**
@@ -178,8 +181,8 @@ public class StatTest {
 	 * 
 	 * @return Degrees of freedom
 	 */
-	public double getdfHillis() {
-		return dfHillis;
+	public double getDF_Hillis() {
+		return DF_Hillis;
 	}
 
 	/**
@@ -187,145 +190,93 @@ public class StatTest {
 	 * 
 	 * @return Degrees of freedom
 	 */
-	public double getDfBDG() {
-		return dfBDG;
+	public double getDF_BDG() {
+		return DF_BDG;
 	}
 
 	/**
 	 * Constructor used for calculating statistics when performing initial
 	 * variance analysis
-	 * @param curRecord The database record for which to calculate statistics
-	 * @param selectedMod Which modality/difference
+	 * @param inputRecord The database record for which to calculate statistics
+	 * @param selectedMod modA=0, modB=1, difference=3
 	 * @param useMLE Whether or not to use biased variance components
 	 * @param sig Significance level
 	 * @param eff Effect size
 	 */
-	public StatTest(DBRecord curRecord, int selectedMod, int useMLE,
+	public StatTest(DBRecord inputRecord, int selectedMod, int useMLE,
 			double sig, double eff) {
 
-		double dn0 = curRecord.getNormal();
-		double dn1 = curRecord.getDisease();
-		double dnr = curRecord.getReader();
-
-		double ms_t = 0, ms_tr, denom = 0;
-		double[] aucs = { 0, 0 };
-		double[][] coeff;
+		curRecord = inputRecord;
 		
-		coeff = curRecord.getBDGcoeff();
-		double[][] BDG = curRecord.getBDG(useMLE);
-		
-		aucs[0] = curRecord.getAUCinNumber(0);
-		aucs[1] = curRecord.getAUCinNumber(1);
-		double meanCI = 0;
+		double totalVar = curRecord.totalVar;
+		double[] aucs = { curRecord.getAUCinNumber(0), curRecord.getAUCinNumber(1)};
 
-		double cutoffZ, cutoffBDG, cutoffHillis;
+		double meanCI, tStatEst, cutoffZ, cutoffBDG, cutoffHillis;
 		NormalDist ndist = new NormalDist();
 
-		// This function returns all the content appearing in the BDG tab
-		// It keeps only the the seventh row (index = 6 b.c. indices start at zero)
-		// The seventh row contains the weighted contribution to the total variance 
-		double[] var = DBRecord.getBDGTab(selectedMod, BDG, coeff)[6];
-		double var0 = 0;
-		for (int j = 0; j < 8; j++) {
-			var0 = var0 + var[j];
-		}
+		System.out.println("NR=" + curRecord.getReader() + 
+				           ",  N0=" + curRecord.getNormal() + 
+				           ",  N1=" + curRecord.getDisease());
+		System.out.println("auc0=" + aucs[0] + "  auc1=" + aucs[1]);
+		System.out.println("totalVar=" + curRecord.totalVar);
+		System.out.println("eff=" + eff + ",  sig=" + sig);
 
-		double[] DBMvar = new double[3];
-		double[] ORvar = new double[6];
-		double[] ORcoeff = new double[6];
 		if (selectedMod == 1 || selectedMod == 0) {
-			DBMvar[0] = curRecord.getDBM(NO_MLE)[selectedMod][0];
-			DBMvar[1] = curRecord.getDBM(NO_MLE)[selectedMod][1];
-			DBMvar[2] = curRecord.getDBM(NO_MLE)[selectedMod][2];
-
-			for(int j=0; j<6; j++){
-				ORvar[j] = curRecord.getOR(useMLE)[selectedMod][j];
-				ORcoeff[j] = curRecord.getORcoeff()[selectedMod][j];
-			}
-
 			meanCI = aucs[selectedMod];
-			ms_t = dnr * doVar(aucs[selectedMod], eff); // Following Eq. 3, Hillis 2007
-//			denom = MS[selectedMod][0]
-//					+ Math.max(0.0, (MS[selectedMod][1] - MS[selectedMod][4]));
-//			tStatEst = Math.sqrt(mst / denom);
-//			dfHillis = denom * denom
-//					/ (MS[selectedMod][0] * MS[selectedMod][0] / (dnr - 1));
-
+			/* Compare single-modality AUC to 0.5 */
+			tStatEst = Math.sqrt(Math.pow(meanCI - 0.5, 2)/curRecord.totalVar);
 		} else {
-			DBMvar[0] = curRecord.getDBM(NO_MLE)[selectedMod][3];
-			DBMvar[1] = curRecord.getDBM(NO_MLE)[selectedMod][4];
-			DBMvar[2] = curRecord.getDBM(NO_MLE)[selectedMod][5];
-
-			for(int j=0; j<6; j++){
-				ORvar[j] = curRecord.getOR(useMLE)[selectedMod][j];
-				ORcoeff[j] = curRecord.getORcoeff()[selectedMod][j];
-			}
-
-			meanCI = aucs[0] - aucs[1];
-			ms_t = dnr * doVar(aucs[0], aucs[1]); // Following Eq. 3, Hillis 2007
-//			denom = MS[selectedMod][2]
-//					+ Math.max(0.0, (MS[selectedMod][3] - MS[selectedMod][5]));
-//			tStatEst = Math.sqrt(mst / denom);
-//			dfHillis = denom * denom
-//					/ (MS[selectedMod][2] * MS[selectedMod][2] / (dnr - 1));
+			meanCI = aucs[1] - aucs[0];
+			/* Compare difference in modality AUCs to 0.0 */
+			tStatEst = Math.sqrt(Math.pow(meanCI, 2)/curRecord.totalVar);
 		}	
 
-		System.out.println("R=" + dnr + "  N0=" + dn0 + "  N1=" + dn1);
-		System.out.println("eff=" + eff + "  sig" + sig);
-		System.out.println("auc0=" + aucs[0] + "  auc1=" + aucs[1]);
+		DF_BDG = calcDF_BDG(selectedMod);
+		DF_Hillis = calcDF_Hillis(selectedMod);
 
-		dfBDG = calcDFBDG(curRecord.getBCK(NO_MLE), curRecord.getReader(),
-				curRecord.getNormal(), curRecord.getDisease(), var0);
+		System.out.println("DF_BDG=" + DF_BDG);
+		System.out.println("DF_Hillis=" + DF_Hillis);
 
-		dfHillis = DDF_Hillis(DBMvar, curRecord.getReader(), curRecord.getNormal()
-		 + curRecord.getDisease(), var0);
-
-		ms_tr = ORvar[1] + ORvar[5] - ORvar[2] - ORvar[3] + ORvar[4]; // Table 1, Hillis 2007
-
-		denom = (ms_tr + dnr * Math.max(0.0, (ORvar[3]-ORvar[4])));
-		tStatEst = Math.sqrt(ms_t / denom);
-		dfHillis = (dnr - 1) * denom * denom / ms_tr / ms_tr;
-				
 		// calculate p-value and cutoff assuming normality
 		pValF = 2*(1 - NormalDist.cdf(0, 1, tStatEst));
 		cutoffZ = ndist.inverseF(1 - sig/2);
 
-		// calculate p-value and cutoff assuming t-distribution with dfbdg
+		// calculate p-value and cutoff assuming t-distribution with DF_BDG or DF_Hillis
 		// Use normal distribution if df > 50, since they are approximately
 		// equal at that point, and StudentDist can't handle large dfs
-		if (dfBDG >= 50) {
+		if (DF_BDG >= 50) {
 			pValFBDG = pValF;
 			cutoffBDG = cutoffZ;
 		} else {
-			StudentDist tdist = new StudentDist((int) dfBDG );
+			StudentDist tdist = new StudentDist((int) DF_BDG );
 			pValFBDG = 2*(1 - tdist.cdf( tStatEst ));
 			cutoffBDG = tdist.inverseF( 1-sig/2 );
 		}
 
-		// calculate p-value and cutoff assuming t-distribution with dfHillis
+		// calculate p-value and cutoff assuming t-distribution with DF_Hillis
 		// Use normal distribution if df > 50, since they are approximately
 		// equal at that point, and FisherFDist can't handle large dfs
-		if (dfHillis >= 50) {
+		if (DF_Hillis >= 50) {
 			pValFHillis = pValF;
 			cutoffHillis = cutoffZ;
 		} else {
-			StudentDist tdist = new StudentDist((int) dfHillis );
+			StudentDist tdist = new StudentDist((int) DF_Hillis );
 			pValFHillis = 2*(1 - tdist.cdf( tStatEst ));
 			cutoffHillis = tdist.inverseF( 1-sig/2 );
 		}
 		
-		ciBot = meanCI - Math.sqrt(var0) * cutoffZ; // bdg
-		ciTop = meanCI + Math.sqrt(var0) * cutoffZ; // bdg
-		ciBotDfBDG = meanCI - Math.sqrt(var0) * cutoffBDG;
-		ciTopDfBDG = meanCI + Math.sqrt(var0) * cutoffBDG;
-		ciBotDfHillis = meanCI - Math.sqrt(var0) * cutoffHillis;
-		ciTopDfHillis = meanCI + Math.sqrt(var0) * cutoffHillis;
+		ciBot = meanCI - Math.sqrt(totalVar) * cutoffZ; // normal approx
+		ciTop = meanCI + Math.sqrt(totalVar) * cutoffZ; // normal approx
+		ciBotDF_BDG = meanCI - Math.sqrt(totalVar) * cutoffBDG;
+		ciTopDF_BDG = meanCI + Math.sqrt(totalVar) * cutoffBDG;
+		ciBotDF_Hillis = meanCI - Math.sqrt(totalVar) * cutoffHillis;
+		ciTopDF_Hillis = meanCI + Math.sqrt(totalVar) * cutoffHillis;
 
 		System.out.println("mean=" + meanCI);
 		System.out.println("tStatEst=" + tStatEst);
 		System.out.println("Normal approx:" + "  pValF=" + pValF + "  cutoffZ=" + cutoffZ + "  ci=" + ciBot + ","  + ciTop);
-		System.out.println("dfBDG=" + dfBDG + "  pValBDG=" + pValFBDG + "  cutoffBDG=" + cutoffBDG + "  ci=" + ciBotDfBDG + ","  + ciTopDfBDG);
-		System.out.println("dfHillis=" + dfHillis + "  pValHillis=" + pValFHillis + "  cutoffHillis=" + cutoffHillis + "  ci=" + ciBotDfHillis + ","  + ciTopDfHillis);
+		System.out.println("DF_BDG=" + DF_BDG + "  pValBDG=" + pValFBDG + "  cutoffBDG=" + cutoffBDG + "  ci=" + ciBotDF_BDG + ","  + ciTopDF_BDG);
+		System.out.println("DF_Hillis=" + DF_Hillis + "  pValHillis=" + pValFHillis + "  cutoffHillis=" + cutoffHillis + "  ci=" + ciBotDF_Hillis + ","  + ciTopDF_Hillis);
 	}
 
 	/**
@@ -339,7 +290,9 @@ public class StatTest {
 	 * @param sig Significance level=
 	 * @param eff Effect size
 	 * @param totalVar Total variance of components
-	 * @param BCKbias Biased BCK variance components
+	 * @param BCK Biased BCK variance components
+	 * @param aucs
+	 * @param selectedMod
 	 */
 	public StatTest(double[] DBMvar, int r, int n, int d, double sig,
 			double eff, double totalVar, double[][] BCK, double[] aucs,
@@ -347,26 +300,26 @@ public class StatTest {
 
 		sigLevel = sig;
 		effSize = eff;
-		dfHillis = DDF_Hillis(DBMvar, r, n + d, totalVar);
-		dfBDG = calcDFBDG(BCK, r, n, d, totalVar);
-		powerWithHillisDF = FTest_power(DBMvar, r, n + d, totalVar, dfHillis);
-		powerWithBDGDF = FTest_power(DBMvar, r, n + d, totalVar, dfBDG);
+		DF_Hillis = calcDF_Hillis(DBMvar, r, n+d, totalVar);
+		DF_BDG = calcDF_BDG(BCK, r, n, d, totalVar);
+		powerWithHillisDF = FTest_power(DBMvar, r, n + d, totalVar, DF_Hillis);
+		powerWithBDGDF = FTest_power(DBMvar, r, n + d, totalVar, DF_BDG);
 		powerZ = ZTest(DBMvar, r, n + d, totalVar);
 
 		double cutoffZ, cutoffBDG, cutoffHillis;
 		NormalDist ndist = new NormalDist();
 		cutoffZ = ndist.inverseF(1 - sig);
 
-		if (dfBDG >= 50) {
+		if (DF_BDG >= 50) {
 			cutoffBDG = ndist.inverseF(1 - sig);
 		} else {
-			FisherFDist fdist = new FisherFDist(1, (int) dfBDG);
+			FisherFDist fdist = new FisherFDist(1, (int) DF_BDG);
 			cutoffBDG = fdist.inverseF(1 - sig);
 		}
-		if (dfHillis >= 50) {
+		if (DF_Hillis >= 50) {
 			cutoffHillis = ndist.inverseF(1 - sig);
 		} else {
-			FisherFDist fdist = new FisherFDist(1, (int) dfHillis);
+			FisherFDist fdist = new FisherFDist(1, (int) DF_Hillis);
 			cutoffHillis = fdist.inverseF(1 - sig);
 		}
 
@@ -378,10 +331,10 @@ public class StatTest {
 		}
 		ciBot = meanCI - Math.sqrt(totalVar) * cutoffZ; // bdg
 		ciTop = meanCI + Math.sqrt(totalVar) * cutoffZ; // bdg
-		ciBotDfBDG = meanCI - Math.sqrt(totalVar) * cutoffBDG;
-		ciTopDfBDG = meanCI + Math.sqrt(totalVar) * cutoffBDG;
-		ciBotDfHillis = meanCI - Math.sqrt(totalVar) * cutoffHillis;
-		ciTopDfHillis = meanCI + Math.sqrt(totalVar) * cutoffHillis;
+		ciBotDF_BDG = meanCI - Math.sqrt(totalVar) * cutoffBDG;
+		ciTopDF_BDG = meanCI + Math.sqrt(totalVar) * cutoffBDG;
+		ciBotDF_Hillis = meanCI - Math.sqrt(totalVar) * cutoffHillis;
+		ciTopDF_Hillis = meanCI + Math.sqrt(totalVar) * cutoffHillis;
 	}
 
 	/**
@@ -400,18 +353,14 @@ public class StatTest {
 	/**
 	 * Calculates the denominator degrees of freedom by Hillis 2008 method
 	 * 
-	 * @param varDBM Subset of DBM variance components for the selected
-	 *            modality/difference
-	 * @param l Number of readers
-	 * @param m Number of cases
-	 * @param totalVar Total variance of components
-	 * @return Denominator degrees of freedom
 	 */
-	public double DDF_Hillis(double[] varDBM, long l, long m, double totalVar) {
+	public double calcDF_Hillis(double[] varDBM, long l, long m, double totalVar) {
+		
+		double ddf_hillis;
+
 		double SigTR = varDBM[0];
 		double SigTC = varDBM[1];
 		double SigTRC = varDBM[2];
-		double ddf_hillis;
 
 		if (SigTR < 0) {
 			SigTR = 0;
@@ -440,6 +389,67 @@ public class StatTest {
 		}
 		
 		return ddf_hillis;
+	}
+	/**
+	 * Calculates the denominator degrees of freedom by Hillis 2008 method given the curRecord
+	 * 
+	 */
+	public double calcDF_Hillis(int selectedMod) {
+		
+		double[] AUCsReaderAvg = curRecord.getAUCsReaderAvg();
+		double[][] AUCs = curRecord.getAUCs();
+		double dnm = 2.0;
+		double dnr = curRecord.getReader();
+		double ms_t, ms_r, ms_tr, temp, denom;
+
+		double[][] OR = curRecord.getOR(NO_MLE);
+
+		if(selectedMod == 3) {
+			// Hillis2014, pg 332
+			ms_t = 0.0;
+			ms_tr = 0.0;
+			for(int i=0; i<2; i++) {
+				temp = AUCsReaderAvg[i] - (AUCsReaderAvg[0] + AUCsReaderAvg[1])/2.0;
+				ms_t = ms_t + Math.pow(temp, 2); 
+				for(int j=0; j<dnr; j++) {
+					temp = AUCs[j][i] - 
+							AUCsReaderAvg[i] - 
+							(AUCs[j][0] + AUCs[j][1])/2.0 + 
+							(AUCsReaderAvg[0] + AUCsReaderAvg[1])/2.0;
+					ms_tr = ms_tr + Math.pow(temp, 2); 
+				}
+			}
+			ms_t = dnr*ms_t/(dnm-1.0);
+			ms_tr = ms_tr/(dnr-1.0)/(dnm-1.0);
+			
+			denom = ms_tr + Math.max(dnr*(OR[3][3]-OR[3][4]),0);
+			temp = ms_t / ( denom );
+			tStatEst = Math.sqrt(temp);
+			// These expressions are equivalent
+			tStatEst = (AUCsReaderAvg[0] - AUCsReaderAvg[1])/Math.sqrt(curRecord.totalVar);
+			// Here is another equivalent expression for the total variance
+			// curRecord.totalVar = (1*1 + 1*1)*denom/dnr;
+			
+			DF_Hillis = (dnr-1.0)*(dnm-1.0)*denom*denom/ms_tr/ms_tr;
+		} else {
+			// Hillis2014, pg 333
+			
+			ms_r = 0.0;
+			for(int j=0; j<dnr; j++) {
+				temp = AUCs[j][selectedMod] - AUCsReaderAvg[selectedMod];
+				ms_r = ms_r + Math.pow(temp, 2); 
+			}
+			ms_r = ms_r/(dnr-1.0);
+			denom = ms_r + Math.max(dnr*OR[selectedMod][3],0);
+			tStatEst = (AUCsReaderAvg[selectedMod]-0.5)/Math.sqrt(curRecord.totalVar);
+			// Here is another equivalent expression for the total variance
+			// curRecord.totalVar = denom/dnr;
+
+			DF_Hillis = (dnr-1.0)*denom*denom/ms_r/ms_r;
+			
+		}
+
+		return DF_Hillis;
 	}
 
 	/**
@@ -496,7 +506,7 @@ public class StatTest {
 		}
 
 		fTestPower = 1 - cdftemp;
-		System.out.println("delta=" + tStatCalc + " df2=" + dfHillis + " CVF="
+		System.out.println("delta=" + tStatCalc + " df2=" + DF_Hillis + " CVF="
 				+ f0 + " powerF= " + fTestPower + " totalVar= " + totalVar);
 
 		return fTestPower;
@@ -550,49 +560,119 @@ public class StatTest {
 
 	// TODO verify correctness
 	/**
-	 * Calculates degrees of freedom by Obuchowski, BCK method
+	 * Calculates degrees of freedom by BDG <br>
+	 * ----Obuchowski2012_Acad-Radiol_v19p1508
 	 * 
 	 * @param BCK Components of variance for BCK decomposition
-	 * @param l Number of readers
-	 * @param m Number of normal cases
-	 * @param n Number of disease cases
+	 * @param Nreader Number of readers
+	 * @param Nnormal Number of normal cases
+	 * @param Ndisease Number of disease cases
 	 * @param totalVar Total variance of components
 	 * @return Degrees of freedom
 	 */
-	private double calcDFBDG(double[][] BCK, long l, long m, long n,
+	public double calcDF_BDG(double[][] BCK, long Nreader, long Nnormal, long Ndisease,
 			double totalVar) {
+		
 		System.out.println("total var " + totalVar);
 		double s2b0 = 0.0;
-		s2b0 = s2b0 + l*  n*(BCK[0][0] + BCK[1][0] - 2*BCK[2][0]);
-		s2b0 = s2b0 +     n*(BCK[0][4] + BCK[1][4] - 2*BCK[2][4]);
-		s2b0 = s2b0 + l*    (BCK[0][2] + BCK[1][2] - 2*BCK[2][2]);
-		s2b0 = s2b0 +       (BCK[0][6] + BCK[1][6] - 2*BCK[2][6]);
-		s2b0 = s2b0  /l/m/n;
+		s2b0 = s2b0 + Nreader*Ndisease*(BCK[0][0] + BCK[1][0] - 2*BCK[2][0]);
+		s2b0 = s2b0 +         Ndisease*(BCK[0][4] + BCK[1][4] - 2*BCK[2][4]);
+		s2b0 = s2b0 + Nreader*         (BCK[0][2] + BCK[1][2] - 2*BCK[2][2]);
+		s2b0 = s2b0 +                  (BCK[0][6] + BCK[1][6] - 2*BCK[2][6]);
+		s2b0 = s2b0  /Nreader/Nnormal/Ndisease;
 		
 		double s2b1 = 0.0;
-		s2b1 = s2b1 + l*m*  (BCK[0][1] + BCK[1][1] - (2 * BCK[2][1]));
-		s2b1 = s2b1 +   m*  (BCK[0][5] + BCK[1][5] - (2 * BCK[2][5]));
-		s2b1 = s2b1 + l*    (BCK[0][2] + BCK[1][2] - (2 * BCK[2][2]));
-		s2b1 = s2b1 +       (BCK[0][6] + BCK[1][6] - (2 * BCK[2][6]));
-		s2b1 = s2b1  /l/m/n;
+		s2b1 = s2b1 + Nreader*Nnormal*(BCK[0][1] + BCK[1][1] - (2 * BCK[2][1]));
+		s2b1 = s2b1 +         Nnormal*(BCK[0][5] + BCK[1][5] - (2 * BCK[2][5]));
+		s2b1 = s2b1 + Nreader*        (BCK[0][2] + BCK[1][2] - (2 * BCK[2][2]));
+		s2b1 = s2b1 +                 (BCK[0][6] + BCK[1][6] - (2 * BCK[2][6]));
+		s2b1 = s2b1  /Nreader/Nnormal/Ndisease;
 
 		double s2br = 0.0;
-		s2br = s2br +   m*n*(BCK[0][3] + BCK[1][3] - (2 * BCK[2][3]));
-		s2br = s2br +     n*(BCK[0][4] + BCK[1][4] - (2 * BCK[2][4]));
-		s2br = s2br +   m*  (BCK[0][5] + BCK[1][5] - (2 * BCK[2][5]));
-		s2br = s2br +       (BCK[0][6] + BCK[1][6] - (2 * BCK[2][6]));
-		s2br = s2br  /l/m/n;
+		s2br = s2br + Nnormal*Ndisease*(BCK[0][3] + BCK[1][3] - (2 * BCK[2][3]));
+		s2br = s2br +         Ndisease*(BCK[0][4] + BCK[1][4] - (2 * BCK[2][4]));
+		s2br = s2br + Nnormal*         (BCK[0][5] + BCK[1][5] - (2 * BCK[2][5]));
+		s2br = s2br +                  (BCK[0][6] + BCK[1][6] - (2 * BCK[2][6]));
+		s2br = s2br  /Nreader/Nnormal/Ndisease;
 
 //		double balanceR = (Math.pow(s2br, 2) / Math.pow(r - 1, 3));
-//		double balance0 = (Math.pow(s2b0, 2) / Math.pow(n - 1, 3));
+//		double balance0 = (Math.pow(s2b0, 2) / Math.pow(Ndisease - 1, 3));
 //		double balance1 = (Math.pow(s2b1, 2) / Math.pow(d - 1, 3));
 
-		double balanceR = (Math.pow(s2br, 2) / (l - 1));
-		double balance0 = (Math.pow(s2b0, 2) / (m - 1));
-		double balance1 = (Math.pow(s2b1, 2) / (n - 1));
+		double balanceR = (Math.pow(s2br, 2) / (Nreader - 1));
+		double balance0 = (Math.pow(s2b0, 2) / (Nnormal - 1));
+		double balance1 = (Math.pow(s2b1, 2) / (Ndisease - 1));
 		double df = Math.pow(totalVar, 2) / (balanceR + balance0 + balance1);
-		System.out.println("calc df = " + df);
+
 		return df;
+	}
+	
+	// TODO verify correctness
+	/**
+	 * Calculates degrees of freedom by BDG <br>
+	 * ----Obuchowski2012_Acad-Radiol_v19p1508
+	 * 
+	 * @param BCK Components of variance for BCK decomposition
+	 * @param Nreader Number of readers
+	 * @param Nnormal Number of normal cases
+	 * @param Ndisease Number of disease cases
+	 * @param totalVar Total variance of components
+	 * @return Degrees of freedom
+	 */
+	public double calcDF_BDG(int selectedMod) {
+		
+		double[][] BCK = curRecord.getBCK(NO_MLE); 
+		long Nreader=curRecord.getReader(), Nnormal=curRecord.getNormal(), Ndisease=curRecord.getDisease();
+		
+		double s2b0 = 0.0, s2b1 = 0.0, s2br = 0.0;
+
+		if(selectedMod == 3) {
+			s2b0 = s2b0 + Nreader*Ndisease*(BCK[0][0] + BCK[1][0] - 2*BCK[2][0]);
+			s2b0 = s2b0 +         Ndisease*(BCK[0][4] + BCK[1][4] - 2*BCK[2][4]);
+			s2b0 = s2b0 + Nreader*         (BCK[0][2] + BCK[1][2] - 2*BCK[2][2]);
+			s2b0 = s2b0 +                  (BCK[0][6] + BCK[1][6] - 2*BCK[2][6]);
+			s2b0 = s2b0  /Nreader/Nnormal/Ndisease;
+			
+			s2b1 = s2b1 + Nreader*Nnormal*(BCK[0][1] + BCK[1][1] - (2 * BCK[2][1]));
+			s2b1 = s2b1 +         Nnormal*(BCK[0][5] + BCK[1][5] - (2 * BCK[2][5]));
+			s2b1 = s2b1 + Nreader*        (BCK[0][2] + BCK[1][2] - (2 * BCK[2][2]));
+			s2b1 = s2b1 +                 (BCK[0][6] + BCK[1][6] - (2 * BCK[2][6]));
+			s2b1 = s2b1  /Nreader/Nnormal/Ndisease;
+	
+			s2br = s2br + Nnormal*Ndisease*(BCK[0][3] + BCK[1][3] - (2 * BCK[2][3]));
+			s2br = s2br +         Ndisease*(BCK[0][4] + BCK[1][4] - (2 * BCK[2][4]));
+			s2br = s2br + Nnormal*         (BCK[0][5] + BCK[1][5] - (2 * BCK[2][5]));
+			s2br = s2br +                  (BCK[0][6] + BCK[1][6] - (2 * BCK[2][6]));
+			s2br = s2br  /Nreader/Nnormal/Ndisease;
+	
+		}
+		else {
+			s2b0 = s2b0 + Nreader*Ndisease*(BCK[selectedMod][0]);
+			s2b0 = s2b0 +         Ndisease*(BCK[selectedMod][4]);
+			s2b0 = s2b0 + Nreader*         (BCK[selectedMod][2]);
+			s2b0 = s2b0 +                  (BCK[selectedMod][6]);
+			s2b0 = s2b0  /Nreader/Nnormal/Ndisease;
+			
+			s2b1 = s2b1 + Nreader*Nnormal*(BCK[selectedMod][1]);
+			s2b1 = s2b1 +         Nnormal*(BCK[selectedMod][5]);
+			s2b1 = s2b1 + Nreader*        (BCK[selectedMod][2]);
+			s2b1 = s2b1 +                 (BCK[selectedMod][6]);
+			s2b1 = s2b1  /Nreader/Nnormal/Ndisease;
+	
+			s2br = s2br + Nnormal*Ndisease*(BCK[selectedMod][3]);
+			s2br = s2br +         Ndisease*(BCK[selectedMod][4]);
+			s2br = s2br + Nnormal*         (BCK[selectedMod][5]);
+			s2br = s2br +                  (BCK[selectedMod][6]);
+			s2br = s2br  /Nreader/Nnormal/Ndisease;
+	
+		}
+		
+		double balanceR = (Math.pow(s2br, 2) / (Nreader - 1));
+		double balance0 = (Math.pow(s2b0, 2) / (Nnormal - 1));
+		double balance1 = (Math.pow(s2b1, 2) / (Ndisease - 1));
+		DF_BDG = Math.pow(curRecord.totalVar, 2) / (balanceR + balance0 + balance1);
+
+		return DF_BDG;
 	}
 	/*
 	 * public double FTest2011(double[] OR,int r, int c, int rnew, int

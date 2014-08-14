@@ -168,8 +168,6 @@ public class MrmcDB {
 				for (int j = 0; j < 2; j++) // two modalities
 				{
 					each = each + Records[i].getFilename() + "\t";
-					each = each + Records[i].getModality(j) + "\t";
-					each = each + Records[i].getTask() + "\t";
 					for (int k = 0; k < K; k++) {
 						each = each + Double.toString(data[j][k]) + "\t";
 					}
@@ -177,8 +175,6 @@ public class MrmcDB {
 				}
 			else {
 				each = each + Records[i].getFilename() + "\t";
-				each = each + Records[i].getModality(0) + "\t"
-						+ Records[i].getModality(1) + "\t";
 				each = each + Records[i].getTask() + "\t";
 				for (int k = 0; k < K; k++) {
 					each = each + Double.toString(data[3][k]) + "\t";

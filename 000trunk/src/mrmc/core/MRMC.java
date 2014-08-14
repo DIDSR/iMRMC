@@ -16,7 +16,7 @@
  *     
  */
 
-package mrmc.core;
+ package mrmc.core;
 
 import javax.swing.*;
 
@@ -26,7 +26,8 @@ import mrmc.gui.GUInterface;
 import java.awt.*;
 
 /**
- * Entry point of application
+ * Entry point of application <br>
+ * ---- Launches {@link mrmc.gui.GUInterface GUInterface} and {@link mrmc.gui.GUImenubar GUImenubar}.
  * 
  * @author Xin He, Ph.D,
  * @author Brandon D. Gallas, Ph.D
@@ -70,7 +71,9 @@ public class MRMC extends JApplet {
 	}
 
 	/**
-	 * Creates the GUI and top-level menu bar
+	 * Creates gui and menuBar from constructors {mrmc.gui.GUInterface} and {@link mrmc.gui.GUImenubar} <br>
+	 * <br>
+	 * CALLED FROM: {@link #run(JApplet, int, int)}
 	 */
 	@Override
 	public void init() {
@@ -91,8 +94,9 @@ public class MRMC extends JApplet {
 	}
 
 	/**
-	 * Entry point of the application. Sets the look-and-feel to match that of
-	 * the user's OS and starts the application with the specified frame size.
+	 * Sets the look-and-feel to match that of
+	 * the user's OS and starts the application with the specified frame size. <br>
+	 * ---- Creates object MRMC from class jApplet
 	 * 
 	 * @param args Command-line arguments, not used
 	 */
@@ -114,7 +118,7 @@ public class MRMC extends JApplet {
 	}
 
 	/**
-	 * Creates the frame for the application, starts it and displays it
+	 * Creates the frame for the application; adds, inits, and starts MRMC applet.
 	 * 
 	 * @param applet This application. It is called "applet" but we only run
 	 *            from a standalone jar so it is more of an "application"
@@ -122,11 +126,14 @@ public class MRMC extends JApplet {
 	 * @param height Height of the application frame in pixels
 	 */
 	public static void run(JApplet applet, int width, int height) {
-		mrmcFrame = new JFrame("iMRMC Version 2p4");
+		mrmcFrame = new JFrame("iMRMC Version 2p5");
 		mrmcFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mrmcFrame.getContentPane().add(applet);
 		mrmcFrame.pack();
 		mrmcFrame.setSize(width, height);
+
+		// We shall override the normal init method.
+		// Please refer to the init method in this (sub)class 
 		applet.init();
 		applet.start();
 		mrmcFrame.setVisible(true);
