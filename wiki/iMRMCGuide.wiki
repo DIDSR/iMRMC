@@ -10,7 +10,7 @@ The software treats arbitrary study designs that are not "fully-crossed". Please
   * Obuchowski, N.; Gallas, B. D. & Hillis, S. L. (2012), 'Multi-Reader ROC Studies with Split-Plot Designs: A Comparison of Statistical Methods.' _Acad Radiol_, *19*, 1508-1517.
 
 ===_Status_===
-_This software is still a work in progress. We believe the variances and components of variance are very robust. We believe the p-values and confidence intervals are correct, and intend a comprehensive validation study with accompanying paper. We have disabled the sizing and power analysis panel until it is fully validated. Please contact us with any issues by email or via the issues page._
+_The sizing analysis has been debugged and enabled once more. We believe all elements are now functioning properly. Confirmatory validation of statistical and sizing analysis by Roe and Metz simulation is planned. Please contact us with any issues by email or via the issues page._
 
 
 ===_Authors_===
@@ -35,11 +35,11 @@ Please *read* the user manual for useful information. See below for the current 
 <br>
 
 =Application Current Version=
-Version 2p5 posted 2014-08-14
+Version 2p6 posted 2014-09-05
 
-Fixed bug that was causing iMRMC to crash when executing statistical analysis of a single modality AUC. <br>
+Sizing analysis functioning. We believe it is functioning properly and are planning a validation paper. We have also added a button to view the individual reader AUCs. Analysis of individual reader AUCs is planned. <br>
 
-*[http://imrmc.googlecode.com/svn/standalone_application/iMRMC-v2p5.jar Click to download application (imrmc-v2p5.jar)]*
+*[http://imrmc.googlecode.com/svn/standalone_application/iMRMC-v2p6.jar Click to download application (imrmc-v2p6.jar)]*
 
 <br>
 
