@@ -10,6 +10,15 @@ Here are some sample {{{*}}}.imrmc input files that you can use to try the softw
 
 <br>
 
+=iMRMC Application Version 2p6=
+posted 2014-09-05
+
+Sizing analysis functioning. We believe it is functioning properly and are planning a validation paper. We have also added a button to view the individual reader AUCs. Analysis of individual reader AUCs is planned. <br>
+
+*[http://imrmc.googlecode.com/svn/standalone_application/iMRMC-v2p6.jar Click to download application (imrmc-v2p6.jar)]*
+
+<br>
+
 =iMRMC Application Version 2p5=
 posted 2014-08-14
 
