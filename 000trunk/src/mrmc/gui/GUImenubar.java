@@ -19,7 +19,13 @@
 package mrmc.gui;
 
 import javax.swing.*;
+
+import java.awt.Desktop;
 import java.awt.event.*;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import mrmc.core.MRMC;
 
 /**
@@ -33,10 +39,6 @@ import mrmc.core.MRMC;
 public class GUImenubar {
 	private MRMC lst;
 	private JMenuBar menuBar = new JMenuBar();
-	private String Manual = "Dowload manual, sample file, source code and database at\n"
-			+ "https://code.google.com/p/imrmc/\n";
-	private String About = "Developed by Xin He, Brandon Gallas, and Rohan Pathare\n"
-			+ "http://www.fda.gov\n";
 	private String Ref = "1. A Probabilistic Development of the MRMC Method, Eric Clarkson, Matthew A.Kupinski,\n"
 			+ "   Harrison H. Barrett, Academic Radiology. 2006 Mar;13(3):353-62.\n"
 			+ "2. One-Shot Estimate of MRMC Variance: AUC, Brandon D. Gallas, Academic Radiology 13,\n"
@@ -90,28 +92,72 @@ public class GUImenubar {
 	}
 
 	/**
-	 * Handler for "About iMRMC" menu button.
+	 * Handler for "Website" menu button.
 	 */
 	class menuAboutListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
-			System.out.println("Menu about clicked");
-			JFrame frame = lst.getFrame();
-			JOptionPane.showMessageDialog(frame, About, "About",
-					JOptionPane.INFORMATION_MESSAGE);
+			System.out.println("Menu Website clicked");
+
+			// Create Desktop object
+			Desktop d=Desktop.getDesktop();
+
+			// Browse a URL, say google.com
+			try {
+				d.browse(new URI("http://imrmc.googlecode.com/"));
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (URISyntaxException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
 		}
 	}
 
 	/**
-	 * Handler for "Manual" menu button
+	 * Handler for "Report Issue" menu button.
+	 */
+	class menuIssueListener implements ActionListener {
+		public void actionPerformed(ActionEvent event) {
+			System.out.println("Menu Report Issue clicked");
+
+			// Create Desktop object
+			Desktop d=Desktop.getDesktop();
+
+			// Browse a URL, say google.com
+			try {
+				d.browse(new URI("https://code.google.com/p/imrmc/issues/list"));
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (URISyntaxException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
+		}
+	}
+
+	/**
+	 * Handler for "Download User Manual" menu button
 	 */
 	class menuManualListener implements ActionListener {
 		JFrame frame2 = new JFrame("diaglog manual");
 
 		public void actionPerformed(ActionEvent event) {
 			System.out.println("Manual about clicked");
-			JFrame frame = lst.getFrame();
-			JOptionPane.showMessageDialog(frame, Manual, "Download",
-					JOptionPane.INFORMATION_MESSAGE);
+			// Create Desktop object
+			Desktop d=Desktop.getDesktop();
+			try {
+				d.browse(new URI("http://imrmc.googlecode.com/svn/standalone_application/iMRMCuserguide-current.pdf"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 		}
 	}
@@ -122,17 +168,20 @@ public class GUImenubar {
 	private void createMenuBar() {
 		JMenu menu;
 		JMenuItem menuItem;
-		menu = new JMenu("Menu");
+		menu = new JMenu("Help and Info");
 		menuBar.add(menu);
 
-		menuItem = new JMenuItem("Reference");
+		menuItem = new JMenuItem("Related References");
 		menuItem.addActionListener(new menuRefListener());
 		menu.add(menuItem);
-		menuItem = new JMenuItem("About MRMC");
+		menuItem = new JMenuItem("Website");
 		menuItem.addActionListener(new menuAboutListener());
 		menu.add(menuItem);
-		menuItem = new JMenuItem("Manual");
+		menuItem = new JMenuItem("Download User Manual");
 		menuItem.addActionListener(new menuManualListener());
+		menu.add(menuItem);
+		menuItem = new JMenuItem("Report Issue");
+		menuItem.addActionListener(new menuIssueListener());
 		menu.add(menuItem);
 	}
 

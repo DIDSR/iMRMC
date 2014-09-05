@@ -33,6 +33,8 @@ import mrmc.core.Matrix;
  * @author Rohan Pathare
  */
 public class SimRoeMetz {
+	
+	private String[][] fData;
 	private double[][] tA0;
 	private double[][] tB0;
 	private double[][] tA1;
@@ -297,26 +299,79 @@ public class SimRoeMetz {
 			Arrays.fill(tB1[i], u1);
 		}
 
-		for (int r = 0; r < nr; r++) {
-			for (int i = 0; i < n0; i++) {
-				tA0[r][i] += R0[r] + C0[i] + RA0[r] + CA0[i];
-				tB0[r][i] += R0[r] + C0[i] + RB0[r] + CB0[i];
+		/*
+		 * Create the array as it would appear in an input file.
+		 * nrows includes n0+n1 rows defining truth
+		 * plus 2 modalities * nr * (n0+n1)
+		 */
+		int nrows = (int) (2 * nr * (n0+n1) + (n0+n1));
+		fData = new String[nrows][4];
+
+		/*
+		 * Create the rows defining truth states
+		 */
+		int irow=0;
+		for(int normalID=0; normalID<n0; normalID++) {
+			fData[irow][0] = "-1";
+			fData[irow][1] = "normal"+Integer.toString(normalID);
+			fData[irow][2] = "truth";
+			fData[irow][3] = Integer.toString(0);
+			irow++;
+		}
+		for(int diseaseID=0; diseaseID<n1; diseaseID++) {
+			fData[irow][0] = "-1";
+			fData[irow][1] = "disease"+Integer.toString(diseaseID);
+			fData[irow][2] = "truth";
+			fData[irow][3] = Integer.toString(1);
+			irow++;
+		}
+		
+		for (int readerID = 0; readerID < nr; readerID++) {
+			for (int normalID = 0; normalID < n0; normalID++) {
+				tA0[readerID][normalID] += R0[readerID] + C0[normalID] + RA0[readerID]
+						+ CA0[normalID] + RC0[readerID][normalID] + RCA0[readerID][normalID];
+				fData[irow][0] = Integer.toString(readerID);
+				fData[irow][1] = "normal"+Integer.toString(normalID);
+				fData[irow][2] = "ModalityA";
+				fData[irow][3] = Double.toString(tA0[readerID][normalID]);
+				irow++;
+
+				tB0[readerID][normalID] += R0[readerID] + C0[normalID] + RB0[readerID]
+						+ CB0[normalID] + RC0[readerID][normalID] + RCB0[readerID][normalID];
+				fData[irow][0] = Integer.toString(readerID);
+				fData[irow][1] = "normal"+Integer.toString(normalID);
+				fData[irow][2] = "ModalityB";
+				fData[irow][3] = Double.toString(tB0[readerID][normalID]);
+				irow++;
 			}
-			for (int j = 0; j < n1; j++) {
-				tA1[r][j] += R1[r] + C1[j] + RA1[r] + CA1[j];
-				tB1[r][j] += R1[r] + C1[j] + RB1[r] + CB1[j];
+			for (int diseaseID = 0; diseaseID < n1; diseaseID++) {
+				tA1[readerID][diseaseID] += R1[readerID] + C1[diseaseID] + RA1[readerID]
+						+ CA1[diseaseID] + RC1[readerID][diseaseID] + RCA1[readerID][diseaseID];
+				fData[irow][0] = Integer.toString(readerID);
+				fData[irow][1] = "disease"+Integer.toString(diseaseID);
+				fData[irow][2] = "ModalityA";
+				fData[irow][3] = Double.toString(tA1[readerID][diseaseID]);
+				irow++;
+				
+				tB1[readerID][diseaseID] += R1[readerID] + C1[diseaseID] + RB1[readerID]
+						+ CB1[diseaseID] + RC1[readerID][diseaseID] + RCB1[readerID][diseaseID];
+				fData[irow][0] = Integer.toString(readerID);
+				fData[irow][1] = "disease"+Integer.toString(diseaseID);
+				fData[irow][2] = "ModalityB";
+				fData[irow][3] = Double.toString(tB1[readerID][diseaseID]);
+				irow++;
 			}
 		}
 
-		tA0 = Matrix.matrixAdd(tA0, RC0);
-		tB0 = Matrix.matrixAdd(tB0, RC0);
-		tA0 = Matrix.matrixAdd(tA0, RCA0);
-		tB0 = Matrix.matrixAdd(tB0, RCB0);
+//		tA0 = Matrix.matrixAdd(tA0, RC0);
+//		tB0 = Matrix.matrixAdd(tB0, RC0);
+//		tA0 = Matrix.matrixAdd(tA0, RCA0);
+//		tB0 = Matrix.matrixAdd(tB0, RCB0);
 
-		tA1 = Matrix.matrixAdd(tA1, RC1);
-		tB1 = Matrix.matrixAdd(tB1, RC1);
-		tA1 = Matrix.matrixAdd(tA1, RCA1);
-		tB1 = Matrix.matrixAdd(tB1, RCB1);
+//		tA1 = Matrix.matrixAdd(tA1, RC1);
+//		tB1 = Matrix.matrixAdd(tB1, RC1);
+//		tA1 = Matrix.matrixAdd(tA1, RCA1);
+//		tB1 = Matrix.matrixAdd(tB1, RCB1);
 	}
 
 	/**
@@ -325,16 +380,14 @@ public class SimRoeMetz {
 	 * @throws IOException 
 	 */
 	public void processSimExperiment() throws IOException {
-		double[][][][] newTMatrices = convertTMatrices();
-		int[][][][] dMatrices = createDMatrices();
 
 		// Creates an "InputFile" of the scores from simulated experiment so
 		// that we can perform variance analysis on them.
-		InputFile toCalc = new InputFile(newTMatrices, dMatrices, nr, n0, n1,
-				"SimExp", "Simulated Experiment");
+		InputFile toCalc = new InputFile(fData);
 		// Creates a record of the variance analysis so decompositions can be
 		// accessed
-		DBRecord rec = new DBRecord(toCalc, 3, "1", "2");
+		DBRecord rec = new DBRecord();
+		rec.DBRecordInputFile(toCalc, "ModalityA", "ModalityB", 3);
 
 		BDG = rec.getBDG(useMLE);
 		BCK = rec.getBCK(useMLE);
@@ -343,79 +396,6 @@ public class SimRoeMetz {
 		MS = rec.getMS(useMLE);
 		auc = new double[] { rec.getAUCinNumber(0), rec.getAUCinNumber(1),
 				(rec.getAUCinNumber(0) - rec.getAUCinNumber(1)) };
-	}
-
-	/**
-	 * Reorganizes the t-matrices into format that is convenient for variance
-	 * analysis by iMRMC methods. Additionally creates the t0 and t1 matrices
-	 * which are modality-independent
-	 * 
-	 * @return Array consisting of all converted t-matrices necessary for
-	 *         variance analysis
-	 */
-	private double[][][][] convertTMatrices() {
-		double[][][] newtA0 = new double[(int) n0][(int) nr][2];
-		double[][][] newtB0 = new double[(int) n0][(int) nr][2];
-		double[][][] newtA1 = new double[(int) n1][(int) nr][2];
-		double[][][] newtB1 = new double[(int) n1][(int) nr][2];
-		double[][][] newt0 = new double[(int) n0][(int) nr][2];
-		double[][][] newt1 = new double[(int) n1][(int) nr][2];
-
-		for (int reader = 0; reader < tA0.length; reader++) {
-			for (int cases = 0; cases < tA0[reader].length; cases++) {
-				newtA0[cases][reader][0] = tA0[reader][cases];
-				newtA0[cases][reader][1] = tA0[reader][cases];
-				newt0[cases][reader][0] = tA0[reader][cases];
-			}
-		}
-		for (int reader = 0; reader < tB0.length; reader++) {
-			for (int cases = 0; cases < tB0[reader].length; cases++) {
-				newtB0[cases][reader][0] = tB0[reader][cases];
-				newtB0[cases][reader][1] = tB0[reader][cases];
-				newt0[cases][reader][1] = tB0[reader][cases];
-			}
-		}
-		for (int reader = 0; reader < tA1.length; reader++) {
-			for (int cases = 0; cases < tA1[reader].length; cases++) {
-				newtA1[cases][reader][0] = tA1[reader][cases];
-				newtA1[cases][reader][1] = tA1[reader][cases];
-				newt1[cases][reader][0] = tA1[reader][cases];
-			}
-		}
-		for (int reader = 0; reader < tB1.length; reader++) {
-			for (int cases = 0; cases < tB1[reader].length; cases++) {
-				newtB1[cases][reader][0] = tB1[reader][cases];
-				newtB1[cases][reader][1] = tB1[reader][cases];
-				newt1[cases][reader][1] = tB1[reader][cases];
-			}
-		}
-
-		return new double[][][][] { newtA0, newtB0, newtA1, newtB1, newt0,
-				newt1 };
-	}
-
-	/**
-	 * Creates design matrices for the simulated experiment. The design matrices
-	 * for both normal and disease cases both indicate a fully-crossed design
-	 * (consist of all 1's), since a simulated experiment does not have any
-	 * missing scores.
-	 * 
-	 * @return Array containing design matrices for normal cases and disease
-	 *         cases.
-	 */
-	private int[][][][] createDMatrices() {
-		int[][][] d0 = new int[(int) n0][(int) nr][2];
-		int[][][] d1 = new int[(int) n1][(int) nr][2];
-
-		for (int i = 0; i < nr; i++) {
-			for (int j = 0; j < n1; j++) {
-				Arrays.fill(d1[j][i], 1);
-			}
-			for (int j = 0; j < n0; j++) {
-				Arrays.fill(d0[j][i], 1);
-			}
-		}
-		return new int[][][][] { d0, d1 };
 	}
 
 	/**

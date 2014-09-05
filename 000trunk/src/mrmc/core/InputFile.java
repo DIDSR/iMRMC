@@ -39,7 +39,7 @@ import mrmc.gui.GUInterface;
  *   <li> {@link #keyedData}, {@link #truthVals} 
  *   <li> These are not private and are accessed directly, like a structure. Do not modify.
  * </ul>
- * CALLED FROM: {@link mrmc.gui.GUInterface.brwsButtonListener} and {@link roemetz.core.SimRoeMetz} <br>
+ * CALLED FROM: {@link mrmc.gui.RawStudyCard.brwsButtonListener} and {@link roemetz.core.SimRoeMetz} <br>
  * 
  * @author Xin He, Ph.D,
  * @author Brandon D. Gallas, Ph.D
@@ -64,7 +64,7 @@ public class InputFile {
 	/**
 	 * Filename for the .imrmc reader study data
 	 */
-	private String filename;
+	public String filename;
 	/**
 	 * The content of .imrmc reader study data file before "BEGIN DATA:"
 	 */
@@ -95,15 +95,15 @@ public class InputFile {
 	/**
 	 * A sorted tree (list) containing all the readerIDs in the data (IDs of the readers)
 	 */
-	private TreeMap<String, Integer> readerIDs = new TreeMap<String, Integer>();
+	public TreeMap<String, Integer> readerIDs = new TreeMap<String, Integer>();
 	/**
 	 * A sorted tree (list) containing all the readerIDs in the data (IDs of normal cases)
 	 */
-	private TreeMap<String, Integer> normalIDs = new TreeMap<String, Integer>();
+	public TreeMap<String, Integer> normalIDs = new TreeMap<String, Integer>();
 	/**
 	 * A sorted tree (list) containing all the diseaseIDs in the data (IDs of disease cases)
 	 */
-	private TreeMap<String, Integer> diseaseIDs = new TreeMap<String, Integer>();
+	public TreeMap<String, Integer> diseaseIDs = new TreeMap<String, Integer>();
 	/**
 	 * A sorted tree (list) containing all the caseIDs in the data (IDs of all cases)
 	 */
@@ -167,15 +167,6 @@ public class InputFile {
 	 */
 	public String getDesc() {
 		return Header;
-	}
-
-	/**
-	 * Gets the filename of the raw data file from which the study was loaded
-	 * 
-	 * @return String containing filename path
-	 */
-	public String getFilename() {
-		return filename;
 	}
 
 	/**
@@ -531,7 +522,7 @@ public class InputFile {
 	 * 
 	 * @see #recordTitle
 	 * @see #verificationDetails
-	 * @see #processScoresAndTruth(String[][])
+	 * @see #processScoresAndTruth(String[][], boolean)
 	 * 
 	 * @throws IOException
 	 */
@@ -539,11 +530,12 @@ public class InputFile {
 		recordTitle = fileContent.get(0);
 		int counter = getExperimentSizeFromHeader(fileContent);
 		String[][] fData = parseContent(fileContent, counter);
-
+		boolean VerboseTrue=true;
+		
 		// Function determines readerIDs, normalIDs, diseaseIDs, modalityIDs from the data
 		// Return holds string indicating inconsistencies between header and data
 		// User will be made aware of inconsistencies and header info will be ignored
-		verificationDetails = verifySizesAndGetIDs(fData);
+		verificationDetails = verifySizesAndGetIDs(fData, VerboseTrue);
 		// Indicates whether or not there were inconsistencies between header and data
 		if (verificationDetails.isEmpty()) {
 			verified = true;
@@ -552,7 +544,7 @@ public class InputFile {
 		}
 
 		// fills keyedData and truthVals structures with proper values
-		processScoresAndTruth(fData);
+		processScoresAndTruth(fData, VerboseTrue);
 
 		System.out.println("Input File Successfully Read!");
 	}
@@ -573,7 +565,7 @@ public class InputFile {
 	 * 
 	 * @throws IOException 
 	 */
-	private void processScoresAndTruth(String[][] fData) 
+	private void processScoresAndTruth(String[][] fData, boolean verbose) 
 					throws IOException {
 		
 		// Create a data structure corresponding to a fully-crossed experiment
@@ -591,7 +583,9 @@ public class InputFile {
 		for ( String desc : keyedData.get(keyedData.firstKey()).keySet() ) {
 			caseIDs.put(desc, ic++);
 		}
-		System.out.println("caseIDs: " + caseIDs);
+		if(verbose) {
+			System.out.println("caseIDs: " + caseIDs);
+		}
 
 		for (int i = 0; i < fData.length; i++) {
 			String readerID   = fData[i][0];
@@ -757,7 +751,7 @@ public class InputFile {
 	 * 
 	 * @throws IOException 
 	 */
-	private String verifySizesAndGetIDs(String[][] fData)
+	private String verifySizesAndGetIDs(String[][] fData, boolean verbose)
 					throws IOException {
 		
 		String toReturn = new String();
@@ -819,7 +813,9 @@ public class InputFile {
 		// Given the set of readerIDs,
 		// give them an index corresponding to the "keySet" sorted order
 		for(String ID : readerIDs.keySet()) { readerIDs.put(ID, ++inr); }
-		System.out.println("readerIDs: " + readerIDs);
+		if(verbose) {
+			System.out.println("readerIDs: " + readerIDs);
+		}
 		// Compare the number of readers in the data to that specified in the header
 		// Set Nreader to the number of readers in the data
 		if (Nreader != readerIDs.size()) {
@@ -830,7 +826,9 @@ public class InputFile {
 		// Given the set of normalIDs,
 		// give them an index corresponding to the "keySet" sorted order
 		for(String ID : normalIDs.keySet()) { normalIDs.put(ID, ++in0); }
-		System.out.println("normalIDs: " + normalIDs);
+		if(verbose) {
+			System.out.println("normalIDs: " + normalIDs);
+		}
 		// Compare the number of normal cases in the data to that specified in the header
 		// Set Nreader to the number of normal cases in the data
 		if (Nnormal != normalIDs.size()) {
@@ -841,7 +839,9 @@ public class InputFile {
 		// Given the set of diseaseIDs,
 		// give them an index corresponding to the "keySet" sorted order
 		for(String ID : diseaseIDs.keySet()) { diseaseIDs.put(ID, ++in1); }
-		System.out.println("diseaseIDs: " + diseaseIDs);
+		if(verbose) {
+			System.out.println("diseaseIDs: " + diseaseIDs);
+		}
 		// Compare the number of disease cases in the data to that specified in the header
 		// Set Nreader to the number of disease cases in the data
 		if (Ndisease != diseaseIDs.size()) {
@@ -852,7 +852,9 @@ public class InputFile {
 		// Given the set of modalityIDs,
 		// give them an index corresponding to the "keySet" sorted order
 		for(String ID : modalityIDs.keySet()) { modalityIDs.put(ID, ++inm); }
-		System.out.println("modalityIDs: " + modalityIDs);
+		if(verbose) {
+			System.out.println("modalityIDs: " + modalityIDs);
+		}
 		// Compare the number of modalities in the data to that specified in the header
 		// Set Nreader to the number of disease cases in the data
 		if (Nmodality != (modalityIDs.size())) {
@@ -896,20 +898,29 @@ public class InputFile {
 	}
 
 	/**
+	 * Constructor for initializing the object
+	 */
+	public InputFile() {
+	
+		Nreader = 0;
+		Ndisease = 0;
+		Nnormal = 0;
+		
+	}
+
+	/**
 	 * Constructor used for reading in a raw study file. <br>
 	 * 
-	 * CALLED BY: {@link mrmc.gui.GUInterface.brwsButtonListener}
+	 * CALLED BY: {@link mrmc.gui.RawStudyCard.brwsButtonListener}
 	 * 
 	 * 
 	 * @see #readFile()
 	 * @see #organizeData(ArrayList)
 	 * 
-	 * @param file Name/path of file to be loaded
 	 * @throws IOException
 	 */
-	public InputFile(String file) throws IOException {
+	public void ReadInputFile() throws IOException {
 	
-		filename = file;
 		ArrayList<String> fileContent = new ArrayList<String>();
 		
 		try {
@@ -948,6 +959,20 @@ public class InputFile {
 		this.Header = desc;
 		this.isFullyCrossed = true;
 	
+	}
+
+	/*
+	 * Constructor for RoeMetz
+	 */
+	public InputFile(String[][] fData) throws IOException {
+		
+		this.recordTitle = "SimExp";
+		this.Header = "Simulated Experiment";
+		
+		boolean VerboseFalse = false;
+		verifySizesAndGetIDs(fData, VerboseFalse);
+		processScoresAndTruth(fData, VerboseFalse);
+
 	}
 
 
