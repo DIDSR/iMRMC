@@ -382,7 +382,7 @@ public class ManualCard {
 			double[][] tempData = new double[][]{data, data, data, data};
 			record = new DBRecord(tempData, selectedManualComp, Reader, Normal,
 					Disease, auc);
-			gui.set1stStatPanel();
+			gui.setStatPanel();
 			gui.setTable1();
 			gui.setSizePanel();
 		}

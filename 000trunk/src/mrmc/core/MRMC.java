@@ -126,7 +126,7 @@ public class MRMC extends JApplet {
 	 * @param height Height of the application frame in pixels
 	 */
 	public static void run(JApplet applet, int width, int height) {
-		mrmcFrame = new JFrame("iMRMC Version 2p5");
+		mrmcFrame = new JFrame("iMRMC Version 2p6");
 		mrmcFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mrmcFrame.getContentPane().add(applet);
 		mrmcFrame.pack();

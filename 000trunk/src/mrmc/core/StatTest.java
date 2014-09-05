@@ -18,6 +18,8 @@
 
 package mrmc.core;
 
+import mrmc.gui.GUInterface;
+import mrmc.gui.SizePanel;
 import umontreal.iro.lecuyer.probdist.BetaDist;
 import umontreal.iro.lecuyer.probdist.FisherFDist;
 import umontreal.iro.lecuyer.probdist.StudentDist;
@@ -34,7 +36,8 @@ import umontreal.iro.lecuyer.probdist.NormalDist;
  */
 public class StatTest {
 	
-	DBRecord curRecord;
+	GUInterface GUI;
+	DBRecord DBRecordStat, DBRecordSize;
 
 	private final int INFINITY = 500;
 	private final int PRECISION = 6;
@@ -42,27 +45,18 @@ public class StatTest {
 //	private final static int USE_MLE = 1;
 	private final static int NO_MLE = 0;
 
-	private double tStatEst = 0;
-	private double effSize;
-	private double sigLevel;
-	private double tStatCalc;
-	private double f0;
-	private double df1 = 1.0; // future versions may account for greater df1
+	public double tStatEst = 0;
+	public double effSize;
+	public double sigLevel;
+	public double tStatCalc;
 
-	private double DF_BDG;
-	private double DF_Hillis;
-	
-	private double pValF;
-	private double pValFBDG;
-	private double pValFHillis;
-
-	private double ciBot, ciTop;
-	private double ciBotDF_BDG, ciTopDF_BDG;
-	private double ciBotDF_Hillis, ciTopDF_Hillis;
-
-	private double powerZ;
-	private double powerWithBDGDF;
-	private double powerWithHillisDF;
+	public double DF_BDG, DF_Hillis;
+	public double pValF, pValFBDG, pValFHillis;
+	public double cutoffNormal, cutoffBDG, cutoffHillis;
+	public double lambdaBDG, lambdaHillis;
+	public double powerNormal, powerBDG, powerHillis;
+	public double ciBotNormal, ciBotBDG, ciBotHillis; 
+	public double ciTopNormal, ciTopBDG, ciTopHillis;
 
 	/**
 	 * Gets the confidence interval
@@ -70,7 +64,7 @@ public class StatTest {
 	 * @return Lower and upper range of confidence interval
 	 */
 	public double[] getCI() {
-		return new double[] { ciBot, ciTop };
+		return new double[] { ciBotNormal, ciTopNormal };
 	}
 
 	/**
@@ -80,7 +74,7 @@ public class StatTest {
 	 * @return Lower and upper range of confidence interval
 	 */
 	public double[] getCIDF_BDG() {
-		return new double[] { ciBotDF_BDG, ciTopDF_BDG };
+		return new double[] { ciBotBDG, ciTopBDG };
 	}
 
 	/**
@@ -90,7 +84,7 @@ public class StatTest {
 	 * @return Lower and upper range of confidence interval
 	 */
 	public double[] getCIDF_Hillis() {
-		return new double[] { ciBotDF_Hillis, ciTopDF_Hillis };
+		return new double[] { ciBotHillis, ciTopHillis };
 	}
 
 	/**
@@ -100,7 +94,7 @@ public class StatTest {
 	 * @return Power calculation
 	 */
 	public double getHillisPowerWithBDGDF() {
-		return powerWithBDGDF;
+		return powerBDG;
 	}
 
 	/**
@@ -110,7 +104,7 @@ public class StatTest {
 	 * @return Power calculation
 	 */
 	public double getHillisPowerWithHillisDF() {
-		return powerWithHillisDF;
+		return powerHillis;
 	}
 
 	/**
@@ -119,7 +113,7 @@ public class StatTest {
 	 * @return Power calculation
 	 */
 	public double getZPower() {
-		return powerZ;
+		return powerNormal;
 	}
 
 	/**
@@ -164,7 +158,7 @@ public class StatTest {
 	 * @return CVF
 	 */
 	public double getCVF() {
-		return f0;
+		return cutoffNormal;
 	}
 
 	/**
@@ -195,51 +189,46 @@ public class StatTest {
 	}
 
 	/**
-	 * Constructor used for calculating statistics when performing initial
-	 * variance analysis
-	 * @param inputRecord The database record for which to calculate statistics
-	 * @param selectedMod modA=0, modB=1, difference=3
-	 * @param useMLE Whether or not to use biased variance components
-	 * @param sig Significance level
-	 * @param eff Effect size
+	 * Constructor used for calculating statistics when performing initial variance analysis
+	 * @param DBRecordStatTemp is the record to have a statistical analysis
+	 * @param selectedMod is 0 for modality A, 1 for modality B, and 3 for the difference in modalities
 	 */
-	public StatTest(DBRecord inputRecord, int selectedMod, int useMLE,
-			double sig, double eff) {
+	public StatTest(DBRecord DBRecordStatTemp, int selectedMod) {
 
-		curRecord = inputRecord;
+		DBRecordStat = DBRecordStatTemp;
+		double sig = 0.05;
 		
-		double totalVar = curRecord.totalVar;
-		double[] aucs = { curRecord.getAUCinNumber(0), curRecord.getAUCinNumber(1)};
+		double totalVar = DBRecordStat.totalVar;
+		double[] aucs = { DBRecordStat.getAUCinNumber(0), DBRecordStat.getAUCinNumber(1)};
 
 		double meanCI, tStatEst, cutoffZ, cutoffBDG, cutoffHillis;
-		NormalDist ndist = new NormalDist();
 
-		System.out.println("NR=" + curRecord.getReader() + 
-				           ",  N0=" + curRecord.getNormal() + 
-				           ",  N1=" + curRecord.getDisease());
+		System.out.println("NR=" + DBRecordStat.getReader() + 
+				           ",  N0=" + DBRecordStat.getNormal() + 
+				           ",  N1=" + DBRecordStat.getDisease());
 		System.out.println("auc0=" + aucs[0] + "  auc1=" + aucs[1]);
-		System.out.println("totalVar=" + curRecord.totalVar);
-		System.out.println("eff=" + eff + ",  sig=" + sig);
+		System.out.println("totalVar=" + DBRecordStat.totalVar);
 
 		if (selectedMod == 1 || selectedMod == 0) {
 			meanCI = aucs[selectedMod];
 			/* Compare single-modality AUC to 0.5 */
-			tStatEst = Math.sqrt(Math.pow(meanCI - 0.5, 2)/curRecord.totalVar);
+			tStatEst = Math.sqrt(Math.pow(meanCI - 0.5, 2)/DBRecordStat.totalVar);
 		} else {
 			meanCI = aucs[1] - aucs[0];
 			/* Compare difference in modality AUCs to 0.0 */
-			tStatEst = Math.sqrt(Math.pow(meanCI, 2)/curRecord.totalVar);
+			tStatEst = Math.sqrt(Math.pow(meanCI, 2)/DBRecordStat.totalVar);
 		}	
 
-		DF_BDG = calcDF_BDG(selectedMod);
-		DF_Hillis = calcDF_Hillis(selectedMod);
+		DF_BDG = calcDF_BDG(DBRecordStat, selectedMod);
+		DF_Hillis = calcDF_Hillis(DBRecordStat, selectedMod);
 
 		System.out.println("DF_BDG=" + DF_BDG);
 		System.out.println("DF_Hillis=" + DF_Hillis);
 
 		// calculate p-value and cutoff assuming normality
-		pValF = 2*(1 - NormalDist.cdf(0, 1, tStatEst));
-		cutoffZ = ndist.inverseF(1 - sig/2);
+		NormalDist ndist = new NormalDist();
+		pValF = 2*(1 - ndist.cdf(tStatEst));
+		cutoffZ = ndist.inverseF(1 - sig/2.0);
 
 		// calculate p-value and cutoff assuming t-distribution with DF_BDG or DF_Hillis
 		// Use normal distribution if df > 50, since they are approximately
@@ -265,76 +254,107 @@ public class StatTest {
 			cutoffHillis = tdist.inverseF( 1-sig/2 );
 		}
 		
-		ciBot = meanCI - Math.sqrt(totalVar) * cutoffZ; // normal approx
-		ciTop = meanCI + Math.sqrt(totalVar) * cutoffZ; // normal approx
-		ciBotDF_BDG = meanCI - Math.sqrt(totalVar) * cutoffBDG;
-		ciTopDF_BDG = meanCI + Math.sqrt(totalVar) * cutoffBDG;
-		ciBotDF_Hillis = meanCI - Math.sqrt(totalVar) * cutoffHillis;
-		ciTopDF_Hillis = meanCI + Math.sqrt(totalVar) * cutoffHillis;
+		ciBotNormal = meanCI - Math.sqrt(totalVar) * cutoffZ; // normal approx
+		ciTopNormal = meanCI + Math.sqrt(totalVar) * cutoffZ; // normal approx
+		ciBotBDG = meanCI - Math.sqrt(totalVar) * cutoffBDG;
+		ciTopBDG = meanCI + Math.sqrt(totalVar) * cutoffBDG;
+		ciBotHillis = meanCI - Math.sqrt(totalVar) * cutoffHillis;
+		ciTopHillis = meanCI + Math.sqrt(totalVar) * cutoffHillis;
 
 		System.out.println("mean=" + meanCI);
 		System.out.println("tStatEst=" + tStatEst);
-		System.out.println("Normal approx:" + "  pValF=" + pValF + "  cutoffZ=" + cutoffZ + "  ci=" + ciBot + ","  + ciTop);
-		System.out.println("DF_BDG=" + DF_BDG + "  pValBDG=" + pValFBDG + "  cutoffBDG=" + cutoffBDG + "  ci=" + ciBotDF_BDG + ","  + ciTopDF_BDG);
-		System.out.println("DF_Hillis=" + DF_Hillis + "  pValHillis=" + pValFHillis + "  cutoffHillis=" + cutoffHillis + "  ci=" + ciBotDF_Hillis + ","  + ciTopDF_Hillis);
+		System.out.println("Normal approx:" + "  pValF=" + pValF + "  cutoffZ=" + cutoffZ + "  ci=" + ciBotNormal + ","  + ciTopNormal);
+		System.out.println("DF_BDG=" + DF_BDG 
+				+ "  pValBDG=" + pValFBDG + "  cutoffBDG=" + cutoffBDG 
+				+ "  ci=" + ciBotBDG + ","  + ciTopBDG);
+		System.out.println("DF_Hillis=" + DF_Hillis 
+				+ "  pValHillis=" + pValFHillis + "  cutoffHillis=" + cutoffHillis 
+				+ "  ci=" + ciBotHillis + ","  + ciTopHillis);
 	}
 
 	/**
 	 * Constructor used for calculating statistics when sizing a new trial
 	 * 
-	 * @param DBMvar Subset of DBM variance components for the selected
-	 *            modality/difference
-	 * @param r Number of readers
-	 * @param n Number of normal cases
-	 * @param d Number of disease cases
-	 * @param sig Significance level=
-	 * @param eff Effect size
-	 * @param totalVar Total variance of components
-	 * @param BCK Biased BCK variance components
-	 * @param aucs
-	 * @param selectedMod
+	 * @param GUI The GUI that launched this statistical analysis
+	 * @param SizePanel is the bottom panel of the GUI
 	 */
-	public StatTest(double[] DBMvar, int r, int n, int d, double sig,
-			double eff, double totalVar, double[][] BCK, double[] aucs,
-			int selectedMod) {
+	public StatTest(GUInterface GUI, SizePanel SizePanel) {
 
-		sigLevel = sig;
-		effSize = eff;
-		DF_Hillis = calcDF_Hillis(DBMvar, r, n+d, totalVar);
-		DF_BDG = calcDF_BDG(BCK, r, n, d, totalVar);
-		powerWithHillisDF = FTest_power(DBMvar, r, n + d, totalVar, DF_Hillis);
-		powerWithBDGDF = FTest_power(DBMvar, r, n + d, totalVar, DF_BDG);
-		powerZ = ZTest(DBMvar, r, n + d, totalVar);
+		DBRecordStat = GUI.DBRecordStat;
+		DBRecordSize = GUI.DBRecordSize;
+		int selectedMod = GUI.selectedMod;
+		
+		effSize = SizePanel.effSize;
+		sigLevel = SizePanel.sigLevel;
+		tStatCalc = effSize / Math.sqrt(DBRecordSize.totalVar);
+		
+		System.out.println("\nBegin Sizing Analysis");
+		System.out.println("effSize= " + effSize 
+				+ " totalVar= " + DBRecordSize.totalVar 
+				+ " tStatCalc=" + tStatCalc);
 
-		double cutoffZ, cutoffBDG, cutoffHillis;
-		NormalDist ndist = new NormalDist();
-		cutoffZ = ndist.inverseF(1 - sig);
-
-		if (DF_BDG >= 50) {
-			cutoffBDG = ndist.inverseF(1 - sig);
-		} else {
-			FisherFDist fdist = new FisherFDist(1, (int) DF_BDG);
-			cutoffBDG = fdist.inverseF(1 - sig);
+		DF_BDG = calcDF_BDG(DBRecordSize, selectedMod);
+		lambdaBDG = tStatCalc*tStatCalc;
+		
+		/*
+		 * Here we calculate the parameters Hillis 2011 Eq. 10
+		 */
+		double[][] OR = DBRecordStat.OR;
+		double dnr = DBRecordSize.Nreader;
+		double resizeFactor = ((double) (DBRecordStat.Nnormal+DBRecordStat.Ndisease))
+				/ ((double) (DBRecordSize.Nnormal+DBRecordSize.Ndisease));
+		double ms_r, var_r, var_tr, bracket1, bracket2, variance;
+		
+		if(selectedMod == 3) {
+			var_tr = DBRecordStat.ms_tr - OR[3][5] + OR[3][2]
+					+  Math.max(OR[3][3]-OR[3][4],0);
+			bracket1 = OR[3][5] - OR[3][2] 
+					+ (dnr-1.0) * Math.max((OR[3][3]-OR[3][4]),0);
+			variance = 2.0/dnr * (var_tr + resizeFactor*bracket1);
+			lambdaHillis = effSize*effSize/variance;
+			bracket2 = OR[3][5] - OR[3][2] - Math.max((OR[3][3]-OR[3][4]),0); // different from bracket above 
+			DF_Hillis = (dnr-1.0)*dnr*dnr*variance*variance/2.0/2.0
+					/ (var_tr + resizeFactor * bracket2) / (var_tr + resizeFactor * bracket2);
 		}
-		if (DF_Hillis >= 50) {
-			cutoffHillis = ndist.inverseF(1 - sig);
-		} else {
-			FisherFDist fdist = new FisherFDist(1, (int) DF_Hillis);
-			cutoffHillis = fdist.inverseF(1 - sig);
+		else {
+			ms_r = 0.0;
+			if(selectedMod == 0) ms_r = DBRecordStat.ms_rA; 
+			if(selectedMod == 1) ms_r = DBRecordStat.ms_rB; 
+			var_r = ms_r - OR[selectedMod][5] + OR[selectedMod][3]; 
+			bracket1 = OR[selectedMod][5] + (dnr-1)*OR[selectedMod][3];
+			variance = 1.0/dnr * (var_r + resizeFactor*bracket1);
+			lambdaHillis = effSize*effSize/variance;
+			bracket2 = OR[selectedMod][5] - OR[selectedMod][3]; // different from bracket above
+			DF_Hillis = (dnr-1.0)*dnr*dnr*variance*variance
+					/ (var_r + resizeFactor * bracket2) / (var_r + resizeFactor * bracket2);
 		}
 
-		double meanCI;
-		if (selectedMod == 0 || selectedMod == 1) {
-			meanCI = aucs[selectedMod];
-		} else {
-			meanCI = aucs[0] - aucs[1];
-		}
-		ciBot = meanCI - Math.sqrt(totalVar) * cutoffZ; // bdg
-		ciTop = meanCI + Math.sqrt(totalVar) * cutoffZ; // bdg
-		ciBotDF_BDG = meanCI - Math.sqrt(totalVar) * cutoffBDG;
-		ciTopDF_BDG = meanCI + Math.sqrt(totalVar) * cutoffBDG;
-		ciBotDF_Hillis = meanCI - Math.sqrt(totalVar) * cutoffHillis;
-		ciTopDF_Hillis = meanCI + Math.sqrt(totalVar) * cutoffHillis;
+		double[] result = new double[4];
+		result = PowerZtest();
+		cutoffNormal = result[0];
+		powerNormal = result[1];
+		System.out.println("Normal power analysis:");
+		System.out.println("cutoff=" + result[0]
+				+ ", power=" + result[1]);
+
+		result = PowerFtest(DF_BDG, lambdaBDG);
+		cutoffBDG = result[0];
+		powerBDG = result[1];
+		System.out.println("BDG power analysis (t):");
+		System.out.println("DF_BDG=" + DF_BDG
+				+ ", cutoff=" + result[0]
+				+ ", noncentrality=" + lambdaBDG
+				+ ", power=" + result[1]);
+		
+		result = PowerFtest(DF_Hillis, lambdaHillis);
+		cutoffHillis = result[0];
+		powerHillis = result[1];
+		System.out.println("Hillis power analysis (t):");
+		System.out.println("DF_Hillis=" + DF_Hillis
+				+ ", cutoff=" + result[0]
+				+ ", noncentrality=" + lambdaHillis
+				+ ", power=" + result[1]);
+
 	}
 
 	/**
@@ -394,122 +414,77 @@ public class StatTest {
 	 * Calculates the denominator degrees of freedom by Hillis 2008 method given the curRecord
 	 * 
 	 */
-	public double calcDF_Hillis(int selectedMod) {
+	public double calcDF_Hillis(DBRecord curRecord, int selectedMod) {
 		
 		double[] AUCsReaderAvg = curRecord.getAUCsReaderAvg();
-		double[][] AUCs = curRecord.getAUCs();
 		double dnm = 2.0;
 		double dnr = curRecord.getReader();
-		double ms_t, ms_r, ms_tr, temp, denom;
+		double denom;
 
 		double[][] OR = curRecord.getOR(NO_MLE);
 
 		if(selectedMod == 3) {
 			// Hillis2014, pg 332
-			ms_t = 0.0;
-			ms_tr = 0.0;
-			for(int i=0; i<2; i++) {
-				temp = AUCsReaderAvg[i] - (AUCsReaderAvg[0] + AUCsReaderAvg[1])/2.0;
-				ms_t = ms_t + Math.pow(temp, 2); 
-				for(int j=0; j<dnr; j++) {
-					temp = AUCs[j][i] - 
-							AUCsReaderAvg[i] - 
-							(AUCs[j][0] + AUCs[j][1])/2.0 + 
-							(AUCsReaderAvg[0] + AUCsReaderAvg[1])/2.0;
-					ms_tr = ms_tr + Math.pow(temp, 2); 
-				}
-			}
-			ms_t = dnr*ms_t/(dnm-1.0);
-			ms_tr = ms_tr/(dnr-1.0)/(dnm-1.0);
-			
-			denom = ms_tr + Math.max(dnr*(OR[3][3]-OR[3][4]),0);
-			temp = ms_t / ( denom );
-			tStatEst = Math.sqrt(temp);
+			denom = curRecord.ms_tr + Math.max(dnr*(OR[3][3]-OR[3][4]),0);
+
+			tStatEst = Math.sqrt(curRecord.ms_t/denom);
 			// These expressions are equivalent
 			tStatEst = (AUCsReaderAvg[0] - AUCsReaderAvg[1])/Math.sqrt(curRecord.totalVar);
+
+			DF_Hillis = (dnr-1.0)*(dnm-1.0)*denom*denom/curRecord.ms_tr/curRecord.ms_tr;
+
 			// Here is another equivalent expression for the total variance
-			// curRecord.totalVar = (1*1 + 1*1)*denom/dnr;
-			
-			DF_Hillis = (dnr-1.0)*(dnm-1.0)*denom*denom/ms_tr/ms_tr;
+			// The ones are from the contrast between modalities 1*AUC1 + (-1)*AUC2
+			// curRecord.totalVar = (1*1 + (-1)*(-1))*denom/dnr;
+
 		} else {
 			// Hillis2014, pg 333
 			
-			ms_r = 0.0;
-			for(int j=0; j<dnr; j++) {
-				temp = AUCs[j][selectedMod] - AUCsReaderAvg[selectedMod];
-				ms_r = ms_r + Math.pow(temp, 2); 
-			}
-			ms_r = ms_r/(dnr-1.0);
+			double ms_r=0.0;
+			if(selectedMod == 0) ms_r = curRecord.ms_rA;
+			if(selectedMod == 1) ms_r = curRecord.ms_rB;
+					
 			denom = ms_r + Math.max(dnr*OR[selectedMod][3],0);
 			tStatEst = (AUCsReaderAvg[selectedMod]-0.5)/Math.sqrt(curRecord.totalVar);
+			
+			DF_Hillis = (dnr-1.0)*denom*denom/ms_r/ms_r;
+			
 			// Here is another equivalent expression for the total variance
 			// curRecord.totalVar = denom/dnr;
 
-			DF_Hillis = (dnr-1.0)*denom*denom/ms_r/ms_r;
-			
 		}
 
 		return DF_Hillis;
 	}
 
 	/**
-	 * Calculates the statistical power by f-test
+	 * Calculates the statistical power by non-central f-test
 	 * 
-	 * @param var Subset of DBM variance components for the selected
-	 *            modality/difference
-	 * @param r Number of readers
-	 * @param c Number of cases
-	 * @param totalVar Total variance of components
-	 * @return Statistical power
+	 * @param df Degrees of freedom
+	 * @param lambda Non-centrality parameter
+	 * @return Statistical power assuming a non-central F-distribution
 	 */
-	public double FTest_power(double[] var, int r, int c, double totalVar,
-			double df) {
-		double SigTR = var[0];
-		double SigTC = var[1];
-		double SigTRC = var[2];
-		double fTestPower;
+	public double[] PowerFtest(double df, double lambda) {
 
-		if (SigTR < 0) {
-			SigTR = 0;
-		}
-		if (SigTC < 0) {
-			SigTC = 0;
-		}
-		if (SigTRC < 0) {
-			SigTRC = 0;
-		}
-
-//		tStatCalc = effSize * effSize / totalVar;
-//		System.out.println("delta=" + tStatCalc);
-//		tStatCalc = Math.sqrt(tStatCalc);
+		double[] result = new double[4];
+		double cutoff, power;
 
 		// we use normal distribution for df > 50 since it is close to Fisher F
 		// and fisherF fails for DOF > 2000
-		double cdftemp;
 		if (df >= 50) {
-			// Inverse normal cumulative d.f.
-			// return = NormalDist.inverseF(mean, var, prob);
-			// prob = integral(-inf, return) normal_pdf(mean, var)
-			f0 = NormalDist.inverseF(0, 1, (1 - sigLevel / 2.0));
-			// Normal cumulative d.f.
-			// return = NormalDist.cdf(mean, var, x0);
-			// return = integral(-inf, x0) normal.pdf(mean, var)
-			tStatCalc = effSize / Math.sqrt(totalVar);
-			cdftemp = NormalDist.cdf(tStatCalc, 1, f0);
+			cutoff = NormalDist.inverseF(0, 1, 1 - sigLevel / 2.0);
+			power = 1 - NormalDist.cdf(Math.sqrt(lambda), 1, cutoff);
+			result = PowerZtest();
+			
 		} else {
-			FisherFDist fdist = new FisherFDist((int) df1, (int) df);
-			f0 = fdist.inverseF(1 - sigLevel);
-			
-			tStatCalc = effSize / Math.sqrt(totalVar);
-			
-			cdftemp = cdfNonCentralF((int) df1, (int) df-1, tStatCalc*tStatCalc, f0);
+			FisherFDist fdist = new FisherFDist(1, (int) df);
+			cutoff = fdist.inverseF(1 - sigLevel);
+			power = 1 - cdfNonCentralF(1, (int) df-1, lambda, cutoff);
 		}
 
-		fTestPower = 1 - cdftemp;
-		System.out.println("delta=" + tStatCalc + " df2=" + DF_Hillis + " CVF="
-				+ f0 + " powerF= " + fTestPower + " totalVar= " + totalVar);
-
-		return fTestPower;
+		result[0] = cutoff;
+		result[1] = power;
+		return result;
 	}
 
 	/**
@@ -542,20 +517,22 @@ public class StatTest {
 	/**
 	 * Calculates statistical power via z-test
 	 * 
-	 * @param var Subset of DBM variance components for the selected
-	 *            modality/difference
-	 * @param r Number of readers
-	 * @param c Number of cases
-	 * @param totalVar Total variance of components
-	 * @return Statistical power
+	 * @return Statistical power assuming normality
 	 */
-	public double ZTest(double[] var, int r, int c, double totalVar) {
-		double sigma = Math.sqrt(totalVar);
-		double v = NormalDist.inverseF(0, sigma, 1 - sigLevel / 2.0);
-		powerZ = 1 - NormalDist.cdf(effSize, sigma, v);
-		System.out.println("powerZ=" + powerZ + " effSize= " + effSize
-				+ " CVF= " + v + " totalVar= " + totalVar);
-		return powerZ;
+	public double[] PowerZtest() {
+
+		double cutoff = NormalDist.inverseF(0, 1, 1 - sigLevel / 2.0);
+		double power = 1 - NormalDist.cdf(tStatCalc, 1, cutoff);
+		double ciBot = effSize - NormalDist.inverseF(0, 1.0, sigLevel/2.0);
+		double ciTop = effSize + NormalDist.inverseF(0, 1.0, sigLevel/2.0);
+		
+		double[] result = new double[4];
+		result[0] = cutoff;
+		result[1] = power;
+		result[2] = ciBot;
+		result[3] = ciTop;
+		
+		return result;
 	}
 
 	// TODO verify correctness
@@ -612,14 +589,10 @@ public class StatTest {
 	 * Calculates degrees of freedom by BDG <br>
 	 * ----Obuchowski2012_Acad-Radiol_v19p1508
 	 * 
-	 * @param BCK Components of variance for BCK decomposition
-	 * @param Nreader Number of readers
-	 * @param Nnormal Number of normal cases
-	 * @param Ndisease Number of disease cases
-	 * @param totalVar Total variance of components
+	 * @param selectedMod 0 indicates modality 1, 1 indicates modality 2, 3 indicates both
 	 * @return Degrees of freedom
 	 */
-	public double calcDF_BDG(int selectedMod) {
+	public double calcDF_BDG(DBRecord curRecord, int selectedMod) {
 		
 		double[][] BCK = curRecord.getBCK(NO_MLE); 
 		long Nreader=curRecord.getReader(), Nnormal=curRecord.getNormal(), Ndisease=curRecord.getDisease();

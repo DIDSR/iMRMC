@@ -1604,17 +1604,17 @@ public class RMGUInterface {
 	 * Writes the results of a simulation experiment as ROC scores to a text
 	 * file, formatted to be read by iMRMC or equivalent software
 	 * 
-	 * @param t00 Matrix for normal cases, modality 0
-	 * @param t01 Matrix for normal cases, modality 1
-	 * @param t10 Matrix for disease cases, modality 0
-	 * @param t11 Matrix for disease cases, modality 1
+	 * @param tA0 Matrix for normal cases, modality A
+	 * @param tB0 Matrix for normal cases, modality B
+	 * @param tA1 Matrix for disease cases, modality A
+	 * @param tB1 Matrix for disease cases, modality B
 	 * @param auc AUCs of experiment1
 	 * @param filename Filename prefix (is a timestamp) for a particular batch
 	 *            of output files
 	 * @param l The number of this particular experiment in the batch
 	 */
-	public void writeMRMCFile(double[][] t00, double[][] t01, double[][] t10,
-			double[][] t11, double[] auc, String filename, long l) {
+	public void writeMRMCFile(double[][] tA0, double[][] tB0, double[][] tA1,
+			double[][] tB1, double[] auc, String filename, long l) {
 		try {
 			File file = new File(simSaveDirectory + "/" + "sim-" + filename
 					+ "-" + String.format("%05d", l) + ".imrmc");
@@ -1626,9 +1626,9 @@ public class RMGUInterface {
 
 			bw.write("Simulated iMRMC input from " + filename + "\n");
 			bw.write("\n");
-			bw.write("NR: " + t00.length + "\n");
-			bw.write("N0: " + t00[0].length + "\n");
-			bw.write("N1: " + t10[0].length + "\n");
+			bw.write("NR: " + tA0.length + "\n");
+			bw.write("N0: " + tA0[0].length + "\n");
+			bw.write("N1: " + tA1[0].length + "\n");
 			bw.write("NM: 2\n");
 			bw.write("\n");
 			bw.write("AUC1: " + threeDecOpt.format(auc[0]) + "\n");
@@ -1638,25 +1638,25 @@ public class RMGUInterface {
 			bw.write("BEGIN DATA:\n");
 
 			int caseNum = 1;
-			for (int j = 0; j < t00[0].length; j++) {
+			for (int j = 0; j < tA0[0].length; j++) {
 				bw.write("-1," + caseNum + ",0,0\n");
 				caseNum++;
 			}
-			for (int k = 0; k < t10[0].length; k++) {
+			for (int k = 0; k < tA1[0].length; k++) {
 				bw.write("-1," + caseNum + ",0,1\n");
 				caseNum++;
 			}
 
-			for (int i = 0; i < t00.length; i++) {
+			for (int i = 0; i < tA0.length; i++) {
 				caseNum = 1;
-				for (int m = 0; m < t00[i].length; m++) {
-					bw.write((i + 1) + "," + caseNum + ",1," + t00[i][m] + "\n");
-					bw.write((i + 1) + "," + caseNum + ",2," + t01[i][m] + "\n");
+				for (int m = 0; m < tA0[i].length; m++) {
+					bw.write((i + 1) + "," + caseNum + ",1," + tA0[i][m] + "\n");
+					bw.write((i + 1) + "," + caseNum + ",2," + tB0[i][m] + "\n");
 					caseNum++;
 				}
-				for (int n = 0; n < t10[i].length; n++) {
-					bw.write((i + 1) + "," + caseNum + ",1," + t10[i][n] + "\n");
-					bw.write((i + 1) + "," + caseNum + ",2," + t11[i][n] + "\n");
+				for (int n = 0; n < tA1[i].length; n++) {
+					bw.write((i + 1) + "," + caseNum + ",1," + tA1[i][n] + "\n");
+					bw.write((i + 1) + "," + caseNum + ",2," + tB1[i][n] + "\n");
 					caseNum++;
 				}
 			}
@@ -1679,8 +1679,7 @@ public class RMGUInterface {
 			int useMLE, String filename, long l) {
 		DBRecord tempRecord = new DBRecord(BDGdata, 0, n[2], n[0], n[1],
 				new double[] { auc[0], auc[1] });
-		StatTest tempStat = new StatTest(tempRecord, 3, useMLE, 0.05,
-				Math.abs(auc[0] - auc[1]));
+		StatTest tempStat = new StatTest(tempRecord, 3);
 		System.out.println("p-val = " + tempStat.getpValF());
 		System.out.println("CI = " + tempStat.getCI()[0] + ", "
 				+ tempStat.getCI()[1]);
