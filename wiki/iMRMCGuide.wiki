@@ -43,12 +43,27 @@ Sizing analysis functioning. We believe it is functioning properly and are plann
 
 <br>
 
+=Other Resources=
+
 ==Sample Input Files ({{{*}}}.imrmc)==
 
 Here are some sample {{{*}}}.imrmc input files that you can use to try the software. Some of the sample input files have common formatting errors that are detected and reported. <br>
 *[http://imrmc.googlecode.com/svn/standalone_application/FilesTest-iMRMC Click to download raw data input files (*.imrmc)]* <br>
 
 <br>
+
+==Sample eCRF and Reader Training==
+
+Here is what the eCRF looks like for a reader study we are executing that compares Full-Field Digital Mammography to Screen-Film. The clinician is first asked whether or not to recall the patient. It has a 100-point scale below the no recall/recall decision threshold and a 100-point scale above the no recall/recall decision threshold. It also has instructions for using each 100-point scale. <br>
+*[http://imrmc.googlecode.com/svn/standalone_application/docs/VIPER/eCRF-3.pdf Click to download a sample eCRF]* <br>
+
+Here are instructions for readers on reporting the numeric score on the eCRF.
+<br>
+*[http://imrmc.googlecode.com/svn/standalone_application/docs/VIPER/VIPER%20instructions-scoring-v2.pdf Click to download the sample training instructions]* <br>
+<br>
+
+
+
 
 =[iMRMCVersionHistory Download Previous Versions]= 
 <br>
