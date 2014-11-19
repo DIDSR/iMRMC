@@ -9,6 +9,10 @@ This software package provides tools that allow you:
 
   * Size a binary MRMC study
 
+<br>
+When publishing results using our software, please reference with one of the following:
+  * Chen, W.; Wunderlich, A.; Petrick, N. A. & Gallas, B. D. (Accepted 2014), 'A general framework for MRMC reader studies with binary assessments: simulation for validation and sizing.' _J Med Img_. [http://imrmc.googlecode.com/svn/standalone_application/docs/Chen2014_J-Med-Img_accepted.pdf Link to article]
+
 = User Manual =
 Please read the [http://imrmc.googlecode.com/svn/standalone_application/iMRMC_Binary_UserManual.pdf user manual] for useful information. The user manual contains 
 
