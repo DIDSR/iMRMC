@@ -41,7 +41,7 @@ Update calculation of DF_BDG, degrees of freedom described in
 Obuchowski2012_Acad-Radiol_v19p1508, to treat unpaired readers, normal cases, or disease cases. Also implemented a minimum DF_BDG according
 to Gaylor1969_Technometrics_v4p691 Eq. 5. <br>
 Bug Fix: DF_BDG estimates less than 2 can't be treated by the implementation of Student T distribution. So DF_BDG is not allowed to fall below 2. <br>
-Bug Fix: When DF_Hillis is infinity (ms_tr=0.0), some users reported an application crash. So DF_Hillis is set to 50 in this case, and you get the same effect.Bug Fix <br>
+Bug Fix: When DF_Hillis is infinity (ms_tr=0.0), some users reported an application crash. So DF_Hillis is set to 50 in this case, and you get the same effect. <br>
 
 *[http://imrmc.googlecode.com/svn/standalone_application/iMRMC-v2p7.jar Click to download application (imrmc-v2p7.jar)]*
 
@@ -51,7 +51,7 @@ Bug Fix: When DF_Hillis is infinity (ms_tr=0.0), some users reported an applicat
 
 ==Sample Input Files ({{{*}}}.imrmc)==
 
-Here are some sample {{{*}}}.imrmc input files that you can use to try the software. Some of the sample input files have common formatting errors that are detected and reported. <br>
+Here are some sample {{{*}}}.imrmc input files that you can use to try the software. There is a directory of sample input files generated from iRoeMetz following the parameters spelled out in Roe1997_Acad-Radiol_v4p298. There is also a directory of the sample input files that have common formatting errors that are detected and reported. <br>
 *[http://imrmc.googlecode.com/svn/standalone_application/FilesTest-iMRMC Click to download raw data input files (*.imrmc)]* <br>
 
 <br>
