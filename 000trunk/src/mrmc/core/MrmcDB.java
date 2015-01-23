@@ -149,6 +149,8 @@ public class MrmcDB {
 			K = 6;
 		} else
 			;
+		double x = 1/0;
+		/** TODO
 		String each = "";
 		for (int i = 0; i < noOfItems; i++) {
 			each = "";
@@ -184,6 +186,7 @@ public class MrmcDB {
 			}
 			Summary = Summary + each;
 		}
+		*/
 		return Summary;
 	}
 

@@ -71,17 +71,18 @@ public class CalcGenRoeMetz {
 					var_t[i] = Double.parseDouble(var_ts[i]);
 				}
 			}
-			long[] n = new long[3];
+			int Nreader, Nnormal, Ndisease;
 			String[] ns = args[2].substring(args[2].lastIndexOf("[") + 1,
 					args[0].indexOf("]")).split(",");
 			if (ns.length != 2) {
 				System.out.println("Expected input n to contain 3 elements");
 				return;
 			} else {
-				n = new long[] { Integer.parseInt(ns[0]),
-						Integer.parseInt(ns[1]), Integer.parseInt(ns[2]) };
+				Nnormal = Integer.parseInt(ns[0]);
+				Ndisease = Integer.parseInt(ns[1]);
+				Nreader = Integer.parseInt(ns[2]);
 			}
-			genRoeMetz(u, var_t, n);
+			genRoeMetz(u, var_t, Nreader, Nnormal, Ndisease);
 			printResults();
 		} catch (NumberFormatException e) {
 			System.out.println("Incorrectly Formatted Input");
@@ -267,7 +268,7 @@ public class CalcGenRoeMetz {
 	 * @param var_t Contains variance components. Has 18 elements.
 	 * @param n Contains experiment sizes. Has 3 elements.
 	 */
-	public static void genRoeMetz(double[] u, double[] var_t, long[] n) {
+	public static void genRoeMetz(double[] u, double[] var_t, int Nreader, int Nnormal, int Ndisease) {
 		NormalDistribution gauss = new NormalDistribution();
 
 		// number of samples for numerical integration, can change
@@ -291,9 +292,6 @@ public class CalcGenRoeMetz {
 		double v_R1 = var_t[15];
 		double v_C1 = var_t[16];
 		double v_RC1 = var_t[17];
-		long n0 = n[0];
-		long n1 = n[1];
-		long nr = n[2];
 
 		m = new double[2][2][9];
 
@@ -484,7 +482,7 @@ public class CalcGenRoeMetz {
 		m[1][0][8] = m[0][0][0] * m[1][1][0];
 		m[0][1][8] = m[1][0][8];
 
-		calcAUCsAndDecomps(n0, n1, nr);
+		calcAUCsAndDecomps(Nnormal, Ndisease, Nreader);
 
 	}
 
@@ -563,7 +561,8 @@ public class CalcGenRoeMetz {
 			BDG[3][i] = (m[0][0][i + 1] + m[1][1][i + 1] - (2 * m[0][1][i + 1]));
 		}
 
-		BCK = DBRecord.BDG2BCK(BDG);
+		double[][] BCKcoeff = DBRecord.genBCKCoeff(n0, n1, nr);
+		BCK = DBRecord.BDG2BCK(BDG, BCKcoeff);
 		DBM = DBRecord.BCK2DBM(BCK, nr, n0, n1);
 		OR = DBRecord.DBM2OR(0, DBM, nr, n0, n1);
 		MS = DBRecord.DBM2MS(DBM, nr, n0, n1);

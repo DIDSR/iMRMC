@@ -19,99 +19,134 @@
 package mrmc.core;
 
 import java.util.*;
+import java.io.IOException;
 import java.text.DecimalFormat;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import mrmc.gui.GUInterface;
 import mrmc.gui.SizePanel;
 
 /**
- * The contents of an .omrmc file. Summary info from a reader study.
- * This class includes all the information on one
- * study. it also includes all the formulas to convert one decomposition to the
- * other. The conversion formulas are based on Gallas BD, Bandos A, Samuelson F,
- * Wagner RF. A Framework for random-effects ROC analsysis: Biases with the
- * Bootstrap and other variance estimators�, Commun Stat A-Theory 38(15),
+ * Analyze a reader study (a single modality or a difference of 2 modalities). <br>
+ * This class processes the {@link mrmc.core.InputFile#observerData}. <br>
+ * This class produces the AUC estimates, variance estimates, hypothesis test results,
+ * and components of variance. <br>
+ * This class includes all the formulas to convert one variance representation
+ * to another. <br>
+ * The conversion formulas are based on Gallas BD, Bandos A, Samuelson F,
+ * Wagner RF. "A Framework for random-effects ROC analsysis: Biases with the
+ * Bootstrap and other variance estimators", Commun Stat A-Theory 38(15),
  * 2586-2603 (2009). <br>
- * 
+ * <br>
+ * <b>Flow 1)</b> Object DBRecordStat created in {@link mrmc.gui.GUInterface#GUInterface(MRMC, java.awt.Container)} <br>
+ * -- {@link mrmc.gui.InputFileCard.varAnalysisListener} calls <br>
+ * -- -- {@link #DBRecordStatFill(InputFile, DBRecord)} <br>
+ * <br>
+ * <b>Flow 2)</b> Object DBRecordSize created in {@link mrmc.gui.GUInterface#GUInterface(MRMC, java.awt.Container)} <br>
+ * -- {@link mrmc.gui.InputFileCard.brwsButtonListener} calls {@link mrmc.core.InputFile#ReadInputFile()} <br>
+ * <br>
+ * <b>Flow 3)</b> Object created in {@link roemetz.gui.RMGUInterface.SimExperiments_thread#doInBackground()} <br>
+ * -- {@link roemetz.gui.RMGUInterface.SimExperiments_thread#doInBackground()} <br> 
+ *    calls {@link roemetz.core.SimRoeMetz#doSim(DBRecord, InputFile)} <br>
+ * <br>
  * Important fields<br>
  * ----<code>recordDesc </code><br>
  * ----<code>recordTitle </code><br>
  * ----<code>filename </code><br>
  * ----<code>Task </code><br>
  * <br>
-
- * {@link #makeTMatrices} takes study data ({@link mrmc.core.InputFile#keyedData}, {@link mrmc.core.InputFile#truthVals})
- * and creates data for {@link mrmc.core.CovMRMC} <br>
- * --t-matrices: reader scores <br>
- * ----<code>t0_modAA, t0_modAB, t0_modBB</code>: signal-absent scores  [Nnormal ][Nreader][2 modalities] <br>
- * ----<code>t1_modAA, t1_modAB, t1_modBB</code>: signal-present scores [Ndisease][Nreader][2 modalities] <br>
- * --d-matrices: study design <br>
- * ----<code>d0_modAA, d0_modAB, d0_modBB</code>: signal absent scores  [Nnormal ][Nreader][2 modalities] <br>
- * ----<code>d1_modAA, d1_modAB, d1_modBB</code>: signal present scores [Ndisease][Nreader][2 modalities] <br>
- * CALLED BY: {@link mrmc.gui.RawStudyCard.varAnalysisListener} <br>
- * <br>
- * {@link #calculateCovMRMC} <br>
- * ----<code>BDG, BDGbiased, BDGcoeff</code>, [AA, BB, AB, A+B-2AB], [4][8] arrays  <br>
- * ----<br>
- * ----<code>AUCs</code>, [Nreader][2] array <br>
- * ----<code>AUCsReaderAvg</code>, [2] array <br>
- * ----<code>totalVar</code> based on the current study <br>
- * <br>
- * {@link #generateDecompositions} <br>
- * ----<code>BCK, BCKbias, BCKcoeff</code>, [4][7] arrays  <br>
- * ----If fully-crossed data, <br>
- * --------<code>DBM, DBMbias, DBMcoeff </code> [4][6] arrays: <br>
- * --------<code>OR, ORbias, ORcoeff</code>, [4][6] arrays: <br>
- * --------<code>MS, MSbias, MScoeff</code>, [4][6] arrays: <br>
- * <br>
  * 
-
  * @author Xin He, Ph.D,
  * @author Brandon D. Gallas, Ph.D
  * @author Rohan Pathare
  */
 public class DBRecord {
 	
-	private GUInterface GUI;
-	private DBRecord DBRecordStat, DBRecordSize;
-	private InputFile InputFile;
-	private SizePanel SizePanel;
+	public boolean verbose = true;
 
+	public GUInterface GUI;
+	public DBRecord DBRecordStat, DBRecordSize;
+	public InputFile InputFile1;
+	public SizePanel SizePanel1;
+
+	public StatTest testStat, testSize;
+	
 	/**
 	 * raw data file or database file
 	 */
-	private String filename = "";
+	public String filename = "";
 	/**
 	 * The summary info from a reader study. The entire contents of .omrmc file.
 	 */
-	private String recordDesc = "";
+	public String recordDesc = "";
 	/**
 	 * The title of the reader study. read from the .omrmc file.
 	 */
-	private String recordTitle = "";
+	public String recordTitle = "";
 	/**
 	 * The task of the reader study. read from the .omrmc file.
 	 */
-	private String Task = "";
+	public String Task = "";
 
 	/**
-	 * Th number of readers, normal cases, and diseased cases
+	 * The number of readers, normal cases, and diseased cases
 	 */
 	public long Nreader = -1;
 	public long Nnormal = -1;
 	public long Ndisease = -1;
-	
-	/**
-	 * The scores from the readers
+	/** 
+	 * Strings holding the names of the modalities to be analyzed, read in with {@link mrmc.gui.InputFileCard}
 	 */
-	public double[][][] t0_modAB, t1_modAB, t0_modAA, t1_modAA, t0_modBB, t1_modBB;
-	public int[][][] d0_modAB, d1_modAB, d0_modAA, d1_modAA, d0_modBB, d1_modBB;
+	public String modalityA = "modalityA", modalityB = "modalityB";
+	/**
+	 * Indicates which modalities to analyze, read in with {@link mrmc.gui.InputFileCard} <br>
+	 * ----0 only {@link #modalityA} is active <br>
+	 * ----1 only {@link #modalityB} is active <br>
+	 * ----3 {@link #modalityA} and {@link #modalityB} are both active
+	 */
+	public int selectedMod = 3;
+	/**
+	 * Covariance information {@link mrmc.core.CovMRMC}
+	 */
+	public CovMRMC covMRMCstat, covMRMCsize;
+	/**
+	 * Reader-averaged auc for each modality
+	 */
+	public double[] AUCsReaderAvg;
+	/**
+	 * AUCs for each reader and modality [Nreader][2]
+	 */
+	public double[][] AUCs;
+	/**
+	 * Total variance of the reader-averaged AUC for <br>
+	 * ----the modality selected <br>
+	 * ----the difference in modalities
+	 * 
+	 */
+	public double totalVar = -1.0;
+	/**
+	 * Indicator whether {mrmc.gui.InputFileCard#FlagMLE} is set
+	 */
+	public int flagMLE = 0;
+	/**
+	 * Indicator whether {mrmc.gui.InputFileCard#FlagMLE} is set
+	 */
+	public long flagTotalVarIsNegative = 0;
+	/**
+	 * Indicator whether the data is fully crossed or not.
+	 */
+	public boolean flagFullyCrossed = true;
 
 	/**
-	 * The BDG unbiased moments, biased moments, and coefficients <br>
-	 * ----Gallas2006_Acad-Radiol_v13p353 <br>
+	 * The BDG[4][8] (Barrett, Clarkson, and Kupinski) variance components <br>
+	 * ----BDG[0] are the components of variance of AUC_A <br>
+	 * ----BDG[1] are the components of variance of AUC_B <br>
+	 * ----BDG[2] are the components of the covariance between AUC_A & AUC_B <br>
+	 * ----BDG[3] are the components of variance of AUC_A - AUC_B <br>
+	 * ----BDG[i][0 thru 7] refer to the following <br>
+	 * ----Clarkson2006_Acad-Radiol_v13p1410 <br>
 	 * ----Gallas2009_Commun-Stat-A-Theor_v38p2586 <br>
 	 * 
 	 */
@@ -120,7 +155,13 @@ public class DBRecord {
 						BDGcoeff = new double[4][8];
 
 	/**
-	 * The BCK (Barrett, Clarkson, and Kupinski) variance components <br>
+	 * The BCK[4][7] (Barrett, Clarkson, and Kupinski) variance components <br>
+	 * ----BCK[0] are the components of variance of AUC_A <br>
+	 * ----BCK[1] are the components of variance of AUC_B <br>
+	 * ----BCK[2] are the components of the covariance between AUC_A & AUC_B <br>
+	 * ----BCK[3] are the components of variance of AUC_A - AUC_B <br>
+	 * ----BCK[i][0 thru 6] correspond to the following components <br>
+	 * -------- 1/N0, 1/N1, 1/N0/N1, 1/Nr, 1/N0/Nr, 1/N1/Nr, 1/N0/N1/Nr <br>
 	 * ----Clarkson2006_Acad-Radiol_v13p1410 <br>
 	 * ----Gallas2009_Commun-Stat-A-Theor_v38p2586 <br>
 	 * 
@@ -130,11 +171,17 @@ public class DBRecord {
 						BCKcoeff = new double[4][7];
 
 	/** 
-	 * The DBM (Dorfman, Berbaum, and Metz) variance components.
+	 * The DBM[4][6] (Dorfman, Berbaum, and Metz) variance components.
+ 	 * ----DBM[0] are the components of variance of AUC_A <br>
+	 * ----DBM[1] are the components of variance of AUC_B <br>
+	 * ----DBM[2] are the components of the covariance between AUC_A & AUC_B <br>
+	 * ----DBM[3] are the components of variance of AUC_A - AUC_B <br>
+	 * ----DBM[i][0 thru 5] correspond to the following components <br>
+	 * -------- R, C, RC, TR, TC, TRC <br>
 	 * Perhaps it would be better to refer to these as the 
 	 * RM (Roe and Metz) variance components. <br>
 	 * ----RM solidified the model <br>
-	 * ----DBM presented an estimation  method <br>
+	 * ----DBM presented an estimation method <br>
 	 * ---- <br>
 	 * ----Dorfman1992_Invest-Radiol_v27p723 <br>
 	 * ----Roe1997_Acad-Radiol_v4p587 <br>
@@ -145,7 +192,13 @@ public class DBRecord {
 						DBMcoeff = new double[4][6];
 	
 	/**
-	 * The OR (Obuchowski and Rockette) variance components <br>
+	 * The OR[4][6] (Obuchowski and Rockette) variance components <br>
+  	 * ----OR[0] are the components of variance of AUC_A <br>
+	 * ----OR[1] are the components of variance of AUC_B <br>
+	 * ----OR[2] are the components of the covariance between AUC_A & AUC_B <br>
+	 * ----OR[3] are the components of variance of AUC_A - AUC_B <br>
+	 * ----OR[i][0 thru 5] correspond to the following components <br>
+	 * -------- R, TR, Cov1, Cov2, Cov3, Error <br>
 	 * ----Obuchowski1995_Commun-Stat-Simulat_v24p285 <br>
 	 * ----Hillis2014_Stat-Med_v33p330 <br>
 	 * 
@@ -173,235 +226,13 @@ public class DBRecord {
 			MScoeff = new double[4][6];
 
 	/**
-	 * The reader-averaged AUCs for both modalities
-	 * 
-	 */
-	public double[] AUCsReaderAvg = new double[2];
-	/**
-	 * The AUCs for each reader and modality [Nreader][2]
-	 */
-	public double[][] AUCs;
-	/**
-	 * The total variance of the reader-averaged AUC for <br>
-	 * ----the modality selected <br>
-	 * ----the difference in modalities
-	 * 
-	 */
-	public double totalVar = -1.0;
-
-	/**
-	 * This field indicates whether the data is fully crossed or not.
-	 */
-	private boolean fullyCrossed = true;
-
-	/**
-	 * Gets a description of the task
-	 * 
-	 * @return String describing task performed
-	 */
-	public String getTask() {
-		return Task;
-	}
-
-	/**
-	 * Gets the filename of the raw data file or database file used to create
-	 * the record
-	 * 
-	 * @return String containing filename path
-	 */
-	public String getFilename() {
-		return filename;
-	}
-
-	/**
-	 * Gets the number of readers in the record
-	 * 
-	 * @return Number of readers
-	 */
-	public long getReader() {
-		return Nreader;
-	}
-
-	/**
-	 * Gets the number of normal cases in the record
-	 * 
-	 * @return Number of normal cases
-	 */
-	public long getNormal() {
-		return Nnormal;
-	}
-
-	/**
-	 * Gets the number of disease cases in the record
-	 * 
-	 * @return Number of disease cases
-	 */
-	public long getDisease() {
-		return Ndisease;
-	}
-
-	/**
-	 * Gets the title of the study record
-	 * 
-	 * @return String with title of the record
-	 */
-	public String getRecordTitle() {
-		return recordTitle;
-	}
-
-	/**
-	 * Gets a textual description of the study record
-	 * 
-	 * @return String with description of the record
-	 */
-	public String getRecordDesc() {
-		return recordDesc;
-	}
-
-	/**
-	 * Gets whether the record is fully-crossed or not
-	 * 
-	 * @return True if fully crossed, false otherwise
-	 */
-	public boolean getFullyCrossedStatus() {
-		return fullyCrossed;
-	}
-
-	/**
-	 * Get the reader-averaged AUCs for both modalities
-	 * 
-	 * @return Array containing AUCs for both modalities
-	 */
-	public double[] getAUCsReaderAvg() {
-		return AUCsReaderAvg;
-	}
-
-	/**
-	 * Get AUCs for each reader and modality [Nreader][2]
-	 * 
-	 * @return Array containing AUCs for each reader and modality [Nreader][2]
-	 */
-	public double[][] getAUCs() {
-		return AUCs;
-	}
-
-	/**
-	 * Gets the BDG components decomposition with bias or not
-	 * 
-	 * @param useBiasM Whether to get biased decomposition or not
-	 * @return Matrix of BDG component decomposition
-	 */
-	public double[][] getBDG(int useBiasM) {
-		if (useBiasM == 1)
-			return BDGbias;
-		else
-			return BDG;
-	}
-
-	/**
-	 * Gets the coefficient matrix for BDG decomposition
-	 * 
-	 * @return Coefficients matrix
-	 */
-	public double[][] getBDGcoeff() {
-		return BDGcoeff;
-	}
-
-	/**
-	 * Gets the BCK components decomposition with bias or not
-	 * 
-	 * @param useBiasM Whether to get biased decomposition or not
-	 * @return Matrix of BCK component decomposition
-	 */
-	public double[][] getBCK(int useBiasM) {
-		if (useBiasM == 1)
-			return BCKbias;
-		else
-			return BCK;
-	}
-
-	/**
-	 * Gets the coefficient matrix for BCK decomposition
-	 * 
-	 * @return Coefficients matrix
-	 */
-	public double[][] getBCKcoeff() {
-		return BCKcoeff;
-	}
-
-	/**
-	 * Gets the DBM components decomposition with bias or not
-	 * 
-	 * @param useBias Whether to get biased decomposition or not
-	 * @return Matrix of DBM component decomposition
-	 */
-	public double[][] getDBM(int useBias) {
-		if (useBias == 1)
-			return DBMbias;
-		else
-			return DBM;
-	}
-
-	/**
-	 * Gets the coefficient matrix for DBM decomposition
-	 * 
-	 * @return Coefficients matrix
-	 */
-	public double[][] getDBMcoeff() {
-		return DBMcoeff;
-	}
-
-	/**
-	 * Gets the OR components decomposition with bias or not
-	 * 
-	 * @param useBias Whether to get biased decomposition or not
-	 * @return Matrix of OR component decomposition
-	 */
-	public double[][] getOR(int useBias) {
-		if (useBias == 1)
-			return ORbias;
-		else
-			return OR;
-	}
-
-	/**
-	 * Gets the coefficient matrix for OR decomposition
-	 * 
-	 * @return Coefficients matrix
-	 */
-	public double[][] getORcoeff() {
-		return ORcoeff;
-	}
-
-	/**
-	 * Gets the MS components decomposition with bias or not
-	 * 
-	 * @param useBias Whether to get biased decomposition or not
-	 * @return Matrix of MS component decomposition
-	 */
-	public double[][] getMS(int useBias) {
-		if (useBias == 1)
-			return MSbias;
-		else
-			return MS;
-	}
-
-	/**
-	 * Gets the coefficient matrix for MS decomposition
-	 * 
-	 * @return Coefficients matrix
-	 */
-	public double[][] getMScoeff() {
-		return MScoeff;
-	}
-
-
-	/**
 	 * Constructor for iMRMC
 	 * @param GUItemp
 	 */
 	public DBRecord(GUInterface GUItemp) {
+		
 		GUI = GUItemp;
+		
 	}
 
 	/**
@@ -410,119 +241,6 @@ public class DBRecord {
 	public DBRecord() {
 		// TODO Auto-generated constructor stub
 	}
-
-	/**
-	 * Constructor for creating a record from raw study data input file (two modalities)
-	 * 
-	 * @param InputFileTemp object containing information about the study
-	 * @param selectedMod Identifies which pull-down menu is active: 0=modA, 1=modB, or 3=both
-	 * @param modA Which modality within the study we are using as ModA
-	 * @param modB Which modality within the study we are using as ModB
-	 */
-	public void DBRecordInputFile(InputFile InputFileTemp, String modA, String modB, int selectedMod) {
-		
-		Task = "task unspecified";
-	
-		InputFile = InputFileTemp;
-		Nnormal = InputFile.getNnormal();
-		Ndisease = InputFile.getNdisease();
-		Nreader = InputFile.getNreader();
-	
-		makeTMatrices(modA, modB);
-		calculateCovMRMC(selectedMod);
-		generateDecompositions();
-		
-	}
-	
-	/**
-	 * Performs calculations for sizing a new trial based on parameters
-	 * specified. Sets GUI label with statistics info.
-	 * 
-	 * @param SizePanelTemp
-	 */
-	public void DBRecordSizeTrial(SizePanel SizePanelTemp) {
-		
-		DBRecordSize = GUI.DBRecordSize;
-		DBRecordStat = GUI.DBRecordStat;
-		SizePanel = SizePanelTemp;
-		
-		Nreader = SizePanel.Nreader;
-		Nnormal = SizePanel.Nnormal;
-		Ndisease = SizePanel.Ndisease;
-		
-		if (DBRecordStat.totalVar <= 0.0) {
-			JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
-					"Must perform variance analysis first.", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		/*
-		 * Here we create the study design based on the SizePanel inputs.
-		 *   d0_modAA, d0_modBB, d0_modAB, d1_modAA, d1_modBB, d1_modAB
-		 * We also create arrays of PHONY scores.
-		 *   t0_modAA, t0_modBB, t0_modAB, t1_modAA, t1_modBB, t1_modAB
-		 */
-		DBRecordSize.makeTMatrices();
-		/*
-		 * Here we calculate the study design coefficients.
-		 *   BDGcoeff
-		 * We also calculate the BDG and BDGbias moments from the PHONY scores.
-		 * They are bogus.
-		 * We also calculate the totalVar. It is bogus.
-		 * We also calculate AUCs and AUCsReaderAvg. They are bogus.
-		 */
-		calculateCovMRMC(GUI.selectedMod);
-		/*
-		 * Here we overwrite the bogus BDG and BDGbias moments.
-		 * Replacing them with the model BDG and BDGbias moments.
-		 * The last row of BDG and BDGbias moments are inconsistent with new study design.
-		 */
-		BDG = DBRecordStat.BDG;
-		BDGbias = DBRecordStat.BDGbias;
-		/*
-		 * Here we generate all the decompositions.
-		 * The following parameters are based on the PHONY scores:
-		 * ms_r, ms_rA, ms_rB, ms_t, ms_tA, ms_tB, ms_tr, ms_trA, ms_trB
-		 */
-		generateDecompositions();
-
-		/*
-		 * Here we update the last row of BDG and BDGbias moments
-		 * according to the size of the experiment.
-		 * We also calculate the correct totalVar.
-		 */
-		totalVar = 0.0;
-		for (int i = 0; i < 8; i++) {
-			BDG[3][i] =     (BDG[0][i] * BDGcoeff[0][i])
-					  +     (BDG[1][i] * BDGcoeff[1][i])
-					  - 2.0*(BDG[2][i] * BDGcoeff[2][i]);
-			BDGbias[3][i] = (BDGbias[0][i] * BDGcoeff[0][i])
-					  +     (BDGbias[1][i] * BDGcoeff[1][i])
-					  - 2.0*(BDGbias[2][i] * BDGcoeff[2][i]);
-
-			totalVar += BDGcoeff[3][i] * BDG[3][i];			
-		}
-		
-		/* 
-		 * Here we overwrite the remaining bogus parameters
-		 * with the results from the statistical analysis
-		 */
-		DBRecordSize.AUCs = DBRecordStat.AUCs;
-		DBRecordSize.AUCsReaderAvg = DBRecordStat.AUCsReaderAvg;
-		DBRecordSize.ms_r = DBRecordStat.ms_r;
-		DBRecordSize.ms_rA = DBRecordStat.ms_rA;
-		DBRecordSize.ms_rB = DBRecordStat.ms_rB;
-		DBRecordSize.ms_t = DBRecordStat.ms_t;
-		DBRecordSize.ms_tA = DBRecordStat.ms_tA;
-		DBRecordSize.ms_tB = DBRecordStat.ms_tB;
-		DBRecordSize.ms_tr = DBRecordStat.ms_tr;
-		DBRecordSize.ms_trA = DBRecordStat.ms_trA;
-		DBRecordSize.ms_trB = DBRecordStat.ms_trB;
-
-	}
-	
-
 
 	/**
 	 * Constructor for creating a record from the internal database
@@ -534,11 +252,18 @@ public class DBRecord {
 	 */
 	public DBRecord(String fname, String[] componentStrings,
 			ArrayList<String> desc, String AUCstr) {
+
+		double x = 1/0;
+		/**
+		 * TODO
+		
 		int i, j;
 		recordTitle = desc.get(0).substring(2);
 		filename = fname;
 		// Currently all files in DB are fully crossed, but this may change
-		fullyCrossed = true;
+
+ 		fullyCrossed = true;
+
 
 		for (i = 0; i < 7; i++) {
 			String tempStr = desc.get(i);
@@ -553,19 +278,19 @@ public class DBRecord {
 		String[] tempAUC = AUCstr.split(",");
 		AUCsReaderAvg[0] = Double.valueOf(tempAUC[1]);
 		AUCsReaderAvg[1] = Double.valueOf(tempAUC[2]);
-
+		
 		Nreader = Integer.valueOf(tempAUC[3]);
 		Nnormal = Integer.valueOf(tempAUC[4]);
 		Ndisease = Integer.valueOf(tempAUC[5]);
 
-// TODO		checkStudyDesign();
+		checkStudyDesign();
 
 		for (i = 0; i < desc.size(); i++) {
 			recordDesc = recordDesc + desc.get(i) + "\n";
 		}
 
 		// Grab BDG components from file string
-		for (i = 0; i < componentStrings.length / 2; i++) {
+ 		for (i = 0; i < componentStrings.length / 2; i++) {
 			String[] temp = componentStrings[i].split(",");
 			for (j = 0; j < 8; j++) {
 				BDG[i][j] = Double.valueOf(temp[j]);
@@ -579,7 +304,8 @@ public class DBRecord {
 			}
 		}
 		generateDecompositions();
-	}
+*/
+		}
 
 	/**
 	 * Constructor for creating a record from manual input of components of
@@ -594,6 +320,11 @@ public class DBRecord {
 	 */
 	public DBRecord(double[][] components, int whichComp, long n, long n2,
 			long n3, double[] auc) {
+
+		double x = 1/0;
+		/**
+		  TODO
+
 		AUCsReaderAvg = auc;
 		Nreader = n;
 		Nnormal = n2;
@@ -601,7 +332,7 @@ public class DBRecord {
 
 		fullyCrossed = true;
 
-// TODO		checkStudyDesign();
+  		checkStudyDesign();
 
 		switch (whichComp) {
 		case 0: // BDG
@@ -673,23 +404,216 @@ public class DBRecord {
 			break;
 
 		}
+*/
 	}
 
+	/**
+	 *  Analyze {@link mrmc.core.InputFile#observerData} <br>
+	 * <b>Flow 1)</b> Called from {@link mrmc.gui.InputFileCard.varAnalysisListener} <br>
+	 * <br>
+	 * <b>Flow 2)</b> Called from {@link roemetz.core.SimRoeMetz#doSim(DBRecord, InputFile)} <br>
+	 * <br>
+	 * Creates {@link mrmc.core.CovMRMC} <br>
+	 * 
+	 * The required InputFile Fields are <br>
+	 * -- {@link mrmc.core.InputFile#observerData} <br>
+	 * -- {@link mrmc.core.InputFile#Nnormal} <br>
+	 * -- {@link mrmc.core.InputFile#Ndisease} <br>
+	 * -- {@link mrmc.core.InputFile#Nreader}
+	 * 
+	 * @param InputFileTemp instance of {@link mrmc.core.InputFile#InputFile()}
+	 * @param DBRecordStatTemp instance of {@link mrmc.core.DBRecord#DBRecord(GUInterface)}
+	 */
+	public void DBRecordStatFill(InputFile InputFileTemp, DBRecord DBRecordStatTemp) {
+		
+		InputFile1 = InputFileTemp;
+		DBRecordStat = DBRecordStatTemp;
+
+		covMRMCstat = new CovMRMC(InputFile1, DBRecordStatTemp);
+
+		BDGforStatPanel();
+		Decompositions();
+
+		if(selectedMod == 0) {
+			flagFullyCrossed = covMRMCstat.fullyCrossedA;
+			if(AUCsReaderAvg[0] < 0) {
+				JFrame frame = new JFrame();
+				JOptionPane.showMessageDialog(frame,
+						"There are no observations for modality A." + 
+						"\nPlease check your data.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+		}
+		if(selectedMod == 1) {
+			flagFullyCrossed = covMRMCstat.fullyCrossedB;
+			if(AUCsReaderAvg[1] < 0) {
+				JFrame frame = new JFrame();
+				JOptionPane.showMessageDialog(frame,
+						"There are no observations for modality B." + 
+						"\nPlease check your data.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+		}
+		if(selectedMod == 3) {
+			flagFullyCrossed = covMRMCstat.fullyCrossedA && 
+					covMRMCstat.fullyCrossedB && 
+					covMRMCstat.fullyCrossedAB;
+			if(AUCsReaderAvg[0] < 0) {
+				JFrame frame = new JFrame();
+				JOptionPane.showMessageDialog(frame,
+						"There are no observations for modality A." + 
+						"\nPlease check your data.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			if(AUCsReaderAvg[1] < 0) {
+				JFrame frame = new JFrame();
+				JOptionPane.showMessageDialog(frame,
+						"There are no observations for modality B." + 
+						"\nPlease check your data.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+		}
+
+		testStat = new StatTest(InputFile1, DBRecordStat);
+
+	}
+	
+	
+	/**
+	 * Performs calculations for sizing a new trial based on parameters
+	 * specified. Sets GUI label with statistics info.
+	 * 
+	 * @param SizePanelTemp
+	 */
+	public void DBRecordSizeFill(SizePanel SizePanelTemp) {
+		
+		SizePanel1 = SizePanelTemp;
+		DBRecordSize = GUI.DBRecordSize;
+		DBRecordStat = GUI.DBRecordStat;
+
+		if (DBRecordStat.totalVar <= 0.0) {
+			JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
+					"Must perform variance analysis first.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		covMRMCstat = DBRecordStat.covMRMCstat;
+		covMRMCsize = new CovMRMC(SizePanel1, DBRecordSize);
+
+		BDGforSizePanel();
+		Decompositions();
+
+		if(selectedMod == 0) {
+			flagFullyCrossed = covMRMCsize.fullyCrossedA;
+		}
+		if(selectedMod == 1) {
+			flagFullyCrossed = covMRMCsize.fullyCrossedB;
+		}
+		if(selectedMod == 3) {
+			flagFullyCrossed = covMRMCsize.fullyCrossedA && 
+					covMRMCsize.fullyCrossedB && 
+					covMRMCsize.fullyCrossedAB;
+		}
+
+		testSize = new StatTest(SizePanel1, GUI);
+
+	}
+	
+
+
+	/**
+	 * Determine BDG, BDGbias, and BDGcoeff from {@link #DBRecordStat}, <br>
+	 * Calculate {@link #totalVar}
+	 */
+	private void BDGforStatPanel() {
+
+		totalVar = 0.0;
+		for (int i = 0; i < 8; i++) {
+			BDG[0][i] = covMRMCstat.momentsAA[i + 1];
+			BDG[1][i] = covMRMCstat.momentsBB[i + 1];
+			BDG[2][i] = covMRMCstat.momentsAB[i + 1];
+			BDGbias[0][i] = covMRMCstat.momentsBiasedAA[i + 1];
+			BDGbias[1][i] = covMRMCstat.momentsBiasedBB[i + 1];
+			BDGbias[2][i] = covMRMCstat.momentsBiasedAB[i + 1];
+			BDGcoeff[0][i] = covMRMCstat.coefficientsAA[i + 1];
+			BDGcoeff[1][i] = covMRMCstat.coefficientsBB[i + 1];
+			BDGcoeff[2][i] = covMRMCstat.coefficientsAB[i + 1];
+			
+			BDGcoeff[3][i] = 1.0;
+
+			BDG[3][i] =     (BDG[0][i] * BDGcoeff[0][i])
+					  +     (BDG[1][i] * BDGcoeff[1][i])
+					  - 2.0*(BDG[2][i] * BDGcoeff[2][i]);
+			BDGbias[3][i] = (BDGbias[0][i] * BDGcoeff[0][i])
+					  +     (BDGbias[1][i] * BDGcoeff[1][i])
+					  - 2.0*(BDGbias[2][i] * BDGcoeff[2][i]);
+			
+			totalVar += BDGcoeff[3][i] * BDG[3][i];
+			
+		}
+
+		if(totalVar < 0) {
+			flagTotalVarIsNegative = 1;
+		}
+
+	}
+	
+	/**
+	 * Determine BDG and BDGbias from {@link #covMRMCstat}, <br>
+	 * Determine BDGcoeff from {@link #covMRMCsize}
+	 * Calculate {@link #totalVar}
+	 */
+	private void BDGforSizePanel() {
+
+		totalVar = 0.0;
+		for (int i = 0; i < 8; i++) {
+			BDG[0][i] = covMRMCstat.momentsAA[i + 1];
+			BDG[1][i] = covMRMCstat.momentsBB[i + 1];
+			BDG[2][i] = covMRMCstat.momentsAB[i + 1];
+			BDGbias[0][i] = covMRMCstat.momentsBiasedAA[i + 1];
+			BDGbias[1][i] = covMRMCstat.momentsBiasedBB[i + 1];
+			BDGbias[2][i] = covMRMCstat.momentsBiasedAB[i + 1];
+			BDGcoeff[0][i] = covMRMCsize.coefficientsAA[i + 1];
+			BDGcoeff[1][i] = covMRMCsize.coefficientsBB[i + 1];
+			BDGcoeff[2][i] = covMRMCsize.coefficientsAB[i + 1];
+			
+			BDGcoeff[3][i] = 1.0;
+
+			BDG[3][i] =     (BDG[0][i] * BDGcoeff[0][i])
+					  +     (BDG[1][i] * BDGcoeff[1][i])
+					  - 2.0*(BDG[2][i] * BDGcoeff[2][i]);
+			BDGbias[3][i] = (BDGbias[0][i] * BDGcoeff[0][i])
+					  +     (BDGbias[1][i] * BDGcoeff[1][i])
+					  - 2.0*(BDGbias[2][i] * BDGcoeff[2][i]);
+			
+			totalVar += BDGcoeff[3][i] * BDG[3][i];
+			
+		}
+		
+		totalVar = totalVar*1.0;
+
+	}
+	
 	/**
 	 * Derives all decompositions and coefficient matrices from predefined BDG
 	 * components and experiment size
 	 */
-	private void generateDecompositions() {
+	public void Decompositions() {
 
-		BCK = BDG2BCK(BDG);
-		BCKbias = BDG2BCK(BDGbias);
 		BCKcoeff = genBCKCoeff(BDGcoeff);
-		
-		if(fullyCrossed) {
+		BCK = BDG2BCK(BDG, BCKcoeff);
+		BCKbias = BDG2BCK(BDGbias, BCKcoeff);
+
+		if(flagFullyCrossed) {
 			DBMcoeff = genDBMCoeff(Nreader, Nnormal, Ndisease);
 			ORcoeff = genORCoeff(Nreader, Nnormal, Ndisease);
 			MScoeff = genMSCoeff(Nreader, Nnormal, Ndisease);
-	
+
 			DBM = BCK2DBM(BCK, Nreader, Nnormal, Ndisease);
 			BDG2OR();
 			// OR = DBM2OR(0, DBM, Nreader, Nnormal, Ndisease);
@@ -707,22 +631,22 @@ public class DBRecord {
 	 * @param selectedMod specifies modality A, B, or difference
 	 * @return String containing AUCsReaderAvg
 	 */
-	public String getAUCsReaderAvg(int selectedMod) {
+	public String getAUCsReaderAvgString(int selectedMod) {
 		DecimalFormat threeDec = new DecimalFormat("0.000");
 		threeDec.setGroupingUsed(false);
 
 		String temp = "";
 		switch (selectedMod) {
 		case 0:
-			temp = "AUC1=" + threeDec.format(AUCsReaderAvg[0]) + "       ";
+			temp = "AUC_A = " + threeDec.format(AUCsReaderAvg[0]);
 			break;
 		case 1:
-			temp = "AUC2=" + threeDec.format(AUCsReaderAvg[1]) + "       ";
+			temp = "AUC_B = " + threeDec.format(AUCsReaderAvg[1]);
 			break;
 		case 3:
-			temp = "AUC1=" + threeDec.format(AUCsReaderAvg[0]) + "       AUC2="
-					+ threeDec.format(AUCsReaderAvg[1]) + "       AUC1-AUC2="
-					+ threeDec.format(AUCsReaderAvg[0] - AUCsReaderAvg[1]) + "       ";
+			temp = "AUC_A = " + threeDec.format(AUCsReaderAvg[0]) + ",   AUC_B = "
+					+ threeDec.format(AUCsReaderAvg[1]) + ",   AUC_A - AUC_B = "
+					+ threeDec.format(AUCsReaderAvg[0] - AUCsReaderAvg[1]);
 		}
 		return temp;
 	}
@@ -743,8 +667,8 @@ public class DBRecord {
 	 * @return String containing experiment sizes
 	 */
 	public String getSizes() {
-		return (Long.toString(Nreader) + " Readers,  "
-				+ Long.toString(Nnormal) + " Normal cases,  "
+		return (Long.toString(Nreader) + " Readers,   "
+				+ Long.toString(Nnormal) + " Normal cases,   "
 				+ Long.toString(Ndisease) + " Disease cases.");
 	}
 
@@ -783,7 +707,7 @@ public class DBRecord {
 			BDGTab1[2] = BDGtemp[1];
 			BDGTab1[3] = BDGc[1];
 			BDGTab1[4] = BDGtemp[2]; // covariance
-			BDGTab1[5] = Matrix.scaleVector(BDGc[2], 2);
+			BDGTab1[5] = Matrix.scale(BDGc[2], 2);
 		}
 		for (int i = 0; i < 8; i++) {
 			BDGTab1[6][i] = (BDGTab1[0][i] * BDGTab1[1][i])
@@ -837,7 +761,7 @@ public class DBRecord {
 			BCKTab1[2] = BCKtemp[1];
 			BCKTab1[3] = BCKc[1];
 			BCKTab1[4] = BCKtemp[2]; // covariance
-			BCKTab1[5] = Matrix.scaleVector(BCKc[3], 2);
+			BCKTab1[5] = Matrix.scale(BCKc[2], 2);
 		}
 		for (int i = 0; i < 7; i++) {
 			BCKTab1[6][i] = (BCKTab1[0][i] * BCKTab1[1][i])
@@ -983,15 +907,20 @@ public class DBRecord {
 	 * @param BDG Matrix of BDG variance components
 	 * @return Matrix of BCK representation of variance components
 	 */
-	public static double[][] BDG2BCK(double[][] BDG) {
+	public static double[][] BDG2BCK(double[][] tempBDG, double[][] tempBCKcoeff) {
+		
 		double[][] c = new double[3][7];
 		double[][] BAlpha = new double[][] { { 0, 0, 0, 0, 0, 0, 1, -1 },
 				{ 0, 0, 0, 0, 0, 1, 0, -1 }, { 0, 0, 0, 0, 1, -1, -1, 1 },
 				{ 0, 0, 0, 1, 0, 0, 0, -1 }, { 0, 0, 1, -1, 0, 0, -1, 1 },
 				{ 0, 1, 0, -1, 0, -1, 0, 1 }, { 1, -1, -1, 1, -1, 1, 1, -1 } };
 
-		c = Matrix.matrixTranspose(Matrix.multiply(BAlpha,Matrix.matrixTranspose(BDG)));
+		c = Matrix.matrixTranspose(Matrix.multiply(BAlpha,Matrix.matrixTranspose(tempBDG)));
 
+		for(int i=0; i<7; i++) {
+			if(tempBCKcoeff[2][i] == 0) c[2][i] = 0;
+		}
+		
 		return c;
 	}
 
@@ -1050,7 +979,7 @@ public class DBRecord {
 	}
 	
 	/**
-	 * Determines the coefficient matrix for BCK variance components given <code>BDGcoeff</code>
+	 * Determines the coefficient matrix for BCK variance components given experiment size
 	 * 
 	 * @return Matrix containing coefficients corresponding to BCK variance [4][7]
 	 *         components
@@ -1092,8 +1021,8 @@ public class DBRecord {
 		c[0][5] = 1.0 / Nreader2 / (Nnormal2 + Ndisease2);
 
 		c[1] = c[0];
-		c[2] = Matrix.scaleVector(c[0], 0);
-		c[3] = Matrix.scaleVector(c[0], 2);
+		c[2] = Matrix.scale(c[0], 0);
+		c[3] = Matrix.scale(c[0], 2);
 
 		c[0][3] = 0;
 		c[0][4] = 0;
@@ -1127,7 +1056,7 @@ public class DBRecord {
 		c[0][4] = -tmp;
 		c[0][5] = 0;
 		c[1] = c[0];
-		c[2] = Matrix.scaleVector(c[0], 0);
+		c[2] = Matrix.scale(c[0], 0);
 		c[3][0] = 0;
 		c[3][1] = 0;
 		c[3][2] = tmp * 2.0;
@@ -1156,7 +1085,7 @@ public class DBRecord {
 		c[0][4] = 0;
 		c[0][5] = 1.0 / Nreader2;
 		c[1] = c[0];
-		c[2] = Matrix.scaleVector(c[0], 0);
+		c[2] = Matrix.scale(c[0], 0);
 		c[3][0] = 0;
 		c[3][1] = 2.0 / Nreader2;
 		c[3][2] = -2.0 / Nreader2;
@@ -1405,291 +1334,187 @@ public class DBRecord {
 
 		return DBMnew;
 	}
+
+
 	
-	/**
-	 * Takes study data ({@link mrmc.core.InputFile#keyedData}, {@link mrmc.core.InputFile#keyedData})
-	 *  and creates data for {@link mrmc.core.CovMRMC} <br>
-	 * --t-matrices: reader scores <br>
- 	 * ----t0_modAA, t0_modAB, t0_modBB: signal-absent scores  [Nnormal ][Nreader][2 modalities] <br>
-	 * ----t1_modAA, t1_modAB, t1_modBB: signal-present scores [Ndisease][Nreader][2 modalities] <br>
-	 * --d-matrices: study design <br>
-	 * ----d0_modAA, d0_modAB, d0_modBB: signal absent scores  [Nnormal ][Nreader][2 modalities] <br>
-	 * ----d1_modAA, d1_modAB, d1_modBB: signal present scores [Ndisease][Nreader][2 modalities] <br>
-	 *
-	 * 
-	 * @param modA Modality to be used as mod 0
-	 * @param modB Modality to be used as mod 1
-	 */
-	public void makeTMatrices(String modA, String modB) {
+	public static void copy(DBRecord DBRecordTemp, DBRecord copyDBRecordTemp) {
+
+		copyDBRecordTemp.AUCs = Matrix.copy(DBRecordTemp.AUCs);
+		copyDBRecordTemp.AUCsReaderAvg = Matrix.copy(DBRecordTemp.AUCsReaderAvg);
+
+		copyDBRecordTemp.BDG = Matrix.copy(DBRecordTemp.BDG);
+		copyDBRecordTemp.BDGbias = Matrix.copy(DBRecordTemp.BDGbias);
+		copyDBRecordTemp.BDGcoeff = Matrix.copy(DBRecordTemp.BDGcoeff);
 		
-		t0_modAB = new double[(int) Nnormal][(int) Nreader][2];
-		t1_modAB = new double[(int) Ndisease][(int) Nreader][2];
-		t0_modAA = new double[(int) Nnormal][(int) Nreader][2];
-		t0_modBB = new double[(int) Nnormal][(int) Nreader][2];
-		t1_modAA = new double[(int) Ndisease][(int) Nreader][2];
-		t1_modBB = new double[(int) Ndisease][(int) Nreader][2];
-		d0_modAA = new int[(int) Nnormal][(int) Nreader][2];
-		d1_modAA = new int[(int) Ndisease][(int) Nreader][2];
-		d0_modBB = new int[(int) Nnormal][(int) Nreader][2];
-		d1_modBB = new int[(int) Ndisease][(int) Nreader][2];
-		d0_modAB = new int[(int) Nnormal][(int) Nreader][2];
-		d1_modAB = new int[(int) Ndisease][(int) Nreader][2];
+		copyDBRecordTemp.testStat.ciBotNormal  = DBRecordTemp.testStat.ciBotNormal; 
+		copyDBRecordTemp.testStat.ciBotBDG     = DBRecordTemp.testStat.ciBotBDG; 
+		copyDBRecordTemp.testStat.ciBotHillis  = DBRecordTemp.testStat.ciBotHillis; 
 
-		double ScoreModA;
-		double ScoreModB;
-		int PresentModA;
-		int PresentModB;
+		copyDBRecordTemp.testStat.ciTopNormal  = DBRecordTemp.testStat.ciTopNormal; 
+		copyDBRecordTemp.testStat.ciTopBDG     = DBRecordTemp.testStat.ciTopBDG; 
+		copyDBRecordTemp.testStat.ciTopHillis  = DBRecordTemp.testStat.ciTopHillis; 
 
-		int m, n;
-		int k = 0; // reader index
-		for (String r : InputFile.keyedData.keySet()) {
-			m = 0; // signal-absent case index
-			n = 0; // signal-present case index
-			for (String c : InputFile.keyedData.get(r).keySet()) {
+		copyDBRecordTemp.testStat.cutoffNormal = DBRecordTemp.testStat.cutoffNormal; 
+		copyDBRecordTemp.testStat.cutoffBDG    = DBRecordTemp.testStat.cutoffBDG; 
+		copyDBRecordTemp.testStat.cutoffHillis = DBRecordTemp.testStat.cutoffHillis; 
 
-				// For all readers and cases, determine which had observations
-				if (InputFile.keyedData.get(r).containsKey(c)) {
-					if (InputFile.keyedData.get(r).get(c).containsKey(modA)) {
-						ScoreModA = InputFile.keyedData.get(r).get(c).get(modA);
-						PresentModA = 1;
-					} else {
-						ScoreModA = -1000000;
-						PresentModA = 0;
-						fullyCrossed = false;
-					}
-					if (InputFile.keyedData.get(r).get(c).containsKey(modB)) {
-						ScoreModB = InputFile.keyedData.get(r).get(c).get(modB);
-						PresentModB = 1;
-					} else {
-						ScoreModB = -1000000;
-						PresentModB = 0;
-						fullyCrossed = false;
-					}
-				} else {
-					ScoreModA = -1000000;
-					ScoreModB = -1000000;
-					PresentModA = 0;
-					PresentModB = 0;
-					fullyCrossed = false;
-				}
-				
-				// Fill in the score and design matrices
-				if (InputFile.truthVals.get(c) == 0) {
-					t0_modAB[m][k][0] = ScoreModA;
-					t0_modAB[m][k][1] = ScoreModB;
-					t0_modAA[m][k][0] = ScoreModA;
-					t0_modAA[m][k][1] = ScoreModA;
-					t0_modBB[m][k][0] = ScoreModB;
-					t0_modBB[m][k][1] = ScoreModB;
-					
-					d0_modAB[m][k][0] = PresentModA;
-					d0_modAB[m][k][1] = PresentModB;
-					d0_modAA[m][k][0] = PresentModA;
-					d0_modAA[m][k][1] = PresentModA;
-					d0_modBB[m][k][0] = PresentModB;
-					d0_modBB[m][k][1] = PresentModB;
+		copyDBRecordTemp.testStat.DF_BDG       = DBRecordTemp.testStat.DF_BDG; 
+		copyDBRecordTemp.testStat.DF_Hillis    = DBRecordTemp.testStat.DF_Hillis; 
 
-					m++;
-				} else {
-					t1_modAB[n][k][0] = ScoreModA;
-					t1_modAB[n][k][1] = ScoreModB;
-					t1_modAA[n][k][0] = ScoreModA;
-					t1_modAA[n][k][1] = ScoreModA;
-					t1_modBB[n][k][0] = ScoreModB;
-					t1_modBB[n][k][1] = ScoreModB;
+		copyDBRecordTemp.testStat.pValNormal   = DBRecordTemp.testStat.pValNormal;
+		copyDBRecordTemp.testStat.pValBDG      = DBRecordTemp.testStat.pValBDG;
+		copyDBRecordTemp.testStat.pValHillis   = DBRecordTemp.testStat.pValHillis;
+		
+		copyDBRecordTemp.testStat.tStatEst     = DBRecordTemp.testStat.tStatEst;		
+		copyDBRecordTemp.testStat.rejectNormal = DBRecordTemp.testStat.rejectNormal;
+		copyDBRecordTemp.testStat.rejectBDG    = DBRecordTemp.testStat.rejectBDG;
+		copyDBRecordTemp.testStat.rejectHillis = DBRecordTemp.testStat.rejectHillis;
+		
+		/**
+		 * TODO we need to collect totalVar for modalityA and modalityB
+		 */
+		copyDBRecordTemp.totalVar = DBRecordTemp.totalVar;
+		copyDBRecordTemp.flagTotalVarIsNegative = DBRecordTemp.flagTotalVarIsNegative;
 
-					d1_modAB[n][k][0] = PresentModA;
-					d1_modAB[n][k][1] = PresentModB;
-					d1_modAA[n][k][0] = PresentModA;
-					d1_modAA[n][k][1] = PresentModA;
-					d1_modBB[n][k][0] = PresentModB;
-					d1_modBB[n][k][1] = PresentModB;
-
-					n++;
-				}
-			} // loop over cases
-			k++;
-		} // loop over readers
 	}
 	
-	/**
-	 * Creates a study design for modality 0 and 1 based on designated
-	 * split-plot design and pairing of readers and cases
-	 * The scores do not matter. We only want the design arrays.
-	 * 
-	 */
-	public void makeTMatrices() {
+	public static void add(DBRecord DBRecordTemp, DBRecord sumDBRecordTemp) {
 
-		t0_modAB = new double[(int) Nnormal][(int) Nreader][2];
-		t1_modAB = new double[(int) Ndisease][(int) Nreader][2];
-		t0_modAA = new double[(int) Nnormal][(int) Nreader][2];
-		t0_modBB = new double[(int) Nnormal][(int) Nreader][2];
-		t1_modAA = new double[(int) Ndisease][(int) Nreader][2];
-		t1_modBB = new double[(int) Ndisease][(int) Nreader][2];
-		d0_modAA = new int[(int) Nnormal][(int) Nreader][2];
-		d0_modBB = new int[(int) Nnormal][(int) Nreader][2];
-		d0_modAB = new int[(int) Nnormal][(int) Nreader][2];
-		d1_modAA = new int[(int) Ndisease][(int) Nreader][2];
-		d1_modBB = new int[(int) Ndisease][(int) Nreader][2];
-		d1_modAB = new int[(int) Ndisease][(int) Nreader][2];
+		sumDBRecordTemp.AUCs = 
+				Matrix.add(sumDBRecordTemp.AUCs, DBRecordTemp.AUCs);
+		sumDBRecordTemp.AUCsReaderAvg = 
+				Matrix.add(sumDBRecordTemp.AUCsReaderAvg, DBRecordTemp.AUCsReaderAvg);
+		
+		sumDBRecordTemp.BDG = 
+				Matrix.add(sumDBRecordTemp.BDG, DBRecordTemp.BDG);
+		sumDBRecordTemp.BDGbias = 
+				Matrix.add(sumDBRecordTemp.BDGbias, DBRecordTemp.BDGbias);
+		sumDBRecordTemp.BDGcoeff = 
+				Matrix.add(sumDBRecordTemp.BDGcoeff, DBRecordTemp.BDGcoeff);
+		
+		sumDBRecordTemp.testStat.ciBotNormal  += DBRecordTemp.testStat.ciBotNormal; 
+		sumDBRecordTemp.testStat.ciBotBDG     += DBRecordTemp.testStat.ciBotBDG; 
+		sumDBRecordTemp.testStat.ciBotHillis  += DBRecordTemp.testStat.ciBotHillis; 
 
-		int NreaderPerModality, NreaderPerGroup;
-		int NnormalPerModality, NnormalPerGroup;
-		int NdiseasePerModality, diseasePerGroup;
+		sumDBRecordTemp.testStat.ciTopNormal  += DBRecordTemp.testStat.ciTopNormal; 
+		sumDBRecordTemp.testStat.ciTopBDG     += DBRecordTemp.testStat.ciTopBDG; 
+		sumDBRecordTemp.testStat.ciTopHillis  += DBRecordTemp.testStat.ciTopHillis; 
 
-		if (SizePanel.pairedReadersFlag == 1) {
-			NreaderPerModality = (int) Nreader;
-		} else {
-			NreaderPerModality = (int) (Nreader / 2);
-		}
-		if (SizePanel.pairedNormalsFlag == 1) {
-			NnormalPerModality = (int) Nnormal;
-		} else {
-			NnormalPerModality = (int) (Nnormal / 2);
-		}
-		if (SizePanel.pairedDiseasedFlag == 1) {
-			NdiseasePerModality = (int) Ndisease;
-		} else {
-			NdiseasePerModality = (int) (Ndisease / 2);
-		}
+		sumDBRecordTemp.testStat.cutoffNormal += DBRecordTemp.testStat.cutoffNormal; 
+		sumDBRecordTemp.testStat.cutoffBDG    += DBRecordTemp.testStat.cutoffBDG; 
+		sumDBRecordTemp.testStat.cutoffHillis += DBRecordTemp.testStat.cutoffHillis; 
 
-		NreaderPerGroup = NreaderPerModality / SizePanel.numSplitPlots;
-		NnormalPerGroup = NnormalPerModality / SizePanel.numSplitPlots;
-		diseasePerGroup = NdiseasePerModality / SizePanel.numSplitPlots;
+		sumDBRecordTemp.testStat.DF_BDG       += DBRecordTemp.testStat.DF_BDG; 
+		sumDBRecordTemp.testStat.DF_Hillis    += DBRecordTemp.testStat.DF_Hillis; 
 
-		int readerID_modA, caseID_modA;
-		int readerID_modB, caseID_modB;
-		for (int s = 0; s < SizePanel.numSplitPlots; s++) {
-			for (int i = 0; i < NreaderPerGroup; i++) {
+		sumDBRecordTemp.testStat.pValNormal   += DBRecordTemp.testStat.pValNormal;
+		sumDBRecordTemp.testStat.pValBDG      += DBRecordTemp.testStat.pValBDG;
+		sumDBRecordTemp.testStat.pValHillis   += DBRecordTemp.testStat.pValHillis;
+		
+		sumDBRecordTemp.testStat.tStatEst     += DBRecordTemp.testStat.tStatEst;		
+		sumDBRecordTemp.testStat.rejectNormal += DBRecordTemp.testStat.rejectNormal;
+		sumDBRecordTemp.testStat.rejectBDG    += DBRecordTemp.testStat.rejectBDG;
+		sumDBRecordTemp.testStat.rejectHillis += DBRecordTemp.testStat.rejectHillis;
 
-				readerID_modA = i + (NreaderPerGroup * s);
-				if (SizePanel.pairedReadersFlag == 1) {
-					readerID_modB = readerID_modA;
-				} else {
-					readerID_modB = readerID_modA + NreaderPerModality;
-				}
-				
-				for (int j = 0; j < NnormalPerGroup; j++) {
-					
-					caseID_modA = j + (NnormalPerGroup * s);
-					if (SizePanel.pairedNormalsFlag == 1) {
-						caseID_modB = caseID_modA;
-					} else {
-						caseID_modB = caseID_modA + NnormalPerModality;
-					}
+		/**
+		 * TODO we need to collect totalVar for modalityA and modalityB
+		 */
+		sumDBRecordTemp.totalVar += DBRecordTemp.totalVar;
+		sumDBRecordTemp.flagTotalVarIsNegative += DBRecordTemp.flagTotalVarIsNegative;
+		
+	}
+	
+	public static void scale(DBRecord DBRecordTemp, double scaleFactor) {
+	
+		DBRecordTemp.AUCs = 
+				Matrix.scale(DBRecordTemp.AUCs, scaleFactor);
+		DBRecordTemp.AUCsReaderAvg = 
+				Matrix.scale(DBRecordTemp.AUCsReaderAvg, scaleFactor);
+		
+		DBRecordTemp.BDG = 
+				Matrix.scale(DBRecordTemp.BDG, scaleFactor);
+		DBRecordTemp.BDGbias = 
+				Matrix.scale(DBRecordTemp.BDGbias, scaleFactor);
+		DBRecordTemp.BDGcoeff = 
+				Matrix.scale(DBRecordTemp.BDGcoeff, scaleFactor);
+	
+		DBRecordTemp.testStat.ciBotNormal  *= scaleFactor; 
+		DBRecordTemp.testStat.ciBotBDG     *= scaleFactor;
+		DBRecordTemp.testStat.ciBotHillis  *= scaleFactor;
+	
+		DBRecordTemp.testStat.ciTopNormal  *= scaleFactor;
+		DBRecordTemp.testStat.ciTopBDG     *= scaleFactor;
+		DBRecordTemp.testStat.ciTopHillis  *= scaleFactor;
+	
+		DBRecordTemp.testStat.cutoffNormal *= scaleFactor;
+		DBRecordTemp.testStat.cutoffBDG    *= scaleFactor;
+		DBRecordTemp.testStat.cutoffHillis *= scaleFactor;
+	
+		DBRecordTemp.testStat.DF_BDG       *= scaleFactor;
+		DBRecordTemp.testStat.DF_Hillis    *= scaleFactor;
+	
+		DBRecordTemp.testStat.pValNormal   *= scaleFactor;
+		DBRecordTemp.testStat.pValBDG      *= scaleFactor;
+		DBRecordTemp.testStat.pValHillis   *= scaleFactor;
+		
+		DBRecordTemp.testStat.tStatEst     *= scaleFactor;	
+		DBRecordTemp.testStat.rejectNormal *= scaleFactor;
+		DBRecordTemp.testStat.rejectBDG    *= scaleFactor;
+		DBRecordTemp.testStat.rejectHillis *= scaleFactor;
 
-					d0_modAA[caseID_modA][readerID_modA][0] = 1;
-					d0_modAA[caseID_modA][readerID_modA][1] = 1;
-					d0_modBB[caseID_modB][readerID_modB][0] = 1;
-					d0_modBB[caseID_modB][readerID_modB][1] = 1;
-					d0_modAB[caseID_modA][readerID_modA][0] = 1;
-					d0_modAB[caseID_modB][readerID_modB][1] = 1;
-				}
-
-				for (int j = 0; j < diseasePerGroup; j++) {
-
-					caseID_modA = j + (diseasePerGroup * s);
-					if (SizePanel.pairedDiseasedFlag == 1) {
-						caseID_modB = caseID_modA;
-					} else {
-						caseID_modB = caseID_modA + NdiseasePerModality;
-					}
-					
-					d1_modAA[caseID_modA][readerID_modA][0] = 1;
-					d1_modAA[caseID_modA][readerID_modA][1] = 1;
-					d1_modBB[caseID_modB][readerID_modB][0] = 1;
-					d1_modBB[caseID_modB][readerID_modB][1] = 1;
-					d1_modAB[caseID_modA][readerID_modA][0] = 1;
-					d1_modAB[caseID_modB][readerID_modB][1] = 1;
-				}
-			}
-		}
-
+		/**
+		 * TODO we need to collect totalVar for modalityA and modalityB
+		 */
+		DBRecordTemp.totalVar *= scaleFactor;
+		DBRecordTemp.flagTotalVarIsNegative *= scaleFactor;
+		
 	}
 
-	
-	/**
-	 * Perform variance analysis with scores, study design, experiment size. <br>
-	 * ----Creates BDG moments [AA, BB, AB][8] <br>
-	 * ----Creates BDGbiased moments [AA, BB, AB] <br>
-	 * ----Creates BDGcoeff based on the current study
-	 * 
-	 */
-	public void calculateCovMRMC(Integer selectedMod) {
-		
-		double[] M_AA  = new double[9];
-		double[] M_BB  = new double[9];
-		double[] M_AB  = new double[9];
-		double[] Mb_AA = new double[9];
-		double[] Mb_BB = new double[9];
-		double[] Mb_AB = new double[9];
-		double[] C_AA  = new double[9];
-		double[] C_BB  = new double[9];
-		double[] C_AB  = new double[9];
-	
-		CovMRMC cov_AA = new CovMRMC(t0_modAA, d0_modAA, t1_modAA, d1_modAA, Nreader, Nnormal, Ndisease);
-		CovMRMC cov_BB = new CovMRMC(t0_modBB, d0_modBB, t1_modBB, d1_modBB, Nreader, Nnormal, Ndisease);
-		CovMRMC cov_AB = new CovMRMC(t0_modAB, d0_modAB, t1_modAB, d1_modAB, Nreader, Nnormal, Ndisease);
+	public static void square(DBRecord DBRecordTemp) {
 
-		AUCs = cov_AB.getAUCs();
-		AUCsReaderAvg = cov_AB.getAUCsReaderAvg();
-		BDG = new double[4][8];
-		BDGbias = new double[4][8];
-		BDGcoeff = new double[4][8];
-		totalVar = 0.0;
-		
-		if(selectedMod==0) {
-			M_AA  = cov_AA.getMoments();
-			Mb_AA = cov_AA.getMomentsBiased();
-			C_AA  = cov_AA.getCoefficients();
-			for(int i=0; i<Nreader; i++) AUCs[i][1] = 0.0;
-			AUCsReaderAvg[1] = 0.0;
-		}
-		if(selectedMod==1) {
-			M_BB  = cov_BB.getMoments();
-			Mb_BB = cov_BB.getMomentsBiased();
-			C_BB  = cov_BB.getCoefficients();
-			for(int i=0; i<Nreader; i++) AUCs[i][0] = 0.0;
-			AUCsReaderAvg[0] = 0.0;
-		}
-		if(selectedMod==3) {
-			M_AA  = cov_AA.getMoments();
-			Mb_AA = cov_AA.getMomentsBiased();
-			C_AA  = cov_AA.getCoefficients();
-			
-			M_BB  = cov_BB.getMoments();
-			Mb_BB = cov_BB.getMomentsBiased();
-			C_BB  = cov_BB.getCoefficients();
-			
-			M_AB  = cov_AB.getMoments();
-			Mb_AB = cov_AB.getMomentsBiased();
-			C_AB  = cov_AB.getCoefficients();
-		}
-		
-		for (int i = 0; i < 8; i++) {
-			BDG[0][i] = M_AA[i + 1];
-			BDG[1][i] = M_BB[i + 1];
-			BDG[2][i] = M_AB[i + 1];
-			BDGbias[0][i] = Mb_AA[i + 1];
-			BDGbias[1][i] = Mb_BB[i + 1];
-			BDGbias[2][i] = Mb_AB[i + 1];
-			BDGcoeff[0][i] = C_AA[i + 1];
-			BDGcoeff[1][i] = C_BB[i + 1];
-			BDGcoeff[2][i] = C_AB[i + 1];
-			
-			BDGcoeff[3][i] = 1.0;
+		DBRecordTemp.AUCs = 
+				Matrix.squareTerms(DBRecordTemp.AUCs);
+		DBRecordTemp.AUCsReaderAvg = 
+				Matrix.squareTerms(DBRecordTemp.AUCsReaderAvg);
 
-			BDG[3][i] =     (BDG[0][i] * BDGcoeff[0][i])
-					  +     (BDG[1][i] * BDGcoeff[1][i])
-					  - 2.0*(BDG[2][i] * BDGcoeff[2][i]);
-			BDGbias[3][i] = (BDGbias[0][i] * BDGcoeff[0][i])
-					  +     (BDGbias[1][i] * BDGcoeff[1][i])
-					  - 2.0*(BDGbias[2][i] * BDGcoeff[2][i]);
-			
-			totalVar += BDGcoeff[3][i] * BDG[3][i];
-			
-		}
+		DBRecordTemp.BDG = Matrix.squareTerms(DBRecordTemp.BDG);
+		DBRecordTemp.BDGbias = Matrix.squareTerms(DBRecordTemp.BDGbias);
+		DBRecordTemp.BDGcoeff = Matrix.squareTerms(DBRecordTemp.BDGcoeff);
 		
-		totalVar = totalVar*1.0;
+		DBRecordTemp.testStat.ciBotNormal  *= DBRecordTemp.testStat.ciBotNormal; 
+		DBRecordTemp.testStat.ciBotBDG     *= DBRecordTemp.testStat.ciBotBDG; 
+		DBRecordTemp.testStat.ciBotHillis  *= DBRecordTemp.testStat.ciBotHillis; 
+
+		DBRecordTemp.testStat.ciTopNormal  *= DBRecordTemp.testStat.ciTopNormal; 
+		DBRecordTemp.testStat.ciTopBDG     *= DBRecordTemp.testStat.ciTopBDG; 
+		DBRecordTemp.testStat.ciTopHillis  *= DBRecordTemp.testStat.ciTopHillis; 
+
+		DBRecordTemp.testStat.cutoffNormal *= DBRecordTemp.testStat.cutoffNormal; 
+		DBRecordTemp.testStat.cutoffBDG    *= DBRecordTemp.testStat.cutoffBDG; 
+		DBRecordTemp.testStat.cutoffHillis *= DBRecordTemp.testStat.cutoffHillis; 
+
+		DBRecordTemp.testStat.DF_BDG       *= DBRecordTemp.testStat.DF_BDG; 
+		DBRecordTemp.testStat.DF_Hillis    *= DBRecordTemp.testStat.DF_Hillis; 
+
+		DBRecordTemp.testStat.pValNormal   *= DBRecordTemp.testStat.pValNormal;
+		DBRecordTemp.testStat.pValBDG      *= DBRecordTemp.testStat.pValBDG;
+		DBRecordTemp.testStat.pValHillis   *= DBRecordTemp.testStat.pValHillis;
+		
+		DBRecordTemp.testStat.tStatEst     *= DBRecordTemp.testStat.tStatEst;
+		DBRecordTemp.testStat.rejectNormal *= DBRecordTemp.testStat.rejectNormal;
+		DBRecordTemp.testStat.rejectBDG    *= DBRecordTemp.testStat.rejectBDG;
+		DBRecordTemp.testStat.rejectHillis *= DBRecordTemp.testStat.rejectHillis;
+
+		/**
+		 * TODO we need to collect totalVar for modalityA and modalityB
+		 */
+		DBRecordTemp.totalVar *= DBRecordTemp.totalVar;
+		DBRecordTemp.flagTotalVarIsNegative *= DBRecordTemp.flagTotalVarIsNegative;
+		
 	}
+	
+
+
+	
+
 }

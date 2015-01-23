@@ -30,6 +30,173 @@ import java.text.DecimalFormat;
 public class Matrix {
 
 	/**
+	 * copy vector
+	 * 
+	 * @param m input vector
+	 * @return copy of m
+	 */
+	public static double[] copy(double[] m) {
+		double[] result = new double[m.length];
+		for (int i = 0; i < m.length; i++) {
+			result[i] = m[i];
+		}
+		return result;
+	}
+
+	/**
+	 * copy matrix
+	 * 
+	 * @param m input matrix
+	 * @return copy of m
+	 */
+	public static double[][] copy(double[][] m) {
+		double[][] result = new double[m.length][m[0].length];
+		for (int i = 0; i < m.length; i++) {
+			for (int j = 0; j < m[i].length; j++) {
+				result[i][j] = m[i][j];
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Scales a double vector by a double
+	 * 
+	 * @param m1 The vector
+	 * @param s The scalar
+	 * @return m1 scaled by s
+	 */
+	public static double[] scale(double[] m1, double s) {
+		double[] result = new double[m1.length];
+		for (int i = 0; i < m1.length; i++) {
+			result[i] = m1[i] * s;
+		}
+		return result;
+	}
+
+	/**
+	 * Scales a double matrix by a double
+	 * 
+	 * @param m The matrix
+	 * @param s The scalar
+	 * @return m scaled by s
+	 */
+	public static double[][] scale(double[][] m, double s) {
+		double[][] result = new double[m.length][m[0].length];
+		for (int i = 0; i < m.length; i++) {
+			for (int j = 0; j < m[i].length; j++) {
+				result[i][j] = m[i][j] * s;
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Adds the corresponding elements of two double vectors
+	 * 
+	 * @param m1 First vector
+	 * @param m2 Second vector
+	 * @return Vector of m1 + m2
+	 */
+	public static double[] add(double[] m1, double[] m2) {
+		double[] result = new double[m1.length];
+		for (int i = 0; i < m1.length; i++)
+			result[i] = m1[i] + m2[i];
+		return result;
+	}
+
+	/**
+	 * Adds the corresponding elements of two double matrices
+	 * 
+	 * @param m1 First matrix
+	 * @param m2 Second matrix
+	 * @return Matrix of m1 + m2
+	 */
+	public static double[][] add(double[][] m1, double[][] m2) {
+		double[][] result = new double[m1.length][m1[0].length];
+		for (int i = 0; i < m1.length; i++)
+			for (int j = 0; j < m1[0].length; j++)
+				result[i][j] = m1[i][j] + m2[i][j];
+		return result;
+	}
+
+	/**
+	 * Square elements of a double vector
+	 * 
+	 * @param m1 vector
+	 * @return vector with elements squared
+	 */
+	public static double[] squareTerms(double[] m1) {
+		double[] result = new double[m1.length];
+		for (int i = 0; i < m1.length; i++) {
+			result[i] = m1[i] * m1[i];
+		}
+		return result;
+	}
+
+	/**
+	 * Square elements of a double matrix
+	 * 
+	 * @param m1 matrix
+	 * @return matrix with elements squared
+	 */
+	public static double[][] squareTerms(double[][] m) {
+		double[][] result = new double[m.length][m[0].length];
+		for (int i = 0; i < m.length; i++) {
+			for (int j = 0; j < m[i].length; j++) {
+				result[i][j] = m[i][j] * m[i][j];
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Calculates the total of all values in an int matrix
+	 * 
+	 * @param m The matrix
+	 * @return Total value of all entries in m
+	 */
+	public static int total(int[][] m) {
+		int rows = m.length;
+		int cols = m[0].length;
+		int T = 0;
+		for (int i = 0; i < rows; i++)
+			for (int j = 0; j < cols; j++)
+				T = T + m[i][j];
+		return T;
+	}
+
+	/**
+	 * Calculates the total of all values in a double matrix
+	 * 
+	 * @param m The matrix
+	 * @return Total value of all entries in m
+	 */
+	public static double total(double[][] m) {
+		int rows = m.length;
+		int cols = m[0].length;
+		double T = 0;
+		for (int i = 0; i < rows; i++)
+			for (int j = 0; j < cols; j++)
+				T = T + m[i][j];
+		return T;
+	}
+
+	/**
+	 * Calculates the total of all values in a double vector
+	 * 
+	 * @param m The vector
+	 * @return Total value of all entries in m
+	 */
+	public static double total(double[] m) {
+		int rows = m.length;
+		double T = 0;
+		for (int i = 0; i < rows; i++)
+			T = T + m[i];
+		return T;
+	}
+
+	/**
 	 * Multiplies two double matrices
 	 * 
 	 * @param m1 First matrix
@@ -127,84 +294,6 @@ public class Matrix {
 			result[i] = m1[i] * m2[i];
 		}
 		return result;
-	}
-
-	/**
-	 * Scales a double vector by a double
-	 * 
-	 * @param m1 The vector
-	 * @param s The scalar
-	 * @return m1 scaled by s
-	 */
-	public static double[] scaleVector(double[] m1, double s) {
-		double[] result = new double[m1.length];
-		for (int i = 0; i < m1.length; i++) {
-			result[i] = m1[i] * s;
-		}
-		return result;
-	}
-
-	/**
-	 * Scales a double matrix by a double
-	 * 
-	 * @param m The matrix
-	 * @param s The scalar
-	 * @return m scaled by s
-	 */
-	public static double[][] scaleMatrix(double[][] m, double s) {
-		double[][] result = new double[m.length][m[0].length];
-		for (int i = 0; i < m.length; i++) {
-			for (int j = 0; j < m[i].length; j++) {
-				result[i][j] = m[i][j] * s;
-			}
-		}
-		return result;
-	}
-
-	/**
-	 * Calculates the total of all values in an int matrix
-	 * 
-	 * @param m The matrix
-	 * @return Total value of all entries in m
-	 */
-	public static int total(int[][] m) {
-		int rows = m.length;
-		int cols = m[0].length;
-		int T = 0;
-		for (int i = 0; i < rows; i++)
-			for (int j = 0; j < cols; j++)
-				T = T + m[i][j];
-		return T;
-	}
-
-	/**
-	 * Calculates the total of all values in a double matrix
-	 * 
-	 * @param m The matrix
-	 * @return Total value of all entries in m
-	 */
-	public static double total(double[][] m) {
-		int rows = m.length;
-		int cols = m[0].length;
-		double T = 0;
-		for (int i = 0; i < rows; i++)
-			for (int j = 0; j < cols; j++)
-				T = T + m[i][j];
-		return T;
-	}
-
-	/**
-	 * Calculates the total of all values in a double vector
-	 * 
-	 * @param m The vector
-	 * @return Total value of all entries in m
-	 */
-	public static double total(double[] m) {
-		int rows = m.length;
-		double T = 0;
-		for (int i = 0; i < rows; i++)
-			T = T + m[i];
-		return T;
 	}
 
 	/**
@@ -470,34 +559,9 @@ public class Matrix {
 		return result;
 	}
 
-	/**
-	 * Adds the corresponding elements of two double vectors
-	 * 
-	 * @param m1 First vector
-	 * @param m2 Second vector
-	 * @return Vector of m1 + m2
-	 */
-	public static double[] matrixAdd(double[] m1, double[] m2) {
-		double[] result = new double[m1.length];
-		for (int i = 0; i < m1.length; i++)
-			result[i] = m1[i] + m2[i];
-		return result;
-	}
 
-	/**
-	 * Adds the corresponding elements of two double matrices
-	 * 
-	 * @param m1 First matrix
-	 * @param m2 Second matrix
-	 * @return Matrix of m1 + m2
-	 */
-	public static double[][] matrixAdd(double[][] m1, double[][] m2) {
-		double[][] result = new double[m1.length][m1[0].length];
-		for (int i = 0; i < m1.length; i++)
-			for (int j = 0; j < m1[0].length; j++)
-				result[i][j] = m1[i][j] + m2[i][j];
-		return result;
-	}
+
+
 
 	/**
 	 * Same as double dot product, but doesn't check bounds
@@ -596,4 +660,6 @@ public class Matrix {
 		return x;
 
 	}
+
+
 }

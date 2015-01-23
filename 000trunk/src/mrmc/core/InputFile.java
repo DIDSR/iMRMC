@@ -19,39 +19,41 @@
 package mrmc.core;
 
 import java.util.*;
-import java.awt.Component;
 import java.io.*;
 
-import javax.swing.JOptionPane;
-
 import mrmc.chart.XYPair;
-import mrmc.gui.GUInterface;
 
 
 /**
- * Handles input of a raw study data file<br>
+ * <b>Flow 1)</b> Object InputFile1 created in {@link mrmc.gui.GUInterface#GUInterface(MRMC, java.awt.Container)} <br>
+ * -- {@link mrmc.gui.InputFileCard.brwsButtonListener} calls {@link #ReadInputFile()} <br>
+ * <br>
+ * <b>Flow 2)</b> Object currInputFile created in {@link roemetz.gui.RMGUInterface.SimExperiments_thread#doInBackground()} <br>
+ * -- {@link roemetz.gui.RMGUInterface.SimExperiments_thread#doInBackground()} 
+ *    calls {@link roemetz.core.SimRoeMetz#doSim(DBRecord, InputFile)} <br>
+ * <br>
  * <ul>
- *   <li> {@link #getReaderIDs getReaderIDs}, {@link #getNreader() getNreader}, 
- *   <li> {@link #getNormalIDs() getNormalIDs}, {@link #getNnormal() getNnormal},
- *   <li> {@link #getDiseaseIDs() getDiseaseIDs}, {@link #getNdisease() getNdisease},
- *   <li> {@link #getModalityIDs() getModalityIDs}, {@link #getNmodality() getNmodality},
  *   <li> ----KEY FIELDS----
- *   <li> {@link #keyedData}, {@link #truthVals} 
- *   <li> These are not private and are accessed directly, like a structure. Do not modify.
+ *   <li> {@link #observerData},
+ *   <li> {@link #readerIDs}, {@link #Nreader}, 
+ *   <li> {@link #normalIDs}, {@link #Nnormal},
+ *   <li> {@link #diseaseIDs}, {@link #Ndisease},
+ *   <li> {@link #modalityIDs}, {@link #Nmodality},
+ *   <li> {@link #keyedData}, {@link #truthVals},
+ *   <li> {@link #caseIDs}
+ *   <li> These fields are not private and are accessed directly, like a structure.
  * </ul>
- * CALLED FROM: {@link mrmc.gui.RawStudyCard.brwsButtonListener} and {@link roemetz.core.SimRoeMetz} <br>
  * 
  * @author Xin He, Ph.D,
  * @author Brandon D. Gallas, Ph.D
  * @author Rohan Pathare
  */
 
-@SuppressWarnings("unused")
 public class InputFile {
 	
 	/**
 	 *  Contains all score data organized as a TreeMap of a fully-crossed study 
-	 *  (Reader, (Case, (Modality, Score)))
+	 *  (Reader, (Case, (Modality, Score))), sorted by default
 	 */
 	TreeMap<String, TreeMap<String, TreeMap<String, Double>>> 
 		keyedData = new TreeMap<String, TreeMap<String, TreeMap<String, Double>>>();
@@ -60,44 +62,16 @@ public class InputFile {
 	 */
 	TreeMap<String, Integer> 
 		truthVals = new TreeMap<String, Integer>();
-		
-	/**
-	 * Filename for the .imrmc reader study data
-	 */
-	public String filename;
-	/**
-	 * The content of .imrmc reader study data file before "BEGIN DATA:"
-	 */
-	private String Header = "";
-	/**
-	 * The number of rows in .imrmc reader study data file before "BEGIN DATA:"
-	 */
-	private int RowsInHeader = 0;	
-	/**
-	 * The first line of the .imrmc reader study data file acts as the study title
-	 */
-	private String recordTitle = "";
-	
 	/**
 	 * The number of readers, normal cases, disease cases, and modalities
 	 */
-	private long Nreader, Nnormal, Ndisease, Nmodality;
-
-	private boolean isFullyCrossed = true;
-	private boolean verified = false;
-	private boolean isLoaded = false;
-	/** 
-	 * String describing inconsistencies between header info and actual study info
-	 * 
-	 * @see #verificationDetails
-	 */
-	private String verificationDetails = ""; // describes experiment size
+	public long Nreader, Nnormal, Ndisease, Nmodality;
 	/**
 	 * A sorted tree (list) containing all the readerIDs in the data (IDs of the readers)
 	 */
 	public TreeMap<String, Integer> readerIDs = new TreeMap<String, Integer>();
 	/**
-	 * A sorted tree (list) containing all the readerIDs in the data (IDs of normal cases)
+	 * A sorted tree (list) containing all the normalIDs in the data (IDs of normal cases)
 	 */
 	public TreeMap<String, Integer> normalIDs = new TreeMap<String, Integer>();
 	/**
@@ -105,51 +79,68 @@ public class InputFile {
 	 */
 	public TreeMap<String, Integer> diseaseIDs = new TreeMap<String, Integer>();
 	/**
-	 * A sorted tree (list) containing all the caseIDs in the data (IDs of all cases)
+	 * A sorted tree (list) containing all the caseIDs in the data (IDs of all cases), 
+	 * including {@link #normalIDs} and {@link #diseaseIDs}
 	 */
-	private TreeMap<String, Integer> caseIDs = new TreeMap<String, Integer>();
+	public TreeMap<String, Integer> caseIDs = new TreeMap<String, Integer>();
 	/**
 	 * A sorted tree (list) containing all the modalityIDs in the data (IDs of the modalities)
 	 */
 	private TreeMap<String, Integer> modalityIDs = new TreeMap<String, Integer>();
+		
+	/**
+	 * Filename for the .imrmc reader study data
+	 */
+	public String filename;
+	/**
+	 * 
+	 */
+	ArrayList<String> fileContent = new ArrayList<String>();
+	
+;
+	/**
+	 * number of lines in {@link #fileContent}
+	 */
+	int NlinesFileContent;
+	/**
+	 * keeps track of file position while reading .imrmc input file
+	 */
+	int filePosition;
+	/**
+	 * The number of rows in .imrmc reader study data file before "BEGIN DATA:"
+	 */
+	public int NrowsInHeader = 0;	
+	/**
+	 * The first line of the .imrmc reader study data file acts as the record title
+	 */
+	public String recordTitle = "Default Record Title";
+	/**
+	 * The content of .imrmc reader study data file before "BEGIN DATA:"
+	 */
+	public String fileHeader = "Default Record Title,\n" +
+			"All rows of input file before BEGIN DATA:";
+	/**
+	 * Rows of observation data, each row contains: <br>
+	 *   reader_id, case_id, modality_id, score
+	 */
+	public String[][] observerData;
+	
 
+	public boolean isLoaded = false;
+	/** 
+	 * String describing inconsistencies between header info and actual study info
+	 */
+	public String dataCheckResults = "";
 	/**
 	 * Gets completed status of loading input
 	 * 
-	 * @return True if file has fully been processed, false otherwise
+	 * @return True if file has been processed, false otherwise
 	 */
 	public boolean isLoaded() {
 		return isLoaded;
 	}
 
-	/**
-	 * Gets whether input study is fully crossed or not
-	 * 
-	 * @return True if input study is fully crossed, false otherwise
-	 */
-	public boolean getFullyCrossedStatus() {
-		return isFullyCrossed;
-	}
 
-	/**
-	 * Gets whether experiment size from header agree with those found in the data
-	 * 
-	 * @return True if correct experiment size is known, false otherwise
-	 */
-	public boolean numsVerified() {
-		return verified;
-	}
-
-	/**
-	 * Gets a description of experiment size values specified in header of input
-	 * that do not match actual experiment size
-	 * 
-	 * @return String describing mismatched experiment size values, or empty if
-	 *         values match
-	 */
-	public String showUnverified() {
-		return verificationDetails;
-	}
 
 	/**
 	 * Gets the title of the study
@@ -166,48 +157,9 @@ public class InputFile {
 	 * @return String with description of the study
 	 */
 	public String getDesc() {
-		return Header;
+		return fileHeader;
 	}
 
-	/**
-	 * Gets number of readers in the study
-	 * 
-	 * @return Number of readers
-	 */
-	public long getNreader() {
-		return Nreader;
-	}
-
-	/**
-	 * Gets the number of normal cases in the study
-	 * 
-	 * @return Number of normal cases
-	 */
-	public long getNnormal() {
-		return Nnormal;
-	}
-
-	/**
-	 * Gets the number of disease cases in the study
-	 * 
-	 * @return Number of disease cases
-	 */
-	public long getNdisease() {
-		return Ndisease;
-	}
-
-	/**
-	 * Gets the number of modalities in the study
-	 * 
-	 * @return Number of modalities
-	 */
-	public long getNmodality() {
-		return Nmodality;
-	}
-
-
-	
-	
 	/**
 	 * Gets readers in the study
 	 * 
@@ -500,7 +452,6 @@ public class InputFile {
 					design[r][i] = true;
 				} else {
 					design[r][i] = false;
-					isFullyCrossed = false;
 				}
 				i++;
 			}
@@ -510,169 +461,111 @@ public class InputFile {
 	}
 	
 	/**
-	 * Reads the input file. <br>
-	 * ----Takes lines from .imrmc file and gets experiment information from header. <br> 
-	 * ----Determines the {@link #readerIDs}, {@link #normalIDs}, {@link #diseaseIDs} and {@link #modalityIDs}. <br>
-	 * ----Compares experiment information in header to that found in the data. <br>
-	 * ----Creates {@link #caseIDs} by concatenating {@link #normalIDs} and {@link #diseaseIDs} <br>
-	 * ----Creates the core data structures {@link #keyedData} and {@link #truthVals}.  <br>
-
+	 * Constructor for initializing the object. <br>
+	 * If reading an .imrmc input file, then {@link #ReadInputFile()}
 	 * 
-	 * @param fileContent ArrayList of Strings of each line from file
-	 * 
-	 * @see #recordTitle
-	 * @see #verificationDetails
-	 * @see #processScoresAndTruth(String[][], boolean)
-	 * 
-	 * @throws IOException
 	 */
-	private void organizeData(ArrayList<String> fileContent) throws IOException {
-		recordTitle = fileContent.get(0);
-		int counter = getExperimentSizeFromHeader(fileContent);
-		String[][] fData = parseContent(fileContent, counter);
-		boolean VerboseTrue=true;
+	public InputFile() {
+	
+		Nreader = 0;
+		Ndisease = 0;
+		Nnormal = 0;
 		
-		// Function determines readerIDs, normalIDs, diseaseIDs, modalityIDs from the data
-		// Return holds string indicating inconsistencies between header and data
-		// User will be made aware of inconsistencies and header info will be ignored
-		verificationDetails = verifySizesAndGetIDs(fData, VerboseTrue);
-		// Indicates whether or not there were inconsistencies between header and data
-		if (verificationDetails.isEmpty()) {
-			verified = true;
-		} else {
-			verified = false;
-		}
-
-		// fills keyedData and truthVals structures with proper values
-		processScoresAndTruth(fData, VerboseTrue);
-
-		System.out.println("Input File Successfully Read!");
+		recordTitle = "Default Record Title";
+		fileHeader = "Default Record Title,\n" +
+				"All rows of input file before BEGIN DATA:";
+			
 	}
 
 	/**
-	 * Creates the core data structures {@link #keyedData} and  {@link #truthVals}. <br>
-	 * Creates caseIDs that are ordered with the normal cases first, followed by the disease cases <br>
-	 * The structure is (readerIDs(caseIDs(modalityIDs, score))) <br>
-	 * Checks for duplicate observations 
+	 * Given .imrmc input file {@link #filename}, create {@link #fileContent}, then <br>
+	 * ----{@link #getExperimentSizeFromHeader()} <br>
+	 * ----{@link #parseObserverData()} <br>
+	 * ----{@link #verifySizesAndGetIDs(boolean)} <br>
+	 * ----{@link #processScoresAndTruth(boolean)} <br>
 	 * 
-	 * @param fData Individual scores with reader, case information
+	 * @see #dataCheckResults
+	 * @see #isLoaded
 	 * 
-	 * @see #readerIDs
-	 * @see #normalIDs
-	 * @see #diseaseIDs
-	 * @see #caseIDs
-	 * @see #modalityIDs
+	 * CALLED BY: {@link mrmc.gui.InputFileCard.brwsButtonListener}
 	 * 
-	 * @throws IOException 
-	 */
-	private void processScoresAndTruth(String[][] fData, boolean verbose) 
-					throws IOException {
-		
-		// Create a data structure corresponding to a fully-crossed experiment
-		for (String r : readerIDs.keySet()) {
-			keyedData.put(r, new TreeMap<String, TreeMap<String, Double>>());
-			for (String n : normalIDs.keySet()) {
-				keyedData.get(r).put(n, new TreeMap<String, Double>());
-			}
-			for (String d : diseaseIDs.keySet()) {
-				keyedData.get(r).put(d, new TreeMap<String, Double>());
-			}
-		}
-		
-		Integer ic=0;
-		for ( String desc : keyedData.get(keyedData.firstKey()).keySet() ) {
-			caseIDs.put(desc, ic++);
-		}
-		if(verbose) {
-			System.out.println("caseIDs: " + caseIDs);
-		}
-
-		for (int i = 0; i < fData.length; i++) {
-			String readerID   = fData[i][0];
-			String caseID     = fData[i][1];
-			String modalityID = fData[i][2];
-			double score = Double.valueOf(fData[i][3]).doubleValue();
-			if (readerID.equals("-1")) {
-				truthVals.put(caseID, Integer.valueOf(fData[i][3]).intValue());
-			} else {
-				if (keyedData.get(readerID).get(caseID).containsKey(modalityID)	){
-					String toReturn = "ERROR: Replicate observation found"    + " \n";
-					toReturn = toReturn + "      row = " + (RowsInHeader+i+2) + " \n";
-					toReturn = toReturn + "Check for an earlier occurrence: " + " \n";
-					toReturn = toReturn + "      readerID = " + fData[i][0]   + " \n";
-					toReturn = toReturn + "      caseID = " + fData[i][1]     + " \n";
-					toReturn = toReturn + "      modalityID = " + fData[i][2] + " \n";
-
-					throw new IOException(toReturn);
-
-				}
-				else {
-					keyedData.get(readerID).get(caseID).put(modalityID, score);
-				}
-			}
-
-		}
-	}
-
-	/**
-	 * Parses out reader study observations from .imrmc file (rows following "BEGIN DATA:")
-	 * 
-	 * @param fileContent ArrayList of each line from file as a String
-	 * @param counter Position of where score data begins in file
-	 * 
-	 * @return 2-D array where first dimension is line number from file, second
-	 *         dimension is reader, case, modality, score information
-	 *         
 	 * @throws IOException
 	 */
-	private String[][] parseContent(ArrayList<String> fileContent, int counter)
-			throws IOException {
-		int totalLine = fileContent.size();
-		String[] tempNumbers;
-		String[][] fData = new String[totalLine - (counter + 1)][4];
-
-		// parse each line of input into its separate fields (still ordered by
-		// line)
-		for (int i = 0; i < totalLine - (counter + 1); i++) {
-			tempNumbers = fileContent.get((counter + 1) + i).split(",");
+	public void ReadInputFile() throws IOException {
+	
+		try {
+			//InputStreamReader isr;
+			//DataInputStream din;
+			FileInputStream fstream = new FileInputStream(filename);
+			DataInputStream din = new DataInputStream(fstream);
+			InputStreamReader isr = new InputStreamReader(din);
+			BufferedReader br = new BufferedReader(isr);
+			String strtemp;
 			try {
-				fData[i][0] = String.valueOf(tempNumbers[0]).replaceAll("\\s",""); // Reader
-				fData[i][1] = String.valueOf(tempNumbers[1]).replaceAll("\\s",""); // Case
-				fData[i][2] = String.valueOf(tempNumbers[2]).replaceAll("\\s",""); // Modality id
-				fData[i][3] = String.valueOf(tempNumbers[3]).replaceAll("\\s",""); // Score
+				while ((strtemp = br.readLine()) != null) {
+					fileContent.add(strtemp);
+				}
+				din.close();
+			} catch (FileNotFoundException e1) {
+				e1.printStackTrace();
 			} catch (Exception e) {
-				String toReturn = "ERROR: Invalid input";
-				toReturn = toReturn + "      row = " +    (RowsInHeader+i+2) + " \n";
-				toReturn = toReturn + fileContent.get(counter+1+i) + " \n";
-
-				throw new IOException(toReturn, e);
+				System.err.println("read record Error in inputFile.java: "
+						+ e.getMessage());
 			}
+
+		} catch (Exception e) {
+			System.err
+					.println("Error reading file" + filename + e.getMessage());
 		}
-		return fData;
+		
+			NlinesFileContent = fileContent.size();
+			filePosition = 0;
+
+			getExperimentSizeFromHeader();
+
+			observerData = new String[NlinesFileContent - (filePosition + 1)][4];
+			parseObserverData();
+
+			boolean VerboseTrue=true;
+			
+			// Function determines readerIDs, normalIDs, diseaseIDs, modalityIDs from the data
+			// Return holds string indicating inconsistencies between header and data
+			// User will be made aware of inconsistencies and header info will be ignored
+			verifySizesAndGetIDs(VerboseTrue);
+
+			// fills keyedData and truthVals structures with proper values
+			processScoresAndTruth(VerboseTrue);
+
+			System.out.println("Input File Successfully Read!");
+
+			isLoaded = true;
+		
 	}
 
-	/**
-	 * Parses experiment size data from file header information. <br>
-	 * 
-	 * @param fileContent (input) = ArrayList of each line from .imrmc file as a String
 
-	 * @return Position in file where header information ends/score data begins
-	 * 
-	 * @see #Nnormal
-	 * @see #Ndisease
-	 * @see #Nreader
-	 * @see #Nmodality
+
+	/**
+	 * Given {@link #fileContent}, determine <br>
+ 	 * ----{@link #recordTitle} <br>
+ 	 * ----{@link #NrowsInHeader} <br>
+ 	 * ----{@link #fileHeader} <br>
+	 * ----{@link #Nreader} <br>
+	 * ----{@link #Nnormal} <br>
+	 * ----{@link #Ndisease} <br>
+	 * ----{@link #Nmodality} <br>
 	 * 
 	 * @throws IOException 
 	 */
-	private int getExperimentSizeFromHeader(ArrayList<String> fileContent) throws IOException {
+	private void getExperimentSizeFromHeader() throws IOException {
+		
+		recordTitle = fileContent.get(0);
+		
 		String tempstr = fileContent.get(0).toUpperCase();
 		int dataloc = tempstr.indexOf("BEGIN DATA:");
-		int counter = 0;
 		String toReturn = "";
 		while (dataloc != 0) {
-			Header = Header + fileContent.get(counter) + "\n";
-			tempstr = fileContent.get(counter).toUpperCase();
+			fileHeader = fileHeader + fileContent.get(filePosition) + "\n";
+			tempstr = fileContent.get(filePosition).toUpperCase();
 
 			int loc = tempstr.indexOf("N0:");
 			if (loc != -1) {
@@ -719,93 +612,119 @@ public class InputFile {
 				}
 			}
 
-			counter++;
-			tempstr = fileContent.get(counter).toUpperCase();
+			filePosition++;
+			tempstr = fileContent.get(filePosition).toUpperCase();
 			dataloc = tempstr.indexOf("BEGIN DATA:");
 		}
 
-		RowsInHeader = counter;
-		System.out.println("a total of " + RowsInHeader + " lines in header");
+		NrowsInHeader = filePosition;
+		System.out.println("a total of " + NrowsInHeader + " lines in header");
 
-		return counter;
 	}
 
 	/**
-	 * Determines the IDs of all the readers, cases, and modalities. <br>
-	 * ----Determines truth status of cases <br>
-	 * ----Checks for duplicate cases <br>
-	 * ----Checks that cases have truth <br>
-	 * ----Compares the number of modalities in the data to that specified in the header <br>
-	 * ----Sets Nreader to the number of disease cases in the data <br>
+	 * Given {@link #fileContent} parse rows following "BEGIN DATA:" into {@link #observerData}
 	 * 
-	 * @param fData 2-D array where first dimension is line number from file,
-	 *            second dimension is reader, case, modality, score information
+	 * @throws IOException
+	 */
+	private void parseObserverData() throws IOException {
+		String[] tempNumbers;
+
+		// parse each line of input into its separate fields (still ordered by line)
+		for (int i = 0; i < NlinesFileContent - (filePosition + 1); i++) {
+			tempNumbers = fileContent.get((filePosition + 1) + i).split(",");
+			try {
+				observerData[i][0] = String.valueOf(tempNumbers[0]).replaceAll("\\s",""); // Reader
+				observerData[i][1] = String.valueOf(tempNumbers[1]).replaceAll("\\s",""); // Case
+				observerData[i][2] = String.valueOf(tempNumbers[2]).replaceAll("\\s",""); // Modality id
+				observerData[i][3] = String.valueOf(tempNumbers[3]).replaceAll("\\s",""); // Score
+			} catch (Exception e) {
+				String toReturn = "ERROR: Invalid input";
+				toReturn = toReturn + "      row = " +    (NrowsInHeader+i+2) + " \n";
+				toReturn = toReturn + fileContent.get(filePosition+1+i) + " \n";
+
+				throw new IOException(toReturn, e);
+			}
+		}
+	}
+	
+	/**
+	 * Given {@link #observerData}, determine <br>
+	 * ----{@link #Nreader}, {@link #readerIDs} <br>
+	 * ----{@link #Nnormal}, {@link #normalIDs} <br>
+	 * ----{@link #Ndisease}, {@link #diseaseIDs} <br>
+	 * ----{@link #Nnormal}, {@link #modalityIDs} <br>
+	 * ----{@link #dataCheckResults}<br>
+	 * <br>
+	 * Determines truth status of cases <br>
+	 * Checks for duplicate cases <br>
+	 * Checks that cases have truth <br>
+	 * Copmpares experiment size from data versus header
+	 * 
+	 * @param verbose indicates whether or not to write info to the console
 	 *            
-	 * @return String describing inconsistencies between header info and actual
-	 *         study info
-	 *         
-	 * @see #readerIDs
-	 * @see #normalIDs
-	 * @see #diseaseIDs
-	 * @see #modalityIDs
-	 * 
 	 * @throws IOException 
 	 */
-	private String verifySizesAndGetIDs(String[][] fData, boolean verbose)
+	public void verifySizesAndGetIDs(boolean verbose)
 					throws IOException {
 		
-		String toReturn = new String();
 		Integer in0=-1, in1=-1, inr=-1, inm=-1;
 		
 		// Find the rows corresponding to truth
 		// Check for duplicate cases
 		// Create normalIDs and diseaseIDs
-		for (int i = 0; i < fData.length; i++) {
-			if ( fData[i][0].equals("-1")){
-				if ( normalIDs.containsKey(fData[i][1]) || diseaseIDs.containsKey(fData[i][1]) ){
-					toReturn = "ERROR: Duplicate case found"                 + " \n";
-					toReturn = toReturn + "      row = " + (RowsInHeader+i+2)+ " \n";
-					toReturn = toReturn + "Check for an earlier occurrence:" + " \n";
-					toReturn = toReturn + "      readerID = " + fData[i][0]   + " \n";
-					toReturn = toReturn + "      caseID = " + fData[i][1]     + " \n";
-					toReturn = toReturn + "      modalityID = " + fData[i][2] + " \n";
+		for (int i = 0; i < observerData.length; i++) {
+
+			if(observerData[i][0] == null) break;
+
+			if ( observerData[i][0].equals("-1")){
+				if ( normalIDs.containsKey(observerData[i][1]) || diseaseIDs.containsKey(observerData[i][1]) ){
+					dataCheckResults = "ERROR: Duplicate case found"                 + " \n";
+					dataCheckResults = dataCheckResults + "      row = " + (NrowsInHeader+i+2)+ " \n";
+					dataCheckResults = dataCheckResults + "Check for an earlier occurrence:" + " \n";
+					dataCheckResults = dataCheckResults + "      readerID = " + observerData[i][0]   + " \n";
+					dataCheckResults = dataCheckResults + "      caseID = " + observerData[i][1]     + " \n";
+					dataCheckResults = dataCheckResults + "      modalityID = " + observerData[i][2] + " \n";
 					
-					throw new IOException(toReturn);
+					throw new IOException(dataCheckResults);
 
 				}
 				// New normal ID?
-				if ( !normalIDs.containsKey(fData[i][1])  && fData[i][3].equals("0")) {
-					normalIDs.put(fData[i][1], in0);
+				if ( !normalIDs.containsKey(observerData[i][1])  && observerData[i][3].equals("0")) {
+					normalIDs.put(observerData[i][1], in0);
 				}
 				// New disease ID?
-				if ( !diseaseIDs.containsKey(fData[i][1]) && fData[i][3].equals("1")) {
-					diseaseIDs.put(fData[i][1], in1);
+				if ( !diseaseIDs.containsKey(observerData[i][1]) && observerData[i][3].equals("1")) {
+					diseaseIDs.put(observerData[i][1], in1);
 				}
 			}
 		}
 		
 		// Find all the rows not corresponding to truth
 		// Check that cases have truth, find readers and modalities
-		for (int i = 0; i < fData.length; i++) {
-			if ( !fData[i][0].equals("-1")){
+		for (int i = 0; i < observerData.length; i++) {
 
-				if ( !normalIDs.containsKey(fData[i][1]) && !diseaseIDs.containsKey(fData[i][1]) ){
-					toReturn = "ERROR: No truth for case"                     + " \n";
-					toReturn = toReturn + "      row = " + (RowsInHeader+i+2) + " \n";
-					toReturn = toReturn + "      readerID = " + fData[i][0]   + " \n";
-					toReturn = toReturn + "      caseID = " + fData[i][1]     + " \n";
-					toReturn = toReturn + "      modalityID = " + fData[i][2] + " \n";
+			if(observerData[i][0] == null) break;
+
+			if ( !observerData[i][0].equals("-1")){
+
+				if ( !normalIDs.containsKey(observerData[i][1]) && !diseaseIDs.containsKey(observerData[i][1]) ){
+					dataCheckResults = "ERROR: No truth for case"                     + " \n";
+					dataCheckResults = dataCheckResults + "      row = " + (NrowsInHeader+i+2) + " \n";
+					dataCheckResults = dataCheckResults + "      readerID = " + observerData[i][0]   + " \n";
+					dataCheckResults = dataCheckResults + "      caseID = " + observerData[i][1]     + " \n";
+					dataCheckResults = dataCheckResults + "      modalityID = " + observerData[i][2] + " \n";
 					
-					throw new IOException(toReturn);
+					throw new IOException(dataCheckResults);
 
 				}
 				// New reader ID?
-				if ( !readerIDs.containsKey(fData[i][0])  ) {
-					readerIDs.put(fData[i][0], inr);
+				if ( !readerIDs.containsKey(observerData[i][0])  ) {
+					readerIDs.put(observerData[i][0], inr);
 				}
 				// New modality ID?
-				if ( !modalityIDs.containsKey(fData[i][2])) {
-					modalityIDs.put(fData[i][2], inm);
+				if ( !modalityIDs.containsKey(observerData[i][2])) {
+					modalityIDs.put(observerData[i][2], inm);
 				}
 			}
 		}
@@ -819,7 +738,7 @@ public class InputFile {
 		// Compare the number of readers in the data to that specified in the header
 		// Set Nreader to the number of readers in the data
 		if (Nreader != readerIDs.size()) {
-			toReturn = toReturn + "NR Given = " + Nreader + " NR Found = "
+			dataCheckResults = dataCheckResults + "NR Given = " + Nreader + " NR Found = "
 					+ readerIDs.size() + " \n";
 			Nreader = readerIDs.size();
 		}
@@ -832,7 +751,7 @@ public class InputFile {
 		// Compare the number of normal cases in the data to that specified in the header
 		// Set Nreader to the number of normal cases in the data
 		if (Nnormal != normalIDs.size()) {
-			toReturn = toReturn + "N0 Given = " + Nnormal + " N0 Found = "
+			dataCheckResults = dataCheckResults + "N0 Given = " + Nnormal + " N0 Found = "
 					+ normalIDs.size() + " \n";
 			Nnormal = normalIDs.size();
 		}
@@ -845,7 +764,7 @@ public class InputFile {
 		// Compare the number of disease cases in the data to that specified in the header
 		// Set Nreader to the number of disease cases in the data
 		if (Ndisease != diseaseIDs.size()) {
-			toReturn = toReturn + "N1 Given = " + Ndisease + " N1 Found = "
+			dataCheckResults = dataCheckResults + "N1 Given = " + Ndisease + " N1 Found = "
 					+ diseaseIDs.size() + " \n";
 			Ndisease = diseaseIDs.size();
 		}
@@ -858,124 +777,116 @@ public class InputFile {
 		// Compare the number of modalities in the data to that specified in the header
 		// Set Nreader to the number of disease cases in the data
 		if (Nmodality != (modalityIDs.size())) {
-			toReturn = toReturn + "NM Given = " + Nmodality + " NM Found = "
+			dataCheckResults = dataCheckResults + "NM Given = " + Nmodality + " NM Found = "
 					+ (modalityIDs.size());
 			Nmodality = modalityIDs.size();
 		}
 		
-		return toReturn;
-		
-	}
-
-	/**
-	 * Creates ArrayList of strings from all lines in the given file
-	 * 
-	 * @return ArrayList of strings from all lines in the given file
-	 * @throws FileNotFoundException
-	 */
-	private ArrayList<String> readFile() throws FileNotFoundException {
-		//InputStreamReader isr;
-		//DataInputStream din;
-		FileInputStream fstream = new FileInputStream(filename);
-		DataInputStream din = new DataInputStream(fstream);
-		InputStreamReader isr = new InputStreamReader(din);
-		BufferedReader br = new BufferedReader(isr);
-		ArrayList<String> content = new ArrayList<String>();
-		String strtemp;
-		try {
-			while ((strtemp = br.readLine()) != null) {
-				content.add(strtemp);
-			}
-			din.close();
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		} catch (Exception e) {
-			System.err.println("read record Error in inputFile.java: "
-					+ e.getMessage());
+		if(verbose) {
+			System.out.println("caseIDs: " + caseIDs);
 		}
 
-		return content;
 	}
-
-	/**
-	 * Constructor for initializing the object
-	 */
-	public InputFile() {
 	
-		Nreader = 0;
-		Ndisease = 0;
-		Nnormal = 0;
-		
-	}
-
 	/**
-	 * Constructor used for reading in a raw study file. <br>
+	 * Maps {@link #observerData} to the core data structures <br>
+	 * ----{@link #keyedData} <br>
+	 * ----{@link #truthVals} <br>
+	 * Also creates {@link #caseIDs} by combining {@link #normalIDs} and {@link #diseaseIDs}<br>
+	 * Also checks for duplicate observations 
 	 * 
-	 * CALLED BY: {@link mrmc.gui.RawStudyCard.brwsButtonListener}
+	 * @param verbose indicates whether or not to write info to the console
 	 * 
-	 * 
-	 * @see #readFile()
-	 * @see #organizeData(ArrayList)
-	 * 
-	 * @throws IOException
-	 */
-	public void ReadInputFile() throws IOException {
-	
-		ArrayList<String> fileContent = new ArrayList<String>();
-		
-		try {
-			fileContent = readFile();
-		} catch (Exception e) {
-			System.err
-					.println("Error reading file" + filename + e.getMessage());
-		}
-		organizeData(fileContent);
-		isLoaded = true;
-	}
-
-	/**
-	 * Constructor used to create an InputFile for variance analysis from
-	 * simulated experiment data from iRoeMetz
-	 * 
-	 * @param tMatrices Matrices of score data
-	 * @param dMatrices Study design matrices
-	 * @param nr Number of readers
-	 * @param n0 Number of normal cases
-	 * @param n1 Number of disease cases
-	 * @param title Simulated study title
-	 * @param desc Simulated study description
 	 * @throws IOException 
 	 */
-	public InputFile(double[][][][] tMatrices, int[][][][] dMatrices, long nr,
-			long n0, long n1, String title, String desc) throws IOException {
+	public void processScoresAndTruth(boolean verbose) 
+					throws IOException {
+		
+		// Create a data structure corresponding to a fully-crossed experiment
+		for (String r : readerIDs.keySet()) {
+			keyedData.put(r, new TreeMap<String, TreeMap<String, Double>>());
+			for (String n : normalIDs.keySet()) {
+				keyedData.get(r).put(n, new TreeMap<String, Double>());
+			}
+			for (String d : diseaseIDs.keySet()) {
+				keyedData.get(r).put(d, new TreeMap<String, Double>());
+			}
+		}
 
-		//TODO Create the keyedData from the tMatrices
-		System.out.println("Create the keyeData from the tMatrices!");
+		// Determine caseIDs
+		Integer ic=0;
+		for ( String desc : keyedData.get(keyedData.firstKey()).keySet() ) {
+			caseIDs.put(desc, ic++);
+		}
 
-		this.Nreader = nr;
-		this.Nnormal = n0;
-		this.Ndisease = n1;
-		this.recordTitle = title;
-		this.Header = desc;
-		this.isFullyCrossed = true;
+		// Populate keyedData with the observed scores
+		for (int i = 0; i < observerData.length; i++) {
+			
+			if(observerData[i][0] == null) break;
+
+			String readerID   = observerData[i][0];
+			String caseID     = observerData[i][1];
+			String modalityID = observerData[i][2];
+			double score = Double.valueOf(observerData[i][3]).doubleValue();
+			if (readerID.equals("-1")) {
+				truthVals.put(caseID, Integer.valueOf(observerData[i][3]).intValue());
+			} else {
+				if (keyedData.get(readerID).get(caseID).containsKey(modalityID)	){
+					String toReturn = "ERROR: Replicate observation found"    + " \n";
+					toReturn = toReturn + "      row = " + (NrowsInHeader+i+2) + " \n";
+					toReturn = toReturn + "Check for an earlier occurrence: " + " \n";
+					toReturn = toReturn + "      readerID = " + observerData[i][0]   + " \n";
+					toReturn = toReturn + "      caseID = " + observerData[i][1]     + " \n";
+					toReturn = toReturn + "      modalityID = " + observerData[i][2] + " \n";
+
+					throw new IOException(toReturn);
+
+				}
+				else {
+					keyedData.get(readerID).get(caseID).put(modalityID, score);
+				}
+			}
+
+		}
+		
+	}
+
+	public void resetInputFile() {
+
+		observerData = null;
+		
+		keyedData.clear();
+		truthVals.clear();
+
+		Nreader = 0;
+		Nnormal = 0;
+		Ndisease = 0;
+		Nmodality = 0;
+		
+		resetIDs();
+
+		filename = "";
+		fileContent.clear();
+		NlinesFileContent = 0;
+		filePosition = 0;
+		NrowsInHeader = 0;
+
+		recordTitle = "Default Record Title";
+		fileHeader = "Default Record Title,\n" +
+				"All rows of input file before BEGIN DATA:";
+		
+		dataCheckResults = "";
+		
+	}
 	
-	}
+	public void resetIDs() {
 
-	/*
-	 * Constructor for RoeMetz
-	 */
-	public InputFile(String[][] fData) throws IOException {
-		
-		this.recordTitle = "SimExp";
-		this.Header = "Simulated Experiment";
-		
-		boolean VerboseFalse = false;
-		verifySizesAndGetIDs(fData, VerboseFalse);
-		processScoresAndTruth(fData, VerboseFalse);
+		readerIDs.clear();
+		caseIDs.clear();
+		normalIDs.clear();
+		diseaseIDs.clear();
+		modalityIDs.clear();
 
 	}
 
-
-
-
-}
+} // Close InputFile class
