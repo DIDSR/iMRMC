@@ -82,7 +82,7 @@ public class ManualCard {
 	 */
 	public void reset() {
 		com1Button.setSelected(true);
-		gui.enableTabs();
+		gui.StatPanel1.enableTabs();
 		SingleMod.setSelected(true);
 		AUCText2.setEnabled(false);
 		manualInReader.setText("22");
@@ -278,24 +278,24 @@ public class ManualCard {
 	class comSelListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			String str;
-			gui.disableTabs();
+			gui.StatPanel1.disableTabs();
 			str = e.getActionCommand();
 			if (str.equals("BDG")) {
 				selectedManualComp = 0;
 				compLabel.setText(BDGlabel);
-				gui.enableTabs();
+				gui.StatPanel1.enableTabs();
 			} else if (str.equals("BCK")) {
 				selectedManualComp = 1;
 				compLabel.setText(BCKlabel);
-				gui.enableBCKTab();
+				gui.StatPanel1.enableBCKTab();
 			} else if (str.equals("DBM")) {
 				selectedManualComp = 2;
 				compLabel.setText(DBMlabel);
-				gui.enableDBMORTabs();
+				gui.StatPanel1.enableDBMORTabs();
 			} else if (str.equals("OR")) {
 				selectedManualComp = 3;
 				compLabel.setText(ORlabel);
-				gui.enableDBMORTabs();
+				gui.StatPanel1.enableDBMORTabs();
 			}
 			compText.setText("");
 		}
@@ -307,6 +307,8 @@ public class ManualCard {
 	 */
 	class modSelListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
+			
+			/** TODO
 			String str;
 			str = e.getActionCommand();
 			if (str.equals(mod[0])) {
@@ -317,8 +319,8 @@ public class ManualCard {
 				gui.selectedMod=3;
 				AUCText2.setEnabled(true);
 				SingleOrDiff = 1;
-
 			}
+			*/
 		}
 	}
 
@@ -382,9 +384,9 @@ public class ManualCard {
 			double[][] tempData = new double[][]{data, data, data, data};
 			record = new DBRecord(tempData, selectedManualComp, Reader, Normal,
 					Disease, auc);
-			gui.setStatPanel();
-			gui.setTable1();
-			gui.setSizePanel();
+			gui.StatPanel1.setStatPanel();
+			gui.StatPanel1.setTable1();
+			gui.SizePanel1.setSizePanel();
 		}
 	}
 

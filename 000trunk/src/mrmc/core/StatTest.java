@@ -18,6 +18,9 @@
 
 package mrmc.core;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 import mrmc.gui.GUInterface;
 import mrmc.gui.SizePanel;
 import umontreal.iro.lecuyer.probdist.BetaDist;
@@ -36,7 +39,7 @@ import umontreal.iro.lecuyer.probdist.NormalDist;
  */
 public class StatTest {
 	
-	GUInterface GUI;
+
 	DBRecord DBRecordStat, DBRecordSize;
 
 	private final int INFINITY = 500;
@@ -51,149 +54,21 @@ public class StatTest {
 	public double tStatCalc;
 
 	public double DF_BDG, DF_Hillis;
-	public double pValF, pValFBDG, pValFHillis;
+	public double pValNormal, pValBDG, pValHillis;
 	public double cutoffNormal, cutoffBDG, cutoffHillis;
 	public double lambdaBDG, lambdaHillis;
 	public double powerNormal, powerBDG, powerHillis;
 	public double ciBotNormal, ciBotBDG, ciBotHillis; 
 	public double ciTopNormal, ciTopBDG, ciTopHillis;
-
-	/**
-	 * Gets the confidence interval
-	 * 
-	 * @return Lower and upper range of confidence interval
-	 */
-	public double[] getCI() {
-		return new double[] { ciBotNormal, ciTopNormal };
-	}
-
-	/**
-	 * Gets confidence interval calculated with degrees of freedom via BDG
-	 * method
-	 * 
-	 * @return Lower and upper range of confidence interval
-	 */
-	public double[] getCIDF_BDG() {
-		return new double[] { ciBotBDG, ciTopBDG };
-	}
-
-	/**
-	 * Gets confidence interval calculated with degrees of freedom via Hillis
-	 * 2008 method
-	 * 
-	 * @return Lower and upper range of confidence interval
-	 */
-	public double[] getCIDF_Hillis() {
-		return new double[] { ciBotHillis, ciTopHillis };
-	}
-
-	/**
-	 * Gets the power according to Hillis 2011 calculation with degrees of
-	 * freedom via BDG method.
-	 * 
-	 * @return Power calculation
-	 */
-	public double getHillisPowerWithBDGDF() {
-		return powerBDG;
-	}
-
-	/**
-	 * Gets the power according to Hillis 2011 calculation with degrees of
-	 * freedom via Hillis 2008 method.
-	 * 
-	 * @return Power calculation
-	 */
-	public double getHillisPowerWithHillisDF() {
-		return powerHillis;
-	}
-
-	/**
-	 * Gets the power according to Z test
-	 * 
-	 * @return Power calculation
-	 */
-	public double getZPower() {
-		return powerNormal;
-	}
-
-	/**
-	 * Gets the estimated t-statistic
-	 * 
-	 * @return Estimated t-statistic
-	 */
-	public double getTStatEst() {
-		return tStatEst;
-	}
-
-	/**
-	 * Gets the p-value
-	 * 
-	 * @return P-value
-	 */
-	public double getpValF() {
-		return pValF;
-	}
-
-	/**
-	 * Gets the p-value using degrees of freedom via BDG calculation
-	 * 
-	 * @return P-value
-	 */
-	public double getpValFBDG() {
-		return pValFBDG;
-	}
-
-	/**
-	 * Gets the p-value using degrees of freedom via Hillis calculation
-	 * 
-	 * @return P-value
-	 */
-	public double getpValFHillis() {
-		return pValFHillis;
-	}
-
-	/**
-	 * Gets the CVF
-	 * 
-	 * @return CVF
-	 */
-	public double getCVF() {
-		return cutoffNormal;
-	}
-
-	/**
-	 * Gets the calculated t-statistic
-	 * 
-	 * @return Calculated t-statistic
-	 */
-	public double getTStatCalc() {
-		return tStatCalc;
-	}
-
-	/**
-	 * Gets the denominator degrees of freedom (Hillis 2008 method)
-	 * 
-	 * @return Degrees of freedom
-	 */
-	public double getDF_Hillis() {
-		return DF_Hillis;
-	}
-
-	/**
-	 * Gets the degrees of freedom (Obuchowski, BDG method)
-	 * 
-	 * @return Degrees of freedom
-	 */
-	public double getDF_BDG() {
-		return DF_BDG;
-	}
+	public double rejectNormal, rejectBDG, rejectHillis;
 
 	/**
 	 * Constructor used for calculating statistics when performing initial variance analysis
+	 * 
+	 * @param InputFileTemp is the source that yields results shown in the statistical panel of the GUI
 	 * @param DBRecordStatTemp is the record to have a statistical analysis
-	 * @param selectedMod is 0 for modality A, 1 for modality B, and 3 for the difference in modalities
 	 */
-	public StatTest(DBRecord DBRecordStatTemp, int selectedMod) {
+	public StatTest(InputFile InputFileTemp, DBRecord DBRecordStatTemp) {
 
 		DBRecordStat = DBRecordStatTemp;
 		double sig = 0.05;
@@ -201,44 +76,37 @@ public class StatTest {
 		double totalVar = DBRecordStat.totalVar;
 		double[] aucs = { DBRecordStat.getAUCinNumber(0), DBRecordStat.getAUCinNumber(1)};
 
-		double meanCI, tStatEst, cutoffZ, cutoffBDG, cutoffHillis;
+		double meanCI;
 
-		System.out.println("NR=" + DBRecordStat.getReader() + 
-				           ",  N0=" + DBRecordStat.getNormal() + 
-				           ",  N1=" + DBRecordStat.getDisease());
-		System.out.println("auc0=" + aucs[0] + "  auc1=" + aucs[1]);
-		System.out.println("totalVar=" + DBRecordStat.totalVar);
-
-		if (selectedMod == 1 || selectedMod == 0) {
-			meanCI = aucs[selectedMod];
+		if (DBRecordStat.selectedMod == 1 || DBRecordStat.selectedMod == 0) {
+			meanCI = aucs[DBRecordStat.selectedMod];
 			/* Compare single-modality AUC to 0.5 */
 			tStatEst = Math.sqrt(Math.pow(meanCI - 0.5, 2)/DBRecordStat.totalVar);
 		} else {
-			meanCI = aucs[1] - aucs[0];
+			meanCI = aucs[0] - aucs[1];
 			/* Compare difference in modality AUCs to 0.0 */
 			tStatEst = Math.sqrt(Math.pow(meanCI, 2)/DBRecordStat.totalVar);
 		}	
 
-		DF_BDG = calcDF_BDG(DBRecordStat, selectedMod);
-		DF_Hillis = calcDF_Hillis(DBRecordStat, selectedMod);
-
-		System.out.println("DF_BDG=" + DF_BDG);
-		System.out.println("DF_Hillis=" + DF_Hillis);
+		DF_BDG = calcDF_BDGbckIndep(DBRecordStat);
+		DF_BDG = calcDF_BDGbckGroup(DBRecordStat);
+		DF_BDG = calcDF_BDGms(DBRecordStat);
+		DF_Hillis = calcDF_Hillis(DBRecordStat);
 
 		// calculate p-value and cutoff assuming normality
 		NormalDist ndist = new NormalDist();
-		pValF = 2*(1 - ndist.cdf(tStatEst));
-		cutoffZ = ndist.inverseF(1 - sig/2.0);
+		pValNormal = 2*(1 - ndist.cdf(tStatEst));
+		cutoffNormal = ndist.inverseF(1 - sig/2.0);
 
 		// calculate p-value and cutoff assuming t-distribution with DF_BDG or DF_Hillis
 		// Use normal distribution if df > 50, since they are approximately
 		// equal at that point, and StudentDist can't handle large dfs
 		if (DF_BDG >= 50) {
-			pValFBDG = pValF;
-			cutoffBDG = cutoffZ;
+			pValBDG = pValNormal;
+			cutoffBDG = cutoffNormal;
 		} else {
 			StudentDist tdist = new StudentDist((int) DF_BDG );
-			pValFBDG = 2*(1 - tdist.cdf( tStatEst ));
+			pValBDG = 2*(1 - tdist.cdf( tStatEst ));
 			cutoffBDG = tdist.inverseF( 1-sig/2 );
 		}
 
@@ -246,43 +114,58 @@ public class StatTest {
 		// Use normal distribution if df > 50, since they are approximately
 		// equal at that point, and FisherFDist can't handle large dfs
 		if (DF_Hillis >= 50) {
-			pValFHillis = pValF;
-			cutoffHillis = cutoffZ;
+			pValHillis = pValNormal;
+			cutoffHillis = cutoffNormal;
 		} else {
 			StudentDist tdist = new StudentDist((int) DF_Hillis );
-			pValFHillis = 2*(1 - tdist.cdf( tStatEst ));
+			pValHillis = 2*(1 - tdist.cdf( tStatEst ));
 			cutoffHillis = tdist.inverseF( 1-sig/2 );
 		}
 		
-		ciBotNormal = meanCI - Math.sqrt(totalVar) * cutoffZ; // normal approx
-		ciTopNormal = meanCI + Math.sqrt(totalVar) * cutoffZ; // normal approx
+		ciBotNormal = meanCI - Math.sqrt(totalVar) * cutoffNormal; // normal approx
+		ciTopNormal = meanCI + Math.sqrt(totalVar) * cutoffNormal; // normal approx
 		ciBotBDG = meanCI - Math.sqrt(totalVar) * cutoffBDG;
 		ciTopBDG = meanCI + Math.sqrt(totalVar) * cutoffBDG;
 		ciBotHillis = meanCI - Math.sqrt(totalVar) * cutoffHillis;
 		ciTopHillis = meanCI + Math.sqrt(totalVar) * cutoffHillis;
 
-		System.out.println("mean=" + meanCI);
-		System.out.println("tStatEst=" + tStatEst);
-		System.out.println("Normal approx:" + "  pValF=" + pValF + "  cutoffZ=" + cutoffZ + "  ci=" + ciBotNormal + ","  + ciTopNormal);
-		System.out.println("DF_BDG=" + DF_BDG 
-				+ "  pValBDG=" + pValFBDG + "  cutoffBDG=" + cutoffBDG 
-				+ "  ci=" + ciBotBDG + ","  + ciTopBDG);
-		System.out.println("DF_Hillis=" + DF_Hillis 
-				+ "  pValHillis=" + pValFHillis + "  cutoffHillis=" + cutoffHillis 
-				+ "  ci=" + ciBotHillis + ","  + ciTopHillis);
+		if(pValNormal < sig) rejectNormal = 1;
+		if(pValBDG < sig) rejectBDG = 1;
+		if(pValHillis < sig) rejectHillis = 1;
+
+		if(DBRecordStat.verbose) {
+			System.out.println("NR=" + DBRecordStat.Nreader + 
+			           ",  N0=" + DBRecordStat.Nnormal + 
+			           ",  N1=" + DBRecordStat.Ndisease);
+			System.out.println("auc0=" + aucs[0] + "  auc1=" + aucs[1]);
+			System.out.println("auc0-auc1=" + meanCI);
+			System.out.println("totalVar=" + DBRecordStat.totalVar);
+
+			System.out.println("tStatEst=" + tStatEst);
+			System.out.println("Normal approx:" + 
+					"  pValF=" + pValNormal + "  cutoffNormal=" + cutoffNormal + 
+					"  ci=" + ciBotNormal + ","  + ciTopNormal);
+			System.out.println("DF_BDG=" + DF_BDG 
+					+ "  pValBDG=" + pValBDG + "  cutoffBDG=" + cutoffBDG 
+					+ "  ci=" + ciBotBDG + ","  + ciTopBDG);
+			System.out.println("DF_Hillis=" + DF_Hillis 
+					+ "  pValHillis=" + pValHillis + "  cutoffHillis=" + cutoffHillis 
+					+ "  ci=" + ciBotHillis + ","  + ciTopHillis);
+		}
+
 	}
 
 	/**
 	 * Constructor used for calculating statistics when sizing a new trial
 	 * 
-	 * @param GUI The GUI that launched this statistical analysis
 	 * @param SizePanel is the bottom panel of the GUI
+	 * @param GUItemp The GUI that launched this stat analysis
 	 */
-	public StatTest(GUInterface GUI, SizePanel SizePanel) {
+	public StatTest(SizePanel SizePanel, GUInterface GUItemp) {
 
-		DBRecordStat = GUI.DBRecordStat;
-		DBRecordSize = GUI.DBRecordSize;
-		int selectedMod = GUI.selectedMod;
+		DBRecordStat = GUItemp.DBRecordStat;
+		DBRecordSize = GUItemp.DBRecordSize;
+		int selectedMod = DBRecordSize.selectedMod;
 		
 		effSize = SizePanel.effSize;
 		sigLevel = SizePanel.sigLevel;
@@ -293,7 +176,9 @@ public class StatTest {
 				+ " totalVar= " + DBRecordSize.totalVar 
 				+ " tStatCalc=" + tStatCalc);
 
-		DF_BDG = calcDF_BDG(DBRecordSize, selectedMod);
+		DF_BDG = calcDF_BDGbckIndep(DBRecordSize);
+		DF_BDG = calcDF_BDGbckGroup(DBRecordSize);
+		DF_BDG = calcDF_BDGms(DBRecordSize);
 		lambdaBDG = tStatCalc*tStatCalc;
 		
 		/*
@@ -370,10 +255,456 @@ public class StatTest {
 		return var;
 	}
 
+
+		
+
+	
+/**
+* In this DF estimation method ... <br>
+* The BCK components of variance are used following Satterthwaite instead of mean squares <br>
+* This follows Eq. 4 Gaylor1969_Technometrics_v4p691 <br>
+* Each contribution to the denominator of the Satterthwaite approximation <br>
+*     takes the form (contribution to the variance)^2 / (df of contribution to the variance) <br>
+* Each contribution to var_A, var_B, covAB is treated separately. <br>
+ * 
+ * @param curRecord {@link mrmc.core.DBRecord}
+ * @return Degrees of freedom
+ */
+public double calcDF_BDGbckIndep(DBRecord curRecord) {
+	
+	/*
+	 */
+	boolean verbose = curRecord.verbose;
+	int selectedMod = curRecord.selectedMod;
+	double totalVar = curRecord.totalVar;
+	double[][] tempBCK = curRecord.BCK;
+	double[][] tempBCKcoeff = curRecord.BCKcoeff;
+	
+	// According to Gaylor1969_Technometrics_v4p691, we will set DF_min
+	double DF_min = 0.0;
+
+	// Note: let c = the coefficient in front of each BCK term = one over the number of corresponding samples = 1/n
+	// Note: The degrees of freedom of each term is the number of corresponding samples minus one = n-1
+	// Note: Therefore, the degrees of freedom are 1/c - 1
+
+	
+	double DF_denom = 0.0;
+	// Analysis of modality A
+	if (selectedMod == 0){
+		// DF leading term corresponding to normal cases
+		double DFnormal  = 1.0/tempBCKcoeff[selectedMod][0] - 1.0;
+		// DF leading term corresponding to disese cases
+		double DFdisease = 1.0/tempBCKcoeff[selectedMod][1] - 1.0;
+		// DF leading term corresponding to reader cases
+		double DFreader  = 1.0/tempBCKcoeff[selectedMod][3] - 1.0;
+
+		// According to Gaylor1969_Technometrics_v4p691, we will set DF_min
+		DF_min =          DFnormal;          
+		DF_min = Math.min(DFdisease, DF_min); 
+		DF_min = Math.min(DFreader,  DF_min); 
+
+		for(int i=0; i<7; i++) {
+			double componentDF = (1.0/tempBCKcoeff[selectedMod][i] - 1.0);
+			DF_denom = DF_denom
+				+ Math.pow(tempBCKcoeff[selectedMod][i]*tempBCK[selectedMod][i],  2) / componentDF;
+		}
+	}
+	// Analysis of modality B
+	if (selectedMod == 1){
+		// DF leading term corresponding to normal cases
+		double DFnormal  = 1.0/tempBCKcoeff[selectedMod][0] - 1.0;
+		// DF leading term corresponding to disese cases
+		double DFdisease = 1.0/tempBCKcoeff[selectedMod][1] - 1.0;
+		// DF leading term corresponding to reader cases
+		double DFreader  = 1.0/tempBCKcoeff[selectedMod][3] - 1.0;
+
+		// According to Gaylor1969_Technometrics_v4p691, we will set DF_min
+		DF_min =          DFnormal;          
+		DF_min = Math.min(DFdisease, DF_min); 
+		DF_min = Math.min(DFreader,  DF_min); 
+
+		for(int i=0; i<7; i++) {
+			double componentDF = (1.0/tempBCKcoeff[selectedMod][i] - 1.0);
+			DF_denom = DF_denom
+				+ Math.pow(tempBCKcoeff[selectedMod][i]*tempBCK[selectedMod][i],  2) / componentDF;
+		}
+	}
+	// Analysis of difference in modalities
+	if(selectedMod == 3) {
+		// DF leading term corresponding to normal cases
+		double DFnormalA  = 1.0/tempBCKcoeff[0][0] - 1.0;
+		double DFnormalB  = 1.0/tempBCKcoeff[1][0] - 1.0;
+		// DF leading term corresponding to disese cases
+		double DFdiseaseA = 1.0/tempBCKcoeff[0][1] - 1.0;
+		double DFdiseaseB = 1.0/tempBCKcoeff[1][1] - 1.0;
+		// DF leading term corresponding to reader cases
+		double DFreaderA  = 1.0/tempBCKcoeff[0][3] - 1.0;
+		double DFreaderB  = 1.0/tempBCKcoeff[1][3] - 1.0;
+
+		// componentsDF[0][i] = componentsDF[1][i] when readers and cases are paired across modalities
+		// Averaging the DF's across modalities doesn't change this
+		// Averaging the DF's across modalities should provide robustness to instances of missing data
+		double DFnormal  = DFnormalA /2.0 + DFnormalB /2.0;
+		double DFdisease = DFdiseaseA/2.0 + DFdiseaseB/2.0;
+		double DFreader  = DFreaderA /2.0 + DFreaderB /2.0;
+		
+		// According to Gaylor1969_Technometrics_v4p691, we will set DF_min
+		DF_min =          DFnormal;          
+		DF_min = Math.min(DFdisease, DF_min); 
+		DF_min = Math.min(DFreader,  DF_min); 
+
+		for(int i=0; i<7; i++) {
+			
+			double componentDF_A = (1.0/tempBCKcoeff[0][i] - 1.0);
+			double componentDF_B = (1.0/tempBCKcoeff[1][i] - 1.0);
+			DF_denom = DF_denom
+				+ Math.pow(tempBCKcoeff[0][i]*tempBCK[0][i],  2) / componentDF_A
+				+ Math.pow(tempBCKcoeff[1][i]*tempBCK[1][i],  2) / componentDF_B;
+			if(tempBCKcoeff[2][i] > 0.0) {
+
+				double componentDF_AB =	(1.0/tempBCKcoeff[2][i] - 1.0);
+				DF_denom = DF_denom
+					+ Math.pow(2.0*tempBCKcoeff[2][i]*tempBCK[2][i], 2) / componentDF_AB;
+			}
+		}
+	}
+
+	DF_BDG = Math.pow(totalVar, 2) / DF_denom;
+
+	/**
+	 * TODO Investigate a minimum df
+	 */
+	// According to Gaylor1969_Technometrics_v4p691, there is a minimum DF
+	if (DF_BDG < DF_min) {
+		if(verbose) {
+			JFrame frame = new JFrame();
+			JOptionPane.showMessageDialog(frame,
+					"DF_BDG was calculated to be " + DF_BDG + "\nIt is being set to DF_min = " + DF_min +
+					"\nThis follows Gaylor1969_Technometrics_v4p691" +
+					"\nand indicates that your data is very limited", "Warning",
+					JOptionPane.ERROR_MESSAGE);
+		}
+		DF_BDG = DF_min;
+	}
+
+	// Do not return a DF_BDG that is less than 2
+	if (DF_BDG < 2) {
+		if(verbose) {
+ 			JFrame frame = new JFrame();
+ 			JOptionPane.showMessageDialog(frame,
+					"DF_BDG was calculated to be " + DF_BDG +
+					"\nDF_BDG less than 2 cannot be handled" +
+					"\nTherefore, it is being set to 2", "Warning",
+					JOptionPane.ERROR_MESSAGE);
+		}
+		DF_BDG = 2;
+	}
+
+	return DF_BDG;
+}
+
+/**
+* In this DF estimation method ... <br>
+* The BCK components of variance are used following Satterthwaite instead of mean squares <br>
+* This follows Eq. 4 Gaylor1969_Technometrics_v4p691 <br>
+* Each contribution to the denominator of the Satterthwaite approximation <br>
+*     takes the form (contribution to the variance)^2 / (df of contribution to the variance) <br>
+* When the covariance term exists, the <br>
+*     contribution to the variance = contribution to (var_A + var_B - 2*covAB) <br>
+* Otherwise the contribution to var_A and var_B are treated separately. <br>
+* 
+* @param curRecord {@link mrmc.core.DBRecord}
+* @return Degrees of freedom
+*/
+public double calcDF_BDGbckGroup(DBRecord curRecord) {
+
+boolean verbose = curRecord.verbose;
+int selectedMod = curRecord.selectedMod;
+double totalVar = curRecord.totalVar;
+double[][] tempBCK = curRecord.BCK;
+double[][] tempBCKcoeff = curRecord.BCKcoeff;
+
+// According to Gaylor1969_Technometrics_v4p691, we will set DF_min
+double DF_min = 0.0;
+
+// Note: let c = the coefficient in front of each BCK term = one over the number of corresponding samples = 1/n
+// Note: The degrees of freedom of each term is the number of corresponding samples minus one = n-1
+// Note: Therefore, the degrees of freedom are 1/c - 1
+
+
+double DF_denom = 0.0;
+// Analysis of modality A
+if (selectedMod == 0){
+	// DF leading term corresponding to normal cases
+	double DFnormal  = 1.0/tempBCKcoeff[selectedMod][0] - 1.0;
+	// DF leading term corresponding to disese cases
+	double DFdisease = 1.0/tempBCKcoeff[selectedMod][1] - 1.0;
+	// DF leading term corresponding to reader cases
+	double DFreader  = 1.0/tempBCKcoeff[selectedMod][3] - 1.0;
+
+	// According to Gaylor1969_Technometrics_v4p691, we will set DF_min
+	DF_min =          DFnormal;          
+	DF_min = Math.min(DFdisease, DF_min); 
+	DF_min = Math.min(DFreader,  DF_min); 
+
+	for(int i=0; i<7; i++) {
+		double componentDF = (1.0/tempBCKcoeff[selectedMod][i] - 1.0);
+		DF_denom = DF_denom
+			+ Math.pow(tempBCKcoeff[selectedMod][i]*tempBCK[selectedMod][i],  2) / componentDF;
+	}
+}
+// Analysis of modality B
+if (selectedMod == 1){
+	// DF leading term corresponding to normal cases
+	double DFnormal  = 1.0/tempBCKcoeff[selectedMod][0] - 1.0;
+	// DF leading term corresponding to disese cases
+	double DFdisease = 1.0/tempBCKcoeff[selectedMod][1] - 1.0;
+	// DF leading term corresponding to reader cases
+	double DFreader  = 1.0/tempBCKcoeff[selectedMod][3] - 1.0;
+
+	// According to Gaylor1969_Technometrics_v4p691, we will set DF_min
+	DF_min =          DFnormal;          
+	DF_min = Math.min(DFdisease, DF_min); 
+	DF_min = Math.min(DFreader,  DF_min); 
+
+	for(int i=0; i<7; i++) {
+		double componentDF = (1.0/tempBCKcoeff[selectedMod][i] - 1.0);
+		DF_denom = DF_denom
+			+ Math.pow(tempBCKcoeff[selectedMod][i]*tempBCK[selectedMod][i],  2) / componentDF;
+	}
+}
+// Analysis of difference in modalities
+if(selectedMod == 3) {
+	// DF leading term corresponding to normal cases
+	double DFnormalA  = 1.0/tempBCKcoeff[0][0] - 1.0;
+	double DFnormalB  = 1.0/tempBCKcoeff[1][0] - 1.0;
+	// DF leading term corresponding to disese cases
+	double DFdiseaseA = 1.0/tempBCKcoeff[0][1] - 1.0;
+	double DFdiseaseB = 1.0/tempBCKcoeff[1][1] - 1.0;
+	// DF leading term corresponding to reader cases
+	double DFreaderA  = 1.0/tempBCKcoeff[0][3] - 1.0;
+	double DFreaderB  = 1.0/tempBCKcoeff[1][3] - 1.0;
+
+	// componentsDF[0][i] = componentsDF[1][i] when readers and cases are paired across modalities
+	// Averaging the DF's across modalities doesn't change this
+	// Averaging the DF's across modalities should provide robustness to instances of missing data
+	double DFnormal  = DFnormalA /2.0 + DFnormalB /2.0;
+	double DFdisease = DFdiseaseA/2.0 + DFdiseaseB/2.0;
+	double DFreader  = DFreaderA /2.0 + DFreaderB /2.0;
+	
+	// According to Gaylor1969_Technometrics_v4p691, we will set DF_min
+	DF_min =          DFnormal;          
+	DF_min = Math.min(DFdisease, DF_min); 
+	DF_min = Math.min(DFreader,  DF_min); 
+
+	for(int i=0; i<7; i++) {
+		
+		// When readers or cases are paired, there will be a covariance component 
+		// In these cases we should use the variance components of AUC_A - AUC_B
+		// Otherwise, we should use the variance components of AUC_A and AUC_B separately
+		if(tempBCKcoeff[2][i] > 0.0) {
+			double currContributionToVariance = 
+				      + tempBCKcoeff[0][i]*tempBCK[0][i]
+				      + tempBCKcoeff[1][i]*tempBCK[1][i]
+				- 2.0 * tempBCKcoeff[2][i]*tempBCK[2][i];
+
+			// componentsDF[0][i] = componentsDF[1][i] when readers and cases are paired across modalities
+			// Averaging the DF's across modalities doesn't change this
+			// Averaging the DF's across modalities should provide robustness to instances of missing data
+			double currContributionToVarianceDF =
+					(1.0/tempBCKcoeff[0][i] - 1.0)/2.0 + (1.0/tempBCKcoeff[1][i] - 1.0)/2.0;
+
+			DF_denom = DF_denom
+				+ Math.pow(currContributionToVariance,  2) / currContributionToVarianceDF;
+		}
+		else {
+
+			DF_denom = DF_denom
+				+ Math.pow(tempBCKcoeff[0][i]*tempBCK[0][i],  2) / (1.0/tempBCKcoeff[0][i] - 1.0)
+				+ Math.pow(tempBCKcoeff[1][i]*tempBCK[1][i],  2) / (1.0/tempBCKcoeff[1][i] - 1.0);
+		}
+	}
+}
+
+DF_BDG = Math.pow(totalVar, 2) / DF_denom;
+
+/**
+ * TODO Investigate a minimum df
+ */
+//According to Gaylor1969_Technometrics_v4p691, there is a minimum DF
+if (DF_BDG < DF_min) {
+	if(verbose) {
+		JFrame frame = new JFrame();
+		JOptionPane.showMessageDialog(frame,
+				"DF_BDG was calculated to be " + DF_BDG + "\nIt is being set to DF_min = " + DF_min +
+				"\nThis follows Gaylor1969_Technometrics_v4p691" +
+				"\nand indicates that your data is very limited", "Warning",
+				JOptionPane.ERROR_MESSAGE);
+	}
+	DF_BDG = DF_min;
+}
+
+//Do not return a DF_BDG that is less than 2
+if (DF_BDG < 2) {
+	if(verbose) {
+			JFrame frame = new JFrame();
+			JOptionPane.showMessageDialog(frame,
+				"DF_BDG was calculated to be " + DF_BDG +
+				"\nDF_BDG less than 2 cannot be handled" +
+				"\nTherefore, it is being set to 2", "Warning",
+				JOptionPane.ERROR_MESSAGE);
+	}
+	DF_BDG = 2;
+}
+
+return DF_BDG;
+}
+
+/**
+* In this DF estimation method ...
+* When the readers, normal cases, disease cases are all paired across modalities
+*     I use the an approximate Satterthwaite method based on mean squares
+*     as outlined in Obuchowski2012_Acad-Radiol_v19p1508
+* When the normal cases are unpaired,
+*     I treat the modality specific mean squares separately.
+* When the disease cases are unpaired,
+*     I treat the modality specific mean squares separately.
+* When readers are unpaired,
+*     I treat the modality specific mean squares separately.
+* 
+* @param curRecord {@link mrmc.core.DBRecord}
+* @return Degrees of freedom
+*/
+public double calcDF_BDGms(DBRecord curRecord) {
+
+boolean verbose = curRecord.verbose;
+int selectedMod = curRecord.selectedMod;
+double totalVar = curRecord.totalVar;
+double[][] tempBCKbias = curRecord.BCKbias;
+double[][] tempBCKcoeff = curRecord.BCKcoeff;
+
+double DFnormalA  = 1.0/tempBCKcoeff[0][0] - 1.0;
+double DFnormalB  = 1.0/tempBCKcoeff[1][0] - 1.0;
+double DFdiseaseA = 1.0/tempBCKcoeff[0][1] - 1.0;
+double DFdiseaseB = 1.0/tempBCKcoeff[1][1] - 1.0;
+double DFreaderA  = 1.0/tempBCKcoeff[0][3] - 1.0;
+double DFreaderB  = 1.0/tempBCKcoeff[1][3] - 1.0;
+
+/*
+ * The following are mean squares times 2/N0/N1/NR
+ * The factor is not necessary since it cancels in the DF calculation
+ */
+double MSnormalA  = tempBCKbias[0][0];
+double MSnormalB  = tempBCKbias[1][0];
+double MSnormal   = tempBCKbias[0][0] + tempBCKbias[1][0] - 2.0*tempBCKbias[2][0];
+double MSdiseaseA = tempBCKbias[0][1];
+double MSdiseaseB = tempBCKbias[1][1];
+double MSdisease  = tempBCKbias[0][1] + tempBCKbias[1][1] - 2.0*tempBCKbias[2][1];
+double MSreaderA  = tempBCKbias[0][3];
+double MSreaderB  = tempBCKbias[1][3];
+double MSreader   = tempBCKbias[0][3] + tempBCKbias[1][3] - 2.0*tempBCKbias[2][3];
+
+double DF_denom = 0.0, DF_min = 0.0;
+// Analysis of modality A
+if (selectedMod == 0){
+	DF_denom =
+			+ Math.pow(MSnormalA  / DFnormalA,  2) / DFnormalA
+			+ Math.pow(MSdiseaseA / DFdiseaseA, 2) / DFdiseaseA
+			+ Math.pow(MSreaderA  / DFreaderA,  2) / DFreaderA;
+	DF_min = Math.min(DFnormalA,  DFdiseaseA);
+	DF_min = Math.min(DF_min,  DFreaderA);
+}
+// Analysis of modality B
+if (selectedMod == 1){
+	DF_denom =
+			+ Math.pow(MSnormalB  / DFnormalB,  2) / DFnormalB
+			+ Math.pow(MSdiseaseB / DFdiseaseB, 2) / DFdiseaseB
+			+ Math.pow(MSreaderB  / DFreaderB,  2) / DFreaderB;
+	DF_min = Math.min(DFnormalB,  DFdiseaseB);
+	DF_min = Math.min(DF_min,  DFreaderB);
+}
+// Analysis of difference in modalities
+if(selectedMod == 3) {
+
+	// DFnormalA = DFnormalB when normal cases are paired across modalities
+	// DFdiseaseA = DFdiseaseB when disease cases are paired across modalities
+	// DFreaderA = DFreaderB when readers are paired across modalities
+	// Their average should provide robustness to instances of missing data
+	// Averaging the DF's across modalities should provide robustness to instances of missing data
+	double DFnormal   = DFnormalA/2  + DFnormalB/2;
+	double DFdisease  = DFdiseaseA/2 + DFdiseaseB/2;
+	double DFreader   = DFreaderA/2  + DFreaderB/2;
+	DF_min = Math.min(DFnormal,  DFdisease);
+	DF_min = Math.min(DF_min,  DFreader);
+
+	// If normal cases are paired across modalities
+	if(tempBCKcoeff[2][0] > 0.0) {
+		DF_denom = DF_denom
+				+ Math.pow(MSnormal  / DFnormal,  2) / DFnormal;
+	} else {
+		DF_denom = DF_denom
+				+ Math.pow(MSnormalA / DFnormalA, 2) / DFnormalA
+				+ Math.pow(MSnormalB / DFnormalB, 2) / DFnormalB;
+	}
+	
+	// If disease cases are paired across modalities
+	if(tempBCKcoeff[2][1] > 0.0) {
+		DF_denom = DF_denom
+				+ Math.pow(MSdisease  / DFdisease,  2) / DFdisease;
+	} else {
+		DF_denom = DF_denom
+				+ Math.pow(MSdiseaseA / DFdiseaseA, 2) / DFdiseaseA
+				+ Math.pow(MSdiseaseB / DFdiseaseB, 2) / DFdiseaseB;
+	}
+	
+	// If readers are paired across modalities
+	if(tempBCKcoeff[2][3] > 0.0) {
+		DF_denom = DF_denom
+				+ Math.pow(MSreader  / DFreader,  2) / DFreader;
+	} else {
+		DF_denom = DF_denom
+				+ Math.pow(MSreaderA / DFreaderA, 2) / DFreaderA
+				+ Math.pow(MSreaderB / DFreaderB, 2) / DFreaderB;
+	}
+}
+
+DF_BDG = Math.pow(totalVar, 2) / DF_denom;
+
+/**
+ * TODO Investigate a minimum df
+ */
+// According to Gaylor1969_Technometrics_v4p691, there is a minimum DF
+if (DF_BDG < DF_min) {
+	if(verbose) {
+		JFrame frame = new JFrame();
+		JOptionPane.showMessageDialog(frame,
+				"DF_BDG was calculated to be " + DF_BDG + "\nIt is being set to DF_min = " + DF_min +
+				"\nThis follows Gaylor1969_Technometrics_v4p691" +
+				"\nand indicates that your data is very limited", "Warning",
+				JOptionPane.ERROR_MESSAGE);
+	}
+	DF_BDG = DF_min;
+}
+
+//Do not return a DF_BDG that is less than 2
+if (DF_BDG < 2) {
+	if(verbose) {
+			JFrame frame = new JFrame();
+			JOptionPane.showMessageDialog(frame,
+				"DF_BDG was calculated to be " + DF_BDG +
+				"\nDF_BDG less than 2 cannot be handled" +
+				"\nTherefore, it is being set to 2", "Warning",
+				JOptionPane.ERROR_MESSAGE);
+	}
+	DF_BDG = 2;
+}
+
+return DF_BDG;
+}
+
 	/**
 	 * Calculates the denominator degrees of freedom by Hillis 2008 method
 	 * 
-	 */
 	public double calcDF_Hillis(double[] varDBM, long l, long m, double totalVar) {
 		
 		double ddf_hillis;
@@ -410,28 +741,30 @@ public class StatTest {
 		
 		return ddf_hillis;
 	}
+	*/
 	/**
-	 * Calculates the denominator degrees of freedom by Hillis 2008 method given the curRecord
+	 * Calculates the denominator degrees of freedom by Hillis 2008 method given the curRecord, 
+	 * which can be DBRecordStat or DBRecordSize 
 	 * 
 	 */
-	public double calcDF_Hillis(DBRecord curRecord, int selectedMod) {
+	public double calcDF_Hillis(DBRecord curRecord) {
 		
-		double[] AUCsReaderAvg = curRecord.getAUCsReaderAvg();
+		double[] AUCsReaderAvg = curRecord.AUCsReaderAvg;
 		double dnm = 2.0;
-		double dnr = curRecord.getReader();
+		double dnr = curRecord.Nreader;
 		double denom;
 
-		double[][] OR = curRecord.getOR(NO_MLE);
+		double[][] OR = curRecord.OR;
 
-		if(selectedMod == 3) {
+		if(curRecord.selectedMod == 3) {
 			// Hillis2014, pg 332
 			denom = curRecord.ms_tr + Math.max(dnr*(OR[3][3]-OR[3][4]),0);
-
-			tStatEst = Math.sqrt(curRecord.ms_t/denom);
-			// These expressions are equivalent
-			tStatEst = (AUCsReaderAvg[0] - AUCsReaderAvg[1])/Math.sqrt(curRecord.totalVar);
-
 			DF_Hillis = (dnr-1.0)*(dnm-1.0)*denom*denom/curRecord.ms_tr/curRecord.ms_tr;
+
+			// tStatEst = Math.pow(AUCsReaderAvg[0] - AUCsReaderAvg[1], 2)/curRecord.totalVar;
+			// tStatEst = Math.sqrt(tStatEst);
+			// The expression above is equivalent to the expression below
+			// tStatEst = Math.sqrt(curRecord.ms_t/denom);
 
 			// Here is another equivalent expression for the total variance
 			// The ones are from the contrast between modalities 1*AUC1 + (-1)*AUC2
@@ -441,17 +774,36 @@ public class StatTest {
 			// Hillis2014, pg 333
 			
 			double ms_r=0.0;
-			if(selectedMod == 0) ms_r = curRecord.ms_rA;
-			if(selectedMod == 1) ms_r = curRecord.ms_rB;
+			if(curRecord.selectedMod == 0) ms_r = curRecord.ms_rA;
+			if(curRecord.selectedMod == 1) ms_r = curRecord.ms_rB;
 					
-			denom = ms_r + Math.max(dnr*OR[selectedMod][3],0);
-			tStatEst = (AUCsReaderAvg[selectedMod]-0.5)/Math.sqrt(curRecord.totalVar);
-			
+			denom = ms_r + Math.max(dnr*OR[curRecord.selectedMod][3],0);
 			DF_Hillis = (dnr-1.0)*denom*denom/ms_r/ms_r;
 			
-			// Here is another equivalent expression for the total variance
+			// tStatEst = (AUCsReaderAvg[selectedMod]-0.5)/Math.sqrt(curRecord.totalVar);
+			
+			// Below is an equivalent expression for the total variance
 			// curRecord.totalVar = denom/dnr;
 
+		}
+
+		if (DF_Hillis < 2) {
+			JFrame frame = new JFrame();
+			JOptionPane.showMessageDialog(frame,
+					"DF_Hillis was calculated to be " + DF_Hillis + "\nIt is being set to 2", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			DF_Hillis = 2.0;
+		}
+		if( Double.isInfinite(DF_Hillis) ) {
+			JFrame frame = new JFrame();
+			JOptionPane.showMessageDialog(frame,
+					"DF_Hillis was calculated to be infinite." + 
+					"\nIt is likely due to ms_tr = 0.0 (difference in modalities analysis)" +
+					"\n    or ms_r = 0.0 (single modality analysis)." + 
+					"\nDF_Hillis is being set to 50." +
+					"\nPlease check your data.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			DF_Hillis = 50.0;			
 		}
 
 		return DF_Hillis;
@@ -535,7 +887,6 @@ public class StatTest {
 		return result;
 	}
 
-	// TODO verify correctness
 	/**
 	 * Calculates degrees of freedom by BDG <br>
 	 * ----Obuchowski2012_Acad-Radiol_v19p1508
@@ -546,7 +897,6 @@ public class StatTest {
 	 * @param Ndisease Number of disease cases
 	 * @param totalVar Total variance of components
 	 * @return Degrees of freedom
-	 */
 	public double calcDF_BDG(double[][] BCK, long Nreader, long Nnormal, long Ndisease,
 			double totalVar) {
 		
@@ -583,86 +933,6 @@ public class StatTest {
 
 		return df;
 	}
+	*/
 	
-	// TODO verify correctness
-	/**
-	 * Calculates degrees of freedom by BDG <br>
-	 * ----Obuchowski2012_Acad-Radiol_v19p1508
-	 * 
-	 * @param selectedMod 0 indicates modality 1, 1 indicates modality 2, 3 indicates both
-	 * @return Degrees of freedom
-	 */
-	public double calcDF_BDG(DBRecord curRecord, int selectedMod) {
-		
-		double[][] BCK = curRecord.getBCK(NO_MLE); 
-		long Nreader=curRecord.getReader(), Nnormal=curRecord.getNormal(), Ndisease=curRecord.getDisease();
-		
-		double s2b0 = 0.0, s2b1 = 0.0, s2br = 0.0;
-
-		if(selectedMod == 3) {
-			s2b0 = s2b0 + Nreader*Ndisease*(BCK[0][0] + BCK[1][0] - 2*BCK[2][0]);
-			s2b0 = s2b0 +         Ndisease*(BCK[0][4] + BCK[1][4] - 2*BCK[2][4]);
-			s2b0 = s2b0 + Nreader*         (BCK[0][2] + BCK[1][2] - 2*BCK[2][2]);
-			s2b0 = s2b0 +                  (BCK[0][6] + BCK[1][6] - 2*BCK[2][6]);
-			s2b0 = s2b0  /Nreader/Nnormal/Ndisease;
-			
-			s2b1 = s2b1 + Nreader*Nnormal*(BCK[0][1] + BCK[1][1] - (2 * BCK[2][1]));
-			s2b1 = s2b1 +         Nnormal*(BCK[0][5] + BCK[1][5] - (2 * BCK[2][5]));
-			s2b1 = s2b1 + Nreader*        (BCK[0][2] + BCK[1][2] - (2 * BCK[2][2]));
-			s2b1 = s2b1 +                 (BCK[0][6] + BCK[1][6] - (2 * BCK[2][6]));
-			s2b1 = s2b1  /Nreader/Nnormal/Ndisease;
-	
-			s2br = s2br + Nnormal*Ndisease*(BCK[0][3] + BCK[1][3] - (2 * BCK[2][3]));
-			s2br = s2br +         Ndisease*(BCK[0][4] + BCK[1][4] - (2 * BCK[2][4]));
-			s2br = s2br + Nnormal*         (BCK[0][5] + BCK[1][5] - (2 * BCK[2][5]));
-			s2br = s2br +                  (BCK[0][6] + BCK[1][6] - (2 * BCK[2][6]));
-			s2br = s2br  /Nreader/Nnormal/Ndisease;
-	
-		}
-		else {
-			s2b0 = s2b0 + Nreader*Ndisease*(BCK[selectedMod][0]);
-			s2b0 = s2b0 +         Ndisease*(BCK[selectedMod][4]);
-			s2b0 = s2b0 + Nreader*         (BCK[selectedMod][2]);
-			s2b0 = s2b0 +                  (BCK[selectedMod][6]);
-			s2b0 = s2b0  /Nreader/Nnormal/Ndisease;
-			
-			s2b1 = s2b1 + Nreader*Nnormal*(BCK[selectedMod][1]);
-			s2b1 = s2b1 +         Nnormal*(BCK[selectedMod][5]);
-			s2b1 = s2b1 + Nreader*        (BCK[selectedMod][2]);
-			s2b1 = s2b1 +                 (BCK[selectedMod][6]);
-			s2b1 = s2b1  /Nreader/Nnormal/Ndisease;
-	
-			s2br = s2br + Nnormal*Ndisease*(BCK[selectedMod][3]);
-			s2br = s2br +         Ndisease*(BCK[selectedMod][4]);
-			s2br = s2br + Nnormal*         (BCK[selectedMod][5]);
-			s2br = s2br +                  (BCK[selectedMod][6]);
-			s2br = s2br  /Nreader/Nnormal/Ndisease;
-	
-		}
-		
-		double balanceR = (Math.pow(s2br, 2) / (Nreader - 1));
-		double balance0 = (Math.pow(s2b0, 2) / (Nnormal - 1));
-		double balance1 = (Math.pow(s2b1, 2) / (Ndisease - 1));
-		DF_BDG = Math.pow(curRecord.totalVar, 2) / (balanceR + balance0 + balance1);
-
-		return DF_BDG;
-	}
-	/*
-	 * public double FTest2011(double[] OR,int r, int c, int rnew, int
-	 * cnew,double sig, double eff ) { double varTR =0 ; double H23=0;
-	 * if(OR[3]-OR[4] > 0) H23=OR[3]-OR[4]; varTR=OR[2]+OR[1]-OR[5]+H23; double
-	 * ratio = (double)c/(double)cnew;
-	 * 
-	 * double delDen =varTR+ratio*(OR[5]-OR[2]+(r-1.0)*H23); double
-	 * Delta=r/2.0*effSize*effSize/delDen; // System.out.println(varTR);
-	 * 
-	 * double num=delDen*delDen; double den=varTR+ratio*(OR[5]-OR[2]-H23);
-	 * double df2=num/(den*den/(r-1)); // System.out.println("df2="+df2+"c="+c);
-	 * FisherFDist fdist = new FisherFDist(1,(int)df2); double
-	 * Fval=fdist.inverseF(1-sigLevel); double
-	 * cdftemp=cdfNonCentralF(1,(int)df2, Delta, Fval); powerF2011=1-cdftemp;
-	 * DOF2011=df2; return powerF2011;
-	 * 
-	 * }
-	 */
 }

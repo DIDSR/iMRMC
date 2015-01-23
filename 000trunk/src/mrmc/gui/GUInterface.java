@@ -65,7 +65,7 @@ import org.jfree.ui.RefineryUtilities;
  * 
 Workflow possibilities are determined by {@link #selectedInput} <br>
 1. If selectedInput == "IMRMC" then reader study data is from .imrmc file: <br>
-Click the Browse button ({@link RawStudyCard.brwsButtonListener brwsButtonListener}) 
+Click the Browse button ({@link InputFileCard.brwsButtonListener brwsButtonListener}) 
 <ul>
   <li> Resets GUI. 
   <li> Browses for reader study .imrmc file with file chooser.
@@ -74,7 +74,7 @@ Click the Browse button ({@link RawStudyCard.brwsButtonListener brwsButtonListen
   ---- Object contains core data structures {@link mrmc.core.InputFile#keyedData keyedData}
           and {@link mrmc.core.InputFile#truthVals truthVals}
 </ul>
-Click the Variance Analysis Button ({@link RawStudyCard.varAnalysisListener})
+Click the Variance Analysis Button ({@link InputFileCard.varAnalysisListener})
  * 
  * <br>
  * 
@@ -90,18 +90,14 @@ public class GUInterface {
 	private MrmcDB fdaDB;
 
 //	private DBCard DBC; // Deleted during commit 1047 
-	private RawStudyCard RSC;
+	public InputFileCard InputFileCard;
 	private ManualCard MC;
 
-	/*
-	 * The SizePanel controls and shows the sizing analysis at the bottom of the GUI
-	 */
-	SizePanel SizePanel1;	
-	/*
-	 * InputFile1 object holds all the unprocessed info related to a reader study
+	/**
+	 * InputFile1 {@link mrmc.core.InputFile}
 	 */
 	InputFile InputFile1 = new InputFile();
-	/*
+	/**
 	 * DBrecord object holds all the processed info related to a reader study
 	 */
 	public DBRecord DBRecordStat = new DBRecord(this);
@@ -124,7 +120,7 @@ public class GUInterface {
 	 * ----<code>DescInputModeManual</code> = "Manual input" <br>
  	 * 
  	 */
-	private String selectedInput = DescInputModeImrmc;
+	String selectedInput = DescInputModeImrmc;
 
 	/**
 	 * the panel that uses CardLayout. There are three cards for three different input.
@@ -135,89 +131,22 @@ public class GUInterface {
 	 * the panel that shares different manual input components
 	 */
 	JPanel manual3;
-	final static int USE_MLE = 1;
-	final static int NO_MLE = 0;
-	final static String NO_MOD = "NO_MOD";
+	/**
+	 * {@link mrmc.gui.SizePanel}
+	 */
+	StatPanel StatPanel1;
+	/**
+	 * {@link mrmc.gui.StatPanel}
+	 */
+	SizePanel SizePanel1;
+
+	public final static String NO_MOD = "NO_MOD";
 	private int selectedDB = 0;
 	private int selectedSummary = 0;
-	private boolean hasNegative = false;
-	public int FlagMLE = 0;
-	private int SummaryFlagMLE = 0;
-
-	JTextField JTextFilename;
-	/*
-	 * table1 corresponds to the variance analysis, table2 corresponds to the sizing analysis
+	/** TODO
+	 * Do we need this flag here?
 	 */
-	private JTable BDGtable1, BDGtable2, 
-					BCKtable1, BCKtable2,
-					DBMtable1, DBMtable2,
-					ORtable1, ORtable2,
-					MStable1, MStable2;
-
-	JTabbedPane tabbedPane1;
-	private JTabbedPane tabbedPane2;
-	private JLabel BDGvar1, BDGvar2;
-	private JLabel BCKvar1, BCKvar2;
-	private JLabel DBMvar1, DBMvar2;
-	private JLabel ORvar1, ORvar2;
-	private JLabel MSvar1, MSvar2;
-
-	/**
-	 * Indicates which of the {@link mrmc.gui.RawStudyCard} pull down menus is active <br>
-	 * ----0 neither <br>
-	 * ----1 first, named in string <code>currmodA</code> <br>
-	 * ----2 second, named in string <code>currmodB</code> <br>
-	 * ----3 both, named in strings <code>currmodA, currmodB</code> <br>
-	 */
-	public int selectedMod = 0;
-	/** 
-	 * Strings holding the names of the modalities to be analyzed, read in with {@link mrmc.core.InputFile}
-	 */
-	public String currModA, currModB;
-
-	/*
-	 * These JLabels make up the StatPanel
-	 */
-	private JLabel 
-		StatJLabel = new JLabel("Statistical Analysis: "),
-		StatJLabelAUC = new JLabel(),
-		StatJLabelTotalVar = new JLabel(), 
-		StatJLabelSqrtTotalVar = new JLabel(), 
-		StatJLabelTstat = new JLabel(),
-		StatJLabelDFNormal = new JLabel(),
-		StatJLabelPValNormal = new JLabel(),
-		StatJLabelCINormal = new JLabel(),
-		StatJLabelDFBDG = new JLabel(),
-		StatJLabelPValBDG = new JLabel(),
-		StatJLabelCIBDG = new JLabel(),
-		StatJLabelDFHillis = new JLabel(),
-		StatJLabelPValHillis = new JLabel(),
-		StatJLabelCIHillis = new JLabel();
-	
-	JPanel SizePanelRow1 = new JPanel(new FlowLayout()),
-			SizePanelRow2 = new JPanel(new FlowLayout()),
-			SizePanelRow3 = new JPanel(new FlowLayout()),
-			SizePanelRow4 = new JPanel(new FlowLayout()),
-			SizePanelRow5 = new JPanel(new FlowLayout()),
-			SizePanelRow6 = new JPanel(new FlowLayout());
-
-	/*
-	 * These JLabels make up the SizePanel
-	 */
-	JLabel 
-		SizeJLabel = new JLabel("Sizing Analysis: "), 
-		SizeJLabelSqrtVar = new JLabel(),
-		SizeJLabelTStat = new JLabel(),
-		SizeJLabelPowerNormal = new JLabel(),
-		SizeJLabelCINormal = new JLabel(),
-		SizeJLabelDFBDG = new JLabel(),
-		SizeJLabelLambdaBDG = new JLabel(),
-		SizeJLabelPowerBDG = new JLabel(),
-		SizeJLabelCIBDG = new JLabel(),
-		SizeJLabelDFHillis = new JLabel(),
-		SizeJLabelLambdaHillis = new JLabel(),
-		SizeJLabelPowerHillis = new JLabel(),
-		SizeJLabelCIHillis = new JLabel();
+	public boolean hasNegative = false;
 
 	DecimalFormat twoDec = new DecimalFormat("0.00");
 	DecimalFormat threeDec = new DecimalFormat("0.000");
@@ -229,104 +158,14 @@ public class GUInterface {
 		 */
 		public void resetGUI() {
 			
-			InputFile1 = null;
-			InputFile1 = new InputFile();
-			JTextFilename.setText("");
-			resetStatPanel();
-			resetTable1();
-			resetTable2();
-			resetSizePanel();
+			InputFile1.resetInputFile();
+			InputFileCard.resetInputFileCard();
+
+			StatPanel1.resetStatPanel();
+			SizePanel1.resetSizePanel();
 	
-			// Selections
-			selectedMod = 0;
-// TODO		DBC.setSelectedMod(selectedMod);
-			currModA = NO_MOD;
-			currModB = NO_MOD;
-			RSC.resetModPanel();
-			MC.reset();
-			
-			setFlagMLE(NO_MLE);
-// TODO		DBC.setFlagMLE(NO_MLE);
-			RSC.setFlagMLE(NO_MLE);
-			setTabTitlesBiased(1, false);
-			setTabTitlesBiased(2, false);
-			enableTabs();
+			StatPanel1.enableTabs();
 
-		}
-
-	/**
-	 * Clears all input fields and statistics labels
-	 */
-	void resetSizePanel() {
-		
-		SizeJLabelSqrtVar.setText("SqrtVar=");
-		SizeJLabelTStat.setText(",  Test Stat=");
-		
-		SizeJLabelPowerNormal.setText("Normal Approx:  df= \u221e,  Power=");
-//		SizeJLabelCINormal.setText("Conf. Int.=");
-
-		SizeJLabelDFBDG.setText("          BDG:  df=");
-		SizeJLabelLambdaBDG.setText(",  Lambda=");
-		SizeJLabelPowerBDG.setText(",  Power=");
-//		SizeJLabelCIBDG.setText("Conf. Int.=");
-
-		SizeJLabelDFHillis.setText("  Hillis 2011:  df=");
-		SizeJLabelLambdaHillis.setText(",  Lambda=");
-		SizeJLabelPowerHillis.setText(",  Power=");
-//		SizeJLabelCIHillis.setText("Conf. Int.=");
-	
-	}
-	
-	/**
-	 * Clears all input fields and statistics labels
-	 */
-	void resetStatPanel() {
-		
-		StatJLabelAUC.setText("AUC=");
-		StatJLabelTstat.setText("Test Stat=");
-		StatJLabelSqrtTotalVar.setText("sqrt(total var)=");
-		DBRecordStat.totalVar = -1.0;
-
-		StatJLabelDFNormal.setText("df(Normal Approx)= \u221e");
-		StatJLabelDFBDG.setText   ("          df(BDG)= ");
-		StatJLabelDFHillis.setText("  df(Hillis 2008)= ");
-
-		StatJLabelPValNormal.setText("p-Value=");
-		StatJLabelPValBDG.setText   ("p-Value=");
-		StatJLabelPValHillis.setText("p-Value=");
-
-		StatJLabelCINormal.setText("Conf. Int.=");
-		StatJLabelCIBDG.setText   ("Conf. Int.=");
-		StatJLabelCIHillis.setText("Conf. Int.=");
-
-	}
-
-	/**
-		 * Generates a table with the specified row and column names
-		 * 
-		 * @param table Table to make
-		 * @param colNames List of column names
-		 * @param rowNames List of row names
-		 * @return Initialized table
-		 */
-		public JScrollPane genTable(JTable table, String[] colNames,
-				String[] rowNames) {
-			table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			for (int i = 0; i < colNames.length; i++)
-				table.getColumnModel().getColumn(i).setHeaderValue(colNames[i]);
-	
-	//		JList rowHeader = new JList(rowNames);
-			JList<String> rowHeader = new JList<String>(rowNames);
-			rowHeader.setFixedCellWidth(80);
-	
-			rowHeader.setFixedCellHeight(table.getRowHeight());
-	//		rowHeader.setCellRenderer(new RowHeaderRenderer(table));
-			rowHeader.setCellRenderer(new RowHeaderRenderer(table));
-	
-			JScrollPane scroll = new JScrollPane(table);
-			scroll.setRowHeaderView(rowHeader);
-			return scroll;
-	
 		}
 
 	/**
@@ -365,15 +204,6 @@ public class GUInterface {
 
 
 	/**
-	 * Gets whether analyzing modality 0, 1 or difference
-	 * 
-	 * @return Which modalities are being analyzed
-	 */
-	public int getSelectedMod() {
-		return selectedMod;
-	}
-
-	/**
 	 * Gets whether single modality or difference between modalities is being
 	 * analyzed when using manually input components
 	 * 
@@ -381,15 +211,6 @@ public class GUInterface {
 	 */
 	public int getSingleOrDiff() {
 		return MC.getSingleOrDiff();
-	}
-
-	/**
-	 * Gets whether MLE (bias) is being used for variance components
-	 * 
-	 * @return Whether MLE is used
-	 */
-	public int getFlagMLE() {
-		return FlagMLE;
 	}
 
 	/**
@@ -401,773 +222,11 @@ public class GUInterface {
 		return MC.getSelectedManualComp();
 	}
 
-	/**
-	 * Gets the AUC in string format from the AUC label
-	 * 
-	 * @return AUC text
-	 */
-	public String getAUCoutput() {
-		return StatJLabelAUC.getText();
-	}
-
-	/**
-	 * Gets statistics for variance analysis in String format
-	 * 
-	 * @return String of statistics for variance analysis
-	 */
-	public String getStatResults() {
-		String results = StatJLabelTstat.getText();
-		results = results + "\t" + StatJLabelSqrtTotalVar.getText();
-		results = results + "\t" + StatJLabelPValNormal.getText();
-		results = results + "\t" + StatJLabelCINormal.getText();
-		results = results + "\n";
-		results = results + "\t" + StatJLabelDFBDG.getText();
-		results = results + "\t" + StatJLabelPValBDG.getText();
-		results = results + "\t" + StatJLabelCIBDG.getText();
-		results = results + "\n";
-		results = results + "\t" + StatJLabelDFHillis.getText();
-		results = results + "\t" + StatJLabelPValHillis.getText();
-		results = results + "\t" + StatJLabelCIHillis.getText();
-
-		return results;
-	}
-
-	/**
-	 * Gets statistics for new trial sizing in String format
-	 * 
-	 * @return String of statistics for new trial sizing
-	 */
-	public String getSizeResults() {
-		String results = SizeJLabelSqrtVar.getText();
-		results = results + "\t" + SizeJLabelTStat.getText();
-		results = results + "\t" + SizeJLabelPowerNormal.getText();
-		results = results + "\t" + SizeJLabelCINormal.getText();
-		results = results + "\n";
-		results = results + "\t" + SizeJLabelDFBDG.getText();
-		results = results + "\t" + SizeJLabelPowerBDG.getText();
-		results = results + "\t" + SizeJLabelCIBDG.getText();
-		results = results + "\n";
-		results = results + "\t" + SizeJLabelDFHillis.getText();
-		results = results + "\t" + SizeJLabelPowerHillis.getText();
-		results = results + "\t" + SizeJLabelCIHillis.getText();
-
-		return results;
-	}
-
-	/**
-	 * Sets whether bias is being used in variance analysis
-	 * 
-	 * @param MLEuse Whether to use bias or not
-	 */
-	public void setFlagMLE(int MLEuse) {
-		FlagMLE = MLEuse;
-	}
-
-	/**
-	 * Sets the trial sizing panel inputs with default values based on the
-	 * current record
-	 */
-	public void setSizePanel() {
-
-		StatTest sizingStat = new StatTest(thisGUI, SizePanel1);
-
-		String output, output2;
-		
-		output = "SqrtVar=" 
-				+ threeDecE.format(Math.sqrt(DBRecordSize.totalVar));
-		SizeJLabelSqrtVar.setText(output);
-		output = ",  Stat= "
-				+ threeDecE.format(sizingStat.tStatCalc);
-		SizeJLabelTStat.setText(output);
-
-		output = "Normal Approx:  df= \u221e ,  Power= "
-				+ twoDec.format(sizingStat.powerNormal);
-		SizeJLabelPowerNormal.setText(output);
-		output = ",  Conf. Int.=("
-				+ fourDec.format(sizingStat.getCI()[0])
-				+ ", "
-				+ fourDec.format(sizingStat.getCI()[1])
-				+ ")";
-//		SizeJLabelCINormal.setText(output);
-
-		output = "          BDG:  df= "
-				+ twoDec.format(sizingStat.DF_BDG);
-		SizeJLabelDFBDG.setText(output);
-		output = ",  Lambda= "
-				+ twoDec.format(sizingStat.lambdaBDG);
-		SizeJLabelLambdaBDG.setText(output);
-		output = ",  Power= "
-				+ twoDec.format(sizingStat.powerBDG);
-		SizeJLabelPowerBDG.setText(output);
-		output = ",  Conf. Int.=("
-				+ fourDec.format(sizingStat.getCIDF_BDG()[0])
-				+ ", "
-				+ fourDec.format(sizingStat.getCIDF_BDG()[1])
-				+ ")";
-//		SizeJLabelCIBDG.setText(output);
-
-		/*
-		 *  Hillis DoF is not applicable for non-fully crossed studies
-		 */
-		if (SizePanel1.numSplitPlots == 1 
-				&& SizePanel1.pairedReadersFlag == 1
-				&& SizePanel1.pairedNormalsFlag == 1
-				&& SizePanel1.pairedDiseasedFlag ==1) {
-			
-			output = "   Hillis 2011:  df= "
-					+ twoDec.format(sizingStat.DF_Hillis);
-			SizeJLabelDFHillis.setText(output);
-			output = ",  Lambda= "
-					+ twoDec.format(sizingStat.lambdaHillis);
-			SizeJLabelLambdaHillis.setText(output);
-			output = ",  Power= "
-					+ twoDec.format(sizingStat.powerHillis);
-			SizeJLabelPowerHillis.setText(output);
-			output = ",  Conf. Int.=("
-					+ fourDec.format(sizingStat.getCIDF_Hillis()[0])
-					+ ", "
-					+ fourDec.format(sizingStat.getCIDF_Hillis()[1])
-					+ ")";
-//			SizeJLabelCIHillis.setText(output);
-		} else {
-			SizeJLabelDFHillis.setText("  Hillis 2011:  df=");
-			SizeJLabelLambdaHillis.setText(",  Lambda=");
-			SizeJLabelPowerHillis.setText(",  Power=");
-//			SizeJLabelCIHillis.setText("Conf. Int.=");
-		}
-
-		if (FlagMLE == USE_MLE) {
-			setTabTitlesBiased(2, true);
-		} else if (FlagMLE == NO_MLE) {
-			setTabTitlesBiased(2, false);
-		}
-
-	}
-
-	/**
-	 * Sets the statistics labels for the variance analysis table based on the
-	 * current record that has been analyzed <br>
-	 * 
-	 * This method is called from the RawStudyCard, the ManualCard, and the DBCard
-	 */
-	public void setStatPanel() {
-		
-		String displayAUC = DBRecordStat.getAUCsReaderAvg(selectedMod);
-		String displaySizes = DBRecordStat.getSizes();
-		StatJLabelAUC.setText(displayAUC + displaySizes);
-		String displaySqrtTotalVar = threeDecE.format(Math.sqrt(DBRecordStat.totalVar));
-		StatJLabelSqrtTotalVar.setText("   sqrt(total var)=" + displaySqrtTotalVar);
-
-		double eff;
-		double[][] BDGtmp = DBRecordStat.getBDG(FlagMLE);
-		double sum = 0;
-		for (int i = 1; i < 8; i++)
-			sum += (BDGtmp[0][i] - BDGtmp[1][i]);
-		if (selectedMod == 1 || selectedMod == 0)
-			eff = DBRecordStat.getAUCinNumber(selectedMod) - 0.5;
-		else
-			eff = Math.abs(DBRecordStat.getAUCinNumber(0)
-					- DBRecordStat.getAUCinNumber(1));
-
-		// two modalities are different
-		if (sum != 0 || sum == 0 && selectedMod != 3) {
-			StatTest varAnalStat = new StatTest(DBRecordStat, selectedMod);
-			// tStat
-			String output = threeDecE.format(varAnalStat.getTStatEst());
-			StatJLabelTstat.setText("  Stat= " + output);
-			output = fourDec.format(varAnalStat.getpValF());
-			StatJLabelPValNormal.setText("  p-Value= " + output);
-			output = fourDec.format(varAnalStat.getCI()[0]);
-			String output2 = fourDec.format(varAnalStat.getCI()[1]);
-			StatJLabelCINormal.setText("Conf. Int.=(" + output + ", " + output2 + ")");
-			output = twoDec.format(varAnalStat.getDF_BDG());
-			StatJLabelDFBDG.setText("  df(BDG) = " + output);
-			output = fourDec.format(varAnalStat.getpValFBDG());
-			StatJLabelPValBDG.setText("  p-Value= " + output);
-			output = fourDec.format(varAnalStat.getCIDF_BDG()[0]);
-			output2 = fourDec.format(varAnalStat.getCIDF_BDG()[1]);
-			StatJLabelCIBDG.setText("Conf. Int.=(" + output + ", " + output2
-					+ ")");
-
-			if (DBRecordStat.getFullyCrossedStatus()) {
-				output = twoDec.format(varAnalStat.getDF_Hillis());
-				StatJLabelDFHillis.setText("  df(Hillis 2008)= " + output);
-				output = fourDec.format(varAnalStat.getpValFHillis());
-				StatJLabelPValHillis.setText("  p-Value= " + output);
-				output = fourDec.format(varAnalStat.getCIDF_Hillis()[0]);
-				output2 = fourDec.format(varAnalStat.getCIDF_Hillis()[1]);
-				StatJLabelCIHillis.setText("Conf. Int.=(" + output + ", "
-						+ output2 + ")");
-			} else {
-				StatJLabelDFHillis.setText("");
-				StatJLabelPValHillis.setText("");
-				StatJLabelCIHillis.setText("");
-			}
-
-		} else {
-			resetStatPanel();
-
-		}
-	}
-
-	/**
-	 * Gets variance analysis information from current study record, populates
-	 * variance analysis table, sets statistics labels
-	 */
-	public void setTable1() {
-
-		if (selectedInput == DescInputModeImrmc && InputFile1.filename.equals(null)) {
-			return;
-		}
-	
-		double[][] BDGdata1 = DBRecord.getBDGTab(selectedMod,
-				DBRecordStat.getBDG(FlagMLE), DBRecordStat.getBDGcoeff());
-		double[][] BCKdata1 = DBRecord.getBCKTab(selectedMod,
-				DBRecordStat.getBCK(FlagMLE), DBRecordStat.getBCKcoeff());
-		double[][] DBMdata1 = DBRecord.getDBMTab(selectedMod,
-				DBRecordStat.getDBM(FlagMLE), DBRecordStat.getDBMcoeff());
-		double[][] ORdata1 = DBRecord.getORTab(selectedMod,
-				DBRecordStat.getOR(FlagMLE), DBRecordStat.getORcoeff());
-		double[][] MSdata1 = DBRecord.getMSTab(selectedMod,
-				DBRecordStat.getMS(FlagMLE), DBRecordStat.getMScoeff());
-		double BDGv = Matrix.total(BDGdata1[6]);
-		double BCKv = Matrix.total(BCKdata1[6]);
-		double DBMv = Matrix.total(DBMdata1[2]);
-		double ORv = Matrix.total(ORdata1[2]);
-		double MSv = Matrix.total(MSdata1[2]);
-	
-		double[][][] allTableData = new double[][][] { BDGdata1, BCKdata1,
-				DBMdata1, ORdata1, MSdata1 };
-	
-		fillTable1(allTableData);
-		resetTable2();
-		
-		String output;
-		
-		output = threeDecE.format(BDGv);
-		BDGvar1.setText("total var=" + output);
-		output = threeDecE.format(BCKv);
-		BCKvar1.setText("total var=" + output);
-		output = threeDecE.format(DBMv);
-		DBMvar1.setText("total var=" + output);
-		output = threeDecE.format(ORv);
-		ORvar1.setText("total var=" + output);
-		output = threeDecE.format(MSv);
-		MSvar1.setText("total var=" + output);
-	
-		if (FlagMLE == USE_MLE) {
-			setTabTitlesBiased(1, true);
-		} else if (FlagMLE == NO_MLE) {
-			setTabTitlesBiased(1, false);
-		}
-	}
-
-	/**
-	 * Empties out all values in the variance analysis table
-	 */
-	void resetTable1() {
-		
-		BDGvar1.setText("total var=");
-		BDGvar2.setText("total var=");
-		BCKvar1.setText("total var=");
-		BCKvar2.setText("total var=");
-		DBMvar1.setText("total var=");
-		DBMvar2.setText("total var=");
-		ORvar1.setText("total var=");
-		ORvar2.setText("total var=");
-		MSvar1.setText("total var=");
-		StatJLabelTotalVar.setText("total var=");
-
-		for (int i = 0; i < BDGtable1.getRowCount(); i++) {
-			for (int j = 0; j < 8; j++) {
-				BDGtable1.setValueAt(0, i, j);
-				BDGtable1.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-			}
-			for (int j = 0; j < 7; j++) {
-				BCKtable1.setValueAt(0, i, j);
-				BCKtable1.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-			}
-		}
-		for (int i = 0; i < MStable1.getRowCount(); i++) {
-			for (int j = 0; j < 6; j++) {
-				MStable1.setValueAt(0, i, j);
-				MStable1.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-			}
-			for (int j = 0; j < 6; j++) {
-				DBMtable1.setValueAt(0, i, j);
-				ORtable1.setValueAt(0, i, j);
-				DBMtable1.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-				ORtable1.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-			}
-		}
-	}
-
-	/**
-	 * Populates variance analysis table with variance components values
-	 * 
-	 * @param allTableData Contains components, coefficients, totals for all
-	 *            decompositions of components of variance
-	 */
-	private void fillTable1(double[][][] allTableData) {
-		for (int i = 0; i < 7; i++) {
-			for (int j = 0; j < 8; j++) {
-				BDGtable1.setValueAt(allTableData[0][i][j], i, j);
-				BDGtable1.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-			}
-			for (int j = 0; j < 7; j++) {
-				BCKtable1.setValueAt(allTableData[1][i][j], i, j);
-				BCKtable1.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-			}
-		}
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 6; j++) {
-				DBMtable1.setValueAt(allTableData[2][i][j], i, j);
-				ORtable1.setValueAt(allTableData[3][i][j], i, j);
-				MStable1.setValueAt(allTableData[4][i][j], i, j);
-				DBMtable1.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-				ORtable1.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-				MStable1.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-				// if study is not fully crossed, DBM, OR, MS calculation is
-				// incorrect, tabs grayed out
-			}
-		}
-	}
-
-	/**
-	 * Sets labels of tabs on variance analysis/trial sizing tables to indicate
-	 * whether MLE (bias) is being used
-	 * 
-	 * @param paneNum Indicates whether variance analysis or trial sizing tables
-	 *            should be altered
-	 * @param MLE Whether or not MLE is being used
-	 */
-	private void setTabTitlesBiased(int paneNum, boolean MLE) {
-		if (paneNum == 1) {
-			if (MLE) {
-				tabbedPane1.setTitleAt(0, "BDG**");
-				tabbedPane1.setTitleAt(1, "BCK**");
-				tabbedPane1.setTitleAt(2, "DBM**");
-				tabbedPane1.setTitleAt(3, "OR**");
-				tabbedPane1.setTitleAt(4, "MS**");
-			} else {
-				tabbedPane1.setTitleAt(0, "BDG");
-				tabbedPane1.setTitleAt(1, "BCK");
-				tabbedPane1.setTitleAt(2, "DBM");
-				tabbedPane1.setTitleAt(3, "OR");
-				tabbedPane1.setTitleAt(4, "MS");
-			}
-		} else if (paneNum == 2) {
-			if (MLE) {
-				tabbedPane2.setTitleAt(0, "BDG**");
-				tabbedPane2.setTitleAt(1, "BCK**");
-				tabbedPane2.setTitleAt(2, "DBM**");
-				tabbedPane2.setTitleAt(3, "OR**");
-				tabbedPane2.setTitleAt(4, "MS**");
-			} else {
-				tabbedPane2.setTitleAt(0, "BDG");
-				tabbedPane2.setTitleAt(1, "BCK");
-				tabbedPane2.setTitleAt(2, "DBM");
-				tabbedPane2.setTitleAt(3, "OR");
-				tabbedPane2.setTitleAt(4, "MS");
-			}
-		}
-	}
-
-
-
-	/**
-	 * Initializes the BDG tab
-	 * 
-	 * @param whichTable Variance analysis table or trial sizing table
-	 * @param rowNames Names for row labels of table
-	 * @return JPanel containing BDG tab
-	 */
-	private JPanel makeBDGTab(int whichTable, String[] rowNames) {
-		JPanel panelBDG = new JPanel();
-		DefaultTableModel dm = new DefaultTableModel(7, 8);
-		String[] BDGnames = { "M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8" };
-		if (whichTable == 1) {
-			BDGtable1 = new JTable(dm);
-			JScrollPane BDGscroll = genTable(BDGtable1, BDGnames, rowNames);
-			int height = BDGtable1.getRowHeight();
-			panelBDG.add(BDGscroll);
-			BDGtable1.setPreferredScrollableViewportSize(new Dimension(650,
-					height * 8));
-			BDGtable1.setFillsViewportHeight(true);
-			BDGvar1 = new JLabel("sqrt(Var)=0.00");
-			panelBDG.add(BDGvar1);
-		} else if (whichTable == 2) {
-			BDGtable2 = new JTable(dm);
-			JScrollPane BDGscroll = genTable(BDGtable2, BDGnames, rowNames);
-			int height = BDGtable2.getRowHeight();
-			panelBDG.add(BDGscroll);
-			BDGtable2.setPreferredScrollableViewportSize(new Dimension(650,
-					height * 8));
-			BDGtable2.setFillsViewportHeight(true);
-			BDGvar2 = new JLabel("sqrt(Var)=0.00");
-			panelBDG.add(BDGvar2);
-		}
-		return panelBDG;
-	}
-
-	/**
-	 * Initializes the BCK tab
-	 * 
-	 * @param whichTable Variance analysis table or trial sizing table
-	 * @param rowNames Names for row labels of table
-	 * @return JPanel containing BCK tab
-	 */
-	private JPanel makeBCKTab(int whichTable, String[] rowNames) {
-		JPanel panelBCK = new JPanel();
-		DefaultTableModel dm = new DefaultTableModel(7, 7);
-		String[] BCKnames = { "N", "D", "N~D", "R", "N~R", "D~R", "R~N~D" };
-		if (whichTable == 1) {
-			BCKtable1 = new JTable(dm);
-			JScrollPane BCKscroll = genTable(BCKtable1, BCKnames, rowNames);
-			panelBCK.add(BCKscroll);
-			int height = BCKtable1.getRowHeight();
-			BCKtable1.setPreferredScrollableViewportSize(new Dimension(575,
-					height * 8));
-			BCKtable1.setFillsViewportHeight(true);
-			BCKvar1 = new JLabel("sqrt(Var)=0.00");
-			panelBCK.add(BCKvar1);
-		} else if (whichTable == 2) {
-			BCKtable2 = new JTable(dm);
-			JScrollPane BCKscroll = genTable(BCKtable2, BCKnames, rowNames);
-			panelBCK.add(BCKscroll);
-			int height = BCKtable2.getRowHeight();
-			BCKtable2.setPreferredScrollableViewportSize(new Dimension(575,
-					height * 8));
-			BCKtable2.setFillsViewportHeight(true);
-			BCKvar2 = new JLabel("sqrt(Var)=0.00");
-			panelBCK.add(BCKvar2);
-		}
-		return panelBCK;
-	}
-
-	/**
-	 * Initializes the DBM tab
-	 * 
-	 * @param whichTable Variance analysis table or trial sizing table
-	 * @param rowNames Names for row labels of table
-	 * @return JPanel containing DBM tab
-	 */
-	private JPanel makeDBMTab(int whichTable, String[] rowNames) {
-		JPanel panelDBM = new JPanel();
-		DefaultTableModel dm = new DefaultTableModel(3, 6);
-		String[] DBMnames = { "R", "C", "R~C", "T~R", "T~C", "T~R~C" };
-		if (whichTable == 1) {
-			DBMtable1 = new JTable(dm);
-			JScrollPane DBMscroll = genTable(DBMtable1, DBMnames, rowNames);
-			panelDBM.add(DBMscroll);
-			int height = DBMtable1.getRowHeight();
-			DBMtable1.setPreferredScrollableViewportSize(new Dimension(500,
-					height * 4));
-			DBMtable1.setFillsViewportHeight(true);
-			DBMvar1 = new JLabel("sqrt(Var)=0.00");
-			panelDBM.add(DBMvar1);
-		} else if (whichTable == 2) {
-			DBMtable2 = new JTable(dm);
-			JScrollPane DBMscroll = genTable(DBMtable2, DBMnames, rowNames);
-			panelDBM.add(DBMscroll);
-			int height = DBMtable2.getRowHeight();
-			DBMtable2.setPreferredScrollableViewportSize(new Dimension(500,
-					height * 4));
-			DBMtable2.setFillsViewportHeight(true);
-			DBMvar2 = new JLabel("sqrt(Var)=0.00");
-			panelDBM.add(DBMvar2);
-		}
-		return panelDBM;
-	}
-
-	/**
-	 * Initializes the OR tab
-	 * 
-	 * @param whichTable Variance analysis table or trial sizing table
-	 * @param rowNames Names for row labels of table
-	 * @return JPanel containing OR tab
-	 */
-	private JPanel makeORTab(int whichTable, String[] rowNames) {
-		JPanel panelOR = new JPanel();
-		DefaultTableModel dm = new DefaultTableModel(3, 6);
-		String[] ORnames = { "R", "TR", "COV1", "COV2", "COV3", "ERROR" };
-		if (whichTable == 1) {
-			ORtable1 = new JTable(dm);
-			JScrollPane ORscroll = genTable(ORtable1, ORnames, rowNames);
-			panelOR.add(ORscroll);
-			int height = ORtable1.getRowHeight();
-			ORtable1.setPreferredScrollableViewportSize(new Dimension(500,
-					height * 4));
-			ORtable1.setFillsViewportHeight(true);
-			ORvar1 = new JLabel("sqrt(Var)=0.00");
-			panelOR.add(ORvar1);
-		} else if (whichTable == 2) {
-			ORtable2 = new JTable(dm);
-			JScrollPane ORscroll = genTable(ORtable2, ORnames, rowNames);
-			panelOR.add(ORscroll);
-			int height = ORtable2.getRowHeight();
-			ORtable2.setPreferredScrollableViewportSize(new Dimension(500,
-					height * 4));
-			ORtable2.setFillsViewportHeight(true);
-			ORvar2 = new JLabel("sqrt(Var)=0.00");
-			panelOR.add(ORvar2);
-		}
-		return panelOR;
-	}
-
-	/**
-	 * Initializes the MS tab
-	 * 
-	 * @param whichTable Variance analysis table or trial sizing table
-	 * @param rowNames Names for row labels of table
-	 * @return JPanel containing MS tab
-	 */
-	private JPanel makeMSTab(int whichTable, String[] rowNames) {
-		JPanel panelMS = new JPanel();
-		DefaultTableModel dm = new DefaultTableModel(3, 6);
-		String[] MSnames = { "R", "C", "RC", "MR", "MC", "MRC" };
-		if (whichTable == 1) {
-			MStable1 = new JTable(dm);
-			JScrollPane MSscroll = genTable(MStable1, MSnames, rowNames);
-			panelMS.add(MSscroll);
-			int height = MStable1.getRowHeight();
-			MStable1.setPreferredScrollableViewportSize(new Dimension(500,
-					height * 4));
-			MStable1.setFillsViewportHeight(true);
-			MSvar1 = new JLabel("sqrt(Var)=0.00");
-			panelMS.add(MSvar1);
-		} else if (whichTable == 2) {
-			MStable2 = new JTable(dm);
-			JScrollPane MSscroll = genTable(MStable2, MSnames, rowNames);
-			panelMS.add(MSscroll);
-			int height = MStable2.getRowHeight();
-			MStable2.setPreferredScrollableViewportSize(new Dimension(500,
-					height * 4));
-			MStable2.setFillsViewportHeight(true);
-			MSvar2 = new JLabel("sqrt(Var)=0.00");
-			panelMS.add(MSvar2);
-		}
-		return panelMS;
-	}
-
-	/**
-	 * Enables all tabs of variance analysis and trial sizing tables
-	 */
-	public void enableTabs() {
-		tabbedPane1.setEnabledAt(0, true);
-		tabbedPane1.setEnabledAt(1, true);
-		tabbedPane1.setEnabledAt(2, true);
-		tabbedPane1.setEnabledAt(3, true);
-		tabbedPane1.setEnabledAt(4, true);
-		tabbedPane2.setEnabledAt(0, true);
-		tabbedPane2.setEnabledAt(1, true);
-		tabbedPane2.setEnabledAt(2, true);
-		tabbedPane2.setEnabledAt(3, true);
-		tabbedPane2.setEnabledAt(4, true);
-		tabbedPane2.setSelectedIndex(0);
-	
-	}
-
-	/**
-	 * Enables tabs relevant to BCK decomposition when performing variance
-	 * analysis on manual component input
-	 */
-	public void enableBCKTab() {
-		tabbedPane1.setEnabledAt(1, true);
-		tabbedPane2.setEnabledAt(1, true);
-		tabbedPane1.setEnabledAt(2, true);
-		tabbedPane1.setEnabledAt(3, true);
-		tabbedPane2.setEnabledAt(2, true);
-		tabbedPane2.setEnabledAt(3, true);
-		tabbedPane1.setSelectedIndex(1);
-		tabbedPane2.setSelectedIndex(1);
-	}
-
-	/**
-	 * Enables tabs relevant to DBM/OR decomposition when performing variance
-	 * analysis on manual component input
-	 */
-	public void enableDBMORTabs() {
-		tabbedPane1.setEnabledAt(2, true);
-		tabbedPane1.setEnabledAt(3, true);
-		tabbedPane2.setEnabledAt(2, true);
-		tabbedPane2.setEnabledAt(3, true);
-		tabbedPane1.setSelectedIndex(2);
-		tabbedPane2.setSelectedIndex(2);
-	}
-
-	/**
-	 * Disables all tabs of variance analysis and trial sizing tables
-	 */
-	public void disableTabs() {
-		tabbedPane1.setEnabledAt(0, false);
-		tabbedPane1.setEnabledAt(1, false);
-		tabbedPane1.setEnabledAt(2, false);
-		tabbedPane1.setEnabledAt(3, false);
-		tabbedPane1.setEnabledAt(4, false);
-		tabbedPane2.setEnabledAt(0, false);
-		tabbedPane2.setEnabledAt(1, false);
-		tabbedPane2.setEnabledAt(2, false);
-		tabbedPane2.setEnabledAt(3, false);
-		tabbedPane2.setEnabledAt(4, false);
-	}
-
-	/**
-	 * Empties out all values in the trial sizing table (which is not visible)
-	 */
-	void resetTable2() {
-		for (int i = 0; i < 7; i++) {
-			for (int j = 0; j < 8; j++) {
-				BDGtable2.setValueAt(0, i, j);
-				BDGtable2.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-			}
-			for (int j = 0; j < 7; j++) {
-				BCKtable2.setValueAt(0, i, j);
-				BCKtable2.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-			}
-		}
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 6; j++) {
-				MStable2.setValueAt(0, i, j);
-				MStable2.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-			}
-			for (int j = 0; j < 6; j++) {
-				DBMtable2.setValueAt(0, i, j);
-				ORtable2.setValueAt(0, i, j);
-				DBMtable2.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-				ORtable2.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-			}
-		}
-	}
-
-	/**
-	 * Populates variance components table for sizing a new trial (which is
-	 * hidden)
-	 * 
-	 * @param allTableData Contains variance components, coefficients, total for
-	 *            all decompositions
-	 */
-	private void fillTable2(double[][][] allTableData) {
-		for (int i = 0; i < 7; i++) {
-			for (int j = 0; j < 8; j++) {
-				BDGtable2.setValueAt(allTableData[0][i][j], i, j);
-				BDGtable2.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-			}
-			for (int j = 0; j < 7; j++) {
-				BCKtable2.setValueAt(allTableData[1][i][j], i, j);
-				BCKtable2.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-			}
-		}
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 6; j++) {
-				DBMtable2.setValueAt(allTableData[2][i][j], i, j);
-				ORtable2.setValueAt(allTableData[3][i][j], i, j);
-				MStable2.setValueAt(allTableData[4][i][j], i, j);
-				DBMtable2.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-				ORtable2.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-				MStable2.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-				// if study is not fully crossed, DBM, OR, MS calculation is
-				// incorrect, table is blocked out anyway
-			}
-		}
-	}
-
-	/**
-	 * Checks whether the total variance is positive
-	 * 
-	 * @return True if variance is positive; false otherwise.
-	 */
-	public boolean checkNegative(DBRecord tempRecord) {
-		
-		// Check if variance estimate is negative
-		if(tempRecord.totalVar > 0)
-			hasNegative = false;
-		else
-			hasNegative = true;
-				
-		if (hasNegative && FlagMLE == NO_MLE) {
-			JFrame frame = MRMCobject.getFrame();
-			int result = JOptionPane
-					.showConfirmDialog(
-							frame,
-							"There are negative values in the components, do you want\nto proceed with MLE estimates to avoid negatives?");
-			if (JOptionPane.CANCEL_OPTION == result) {
-				System.out.println("cancel");
-			} else if (JOptionPane.YES_OPTION == result) {
-// TODO			DBC.setFlagMLE(USE_MLE);
-				RSC.setFlagMLE(USE_MLE);
-				FlagMLE = USE_MLE;
-			} else if (JOptionPane.NO_OPTION == result) {
-// TODO			DBC.setFlagMLE(NO_MLE);
-				RSC.setFlagMLE(NO_MLE);
-				FlagMLE = NO_MLE;
-			}
-
-		}
-
-		return true;
-
-	}
-	
-	/**
-	 * Checks whether raw study input file has been loaded, if any modality
-	 * has been selected for variance analysis, and if the total variance is negative
-	 * 
-	 * @return True if file is loaded, modality selected, and variance is positive; false
-	 *         otherwise.
-	 */
-	public boolean checkRawInput() {
-		
-		// If there is no pilotFile,
-		//   then reader scores have not been read
-		String name = JTextFilename.getText();
-		System.out.println("name=" + name);
-		if (name.equals(null) || name.equals("")) {
-			JFrame frame = MRMCobject.getFrame();
-			JOptionPane.showMessageDialog(frame, "invalid input", " Error",
-					JOptionPane.ERROR_MESSAGE);
-			return false;
-		}
-
-		// If neither currModA nor currModB have been set, 
-		//   then reader scores have not been read
-		if (currModA == NO_MOD && currModB == NO_MOD) {
-			JFrame frame = MRMCobject.getFrame();
-			JOptionPane.showMessageDialog(frame,
-					"You must select at least one modality", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return false;
-		}
-		
-		return true;
-
-	}
-
 
 
 	/**
 	 * Sole constructor, builds and displays the GUI. <br>
-	 * ----Creates {@link mrmc.gui.RawStudyCard RSC=RawStudyCard} 
+	 * ----Creates {@link mrmc.gui.InputFileCard} 
 	 * <br>
 	 * CALLED FROM: {@link mrmc.core.MRMC#init}
 	 * 
@@ -1179,6 +238,7 @@ public class GUInterface {
 	public GUInterface(MRMC MRMCobjectTemp, Container cp) {
 		MRMCobject = MRMCobjectTemp;
 		SizePanel1 = new SizePanel(this);
+		StatPanel1 = new StatPanel(MRMCobject.getFrame(), DBRecordStat);
 
 		cp.setLayout(new BoxLayout(cp, BoxLayout.Y_AXIS));
 
@@ -1205,8 +265,9 @@ public class GUInterface {
 		// Input method determines panel card to show
 		//
 		// create pilot/raw study panel
-		JPanel InputCardImrmc = new JPanel();
-		RSC = new RawStudyCard(InputCardImrmc, this);
+		JPanel JPanel_InputFileCard = new JPanel();
+		InputFileCard = new InputFileCard(JPanel_InputFileCard, this);
+
 		// create manual panel
 		JPanel InputCardManual = new JPanel();
 		MC = new ManualCard(InputCardManual, this, MRMCobject);
@@ -1219,90 +280,15 @@ public class GUInterface {
 		// ***********************************************************************
 		InputPane = new JPanel(new CardLayout());
 //		inputCards.add(CardInputModeDB, DescInputModeDB);
-		InputPane.add(InputCardImrmc, DescInputModeImrmc);
+		InputPane.add(JPanel_InputFileCard, DescInputModeImrmc);
 		InputPane.add(InputCardManual, DescInputModeManual);
-
-		/*
-		 * Generate the statistical analysis panel
-		 */
-		JPanel StatPanelRow1 = new JPanel();
-		StatPanelRow1.add(StatJLabel);
-		StatPanelRow1.add(StatJLabelAUC);
-		
-		JPanel StatPanelRow2 = new JPanel();
-		StatPanelRow2.add(StatJLabelSqrtTotalVar);
-		StatPanelRow2.add(StatJLabelTstat);
-
-		JPanel StatPanelRow3 = new JPanel();
-		StatPanelRow3.add(StatJLabelDFNormal);
-		StatPanelRow3.add(StatJLabelPValNormal);
-		StatPanelRow3.add(StatJLabelCINormal);
-
-		JPanel StatPanelRow4 = new JPanel();
-		StatPanelRow4.add(StatJLabelDFBDG);
-		StatPanelRow4.add(StatJLabelPValBDG);
-		StatPanelRow4.add(StatJLabelCIBDG);
-
-		JPanel StatPanelRow5 = new JPanel();
-		StatPanelRow5.add(StatJLabelDFHillis);
-		StatPanelRow5.add(StatJLabelPValHillis);
-		StatPanelRow5.add(StatJLabelCIHillis);
-
-		// *******************************************************************
-		// *************tabbed panel 1*********************************
-		// *********************************************************************
-		String[] rowNamesDiff = new String[] { "comp M0", "coeff M0",
-				"comp M1", "coeff M1", "comp product", "- coeff product",
-				"total" };
-		String[] rowNamesSingle = new String[] { "components", "coeff", "total" };
-
-		// Create BDG tab
-		JPanel panelBDG1 = makeBDGTab(1, rowNamesDiff);
-		// Create BCK tab
-		JPanel panelBCK1 = makeBCKTab(1, rowNamesDiff);
-		// Create DBM tab
-		JPanel panelDBM1 = makeDBMTab(1, rowNamesSingle);
-		// Create OR tab
-		JPanel panelOR1 = makeORTab(1, rowNamesSingle);
-		// create MS tab
-		JPanel panelMS1 = makeMSTab(1, rowNamesSingle);
-
-		tabbedPane1 = new JTabbedPane();
-		tabbedPane1.addTab("BDG", panelBDG1);
-		tabbedPane1.addTab("BCK", panelBCK1);
-		tabbedPane1.addTab("DBM", panelDBM1);
-		tabbedPane1.addTab("OR", panelOR1);
-		tabbedPane1.addTab("MS", panelMS1);
-
-		// *******************************************************************
-		// *************tabbed panel 2*********************************
-		// *********************************************************************
-		// Create BDG tab
-		JPanel panelBDG2 = makeBDGTab(2, rowNamesDiff);
-		// Create BCK tab
-		JPanel panelBCK2 = makeBCKTab(2, rowNamesDiff);
-		// Create DBM tab
-		JPanel panelDBM2 = makeDBMTab(2, rowNamesSingle);
-		// Create OR tab
-		JPanel panelOR2 = makeORTab(2, rowNamesSingle);
-		// create MS tab
-		JPanel panelMS2 = makeMSTab(2, rowNamesSingle);
-
-		tabbedPane2 = new JTabbedPane();
-		tabbedPane2.addTab("BDG", panelBDG2);
-		tabbedPane2.addTab("BCK", panelBCK2);
-		tabbedPane2.addTab("DBM", panelDBM2);
-		tabbedPane2.addTab("OR", panelOR2);
-		tabbedPane2.addTab("MS", panelMS2);
 
 		/*
 		 * Initialize all the elements of the GUI
 		 */
-		JTextFilename.setText("");
-		resetStatPanel();
-		resetTable1();
-		resetTable2();
-		resetSizePanel();
+		StatPanel1.resetStatPanel();
+		StatPanel1.resetTable1();
+		SizePanel1.resetSizePanel();
 
 		JPanel panelSep = new JPanel(new BorderLayout());
 		panelSep.setBorder(BorderFactory.createEmptyBorder(1, // top
@@ -1325,7 +311,10 @@ public class GUInterface {
 		panelSep3.add(new JSeparator(JSeparator.HORIZONTAL),
 				BorderLayout.CENTER);
 
-		// *******************************************************************
+		/*
+		 * This panel should allow for writing results of the current analysis to the hard drive.
+		 * Delete?
+		 */
 		JPanel panelSummary = new JPanel();
 		panelSummary.add(new JLabel("GUI Summary:"));
 		JButton saveGUI = new JButton("Save to File");
@@ -1389,48 +378,28 @@ public class GUInterface {
 		cp.add(inputSelectPane);
 		cp.add(InputPane);
 		cp.add(panelSep);
-		cp.add(StatPanelRow1);
-		cp.add(StatPanelRow2);
-		cp.add(StatPanelRow3);
-		cp.add(StatPanelRow4);
-		cp.add(StatPanelRow5);
-		cp.add(tabbedPane1);
+		cp.add(StatPanel1.JPanelStat);
 		// Hides the trial sizing table
 		// cp.add(tabbedPane2);
 		// cp.add(panelStat11);
 		cp.add(panelSep2);
 
-//		cp.add(SizePanelRow1);
-		cp.add(SizePanelRow2);
-		cp.add(SizePanelRow3);
-		cp.add(SizePanelRow4);
-		cp.add(SizePanelRow5);
-		cp.add(SizePanelRow6);
+//		//		cp.add(SizePanelRow1);
+//		cp.add(SizePanelRow2);
+//		cp.add(SizePanelRow3);
+//		cp.add(SizePanelRow4);
+//		cp.add(SizePanelRow5);
+//		cp.add(SizePanelRow6);
+		cp.add(SizePanel1.JPanelSize);
 		cp.add(panelSep3);
+		/*
+		 * This panel should allow for writing results of the current analysis to the hard drive.
+		 * Delete?
+		 */
 //		cp.add(panelSummary);
 	}
 
-	/**
-	 * Formats input to cells in variance analysis/trial sizing tables
-	 */
-	class DecimalFormatRenderer extends DefaultTableCellRenderer {
-		private static final long serialVersionUID = 1L;
 
-		public Component getTableCellRendererComponent(JTable table,
-				Object value, boolean isSelected, boolean hasFocus, int row,
-				int column) {
-			DecimalFormat formatter = new DecimalFormat("0.00000E0");
-			try {
-				value = formatter.format((Number) value);
-			} catch (ClassCastException e) {
-				// for some reason sometimes value is a string containing
-				// char representation of its actual value, so we parse it out
-				// value = Double.parseDouble((String) value);
-			}
-			return super.getTableCellRendererComponent(table, value,
-					isSelected, hasFocus, row, column);
-		}
-	}
 
 	/**
 	 * Handler for button to save current GUI state to file
@@ -1442,7 +411,7 @@ public class GUInterface {
 
 			String report = "";
 			if (selectedInput == DescInputModeManual) {
-				report = SizePanel1.genReport(1);
+				report = SizePanel1.genReport();
 			} else {
 				report = SizePanel1.genReport();
 			}
@@ -1474,7 +443,7 @@ public class GUInterface {
 	class dbmBtnListener implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
 			JTextArea desc = genFrame();
-			desc.setText(fdaDB.recordsSummary(selectedSummary, SummaryFlagMLE,
+			desc.setText(fdaDB.recordsSummary(selectedSummary, DBRecordStat.flagMLE,
 					"DBM"));
 		}
 	}
@@ -1485,7 +454,7 @@ public class GUInterface {
 	class bdgBtnListener implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
 			JTextArea desc = genFrame();
-			desc.setText(fdaDB.recordsSummary(selectedSummary, SummaryFlagMLE,
+			desc.setText(fdaDB.recordsSummary(selectedSummary, DBRecordStat.flagMLE,
 					"BDG"));
 		}
 	}
@@ -1496,7 +465,7 @@ public class GUInterface {
 	class bckBtnListener implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
 			JTextArea desc = genFrame();
-			desc.setText(fdaDB.recordsSummary(selectedSummary, SummaryFlagMLE,
+			desc.setText(fdaDB.recordsSummary(selectedSummary, DBRecordStat.flagMLE,
 					"BCK"));
 		}
 	}
@@ -1507,7 +476,7 @@ public class GUInterface {
 	class orBtnListener implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
 			JTextArea desc = genFrame();
-			desc.setText(fdaDB.recordsSummary(selectedSummary, SummaryFlagMLE, "OR"));
+			desc.setText(fdaDB.recordsSummary(selectedSummary, DBRecordStat.flagMLE, "OR"));
 		}
 	}
 
@@ -1547,7 +516,7 @@ public class GUInterface {
 
 			descFrame.getRootPane().setWindowDecorationStyle(
 					JRootPane.PLAIN_DIALOG);
-			JTextArea desc = new JTextArea(DBRecordStat.getRecordDesc(),
+			JTextArea desc = new JTextArea("TODO: This should have something.",
 					18, 40);
 			JScrollPane scrollPane = new JScrollPane(desc,
 					JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -1594,13 +563,17 @@ public class GUInterface {
 	 */
 	class MLESelListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
+
+			double x = 1/0;
+			/** TODO
 			String str = e.getActionCommand();
 			if (str.equals("Yes")) {
-				SummaryFlagMLE = USE_MLE;
+				DBRecordStat.FlagMLE = USE_MLE;
 			}
 			if (str.equals("No")) {
-				SummaryFlagMLE = NO_MLE;
+				DBRecordStat.FlagMLE = NO_MLE;
 			}
+			*/
 		}
 	}
 

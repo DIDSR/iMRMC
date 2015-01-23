@@ -20,10 +20,13 @@ package mrmc.gui;
 
 import javax.swing.*;
 
+import roemetz.gui.RMGUInterface.SeedInputListener;
+
 import java.awt.event.*;
 import java.awt.*;
 
 import mrmc.core.DBRecord;
+import mrmc.core.StatTest;
 
 import java.text.DecimalFormat;
 
@@ -37,55 +40,153 @@ import java.text.DecimalFormat;
 public class SizePanel {
 	private GUInterface GUI;
 	private DBRecord DBRecordSize;
-	SizePanel thisSizePanel = this;
-
+	public JPanel JPanelSize = new JPanel();
 	private JFrame reportFrame;
+
 	public JTextField
-		JTextNumSplitPlots,
-		JTextNreader,
-		JTextNnormal,
-		JTextNdisease,
-		JTextSigLevel,
-		JTextEffSize;
+		NumSplitPlotsJTextField,
+		NreaderJTextField,
+		NnormalJTextField,
+		NdiseaseJTextField,
+		SigLevelJTextField,
+		EffSizeJTextField;
+
+	public JLabel 
+		SizeJLabel = new JLabel("Sizing Analysis: "), 
+		SizeJLabelSqrtVar = new JLabel(),
+		SizeJLabelTStat = new JLabel(),
+		SizeJLabelPowerNormal = new JLabel(),
+		SizeJLabelCINormal = new JLabel(),
+		SizeJLabelDFBDG = new JLabel(),
+		SizeJLabelLambdaBDG = new JLabel(),
+		SizeJLabelPowerBDG = new JLabel(),
+		SizeJLabelCIBDG = new JLabel(),
+		SizeJLabelDFHillis = new JLabel(),
+		SizeJLabelLambdaHillis = new JLabel(),
+		SizeJLabelPowerHillis = new JLabel(),
+		SizeJLabelCIHillis = new JLabel();
+
+	JPanel SizePanelRow1, SizePanelRow2, SizePanelRow3, SizePanelRow4, SizePanelRow5, SizePanelRow6;
+
 	public int
-		numSplitPlots,
-		Nreader,
-		Nnormal,
-		Ndisease,
+		numSplitPlots = 1,
 		pairedNormalsFlag = 1,
 		pairedDiseasedFlag = 1,
 		pairedReadersFlag = 1;
+	
 	public double
 		sigLevel,
 		effSize;
-
 	double[] statParms = new double[2];
 	private String SEPA = ",";
-	private DecimalFormat fiveDecE = new DecimalFormat("0.00000E0");
-	private DecimalFormat twoDec = new DecimalFormat("0.00");
+
+	DecimalFormat twoDec = new DecimalFormat("0.00");
+	DecimalFormat threeDec = new DecimalFormat("0.000");
+	DecimalFormat fourDec = new DecimalFormat("0.0000");
+	DecimalFormat threeDecE = new DecimalFormat("0.000E0");
+	DecimalFormat fiveDecE = new DecimalFormat("0.00000E0");
 
 	/**
-	 * Sole constructor for sizing panel. Creates and initializes related GUI
-	 * elements.
-	 * 
-	 * @param guitemp is the GUInterface that created this sizing panel 
+	 * Empty constructor for accessing panels
 	 * 
 	 */
-	public SizePanel(GUInterface guitemp) {
-		GUI = guitemp;
+	public SizePanel() {
+		
+	}
+	
+	/**
+	 * iMRMC constructor for sizing panel. Creates and initializes related GUI
+	 * elements.
+	 * 
+	 * @param GUItemp is the GUInterface that created this sizing panel 
+	 * 
+	 */
+	public SizePanel(GUInterface GUItemp) {
+		
+		GUI = GUItemp;
 		DBRecordSize = GUI.DBRecordSize;
+		JPanelSize.setLayout(new BoxLayout(JPanelSize, BoxLayout.Y_AXIS));
+
+		SizePanelRow1 = setStudyDesign();
+		SizePanelRow2 = new JPanel(new FlowLayout());
+		SizePanelRow3 = new JPanel(new FlowLayout());
+		SizePanelRow4 = new JPanel(new FlowLayout());
+		SizePanelRow5 = new JPanel(new FlowLayout());
+		SizePanelRow6 = new JPanel(new FlowLayout());
 
 		/*
 		 * Populate the row by adding elements
 		 */
-		GUI.SizePanelRow1.add(new JLabel("Study Design:  "));
+		SigLevelJTextField = new JTextField("0.05", 3);
+		SizePanelRow2.add(new JLabel("Significance level"));
+		SizePanelRow2.add(SigLevelJTextField);
+		//
+		EffSizeJTextField = new JTextField("0.05", 3);
+		SizePanelRow2.add(new JLabel("Effect Size"));
+		SizePanelRow2.add(EffSizeJTextField);
+		//
+		NreaderJTextField = new JTextField("0",3);
+		SizePanelRow2.add(new Label("#Reader"));
+		SizePanelRow2.add(NreaderJTextField);
+		//
+		NnormalJTextField = new JTextField("0",3);
+		SizePanelRow2.add(new Label("#Normal"));
+		SizePanelRow2.add(NnormalJTextField);
+		//
+		NdiseaseJTextField = new JTextField("0",3);
+		SizePanelRow2.add(new Label("#Diseased"));
+		SizePanelRow2.add(NdiseaseJTextField);
+		//
+		JButton sizeTrial = new JButton("Size a Trial");
+		sizeTrial.addActionListener(new sizeTrialListener());
+		SizePanelRow2.add(sizeTrial);
+
+		/*
+		 * Populate the row by adding elements
+		 */
+		SizePanelRow3.add(SizeJLabel);
+		SizePanelRow3.add(SizeJLabelSqrtVar);
+		SizePanelRow3.add(SizeJLabelTStat);
+
+		SizePanelRow4.add(SizeJLabelPowerNormal);
+		SizePanelRow4.add(SizeJLabelCINormal);
+
+		SizePanelRow5.add(SizeJLabelDFBDG);
+		SizePanelRow5.add(SizeJLabelLambdaBDG);
+		SizePanelRow5.add(SizeJLabelPowerBDG);
+		SizePanelRow5.add(SizeJLabelCIBDG);
+
+		SizePanelRow6.add(SizeJLabelDFHillis);
+		SizePanelRow6.add(SizeJLabelLambdaHillis);
+		SizePanelRow6.add(SizeJLabelPowerHillis);
+		SizePanelRow6.add(SizeJLabelCIHillis);
+
+		JPanelSize.add(SizePanelRow1);
+		JPanelSize.add(SizePanelRow2);
+		JPanelSize.add(SizePanelRow3);
+		JPanelSize.add(SizePanelRow4);
+		JPanelSize.add(SizePanelRow5);
+		JPanelSize.add(SizePanelRow6);
+
+	}
+
+	public JPanel setStudyDesign() {
+		
+		JPanel JPanelStudyDesign = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+		/*
+		 * Populate the row by adding elements
+		 */
+		JPanelStudyDesign.add(new JLabel("Study Design:  "));
 		/*
 		 * User can choose the number of groups in a split-plot study design
 		 * Please refer to Obuchowski 2012 Academic Radiology regarding study design
 		 */
-		JTextNumSplitPlots = new JTextField("1", 3);
-		GUI.SizePanelRow1.add(new JLabel("# of Split-Plot Groups"));
-		GUI.SizePanelRow1.add(JTextNumSplitPlots);
+		NumSplitPlotsJTextField = new JTextField("1", 3);
+		JPanelStudyDesign.add(new JLabel("# of Split-Plot Groups"));
+		JPanelStudyDesign.add(NumSplitPlotsJTextField);
+		NumSplitPlotsJTextField.addFocusListener(new NumSplitPlotsListener());
+
 		/*
 		 * Radio buttons to select paired readers
 		 * The same readers will read all the cases in both modalities
@@ -104,9 +205,9 @@ public class SizePanel {
 		ButtonPairedReadersYes.addActionListener(pairedReaders);
 		ButtonPairedReadersNo.addActionListener(pairedReaders);
 		//
-		GUI.SizePanelRow1.add(new JLabel("    Paired Readers? "));
-		GUI.SizePanelRow1.add(ButtonPairedReadersYes);
-		GUI.SizePanelRow1.add(ButtonPairedReadersNo);
+		JPanelStudyDesign.add(new JLabel("    Paired Readers? "));
+		JPanelStudyDesign.add(ButtonPairedReadersYes);
+		JPanelStudyDesign.add(ButtonPairedReadersNo);
 		/*
 		 * Radio buttons to select paired normals
 		 * The same cases will be read in both modalites by all the readers
@@ -125,9 +226,9 @@ public class SizePanel {
 		ButtonPairedNormalsYes.addActionListener(pairedNormals);
 		ButtonPairedNormalsNo.addActionListener(pairedNormals);
 		//
-		GUI.SizePanelRow1.add(new JLabel("    Pair Normal Cases? "));
-		GUI.SizePanelRow1.add(ButtonPairedNormalsYes);
-		GUI.SizePanelRow1.add(ButtonPairedNormalsNo);
+		JPanelStudyDesign.add(new JLabel("    Pair Normal Cases? "));
+		JPanelStudyDesign.add(ButtonPairedNormalsYes);
+		JPanelStudyDesign.add(ButtonPairedNormalsNo);
 		/*
 		 * Radio buttons to select paired diseased
 		 * The same cases will be read in both modalites by all the readers
@@ -146,57 +247,131 @@ public class SizePanel {
 		ButtonPairedDiseasedYes.addActionListener(pairedDiseased);
 		ButtonPairedDiseasedNo.addActionListener(pairedDiseased);
 		//
-		GUI.SizePanelRow1.add(new JLabel("    Pair Disease Cases? "));
-		GUI.SizePanelRow1.add(ButtonPairedDiseasedYes);
-		GUI.SizePanelRow1.add(ButtonPairedDiseasedNo);
+		JPanelStudyDesign.add(new JLabel("    Pair Disease Cases? "));
+		JPanelStudyDesign.add(ButtonPairedDiseasedYes);
+		JPanelStudyDesign.add(ButtonPairedDiseasedNo);
+
+		return JPanelStudyDesign;
+		
+	}
+
+	/**
+	 * Clears all input fields and statistics labels
+	 */
+	void resetSizePanel() {
+		
+		SizeJLabelSqrtVar.setText("SqrtVar=");
+		SizeJLabelTStat.setText(",  Test Stat=");
+		
+		SizeJLabelPowerNormal.setText("Normal Approx:  df= \u221e,  Power=");
+//		SizeJLabelCINormal.setText("Conf. Int.=");
+
+		SizeJLabelDFBDG.setText("          BDG:  df=");
+		SizeJLabelLambdaBDG.setText(",  Lambda=");
+		SizeJLabelPowerBDG.setText(",  Power=");
+//		SizeJLabelCIBDG.setText("Conf. Int.=");
+
+		SizeJLabelDFHillis.setText("  Hillis 2011:  df=");
+		SizeJLabelLambdaHillis.setText(",  Lambda=");
+		SizeJLabelPowerHillis.setText(",  Power=");
+//		SizeJLabelCIHillis.setText("Conf. Int.=");
+	
+	}
+	
+	/**
+	 * Sets the trial sizing panel inputs with default values based on the
+	 * current record
+	 */
+	public void setSizePanel() {
+
+		StatTest testSize = DBRecordSize.testSize;
+		String output;
+		
+		output = "SqrtVar=" 
+				+ threeDecE.format(Math.sqrt(DBRecordSize.totalVar));
+		SizeJLabelSqrtVar.setText(output);
+		output = ",  Stat= "
+				+ threeDecE.format(testSize.tStatCalc);
+		SizeJLabelTStat.setText(output);
+
+		output = "Normal Approx:  df= \u221e ,  Power= "
+				+ twoDec.format(testSize.powerNormal);
+		SizeJLabelPowerNormal.setText(output);
+		output = ",  Conf. Int.=("
+				+ fourDec.format(testSize.ciBotNormal)
+				+ ", "
+				+ fourDec.format(testSize.ciTopNormal)
+				+ ")";
+//		SizeJLabelCINormal.setText(output);
+
+		output = "          BDG:  df= "
+				+ twoDec.format(testSize.DF_BDG);
+		SizeJLabelDFBDG.setText(output);
+		output = ",  Lambda= "
+				+ twoDec.format(testSize.lambdaBDG);
+		SizeJLabelLambdaBDG.setText(output);
+		output = ",  Power= "
+				+ twoDec.format(testSize.powerBDG);
+		SizeJLabelPowerBDG.setText(output);
+		output = ",  Conf. Int.=("
+				+ fourDec.format(testSize.ciBotBDG)
+				+ ", "
+				+ fourDec.format(testSize.ciTopBDG)
+				+ ")";
+//		SizeJLabelCIBDG.setText(output);
 
 		/*
-		 * Populate the row by adding elements
+		 *  Hillis DoF is not applicable for non-fully crossed studies
 		 */
-		JTextSigLevel = new JTextField("0.05", 3);
-		GUI.SizePanelRow2.add(new JLabel("Significance level"));
-		GUI.SizePanelRow2.add(JTextSigLevel);
-		//
-		JTextEffSize = new JTextField("0.05", 3);
-		GUI.SizePanelRow2.add(new JLabel("Effect Size"));
-		GUI.SizePanelRow2.add(JTextEffSize);
-		//
-		JTextNreader = new JTextField("0",3);
-		GUI.SizePanelRow2.add(new Label("#Reader"));
-		GUI.SizePanelRow2.add(JTextNreader);
-		//
-		JTextNnormal = new JTextField("0",3);
-		GUI.SizePanelRow2.add(new Label("#Normal"));
-		GUI.SizePanelRow2.add(JTextNnormal);
-		//
-		JTextNdisease = new JTextField("0",3);
-		GUI.SizePanelRow2.add(new Label("#Diseased"));
-		GUI.SizePanelRow2.add(JTextNdisease);
-		//
-		JButton sizeTrial = new JButton("Size a Trial");
-		sizeTrial.addActionListener(new sizeTrialListener());
-		GUI.SizePanelRow2.add(sizeTrial);
+		if (this.numSplitPlots == 1 
+				&& this.pairedReadersFlag == 1
+				&& this.pairedNormalsFlag == 1
+				&& this.pairedDiseasedFlag ==1) {
+			
+			output = "   Hillis 2011:  df= "
+					+ twoDec.format(testSize.DF_Hillis);
+			SizeJLabelDFHillis.setText(output);
+			output = ",  Lambda= "
+					+ twoDec.format(testSize.lambdaHillis);
+			SizeJLabelLambdaHillis.setText(output);
+			output = ",  Power= "
+					+ twoDec.format(testSize.powerHillis);
+			SizeJLabelPowerHillis.setText(output);
+			output = ",  Conf. Int.=("
+					+ fourDec.format(testSize.ciBotHillis)
+					+ ", "
+					+ fourDec.format(testSize.ciTopHillis)
+					+ ")";
+//			SizeJLabelCIHillis.setText(output);
+		} else {
+			SizeJLabelDFHillis.setText("  Hillis 2011:  df=");
+			SizeJLabelLambdaHillis.setText(",  Lambda=");
+			SizeJLabelPowerHillis.setText(",  Power=");
+//			SizeJLabelCIHillis.setText("Conf. Int.=");
+		}
 
-		/*
-		 * Populate the row by adding elements
-		 */
-		GUI.SizePanelRow3.add(GUI.SizeJLabel);
-		GUI.SizePanelRow3.add(GUI.SizeJLabelSqrtVar);
-		GUI.SizePanelRow3.add(GUI.SizeJLabelTStat);
+	}
+	
+	/**
+	 * Gets statistics for new trial sizing in String format
+	 * 
+	 * @return String of statistics for new trial sizing
+	 */
+	public String getSizeResults() {
+		String results = SizeJLabelSqrtVar.getText();
+		results = results + "\t" + SizeJLabelTStat.getText();
+		results = results + "\t" + SizeJLabelPowerNormal.getText();
+		results = results + "\t" + SizeJLabelCINormal.getText();
+		results = results + "\n";
+		results = results + "\t" + SizeJLabelDFBDG.getText();
+		results = results + "\t" + SizeJLabelPowerBDG.getText();
+		results = results + "\t" + SizeJLabelCIBDG.getText();
+		results = results + "\n";
+		results = results + "\t" + SizeJLabelDFHillis.getText();
+		results = results + "\t" + SizeJLabelPowerHillis.getText();
+		results = results + "\t" + SizeJLabelCIHillis.getText();
 
-		GUI.SizePanelRow4.add(GUI.SizeJLabelPowerNormal);
-		GUI.SizePanelRow4.add(GUI.SizeJLabelCINormal);
-
-		GUI.SizePanelRow5.add(GUI.SizeJLabelDFBDG);
-		GUI.SizePanelRow5.add(GUI.SizeJLabelLambdaBDG);
-		GUI.SizePanelRow5.add(GUI.SizeJLabelPowerBDG);
-		GUI.SizePanelRow5.add(GUI.SizeJLabelCIBDG);
-
-		GUI.SizePanelRow6.add(GUI.SizeJLabelDFHillis);
-		GUI.SizePanelRow6.add(GUI.SizeJLabelLambdaHillis);
-		GUI.SizePanelRow6.add(GUI.SizeJLabelPowerHillis);
-		GUI.SizePanelRow6.add(GUI.SizeJLabelCIHillis);
-
+		return results;
 	}
 
 	/**
@@ -208,33 +383,42 @@ public class SizePanel {
 	 */
 	public String genReport() {
 
-		int useMLE = GUI.getFlagMLE();
+		int useMLE = DBRecordSize.flagMLE;
 
-		double[][] BDG = DBRecordSize.getBDG(useMLE);
-		double[][] DBM = DBRecordSize.getDBM(useMLE);
-		double[][] BCK = DBRecordSize.getBCK(useMLE);
-		double[][] OR = DBRecordSize.getOR(useMLE);
-		double[][] BDGcoeff = DBRecordSize.getBDGcoeff();
-		double[][] BCKcoeff = DBRecordSize.getBCKcoeff();
-		double[][] DBMcoeff = DBRecordSize.getDBMcoeff();
-		double[][] ORcoeff = DBRecordSize.getORcoeff();
+		double[][] BDG = DBRecordSize.BDG;
+		double[][] DBM = DBRecordSize.DBM;
+		double[][] BCK = DBRecordSize.BCK;
+		double[][] OR = DBRecordSize.OR;
+		double[][] MS = DBRecordSize.MS;
+		if(useMLE == 1) {
+			BDG = DBRecordSize.BDGbias;
+			DBM = DBRecordSize.DBMbias;
+			BCK = DBRecordSize.BCKbias;
+			OR = DBRecordSize.ORbias;
+			MS = DBRecordSize.MSbias;
+		}
+		double[][] BDGcoeff = DBRecordSize.BDGcoeff;
+		double[][] BCKcoeff = DBRecordSize.BCKcoeff;
+		double[][] DBMcoeff = DBRecordSize.DBMcoeff;
+		double[][] ORcoeff = DBRecordSize.ORcoeff;
+		double[][] MScoeff = DBRecordSize.MScoeff;
 
-		statParms[0] = Double.parseDouble(JTextSigLevel.getText());
-		statParms[1] = Double.parseDouble(JTextEffSize.getText());
-		String result = GUI.getStatResults();
+		statParms[0] = Double.parseDouble(SigLevelJTextField.getText());
+		statParms[1] = Double.parseDouble(EffSizeJTextField.getText());
+		String result = GUI.StatPanel1.getStatResults();
 
-		int newR = Integer.parseInt(JTextNreader.getText());
-		int newN = Integer.parseInt(JTextNnormal.getText());
-		int newD = Integer.parseInt(JTextNdisease.getText());
+		int NreaderSize = Integer.parseInt(NreaderJTextField.getText());
+		int NnormalSize = Integer.parseInt(NnormalJTextField.getText());
+		int NdiseaseSize = Integer.parseInt(NdiseaseJTextField.getText());
 
-		String resultnew = GUI.getSizeResults();
+		String resultnew = getSizeResults();
 
 		String str = "";
-		str = str + "Filename: " + DBRecordSize.getFilename() + "\n";
-		str = str + DBRecordSize.getRecordDesc();
-		str = str + "Reader=" + Long.toString(DBRecordSize.getReader()) + SEPA
-				+ "Normal=" + Long.toString(DBRecordSize.getNormal()) + SEPA
-				+ "Disease=" + Long.toString(DBRecordSize.getDisease())
+		str = str + "Filename: " + DBRecordSize.filename + "\n";
+		str = str + DBRecordSize.recordDesc;
+		str = str + "Reader=" + Long.toString(DBRecordSize.Nreader) + SEPA
+				+ "Normal=" + Long.toString(DBRecordSize.Nnormal) + SEPA
+				+ "Disease=" + Long.toString(DBRecordSize.Ndisease)
 				+ "\n\n";
 		if (useMLE == 1)
 			str = str + "this report uses MLE estimate of components.\n";
@@ -307,13 +491,13 @@ public class SizePanel {
 				+ "\n*****************************************************************";
 		str = str
 				+ "\n*****************************************************************";
-		str = str + "\n" + GUI.getAUCoutput();
+		str = str + "\n" + GUI.DBRecordStat.getAUCsReaderAvgString(DBRecordSize.selectedMod);
 		str = str + "\n Statistical Tests:" + result + SEPA;
 
 		str = str
 				+ "\n*****************************************************************\n\n\n\n";
-		str = str + "new Reader=" + newR + SEPA + "new Normal=" + newN + SEPA
-				+ "new Disease=" + newD + "\n";
+		str = str + "NReaderSize=" + NreaderSize + SEPA + "NnormalSize=" + NnormalSize + SEPA
+				+ "nDiseaseSize=" + NdiseaseSize + "\n";
 		str = str
 				+ "\n*****************************************************************";
 		str = str
@@ -331,126 +515,21 @@ public class SizePanel {
 		return str;
 	}
 
-	// TODO consolidate with other genReport
-	/**
-	 * Creates a textual representation of the current record analysis and trial
-	 * sizing results. Used when manual component input is selected
-	 * 
-	 * @param flag Indicates manual component input is being used
-	 * @return String containing experiment parameters, components, trial size
-	 *         info
-	 */
-	public String genReport(int flag) {
-
-		double[][] BDG = DBRecordSize.getBDG(0);
-		double[][] DBM = DBRecordSize.getDBM(0);
-		double[][] BCK = DBRecordSize.getBCK(0);
-		double[][] OR = DBRecordSize.getOR(0);
-		double[][] BDGcoeff = DBRecordSize.getBDGcoeff();
-		double[][] BCKcoeff = DBRecordSize.getBCKcoeff();
-		double[][] DBMcoeff = DBRecordSize.getDBMcoeff();
-		double[][] ORcoeff = DBRecordSize.getORcoeff();
-
-		statParms[0] = Double.parseDouble(JTextSigLevel.getText());
-		statParms[1] = Double.parseDouble(JTextEffSize.getText());
-		String results = GUI.getStatResults();
-
-		int newR = Integer.parseInt(JTextNreader.getText());
-		int newN = Integer.parseInt(JTextNnormal.getText());
-		int newD = Integer.parseInt(JTextNdisease.getText());
-
-		String resultnew = GUI.getSizeResults();
-
-		String str = "";
-		str = str + "Reader=" + Long.toString(DBRecordSize.getReader()) + SEPA
-				+ "Normal=" + Long.toString(DBRecordSize.getNormal()) + SEPA
-				+ "Disease=" + Long.toString(DBRecordSize.getDisease())
-				+ "\n\n";
-		int singleOrDiff = GUI.getSingleOrDiff();
-		if (singleOrDiff == 0)
-			str = str + "Single Modality, AUC=" + DBRecordSize.getAUCinNumber(0)
-					+ "\n";
-		else
-			str = str
-					+ "Comparing two modalities, AUC1="
-					+ DBRecordSize.getAUCinNumber(0)
-					+ ", AUC2="
-					+ DBRecordSize.getAUCinNumber(1)
-					+ ", the difference is"
-					+ (DBRecordSize.getAUCinNumber(0) - DBRecordSize
-							.getAUCinNumber(1)) + ".\n";
-		int selectedManualComp = GUI.getSelectedManualComp();
-		if (selectedManualComp == 0) // BDG input is selected
-		{
-			str = str
-					+ "**********************BDG Results***************************\n";
-			str = str + "Moments" + SEPA + "M1" + SEPA + "M2" + SEPA + "M3"
-					+ SEPA + "M4" + SEPA + "M5" + SEPA + "M6" + SEPA + "M7"
-					+ SEPA + "M8" + "\n";
-			str = str + "moments" + SEPA;
-			for (int i = 0; i < 8; i++)
-				str = str + fiveDecE.format(BDG[0][i]) + SEPA;
-			str = str + "\n" + "Coeff" + SEPA;
-			for (int i = 0; i < 8; i++)
-				str = str + fiveDecE.format(BDGcoeff[0][i]) + SEPA;
-		} else if (selectedManualComp == 1) {
-			str = str
-					+ "\n**********************BCK Results***************************";
-			str = str + "\nMoments" + SEPA + "N" + SEPA + "D" + SEPA + "N~D"
-					+ SEPA + "R" + SEPA + "N~R" + SEPA + "D~R" + SEPA + "R~N~D";
-			str = str + "\nMoments" + SEPA;
-			for (int i = 0; i < 7; i++)
-				str = str + fiveDecE.format(BCK[0][i]) + SEPA;
-			str = str + "\nCoeff" + SEPA;
-			for (int i = 0; i < 7; i++)
-				str = str + fiveDecE.format(BCKcoeff[0][i]) + SEPA;
+	public class NumSplitPlotsListener implements FocusListener {
+	
+		@Override
+		public void focusGained(FocusEvent arg0) {
+			// TODO Auto-generated method stub
+	
 		}
+	
+		@Override
+		public void focusLost(FocusEvent arg0) {
 
-		str = str
-				+ "\n**********************DBM Results***************************";
-		str = str + "\nComponents" + SEPA + "R" + SEPA + "C" + SEPA + "R~C"
-				+ SEPA + "T~R" + SEPA + "T~C" + SEPA + "T~R~C";
-		str = str + "\ncompnents" + SEPA;
-		for (int i = 0; i < 6; i++)
-			str = str + fiveDecE.format(DBM[0][i]) + SEPA;
-		str = str + "\nCoeff" + SEPA;
-		for (int i = 0; i < 6; i++)
-			str = str + fiveDecE.format(DBMcoeff[3][i]) + SEPA;
-		str = str
-				+ "\n**********************OR Results***************************";
-		str = str + "\nComponents" + SEPA + "R" + SEPA + "TR" + SEPA + "COV1"
-				+ SEPA + "COV2" + SEPA + "COV3" + SEPA + "ERROR";
-		str = str + "\ncomponents" + SEPA;
-		for (int i = 0; i < 6; i++)
-			str = str + fiveDecE.format(OR[0][i]) + SEPA;
-		str = str + "\nCoeff" + SEPA;
-		for (int i = 0; i < 6; i++)
-			str = str + fiveDecE.format(ORcoeff[3][i]) + SEPA;
-		str = str
-				+ "\n*****************************************************************";
-		str = str
-				+ "\n*****************************************************************";
-		str = str + "\n" + GUI.getAUCoutput();
-		str = str + "\n Statistical Tests:\n" + results + SEPA;
-
-		str = str + "new Reader=" + newR + SEPA + "new Normal=" + newN + SEPA
-				+ "new Disease=" + newD + "\n";
-
-		str = str
-				+ "\n*****************************************************************";
-		str = str
-				+ "\n*****************************************************************";
-		str = str + "\n" + "Effective Size = " + twoDec.format(statParms[1])
-				+ SEPA + "Significance Level = " + twoDec.format(statParms[0]);
-
-		str = str
-				+ "\n*****************************************************************";
-		str = str + "\n Sizing Results\n";
-		str = str + resultnew;
-		str = str
-				+ "\n*****************************************************************\n\n\n";
-
-		return str;
+			numSplitPlots = Integer.parseInt(NumSplitPlotsJTextField.getText());
+	
+		}
+	
 	}
 
 	/**
@@ -513,7 +592,7 @@ public class SizePanel {
 					JRootPane.PLAIN_DIALOG);
 			String str = "";
 			if (GUI.getSelectedInput() == GUInterface.DescInputModeManual)
-				str = genReport(1);
+				str = genReport();
 			else
 				str = genReport();
 			JTextArea report = new JTextArea(str, 50, 50);
@@ -537,16 +616,15 @@ public class SizePanel {
 //						"Error", JOptionPane.ERROR_MESSAGE);
 //				return;
 
-				numSplitPlots = Integer.parseInt(JTextNumSplitPlots.getText());
-				Nreader = Integer.parseInt(JTextNreader.getText());
-				Nnormal = Integer.parseInt(JTextNnormal.getText());
-				Ndisease = Integer.parseInt(JTextNdisease.getText());
+				DBRecordSize.Nreader = Integer.parseInt(NreaderJTextField.getText());
+				DBRecordSize.Nnormal = Integer.parseInt(NnormalJTextField.getText());
+				DBRecordSize.Ndisease = Integer.parseInt(NdiseaseJTextField.getText());
 
-				sigLevel = Double.parseDouble(JTextSigLevel.getText());
-				effSize = Double.parseDouble(JTextEffSize.getText());
+				sigLevel = Double.parseDouble(SigLevelJTextField.getText());
+				effSize = Double.parseDouble(EffSizeJTextField.getText());
 
-				DBRecordSize.DBRecordSizeTrial(thisSizePanel);
-				GUI.setSizePanel();
+				DBRecordSize.DBRecordSizeFill(GUI.SizePanel1);
+				setSizePanel();
 
 			} catch (NumberFormatException e1) {
 				JOptionPane.showMessageDialog(reportFrame, "Invalid Input",

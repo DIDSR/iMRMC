@@ -25,6 +25,8 @@ import java.awt.FlowLayout;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
@@ -38,17 +40,12 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.ByteBuffer;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
-
-import org.uncommons.maths.random.MersenneTwisterRNG;
-
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -56,11 +53,16 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import mrmc.core.DBRecord;
+import mrmc.core.InputFile;
 import mrmc.core.Matrix;
 import mrmc.core.StatTest;
+import mrmc.gui.SizePanel;
+import mrmc.gui.StatPanel;
 import roemetz.core.CalcGenRoeMetz;
 import roemetz.core.RoeMetz;
 import roemetz.core.SimRoeMetz;
+import umontreal.iro.lecuyer.rng.RandomStream;
+import umontreal.iro.lecuyer.rng.WELL1024;
 
 /**
  * This class describes the interface for iRoeMetz application. It contains a
@@ -68,38 +70,88 @@ import roemetz.core.SimRoeMetz;
  * next panel performs multiple simulation experiments based on the input. The
  * last panel estimates the components of variance for the given input.
  * 
+ * Note: In order to debug properly, you do not want to be running in multi-thread mode.
+ * Change the numCores in class DoSimBtnListener to 1
+ * 
  * @author Rohan Pathare
  */
 public class RMGUInterface {
+
+
+
 	private final int USE_MLE = 1;
 	private final int NO_MLE = 0;
-	private static RoeMetz appl;
+	private static RoeMetz RoeMetz1;
+	SizePanel sizePanel1;
 
-	private JTextField mu0, mu1;
-	private JTextField  v_R0,  v_C0,  v_RC0,  v_R1,  v_C1,  v_RC1;
-	private JTextField v_AR0, v_AC0, v_ARC0, v_AR1, v_AC1, v_ARC1;
-	private JTextField v_BR0, v_BC0, v_BRC0, v_BR1, v_BC1, v_BRC1;
-	private JTextField n0, n1, nr;
-	
-	private JLabel mu0Label, mu1Label;
-	private JLabel n0Label, n1Label, nrLabel;
-	private JLabel  v_R0Label,  v_C0Label,  v_RC0Label,  v_R1Label,  v_C1Label,  v_RC1Label;
-	private JLabel v_AR0Label, v_AC0Label, v_ARC0Label, v_AR1Label, v_AC1Label, v_ARC1Label;
-	private JLabel v_BR0Label, v_BC0Label, v_BRC0Label, v_BR1Label, v_BC1Label, v_BRC1Label;
-	
-	private JTextField numExp;
-	private JTextField seed;
+	/**
+	 * Input means
+	 */
+	JTextField 
+		mu0 = new JTextField("1.0", 6),
+		mu1 = new JTextField("1.0", 6);
+	/**
+	 * Input variances invariant to modality
+	 */
+	JTextField 
+		v_R0 = new JTextField("0.166", 6),
+		v_C0 = new JTextField("0.166", 6),
+		v_RC0 = new JTextField("0.166", 6),
+		v_R1 = new JTextField("0.166", 6),
+		v_C1 = new JTextField("0.166", 6),
+		v_RC1 = new JTextField("0.166", 6);
+	/** 
+	 * Input variances specific to modality A
+	 */
+	JTextField 
+		v_AR0 = new JTextField("0.166", 6),
+		v_AC0 = new JTextField("0.166", 6),
+		v_ARC0 = new JTextField("0.166", 6),
+		v_AR1 = new JTextField("0.166", 6),
+		v_AC1 = new JTextField("0.166", 6),
+		v_ARC1 = new JTextField("0.166", 6);
+	/**
+	 * Input variances specific to modality B
+	 */
+	JTextField
+		v_BR0 = new JTextField("0.166", 6),
+		v_BC0 = new JTextField("0.166", 6),
+		v_BRC0 = new JTextField("0.166", 6),
+		v_BR1 = new JTextField("0.166", 6),
+		v_BC1 = new JTextField("0.166", 6),
+		v_BRC1 = new JTextField("0.166", 6);
+	/**
+	 * Input experiment size
+	 */
+	JTextField
+		NnormalJTextField = new JTextField("20", 6),
+		NdiseaseJTextField = new JTextField("20", 6),
+		NreaderJTextField = new JTextField("4", 6);
+
+	/**
+	 * Number of experiments
+	 */
+	JTextField JTextField_Nexp = new JTextField("10",7);
+	/**
+	 * Initial seed for RNG
+	 */
+	JTextField JTextField_seed;
 	
 	private JDialog progDialog;
 	private JCheckBox useMLEbox = new JCheckBox("Use MLE?");
+	@SuppressWarnings("unused")
 	private int useMLE = NO_MLE;
 	private String simSaveDirectory;
 	private static JProgressBar simProgress;
 	public String calcSaveDirectory;
-	private DecimalFormat threeDecOpt = new DecimalFormat("0.###");
-	private DecimalFormat threeDecOptE = new DecimalFormat("0.###E0");
-	private DecimalFormat threeDec = new DecimalFormat("0.000");
-	private DecimalFormat threeDecE = new DecimalFormat("0.000E0");
+	public DecimalFormat threeDecOpt = new DecimalFormat("0.###");
+	public DecimalFormat threeDecOptE = new DecimalFormat("0.###E0");
+	public DecimalFormat threeDec = new DecimalFormat("0.000");
+	public DecimalFormat threeDecE = new DecimalFormat("0.000E0");
+	public DecimalFormat fiveDecOpt = new DecimalFormat( "0.#####");
+	public DecimalFormat fiveDecOptE = new DecimalFormat("0.#####E0");
+	public DecimalFormat fiveDec = new DecimalFormat( "0.00000");
+	public DecimalFormat fiveDecE = new DecimalFormat("0.00000E0");
 
 	/**
 	 * Gets the experiment means parameters from the text fields
@@ -139,187 +191,149 @@ public class RMGUInterface {
 	}
 
 	/**
-	 * Gets the experiment size parameters from the text fields
-	 * 
-	 * @return Array of experiment size parameters
-	 */
-	public long[] getSizes() {
-		return new long[] { Long.valueOf(n0.getText()),
-				Long.valueOf(n1.getText()), Long.valueOf(nr.getText()) };
-	}
-
-	/**
 	 * Sole constructor for GUI, only invoked by RoeMetz driver class
 	 * 
-	 * @param lsttemp Application driver class
+	 * @param tempRoeMetz Application driver class
 	 * @param cp Content pane of the application
 	 */
-	public RMGUInterface(RoeMetz lsttemp, Container cp) {
-		appl = lsttemp;
+	public RMGUInterface(RoeMetz tempRoeMetz, Container cp) {
+		RoeMetz1 = tempRoeMetz;
 		cp.setLayout(new BoxLayout(cp, BoxLayout.Y_AXIS));
 
 		/*
-		 * Panel to handle CofV inputs
+		 * Panel(top-bottom) to handle CofV inputs
 		 */
 		JPanel cofvInputPanel = new JPanel();
-		cofvInputPanel
-				.setLayout(new BoxLayout(cofvInputPanel, BoxLayout.Y_AXIS));
+		cofvInputPanel.setLayout(new BoxLayout(cofvInputPanel, BoxLayout.Y_AXIS));
 
 		/*
-		 * Panel within cofvInputPanel with description of input, type
+		 * cofvInputPanel rows 1&2 panel(left-right) for means
 		 */
-		JPanel inputHeaderMeans = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
-		JLabel inputDescMeans = new JLabel(
-				"Input Means: ");
-		inputHeaderMeans.add(inputDescMeans);
-//		inputHeaderMeans.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-		/*
-		 * Panel within cofvInputPanel with description of input, type
-		 */
-		JPanel inputHeaderVarsO = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
-		JLabel inputDescVars = new JLabel(
-				"Input Variances Invariant to Modality: ");
-		inputHeaderVarsO.add(inputDescVars);
-
-		/*
-		 * Panel within cofvInputPanel with description of input, type
-		 */
-		JPanel inputHeaderVarsA = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
-		JLabel inputDescVarsA = new JLabel(
-				"Input Variances Specific to Modality A: ");
-		inputHeaderVarsA.add(inputDescVarsA);
-
-		/*
-		 * Panel within cofvInputPanel with description of input, type
-		 */
-		JPanel inputHeaderVarsB = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
-		JLabel inputDescVarsB= new JLabel(
-				"Input Variances Specific to Modality B: ");
-		inputHeaderVarsB.add(inputDescVarsB);
-
-		/*
-		 * Panel within cofvInputPanel with description of input, type
-		 */
-		JPanel inputHeaderSize = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
-		JLabel inputDescSize= new JLabel(
-				"Input Experiment Size: ");
-		inputHeaderSize.add(inputDescSize);
-
-		initializeInputLabels();
-		initalizeInputFields();
-
-		/*
-		 * Panel to input means
-		 */
+		JPanel meansJPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		meansJPanel.add(new JLabel("Input Means: "));
+		//
 		JPanel meansFields = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		meansFields.add(Box.createHorizontalStrut(20));
-		meansFields.add(mu0Label);
+		meansFields.add(new JLabel("\u00B5_A: "));
 		meansFields.add(mu0);
-		meansFields.add(mu1Label);
+		meansFields.add(new JLabel("\u00B5_B: "));
 		meansFields.add(mu1);
 
 		/*
-		 * Panel within cofvInputPanel with fields to input variances (row 3)
+		 * cofvInputPanel rows 3&4 panel(left-right) for variances invariant to modality
 		 */
-		JPanel varianceFieldsO = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		varianceFieldsO.add(Box.createHorizontalStrut(20));
-		varianceFieldsO.add(v_R0Label);
-		varianceFieldsO.add(v_R0);
-		varianceFieldsO.add(v_C0Label);
-		varianceFieldsO.add(v_C0);
-		varianceFieldsO.add(v_RC0Label);
-		varianceFieldsO.add(v_RC0);
-		varianceFieldsO.add(v_R1Label);
-		varianceFieldsO.add(v_R1);
-		varianceFieldsO.add(v_C1Label);
-		varianceFieldsO.add(v_C1);
-		varianceFieldsO.add(v_RC1Label);
-		varianceFieldsO.add(v_RC1);
+		JPanel varJPanel0 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		varJPanel0.add(new JLabel("Input Variances Invariant to Modality: "));
+		//
+		JPanel varFieldsO = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		varFieldsO.add(Box.createHorizontalStrut(20));
+		varFieldsO.add(new JLabel("  v_R0: "));
+		varFieldsO.add(v_R0);
+		varFieldsO.add(new JLabel("  v_C0: "));
+		varFieldsO.add(v_C0);
+		varFieldsO.add(new JLabel("  v_RC0: "));
+		varFieldsO.add(v_RC0);
+		varFieldsO.add(new JLabel("  v_R1: "));
+		varFieldsO.add(v_R1);
+		varFieldsO.add(new JLabel("  v_C1: "));
+		varFieldsO.add(v_C1);
+		varFieldsO.add(new JLabel("  v_RC1: "));
+		varFieldsO.add(v_RC1);
 
 		/*
-		 * Panel within cofvInputPanel with fields to input variances (row 1)
+		 * cofvInputPanel rows 5&6 panel(left-right) for variances specific to modality A
 		 */
-		JPanel varianceFieldsA = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		varianceFieldsA.add(Box.createHorizontalStrut(20));
-		varianceFieldsA.add(v_AR0Label);
-		varianceFieldsA.add(v_AR0);
-		varianceFieldsA.add(v_AC0Label);
-		varianceFieldsA.add(v_AC0);
-		varianceFieldsA.add(v_ARC0Label);
-		varianceFieldsA.add(v_ARC0);
-		varianceFieldsA.add(v_AR1Label);
-		varianceFieldsA.add(v_AR1);
-		varianceFieldsA.add(v_AC1Label);
-		varianceFieldsA.add(v_AC1);
-		varianceFieldsA.add(v_ARC1Label);
-		varianceFieldsA.add(v_ARC1);
+		JPanel varJPanelA = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		varJPanelA.add(new JLabel("Input Variances Specific to Modality A: "));
+		//
+		JPanel varFieldsA = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		varFieldsA.add(Box.createHorizontalStrut(20));
+		varFieldsA.add(new JLabel("v_AR0: "));
+		varFieldsA.add(v_AR0);
+		varFieldsA.add(new JLabel("v_AC0: "));
+		varFieldsA.add(v_AC0);
+		varFieldsA.add(new JLabel("v_ARC0: "));
+		varFieldsA.add(v_ARC0);
+		varFieldsA.add(new JLabel("v_AR1: "));
+		varFieldsA.add(v_AR1);
+		varFieldsA.add(new JLabel("v_AC1: "));
+		varFieldsA.add(v_AC1);
+		varFieldsA.add(new JLabel("v_ARC1: "));
+		varFieldsA.add(v_ARC1);
 
 		/*
-		 * Panel within cofvInputPanel with fields to input variances (row 2)
+		 * cofvInputPanel rows 7&8 panel(left-right) for variances specific to modality B
 		 */
-		JPanel varianceFieldsB = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		varianceFieldsB.add(Box.createHorizontalStrut(20));
-		varianceFieldsB.add(v_BR0Label);
-		varianceFieldsB.add(v_BR0);
-		varianceFieldsB.add(v_BC0Label);
-		varianceFieldsB.add(v_BC0);
-		varianceFieldsB.add(v_BRC0Label);
-		varianceFieldsB.add(v_BRC0);
-		varianceFieldsB.add(v_BR1Label);
-		varianceFieldsB.add(v_BR1);
-		varianceFieldsB.add(v_BC1Label);
-		varianceFieldsB.add(v_BC1);
-		varianceFieldsB.add(v_BRC1Label);
-		varianceFieldsB.add(v_BRC1);
+		JPanel varJPanelB = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		varJPanelB.add(new JLabel("Input Variances Specific to Modality B: "));
+		//
+		JPanel varFieldsB = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		varFieldsB.add(Box.createHorizontalStrut(20));
+		varFieldsB.add(new JLabel("v_BR0: "));
+		varFieldsB.add(v_BR0);
+		varFieldsB.add(new JLabel("v_BC0: "));
+		varFieldsB.add(v_BC0);
+		varFieldsB.add(new JLabel("v_BRC0: "));
+		varFieldsB.add(v_BRC0);
+		varFieldsB.add(new JLabel("v_BR1: "));
+		varFieldsB.add(v_BR1);
+		varFieldsB.add(new JLabel("v_BC1: "));
+		varFieldsB.add(v_BC1);
+		varFieldsB.add(new JLabel("v_BRC1: "));
+		varFieldsB.add(v_BRC1);
 
 		/*
-		 * Panel to input experiment size
+		 * cofvInputPanel rows 9&10 panel(left-right) for experiment size
 		 */
+		JPanel sizeJPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		sizeJPanel.add(new JLabel("Input Experiment Size: "));
+		//
 		JPanel sizeFields = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		sizeFields.add(Box.createHorizontalStrut(20));
-		sizeFields.add(n0Label);
-		sizeFields.add(n0);
-		sizeFields.add(n1Label);
-		sizeFields.add(n1);
-		sizeFields.add(nrLabel);
-		sizeFields.add(nr);
+		sizeFields.add(new JLabel("N0: "));
+		sizeFields.add(NnormalJTextField);
+		sizeFields.add(new JLabel("N1: "));
+		sizeFields.add(NdiseaseJTextField);
+		sizeFields.add(new JLabel("Nr: "));
+		sizeFields.add(NreaderJTextField);
 
 		/*
-		 * Panel of buttons controlling input fields
+		 * cofvInputPanel row 11 panel(left-right) of study design inputs
+		 */
+		sizePanel1 = new SizePanel();
+		JPanel studyDesignJPanel = sizePanel1.setStudyDesign();
+		
+		/*
+		 * cofvInputPanel row 12 panel(left-right) of buttons controlling input fields
 		 */
 		JPanel populateFields = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
+		//
 		JButton clearButton = new JButton("Clear Fields");
 		clearButton.addActionListener(new ClearBtnListener());
 		JButton popFromFile = new JButton("Populate Components from File");
 		popFromFile.addActionListener(new PopFromFileListener());
 		JButton saveFields = new JButton("Save Components to File");
 		saveFields.addActionListener(new SaveFieldsListener());
-
+		//
 		populateFields.add(Box.createHorizontalStrut(20));
 		populateFields.add(clearButton);
 		populateFields.add(popFromFile);
 		populateFields.add(saveFields);
 
 		/*
-		 * Add sub-panels to cofvInputPanel
+		 * Add rows to cofvInputPanel
 		 */
-		cofvInputPanel.add(inputHeaderMeans);
+		cofvInputPanel.add(meansJPanel);
 		cofvInputPanel.add(meansFields);
-		cofvInputPanel.add(inputHeaderVarsO);
-		cofvInputPanel.add(varianceFieldsO);
-		cofvInputPanel.add(inputHeaderVarsA);
-		cofvInputPanel.add(varianceFieldsA);
-		cofvInputPanel.add(inputHeaderVarsB);
-		cofvInputPanel.add(varianceFieldsB);
-		cofvInputPanel.add(inputHeaderSize);
+		cofvInputPanel.add(varJPanel0);
+		cofvInputPanel.add(varFieldsO);
+		cofvInputPanel.add(varJPanelA);
+		cofvInputPanel.add(varFieldsA);
+		cofvInputPanel.add(varJPanelB);
+		cofvInputPanel.add(varFieldsB);
+		cofvInputPanel.add(sizeJPanel);
 		cofvInputPanel.add(sizeFields);
+		cofvInputPanel.add(studyDesignJPanel);
 		cofvInputPanel.add(populateFields);
 
 		/*
@@ -329,52 +343,65 @@ public class RMGUInterface {
 		simExpPanel.setLayout(new BoxLayout(simExpPanel, BoxLayout.Y_AXIS));
 
 		/*
-		 * Panel within simExpPanel to describe function
+		 * simExpPanel row 1 panel within simExpPanel to describe simExpPanel
 		 */
 		JPanel simExpDesc = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
-		JLabel expLabel = new JLabel("Simulation Experiments:");
-		simExpDesc.add(expLabel);
+		simExpDesc.add(new JLabel("Simulation Experiments:"));
 
 		/*
-		 * Panel within simExpPanel to show simulation experiment results
+		 * simExpPanel row 2 panel: Seed for RNG, Number of experiments, MLE box
 		 */
-		JPanel simulationExperiment = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		JPanel simExp = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		simExp.add(Box.createHorizontalStrut(20));
 
+		// Seed for RNG
 		JLabel seedLabel = new JLabel("Seed for RNG");
-		seed = new JTextField(9);
-		seed.setText(Long.toString(System.currentTimeMillis()));
+		simExp.add(seedLabel);
+		//
+		JTextField_seed = new JTextField(10);
+		JTextField_seed.addFocusListener(new SeedInputListener());
+		simExp.add(JTextField_seed);
+		// initialize seed: 9 digits or less, so that it can be converted to an integer
+		String String_seed = Long.toString(System.currentTimeMillis());
+		if(String_seed.length() > 9){
+			String_seed = String_seed.substring(String_seed.length()-9, String_seed.length());
+		}
+		JTextField_seed.setText(String_seed);
 
-		JLabel numExpLabel = new JLabel("# of Experiments");
-		numExp = new JTextField(4);
-		
+		// Number of experiments
+		JLabel NexpLabel = new JLabel("# of Experiments");
+		//
+		simExp.add(NexpLabel);
+		//
+		simExp.add(JTextField_Nexp);
+
+		// MLE box
 		useMLEbox.addItemListener(new UseMLEListener());
-
-		simulationExperiment.add(Box.createHorizontalStrut(20));
-		simulationExperiment.add(seedLabel);
-		simulationExperiment.add(seed);
-		simulationExperiment.add(numExpLabel);
-		simulationExperiment.add(numExp);
-		simulationExperiment.add(useMLEbox);
+		//
+		simExp.add(useMLEbox);
 
 		/*
-		 * Panel within simExpPanel to show simulation experiment results
+		 *  simExpPanel row 3: Output location button, Perform simulation button
 		 */
-		JPanel simulationButtonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		JPanel simExpButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		simExpButtons.add(Box.createHorizontalStrut(20));
 
-		JButton doSimExp = new JButton("Perform Simulation Experiments");
-		doSimExp.addActionListener(new DoSimBtnListener());
-
+		// Output location button
 		JButton saveLoc = new JButton("Output Location");
 		saveLoc.addActionListener(new SaveSimulationListener());
+		simExpButtons.add(saveLoc);
 
-		simulationButtonsPanel.add(Box.createHorizontalStrut(20));
-		simulationButtonsPanel.add(saveLoc);
-		simulationButtonsPanel.add(doSimExp);
+		// Perform simulation button
+		JButton doSimExp = new JButton("Perform Simulation Experiments");
+		doSimExp.addActionListener(new DoSimBtnListener());
+		simExpButtons.add(doSimExp);
 
+		/*
+		 *  Add rows to simExpPanel
+		 */
 		simExpPanel.add(simExpDesc);
-		simExpPanel.add(simulationExperiment);
-		simExpPanel.add(simulationButtonsPanel);
+		simExpPanel.add(simExp);
+		simExpPanel.add(simExpButtons);
 
 		/*
 		 * Panel to calculate moments/components of variance
@@ -416,82 +443,7 @@ public class RMGUInterface {
 
 
 
-	/**
-	 * Initialize all text input fields with default placeholder values and
-	 * designate size within GUI
-	 */
-	private void initalizeInputFields() {
-		v_AR0 = new JTextField("0.166", 4);
-		v_AR0.setMaximumSize(v_AR0.getPreferredSize());
-		v_AC0 = new JTextField("0.166", 4);
-		v_AC0.setMaximumSize(v_AC0.getPreferredSize());
-		v_ARC0 = new JTextField("0.166", 4);
-		v_ARC0.setMaximumSize(v_ARC0.getPreferredSize());
-		v_AR1 = new JTextField("0.166", 4);
-		v_AR1.setMaximumSize(v_AR1.getPreferredSize());
-		v_AC1 = new JTextField("0.166", 4);
-		v_AC1.setMaximumSize(v_AC1.getPreferredSize());
-		v_ARC1 = new JTextField("0.166", 4);
-		v_ARC1.setMaximumSize(v_ARC1.getPreferredSize());
-		v_BR0 = new JTextField("0.166", 4);
-		v_BR0.setMaximumSize(v_BR0.getPreferredSize());
-		v_BC0 = new JTextField("0.166", 4);
-		v_BC0.setMaximumSize(v_BC0.getPreferredSize());
-		v_BRC0 = new JTextField("0.166", 4);
-		v_BRC0.setMaximumSize(v_BRC0.getPreferredSize());
-		v_BR1 = new JTextField("0.166", 4);
-		v_BR1.setMaximumSize(v_BR1.getPreferredSize());
-		v_BC1 = new JTextField("0.166", 4);
-		v_BC1.setMaximumSize(v_BC1.getPreferredSize());
-		v_BRC1 = new JTextField("0.166", 4);
-		v_BRC1.setMaximumSize(v_BRC1.getPreferredSize());
-		v_R0 = new JTextField("0.166", 4);
-		v_R0.setMaximumSize(v_R0.getPreferredSize());
-		v_C0 = new JTextField("0.166", 4);
-		v_C0.setMaximumSize(v_C0.getPreferredSize());
-		v_RC0 = new JTextField("0.166", 4);
-		v_RC0.setMaximumSize(v_RC0.getPreferredSize());
-		v_R1 = new JTextField("0.166", 4);
-		v_R1.setMaximumSize(v_R1.getPreferredSize());
-		v_C1 = new JTextField("0.166", 4);
-		v_C1.setMaximumSize(v_C1.getPreferredSize());
-		v_RC1 = new JTextField("0.166", 4);
-		v_RC1.setMaximumSize(v_RC1.getPreferredSize());
-		mu0 = new JTextField("1.5", 4);
-		mu1 = new JTextField("1.0", 4);
-		n0 = new JTextField("20", 4);
-		n1 = new JTextField("20", 4);
-		nr = new JTextField("4", 4);
-	}
 
-	/**
-	 * Set text for all labels next to text input fields
-	 */
-	private void initializeInputLabels() {
-		v_AR0Label = new JLabel("v_AR0: ");
-		v_AC0Label = new JLabel("v_AC0: ");
-		v_ARC0Label = new JLabel("v_ARC0: ");
-		v_AR1Label = new JLabel("v_AR1: ");
-		v_AC1Label = new JLabel("v_AC1: ");
-		v_ARC1Label = new JLabel("v_ARC1: ");
-		v_BR0Label = new JLabel("v_BR0: ");
-		v_BC0Label = new JLabel("v_BC0: ");
-		v_BRC0Label = new JLabel("v_BRC0: ");
-		v_BR1Label = new JLabel("v_BR1: ");
-		v_BC1Label = new JLabel("v_BC1: ");
-		v_BRC1Label = new JLabel("v_BRC1: ");
-		v_R0Label = new JLabel("  v_R0: ");
-		v_C0Label = new JLabel("  v_C0: ");
-		v_RC0Label = new JLabel("  v_RC0: ");
-		v_R1Label = new JLabel("  v_R1: ");
-		v_C1Label = new JLabel("  v_C1: ");
-		v_RC1Label = new JLabel("  v_RC1: ");
-		mu0Label = new JLabel("\u00B5_A: ");
-		mu1Label = new JLabel("\u00B5_B: ");
-		n0Label = new JLabel("n0: ");
-		n1Label = new JLabel("n1: ");
-		nrLabel = new JLabel("nr: ");
-	}
 
 	/**
 	 * Empty out all text input fields
@@ -517,9 +469,9 @@ public class RMGUInterface {
 		v_RC1.setText("");
 		mu0.setText("");
 		mu1.setText("");
-		n0.setText("");
-		n1.setText("");
-		nr.setText("");
+		NnormalJTextField.setText("");
+		NdiseaseJTextField.setText("");
+		NreaderJTextField.setText("");
 	}
 
 	/**
@@ -680,19 +632,19 @@ public class RMGUInterface {
 			loc = tempstr.indexOf("N0:");
 			if (loc != -1) {
 				int tmploc = tempstr.indexOf(":");
-				n0.setText(tempstr.substring(tmploc + 1).trim());
+				NnormalJTextField.setText(tempstr.substring(tmploc + 1).trim());
 				continue;
 			}
 			loc = tempstr.indexOf("N1:");
 			if (loc != -1) {
 				int tmploc = tempstr.indexOf(":");
-				n1.setText(tempstr.substring(tmploc + 1).trim());
+				NdiseaseJTextField.setText(tempstr.substring(tmploc + 1).trim());
 				continue;
 			}
 			loc = tempstr.indexOf("NR:");
 			if (loc != -1) {
 				int tmploc = tempstr.indexOf(":");
-				nr.setText(tempstr.substring(tmploc + 1).trim());
+				NreaderJTextField.setText(tempstr.substring(tmploc + 1).trim());
 				continue;
 			}
 		}
@@ -802,9 +754,9 @@ public class RMGUInterface {
 					bw.write("RC1: " + v_RC1.getText() + "\n");
 					bw.write("uA: " + mu0.getText() + "\n");
 					bw.write("uB: " + mu1.getText() + "\n");
-					bw.write("n0: " + n0.getText() + "\n");
-					bw.write("n1: " + n1.getText() + "\n");
-					bw.write("nr: " + nr.getText() + "\n");
+					bw.write("n0: " + NnormalJTextField.getText() + "\n");
+					bw.write("n1: " + NdiseaseJTextField.getText() + "\n");
+					bw.write("nr: " + NreaderJTextField.getText() + "\n");
 					bw.close();
 				}
 			} catch (HeadlessException e1) {
@@ -870,113 +822,71 @@ public class RMGUInterface {
 		}
 	}
 
-	private class SimExperiments {
 
-		/**
-		 * Constructor for group of simulation experiments.
-		 * 
-		 * @param u Contains experiment means
-		 * @param var_t Contains components of variance
-		 * @param n Contains experiment size
-		 * @param rand Random number generator, no guarantee on current position
-		 *            in sequence
-		 * @param numTimes Number of simulation experiments to perform.
-		 * @param progVal Shared counter of number of experiments performed
-		 *            across all threads
-		 * @param filenameTime Timestamp when this set of experiments was
-		 *            started, to categorize output files
-		 * @throws IOException 
-		 */
-		public double [][][] do_SimExperiments(double[] u, double[] var_t, long[] n, Random rand,
-				long numTimes, AtomicInteger progVal, String filenameTime) throws IOException {
-
-			double[][] avgBDGdata = new double[3][8];
-			double[][] avgBCKdata = new double[3][7];
-			double[][] avgDBMdata = new double[4][6];
-			double[][] avgORdata = new double[4][6];
-			double[][] avgMSdata = new double[4][6];
-			double[] avgAUC = new double[3];
-
-			SimRoeMetz currSim = new SimRoeMetz(u, var_t, n, rand, useMLE);
-			for (long i = 0; i < numTimes; i++) {
-
-				currSim.doSim(var_t, rand);
-				currSim.processSimExperiment();
-				
-				if (simSaveDirectory != null && !simSaveDirectory.equals("")) {
-					writeMRMCFile(currSim.gettA0(), currSim.gettB0(),
-							currSim.gettA1(), currSim.gettB1(),
-							currSim.getAUC(), filenameTime, i);
-					writeComponentsFile(currSim.getBDGdata(), n,
-							currSim.getAUC(), useMLE, filenameTime, i);
-				}
-
-				avgBDGdata = Matrix.matrixAdd(avgBDGdata, currSim.getBDGdata());
-				avgBCKdata = Matrix.matrixAdd(avgBCKdata, currSim.getBCKdata());
-				avgDBMdata = Matrix.matrixAdd(avgDBMdata, currSim.getDBMdata());
-				avgORdata = Matrix.matrixAdd(avgORdata, currSim.getORdata());
-				avgMSdata = Matrix.matrixAdd(avgMSdata, currSim.getMSdata());
-				avgAUC = Matrix.matrixAdd(avgAUC, currSim.getAUC());
-
-			}
-
-			double scaleFactor = 1.0 / (double) numTimes;
-			avgBDGdata = Matrix.scaleMatrix(avgBDGdata, scaleFactor);
-			avgBCKdata = Matrix.scaleMatrix(avgBCKdata, scaleFactor);
-			avgDBMdata = Matrix.scaleMatrix(avgDBMdata, scaleFactor);
-			avgORdata = Matrix.scaleMatrix(avgORdata, scaleFactor);
-			avgMSdata = Matrix.scaleMatrix(avgMSdata, scaleFactor);
-			avgAUC = Matrix.scaleVector(avgAUC, scaleFactor);
-
-			return new double[][][] { avgBDGdata, avgBCKdata, avgDBMdata,
-					avgORdata, avgMSdata, { avgAUC } };
-		}
-
-	}
 	
 	/**
-	 * Performs multiple consecutive simulation experiments in a separate
+	 * extends SwingWorker, Performs multiple consecutive simulation experiments in a separate
 	 * thread. Enables multi-threading to take advantage of multi-core systems
 	 * and keep GUI responsive during heavy calculations.
 	 * 
 	 */
-	private class SimExperiments_thread extends SwingWorker<double[][][], Integer> {
+	private class SimExperiments_thread extends SwingWorker<DBRecord[], Integer> {
+
 		double[] u; // experiment means
 		double[] var_t; // components of variance
-		long[] n; // experiment sizes
-		long numTimes;
-		Random rand;
-		AtomicInteger progVal;
+		SizePanel sizePanel1;
+		
+		/**
+		 * number of experiments per thead
+		 */
+		long NexpPerThread;
+		/**
+		 * progress indicating number of completed experiments,
+		 *  updated by all threads via "atomic"
+		 */
+		AtomicInteger NexpCompleted_atomic;
 		String filenameTime;
+		@SuppressWarnings("unused")
 		int whichTask;
-
+		private RandomStream RandomStreamI;
+		
 		/**
 		 * Constructor for group of simulation experiments.
 		 * 
 		 * @param u Contains experiment means
 		 * @param var_t Contains components of variance
 		 * @param n Contains experiment size
-		 * @param rand Random number generator, no guarantee on current position
-		 *            in sequence
-		 * @param numTimes Number of simulation experiments to perform.
-		 * @param progVal Shared counter of number of experiments performed
+		 * @param NexpPerThread Number of simulation experiments per thread.
+		 * @param NexpCompleted_atomic Shared counter of number of experiments performed
 		 *            across all threads
 		 * @param filenameTime Timestamp when this set of experiments was
 		 *            started, to categorize output files
 		 * @param whichTask Indentifier for this group of simulation experiments
 		 *            (this thread)
+		 * @param RandomStreamI Random numbergenerator at its current state
 		 */
-		public SimExperiments_thread(double[] u, double[] var_t, long[] n, Random rand,
-				long numTimes, AtomicInteger progVal, String filenameTime,
-				int whichTask) {
+		public SimExperiments_thread(double[] u, double[] var_t,
+				long NexpPerThread, AtomicInteger NexpCompleted_atomic, String filenameTime,
+				int whichTask, RandomStream RandomStreamI, SizePanel sizePanelTemp) {
+			
+			sizePanel1 = sizePanelTemp;
+			
 			this.u = u;
 			this.var_t = var_t;
-			this.n = n;
-			this.rand = rand;
-			this.numTimes = numTimes;
-			this.progVal = progVal;
+			this.NexpPerThread = NexpPerThread;
+			this.NexpCompleted_atomic = NexpCompleted_atomic;
 			this.filenameTime = filenameTime;
 			this.whichTask = whichTask;
+			this.RandomStreamI = RandomStreamI;
+			
+			System.out.print("ThreadName:"+Thread.currentThread().getName()+":");
+			//each thread prints 5 random numbers for testing proper threading and reproducibility
+	        for(int j = 0 ; j < 5; j++) {
+	            int nextInt = RandomStreamI.nextInt(1, 100);
+	            System.out.print(nextInt + ",");
+	        }
+	        System.out.println();
+
 		}
 
 		/**
@@ -986,53 +896,94 @@ public class RMGUInterface {
 		 *         this group of simulation experiments
 		 * @throws IOException 
 		 */
-		public double[][][] doInBackground() throws IOException {
-			double[][] avgBDGdata = new double[3][8];
-			double[][] avgBCKdata = new double[3][7];
-			double[][] avgDBMdata = new double[4][6];
-			double[][] avgORdata = new double[4][6];
-			double[][] avgMSdata = new double[4][6];
-			double[] avgAUC = new double[3];
+		public DBRecord[] doInBackground() throws IOException {
 
-			SimRoeMetz currSim = new SimRoeMetz(u, var_t, n, rand, useMLE);
-			for (int i = 0; i < numTimes; i++) {
+			DBRecord DBRecordStat = new DBRecord();
+			DBRecord squareDBRecordStat = new DBRecord();
+			DBRecord sumDBRecordStat = new DBRecord();
+			DBRecord sumSquareDBRecordStat = new DBRecord();
+			DBRecordStat.verbose = false;
+			sumDBRecordStat.verbose = false;
+			squareDBRecordStat.verbose = false;
+			sumSquareDBRecordStat.verbose = false;
+			
+			long flagTotalVarIsNegative = 0;
 
-				currSim.doSim(var_t, rand);
-				currSim.processSimExperiment();
+			SimRoeMetz currSimRoeMetz = new SimRoeMetz(u, var_t, RandomStreamI, sizePanel1);
+			
+			// initialize DBRecords
+			currSimRoeMetz.doSim(squareDBRecordStat);
+			currSimRoeMetz.doSim(sumDBRecordStat);
+			currSimRoeMetz.doSim(sumSquareDBRecordStat);
+
+			// for i=0
+			currSimRoeMetz.doSim(DBRecordStat);
+			// Accumulate DBRecord
+			DBRecord.copy(DBRecordStat, sumDBRecordStat);
+			// Accumulate squareDBRecord
+			DBRecord.copy(DBRecordStat, squareDBRecordStat);			
+			DBRecord.square(squareDBRecordStat);
+			DBRecord.copy(squareDBRecordStat, sumSquareDBRecordStat);
+			// write to disk
+			if (simSaveDirectory != null && !simSaveDirectory.equals("")) {
+				writeInputFile(sumDBRecordStat, filenameTime, 0);
+				writeOutputFile(sumDBRecordStat, filenameTime, 0);
+			}
+			// report progress
+			publish(NexpCompleted_atomic.getAndIncrement());
+			setProgress(0);
+			
+			// continue the loop, add the simulation results to avgDBRecordStat
+			for (long i = 1; i < NexpPerThread; i++) {
+
+				currSimRoeMetz.doSim(DBRecordStat);
 				
+				// Check if DBRecordStat.totalVar < 0
+				// Keep track of how often this happens
+				// Replace current simulation with a new simulation
+				if(DBRecordStat.totalVar < 0) {
+					flagTotalVarIsNegative++;
+					continue;
+				}
+				
+				// Accumulate DBRecord
+				DBRecord.add(DBRecordStat, sumDBRecordStat);
+				// Accumulate squareDBRecord
+				DBRecord.copy(DBRecordStat, squareDBRecordStat);
+				DBRecord.square(squareDBRecordStat);
+				DBRecord.add(squareDBRecordStat, sumSquareDBRecordStat);
+				// write to disk
 				if (simSaveDirectory != null && !simSaveDirectory.equals("")) {
-					writeMRMCFile(currSim.gettA0(), currSim.gettB0(),
-							currSim.gettA1(), currSim.gettB1(),
-							currSim.getAUC(), filenameTime,
-							((whichTask * numTimes) + i));
-					writeComponentsFile(currSim.getBDGdata(), n,
-							currSim.getAUC(), useMLE, filenameTime,
-							((whichTask * numTimes) + i));
+					writeInputFile(DBRecordStat, filenameTime, i);
+					writeOutputFile(DBRecordStat, filenameTime, i);
+				}
+				//report progress
+				publish(NexpCompleted_atomic.getAndIncrement());
+				setProgress((int) (100 * i / NexpPerThread));
+				if(DBRecordStat.verbose) {
+					System.out.print("ThreadName:"+Thread.currentThread().getName()+":");
+					System.out.print(i+1 + " of " + NexpPerThread + " completed\n");
 				}
 
-				avgBDGdata = Matrix.matrixAdd(avgBDGdata, currSim.getBDGdata());
-				avgBCKdata = Matrix.matrixAdd(avgBCKdata, currSim.getBCKdata());
-				avgDBMdata = Matrix.matrixAdd(avgDBMdata, currSim.getDBMdata());
-				avgORdata = Matrix.matrixAdd(avgORdata, currSim.getORdata());
-				avgMSdata = Matrix.matrixAdd(avgMSdata, currSim.getMSdata());
-				avgAUC = Matrix.matrixAdd(avgAUC, currSim.getAUC());
-
-				publish(progVal.getAndIncrement());
-				setProgress((int) (100 * i / numTimes));
 			}
 
-			double scaleFactor = 1.0 / (double) numTimes;
-			avgBDGdata = Matrix.scaleMatrix(avgBDGdata, scaleFactor);
-			avgBCKdata = Matrix.scaleMatrix(avgBCKdata, scaleFactor);
-			avgDBMdata = Matrix.scaleMatrix(avgDBMdata, scaleFactor);
-			avgORdata = Matrix.scaleMatrix(avgORdata, scaleFactor);
-			avgMSdata = Matrix.scaleMatrix(avgMSdata, scaleFactor);
-			avgAUC = Matrix.scaleVector(avgAUC, scaleFactor);
-
-			return new double[][][] { avgBDGdata, avgBCKdata, avgDBMdata,
-					avgORdata, avgMSdata, { avgAUC } };
+			sumDBRecordStat.flagTotalVarIsNegative = flagTotalVarIsNegative;
+			
+			/**
+			 * Return array of DBRecords! 
+			 */
+			DBRecord[] currDBRecord = new DBRecord[4];
+			currDBRecord[0] = DBRecordStat;
+			currDBRecord[1] = sumDBRecordStat;
+			currDBRecord[2] = squareDBRecordStat;
+			currDBRecord[3] = sumSquareDBRecordStat;
+			return currDBRecord;
+			
 		}
 
+		/**
+		 * Move the progress bar along.
+		 */
 		protected void process(List<Integer> chunks) {
 			for (int num : chunks)
 				simProgress.setValue(num);
@@ -1051,42 +1002,67 @@ public class RMGUInterface {
 	class DoSimBtnListener implements ActionListener {
 		int finishedTasks = 0;
 		final int numCores = Runtime.getRuntime().availableProcessors();
-		// final int numCores = 1;
+//		final int numCores = 1;
 		int numCoresToUse;
-		double[][][][] results = new double[numCores][][][];
-		long[] n;
+		DBRecord[][] results = new DBRecord[numCores][2];
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {
+				
+				sizePanel1.NreaderJTextField = NreaderJTextField;
+				sizePanel1.NnormalJTextField = NnormalJTextField;
+				sizePanel1.NdiseaseJTextField = NdiseaseJTextField;
+
+				String String_seed = JTextField_seed.getText();
+				if(String_seed.length() > 9) {
+					return;
+				}
+				
 				double[] u = getMeans();
 				double[] var_t = getVariances();
-				n = getSizes();
-				long seedVar = Long.parseLong(seed.getText());
-				final long numOfExper = Integer.valueOf(numExp.getText());
 
+				final long numOfExper = Integer.valueOf(JTextField_Nexp.getText());
+
+				// Check if saving results
 				if (simSaveDirectory == null || simSaveDirectory.equals("")) {
-					JOptionPane
-							.showMessageDialog(
-									appl.getFrame(),
-									"Save directory not specified.\nExperiment output files will not be written.",
-									"Warning", JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(
+							RoeMetz1.getFrame(),
+						"Save directory not specified.\nExperiment output files will not be written.",
+						"Warning", JOptionPane.WARNING_MESSAGE);
 				}
 
-				// create string representation of current time to use in
-				// filename
+				// Create string representation of current time to use in filename
 				DateFormat dateForm = new SimpleDateFormat("yy-MM-dd-HH-mm-ss");
 				Date currDate = new Date();
 				final String filenameTime = dateForm.format(currDate);
 
-				// create global RNG which is used across all experiments
-				byte[] byteSeed = ByteBuffer.allocate(16).putLong(seedVar)
-						.array();
-				Random rand = new MersenneTwisterRNG(byteSeed);
+				/*
+				 * SSJ: Simulation Stochastique in Java
+				 * http://simul.iro.umontreal.ca/ssj
+				 * The actual random number generators (RNGs) are provided in
+				 * classes that implement this RandomStream interface. Each
+				 * stream of random numbers is an object of the class that 
+				 * implements this interface, and can be viewed as a virtual
+				 * random number generator.
+				 * ...
+				 * Each time a new RandomStream is created, its starting point
+				 * (initial seed) is computed automatically, Z steps ahead of
+				 * the starting point of the previously created stream of the
+				 * same type, and its current state is set equal to this starting point.
+				 */
+				int[] seedIntArr32 = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 
+					     10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 
+					     20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31} ;
+				String seedString = JTextField_seed.getText();
+				seedIntArr32[0] = Integer.parseInt(seedString);
+				WELL1024.setPackageSeed(seedIntArr32);
+				// set seed to 234567890 to yield a sequence for 1 core where DF_BDG < 1
+				// set seed to 725722555 to yield a sequence for 1 core where totalVar < 0, iter=6547
 
-				final AtomicInteger progVal = new AtomicInteger(0);
-
-				createProgressBar((int) numOfExper, progVal.get());
+				// Create a progress bar
+				final AtomicInteger NexpCompleted_atomic = new AtomicInteger(0);
+				createProgressBar((int) numOfExper, NexpCompleted_atomic.get());
 
 				// divide simulations into separate tasks
 				if (numOfExper < numCores) {
@@ -1095,59 +1071,57 @@ public class RMGUInterface {
 					numCoresToUse = numCores;
 				}
 
-				if ( numCoresToUse == 1) {
-					final SimExperiments oneCore = new SimExperiments();
-					try {
-						results[0] = oneCore.do_SimExperiments(u, var_t, n, rand, numOfExper, progVal, filenameTime);
-						processResults( simSaveDirectory, filenameTime);
-
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+				final SimExperiments_thread[] allTasks = new SimExperiments_thread[numCoresToUse];
+		        System.out.println("******** TEST serial RNG BEG ********");
+				for (int i = 0; i < numCoresToUse; i++) {
+					final int taskNum = i;
+					WELL1024 RandomStreamI = new WELL1024();
+					
+					long numOfExperPerCore = numOfExper/numCoresToUse;
+					long remainder = numOfExper % numCoresToUse;
+					// Last core must do more experiments 
+					//   if the number of experiments is not a factor of the number of cores
+					if( (i==numCoresToUse-1) && (remainder != 0)) {
+						numOfExperPerCore = numOfExperPerCore + remainder;
 					}
-				
-				} else {
-					final SimExperiments_thread[] allTasks = new SimExperiments_thread[numCoresToUse];
-					for (int i = 0; i < numCoresToUse; i++) {
-						final int taskNum = i;
-						allTasks[i] = new SimExperiments_thread(u, var_t, n, rand,
-								numOfExper / numCoresToUse, progVal, filenameTime, i);
-						// Check to see when each task finishes and get its results
-						allTasks[i]
-								.addPropertyChangeListener(new PropertyChangeListener() {
-									public void propertyChange(
-											PropertyChangeEvent evt) {
-										if (evt.getPropertyName().equals("done")) {
-											try {
-												results[taskNum] = allTasks[taskNum]
-														.get();
-												finishedTasks++;
-												if (finishedTasks == numCoresToUse) {
-													finishedTasks = 0;
-													processResults(
-															simSaveDirectory,
-															filenameTime);
-												}
-											} catch (InterruptedException e) {
-												e.printStackTrace();
-											} catch (ExecutionException e) {
-												e.printStackTrace();
-											}
-										}
-									}
-								});
-					}
-					// run each task in its own thread, to spread across cores
-					for (int i = 0; i < numCoresToUse; i++) {
-						allTasks[i].execute();
-					}
+					
+					// Create the simulation objects on available cores
+					allTasks[i] = new SimExperiments_thread(
+						u, var_t, numOfExperPerCore, NexpCompleted_atomic, filenameTime, i, RandomStreamI, sizePanel1);
+					
+					// Check to see when each task finishes and get its results
+					allTasks[i].addPropertyChangeListener(
+					new PropertyChangeListener() {
+					public void propertyChange(PropertyChangeEvent evt) {
+						if (evt.getPropertyName().equals("done")) {
+							try {
+								results[taskNum] = allTasks[taskNum].get();
+								finishedTasks++;
+								if (finishedTasks == numCoresToUse) {
+									finishedTasks = 0;
+									processResults(simSaveDirectory,filenameTime);
+								}
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							} catch (ExecutionException e) {
+								e.printStackTrace();
+							}
+						}
+					}});
 				}
+				
+		        System.out.println("******** TEST serial RNG END ********");
+				// Run each simulation object on its own core
+				for (int i = 0; i < numCoresToUse; i++) {
+					allTasks[i].execute();
+				}
+	
 			} catch (NumberFormatException e1) {
 				System.out.println(e1.toString());
-				JOptionPane.showMessageDialog(appl.getFrame(),
-						"Incorrect / Incomplete Input", "Error",
-						JOptionPane.ERROR_MESSAGE);
-
+				JOptionPane.showMessageDialog(
+						RoeMetz1.getFrame(),
+					"Incorrect / Incomplete Input", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			}
 			
 		}
@@ -1156,14 +1130,14 @@ public class RMGUInterface {
 		 * Makes a bar indicating the amount of progress over all simulation
 		 * experiments
 		 * 
-		 * @param numTimes Total number of experiments to be performed, maximum
+		 * @param NexpPerThread number of experiments per thread, maximum
 		 *            value of progress bar
 		 * @param initProgress Initial value of progress bar
 		 */
-		private void createProgressBar(int numTimes, int initProgress) {
-			simProgress = new JProgressBar(0, numTimes);
+		private void createProgressBar(int NexpPerThread, int initProgress) {
+			simProgress = new JProgressBar(0, NexpPerThread);
 			simProgress.setValue(initProgress);
-			progDialog = new JDialog(appl.getFrame(), "Simulation Progress");
+			progDialog = new JDialog(RoeMetz1.getFrame(), "Simulation Progress");
 			JPanel pane = new JPanel(new FlowLayout());
 			pane.add(simProgress);
 			progDialog.setContentPane(pane);
@@ -1178,45 +1152,73 @@ public class RMGUInterface {
 		public void processResults(String simSaveDirectory, String filenameTime) {
 			progDialog.setVisible(false);
 
-			double[][] avgdBDG = new double[3][8];
-			double[][] avgdBCK = new double[3][7];
-			double[][] avgdDBM = new double[4][6];
-			double[][] avgdOR = new double[4][6];
-			double[][] avgdMS = new double[4][6];
-			double[] avgdAUC = new double[3];
-
-			for (int i = 0; i < numCoresToUse; i++) {
-				avgdBDG = Matrix.matrixAdd(avgdBDG, results[i][0]);
-				avgdBCK = Matrix.matrixAdd(avgdBCK, results[i][1]);
-				avgdDBM = Matrix.matrixAdd(avgdDBM, results[i][2]);
-				avgdOR = Matrix.matrixAdd(avgdOR, results[i][3]);
-				avgdMS = Matrix.matrixAdd(avgdMS, results[i][4]);
-				avgdAUC = Matrix.matrixAdd(avgdAUC, results[i][5][0]);
+			DBRecord DBRecordStat = new DBRecord();
+			DBRecord avgDBRecordStat = new DBRecord();
+			DBRecord squareDBRecordStat = new DBRecord();
+			DBRecord avgSquareDBRecordStat = new DBRecord();
+			
+			// for i=0, put results in avgDBRecordStat
+			DBRecordStat = results[0][0];
+			avgDBRecordStat = results[0][1];
+			squareDBRecordStat = results[0][2];
+			avgSquareDBRecordStat = results[0][3];
+			// continue the loop, add the simulation results to avgDBRecordStat
+			for (int i = 1; i < numCoresToUse; i++) {
+				DBRecordStat = results[i][1];
+				DBRecord.add(DBRecordStat, avgDBRecordStat);
+				DBRecordStat = results[i][0];
+				
+				squareDBRecordStat = results[i][3];
+				DBRecord.add(squareDBRecordStat, avgSquareDBRecordStat);
+				squareDBRecordStat = results[i][2];
 			}
 
-			avgdBDG = Matrix.scaleMatrix(avgdBDG, 1.0 / (double) numCoresToUse);
-			avgdBCK = Matrix.scaleMatrix(avgdBCK, 1.0 / (double) numCoresToUse);
-			avgdDBM = Matrix.scaleMatrix(avgdDBM, 1.0 / (double) numCoresToUse);
-			avgdOR = Matrix.scaleMatrix(avgdOR, 1.0 / (double) numCoresToUse);
-			avgdMS = Matrix.scaleMatrix(avgdMS, 1.0 / (double) numCoresToUse);
-			avgdAUC = Matrix.scaleVector(avgdAUC, 1.0 / (double) numCoresToUse);
+			if(avgDBRecordStat.flagTotalVarIsNegative > 0) {
+	 			JFrame frame = new JFrame();
+	 			JOptionPane.showMessageDialog(frame,
+						"There were " + avgDBRecordStat.flagTotalVarIsNegative + 
+						" iterations where the totalVar estimate was negative.\n" +
+						"These iterations were replaced new iterations.\n" +
+						"Negative estimates of totalVar are generally expected to be very rare.\n" +
+						"The likelihood increases as N0, N1, and NR get small.\n" +
+						"Negative estimates of totalVar are not possible when you use MLE.", "Warning",
+						JOptionPane.ERROR_MESSAGE);
+			}
+			
+ 			final double numOfExper = Integer.valueOf(JTextField_Nexp.getText());
+			DBRecord.scale(avgDBRecordStat, 1.0/numOfExper);
+			DBRecord.scale(avgSquareDBRecordStat, 1.0/numOfExper);
 
-			double[][] BDGcoeff = DBRecord.genBDGCoeff(n[2], n[0], n[1]);
-			double[][] BCKcoeff = DBRecord.genBCKCoeff(n[2], n[0], n[1]);
-			double[][] DBMcoeff = DBRecord.genDBMCoeff(n[2], n[0], n[1]);
-			double[][] MScoeff = DBRecord.genMSCoeff(n[2], n[0], n[1]);
-			double[][] ORcoeff = DBRecord.genORCoeff(n[2], n[0], n[1]);
+			// Calculate second order moments
+			DBRecord.copy(avgSquareDBRecordStat, squareDBRecordStat);
+			DBRecord.scale(squareDBRecordStat, numOfExper/(numOfExper-1));
+			// Calculate squared means
+			DBRecord.copy(avgDBRecordStat, DBRecordStat);
+			DBRecord.square(DBRecordStat);
+			DBRecord.scale(DBRecordStat, -numOfExper/(numOfExper-1));
+			// Calculate variances: N/(N-1) * (avg(x^2) - avg(x)^2)
+			DBRecord.add(DBRecordStat, squareDBRecordStat);
+			// Rename result
+			DBRecord varDBRecordStat = squareDBRecordStat;
+			squareDBRecordStat = null;
+			// Reset DBRecordStat: Access one MC trial
+			DBRecordStat = results[0][0];
+			
+			avgDBRecordStat.Decompositions();
+			
+			StatPanel StatPanel1 = new StatPanel(RoeMetz1.getFrame(), avgDBRecordStat);
+			StatPanel1.setStatPanel();
+			StatPanel1.setTable1();
+			StatPanel1.setMCresults(avgDBRecordStat, varDBRecordStat);
+			
+			JDialog simOutput = new JDialog(RoeMetz1.getFrame(), "Simulation Results");
+			simOutput.add(StatPanel1.JPanelStat);
+			simOutput.pack();
+			simOutput.setVisible(true);
 
-			double[][][] allCoeffs = new double[][][] { BDGcoeff, BCKcoeff,
-					DBMcoeff, MScoeff, ORcoeff };
-			double[][][] allDecomps = new double[][][] { avgdBDG, avgdBCK,
-					avgdDBM, avgdOR, avgdMS };
-
-			showSimOutput(allDecomps, allCoeffs, avgdAUC);
-
-			writeSummaryFile(simSaveDirectory, "Summary of Simulation Results",
-					"results-simulation-" + filenameTime, allDecomps,
-					allCoeffs, avgdAUC);
+//			writeSummaryFile(simSaveDirectory, "Summary of Simulation Results",
+//					"results-simulation-" + filenameTime, allDecomps,
+//					allCoeffs, avgdAUC);
 
 		}
 
@@ -1230,10 +1232,9 @@ public class RMGUInterface {
 		 * @param avgdAUC Contains the average AUCs for all simulated
 		 *            experiments
 		 */
-		private void showSimOutput(double[][][] allDecomps,
-				double[][][] allCoeffs, double[] avgdAUC) {
+		private void showSimOutput(DBRecord DBRecordStat) {
 
-			JDialog simOutput = new JDialog(appl.getFrame(),
+			JDialog simOutput = new JDialog(RoeMetz1.getFrame(),
 					"Simulation Results");
 			JPanel panel = new JPanel();
 			panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -1244,12 +1245,14 @@ public class RMGUInterface {
 			JPanel buttonPanel = new JPanel();
 			buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 
-			JTabbedPane tabTables = makeTableTabs(allDecomps, allCoeffs);
+//			JTabbedPane tabTables = makeTableTabs(DBRecordStat);
 
 			// Display AUCs
-			JLabel AUCs = new JLabel("AUC1: " + threeDecOpt.format(avgdAUC[0])
-					+ "   AUC2: " + threeDecOpt.format(avgdAUC[1])
-					+ "   AUC1-AUC2: " + threeDecOpt.format(avgdAUC[2]) + "   ");
+			JLabel AUCs = new JLabel(
+					"AUC1: " + threeDecOpt.format(DBRecordStat.AUCsReaderAvg[0]) + "   " + 
+					"AUC2: " + threeDecOpt.format(DBRecordStat.AUCsReaderAvg[1]) + "   " +
+					"AUC1-AUC2: " + threeDecOpt.format(DBRecordStat.AUCsReaderAvg[0] 
+														- DBRecordStat.AUCsReaderAvg[1]) + "   ");
 
 			// create modality select buttons
 			String str1 = "Modality 1";
@@ -1268,13 +1271,13 @@ public class RMGUInterface {
 			group.add(mod2SimButton);
 			group.add(modDSimButton);
 			// Register a listener for the radio buttons.
-			ModSimListener gListener = new ModSimListener(tabTables,
-					allDecomps, allCoeffs);
-			mod1SimButton.addActionListener(gListener);
-			mod2SimButton.addActionListener(gListener);
-			modDSimButton.addActionListener(gListener);
+//			ModSimListener gListener = new ModSimListener(tabTables,
+//					allDecomps, allCoeffs);
+//			mod1SimButton.addActionListener(gListener);
+//			mod2SimButton.addActionListener(gListener);
+//			modDSimButton.addActionListener(gListener);
 
-			tablePanel.add(tabTables);
+//			tablePanel.add(tabTables);
 			buttonPanel.add(AUCs);
 			buttonPanel.add(mod1SimButton);
 			buttonPanel.add(mod2SimButton);
@@ -1362,12 +1365,14 @@ public class RMGUInterface {
 	private class CalculateCofV extends SwingWorker<double[][][], Integer> {
 		double[] u; // experiment means
 		double[] var_t; // components of variance
-		long[] n; // experiment sizes
+		int Nreader, Nnormal, Ndisease; // experiment sizes
 
-		public CalculateCofV(double[] u, double[] var_t, long[] n2) {
+		public CalculateCofV(double[] u, double[] var_t, int Nreader, int Nnormal, int Ndisease) {
 			this.u = u;
 			this.var_t = var_t;
-			this.n = n2;
+			this.Nreader = Nreader;
+			this.Nnormal = Nnormal;
+			this.Ndisease = Ndisease;
 		}
 
 		/**
@@ -1375,7 +1380,7 @@ public class RMGUInterface {
 		 * decompositions
 		 */
 		public double[][][] doInBackground() {
-			CalcGenRoeMetz.genRoeMetz(u, var_t, n);
+			CalcGenRoeMetz.genRoeMetz(u, var_t, Nreader, Nnormal, Ndisease);
 			double[][][] results_temp = new double[][][] { CalcGenRoeMetz.getBDGdata(),
 					CalcGenRoeMetz.getBCKdata(), CalcGenRoeMetz.getDBMdata(),
 					CalcGenRoeMetz.getORdata(), CalcGenRoeMetz.getMSdata() };
@@ -1395,16 +1400,17 @@ public class RMGUInterface {
 	 */
 	class DoGenRoeMetzBtnListener implements ActionListener {
 		double[][][] results; // averaged decompositions of cofv
-		long[] n; // experiment size
+		int Nreader = Integer.parseInt(NnormalJTextField.getText());
+		int Nnormal = Integer.parseInt(NnormalJTextField.getText());
+		int Ndisease = Integer.parseInt(NnormalJTextField.getText());
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {
 				double[] u = getMeans();
 				double[] var_t = getVariances();
-				n = getSizes();
-
-				final CalculateCofV calcTask = new CalculateCofV(u, var_t, n);
+				
+				final CalculateCofV calcTask = new CalculateCofV(u, var_t, Nreader, Nnormal, Ndisease);
 				calcTask.addPropertyChangeListener(new PropertyChangeListener() {
 					public void propertyChange(PropertyChangeEvent evt) {
 						if (evt.getPropertyName().equals("done")) {
@@ -1422,7 +1428,7 @@ public class RMGUInterface {
 
 				calcTask.execute();
 			} catch (NumberFormatException e1) {
-				JOptionPane.showMessageDialog(appl.getFrame(),
+				JOptionPane.showMessageDialog(RoeMetz1.getFrame(),
 						"Incorrect / Incomplete Input", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
@@ -1439,11 +1445,11 @@ public class RMGUInterface {
 			double[][] DBM = results[2];
 			double[][] OR = results[3];
 			double[][] MS = results[4];
-			double[][] BDGcoeff = DBRecord.genBDGCoeff(n[2], n[0], n[1]);
-			double[][] BCKcoeff = DBRecord.genBCKCoeff(n[2], n[0], n[1]);
-			double[][] DBMcoeff = DBRecord.genDBMCoeff(n[2], n[0], n[1]);
-			double[][] MScoeff = DBRecord.genMSCoeff(n[2], n[0], n[1]);
-			double[][] ORcoeff = DBRecord.genORCoeff(n[2], n[0], n[1]);
+			double[][] BDGcoeff = DBRecord.genBDGCoeff(Nreader, Nnormal, Ndisease);
+			double[][] BCKcoeff = DBRecord.genBCKCoeff(Nreader, Nnormal, Ndisease);
+			double[][] DBMcoeff = DBRecord.genDBMCoeff(Nreader, Nnormal, Ndisease);
+			double[][] MScoeff = DBRecord.genMSCoeff(Nreader, Nnormal, Ndisease);
+			double[][] ORcoeff = DBRecord.genORCoeff(Nreader, Nnormal, Ndisease);
 
 			double[][][] allCoeffs = new double[][][] { BDGcoeff, BCKcoeff,
 					DBMcoeff, MScoeff, ORcoeff };
@@ -1472,7 +1478,7 @@ public class RMGUInterface {
 		 */
 		private void showCalcOutput(double[][][] allDecomps,
 				double[][][] allCoeffs) {
-			JDialog estOutput = new JDialog(appl.getFrame(),
+			JDialog estOutput = new JDialog(RoeMetz1.getFrame(),
 					"Calculation Results");
 			JPanel panel = new JPanel();
 			panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -1599,23 +1605,81 @@ public class RMGUInterface {
 			}
 		}
 	}
+	
+	/**
+	 * check seed when focusLost on JTextField_seed
+	 * @author BDG
+	 *
+	 */
+	public class SeedInputListener implements FocusListener {
+
+		/* (non-Javadoc)
+		 * @see java.awt.event.FocusListener#focusGained(java.awt.event.FocusEvent)
+		 */
+		@Override
+		public void focusGained(FocusEvent e) {
+
+		}
+
+		/* (non-Javadoc)
+		 * @see java.awt.event.FocusListener#focusLost(java.awt.event.FocusEvent)
+		 */
+		@Override
+		public void focusLost(FocusEvent e) {
+
+			String String_seed, String_desc;
+			
+			// Check seed has 9 digits or less
+			String_seed = JTextField_seed.getText();
+			if(String_seed.length() > 9) {
+				String_seed = String_seed.substring(String_seed.length()-9, String_seed.length());
+				JTextField_seed.setText(String_seed);
+
+				String_desc = "Seed must be 9 digit integer or smaller. \n" +
+						"Input seed will be truncated.";
+				System.out.println(String_desc);
+				JOptionPane.showMessageDialog(
+						RoeMetz1.getFrame(), String_desc, "Error", JOptionPane.ERROR_MESSAGE);
+
+			}
+
+			// Check seed is only digits
+			String regex = "[0-9]+"; 
+			if(!String_seed.matches(regex)) {
+				
+				/*
+				 * Create a seed that is 9 digits or less, so that it can be converted to an integer
+				 */
+				String_seed = Long.toString(System.currentTimeMillis());
+				if(String_seed.length() > 9){
+					String_seed = String_seed.substring(String_seed.length()-9, String_seed.length());
+				}
+				JTextField_seed.setText(String_seed);
+
+				String_desc = "Seed must be digits only. \n" +
+						"Random seed being used.";
+				System.out.println(String_desc);
+				JOptionPane.showMessageDialog(
+						RoeMetz1.getFrame(), String_desc, "Error", JOptionPane.ERROR_MESSAGE);
+
+			}
+			
+		}
+
+	}
 
 	/**
 	 * Writes the results of a simulation experiment as ROC scores to a text
 	 * file, formatted to be read by iMRMC or equivalent software
 	 * 
-	 * @param tA0 Matrix for normal cases, modality A
-	 * @param tB0 Matrix for normal cases, modality B
-	 * @param tA1 Matrix for disease cases, modality A
-	 * @param tB1 Matrix for disease cases, modality B
-	 * @param auc AUCs of experiment1
 	 * @param filename Filename prefix (is a timestamp) for a particular batch
 	 *            of output files
 	 * @param l The number of this particular experiment in the batch
 	 */
-	public void writeMRMCFile(double[][] tA0, double[][] tB0, double[][] tA1,
-			double[][] tB1, double[] auc, String filename, long l) {
+	public void writeInputFile(DBRecord currDBRecord, String filename, long l) {
+		
 		try {
+			
 			File file = new File(simSaveDirectory + "/" + "sim-" + filename
 					+ "-" + String.format("%05d", l) + ".imrmc");
 			if (!file.exists()) {
@@ -1626,63 +1690,79 @@ public class RMGUInterface {
 
 			bw.write("Simulated iMRMC input from " + filename + "\n");
 			bw.write("\n");
-			bw.write("NR: " + tA0.length + "\n");
-			bw.write("N0: " + tA0[0].length + "\n");
-			bw.write("N1: " + tA1[0].length + "\n");
+			bw.write("NR: " + currDBRecord.Nreader + "\n");
+			bw.write("N0: " + currDBRecord.Nnormal + "\n");
+			bw.write("N1: " + currDBRecord.Ndisease + "\n");
 			bw.write("NM: 2\n");
 			bw.write("\n");
-			bw.write("AUC1: " + threeDecOpt.format(auc[0]) + "\n");
-			bw.write("AUC2: " + threeDecOpt.format(auc[1]) + "\n");
-			bw.write("DAUC: " + threeDecOpt.format(auc[2]) + "\n");
+			bw.write("AUC1: " + threeDecOpt.format(
+					currDBRecord.AUCsReaderAvg[0]) + "\n");
+			bw.write("AUC2: " + threeDecOpt.format(
+					currDBRecord.AUCsReaderAvg[1]) + "\n");
+			bw.write("DAUC: " + threeDecOpt.format(
+					currDBRecord.AUCsReaderAvg[0]-currDBRecord.AUCsReaderAvg[1]) + "\n");
 			bw.write("\n");
 			bw.write("BEGIN DATA:\n");
 
+			int nrows = currDBRecord.InputFile1.observerData.length;
+			String[][] observerDataTemp = currDBRecord.InputFile1.observerData;
+			for(int i=0; i<nrows; i++) {
+				bw.write(observerDataTemp[i][0] + ", " + 
+						observerDataTemp[i][1] + ", " +
+						observerDataTemp[i][2] + ", " +
+						observerDataTemp[i][3] + "\n");
+				
+			}
+
+			/*
 			int caseNum = 1;
-			for (int j = 0; j < tA0[0].length; j++) {
+			for (int i = 0; i < currDBRecord.Nnormal; i++) {
 				bw.write("-1," + caseNum + ",0,0\n");
 				caseNum++;
 			}
-			for (int k = 0; k < tA1[0].length; k++) {
+			for (int j = 0; j < currDBRecord.Ndisease; j++) {
 				bw.write("-1," + caseNum + ",0,1\n");
 				caseNum++;
 			}
 
-			for (int i = 0; i < tA0.length; i++) {
+			for (int r = 0; r < currDBRecord.Nreader; r++) {
 				caseNum = 1;
-				for (int m = 0; m < tA0[i].length; m++) {
-					bw.write((i + 1) + "," + caseNum + ",1," + tA0[i][m] + "\n");
-					bw.write((i + 1) + "," + caseNum + ",2," + tB0[i][m] + "\n");
+				for (int i = 0; i < currDBRecord.Nnormal; i++) {
+					bw.write((r + 1) + "," + caseNum + ", " + currDBRecord.modalityA + 
+							currDBRecord.covMRMCstat.t0_modAA[i][r][0] + "\n");
+					bw.write((r + 1) + "," + caseNum + ", " + currDBRecord.modalityB + 
+							currDBRecord.covMRMCstat.t0_modBB[i][r][0] + "\n");
 					caseNum++;
 				}
-				for (int n = 0; n < tA1[i].length; n++) {
-					bw.write((i + 1) + "," + caseNum + ",1," + tA1[i][n] + "\n");
-					bw.write((i + 1) + "," + caseNum + ",2," + tB1[i][n] + "\n");
+				for (int j = 0; j < currDBRecord.Ndisease; j++) {
+					bw.write((r + 1) + "," + caseNum + ", " + currDBRecord.modalityA + 
+							currDBRecord.covMRMCstat.t1_modAA[j][r][0] + "\n");
+					bw.write((r + 1) + "," + caseNum + ", " + currDBRecord.modalityB + 
+							currDBRecord.covMRMCstat.t0_modBB[j][r][0] + "\n");
 					caseNum++;
 				}
 			}
+			*/
+			
 			bw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
+
+
 	/**
 	 * Writes component info, p-values, and confidence interval of a single study to file
-	 * @param BDGdata BDG components of study
-	 * @param n Experiment size
-	 * @param auc AUC of experiment
-	 * @param useMLE whether or not to use MLE
 	 * @param filename Timestamp based filename to identify group of experiments
 	 * @param l Individual experiment number
 	 */
-	public void writeComponentsFile(double[][] BDGdata, long[] n, double[] auc,
-			int useMLE, String filename, long l) {
-		DBRecord tempRecord = new DBRecord(BDGdata, 0, n[2], n[0], n[1],
-				new double[] { auc[0], auc[1] });
-		StatTest tempStat = new StatTest(tempRecord, 3);
-		System.out.println("p-val = " + tempStat.getpValF());
-		System.out.println("CI = " + tempStat.getCI()[0] + ", "
-				+ tempStat.getCI()[1]);
+	public void writeOutputFile(DBRecord currDBRecord, String filename, long l) {
+
+		StatTest tempStat = new StatTest(currDBRecord.InputFile1, currDBRecord);
+		System.out.println("p-val = " + tempStat.pValNormal);
+		System.out.println("CI = " + tempStat.ciBotNormal + ", "
+				+ tempStat.ciTopNormal);
 
 		try {
 			File file = new File(simSaveDirectory + "/" + "sim-comp-"
@@ -1696,16 +1776,16 @@ public class RMGUInterface {
 			bw.write("BDG components from simulated study " + filename + "-"
 					+ l + "\n");
 
-			int col = BDGdata[0].length;
-			int row = BDGdata.length;
+			int col = currDBRecord.BDG[0].length;
+			int row = currDBRecord.BDG.length;
 			DecimalFormat df = new DecimalFormat("0.###E0");
 			for (int i = 0; i < row; i++) {
 				String temp = "";
 				for (int j = 0; j < col; j++) {
 					int totalWidth = 14;
-					int numWidth = df.format(BDGdata[i][j]).length();
+					int numWidth = df.format(currDBRecord.BDG[i][j]).length();
 					int numSpaces = totalWidth - numWidth;
-					temp = temp + df.format(BDGdata[i][j]);
+					temp = temp + df.format(currDBRecord.BDG[i][j]);
 					for (int x = 0; x < numSpaces; x++) {
 						temp = temp + " ";
 					}
@@ -1714,9 +1794,9 @@ public class RMGUInterface {
 				bw.write(temp);
 			}
 
-			bw.write("p-value: " + tempStat.getpValF() + "\n");
-			bw.write("Confidence Interval: (" + tempStat.getCI()[0] + ", "
-					+ tempStat.getCI()[1] + ")\n");
+			bw.write("p-value: " + tempStat.pValNormal + "\n");
+			bw.write("Confidence Interval: (" + tempStat.ciBotNormal + ", "
+					+ tempStat.ciTopNormal + ")\n");
 			bw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -2094,7 +2174,7 @@ public class RMGUInterface {
 			BDGdata[1] = tempBDGTab[3];
 		} else if (mod == 3) {
 			BDGdata[0] = tempBDGTab[4];
-			BDGdata[1] = Matrix.scaleVector(tempBDGTab[5], 0.5);
+			BDGdata[1] = Matrix.scale(tempBDGTab[5], 0.5);
 			output1 = "sqrt(Cov) = ";
 		}
 
@@ -2136,7 +2216,7 @@ public class RMGUInterface {
 			BCKdata[1] = tempBCKTab[3];
 		} else if (mod == 3) {
 			BCKdata[0] = tempBCKTab[4];
-			BCKdata[1] = Matrix.scaleVector(tempBCKTab[5], 0.5);
+			BCKdata[1] = Matrix.scale(tempBCKTab[5], 0.5);
 			output1 = "sqrt(Cov) = ";
 		}
 
@@ -2232,4 +2312,6 @@ public class RMGUInterface {
 		String output = threeDec.format(Math.sqrt(currVar));
 		varLabel.setText("sqrt(Var) = " + output);
 	}
+
+
 }

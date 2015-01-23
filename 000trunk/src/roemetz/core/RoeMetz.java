@@ -73,7 +73,7 @@ public class RoeMetz extends JApplet {
 		} catch (UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
 		}
-		run(new RoeMetz(), 900, 500);
+		run(new RoeMetz(), 900, 600);
 	}
 
 	/**
