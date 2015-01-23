@@ -35,11 +35,15 @@ Please *read* the user manual for useful information. See below for the current 
 <br>
 
 =Application Current Version=
-Version 2p6 posted 2014-09-05
+Version 2p7 posted 2015-01-22
 
-Sizing analysis functioning. We believe it is functioning properly and are planning a validation paper. We have also added a button to view the individual reader AUCs. Analysis of individual reader AUCs is planned. <br>
+Update calculation of DF_BDG, degrees of freedom described in 
+Obuchowski2012_Acad-Radiol_v19p1508, to treat unpaired readers, normal cases, or disease cases. Also implemented a minimum DF_BDG according
+to Gaylor1969_Technometrics_v4p691 Eq. 5. <br>
+Bug Fix: DF_BDG estimates less than 2 can't be treated by the implementation of Student T distribution. So DF_BDG is not allowed to fall below 2. <br>
+Bug Fix: When DF_Hillis is infinity (ms_tr=0.0), some users reported an application crash. So DF_Hillis is set to 50 in this case, and you get the same effect.Bug Fix <br>
 
-*[http://imrmc.googlecode.com/svn/standalone_application/iMRMC-v2p6.jar Click to download application (imrmc-v2p6.jar)]*
+*[http://imrmc.googlecode.com/svn/standalone_application/iMRMC-v2p7.jar Click to download application (imrmc-v2p7.jar)]*
 
 <br>
 
