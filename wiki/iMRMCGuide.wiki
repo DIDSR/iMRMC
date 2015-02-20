@@ -49,6 +49,13 @@ Bug Fix: When DF_Hillis is infinity (ms_tr=0.0), some users reported an applicat
 
 =Other Resources=
 
+== Presentation: "Resources for Reader Studies" ==
+
+Presented at SPIE Medical Imaging Conference 2015 <br>
+Invited speaker for a joint workshop between the Physics and Image Perception, Observer Performance, and Technology tracks <br>
+*[http://imrmc.googlecode.com/svn/standalone_application/docs/2015SPIE-MIworkshopBDG-4.pdf Click to download presentation]* <br>
+<br>
+
 ==Sample Input Files ({{{*}}}.imrmc)==
 
 Here are some sample {{{*}}}.imrmc input files that you can use to try the software. There is a directory of sample input files generated from iRoeMetz following the parameters spelled out in Roe1997_Acad-Radiol_v4p298. There is also a directory of the sample input files that have common formatting errors that are detected and reported. <br>
