@@ -16,4 +16,4 @@ iMRMC_Binary is a software package for simulating, sizing, and analyzing a multi
 
 <h5>Direct Access to Repository Contents</h5>
 <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/dillipemmanuel/imrmc/master/javadoc/index.html?index-files/index-1.html"> View the Javadoc for the source code description here </a><br/>
-<a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/dillipemmanuel/imrmc/master/standalone_application/iMRMC/userManual/index.html"> View the User Manual</a>
+<a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/dillipemmanuel/imrmc/standalone_application/iMRMC/userManual/index.htm"> View the User Manual</a>
