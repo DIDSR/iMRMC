@@ -1,7 +1,0 @@
-#summary Download packages
-
-= [iMRMCVersionHistory Download iMRMC] =
-
-= [iRoeMetzVersionHistory Download iRoeMetz] =
-
-= [iMRMC_Binary  Download iMRMC_Binary] =
