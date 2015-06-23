@@ -1,8 +1,0 @@
-*target*
-*.class
-*.java
-
-# Package Files #
-*.jar
-*.war
-*.ear
