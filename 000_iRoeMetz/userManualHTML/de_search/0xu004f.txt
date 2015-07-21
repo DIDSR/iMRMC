@@ -1,0 +1,3 @@
+OF; 2;
+OPPOSED; 2;
+ORIGINAL; 2;

@@ -1,0 +1,12 @@
+TAKES; 2;
+THE; 2;
+THEM; 2;
+THEN; 2;
+THESE; 2;
+THIS; 2;
+THREE; 2;
+TITLE; 1;
+TO; 2;
+TODO; 2;
+TOPIC; 2;
+TRUTH; 2;
