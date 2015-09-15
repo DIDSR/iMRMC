@@ -49,7 +49,7 @@ import mrmc.gui.SizePanel;
  * <br>
  * <b>Flow 3)</b> Object created in {@link roemetz.gui.RMGUInterface.SimExperiments_thread#doInBackground()} <br>
  * -- {@link roemetz.gui.RMGUInterface.SimExperiments_thread#doInBackground()} <br> 
- *    calls {@link roemetz.core.SimRoeMetz#doSim(DBRecord, InputFile)} <br>
+ *    calls {@link roemetz.core.SimRoeMetz#doSim(DBRecord)} <br>
  * <br>
  * Important fields<br>
  * ----<code>recordDesc </code><br>
@@ -411,7 +411,7 @@ public class DBRecord {
 	 *  Analyze {@link mrmc.core.InputFile#observerData} <br>
 	 * <b>Flow 1)</b> Called from {@link mrmc.gui.InputFileCard.varAnalysisListener} <br>
 	 * <br>
-	 * <b>Flow 2)</b> Called from {@link roemetz.core.SimRoeMetz#doSim(DBRecord, InputFile)} <br>
+	 * <b>Flow 2)</b> Called from {@link roemetz.core.SimRoeMetz#doSim(DBRecord)} <br>
 	 * <br>
 	 * Creates {@link mrmc.core.CovMRMC} <br>
 	 * 
@@ -478,7 +478,7 @@ public class DBRecord {
 			}
 		}
 
-		testStat = new StatTest(InputFile1, DBRecordStat);
+		testStat = new StatTest(DBRecordStat);
 
 	}
 	
@@ -520,9 +520,61 @@ public class DBRecord {
 					covMRMCsize.fullyCrossedAB;
 		}
 
-		testSize = new StatTest(SizePanel1, GUI);
+		testSize = new StatTest(SizePanel1, DBRecordStat, DBRecordSize);
 
 	}
+	
+	/**
+	 *
+	 * 
+	 * 
+	 * @param SizePanelTemp
+	 */
+	public void DBRecordRoeMetzNumericalFill(SizePanel SizePanelRoeMetz) {
+		
+		DBRecord DBRecordTemp = new DBRecord();
+
+		// We just need the coefficients
+		covMRMCsize = new CovMRMC(SizePanelRoeMetz, DBRecordTemp);
+		
+		totalVar = 0.0;
+		for(int i=0; i<8; i++) {
+			BDGcoeff[0][i] = covMRMCsize.coefficientsAA[i+1];
+			BDGcoeff[1][i] = covMRMCsize.coefficientsBB[i+1];
+			BDGcoeff[2][i] = covMRMCsize.coefficientsAB[i+1];
+			BDGcoeff[3][i] = 1.0;
+			
+			BDG[3][i] = 
+					+    BDGcoeff[0][i]*BDG[0][i]
+					+    BDGcoeff[1][i]*BDG[1][i]
+					-2.0*BDGcoeff[2][i]*BDG[2][i];
+
+			totalVar = totalVar + BDGcoeff[3][i]*BDG[3][i];
+			
+			BDGbias[0][i] = BDG[0][i];
+			BDGbias[1][i] = BDG[1][i];
+			BDGbias[2][i] = BDG[2][i];
+			BDGbias[3][i] = BDG[3][i];
+		}
+
+		if(selectedMod == 0) {
+			flagFullyCrossed = covMRMCsize.fullyCrossedA;
+		}
+		if(selectedMod == 1) {
+			flagFullyCrossed = covMRMCsize.fullyCrossedB;
+		}
+		if(selectedMod == 3) {
+			flagFullyCrossed = covMRMCsize.fullyCrossedA && 
+					covMRMCsize.fullyCrossedB && 
+					covMRMCsize.fullyCrossedAB;
+		}
+
+		Decompositions();
+		testStat = new StatTest(this);
+		
+	}
+	
+
 	
 
 
@@ -598,6 +650,8 @@ public class DBRecord {
 		totalVar = totalVar*1.0;
 
 	}
+	
+
 	
 	/**
 	 * Derives all decompositions and coefficient matrices from predefined BDG
@@ -825,8 +879,10 @@ public class DBRecord {
 		double[][] c = new double[4][6];
 		double[][] BAlpha = new double[][] {
 				{ 2 * (Nnormal2 + Ndisease2), 0, 2, (Nnormal2 + Ndisease2), 0, 1 },
-				{ 0, 2 * Nreader2, 2, 0, Nreader2, 1 }, { 0, 0, 0, (Nnormal2 + Ndisease2), 0, 1 },
-				{ 0, 0, 0, 0, Nreader2, 1 }, { 0, 0, 2, 0, 0, 1 },
+				{ 0, 2 * Nreader2, 2, 0, Nreader2, 1 }, 
+				{ 0, 0, 2, 0, 0, 1 },
+				{ 0, 0, 0, (Nnormal2 + Ndisease2), 0, 1 },
+				{ 0, 0, 0, 0, Nreader2, 1 }, 
 				{ 0, 0, 0, 0, 0, 1 } };
 		for (int i = 0; i < 4; i++)
 			for (int j = 0; j < 6; j++)
@@ -904,7 +960,8 @@ public class DBRecord {
 	 * Transforms BDG representation of variance components into BCK
 	 * representation of variance components
 	 * 
-	 * @param BDG Matrix of BDG variance components
+	 * @param tempBDG BDG variance components
+	 * @param tempBCKcoeff BDG variance components
 	 * @return Matrix of BCK representation of variance components
 	 */
 	public static double[][] BDG2BCK(double[][] tempBDG, double[][] tempBCKcoeff) {

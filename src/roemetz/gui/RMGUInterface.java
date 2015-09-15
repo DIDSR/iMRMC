@@ -82,7 +82,8 @@ public class RMGUInterface {
 	private final int USE_MLE = 1;
 	private final int NO_MLE = 0;
 	private static RoeMetz RoeMetz1;
-	SizePanel sizePanel1;
+	SizePanel SizePanelRoeMetz;
+	JPanel studyDesignJPanel;
 
 	/**
 	 * Input means
@@ -300,8 +301,8 @@ public class RMGUInterface {
 		/*
 		 * cofvInputPanel row 11 panel(left-right) of study design inputs
 		 */
-		sizePanel1 = new SizePanel();
-		JPanel studyDesignJPanel = sizePanel1.setStudyDesign();
+		SizePanelRoeMetz = new SizePanel();
+		studyDesignJPanel = SizePanelRoeMetz.setStudyDesign();
 		
 		/*
 		 * cofvInputPanel row 12 panel(left-right) of buttons controlling input fields
@@ -407,14 +408,13 @@ public class RMGUInterface {
 		 * Panel to calculate moments/components of variance
 		 */
 		JPanel calculatePanel = new JPanel();
-		calculatePanel
-				.setLayout(new BoxLayout(calculatePanel, BoxLayout.Y_AXIS));
+		calculatePanel.setLayout(new BoxLayout(calculatePanel, BoxLayout.Y_AXIS));
 
 		/*
 		 * Panel within calculatePanel to describe function
 		 */
 		JPanel cofvResultsDesc = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		JLabel cofvLabel = new JLabel("Calculate Components of Variance:");
+		JLabel cofvLabel = new JLabel("Calculate Components of Variance by Numerical Integration:");
 		cofvResultsDesc.add(cofvLabel);
 
 		/*
@@ -422,10 +422,10 @@ public class RMGUInterface {
 		 */
 		JPanel cofvResults = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-		JButton doGenRoeMetz = new JButton("Perform Calculation");
-		doGenRoeMetz.addActionListener(new DoGenRoeMetzBtnListener());
 		JButton saveCalcResults = new JButton("Output Location");
 		saveCalcResults.addActionListener(new saveCalcResultsListener());
+		JButton doGenRoeMetz = new JButton("Do Numerical Integration");
+		doGenRoeMetz.addActionListener(new DoNumericalIntegrationBtnListener());
 
 		cofvResults.add(Box.createHorizontalStrut(20));
 		cofvResults.add(saveCalcResults);
@@ -839,7 +839,7 @@ public class RMGUInterface {
 		/**
 		 * number of experiments per thead
 		 */
-		long NexpPerThread;
+		long Nexp, NexpStart, NexpEnd, NexpThisCore;
 		/**
 		 * progress indicating number of completed experiments,
 		 *  updated by all threads via "atomic"
@@ -855,8 +855,9 @@ public class RMGUInterface {
 		 * 
 		 * @param u Contains experiment means
 		 * @param var_t Contains components of variance
-		 * @param n Contains experiment size
-		 * @param NexpPerThread Number of simulation experiments per thread.
+		 * @param Nexp Number of simulation experiments
+		 * @param NexpStart The starting index of the simulation experiment for this core
+		 * @param NexpEnd The ending index of the simulation experiment for this core 
 		 * @param NexpCompleted_atomic Shared counter of number of experiments performed
 		 *            across all threads
 		 * @param filenameTime Timestamp when this set of experiments was
@@ -864,16 +865,20 @@ public class RMGUInterface {
 		 * @param whichTask Indentifier for this group of simulation experiments
 		 *            (this thread)
 		 * @param RandomStreamI Random numbergenerator at its current state
+		 * @param sizePanelTemp Contains parameters for the mrmc experiment to be simulated
 		 */
 		public SimExperiments_thread(double[] u, double[] var_t,
-				long NexpPerThread, AtomicInteger NexpCompleted_atomic, String filenameTime,
+				long Nexp, long NexpStart, long NexpEnd, AtomicInteger NexpCompleted_atomic, String filenameTime,
 				int whichTask, RandomStream RandomStreamI, SizePanel sizePanelTemp) {
 			
 			sizePanel1 = sizePanelTemp;
 			
 			this.u = u;
 			this.var_t = var_t;
-			this.NexpPerThread = NexpPerThread;
+			this.Nexp = Nexp;
+			this.NexpStart = NexpStart;
+			this.NexpEnd = NexpEnd;
+			this.NexpThisCore = NexpEnd-NexpStart;
 			this.NexpCompleted_atomic = NexpCompleted_atomic;
 			this.filenameTime = filenameTime;
 			this.whichTask = whichTask;
@@ -916,7 +921,7 @@ public class RMGUInterface {
 			currSimRoeMetz.doSim(sumDBRecordStat);
 			currSimRoeMetz.doSim(sumSquareDBRecordStat);
 
-			// for i=0
+			// for i=NexpStart
 			currSimRoeMetz.doSim(DBRecordStat);
 			// Accumulate DBRecord
 			DBRecord.copy(DBRecordStat, sumDBRecordStat);
@@ -926,16 +931,27 @@ public class RMGUInterface {
 			DBRecord.copy(squareDBRecordStat, sumSquareDBRecordStat);
 			// write to disk
 			if (simSaveDirectory != null && !simSaveDirectory.equals("")) {
-				writeInputFile(sumDBRecordStat, filenameTime, 0);
-				writeOutputFile(sumDBRecordStat, filenameTime, 0);
+				writeInputFile(sumDBRecordStat, filenameTime, NexpStart);
+				writeOutputFile(sumDBRecordStat, filenameTime, NexpStart);
 			}
-			// report progress
-			publish(NexpCompleted_atomic.getAndIncrement());
-			setProgress(0);
 			
 			// continue the loop, add the simulation results to avgDBRecordStat
-			for (long i = 1; i < NexpPerThread; i++) {
+			for (long i = NexpStart+1; i < NexpEnd; i++) {
 
+				// Sends data chunks to the "process" method.
+				// Below, the process method updates the progress bar.
+				publish(NexpCompleted_atomic.incrementAndGet());
+
+				// SwingWorker supports bound properties, 
+				// which are useful for communicating with other threads.
+				// Two bound properties are predefined: progress and state.
+				// As with all bound properties, progress and state can be used 
+				// to trigger event-handling tasks on the event dispatch thread.
+				// The progress bound variable is an int value that can range from 0 to 100.
+				// It has a predefined setter method (the protected SwingWorker.setProgress)
+				// and a predefined getter method (the public SwingWorker.getProgress).
+				setProgress((int) (100 * (i-NexpStart) / NexpThisCore));
+				
 				currSimRoeMetz.doSim(DBRecordStat);
 				
 				// Check if DBRecordStat.totalVar < 0
@@ -957,12 +973,9 @@ public class RMGUInterface {
 					writeInputFile(DBRecordStat, filenameTime, i);
 					writeOutputFile(DBRecordStat, filenameTime, i);
 				}
-				//report progress
-				publish(NexpCompleted_atomic.getAndIncrement());
-				setProgress((int) (100 * i / NexpPerThread));
 				if(DBRecordStat.verbose) {
 					System.out.print("ThreadName:"+Thread.currentThread().getName()+":");
-					System.out.print(i+1 + " of " + NexpPerThread + " completed\n");
+					System.out.print(i+1 + " of " + Nexp + " completed\n");
 				}
 
 			}
@@ -1001,8 +1014,8 @@ public class RMGUInterface {
 	 */
 	class DoSimBtnListener implements ActionListener {
 		int finishedTasks = 0;
-		final int numCores = Runtime.getRuntime().availableProcessors();
-//		final int numCores = 1;
+//		final int numCores = Runtime.getRuntime().availableProcessors();
+		final int numCores = 1;
 		int numCoresToUse;
 		DBRecord[][] results = new DBRecord[numCores][2];
 
@@ -1010,9 +1023,9 @@ public class RMGUInterface {
 		public void actionPerformed(ActionEvent e) {
 			try {
 				
-				sizePanel1.NreaderJTextField = NreaderJTextField;
-				sizePanel1.NnormalJTextField = NnormalJTextField;
-				sizePanel1.NdiseaseJTextField = NdiseaseJTextField;
+				SizePanelRoeMetz.NreaderJTextField = NreaderJTextField;
+				SizePanelRoeMetz.NnormalJTextField = NnormalJTextField;
+				SizePanelRoeMetz.NdiseaseJTextField = NdiseaseJTextField;
 
 				String String_seed = JTextField_seed.getText();
 				if(String_seed.length() > 9) {
@@ -1022,7 +1035,18 @@ public class RMGUInterface {
 				double[] u = getMeans();
 				double[] var_t = getVariances();
 
-				final long numOfExper = Integer.valueOf(JTextField_Nexp.getText());
+				// Get number of experiments
+				long Nexp = Integer.valueOf(JTextField_Nexp.getText());
+				// Determine number of cores
+				if (Nexp < numCores) {
+					numCoresToUse = (int) Nexp;
+				} else {
+					numCoresToUse = numCores;
+				}
+				// Determine the number of experiments per core
+				long NexpPerCore = Nexp/numCoresToUse;
+				// Declare the start and end of experiment index to be assigned to each core 
+				long NexpStart, NexpEnd;
 
 				// Check if saving results
 				if (simSaveDirectory == null || simSaveDirectory.equals("")) {
@@ -1062,14 +1086,7 @@ public class RMGUInterface {
 
 				// Create a progress bar
 				final AtomicInteger NexpCompleted_atomic = new AtomicInteger(0);
-				createProgressBar((int) numOfExper, NexpCompleted_atomic.get());
-
-				// divide simulations into separate tasks
-				if (numOfExper < numCores) {
-					numCoresToUse = (int) numOfExper;
-				} else {
-					numCoresToUse = numCores;
-				}
+				createProgressBar((int) Nexp, NexpCompleted_atomic.get());
 
 				final SimExperiments_thread[] allTasks = new SimExperiments_thread[numCoresToUse];
 		        System.out.println("******** TEST serial RNG BEG ********");
@@ -1077,17 +1094,18 @@ public class RMGUInterface {
 					final int taskNum = i;
 					WELL1024 RandomStreamI = new WELL1024();
 					
-					long numOfExperPerCore = numOfExper/numCoresToUse;
-					long remainder = numOfExper % numCoresToUse;
+					NexpStart = NexpPerCore * i;
+					NexpEnd = NexpStart + NexpPerCore;
 					// Last core must do more experiments 
 					//   if the number of experiments is not a factor of the number of cores
-					if( (i==numCoresToUse-1) && (remainder != 0)) {
-						numOfExperPerCore = numOfExperPerCore + remainder;
+					if( i==numCoresToUse-1) {
+						NexpEnd = Nexp;
 					}
 					
 					// Create the simulation objects on available cores
 					allTasks[i] = new SimExperiments_thread(
-						u, var_t, numOfExperPerCore, NexpCompleted_atomic, filenameTime, i, RandomStreamI, sizePanel1);
+						u, var_t, Nexp, NexpStart, NexpEnd, NexpCompleted_atomic, 
+						filenameTime, i, RandomStreamI, SizePanelRoeMetz);
 					
 					// Check to see when each task finishes and get its results
 					allTasks[i].addPropertyChangeListener(
@@ -1130,12 +1148,11 @@ public class RMGUInterface {
 		 * Makes a bar indicating the amount of progress over all simulation
 		 * experiments
 		 * 
-		 * @param NexpPerThread number of experiments per thread, maximum
-		 *            value of progress bar
+		 * @param Nexp number of experiments
 		 * @param initProgress Initial value of progress bar
 		 */
-		private void createProgressBar(int NexpPerThread, int initProgress) {
-			simProgress = new JProgressBar(0, NexpPerThread);
+		private void createProgressBar(int Nexp, int initProgress) {
+			simProgress = new JProgressBar(0, Nexp);
 			simProgress.setValue(initProgress);
 			progDialog = new JDialog(RoeMetz1.getFrame(), "Simulation Progress");
 			JPanel pane = new JPanel(new FlowLayout());
@@ -1185,17 +1202,17 @@ public class RMGUInterface {
 						JOptionPane.ERROR_MESSAGE);
 			}
 			
- 			final double numOfExper = Integer.valueOf(JTextField_Nexp.getText());
-			DBRecord.scale(avgDBRecordStat, 1.0/numOfExper);
-			DBRecord.scale(avgSquareDBRecordStat, 1.0/numOfExper);
+ 			final double Nexp = Integer.valueOf(JTextField_Nexp.getText());
+			DBRecord.scale(avgDBRecordStat, 1.0/Nexp);
+			DBRecord.scale(avgSquareDBRecordStat, 1.0/Nexp);
 
 			// Calculate second order moments
 			DBRecord.copy(avgSquareDBRecordStat, squareDBRecordStat);
-			DBRecord.scale(squareDBRecordStat, numOfExper/(numOfExper-1));
+			DBRecord.scale(squareDBRecordStat, Nexp/(Nexp-1));
 			// Calculate squared means
 			DBRecord.copy(avgDBRecordStat, DBRecordStat);
 			DBRecord.square(DBRecordStat);
-			DBRecord.scale(DBRecordStat, -numOfExper/(numOfExper-1));
+			DBRecord.scale(DBRecordStat, -Nexp/(Nexp-1));
 			// Calculate variances: N/(N-1) * (avg(x^2) - avg(x)^2)
 			DBRecord.add(DBRecordStat, squareDBRecordStat);
 			// Rename result
@@ -1225,12 +1242,7 @@ public class RMGUInterface {
 		/**
 		 * Creates a pop-up table to display results of the simulations.
 		 * 
-		 * @param allDecomps Contains all of the decompositions of the
-		 *            components of variance
-		 * @param allCoeffs Contains all of the coefficients for each
-		 *            decomposition
-		 * @param avgdAUC Contains the average AUCs for all simulated
-		 *            experiments
+		 * @param DBRecordStat Contains the results from the simulations 
 		 */
 		private void showSimOutput(DBRecord DBRecordStat) {
 
@@ -1362,30 +1374,24 @@ public class RMGUInterface {
 	 * thread to keep GUI responsive during heavy calculation.
 	 * 
 	 */
-	private class CalculateCofV extends SwingWorker<double[][][], Integer> {
+	private class CalculateCofV extends SwingWorker<DBRecord, Integer> {
 		double[] u; // experiment means
 		double[] var_t; // components of variance
-		int Nreader, Nnormal, Ndisease; // experiment sizes
+		SizePanel SizePanelRoeMetz;
 
-		public CalculateCofV(double[] u, double[] var_t, int Nreader, int Nnormal, int Ndisease) {
+		public CalculateCofV(double[] u, double[] var_t, SizePanel SizePanelRoeMetz) {
 			this.u = u;
 			this.var_t = var_t;
-			this.Nreader = Nreader;
-			this.Nnormal = Nnormal;
-			this.Ndisease = Ndisease;
+			this.SizePanelRoeMetz = SizePanelRoeMetz;
 		}
 
 		/**
 		 * Performs calculation of components of variance and returns their
 		 * decompositions
 		 */
-		public double[][][] doInBackground() {
-			CalcGenRoeMetz.genRoeMetz(u, var_t, Nreader, Nnormal, Ndisease);
-			double[][][] results_temp = new double[][][] { CalcGenRoeMetz.getBDGdata(),
-					CalcGenRoeMetz.getBCKdata(), CalcGenRoeMetz.getDBMdata(),
-					CalcGenRoeMetz.getORdata(), CalcGenRoeMetz.getMSdata() };
-			
-			return results_temp;
+		public DBRecord doInBackground() {
+			CalcGenRoeMetz.genRoeMetz(u, var_t, SizePanelRoeMetz);
+			return CalcGenRoeMetz.DBRecordNumerical;
 		}
 
 		protected void done() {
@@ -1398,24 +1404,28 @@ public class RMGUInterface {
 	 * thread and displays results in a pop-up table.
 	 * 
 	 */
-	class DoGenRoeMetzBtnListener implements ActionListener {
-		double[][][] results; // averaged decompositions of cofv
-		int Nreader = Integer.parseInt(NnormalJTextField.getText());
-		int Nnormal = Integer.parseInt(NnormalJTextField.getText());
-		int Ndisease = Integer.parseInt(NnormalJTextField.getText());
-
+	class DoNumericalIntegrationBtnListener implements ActionListener {
+		DBRecord DBRecordNumerical; // averaged decompositions of cofv
+		
 		@Override
 		public void actionPerformed(ActionEvent e) {
+
+			SizePanelRoeMetz.NreaderJTextField = NreaderJTextField;
+			SizePanelRoeMetz.NnormalJTextField = NnormalJTextField;
+			SizePanelRoeMetz.NdiseaseJTextField = NdiseaseJTextField;
+
+			System.out.println(NreaderJTextField.getText());
+
 			try {
 				double[] u = getMeans();
 				double[] var_t = getVariances();
 				
-				final CalculateCofV calcTask = new CalculateCofV(u, var_t, Nreader, Nnormal, Ndisease);
+				final CalculateCofV calcTask = new CalculateCofV(u, var_t, SizePanelRoeMetz);
 				calcTask.addPropertyChangeListener(new PropertyChangeListener() {
 					public void propertyChange(PropertyChangeEvent evt) {
 						if (evt.getPropertyName().equals("done")) {
 							try {
-								results = calcTask.get();
+								DBRecordNumerical = calcTask.get();
 								processResults();
 							} catch (InterruptedException e) {
 								e.printStackTrace();
@@ -1440,170 +1450,28 @@ public class RMGUInterface {
 		 * calls method to display them in pop-up table
 		 */
 		public void processResults() {
-			double[][] BDG = results[0];
-			double[][] BCK = results[1];
-			double[][] DBM = results[2];
-			double[][] OR = results[3];
-			double[][] MS = results[4];
-			double[][] BDGcoeff = DBRecord.genBDGCoeff(Nreader, Nnormal, Ndisease);
-			double[][] BCKcoeff = DBRecord.genBCKCoeff(Nreader, Nnormal, Ndisease);
-			double[][] DBMcoeff = DBRecord.genDBMCoeff(Nreader, Nnormal, Ndisease);
-			double[][] MScoeff = DBRecord.genMSCoeff(Nreader, Nnormal, Ndisease);
-			double[][] ORcoeff = DBRecord.genORCoeff(Nreader, Nnormal, Ndisease);
 
-			double[][][] allCoeffs = new double[][][] { BDGcoeff, BCKcoeff,
-					DBMcoeff, MScoeff, ORcoeff };
-			double[][][] allDecomps = new double[][][] { BDG, BCK, DBM, OR, MS };
+			DBRecordNumerical.Decompositions();
+			
+			StatPanel StatPanelNumerical = new StatPanel(RoeMetz1.getFrame(), DBRecordNumerical);
+			StatPanelNumerical.setStatPanel();
+			StatPanelNumerical.setTable1();
 
-			showCalcOutput(allDecomps, allCoeffs);
+			JDialog numericalOutput = new JDialog(RoeMetz1.getFrame(), "Numerical Integration Results");
+//			numericalOutput.add(studyDesignJPanel);
+			numericalOutput.add(StatPanelNumerical.JPanelStat);
+			numericalOutput.pack();
+			numericalOutput.setVisible(true);
 
-			double[] AUCs = { allDecomps[0][0][0], allDecomps[0][1][0],
-					allDecomps[0][0][0] - allDecomps[0][1][0] };
 			DateFormat dateForm = new SimpleDateFormat("yy-MM-dd-HH-mm-ss");
 			Date currDate = new Date();
 			final String filenameTime = dateForm.format(currDate);
 
-			writeSummaryFile(calcSaveDirectory,
-					"Summary of Calculation Results", "calc-results-"
-							+ filenameTime, allDecomps, allCoeffs, AUCs);
+//			writeSummaryFile(calcSaveDirectory,
+//					"Summary of Calculation Results", "calc-results-"
+//							+ filenameTime, allDecomps, allCoeffs, AUCs);
 		}
 
-		/**
-		 * Displays the pop-up table with results of calculation.
-		 * 
-		 * @param allDecomps Contains all individual decompositions of
-		 *            components of variance
-		 * @param allCoeffs Contains all individual coefficients for each
-		 *            decomposition
-		 */
-		private void showCalcOutput(double[][][] allDecomps,
-				double[][][] allCoeffs) {
-			JDialog estOutput = new JDialog(RoeMetz1.getFrame(),
-					"Calculation Results");
-			JPanel panel = new JPanel();
-			panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-
-			JPanel tablePanel = new JPanel();
-			tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
-
-			JPanel buttonPanel = new JPanel();
-			buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
-
-			JTabbedPane tabTables = makeTableTabs(allDecomps, allCoeffs);
-
-			// create AUCs label
-			JLabel AUCs = new JLabel("AUC1: "
-					+ threeDecOpt.format(allDecomps[0][0][0])
-					+ "   AUC2: "
-					+ threeDecOpt.format(allDecomps[0][1][0])
-					+ "   AUC1-AUC2: "
-					+ threeDecOpt.format(allDecomps[0][0][0]
-							- allDecomps[0][1][0]) + "    ");
-
-			// create modality select buttons
-			String str1 = "Modality 1";
-			JRadioButton mod1EstButton = new JRadioButton(str1);
-			mod1EstButton.setActionCommand(str1);
-			mod1EstButton.setSelected(true);
-			String str2 = "Modality 2";
-			JRadioButton mod2EstButton = new JRadioButton(str2);
-			mod2EstButton.setActionCommand(str2);
-			String strD = "Difference";
-			JRadioButton modDEstButton = new JRadioButton(strD);
-			modDEstButton.setActionCommand(strD);
-			// Group the radio buttons.
-			ButtonGroup groupEst = new ButtonGroup();
-			groupEst.add(mod1EstButton);
-			groupEst.add(mod2EstButton);
-			groupEst.add(modDEstButton);
-
-			// Register a listener for the radio buttons.
-			ModCalcListener gListenerEst = new ModCalcListener(tabTables,
-					allDecomps, allCoeffs);
-			mod1EstButton.addActionListener(gListenerEst);
-			mod2EstButton.addActionListener(gListenerEst);
-			modDEstButton.addActionListener(gListenerEst);
-
-			tablePanel.add(tabTables);
-			buttonPanel.add(AUCs);
-			buttonPanel.add(mod1EstButton);
-			buttonPanel.add(mod2EstButton);
-			buttonPanel.add(modDEstButton);
-			panel.add(tablePanel);
-			panel.add(buttonPanel);
-			estOutput.add(panel);
-			estOutput.pack();
-			estOutput.setVisible(true);
-		}
-
-		/**
-		 * Handler for "Modality 1", "Modality 2", and "Difference" radio
-		 * buttons in pop-up table of calculation results.
-		 */
-		class ModCalcListener implements ActionListener {
-			JTabbedPane tabTables;
-			double[][] BDG;
-			double[][] BCK;
-			double[][] DBM;
-			double[][] OR;
-			double[][] MS;
-			double[][] BDGcoeff;
-			double[][] BCKcoeff;
-			double[][] DBMcoeff;
-			double[][] ORcoeff;
-			double[][] MScoeff;
-
-			public ModCalcListener(JTabbedPane tabTables,
-					double[][][] allDecomps, double[][][] allCoeffs) {
-				this.tabTables = tabTables;
-				this.BDG = allDecomps[0];
-				this.BCK = allDecomps[1];
-				this.DBM = allDecomps[2];
-				this.OR = allDecomps[3];
-				this.MS = allDecomps[4];
-				this.BDGcoeff = allCoeffs[0];
-				this.BCKcoeff = allCoeffs[1];
-				this.DBMcoeff = allCoeffs[2];
-				this.MScoeff = allCoeffs[3];
-				this.ORcoeff = allCoeffs[4];
-			}
-
-			/**
-			 * Performed when any of the radio buttons are used
-			 */
-			public void actionPerformed(ActionEvent e) {
-				String str;
-				str = e.getActionCommand();
-				if (str == "Modality 1") {
-					updatePanes(0);
-				}
-				if (str == "Modality 2") {
-					updatePanes(1);
-				}
-				if (str == "Difference") {
-					updatePanes(3);
-				}
-			}
-
-			/**
-			 * Changes values of pop-up table according to which modality has
-			 * been selected
-			 * 
-			 * @param mod Selected modality
-			 */
-			private void updatePanes(int mod) {
-				updateBDGpane((JComponent) tabTables.getComponent(0), mod,
-						results[0], BDGcoeff);
-				updateBCKpane((JComponent) tabTables.getComponent(1), mod,
-						results[1], BCKcoeff);
-				updateDBMpane((JComponent) tabTables.getComponent(2), mod,
-						results[2], DBMcoeff);
-				updateORpane((JComponent) tabTables.getComponent(3), mod,
-						results[3], ORcoeff);
-				updateMSpane((JComponent) tabTables.getComponent(4), mod,
-						results[4], MScoeff);
-			}
-		}
 	}
 	
 	/**
@@ -1714,36 +1582,6 @@ public class RMGUInterface {
 				
 			}
 
-			/*
-			int caseNum = 1;
-			for (int i = 0; i < currDBRecord.Nnormal; i++) {
-				bw.write("-1," + caseNum + ",0,0\n");
-				caseNum++;
-			}
-			for (int j = 0; j < currDBRecord.Ndisease; j++) {
-				bw.write("-1," + caseNum + ",0,1\n");
-				caseNum++;
-			}
-
-			for (int r = 0; r < currDBRecord.Nreader; r++) {
-				caseNum = 1;
-				for (int i = 0; i < currDBRecord.Nnormal; i++) {
-					bw.write((r + 1) + "," + caseNum + ", " + currDBRecord.modalityA + 
-							currDBRecord.covMRMCstat.t0_modAA[i][r][0] + "\n");
-					bw.write((r + 1) + "," + caseNum + ", " + currDBRecord.modalityB + 
-							currDBRecord.covMRMCstat.t0_modBB[i][r][0] + "\n");
-					caseNum++;
-				}
-				for (int j = 0; j < currDBRecord.Ndisease; j++) {
-					bw.write((r + 1) + "," + caseNum + ", " + currDBRecord.modalityA + 
-							currDBRecord.covMRMCstat.t1_modAA[j][r][0] + "\n");
-					bw.write((r + 1) + "," + caseNum + ", " + currDBRecord.modalityB + 
-							currDBRecord.covMRMCstat.t0_modBB[j][r][0] + "\n");
-					caseNum++;
-				}
-			}
-			*/
-			
 			bw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -1759,7 +1597,7 @@ public class RMGUInterface {
 	 */
 	public void writeOutputFile(DBRecord currDBRecord, String filename, long l) {
 
-		StatTest tempStat = new StatTest(currDBRecord.InputFile1, currDBRecord);
+		StatTest tempStat = new StatTest(currDBRecord);
 		System.out.println("p-val = " + tempStat.pValNormal);
 		System.out.println("CI = " + tempStat.ciBotNormal + ", "
 				+ tempStat.ciTopNormal);

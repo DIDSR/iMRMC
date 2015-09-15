@@ -30,7 +30,7 @@ import mrmc.chart.XYPair;
  * <br>
  * <b>Flow 2)</b> Object currInputFile created in {@link roemetz.gui.RMGUInterface.SimExperiments_thread#doInBackground()} <br>
  * -- {@link roemetz.gui.RMGUInterface.SimExperiments_thread#doInBackground()} 
- *    calls {@link roemetz.core.SimRoeMetz#doSim(DBRecord, InputFile)} <br>
+ *    calls {@link roemetz.core.SimRoeMetz#doSim(DBRecord)} <br>
  * <br>
  * <ul>
  *   <li> ----KEY FIELDS----

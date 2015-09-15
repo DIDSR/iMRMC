@@ -137,7 +137,7 @@ public class Matrix {
 	/**
 	 * Square elements of a double matrix
 	 * 
-	 * @param m1 matrix
+	 * @param m matrix
 	 * @return matrix with elements squared
 	 */
 	public static double[][] squareTerms(double[][] m) {

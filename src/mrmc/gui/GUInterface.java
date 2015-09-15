@@ -41,7 +41,6 @@ import mrmc.core.MRMC;
 import mrmc.core.DBRecord;
 import mrmc.core.InputFile;
 import mrmc.core.Matrix;
-import mrmc.core.MrmcDB;
 import mrmc.core.StatTest;
 
 import org.jfree.ui.RefineryUtilities;
@@ -87,9 +86,7 @@ public class GUInterface {
 	
 	private GUInterface thisGUI = this;
 	public MRMC MRMCobject;
-	private MrmcDB fdaDB;
 
-//	private DBCard DBC; // Deleted during commit 1047 
 	public InputFileCard InputFileCard;
 	private ManualCard MC;
 
@@ -321,60 +318,6 @@ public class GUInterface {
 		saveGUI.addActionListener(new SaveGUIButtonListener());
 		panelSummary.add(saveGUI);
 
-		panelSummary.add(new JLabel("Database Summary:"));
-
-		// Create the radio buttons.
-		String s1 = "Single Modality";
-		JRadioButton s1Button = new JRadioButton(s1);
-		s1Button.setActionCommand(s1);
-		s1Button.setSelected(true);
-		String s2 = "Difference";
-		JRadioButton s2Button = new JRadioButton(s2);
-		s2Button.setActionCommand(s2);
-		// Group the radio buttons.
-		ButtonGroup groupS = new ButtonGroup();
-		groupS.add(s1Button);
-		groupS.add(s2Button);
-		// Register a listener for the radio buttons.
-		SummarySelListener SummaryListener = new SummarySelListener();
-		s1Button.addActionListener(SummaryListener);
-		s2Button.addActionListener(SummaryListener);
-		panelSummary.add(s1Button);
-		panelSummary.add(s2Button);
-
-		// create radio buttons.
-		panelSummary.add(new JLabel("          Use MLE?"));
-		s1 = "Yes";
-		JRadioButton s1ButtonMLE = new JRadioButton(s1);
-		s1ButtonMLE.setActionCommand(s1);
-		s2 = "No";
-		JRadioButton s2ButtonMLE = new JRadioButton(s2);
-		s2ButtonMLE.setActionCommand(s2);
-		s2ButtonMLE.setSelected(true);
-		// Group the radio buttons.
-		ButtonGroup groupS2 = new ButtonGroup();
-		groupS2.add(s1ButtonMLE);
-		groupS2.add(s2ButtonMLE);
-		// Register a listener for the radio buttons.
-		MLESelListener MLEListener = new MLESelListener();
-		s1ButtonMLE.addActionListener(MLEListener);
-		s2ButtonMLE.addActionListener(MLEListener);
-		panelSummary.add(s1ButtonMLE);
-		panelSummary.add(s2ButtonMLE);
-
-		JButton bdgBtn = new JButton("BDG");
-		bdgBtn.addActionListener(new bdgBtnListener());
-		panelSummary.add(bdgBtn);
-		JButton dbmBtn = new JButton("DBM");
-		dbmBtn.addActionListener(new dbmBtnListener());
-		panelSummary.add(dbmBtn);
-		JButton bckBtn = new JButton("BCK");
-		bckBtn.addActionListener(new bckBtnListener());
-		panelSummary.add(bckBtn);
-		JButton orBtn = new JButton("OR");
-		orBtn.addActionListener(new orBtnListener());
-		panelSummary.add(orBtn);
-
 		cp.add(inputSelectPane);
 		cp.add(InputPane);
 		cp.add(panelSep);
@@ -434,49 +377,6 @@ public class GUInterface {
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
-		}
-	}
-
-	/**
-	 * Handler for button to show database summer with DBM method
-	 */
-	class dbmBtnListener implements ActionListener {
-		public void actionPerformed(ActionEvent evt) {
-			JTextArea desc = genFrame();
-			desc.setText(fdaDB.recordsSummary(selectedSummary, DBRecordStat.flagMLE,
-					"DBM"));
-		}
-	}
-
-	/**
-	 * Handler for button to show database summer with BDG method
-	 */
-	class bdgBtnListener implements ActionListener {
-		public void actionPerformed(ActionEvent evt) {
-			JTextArea desc = genFrame();
-			desc.setText(fdaDB.recordsSummary(selectedSummary, DBRecordStat.flagMLE,
-					"BDG"));
-		}
-	}
-
-	/**
-	 * Handler for button to show database summer with BCK method
-	 */
-	class bckBtnListener implements ActionListener {
-		public void actionPerformed(ActionEvent evt) {
-			JTextArea desc = genFrame();
-			desc.setText(fdaDB.recordsSummary(selectedSummary, DBRecordStat.flagMLE,
-					"BCK"));
-		}
-	}
-
-	/**
-	 * Handler for button to show database summer with OR method
-	 */
-	class orBtnListener implements ActionListener {
-		public void actionPerformed(ActionEvent evt) {
-			JTextArea desc = genFrame();
-			desc.setText(fdaDB.recordsSummary(selectedSummary, DBRecordStat.flagMLE, "OR"));
 		}
 	}
 
