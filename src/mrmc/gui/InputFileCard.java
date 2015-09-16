@@ -322,7 +322,7 @@ public class InputFileCard {
 						"Choose Modality", JOptionPane.INFORMATION_MESSAGE,
 						null);
 				designMod1 = (String) choose1.getSelectedItem();
-				boolean[][] design = InputFile1.getStudyDesign( (String) choose1.getSelectedItem());
+				String[][] design = InputFile1.getStudyDesign( (String) choose1.getSelectedItem());
 				final StudyDesignPlot chart = new StudyDesignPlot(
 						"Study Design: Modality " + designMod1, "Case",
 						"Reader", design);

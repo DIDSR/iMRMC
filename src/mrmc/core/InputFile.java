@@ -442,7 +442,27 @@ public class InputFile {
 	 * @param modalityID Modality for which to determine the study design
 	 * @return 2-D array of readers by cases
 	 */
-	public boolean[][] getStudyDesign(String modalityID) {
+	public String[][]  getStudyDesign(String modalityID) {
+		String[][] design = new String[(int) Nreader][(int) (Nnormal + Ndisease+1)];
+		//String labelreaderID[]=new String[5];
+		int r = 0, i = 0;
+		for (String readerID : keyedData.keySet()) {
+			i = 0;
+			design[r][i] = readerID;
+			for (String caseID : keyedData.get(readerID).keySet()) {
+				i++;
+				if (keyedData.get(readerID).get(caseID).get(modalityID) != null) {
+					design[r][i] = "true";
+				} else {
+					design[r][i] = "false";
+				}
+			}
+			r++;
+		}
+		return design;
+	}
+	
+/*	public boolean[][] getStudyDesign(String modalityID) {
 		boolean[][] design = new boolean[(int) Nreader][(int) (Nnormal + Ndisease)];
 		int r = 0, i = 0;
 		for (String readerID : keyedData.keySet()) {
@@ -458,7 +478,7 @@ public class InputFile {
 			r++;
 		}
 		return design;
-	}
+	}*/
 	
 	/**
 	 * Constructor for initializing the object. <br>

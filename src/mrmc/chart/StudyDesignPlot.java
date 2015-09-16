@@ -25,12 +25,13 @@ import java.awt.Rectangle;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
-import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.SymbolAxis;
 import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.xy.DefaultXYDataset;
+import org.jfree.data.xy.XYDataset;
 
 /**
  * Creates chart displaying presence of score data for a particular case/reader
@@ -51,10 +52,14 @@ public class StudyDesignPlot extends JFrame {
 	 * @param data Mapping of x-y data
 	 */
 	public StudyDesignPlot(final String title, String xaxis, String yaxis,
-			boolean[][] data) {
+			String[][] data) {
 		super(title);
-		DefaultXYDataset dataset = createDataset(data);
-		JFreeChart chart = createChart(dataset, title, xaxis, yaxis);
+		String[] label = new String[data.length];
+		XYDataset dataset = createDataset(data);
+		for (int i = 0; i < data.length; i++){
+			label[i]=data[i][0];
+		}
+		JFreeChart chart = createChart(dataset, title, xaxis, yaxis,label);
 		ChartPanel chartPanel = new ChartPanel(chart);
 		chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
 		setContentPane(chartPanel);
@@ -66,28 +71,30 @@ public class StudyDesignPlot extends JFrame {
 	 * @param data Mapping of x-y data
 	 * @return Chart data in XYDataset format
 	 */
-	private DefaultXYDataset createDataset(boolean[][] data) {
+	private XYDataset createDataset(String[][] data) {
 
 		int nBlack = 0;
 		int nWhite = 0;
 		// Find how many points are black and white
 		for (int i = 0; i < data.length; i++) {
-			for (int j = 0; j < data[i].length; j++) {
-				if (data[i][j]) {
+			for (int j = 1; j < data[i].length; j++) {
+				if (data[i][j]=="true") {
 					nBlack++;
 				} else {
 					nWhite++;
 				}
 			}
 		}
+
 		double[][] trueVals = new double[2][nBlack];
 		double[][] falseVals = new double[2][nWhite];
 		final DefaultXYDataset dataset = new DefaultXYDataset();
+
 		int tCount = 0;
 		int fCount = 0;
 		for (int i = 0; i < data.length; i++) {
-			for (int j = 0; j < data[i].length; j++) {
-				if (data[i][j]) {
+			for (int j = 1; j < data[i].length; j++) {
+				if (data[i][j]=="true") {
 					trueVals[0][tCount] = j;     // x-axis
 					trueVals[1][tCount] = i; // y-axis
 					tCount++;
@@ -100,6 +107,7 @@ public class StudyDesignPlot extends JFrame {
 		}
 		dataset.addSeries("Missing", falseVals);
 		dataset.addSeries("Present", trueVals);
+		
 		return dataset;
 	}
 
@@ -112,16 +120,20 @@ public class StudyDesignPlot extends JFrame {
 	 * @param yaxis Label for y-axis
 	 * @return The chart
 	 */
-	private JFreeChart createChart(final DefaultXYDataset dataset,
-			String title, String xaxis, String yaxis) {
+	private JFreeChart createChart(final XYDataset dataset,
+			String title, String xaxis, String yaxis,String[] label) {
 		final JFreeChart chart = ChartFactory.createScatterPlot(title, xaxis,
 				yaxis, dataset, PlotOrientation.VERTICAL, true, true, false);
 		XYPlot xyplot = (XYPlot) chart.getPlot();
-		NumberAxis rangeAxis = (NumberAxis) xyplot.getRangeAxis();;
+
+
+       
+	    SymbolAxis rangeAxis1 = new SymbolAxis(yaxis, label);
+		rangeAxis1.setTickUnit(new NumberTickUnit(1));
+		rangeAxis1.setRange(-0.5,label.length-0.5);
+	    xyplot.setRangeAxis(rangeAxis1);
+
 		
-		rangeAxis.setLowerBound(-.5);
-		
-		rangeAxis.setTickUnit(new NumberTickUnit(1));
 		XYItemRenderer renderer = xyplot.getRenderer();
 		Rectangle square = new Rectangle(5, 5);
 		renderer.setSeriesShape(0, square);
