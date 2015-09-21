@@ -365,7 +365,7 @@ public class InputFileCard {
 				final ROCCurvePlot roc = new ROCCurvePlot(
 						"ROC Curve: Modality " + rocMod,
 						"FPF (1 - Specificity)", "TPF (Sensitivity)",
-						InputFile1.generateROCpoints(rocMod));
+						InputFile1.generateROCpoints(rocMod),InputFile1.filename);
 				roc.addData(InputFile1.generatePooledROC(rocMod), "Pooled Average");
 				roc.pack();
 				RefineryUtilities.centerFrameOnScreen(roc);

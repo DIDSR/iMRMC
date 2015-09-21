@@ -18,12 +18,17 @@
 package mrmc.chart;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -60,6 +65,7 @@ public class ROCCurvePlot extends JFrame {
 	private JCheckBox horiz;
 	private JCheckBox diag;
 	private JCheckBox pooled;
+	private String inputfilepath ;
 
 	/**
 	 * Sole constructor. Creates a line plot display ROC curves
@@ -70,9 +76,9 @@ public class ROCCurvePlot extends JFrame {
 	 * @param treeMap Mapping of readers to a set of points defining an ROC curve
 	 */
 	public ROCCurvePlot(final String title, String xaxis, String yaxis,
-			TreeMap<String, TreeSet<XYPair>> treeMap) {
+			TreeMap<String, TreeSet<XYPair>> treeMap,String filepath) {
 		super(title);
-
+		inputfilepath = filepath;
 		createDataset(treeMap);
 		final JFreeChart chart = ChartFactory.createScatterPlot(title, xaxis,
 				yaxis, seriesCollection, PlotOrientation.VERTICAL, true, true,
@@ -146,6 +152,10 @@ public class ROCCurvePlot extends JFrame {
 		allAverages.setSelected(true);
 		allAverages.addItemListener(new AverageSelectListener());
 		readerSelect.add(allAverages);
+         
+		JButton exportresult = new JButton("Export");
+		exportresult.addActionListener(new exportROCresult());
+		readerSelect.add(exportresult);
 
 		chartPanel.setPreferredSize(new java.awt.Dimension(700, 700));
 		this.add(chartPanel);
@@ -401,6 +411,53 @@ public class ROCCurvePlot extends JFrame {
 					showSeries(((JCheckBox) e.getItem()).getText(), true);
 				}
 			}
+		}
+	}
+	/**
+	 * Button for export ROC data to file
+	 */
+	class exportROCresult implements ActionListener{
+		public void actionPerformed(ActionEvent e) {
+			String plottitle=getTitle();
+			plottitle = plottitle.replaceAll(":", "");
+			String FileName=inputfilepath;
+			FileName= FileName.replaceAll(".imrmc", "");
+            String sFileName = FileName+" "+plottitle+" data.csv";
+			try {
+				FileWriter writer = new FileWriter(sFileName);	   		
+	            writer.append("Reader Name");
+	            writer.append('\n');
+	            for (int j=0;j<seriesCollection.getSeriesCount();j++){
+		            String serisekey =(String) seriesCollection.getSeriesKey(j); 
+		            XYSeries seriesget = seriesCollection.getSeries(serisekey);             
+		    	    writer.append(serisekey);
+		    	    writer.append(','); 
+		    	    writer.append("FPF"); 
+		    	    writer.append(','); 
+		    	    for (int i=0; i<seriesget.getItemCount(); i++){
+		    	    	String tempx=String.valueOf(seriesget.getX(i));
+		    	    writer.append(tempx);
+		    	    writer.append(',');	
+		    	    }
+		    	    writer.append('\n');
+		    	    writer.append(',');
+		    	    writer.append("TPF"); 
+		    	    writer.append(','); 
+		    	    for (int i=0; i<seriesget.getItemCount(); i++){
+		    	    	String tempx=String.valueOf(seriesget.getY(i));
+		    	    writer.append(tempx);
+		    	    writer.append(',');	
+		    	    }
+		    	    writer.append('\n');
+	            }
+	    	    //generate whatever data you want	    			
+	    	    writer.flush();
+	    	    writer.close();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
 		}
 	}
 }
