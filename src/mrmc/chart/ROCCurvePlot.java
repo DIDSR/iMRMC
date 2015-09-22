@@ -31,6 +31,7 @@ import java.util.TreeSet;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.jfree.chart.ChartFactory;
@@ -41,8 +42,10 @@ import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.title.TextTitle;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.RefineryUtilities;
 
 /**
  * Creates a chart displaying ROC curves for each reader of a particular
@@ -79,10 +82,13 @@ public class ROCCurvePlot extends JFrame {
 			TreeMap<String, TreeSet<XYPair>> treeMap,String filepath) {
 		super(title);
 		inputfilepath = filepath;
+	    String inputfiletitle = inputfilepath.substring(inputfilepath.lastIndexOf("\\") + 1);
+		TextTitle subtitle = new TextTitle(inputfiletitle);
 		createDataset(treeMap);
 		final JFreeChart chart = ChartFactory.createScatterPlot(title, xaxis,
 				yaxis, seriesCollection, PlotOrientation.VERTICAL, true, true,
 				false);
+		chart.addSubtitle(subtitle);
 		XYPlot xyplot = (XYPlot) chart.getPlot();
 		xyplot.setDomainCrosshairVisible(true);
 		xyplot.setRangeCrosshairVisible(true);
@@ -421,7 +427,7 @@ public class ROCCurvePlot extends JFrame {
 			String plottitle=getTitle();
 			plottitle = plottitle.replaceAll(":", "");
 			String FileName=inputfilepath;
-			FileName= FileName.replaceAll(".imrmc", "");
+			FileName= FileName.substring(0,FileName.lastIndexOf(".imrmc"));
             String sFileName = FileName+" "+plottitle+" data.csv";
 			try {
 				FileWriter writer = new FileWriter(sFileName);	   		
@@ -453,6 +459,14 @@ public class ROCCurvePlot extends JFrame {
 	    	    //generate whatever data you want	    			
 	    	    writer.flush();
 	    	    writer.close();
+				JFrame exported= new JFrame("Exported");
+				exported.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				JLabel succeedexport = new JLabel("ROC data has been succeed export to input file directory!", JLabel.CENTER);
+				exported.add(succeedexport);
+				exported.setSize(350, 100);
+				RefineryUtilities.centerFrameOnScreen(exported);
+				exported.setVisible(true);
+				
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
