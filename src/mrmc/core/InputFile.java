@@ -284,49 +284,55 @@ public class InputFile {
 	 * @return TreeMap where the key identifies a reader and the corresponding
 	 *         value is a set of XY coordinates of ROC points
 	 */
-	public TreeMap<String, TreeSet<XYPair>> generateROCpoints(String mod) {
+	public TreeMap<String, TreeMap<String, TreeSet<XYPair>>> generateROCpoints(String[] model) {
 		int samples = 100;
-		double min = getMinScore(mod);
-		double max = getMaxScore(mod);
-		double inc = (max - min) / samples;
-		TreeMap<String, TreeSet<XYPair>> rocPoints = new TreeMap<String, TreeSet<XYPair>>();
-		for (String r : keyedData.keySet()) {
-			for (double thresh = min - inc; thresh <= max + inc; thresh += inc) {
-				int fp = 0;
-				int tp = 0;
-				int normCount = 0;
-				int disCount = 0;
-				for (String c : keyedData.get(r).keySet()) {
-					if (!keyedData.get(r).get(c).isEmpty()
-							&& (keyedData.get(r).get(c).get(mod) != null )) {
-						double score = keyedData.get(r).get(c).get(mod);
-						int caseTruth = truthVals.get(c);
-						if (caseTruth == 0) {
-							normCount++;
-							if (score > thresh) {
-								fp++;
-							}
-						} else {
-							disCount++;
-							if (score > thresh) {
-								tp++;
+		//String[] mood={"1","1"};
+		TreeMap<String, TreeMap<String, TreeSet<XYPair>>> allrocPoints = new TreeMap<String, TreeMap<String, TreeSet<XYPair>>>(); 
+
+		for (String mod :model){
+			TreeMap<String, TreeSet<XYPair>> rocPoints = new TreeMap<String, TreeSet<XYPair>>();
+			double min = getMinScore(mod);
+			double max = getMaxScore(mod);
+			double inc = (max - min) / samples;
+			for (String r : keyedData.keySet()) {
+				for (double thresh = min - inc; thresh <= max + inc; thresh += inc) {
+					int fp = 0;
+					int tp = 0;
+					int normCount = 0;
+					int disCount = 0;
+					for (String c : keyedData.get(r).keySet()) {
+						if (!keyedData.get(r).get(c).isEmpty()
+								&& (keyedData.get(r).get(c).get(mod) != null )) {
+							double score = keyedData.get(r).get(c).get(mod);
+							int caseTruth = truthVals.get(c);
+							if (caseTruth == 0) {
+								normCount++;
+								if (score > thresh) {
+									fp++;
+								}
+							} else {
+								disCount++;
+								if (score > thresh) {
+									tp++;
+								}
 							}
 						}
 					}
-				}
-
-				double fpf = (double) fp / normCount;
-				double tpf = (double) tp / disCount;
-				if (rocPoints.containsKey(r)) {
-					rocPoints.get(r).add(new XYPair(fpf, tpf));
-				} else {
-					TreeSet<XYPair> temp = new TreeSet<XYPair>();
-					temp.add(new XYPair(fpf, tpf));
-					rocPoints.put(r, temp);
+	
+					double fpf = (double) fp / normCount;
+					double tpf = (double) tp / disCount;
+					if (rocPoints.containsKey(r)) {
+						rocPoints.get(r).add(new XYPair(fpf, tpf));
+					} else {
+						TreeSet<XYPair> temp = new TreeSet<XYPair>();
+						temp.add(new XYPair(fpf, tpf));
+						rocPoints.put(r, temp);
+					}
 				}
 			}
+			allrocPoints.put(mod, rocPoints);
 		}
-		return rocPoints;
+		return allrocPoints;
 	}
 
 	/**
@@ -338,42 +344,47 @@ public class InputFile {
 	 * @param rocMod Modality for which ROC curve is being determined
 	 * @return Set of XY coordinates of ROC points
 	 */
-	public TreeSet<XYPair> generatePooledROC(String rocMod) {
+	public TreeMap<String, TreeSet<XYPair>> generatePooledROC(String[] rocModel) {
 		int samples = 100;
-		double min = getMinScore(rocMod);
-		double max = getMaxScore(rocMod);
-		double inc = (max - min) / samples;
-		TreeSet<XYPair> pooledCurve = new TreeSet<XYPair>();
-		for (double thresh = min - inc; thresh <= max + inc; thresh += inc) {
-			int fp = 0;
-			int tp = 0;
-			int normCount = 0;
-			int disCount = 0;
-			for (String r : keyedData.keySet()) {
-				for (String c : keyedData.get(r).keySet()) {
-					if (!keyedData.get(r).get(c).isEmpty()
-							&& (keyedData.get(r).get(c).get(rocMod) != null)) {
-						double score = keyedData.get(r).get(c).get(rocMod);
-						int caseTruth = truthVals.get(c);
-						if (caseTruth == 0) {
-							normCount++;
-							if (score > thresh) {
-								fp++;
-							}
-						} else {
-							disCount++;
-							if (score > thresh) {
-								tp++;
+	//	String[] mood={"1","1"};
+		TreeMap<String, TreeSet<XYPair>> allpooledCurve = new TreeMap<String, TreeSet<XYPair>>();
+		for (String rocMod :rocModel){	
+			double min = getMinScore(rocMod);
+			double max = getMaxScore(rocMod);
+			double inc = (max - min) / samples;
+			TreeSet<XYPair> pooledCurve = new TreeSet<XYPair>();
+			for (double thresh = min - inc; thresh <= max + inc; thresh += inc) {
+				int fp = 0;
+				int tp = 0;
+				int normCount = 0;
+				int disCount = 0;
+				for (String r : keyedData.keySet()) {
+					for (String c : keyedData.get(r).keySet()) {
+						if (!keyedData.get(r).get(c).isEmpty()
+								&& (keyedData.get(r).get(c).get(rocMod) != null)) {
+							double score = keyedData.get(r).get(c).get(rocMod);
+							int caseTruth = truthVals.get(c);
+							if (caseTruth == 0) {
+								normCount++;
+								if (score > thresh) {
+									fp++;
+								}
+							} else {
+								disCount++;
+								if (score > thresh) {
+									tp++;
+								}
 							}
 						}
 					}
 				}
+				double fpf = (double) fp / normCount;
+				double tpf = (double) tp / disCount;
+				pooledCurve.add(new XYPair(fpf, tpf));
 			}
-			double fpf = (double) fp / normCount;
-			double tpf = (double) tp / disCount;
-			pooledCurve.add(new XYPair(fpf, tpf));
+			allpooledCurve.put(rocMod, pooledCurve);
 		}
-		return pooledCurve;
+		return allpooledCurve;
 	}
 
 	/**
