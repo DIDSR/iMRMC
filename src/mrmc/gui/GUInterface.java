@@ -313,7 +313,6 @@ public class GUInterface {
 
 		/*
 		 * This panel should allow for writing results of the current analysis to the hard drive.
-		 * Delete?
 		 */
 		JPanel panelSummary = new JPanel();
 		panelSummary.add(new JLabel("GUI Summary:"));
@@ -380,11 +379,11 @@ public class GUInterface {
 		cp.add(panelSep);
 		cp.add(StatPanel1.JPanelStat);
 		// Hides the trial sizing table
-		// cp.add(tabbedPane2);
-		// cp.add(panelStat11);
+//		 cp.add(tabbedPane2);
+//		 cp.add(panelStat11);
 		cp.add(panelSep2);
 
-//		//		cp.add(SizePanelRow1);
+//		cp.add(SizePanelRow1);
 //		cp.add(SizePanelRow2);
 //		cp.add(SizePanelRow3);
 //		cp.add(SizePanelRow4);
@@ -394,15 +393,13 @@ public class GUInterface {
 		cp.add(panelSep3);
 		/*
 		 * This panel should allow for writing results of the current analysis to the hard drive.
-		 * Delete?
 		 */
-//		cp.add(panelSummary);
+		cp.add(panelSummary);
 	}
 
 
 
-	/**
-	 * Handler for button to save current GUI state to file
+	/**	 * Handler for button to save current GUI state to file
 	 */
 	class SaveGUIButtonListener implements ActionListener {
 
@@ -565,7 +562,24 @@ public class GUInterface {
 		public void actionPerformed(ActionEvent e) {
 
 			double x = 1/0;
-			/** TODO
+
+			/*
+			TODO
+			
+			String str = e.getActionCommand();
+			if (str.equals("Yes")) {
+				
+				DBRecordStat.flagMLE = useMLE;
+			}
+			if (str.equals("No")) {
+				DBRecordStat.flagMLE = useMLE;
+			}
+			*/
+			 
+			/*
+			 * revised 
+			*/
+			
 			String str = e.getActionCommand();
 			if (str.equals("Yes")) {
 				DBRecordStat.FlagMLE = USE_MLE;
@@ -573,7 +587,7 @@ public class GUInterface {
 			if (str.equals("No")) {
 				DBRecordStat.FlagMLE = NO_MLE;
 			}
-			*/
+						
 		}
 	}
 
