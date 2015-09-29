@@ -86,7 +86,7 @@ public class InputFile {
 	/**
 	 * A sorted tree (list) containing all the modalityIDs in the data (IDs of the modalities)
 	 */
-	private TreeMap<String, Integer> modalityIDs = new TreeMap<String, Integer>();
+	public TreeMap<String, Integer> modalityIDs = new TreeMap<String, Integer>();
 		
 	/**
 	 * Filename for the .imrmc reader study data
@@ -284,12 +284,11 @@ public class InputFile {
 	 * @return TreeMap where the key identifies a reader and the corresponding
 	 *         value is a set of XY coordinates of ROC points
 	 */
-	public TreeMap<String, TreeMap<String, TreeSet<XYPair>>> generateROCpoints(String[] model) {
+	public TreeMap<String, TreeMap<String, TreeSet<XYPair>>> generateROCpoints(String[] modchosen) {
 		int samples = 100;
-		//String[] mood={"1","1"};
 		TreeMap<String, TreeMap<String, TreeSet<XYPair>>> allrocPoints = new TreeMap<String, TreeMap<String, TreeSet<XYPair>>>(); 
 
-		for (String mod :model){
+		for (String mod :modchosen){
 			TreeMap<String, TreeSet<XYPair>> rocPoints = new TreeMap<String, TreeSet<XYPair>>();
 			double min = getMinScore(mod);
 			double max = getMaxScore(mod);
@@ -344,11 +343,10 @@ public class InputFile {
 	 * @param rocMod Modality for which ROC curve is being determined
 	 * @return Set of XY coordinates of ROC points
 	 */
-	public TreeMap<String, TreeSet<XYPair>> generatePooledROC(String[] rocModel) {
+	public TreeMap<String, TreeSet<XYPair>> generatePooledROC(String[] rocModchosen) {
 		int samples = 100;
-	//	String[] mood={"1","1"};
 		TreeMap<String, TreeSet<XYPair>> allpooledCurve = new TreeMap<String, TreeSet<XYPair>>();
-		for (String rocMod :rocModel){	
+		for (String rocMod :rocModchosen){	
 			double min = getMinScore(rocMod);
 			double max = getMaxScore(rocMod);
 			double inc = (max - min) / samples;

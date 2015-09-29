@@ -24,7 +24,10 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -61,16 +64,16 @@ public class ROCCurvePlot extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private XYLineAndShapeRenderer renderer;
-	private XYSeriesCollection seriesCollection;
+	private XYSeriesCollection seriesCollection;          //ROC curve data
 	private ArrayList<InterpolatedLine> allLines;
-	private ArrayList<String> readerSeriesTitles;
+	private ArrayList<String> readerSeriesTitles;         //readers ID
 	private ArrayList<JCheckBox> readerSeriesBoxes;
 	private JCheckBox vert;
 	private JCheckBox horiz;
 	private JCheckBox diag;
 	private JCheckBox pooled;
 	private String inputfilepath ;
-	private Set<String> modelkey;
+	private Set<String> modalityID;
 
 	/**
 	 * Sole constructor. Creates a line plot display ROC curves
@@ -87,11 +90,11 @@ public class ROCCurvePlot extends JFrame {
 	    String inputfiletitle = inputfilepath.substring(inputfilepath.lastIndexOf("\\") + 1);
 		TextTitle subtitle = new TextTitle(inputfiletitle);
 		seriesCollection = new XYSeriesCollection();
-		readerSeriesTitles = new ArrayList<String>();
-		modelkey =fulltreeMap.keySet();
-		for (String mod : modelkey){
-	    TreeMap<String, TreeSet<XYPair>> treeMap = fulltreeMap.get(mod);
-		createDataset(mod,treeMap);
+		readerSeriesTitles = new ArrayList<String>();       
+		modalityID =fulltreeMap.keySet();
+		for (String mod : modalityID){
+		    TreeMap<String, TreeSet<XYPair>> treeMap = fulltreeMap.get(mod);
+			createDataset(mod,treeMap);     										//extract data from fulltreeMap and save them into seriesCollection and readerSeriesTitles
 		}
 		String labelmod =  fulltreeMap.firstKey();
 		TreeMap<String, TreeSet<XYPair>> treeMap = fulltreeMap.get(labelmod);
@@ -123,33 +126,32 @@ public class ROCCurvePlot extends JFrame {
 			readerSeriesBoxes.add(aBox);
 			readerSelect.add(aBox);
 			}
-		for (String mod : modelkey){
-			renderer.setSeriesShapesVisible(
-					seriesCollection.getSeriesIndex("mod"+mod+": Vertical Average"), false);
+		hideSeries("Vertical Average");
+		hideSeries("Horizontal Average");
+		hideSeries("Pooled Average");
+		hideSeries("Diagonal Average");
+		showSeries("Diagonal Average",false);
+		for (String mod : modalityID){
 			renderer.setSeriesStroke(
-					seriesCollection.getSeriesIndex("mod"+mod+": Vertical Average"),
-					new java.awt.BasicStroke(3f));
-			renderer.setSeriesShapesVisible(
-					seriesCollection.getSeriesIndex("mod"+mod+": Horizontal Average"), false);
-			renderer.setSeriesStroke(
-					seriesCollection.getSeriesIndex("mod"+mod+": Horizontal Average"),
-					new java.awt.BasicStroke(3f));
-			renderer.setSeriesShapesVisible(
-					seriesCollection.getSeriesIndex("mod"+mod+": Diagonal Average"), false);
-			renderer.setSeriesStroke(
-					seriesCollection.getSeriesIndex("mod"+mod+": Diagonal Average"),
+					seriesCollection.getSeriesIndex("mod_"+mod+": Vertical Average"),
 					new java.awt.BasicStroke(3f));
 			renderer.setSeriesStroke(
-					seriesCollection.getSeriesIndex("mod"+mod+ ": Pooled Average"),
+					seriesCollection.getSeriesIndex("mod_"+mod+": Horizontal Average"),
+					new java.awt.BasicStroke(3f));
+			renderer.setSeriesStroke(
+					seriesCollection.getSeriesIndex("mod_"+mod+": Diagonal Average"),
+					new java.awt.BasicStroke(3f));
+			renderer.setSeriesStroke(
+					seriesCollection.getSeriesIndex("mod_"+mod+ ": Pooled Average"),
 					new java.awt.BasicStroke(3f));
 		}
 
 		vert = new JCheckBox("Vertical Average");
-		vert.setSelected(true);
+		vert.setSelected(false);
 		vert.addItemListener(new SeriesSelectListener());
 		readerSelect.add(vert);
 		horiz = new JCheckBox("Horizontal Average");
-		horiz.setSelected(true);
+		horiz.setSelected(false);
 		horiz.addItemListener(new SeriesSelectListener());
 		readerSelect.add(horiz);
 		diag = new JCheckBox("Diagonal Average");
@@ -157,7 +159,7 @@ public class ROCCurvePlot extends JFrame {
 		diag.addItemListener(new SeriesSelectListener());
 		readerSelect.add(diag);
 		pooled = new JCheckBox("Pooled Average");
-		pooled.setSelected(true);
+		pooled.setSelected(false);
 		pooled.addItemListener(new SeriesSelectListener());
 		readerSelect.add(pooled);
 
@@ -166,7 +168,7 @@ public class ROCCurvePlot extends JFrame {
 		allReaders.addItemListener(new ReadersSelectListener());
 		readerSelect.add(allReaders);
 		JCheckBox allAverages = new JCheckBox("Show Averages");
-		allAverages.setSelected(true);
+		allAverages.setSelected(false);
 		allAverages.addItemListener(new AverageSelectListener());
 		readerSelect.add(allAverages);
          
@@ -188,7 +190,7 @@ public class ROCCurvePlot extends JFrame {
 	 */
 	private void createDataset(String mod, TreeMap<String, TreeSet<XYPair>> treeMap) {
 		for (String r : treeMap.keySet()) {
-			XYSeries series = new XYSeries("mod"+mod +": "+ r, false);
+			XYSeries series = new XYSeries("mod_"+mod +": "+ r, false);
 			readerSeriesTitles.add("" + r);
 			for (XYPair point : treeMap.get(r)) {
 				series.add(point.x, point.y);
@@ -207,7 +209,7 @@ public class ROCCurvePlot extends JFrame {
 		seriesCollection.addSeries(horizAvg);
 		XYSeries diagAvg = generateDiagonalROC(mod, treeMap);
 		seriesCollection.addSeries(diagAvg);
-		XYSeries pooledAvg = new XYSeries("mod"+mod + ": Pooled Average", false);
+		XYSeries pooledAvg = new XYSeries("mod_"+mod + ": Pooled Average", false);
 		seriesCollection.addSeries(pooledAvg);
 
 	}
@@ -219,10 +221,10 @@ public class ROCCurvePlot extends JFrame {
 	 * @param type Name for this set of points
 	 */
 	public void addData(TreeMap<String, TreeSet<XYPair>> fullnewData, String type) {
-		for (String mod : modelkey){
+		for (String mod : modalityID){
 			TreeSet<XYPair> newData = fullnewData.get(mod);
 			for (XYPair point : newData) {
-				seriesCollection.getSeries("mod"+mod +": " + type).add(point.x, point.y);
+				seriesCollection.getSeries("mod_"+mod +": " + type).add(point.x, point.y);
 			}
 		}
 	}
@@ -235,7 +237,7 @@ public class ROCCurvePlot extends JFrame {
 	 * @return Series containing the ROC curve points
 	 */
 	private XYSeries generateDiagonalROC(String mod, TreeMap<String, TreeSet<XYPair>> treeMap) {
-		XYSeries diagAvg = new XYSeries("mod"+mod + ": Diagonal Average", false);
+		XYSeries diagAvg = new XYSeries("mod_"+mod + ": Diagonal Average", false);
 		TreeMap<String, TreeSet<XYPair>> rotatedData = new TreeMap<String, TreeSet<XYPair>>();
 
 		// rotate all points in data 45 degrees clockwise about origin
@@ -284,7 +286,7 @@ public class ROCCurvePlot extends JFrame {
 	 * @return Series containing the ROC curve points
 	 */
 	private XYSeries generateHorizontalROC(String mod) {
-		XYSeries horizAvg = new XYSeries("mod"+mod+": Horizontal Average", false);
+		XYSeries horizAvg = new XYSeries("mod_"+mod+": Horizontal Average", false);
 		for (double i = 0; i <= 1.01; i += 0.01) {
 			double avg = 0;
 			int counter = 0;
@@ -304,7 +306,7 @@ public class ROCCurvePlot extends JFrame {
 	 * @return Series containing the ROC curve points
 	 */
 	private XYSeries generateVerticalROC(String mod) {
-		XYSeries vertAvg = new XYSeries("mod"+mod + ": Vertical Average", false);
+		XYSeries vertAvg = new XYSeries("mod_"+mod + ": Vertical Average", false);
 		for (double i = 0; i <= 1.01; i += 0.01) {
 			double avg = 0;
 			int counter = 0;
@@ -323,13 +325,13 @@ public class ROCCurvePlot extends JFrame {
 	 * @param series Which series to hide
 	 */
 	private void hideSeries(String series) {
-		for (String mod : modelkey){
+		for (String mod : modalityID){
 			renderer.setSeriesLinesVisible(
-					(seriesCollection.getSeriesIndex("mod"+mod+": "+series)), false);
+					(seriesCollection.getSeriesIndex("mod_"+mod+": "+series)), false);
 			renderer.setSeriesShapesVisible(
-					(seriesCollection.getSeriesIndex("mod"+mod+": "+series)), false);
+					(seriesCollection.getSeriesIndex("mod_"+mod+": "+series)), false);
 			renderer.setSeriesVisibleInLegend(
-					(seriesCollection.getSeriesIndex("mod"+mod+": "+series)), false);
+					(seriesCollection.getSeriesIndex("mod_"+mod+": "+series)), false);
 		}
 	}
 
@@ -341,15 +343,15 @@ public class ROCCurvePlot extends JFrame {
 	 *            points
 	 */
 	private void showSeries(String series, boolean shapes) {
-		for(String mod : modelkey){
+		for(String mod : modalityID){
 			renderer.setSeriesLinesVisible(
-					(seriesCollection.getSeriesIndex("mod"+mod+": "+series)), true);
+					(seriesCollection.getSeriesIndex("mod_"+mod+": "+series)), true);
 			if (shapes) {
 				renderer.setSeriesShapesVisible(
-						(seriesCollection.getSeriesIndex("mod"+mod+": "+series)), true);
+						(seriesCollection.getSeriesIndex("mod_"+mod+": "+series)), true);
 			}
 			renderer.setSeriesVisibleInLegend(
-					(seriesCollection.getSeriesIndex("mod"+mod+": "+series)), true);
+					(seriesCollection.getSeriesIndex("mod_"+mod+": "+series)), true);
 		}
 	}
 
@@ -440,14 +442,15 @@ public class ROCCurvePlot extends JFrame {
 	 */
 	class exportROCresult implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
-			String plottitle=getTitle();
-			plottitle = plottitle.replaceAll(":", "");
+            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
+			Date currDate = new Date();
+			final String fileTime = dateForm.format(currDate);
 			String FileName=inputfilepath;
 			FileName= FileName.substring(0,FileName.lastIndexOf(".imrmc"));
-            String sFileName = FileName+" "+plottitle+" data.csv";
+            String sFileName = FileName+"ROCcurve"+fileTime+".csv";
 			try {
 				FileWriter writer = new FileWriter(sFileName);	   		
-	            writer.append("Reader Name");
+	            writer.append("ROC curve name");
 	            writer.append('\n');
 	            for (int j=0;j<seriesCollection.getSeriesCount();j++){
 		            String serisekey =(String) seriesCollection.getSeriesKey(j); 

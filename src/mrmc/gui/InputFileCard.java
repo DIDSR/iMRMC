@@ -357,7 +357,7 @@ public class InputFileCard {
 				Object[] message = { "Which modality would you like view?\n",
 						panel };
 				JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(), message,
-						"Choose Modality and Reader",
+						"Choose Modality",
 						JOptionPane.INFORMATION_MESSAGE, null);
 				int checkedmod=0;
 				for (int i = 0; i < modalitynum; i++) {
@@ -379,7 +379,7 @@ public class InputFileCard {
 				if (selectmod>0){
 					final ROCCurvePlot roc = new ROCCurvePlot(
 							"ROC Curve: Modality " + roctitle,
-							"FPF (1 - Specificity)", "TPF (Sensitivity)",
+							"FPF (1 - Specificity), legend shows symbols for each modalityID:readerID", "TPF (Sensitivity)",
 							InputFile1.generateROCpoints(rocMod),InputFile1.filename);
 					roc.addData(InputFile1.generatePooledROC(rocMod), "Pooled Average");
 					roc.pack();

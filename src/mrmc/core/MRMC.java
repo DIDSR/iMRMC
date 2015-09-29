@@ -33,7 +33,7 @@ import java.awt.*;
  * @author Brandon D. Gallas, Ph.D
  * @author Rohan Pathare
  */
-public class MRMC extends JApplet {
+public class MRMC extends JApplet {	
 	/**
 	 * 
 	 */
