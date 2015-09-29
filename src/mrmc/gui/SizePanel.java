@@ -161,7 +161,8 @@ public class SizePanel {
 		SizePanelRow6.add(SizeJLabelPowerHillis);
 		SizePanelRow6.add(SizeJLabelCIHillis);
 
-		JPanelSize.add(SizePanelRow1);
+		// not ready to add split plot, an pairing readers or cases to sizing panel
+		// JPanelSize.add(SizePanelRow1);
 		JPanelSize.add(SizePanelRow2);
 		JPanelSize.add(SizePanelRow3);
 		JPanelSize.add(SizePanelRow4);
