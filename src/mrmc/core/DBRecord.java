@@ -150,10 +150,18 @@ public class DBRecord {
 	 * ----Gallas2009_Commun-Stat-A-Theor_v38p2586 <br>
 	 * 
 	 */
+	
+	// added for saving the results (i.e., BDG)
 	public double[][] BDG = new double[4][8],
 						BDGbias = new double[4][8],
 						BDGcoeff = new double[4][8];
+	// added for saving the results
+	public static double[][] BDGresult = new double[4][8];
+	public static double[][] BDGbiasresult = new double[4][8];
+	public static double[][] BDGcoeffresult = new double[4][8];
+	public static double[][] BDGPanelresult = new double[7][8];
 
+	
 	/**
 	 * The BCK[4][7] (Barrett, Clarkson, and Kupinski) variance components <br>
 	 * ----BCK[0] are the components of variance of AUC_A <br>
@@ -169,7 +177,13 @@ public class DBRecord {
 	public double[][] BCKbias = new double[4][7], 
 						BCK = new double[4][7], 
 						BCKcoeff = new double[4][7];
+	
+	public static double[][] BCKresult = new double[4][7],
+			BCKbiasresult = new double[4][7],
+			BCKcoeffresult = new double[4][7];
 
+	public static double[][] BCKPanelresult = new double[7][7];
+	
 	/** 
 	 * The DBM[4][6] (Dorfman, Berbaum, and Metz) variance components.
  	 * ----DBM[0] are the components of variance of AUC_A <br>
@@ -190,6 +204,11 @@ public class DBRecord {
 	public double[][] DBMbias = new double[4][6],
 						DBM = new double[4][6], 
 						DBMcoeff = new double[4][6];
+	public static double[][] DBMresult = new double[4][6],
+			DBMbiasresult = new double[4][6],
+			DBMcoeffresult = new double[4][6];
+	
+	public static double[][] DBMPanelresult = new double[3][6];
 	
 	/**
 	 * The OR[4][6] (Obuchowski and Rockette) variance components <br>
@@ -206,6 +225,13 @@ public class DBRecord {
 	public double[][] ORbias = new double[4][6], 
 						OR = new double[4][6], 
 						ORcoeff = new double[4][6];
+	
+	public static double[][] ORbiasresult = new double[4][6],
+			ORresult = new double[4][6],
+			ORcoeffresult = new double[4][6];
+	
+	public static double[][] ORPanelresult = new double[3][6];
+	
 	/**
 	 * The OR (Obuchowski and Rockette) variance components <br>
 	 * ----Obuchowski1995_Commun-Stat-Simulat_v24p285 <br>
@@ -225,6 +251,12 @@ public class DBRecord {
 			MSbias = new double[4][6], 
 			MScoeff = new double[4][6];
 
+	public static double[][] MSresult = new double[4][6],
+			MSbiasresult = new double[4][6],
+			MScoeffresult = new double[4][6];
+	
+	public static double[][] MSPanelresult = new double[3][6];
+	
 	/**
 	 * Constructor for iMRMC
 	 * @param GUItemp
@@ -612,7 +644,15 @@ public class DBRecord {
 		if(totalVar < 0) {
 			flagTotalVarIsNegative = 1;
 		}
-
+		
+		
+		/*
+		 * added for saving the results 
+		 */
+		
+		BDGresult = BDG;
+		BDGcoeffresult = BDGcoeff;
+		BDGbiasresult = BDGbias;	
 	}
 	
 	/**
@@ -648,10 +688,10 @@ public class DBRecord {
 		}
 		
 		totalVar = totalVar*1.0;
-
-	}
+		
 	
 
+	}
 	
 	/**
 	 * Derives all decompositions and coefficient matrices from predefined BDG
@@ -676,7 +716,26 @@ public class DBRecord {
 			DBMbias = BCK2DBM(BCKbias, Nreader, Nnormal, Ndisease);
 			ORbias = DBM2OR(0, DBMbias, Nreader, Nnormal, Ndisease);
 			MSbias = DBM2MS(DBMbias, Nreader, Nnormal, Ndisease);
+		
+			// added for saving the results
+			DBMresult = DBM;
+			DBMcoeffresult = DBMcoeff;
+			DBMbiasresult = DBMbias;
+			
+			ORresult = OR;
+			ORcoeffresult = ORcoeff;
+			ORbiasresult = ORbias;
+			
+			MSresult = MS;
+			MScoeffresult = MScoeff;
+			MSbiasresult = MSbias;
+			
 		}
+		
+		// added for saving the results
+		BCKresult = BCK;
+		BCKcoeffresult = BCKcoeff;
+		BCKbiasresult = BCKbias;
 	}
 
 	/**
@@ -768,6 +827,10 @@ public class DBRecord {
 					+ (BDGTab1[2][i] * BDGTab1[3][i])
 					- (BDGTab1[4][i] * BDGTab1[5][i]);
 		}
+		
+		BDGPanelresult = BDGTab1;
+		
+		// added for saving the results (i.e., BDG comp m0~total)
 		return BDGTab1;
 	}
 	
@@ -787,6 +850,9 @@ public class DBRecord {
 		DBMTab1[0] = DBMtemp[selectedMod];
 		DBMTab1[1] = DBMc[selectedMod];
 		DBMTab1[2] = Matrix.dotProduct(DBMTab1[0], DBMTab1[1]);
+		
+		DBMPanelresult = DBMTab1;
+		
 		return DBMTab1;
 	}
 
@@ -822,6 +888,9 @@ public class DBRecord {
 					+ (BCKTab1[2][i] * BCKTab1[3][i])
 					- (BCKTab1[4][i] * BCKTab1[5][i]);
 		}
+		
+		BCKPanelresult = BCKTab1;
+		
 		return BCKTab1;
 	}
 
@@ -843,6 +912,9 @@ public class DBRecord {
 		ORTab1[0] = ORtemp[selectedMod];
 		ORTab1[1] = ORc[selectedMod];
 		ORTab1[2] = Matrix.dotProduct(ORTab1[0], ORTab1[1]);
+		
+		ORPanelresult = ORTab1;
+		
 		return ORTab1;
 	}
 
@@ -862,6 +934,9 @@ public class DBRecord {
 		MSTab1[0] = MStemp[selectedMod];
 		MSTab1[1] = MSc[selectedMod];
 		MSTab1[2] = Matrix.dotProduct(MSTab1[0], MSTab1[1]);
+		
+		MSPanelresult = MSTab1;
+		
 		return MSTab1;
 	}
 
