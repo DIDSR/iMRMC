@@ -31,8 +31,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.*;
 import javax.swing.text.JTextComponent;
 
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import mrmc.chart.BarGraph;
 import mrmc.chart.StudyDesignPlot;
@@ -99,7 +102,9 @@ public class GUInterface {
 	 */
 	public DBRecord DBRecordStat = new DBRecord(this);
 	public DBRecord DBRecordSize = new DBRecord(this);
-
+	public final static int USE_MLE = 1;
+	public final static int NO_MLE = 0;
+	public static String summaryfilename="";
 	/**
 	 * These strings describe the different input methods
 	 * @see #selectedInput
@@ -310,7 +315,6 @@ public class GUInterface {
 
 		/*
 		 * This panel should allow for writing results of the current analysis to the hard drive.
-		 * Delete?
 		 */
 		JPanel panelSummary = new JPanel();
 		panelSummary.add(new JLabel("GUI Summary:"));
@@ -323,11 +327,11 @@ public class GUInterface {
 		cp.add(panelSep);
 		cp.add(StatPanel1.JPanelStat);
 		// Hides the trial sizing table
-		// cp.add(tabbedPane2);
-		// cp.add(panelStat11);
+//		 cp.add(tabbedPane2);
+//		 cp.add(panelStat11);
 		cp.add(panelSep2);
 
-//		//		cp.add(SizePanelRow1);
+//		cp.add(SizePanelRow1);
 //		cp.add(SizePanelRow2);
 //		cp.add(SizePanelRow3);
 //		cp.add(SizePanelRow4);
@@ -337,46 +341,74 @@ public class GUInterface {
 		cp.add(panelSep3);
 		/*
 		 * This panel should allow for writing results of the current analysis to the hard drive.
-		 * Delete?
 		 */
-//		cp.add(panelSummary);
+		cp.add(panelSummary);
 	}
 
 
 
-	/**
-	 * Handler for button to save current GUI state to file
+	/**	 * Handler for button to save current GUI state to file
 	 */
 	class SaveGUIButtonListener implements ActionListener {
 
-		@Override
+	//	@Override
+		//public String sFileName="";
 		public void actionPerformed(ActionEvent e) {
-
-			String report = "";
-			if (selectedInput == DescInputModeManual) {
-				report = SizePanel1.genReport();
-			} else {
-				report = SizePanel1.genReport();
-			}
-
-			try {
-				JFileChooser fc = new JFileChooser();
-				int fcReturn = fc.showOpenDialog((Component) e.getSource());
-				if (fcReturn == JFileChooser.APPROVE_OPTION) {
-					File f = fc.getSelectedFile();
-					if (!f.exists()) {
-						f.createNewFile();
+			double aaa=DBRecordStat.totalVar;
+			if( DBRecordStat.totalVar > 0.0) {
+				String report = "";
+	            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
+				Date currDate = new Date();
+				final String fileTime = dateForm.format(currDate);
+				String FileName=InputFile1.filename;
+				FileName= FileName.substring(0,FileName.lastIndexOf(".imrmc"));
+				String summaryfilenamewithpath = FileName+"MRMCsummary"+fileTime+".csv";
+				summaryfilename = summaryfilenamewithpath.substring(FileName.lastIndexOf("\\")+1);
+				if (selectedInput == DescInputModeManual) {
+					report = SizePanel1.genReport();
+				} else {
+					report = SizePanel1.genReport();
+				}
+	
+	/*			try {
+					JFileChooser fc = new JFileChooser();
+					int fcReturn = fc.showOpenDialog((Component) e.getSource());
+					if (fcReturn == JFileChooser.APPROVE_OPTION) {
+						File f = fc.getSelectedFile();
+						if (!f.exists()) {
+							f.createNewFile();
+						}
+						FileWriter fw = new FileWriter(f.getAbsoluteFile());
+						BufferedWriter bw = new BufferedWriter(fw);
+						bw.write(report);
+						bw.close();
 					}
-					FileWriter fw = new FileWriter(f.getAbsoluteFile());
+				} catch (HeadlessException e1) {
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				} */
+				
+
+	            try {
+					FileWriter fw = new FileWriter(summaryfilenamewithpath);
 					BufferedWriter bw = new BufferedWriter(fw);
 					bw.write(report);
 					bw.close();
+					JOptionPane.showMessageDialog(
+							thisGUI.MRMCobject.getFrame(),"The summary has been succeed export to input file directory!", 
+							"Exported", JOptionPane.INFORMATION_MESSAGE);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
-			} catch (HeadlessException e1) {
-				e1.printStackTrace();
-			} catch (IOException e1) {
-				e1.printStackTrace();
+	            
+			}else{
+				JOptionPane.showMessageDialog(thisGUI.MRMCobject.getFrame(),
+						"Pilot study data has not yet been analyzed.", "Error",
+						JOptionPane.ERROR_MESSAGE);
 			}
+						
 		}
 	}
 
@@ -465,15 +497,32 @@ public class GUInterface {
 		public void actionPerformed(ActionEvent e) {
 
 			double x = 1/0;
-			/** TODO
+
+			/*
+			TODO
+			
 			String str = e.getActionCommand();
 			if (str.equals("Yes")) {
-				DBRecordStat.FlagMLE = USE_MLE;
+				
+				DBRecordStat.flagMLE = useMLE;
 			}
 			if (str.equals("No")) {
-				DBRecordStat.FlagMLE = NO_MLE;
+				DBRecordStat.flagMLE = useMLE;
 			}
 			*/
+			 
+			/*
+			 * revised 
+			*/
+
+				String str = e.getActionCommand();
+				if (str.equals("Yes")) {
+					DBRecordStat.flagMLE = USE_MLE;
+				}
+				if (str.equals("No")) {
+					DBRecordStat.flagMLE = NO_MLE;
+				}
+
 		}
 	}
 
