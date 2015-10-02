@@ -556,7 +556,6 @@ public class InputFileCard {
 	 */
 	class showAUCsButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			
 			if( DBRecordStat.totalVar > 0.0) {
 			JFrame JFrameAUC= new JFrame("AUCs for each reader and modality");
 			RefineryUtilities.centerFrameOnScreen(JFrameAUC);
