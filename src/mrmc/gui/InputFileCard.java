@@ -30,6 +30,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.TreeMap;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -322,10 +323,10 @@ public class InputFileCard {
 						"Choose Modality", JOptionPane.INFORMATION_MESSAGE,
 						null);
 				designMod1 = (String) choose1.getSelectedItem();
-				String[][] design = InputFile1.getStudyDesign( (String) choose1.getSelectedItem());
+				TreeMap<String,String[][]> StudyDesignData = InputFile1.getStudyDesign( (String) choose1.getSelectedItem());
 				final StudyDesignPlot chart = new StudyDesignPlot(
-						"Study Design: Modality " + designMod1, "Case",
-						"Reader", design);
+						"Study Design: Modality "+designMod1, designMod1, "Case Index",
+						"Reader", StudyDesignData,InputFile1.filename);
 				chart.pack();
 				RefineryUtilities.centerFrameOnScreen(chart);
 				chart.setVisible(true);

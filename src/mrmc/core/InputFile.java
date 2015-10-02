@@ -287,7 +287,6 @@ public class InputFile {
 	public TreeMap<String, TreeMap<String, TreeSet<XYPair>>> generateROCpoints(String[] modchosen) {
 		int samples = 100;
 		TreeMap<String, TreeMap<String, TreeSet<XYPair>>> allrocPoints = new TreeMap<String, TreeMap<String, TreeSet<XYPair>>>(); 
-
 		for (String mod :modchosen){
 			TreeMap<String, TreeSet<XYPair>> rocPoints = new TreeMap<String, TreeSet<XYPair>>();
 			double min = getMinScore(mod);
@@ -320,12 +319,14 @@ public class InputFile {
 	
 					double fpf = (double) fp / normCount;
 					double tpf = (double) tp / disCount;
-					if (rocPoints.containsKey(r)) {
-						rocPoints.get(r).add(new XYPair(fpf, tpf));
-					} else {
-						TreeSet<XYPair> temp = new TreeSet<XYPair>();
-						temp.add(new XYPair(fpf, tpf));
-						rocPoints.put(r, temp);
+					if (normCount!=0 & disCount!=0){          // don't create treemap if there is no data.
+						if (rocPoints.containsKey(r)) {
+							rocPoints.get(r).add(new XYPair(fpf, tpf));
+						} else {
+							TreeSet<XYPair> temp = new TreeSet<XYPair>();
+							temp.add(new XYPair(fpf, tpf));
+							rocPoints.put(r, temp);
+						}
 					}
 				}
 			}
@@ -451,14 +452,21 @@ public class InputFile {
 	 * @param modalityID Modality for which to determine the study design
 	 * @return 2-D array of readers by cases
 	 */
-	public String[][]  getStudyDesign(String modalityID) {
+	public TreeMap<String,String[][]>  getStudyDesign(String modalityID) {
 		String[][] design = new String[(int) Nreader][(int) (Nnormal + Ndisease+1)];
+		String[][] readerrelation = new String[(int) Nreader][2];
+		String[][] caserelation = new String[(int) (Nnormal + Ndisease)][2];
+		TreeMap<String,String[][]> StudyDesignData= new TreeMap<String,String[][]>();
 		//String labelreaderID[]=new String[5];
 		int r = 0, i = 0;
 		for (String readerID : keyedData.keySet()) {
 			i = 0;
 			design[r][i] = readerID;
 			for (String caseID : keyedData.get(readerID).keySet()) {
+				if (r==0){
+					caserelation[i][0]=Integer.toString(i);
+					caserelation[i][1]=caseID;
+				}
 				i++;
 				if (keyedData.get(readerID).get(caseID).get(modalityID) != null) {
 					design[r][i] = "true";
@@ -466,9 +474,14 @@ public class InputFile {
 					design[r][i] = "false";
 				}
 			}
+			readerrelation[r][0]=Integer.toString(r);
+			readerrelation[r][1]=readerID;
 			r++;
 		}
-		return design;
+		StudyDesignData.put("readerrelation", readerrelation);
+		StudyDesignData.put("caserelation", caserelation);
+		StudyDesignData.put("data", design);
+		return StudyDesignData;
 	}
 	
 /*	public boolean[][] getStudyDesign(String modalityID) {
@@ -852,7 +865,6 @@ public class InputFile {
 		for (int i = 0; i < observerData.length; i++) {
 			
 			if(observerData[i][0] == null) break;
-
 			String readerID   = observerData[i][0];
 			String caseID     = observerData[i][1];
 			String modalityID = observerData[i][2];
