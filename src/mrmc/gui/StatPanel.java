@@ -75,10 +75,10 @@ public class StatPanel {
 	DecimalFormat fourDecE = new DecimalFormat("0.0000E0");
 
 	/**
-	 * Sole constructor for sizing panel. Creates and initializes related GUI
+	 * Sole constructor for stat panel. Creates and initializes related GUI
 	 * elements.
 	 * 
-	 * @param GUItemp is the GUInterface that created this sizing panel 
+	 * @param DBRecordStatTemp Class containing results from analyzing an mrmc experiment 
 	 * 
 	 */
 	public StatPanel(JFrame JFrameAppTemp, DBRecord DBRecordStatTemp) {

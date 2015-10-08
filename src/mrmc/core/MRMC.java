@@ -33,33 +33,15 @@ import java.awt.*;
  * @author Brandon D. Gallas, Ph.D
  * @author Rohan Pathare
  */
-public class MRMC extends JApplet {
+public class MRMC extends JApplet {	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private static JFrame mrmcFrame;
+	public static final String versionname ="iMRMC Version 2p8";
 	static GUInterface gui;
 	GUImenubar menuBar;
-	MrmcDB db;
-
-	/**
-	 * Gets the number of entries in the database
-	 * 
-	 * @return Number of entries in the database
-	 */
-	public int getDBSize() {
-		return db.getNoOfItems();
-	}
-
-	/**
-	 * Gets the database object
-	 * 
-	 * @return MrmcDB object for this instance of the application
-	 */
-	public MrmcDB getDB() {
-		return db;
-	}
 
 	/**
 	 * Gets the application frame, used when launching dialog boxes
@@ -81,9 +63,6 @@ public class MRMC extends JApplet {
 		super.init();
 		setLayout(null);
 		resize(6, 6);
-
-		// create the database
-//		db = new MrmcDB();
 
 		Container cp = getContentPane();
 		// Create the interface
@@ -125,17 +104,17 @@ public class MRMC extends JApplet {
 	 * @param width Width of the application frame in pixels
 	 * @param height Height of the application frame in pixels
 	 */
-	public static void run(JApplet applet, int width, int height) {
-		mrmcFrame = new JFrame("iMRMC Version 2p7");
+	public static void run(JApplet MRMC, int width, int height) {
+		mrmcFrame = new JFrame(versionname);
 		mrmcFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		mrmcFrame.getContentPane().add(applet);
+		mrmcFrame.getContentPane().add(MRMC);
 		mrmcFrame.pack();
 		mrmcFrame.setSize(width, height);
 
 		// We shall override the normal init method.
 		// Please refer to the init method in this (sub)class 
-		applet.init();
-		applet.start();
+		MRMC.init();
+		MRMC.start();
 		mrmcFrame.setVisible(true);
 	}
 }

@@ -81,7 +81,6 @@ public class SimRoeMetz {
 	 * 
 	 * @param tempScoreMeans Contains experiment means. Has 2 elements.
 	 * @param tempScoreVar Contains variance components. Has 18 elements.
-	 * @param tempExpSize Contains experiment sizes. Has 3 elements.
 	 * @param RandomStream0 Random numbergenerator at its current state
 	 * @throws IOException 
 	 */
@@ -305,14 +304,16 @@ public class SimRoeMetz {
 		int irow=0;
 		for(int normalID=0; normalID<Nnormal; normalID++) {
 			observerData[irow][0] = "-1";
-			observerData[irow][1] = "normal"+Integer.toString(normalID);
+//			observerData[irow][1] = "normal"+Integer.toString(normalID);
+			observerData[irow][1] = "normal"+String.format("%06d", normalID);
 			observerData[irow][2] = "truth";
 			observerData[irow][3] = Integer.toString(0);
 			irow++;
 		}
 		for(int diseaseID=0; diseaseID<Ndisease; diseaseID++) {
 			observerData[irow][0] = "-1";
-			observerData[irow][1] = "disease"+Integer.toString(diseaseID);
+//			observerData[irow][1] = "disease"+Integer.toString(diseaseID);
+			observerData[irow][1] = "disease"+String.format("%06d", diseaseID);
 			observerData[irow][2] = "truth";
 			observerData[irow][3] = Integer.toString(1);
 			irow++;
@@ -327,8 +328,10 @@ public class SimRoeMetz {
 				if(dA0[readerID][normalID] == 1) {
 					tA0[readerID][normalID] += R0[readerID] + C0[normalID] + RA0[readerID]
 							+ CA0[normalID] + RC0[readerID][normalID] + RCA0[readerID][normalID];
-					observerData[irow][0] = "reader"+Integer.toString(readerID);
-					observerData[irow][1] = "normal"+Integer.toString(normalID);
+//					observerData[irow][0] = "reader"+Integer.toString(readerID);
+					observerData[irow][0] = "reader"+String.format("%03d", readerID);
+//					observerData[irow][1] = "normal"+Integer.toString(normalID);
+					observerData[irow][1] = "normal"+String.format("%06d", normalID);
 					observerData[irow][2] = DBRecordStat.modalityA;
 					observerData[irow][3] = Double.toString(tA0[readerID][normalID]);
 					irow++;
@@ -336,8 +339,10 @@ public class SimRoeMetz {
 				if(dB0[readerID][normalID] == 1) {
 					tB0[readerID][normalID] += R0[readerID] + C0[normalID] + RB0[readerID]
 							+ CB0[normalID] + RC0[readerID][normalID] + RCB0[readerID][normalID];
-					observerData[irow][0] = "reader"+Integer.toString(readerID);
-					observerData[irow][1] = "normal"+Integer.toString(normalID);
+//					observerData[irow][0] = "reader"+Integer.toString(readerID);
+					observerData[irow][0] = "reader"+String.format("%03d", readerID);
+//					observerData[irow][1] = "normal"+Integer.toString(normalID);
+					observerData[irow][1] = "normal"+String.format("%06d", normalID);
 					observerData[irow][2] = DBRecordStat.modalityB;
 					observerData[irow][3] = Double.toString(tB0[readerID][normalID]);
 					irow++;
@@ -347,8 +352,10 @@ public class SimRoeMetz {
 				if(dA1[readerID][diseaseID] == 1) {
 					tA1[readerID][diseaseID] += R1[readerID] + C1[diseaseID] + RA1[readerID]
 							+ CA1[diseaseID] + RC1[readerID][diseaseID] + RCA1[readerID][diseaseID];
-					observerData[irow][0] = "reader"+Integer.toString(readerID);
-					observerData[irow][1] = "disease"+Integer.toString(diseaseID);
+//					observerData[irow][0] = "reader"+Integer.toString(readerID);
+					observerData[irow][0] = "reader"+String.format("%03d", readerID);
+//					observerData[irow][1] = "disease"+Integer.toString(diseaseID);
+					observerData[irow][1] = "disease"+String.format("%06d", diseaseID);
 					observerData[irow][2] = DBRecordStat.modalityA;
 					observerData[irow][3] = Double.toString(tA1[readerID][diseaseID]);
 					irow++;
@@ -356,9 +363,11 @@ public class SimRoeMetz {
 				if(dB1[readerID][diseaseID] == 1) {
 					tB1[readerID][diseaseID] += R1[readerID] + C1[diseaseID] + RB1[readerID]
 							+ CB1[diseaseID] + RC1[readerID][diseaseID] + RCB1[readerID][diseaseID];
-					observerData[irow][0] = "reader"+Integer.toString(readerID);
-					observerData[irow][1] = "disease"+Integer.toString(diseaseID);
-					observerData[irow][2] = DBRecordStat.modalityB;
+//					observerData[irow][0] = "reader"+Integer.toString(readerID);
+					observerData[irow][0] = "reader"+String.format("%03d", readerID);
+//					observerData[irow][1] = "disease"+Integer.toString(diseaseID);
+					observerData[irow][1] = "disease"+String.format("%06d", diseaseID);
+				observerData[irow][2] = DBRecordStat.modalityB;
 					observerData[irow][3] = Double.toString(tB1[readerID][diseaseID]);
 					irow++;
 				}

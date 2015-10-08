@@ -144,7 +144,6 @@ public class CovMRMC {
 	 * -- {@link mrmc.core.DBRecord} <br>
 	 * 
 	 * @param SizePanelTemp refers to {@link mrmc.gui.SizePanel}
-	 * @param GUItemp refers to {@link mrmc.gui.GUInterface}
 	 * 
 	 */
 	public CovMRMC(SizePanel SizePanelTemp) {
@@ -165,7 +164,7 @@ public class CovMRMC {
 	 * -- {@link mrmc.core.DBRecord} <br>
 	 * 
 	 * @param SizePanelTemp refers to {@link mrmc.gui.SizePanel}
-	 * @param GUItemp refers to {@link mrmc.gui.GUInterface}
+	 * @param DBRecordSizeTemp refers to {@link mrmc.gui.GUInterface}
 	 * 
 	 */
 	public CovMRMC(SizePanel SizePanelTemp, DBRecord DBRecordSizeTemp) {

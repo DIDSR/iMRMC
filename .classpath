@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" output="DB" path="DB"/>
-	<classpathentry kind="lib" path="lib/optimization"/>
-	<classpathentry kind="lib" path="lib/umontreal"/>
 	<classpathentry kind="lib" path="lib/jcommon-1.0.18.jar"/>
 	<classpathentry kind="lib" path="lib/commons-math3-3.2.jar"/>
 	<classpathentry kind="lib" path="lib/uncommons-maths-1.2.3.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="lib" path="lib/jfreechart-1.0.14.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/SSJ-StochasticSimulationJava"/>
+	<classpathentry kind="lib" path="lib/ssj.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/000_svn/imrmc/branches/000fda_miscellaneous/libraries/ssj-20140618.zip!/ssj/doc/html"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/optimization"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -322,7 +322,7 @@ public class InputFileCard {
 						"Choose Modality", JOptionPane.INFORMATION_MESSAGE,
 						null);
 				designMod1 = (String) choose1.getSelectedItem();
-				boolean[][] design = InputFile1.getStudyDesign( (String) choose1.getSelectedItem());
+				String[][] design = InputFile1.getStudyDesign( (String) choose1.getSelectedItem());
 				final StudyDesignPlot chart = new StudyDesignPlot(
 						"Study Design: Modality " + designMod1, "Case",
 						"Reader", design);
@@ -342,35 +342,54 @@ public class InputFileCard {
 	 * Handler for "Show ROC Curve" button, displays interactive ROC charts
 	 */
 	class ROCButtonListener implements ActionListener {
-		String rocMod = "";
-
 		public void actionPerformed(ActionEvent e) {
-
 			// If input file is loaded, then show ROC curves
 			// Otherwise as for pilot study to be inpu
 			if (InputFile1.isLoaded()) {
-				JComboBox<String> chooseMod = new JComboBox<String>();
-				
-				for (String Modality : InputFile1.getModalityIDs()){
-					chooseMod.addItem(Modality);
-				}
-
-				chooseMod.setSelectedIndex(0);
+				JPanel panel = new JPanel();
+				int modalitynum = InputFile1.getModalityIDs().size();
+				JCheckBox[] jCheckboxArray = new javax.swing.JCheckBox[modalitynum];
+				for (int i = 0; i < modalitynum; i++) {
+					String modID=InputFile1.getModalityIDs().get(i);
+					jCheckboxArray[i] = new JCheckBox("" + modID);
+					panel.add(jCheckboxArray[i]);
+					}
 				Object[] message = { "Which modality would you like view?\n",
-						chooseMod };
+						panel };
 				JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(), message,
-						"Choose Modality and Reader",
+						"Choose Modality",
 						JOptionPane.INFORMATION_MESSAGE, null);
-				rocMod = (String) chooseMod.getSelectedItem();
-				final ROCCurvePlot roc = new ROCCurvePlot(
-						"ROC Curve: Modality " + rocMod,
-						"FPF (1 - Specificity)", "TPF (Sensitivity)",
-						InputFile1.generateROCpoints(rocMod));
-				roc.addData(InputFile1.generatePooledROC(rocMod), "Pooled Average");
-				roc.pack();
-				RefineryUtilities.centerFrameOnScreen(roc);
-				roc.setVisible(true);
-
+				int checkedmod=0;
+				for (int i = 0; i < modalitynum; i++) {
+					if (jCheckboxArray[i].isSelected()){
+						checkedmod++;
+					}
+				}
+				String[] rocMod= new String[checkedmod];
+				String roctitle="";
+				int selectmod=0;
+				for (int i = 0; i < modalitynum; i++) {
+					if (jCheckboxArray[i].isSelected()){
+					 String modID=InputFile1.getModalityIDs().get(i);
+					 rocMod[selectmod]=modID;
+					 roctitle=roctitle+modID+" ";
+					 selectmod++;
+					}
+				}
+				if (selectmod>0){
+					final ROCCurvePlot roc = new ROCCurvePlot(
+							"ROC Curve: Modality " + roctitle,
+							"FPF (1 - Specificity), legend shows symbols for each modalityID:readerID", "TPF (Sensitivity)",
+							InputFile1.generateROCpoints(rocMod),InputFile1.filename);
+					roc.addData(InputFile1.generatePooledROC(rocMod), "Pooled Average");
+					roc.pack();
+					RefineryUtilities.centerFrameOnScreen(roc);
+					roc.setVisible(true);
+				}else{
+					JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
+							"Please choose at list one Modality.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
 			} else {
 				JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
 						"Pilot study data has not yet been input.", "Error",
@@ -537,7 +556,6 @@ public class InputFileCard {
 	 */
 	class showAUCsButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			
 			if( DBRecordStat.totalVar > 0.0) {
 			JFrame JFrameAUC= new JFrame("AUCs for each reader and modality");
 			RefineryUtilities.centerFrameOnScreen(JFrameAUC);

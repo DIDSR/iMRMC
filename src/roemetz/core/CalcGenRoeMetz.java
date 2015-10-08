@@ -18,8 +18,11 @@
 
 package roemetz.core;
 
+import mrmc.core.CovMRMC;
 import mrmc.core.DBRecord;
 import mrmc.core.Matrix;
+import mrmc.gui.SizePanel;
+
 import org.apache.commons.math3.distribution.NormalDistribution;
 
 /**
@@ -30,15 +33,10 @@ import org.apache.commons.math3.distribution.NormalDistribution;
  * @author Rohan Pathare
  */
 public class CalcGenRoeMetz {
-	private static double[][][] cofv_auc;
-	private static double[][][] cofv_pc;
-	private static double[][][] m;
-	private static double[][] BDG;
-	private static double[][] BCK;
-	private static double[][] DBM;
-	private static double[][] OR;
-	private static double[][] MS;
-
+	
+	public static DBRecord DBRecordNumerical = new DBRecord();
+	
+	
 	/**
 	 * Used when calling CalGenRoeMetz as a standalone application via
 	 * command-line.
@@ -82,8 +80,8 @@ public class CalcGenRoeMetz {
 				Ndisease = Integer.parseInt(ns[1]);
 				Nreader = Integer.parseInt(ns[2]);
 			}
-			genRoeMetz(u, var_t, Nreader, Nnormal, Ndisease);
-			printResults();
+//			genRoeMetz(u, var_t, Nreader, Nnormal, Ndisease);
+			//  printResults();
 		} catch (NumberFormatException e) {
 			System.out.println("Incorrectly Formatted Input");
 			e.printStackTrace();
@@ -92,82 +90,6 @@ public class CalcGenRoeMetz {
 			System.out
 					.println("Format is: CofVGenRoeMetz [u0,u1] [R00,C00,RC00,R10,C10,RC10,R01,C01,RC01,R11,C11,RC11,R0,C0,RC0,R1,C1,RC1] [n0,n1,nr]");
 		}
-	}
-
-	/**
-	 * Prints the results of a simulation experiment to standard out. Only used
-	 * when main method for this class is invoked.
-	 */
-	private static void printResults() {
-		System.out.println("cofv_auc:");
-		for (int i = 0; i < cofv_auc.length; i++) {
-			Matrix.printMatrix(cofv_auc[i]);
-			System.out.println();
-		}
-		System.out.println();
-		System.out.println("cofv_pc:");
-		for (int i = 0; i < cofv_pc.length; i++) {
-			Matrix.printMatrix(cofv_pc[i]);
-			System.out.println();
-		}
-		System.out.println("\n");
-		System.out.println("BDG:");
-		Matrix.printMatrix(BDG);
-		System.out.println();
-
-		System.out.println("BCK:");
-		Matrix.printMatrix(BCK);
-		System.out.println();
-
-		System.out.println("M:");
-		Matrix.printMatrix(m[0]);
-		Matrix.printMatrix(m[1]);
-		System.out.println();
-	}
-
-	/**
-	 * Get BDG decomposition of calculated variance components
-	 * 
-	 * @return BDG decomposition
-	 */
-	public static double[][] getBDGdata() {
-		return BDG;
-	}
-
-	/**
-	 * Get BCK decomposition of calculated variance components
-	 * 
-	 * @return BCK decomposition
-	 */
-	public static double[][] getBCKdata() {
-		return BCK;
-	}
-
-	/**
-	 * Get DBM decomposition of calculated variance components
-	 * 
-	 * @return DBM decomposition
-	 */
-	public static double[][] getDBMdata() {
-		return DBM;
-	}
-
-	/**
-	 * Get OR decomposition of calculated variance components
-	 * 
-	 * @return OR decomposition
-	 */
-	public static double[][] getORdata() {
-		return OR;
-	}
-
-	/**
-	 * Get MS decomposition of calculated variance components
-	 * 
-	 * @return MS decomposition
-	 */
-	public static double[][] getMSdata() {
-		return MS;
 	}
 
 	/**
@@ -266,13 +188,21 @@ public class CalcGenRoeMetz {
 	 * 
 	 * @param u Contains experiment means. Has 2 elements.
 	 * @param var_t Contains variance components. Has 18 elements.
-	 * @param n Contains experiment sizes. Has 3 elements.
+	 * @param Nreader Number of readers in experiment.
+	 * @param Nnormal Number of normal cases in experiment.
+	 * @param Ndisease Number of disease cases in experiment.
 	 */
-	public static void genRoeMetz(double[] u, double[] var_t, int Nreader, int Nnormal, int Ndisease) {
-		NormalDistribution gauss = new NormalDistribution();
+	public static void genRoeMetz(double[] u, double[] var_t, SizePanel SizePanelRoeMetz) {
+		
+		DBRecordNumerical.Nreader = Integer.parseInt(SizePanelRoeMetz.NreaderJTextField.getText());
+		DBRecordNumerical.Nnormal = Integer.parseInt(SizePanelRoeMetz.NnormalJTextField.getText());
+		DBRecordNumerical.Ndisease = Integer.parseInt(SizePanelRoeMetz.NdiseaseJTextField.getText());
+
 
 		// number of samples for numerical integration, can change
 		final int numSamples = 256;
+
+		NormalDistribution gauss = new NormalDistribution();
 
 		double v_AR0 = var_t[0];
 		double v_AC0 = var_t[1];
@@ -293,25 +223,27 @@ public class CalcGenRoeMetz {
 		double v_C1 = var_t[16];
 		double v_RC1 = var_t[17];
 
-		m = new double[2][2][9];
-
 		// AUC
 		double scale1 = v_R0 + v_C0 + v_RC0 + v_R1 + v_C1 + v_RC1;
 		double scale20 = v_AR0 + v_AC0 + v_ARC0 + v_AR1 + v_AC1 + v_ARC1;
 		double scale21 = v_BR0 + v_BC0 + v_BRC0 + v_BR1 + v_BC1 + v_BRC1;
-		m[0][0][0] = gauss.cumulativeProbability(u[0]
-				/ Math.sqrt(scale1 + scale20));
-		m[1][1][0] = gauss.cumulativeProbability(u[1]
-				/ Math.sqrt(scale1 + scale21));
-		m[1][0][0] = m[0][0][0] - m[1][1][0];
-		m[0][1][0] = -m[1][0][0];
+
+		DBRecordNumerical.AUCsReaderAvg = new double[2];
+		DBRecordNumerical.AUCs = new double[(int) DBRecordNumerical.Nreader][2];
+		DBRecordNumerical.AUCsReaderAvg[0] = 
+			gauss.cumulativeProbability(u[0] / Math.sqrt(scale1 + scale20));
+		DBRecordNumerical.AUCsReaderAvg[1] = 
+			gauss.cumulativeProbability(u[1] / Math.sqrt(scale1 + scale21));
+		for(int r=0; r<DBRecordNumerical.Nreader; r++) {
+			DBRecordNumerical.AUCs[r][0] = DBRecordNumerical.AUCsReaderAvg[0];
+			DBRecordNumerical.AUCs[r][1] = DBRecordNumerical.AUCsReaderAvg[1];
+		}
 
 		// M1
 		double[] scaleM1 = { scale1, scale20, scale21 };
-		m[0][0][1] = m[0][0][0];
-		m[1][1][1] = m[1][1][0];
-		m[1][0][1] = prodMoment1(u, scaleM1, numSamples);
-		m[0][1][1] = m[1][0][1];
+		DBRecordNumerical.BDG[0][0] = DBRecordNumerical.AUCsReaderAvg[0];
+		DBRecordNumerical.BDG[1][0] = DBRecordNumerical.AUCsReaderAvg[1];
+		DBRecordNumerical.BDG[2][0] = prodMoment1(u, scaleM1, numSamples);
 
 		// M2
 		double scale30 = v_C0 + v_RC0 + v_AC0 + v_ARC0;
@@ -323,18 +255,18 @@ public class CalcGenRoeMetz {
 		scaleM1[0] = scale1 + scale20;
 		scaleM1[1] = scale30;
 		scaleM1[2] = scale30;
-		m[0][0][2] = prodMoment1(new double[] { u[0], u[0] }, scaleM1,
-				numSamples);
+		DBRecordNumerical.BDG[0][1] = 
+			prodMoment1(new double[] { u[0], u[0] }, scaleM1, numSamples);
 
 		scaleM1[0] = scale1 + scale21;
 		scaleM1[1] = scale31;
 		scaleM1[2] = scale31;
-		m[1][1][2] = prodMoment1(new double[] { u[1], u[1] }, scaleM1,
-				numSamples);
+		DBRecordNumerical.BDG[1][1] = 
+			prodMoment1(new double[] { u[1], u[1] }, scaleM1, numSamples);
 
 		double[] scaleM = { scale1, scale20, scale21, scale30, scale31 };
-		m[1][0][2] = prodMoment(new double[] { u[0], u[1] }, scaleM, numSamples);
-		m[0][1][2] = m[1][0][2];
+		DBRecordNumerical.BDG[2][1] = 
+			prodMoment(new double[] { u[0], u[1] }, scaleM, numSamples);
 
 		// M3
 		scale30 = v_C1 + v_RC1 + v_AC1 + v_ARC1;
@@ -346,22 +278,22 @@ public class CalcGenRoeMetz {
 		scaleM1[0] = scale1 + scale20;
 		scaleM1[1] = scale30;
 		scaleM1[2] = scale30;
-		m[0][0][3] = prodMoment1(new double[] { u[0], u[0] }, scaleM1,
-				numSamples);
+		DBRecordNumerical.BDG[0][2] = 
+			prodMoment1(new double[] { u[0], u[0] }, scaleM1, numSamples);
 
 		scaleM1[0] = scale1 + scale21;
 		scaleM1[1] = scale31;
 		scaleM1[2] = scale31;
-		m[1][1][3] = prodMoment1(new double[] { u[1], u[1] }, scaleM1,
-				numSamples);
+		DBRecordNumerical.BDG[1][2] = 
+			prodMoment1(new double[] { u[1], u[1] }, scaleM1, numSamples);
 
 		scaleM[0] = scale1;
 		scaleM[1] = scale20;
 		scaleM[2] = scale21;
 		scaleM[3] = scale30;
 		scaleM[4] = scale31;
-		m[1][0][3] = prodMoment(new double[] { u[0], u[1] }, scaleM, numSamples);
-		m[0][1][3] = m[1][0][3];
+		DBRecordNumerical.BDG[2][2] = 
+			prodMoment(new double[] { u[0], u[1] }, scaleM, numSamples);
 
 		// M4
 		scale30 = v_C1 + v_RC1 + v_AC1 + v_ARC1 + v_C0 + v_RC0 + v_AC0 + v_ARC0;
@@ -373,22 +305,22 @@ public class CalcGenRoeMetz {
 		scaleM1[0] = scale1 + scale20;
 		scaleM1[1] = scale30;
 		scaleM1[2] = scale30;
-		m[0][0][4] = prodMoment1(new double[] { u[0], u[0] }, scaleM1,
-				numSamples);
+		DBRecordNumerical.BDG[0][3] = 
+			prodMoment1(new double[] { u[0], u[0] }, scaleM1, numSamples);
 
 		scaleM1[0] = scale1 + scale21;
 		scaleM1[1] = scale31;
 		scaleM1[2] = scale31;
-		m[1][1][4] = prodMoment1(new double[] { u[1], u[1] }, scaleM1,
-				numSamples);
+		DBRecordNumerical.BDG[1][3] = 
+			prodMoment1(new double[] { u[1], u[1] }, scaleM1, numSamples);
 
 		scaleM[0] = scale1;
 		scaleM[1] = scale20;
 		scaleM[2] = scale21;
 		scaleM[3] = scale30;
 		scaleM[4] = scale31;
-		m[1][0][4] = prodMoment(new double[] { u[0], u[1] }, scaleM, numSamples);
-		m[0][1][4] = m[1][0][4];
+		DBRecordNumerical.BDG[2][3] = 
+			prodMoment(new double[] { u[0], u[1] }, scaleM, numSamples);
 
 		// M5
 		scale30 = v_R0 + v_R1 + v_RC0 + v_RC1 + v_AR0 + v_AR1 + v_ARC0 + v_ARC1;
@@ -400,13 +332,14 @@ public class CalcGenRoeMetz {
 		scaleM1[0] = scale1 + scale20;
 		scaleM1[1] = scale30;
 		scaleM1[2] = scale30;
-		m[0][0][5] = prodMoment1(new double[] { u[0], u[0] }, scaleM1,
-				numSamples);
+		DBRecordNumerical.BDG[0][4] = 
+			prodMoment1(new double[] { u[0], u[0] }, scaleM1, numSamples);
 
 		scaleM1[0] = scale1 + scale21;
 		scaleM1[1] = scale31;
 		scaleM1[2] = scale31;
-		m[1][1][5] = prodMoment1(new double[] { u[1], u[1] }, scaleM1,
+		DBRecordNumerical.BDG[1][4] = 
+				prodMoment1(new double[] { u[1], u[1] }, scaleM1,
 				numSamples);
 
 		scaleM[0] = scale1;
@@ -414,8 +347,8 @@ public class CalcGenRoeMetz {
 		scaleM[2] = scale21;
 		scaleM[3] = scale30;
 		scaleM[4] = scale31;
-		m[1][0][5] = prodMoment(new double[] { u[0], u[1] }, scaleM, numSamples);
-		m[0][1][5] = m[1][0][5];
+		DBRecordNumerical.BDG[2][4] = 
+			prodMoment(new double[] { u[0], u[1] }, scaleM, numSamples);
 
 		// M6
 		scale30 = v_R0 + v_R1 + v_C0 + v_RC0 + v_RC1 + v_AR0 + v_AR1 + v_AC0 + v_ARC0
@@ -429,22 +362,22 @@ public class CalcGenRoeMetz {
 		scaleM1[0] = scale1 + scale20;
 		scaleM1[1] = scale30;
 		scaleM1[2] = scale30;
-		m[0][0][6] = prodMoment1(new double[] { u[0], u[0] }, scaleM1,
-				numSamples);
+		DBRecordNumerical.BDG[0][5] = 
+			prodMoment1(new double[] { u[0], u[0] }, scaleM1, numSamples);
 
 		scaleM1[0] = scale1 + scale21;
 		scaleM1[1] = scale31;
 		scaleM1[2] = scale31;
-		m[1][1][6] = prodMoment1(new double[] { u[1], u[1] }, scaleM1,
-				numSamples);
+		DBRecordNumerical.BDG[1][5] = 
+			prodMoment1(new double[] { u[1], u[1] }, scaleM1, numSamples);
 
 		scaleM[0] = scale1;
 		scaleM[1] = scale20;
 		scaleM[2] = scale21;
 		scaleM[3] = scale30;
 		scaleM[4] = scale31;
-		m[1][0][6] = prodMoment(new double[] { u[0], u[1] }, scaleM, numSamples);
-		m[0][1][6] = m[1][0][6];
+		DBRecordNumerical.BDG[2][5] = 
+			prodMoment(new double[] { u[0], u[1] }, scaleM, numSamples);
 
 		// M7
 		scale30 = v_R0 + v_R1 + v_C1 + v_RC0 + v_RC1 + v_AR0 + v_AR1 + v_AC1 + v_ARC0
@@ -458,113 +391,34 @@ public class CalcGenRoeMetz {
 		scaleM1[0] = scale1 + scale20;
 		scaleM1[1] = scale30;
 		scaleM1[2] = scale30;
-		m[0][0][7] = prodMoment1(new double[] { u[0], u[0] }, scaleM1,
-				numSamples);
+		DBRecordNumerical.BDG[0][6] = 
+			prodMoment1(new double[] { u[0], u[0] }, scaleM1, numSamples);
 
 		scaleM1[0] = scale1 + scale21;
 		scaleM1[1] = scale31;
 		scaleM1[2] = scale31;
-		m[1][1][7] = prodMoment1(new double[] { u[1], u[1] }, scaleM1,
-				numSamples);
+		DBRecordNumerical.BDG[1][6] = 
+			prodMoment1(new double[] { u[1], u[1] }, scaleM1, numSamples);
 
 		scaleM[0] = scale1;
 		scaleM[1] = scale20;
 		scaleM[2] = scale21;
 		scaleM[3] = scale30;
 		scaleM[4] = scale31;
-		m[1][0][7] = prodMoment(new double[] { u[0], u[1] }, scaleM, numSamples);
-		m[0][1][7] = m[1][0][7];
+		DBRecordNumerical.BDG[2][6] = 
+			prodMoment(new double[] { u[0], u[1] }, scaleM, numSamples);
 
-		//
-
-		m[0][0][8] = m[0][0][0] * m[0][0][0];
-		m[1][1][8] = m[1][1][0] * m[1][1][0];
-		m[1][0][8] = m[0][0][0] * m[1][1][0];
-		m[0][1][8] = m[1][0][8];
-
-		calcAUCsAndDecomps(Nnormal, Ndisease, Nreader);
-
+		// M8
+		DBRecordNumerical.BDG[0][7] = 
+				DBRecordNumerical.AUCsReaderAvg[0]*DBRecordNumerical.AUCsReaderAvg[0];
+		DBRecordNumerical.BDG[1][7] = 
+				DBRecordNumerical.AUCsReaderAvg[1]*DBRecordNumerical.AUCsReaderAvg[1];
+		DBRecordNumerical.BDG[2][7] = 
+				DBRecordNumerical.AUCsReaderAvg[0]*DBRecordNumerical.AUCsReaderAvg[1];
+		
+		// Set the coefficients
+		DBRecordNumerical.DBRecordRoeMetzNumericalFill(SizePanelRoeMetz);
+		
 	}
 
-	/**
-	 * Calculates AUCs and decompositions of components of variance from moment
-	 * matrix according to experiment size
-	 * 
-	 * @param n0 Number of normal cases
-	 * @param n1 Number of disease cases
-	 * @param nr Number of readers
-	 */
-	public static void calcAUCsAndDecomps(long n0, long n1, long nr) {
-		double[][] Bauc = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, -1.0 },
-				{ 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, -1.0 },
-				{ 0.0, 0.0, 0.0, 0.0, 1.0, -1.0, -1.0, 1.0 },
-				{ 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, -1.0 },
-				{ 0.0, 0.0, 1.0, -1.0, 0.0, 0.0, -1.0, 1.0 },
-				{ 0.0, 1.0, 0.0, -1.0, 0.0, -1.0, 0.0, 1.0 },
-				{ 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0 } };
-
-		cofv_auc = new double[2][2][7];
-
-		double[] Baucxm1 = Matrix.multiply(Bauc,
-				Matrix.get1Dimension(1, m, "0", "0", "*"));
-		for (int i = 0; i < cofv_auc[0][0].length; i++) {
-			cofv_auc[0][0][i] = Baucxm1[i];
-		}
-
-		double[] Baucxm2 = Matrix.multiply(Bauc,
-				Matrix.get1Dimension(1, m, "1", "1", "*"));
-		for (int i = 0; i < cofv_auc[1][1].length; i++) {
-			cofv_auc[1][1][i] = Baucxm2[i];
-		}
-
-		double[] Baucxm3 = Matrix.multiply(Bauc,
-				Matrix.get1Dimension(1, m, "1", "0", "*"));
-		for (int i = 0; i < cofv_auc[1][0].length; i++) {
-			cofv_auc[1][0][i] = Baucxm3[i];
-		}
-
-		for (int i = 0; i < cofv_auc[0][1].length; i++) {
-			cofv_auc[0][1][i] = cofv_auc[1][0][i];
-		}
-
-		double[][] Bpc = { { 0, 0, 0, 1, 0, 0, 0, -1 },
-				{ 0, 0, 0, 0, 1, 0, 0, -1 }, { 1, 0, 0, -1, -1, 0, 0, 1 } };
-
-		cofv_pc = new double[2][2][3];
-		double[] Bpcxm1 = Matrix.multiply(Bpc,
-				Matrix.get1Dimension(1, m, "0", "0", "*"));
-		for (int i = 0; i < cofv_pc[0][0].length; i++) {
-			cofv_pc[0][0][i] = Bpcxm1[i];
-		}
-
-		double[] Bpcxm2 = Matrix.multiply(Bpc,
-				Matrix.get1Dimension(1, m, "1", "1", "*"));
-		for (int i = 0; i < cofv_pc[1][1].length; i++) {
-			cofv_pc[1][1][i] = Bpcxm2[i];
-		}
-
-		double[] Bpcxm3 = Matrix.multiply(Bpc,
-				Matrix.get1Dimension(1, m, "1", "0", "*"));
-		for (int i = 0; i < cofv_pc[1][0].length; i++) {
-			cofv_pc[1][0][i] = Bpcxm3[i];
-		}
-
-		for (int i = 0; i < cofv_pc[0][1].length; i++) {
-			cofv_pc[0][1][i] = cofv_pc[1][0][i];
-		}
-
-		BDG = new double[4][8];
-		BDG[0] = Matrix.get1Dimension(1, m, "0", "0", "*");
-		BDG[1] = Matrix.get1Dimension(1, m, "1", "1", "*");
-		BDG[2] = Matrix.get1Dimension(1, m, "0", "1", "*");
-		for (int i = 0; i < 8; i++) {
-			BDG[3][i] = (m[0][0][i + 1] + m[1][1][i + 1] - (2 * m[0][1][i + 1]));
-		}
-
-		double[][] BCKcoeff = DBRecord.genBCKCoeff(n0, n1, nr);
-		BCK = DBRecord.BDG2BCK(BDG, BCKcoeff);
-		DBM = DBRecord.BCK2DBM(BCK, nr, n0, n1);
-		OR = DBRecord.DBM2OR(0, DBM, nr, n0, n1);
-		MS = DBRecord.DBM2MS(DBM, nr, n0, n1);
-	}
 }

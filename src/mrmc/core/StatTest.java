@@ -43,7 +43,6 @@ public class StatTest {
 	DBRecord DBRecordStat, DBRecordSize;
 
 	private final int INFINITY = 500;
-	private final int PRECISION = 6;
 	private final double ZERO = 1E-300;
 //	private final static int USE_MLE = 1;
 	private final static int NO_MLE = 0;
@@ -68,28 +67,24 @@ public class StatTest {
 	 * @param InputFileTemp is the source that yields results shown in the statistical panel of the GUI
 	 * @param DBRecordStatTemp is the record to have a statistical analysis
 	 */
-	public StatTest(InputFile InputFileTemp, DBRecord DBRecordStatTemp) {
+	public StatTest(DBRecord DBRecordStatTemp) {
 
 		DBRecordStat = DBRecordStatTemp;
 		double sig = 0.05;
-		
-		double totalVar = DBRecordStat.totalVar;
-		double[] aucs = { DBRecordStat.getAUCinNumber(0), DBRecordStat.getAUCinNumber(1)};
-
 		double meanCI;
 
 		if (DBRecordStat.selectedMod == 1 || DBRecordStat.selectedMod == 0) {
-			meanCI = aucs[DBRecordStat.selectedMod];
+			meanCI = DBRecordStat.AUCsReaderAvg[DBRecordStat.selectedMod];
 			/* Compare single-modality AUC to 0.5 */
 			tStatEst = Math.sqrt(Math.pow(meanCI - 0.5, 2)/DBRecordStat.totalVar);
 		} else {
-			meanCI = aucs[0] - aucs[1];
+			meanCI = DBRecordStat.AUCsReaderAvg[0] - DBRecordStat.AUCsReaderAvg[1];
 			/* Compare difference in modality AUCs to 0.0 */
 			tStatEst = Math.sqrt(Math.pow(meanCI, 2)/DBRecordStat.totalVar);
 		}	
 
-		DF_BDG = calcDF_BDGbckIndep(DBRecordStat);
-		DF_BDG = calcDF_BDGbckGroup(DBRecordStat);
+//		DF_BDG = calcDF_BDGbckIndep(DBRecordStat);
+//		DF_BDG = calcDF_BDGbckGroup(DBRecordStat);
 		DF_BDG = calcDF_BDGms(DBRecordStat);
 		DF_Hillis = calcDF_Hillis(DBRecordStat);
 
@@ -122,12 +117,12 @@ public class StatTest {
 			cutoffHillis = tdist.inverseF( 1-sig/2 );
 		}
 		
-		ciBotNormal = meanCI - Math.sqrt(totalVar) * cutoffNormal; // normal approx
-		ciTopNormal = meanCI + Math.sqrt(totalVar) * cutoffNormal; // normal approx
-		ciBotBDG = meanCI - Math.sqrt(totalVar) * cutoffBDG;
-		ciTopBDG = meanCI + Math.sqrt(totalVar) * cutoffBDG;
-		ciBotHillis = meanCI - Math.sqrt(totalVar) * cutoffHillis;
-		ciTopHillis = meanCI + Math.sqrt(totalVar) * cutoffHillis;
+		ciBotNormal = meanCI - Math.sqrt(DBRecordStat.totalVar) * cutoffNormal; // normal approx
+		ciTopNormal = meanCI + Math.sqrt(DBRecordStat.totalVar) * cutoffNormal; // normal approx
+		ciBotBDG = meanCI - Math.sqrt(DBRecordStat.totalVar) * cutoffBDG;
+		ciTopBDG = meanCI + Math.sqrt(DBRecordStat.totalVar) * cutoffBDG;
+		ciBotHillis = meanCI - Math.sqrt(DBRecordStat.totalVar) * cutoffHillis;
+		ciTopHillis = meanCI + Math.sqrt(DBRecordStat.totalVar) * cutoffHillis;
 
 		if(pValNormal < sig) rejectNormal = 1;
 		if(pValBDG < sig) rejectBDG = 1;
@@ -137,7 +132,8 @@ public class StatTest {
 			System.out.println("NR=" + DBRecordStat.Nreader + 
 			           ",  N0=" + DBRecordStat.Nnormal + 
 			           ",  N1=" + DBRecordStat.Ndisease);
-			System.out.println("auc0=" + aucs[0] + "  auc1=" + aucs[1]);
+			System.out.println("auc0=" + DBRecordStat.AUCsReaderAvg[0] + 
+					         "  auc1=" + DBRecordStat.AUCsReaderAvg[1]);
 			System.out.println("auc0-auc1=" + meanCI);
 			System.out.println("totalVar=" + DBRecordStat.totalVar);
 
@@ -161,10 +157,10 @@ public class StatTest {
 	 * @param SizePanel is the bottom panel of the GUI
 	 * @param GUItemp The GUI that launched this stat analysis
 	 */
-	public StatTest(SizePanel SizePanel, GUInterface GUItemp) {
+	public StatTest(SizePanel SizePanel, DBRecord DBRecordStat, DBRecord DBRecordSize) {
 
-		DBRecordStat = GUItemp.DBRecordStat;
-		DBRecordSize = GUItemp.DBRecordSize;
+		this.DBRecordStat = DBRecordStat;
+		this.DBRecordSize = DBRecordSize;
 		int selectedMod = DBRecordSize.selectedMod;
 		
 		effSize = SizePanel.effSize;
@@ -176,8 +172,8 @@ public class StatTest {
 				+ " totalVar= " + DBRecordSize.totalVar 
 				+ " tStatCalc=" + tStatCalc);
 
-		DF_BDG = calcDF_BDGbckIndep(DBRecordSize);
-		DF_BDG = calcDF_BDGbckGroup(DBRecordSize);
+//		DF_BDG = calcDF_BDGbckIndep(DBRecordSize);
+//		DF_BDG = calcDF_BDGbckGroup(DBRecordSize);
 		DF_BDG = calcDF_BDGms(DBRecordSize);
 		lambdaBDG = tStatCalc*tStatCalc;
 		
@@ -212,6 +208,15 @@ public class StatTest {
 			bracket2 = OR[selectedMod][5] - OR[selectedMod][3]; // different from bracket above
 			DF_Hillis = (dnr-1.0)*dnr*dnr*variance*variance
 					/ (var_r + resizeFactor * bracket2) / (var_r + resizeFactor * bracket2);
+		}
+		if (DF_Hillis < 2) {
+			JFrame frame = new JFrame();
+			JOptionPane.showMessageDialog(frame,
+					"DF_Hillis was calculated to be " + DF_Hillis +
+					"\nDF_Hillis less than 2 cannot be handled" +
+					"\nTherefore, it is being set to 2", "Warning",
+					JOptionPane.ERROR_MESSAGE);
+			DF_Hillis = 2;
 		}
 
 		double[] result = new double[4];
@@ -379,7 +384,8 @@ public double calcDF_BDGbckIndep(DBRecord curRecord) {
 		if(verbose) {
 			JFrame frame = new JFrame();
 			JOptionPane.showMessageDialog(frame,
-					"DF_BDG was calculated to be " + DF_BDG + "\nIt is being set to DF_min = " + DF_min +
+					"DF_BDG is below a minimum." +
+					"\nDF_BDG was calculated to be " + DF_BDG + "\nIt is being set to DF_min = " + DF_min +
 					"\nThis follows Gaylor1969_Technometrics_v4p691" +
 					"\nand indicates that your data is very limited", "Warning",
 					JOptionPane.ERROR_MESSAGE);
@@ -392,7 +398,8 @@ public double calcDF_BDGbckIndep(DBRecord curRecord) {
 		if(verbose) {
  			JFrame frame = new JFrame();
  			JOptionPane.showMessageDialog(frame,
-					"DF_BDG was calculated to be " + DF_BDG +
+ 					"DF_BDG is below a minimum." +
+					"\nDF_BDG was calculated to be " + DF_BDG +
 					"\nDF_BDG less than 2 cannot be handled" +
 					"\nTherefore, it is being set to 2", "Warning",
 					JOptionPane.ERROR_MESSAGE);
@@ -536,7 +543,8 @@ if (DF_BDG < DF_min) {
 	if(verbose) {
 		JFrame frame = new JFrame();
 		JOptionPane.showMessageDialog(frame,
-				"DF_BDG was calculated to be " + DF_BDG + "\nIt is being set to DF_min = " + DF_min +
+				"DF_BDG is below a minimum." +
+				"\nDF_BDG was calculated to be " + DF_BDG + "\nIt is being set to DF_min = " + DF_min +
 				"\nThis follows Gaylor1969_Technometrics_v4p691" +
 				"\nand indicates that your data is very limited", "Warning",
 				JOptionPane.ERROR_MESSAGE);
@@ -549,7 +557,8 @@ if (DF_BDG < 2) {
 	if(verbose) {
 			JFrame frame = new JFrame();
 			JOptionPane.showMessageDialog(frame,
-				"DF_BDG was calculated to be " + DF_BDG +
+				"DF_BDG is below a minimum." +
+				"\nDF_BDG was calculated to be " + DF_BDG +
 				"\nDF_BDG less than 2 cannot be handled" +
 				"\nTherefore, it is being set to 2", "Warning",
 				JOptionPane.ERROR_MESSAGE);
@@ -631,9 +640,9 @@ if(selectedMod == 3) {
 	// DFreaderA = DFreaderB when readers are paired across modalities
 	// Their average should provide robustness to instances of missing data
 	// Averaging the DF's across modalities should provide robustness to instances of missing data
-	double DFnormal   = DFnormalA/2  + DFnormalB/2;
-	double DFdisease  = DFdiseaseA/2 + DFdiseaseB/2;
-	double DFreader   = DFreaderA/2  + DFreaderB/2;
+	double DFnormal   = Math.min(DFnormalA, DFnormalB);
+	double DFdisease  = Math.min(DFdiseaseA, DFdiseaseB);
+	double DFreader   = Math.min(DFreaderA, DFreaderB);
 	DF_min = Math.min(DFnormal,  DFdisease);
 	DF_min = Math.min(DF_min,  DFreader);
 
@@ -678,7 +687,8 @@ if (DF_BDG < DF_min) {
 	if(verbose) {
 		JFrame frame = new JFrame();
 		JOptionPane.showMessageDialog(frame,
-				"DF_BDG was calculated to be " + DF_BDG + "\nIt is being set to DF_min = " + DF_min +
+				"DF_BDG is below a minimum." +
+				"\nDF_BDG was calculated to be " + DF_BDG + "\nIt is being set to DF_min = " + DF_min +
 				"\nThis follows Gaylor1969_Technometrics_v4p691" +
 				"\nand indicates that your data is very limited", "Warning",
 				JOptionPane.ERROR_MESSAGE);
@@ -691,7 +701,8 @@ if (DF_BDG < 2) {
 	if(verbose) {
 			JFrame frame = new JFrame();
 			JOptionPane.showMessageDialog(frame,
-				"DF_BDG was calculated to be " + DF_BDG +
+				"DF_BDG is below a minimum." +
+				"\nDF_BDG was calculated to be " + DF_BDG +
 				"\nDF_BDG less than 2 cannot be handled" +
 				"\nTherefore, it is being set to 2", "Warning",
 				JOptionPane.ERROR_MESSAGE);
@@ -792,7 +803,7 @@ return DF_BDG;
 			JOptionPane.showMessageDialog(frame,
 					"DF_Hillis was calculated to be " + DF_Hillis + "\nIt is being set to 2", "Error",
 					JOptionPane.ERROR_MESSAGE);
-			DF_Hillis = 2.0;
+			DF_Hillis = 2;
 		}
 		if( Double.isInfinite(DF_Hillis) ) {
 			JFrame frame = new JFrame();
@@ -851,7 +862,7 @@ return DF_BDG;
 	public double cdfNonCentralF(int df1, int df2, double delta, double x) {
 		double cdf = 0;
 		for (int j = 0; j < INFINITY; j++) {
-			double tempF = BetaDist.cdf(df1 / 2.0 + j, df2 / 2.0, PRECISION,
+			double tempF = BetaDist.cdf(df1 / 2.0 + j, df2 / 2.0,
 					df1 * x / (df2 + df1 * x));
 			double sfactor = 1;
 			for (int k = j; k > 0; k--) {
