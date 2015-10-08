@@ -433,9 +433,13 @@ public class SizePanel {
 		
 
 		String str = "";
+<<<<<<< HEAD
+		str = str + "Filename: " + DBRecordSize.filename + "\r\n";
+=======
 		str = str + "MRMC summary statistics from " +MRMC.versionname + "\r\n";
 		str = str + "Summary statistics written to file named:" + "\r\n";
 		str = str + GUInterface.summaryfilename + "\r\n";
+>>>>>>> DIDSR/master
 		str = str + DBRecordSize.recordDesc;
 		str = str + "Reader=" + Long.toString(DBRecordSize.Nreader) + SEPA
 				+ "Normal=" + Long.toString(DBRecordSize.Nnormal) + SEPA

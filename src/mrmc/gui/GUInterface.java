@@ -501,6 +501,7 @@ public class GUInterface {
 			/*
 			TODO
 			
+<<<<<<< HEAD
 			String str = e.getActionCommand();
 			if (str.equals("Yes")) {
 				
@@ -509,6 +510,25 @@ public class GUInterface {
 			if (str.equals("No")) {
 				DBRecordStat.flagMLE = useMLE;
 			}
+			*/
+			 
+			/*
+			 * revised 
+			*/
+			
+=======
+>>>>>>> DIDSR/master
+			String str = e.getActionCommand();
+			if (str.equals("Yes")) {
+				
+				DBRecordStat.flagMLE = useMLE;
+			}
+			if (str.equals("No")) {
+				DBRecordStat.flagMLE = useMLE;
+			}
+<<<<<<< HEAD
+						
+=======
 			*/
 			 
 			/*
@@ -523,6 +543,7 @@ public class GUInterface {
 					DBRecordStat.flagMLE = NO_MLE;
 				}
 
+>>>>>>> DIDSR/master
 		}
 	}
 
