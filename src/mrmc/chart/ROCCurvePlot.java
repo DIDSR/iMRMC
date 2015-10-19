@@ -458,6 +458,7 @@ public class ROCCurvePlot extends JFrame {
 			String FileName=inputfilepath;
 			FileName= FileName.substring(0,FileName.lastIndexOf(".imrmc"));
             String sFileName = FileName+"ROCcurve"+fileTime+".csv";
+            String sFileNameonly = sFileName.substring(FileName.lastIndexOf("\\")+1);
 			try {
 				 //generate whatever data you want	    		
 				FileWriter writer = new FileWriter(sFileName);	   		
@@ -497,7 +498,7 @@ public class ROCCurvePlot extends JFrame {
 	    	    writer.close();
 	    	    JFrame frame = new JFrame();
 				JOptionPane.showMessageDialog(
-						frame,"ROC data has been succeed export to input file directory!", 
+						frame,"ROC data has been succeed export to input file directory!"+"\n"+"Filename="+sFileNameonly, 
 						"Exported", JOptionPane.INFORMATION_MESSAGE);
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block

@@ -65,7 +65,7 @@ import mrmc.gui.SizePanel;
 public class DBRecord {
 	
 	public boolean verbose = true;
-
+    public double totalVarMLE;
 	public GUInterface GUI;
 	public DBRecord DBRecordStat, DBRecordSize;
 	public InputFile InputFile1;
@@ -96,6 +96,9 @@ public class DBRecord {
 	public long Nreader = -1;
 	public long Nnormal = -1;
 	public long Ndisease = -1;
+	public long NreaderDB = -1;
+	public long NnormalDB = -1;
+	public long NdiseaseDB = -1;
 	/** 
 	 * Strings holding the names of the modalities to be analyzed, read in with {@link mrmc.gui.InputFileCard}
 	 */
@@ -457,16 +460,19 @@ public class DBRecord {
 	 * @param DBRecordStatTemp instance of {@link mrmc.core.DBRecord#DBRecord(GUInterface)}
 	 */
 	public void DBRecordStatFill(InputFile InputFileTemp, DBRecord DBRecordStatTemp) {
-		
 		InputFile1 = InputFileTemp;
 		DBRecordStat = DBRecordStatTemp;
-
 		covMRMCstat = new CovMRMC(InputFile1, DBRecordStatTemp);
-
 		BDGforStatPanel();
 		Decompositions();
-
+		TreeMap<String, TreeMap<String,ArrayList<String>>> modinformation1 =InputFile1.modinformation;
+		ArrayList<String> chosenreaderlist = new ArrayList<String>();
+		ArrayList<String> chosennormallist = new ArrayList<String>();
+		ArrayList<String> chosendiseaselist = new ArrayList<String>();
 		if(selectedMod == 0) {
+			chosenreaderlist = modinformation1.get(modalityA).get("reader");
+			chosennormallist = modinformation1.get(modalityA).get("normal");
+			chosendiseaselist = modinformation1.get(modalityA).get("disease");
 			flagFullyCrossed = covMRMCstat.fullyCrossedA;
 			if(AUCsReaderAvg[0] < 0) {
 				JFrame frame = new JFrame();
@@ -478,6 +484,9 @@ public class DBRecord {
 			}
 		}
 		if(selectedMod == 1) {
+			chosenreaderlist = modinformation1.get(modalityB).get("reader");
+			chosennormallist = modinformation1.get(modalityB).get("normal");
+			chosendiseaselist = modinformation1.get(modalityB).get("disease");
 			flagFullyCrossed = covMRMCstat.fullyCrossedB;
 			if(AUCsReaderAvg[1] < 0) {
 				JFrame frame = new JFrame();
@@ -489,6 +498,30 @@ public class DBRecord {
 			}
 		}
 		if(selectedMod == 3) {
+			for (String r:  modinformation1.get(modalityA).get("reader")){
+					chosenreaderlist.add(r);
+			}
+			for (String nor:  modinformation1.get(modalityA).get("normal")){
+					chosennormallist.add(nor);
+			}
+			for (String dis:  modinformation1.get(modalityA).get("disease")){
+					chosendiseaselist.add(dis);
+			}
+			for (String r:  modinformation1.get(modalityB).get("reader")){
+				if (!chosenreaderlist.contains(r)){
+					chosenreaderlist.add(r);
+				}
+			}
+			for (String nor:  modinformation1.get(modalityB).get("normal")){
+				if (!chosennormallist.contains(nor)){
+					chosennormallist.add(nor);
+				}
+			}
+			for (String dis:  modinformation1.get(modalityB).get("disease")){
+				if (!chosendiseaselist.contains(dis)){
+					chosendiseaselist.add(dis);
+				}
+			}
 			flagFullyCrossed = covMRMCstat.fullyCrossedA && 
 					covMRMCstat.fullyCrossedB && 
 					covMRMCstat.fullyCrossedAB;
@@ -509,9 +542,10 @@ public class DBRecord {
 				return;
 			}
 		}
-
+		NreaderDB = chosenreaderlist.size();
+		NnormalDB = chosennormallist.size();
+		NdiseaseDB = chosendiseaselist.size();
 		testStat = new StatTest(DBRecordStat);
-
 	}
 	
 	
@@ -615,8 +649,8 @@ public class DBRecord {
 	 * Calculate {@link #totalVar}
 	 */
 	private void BDGforStatPanel() {
-
-		totalVar = 0.0;
+		double totalVarnoMLE=0.0;
+		totalVarMLE=0.0;
 		for (int i = 0; i < 8; i++) {
 			BDG[0][i] = covMRMCstat.momentsAA[i + 1];
 			BDG[1][i] = covMRMCstat.momentsBB[i + 1];
@@ -636,10 +670,16 @@ public class DBRecord {
 			BDGbias[3][i] = (BDGbias[0][i] * BDGcoeff[0][i])
 					  +     (BDGbias[1][i] * BDGcoeff[1][i])
 					  - 2.0*(BDGbias[2][i] * BDGcoeff[2][i]);
-			
-			totalVar += BDGcoeff[3][i] * BDG[3][i];
+			totalVarnoMLE += BDGcoeff[3][i] * BDG[3][i];
+			totalVarMLE  += BDGcoeff[3][i] * BDGbias[3][i];
 			
 		}
+		if (flagMLE==0){
+			totalVar= totalVarnoMLE;
+		}else{
+			totalVar=totalVarMLE;
+		}
+		
 
 		if(totalVar < 0) {
 			flagTotalVarIsNegative = 1;
@@ -780,9 +820,9 @@ public class DBRecord {
 	 * @return String containing experiment sizes
 	 */
 	public String getSizes() {
-		return (Long.toString(Nreader) + " Readers,   "
-				+ Long.toString(Nnormal) + " Normal cases,   "
-				+ Long.toString(Ndisease) + " Disease cases.");
+		return (Long.toString(NreaderDB) + " Readers,   "
+				+ Long.toString(NnormalDB) + " Normal cases,   "
+				+ Long.toString(NdiseaseDB) + " Disease cases.");
 	}
 
 	/**

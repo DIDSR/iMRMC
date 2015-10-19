@@ -232,7 +232,7 @@ public class StudyDesignPlot extends JFrame {
 				JFrame frame = new JFrame();
 				JOptionPane.showMessageDialog(
 						frame,"Reader Index to reader ID has been succeed export to input file directory!"+"\n"
-						+"Filename:"+filename+"readerIndextoID"+fileTime+".csv",
+						+"Filename="+filename+"readerIndextoID"+fileTime+".csv",
 						"Exported", JOptionPane.INFORMATION_MESSAGE);
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
@@ -258,7 +258,7 @@ public class StudyDesignPlot extends JFrame {
 	    	    JFrame frame = new JFrame();
 				JOptionPane.showMessageDialog(
 						frame,"Case Index to case has been succeed export to input file directory!"+"\n"
-						+"Filename:"+filename+"caseIndextoID"+fileTime+".csv", 
+						+"Filename="+filename+"caseIndextoID"+fileTime+".csv", 
 						"Exported", JOptionPane.INFORMATION_MESSAGE);
 			 } catch (IOException e1) {
 				// TODO Auto-generated catch block

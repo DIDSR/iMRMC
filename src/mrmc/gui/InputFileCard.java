@@ -53,6 +53,7 @@ import mrmc.chart.StudyDesignPlot;
 
 import mrmc.core.DBRecord;
 import mrmc.core.InputFile;
+import mrmc.core.StatTest;
 
 import org.jfree.ui.RefineryUtilities;
 
@@ -411,7 +412,8 @@ public class InputFileCard {
 			} else {
 				FlagMLE = NO_MLE;
 			}
-
+			DBRecordStat.flagMLE = FlagMLE;
+			DBRecordSize.flagMLE = FlagMLE;
 			GUI.StatPanel1.resetStatPanel();
 			GUI.StatPanel1.resetTable1();
 			GUI.SizePanel1.resetSizePanel();
@@ -479,7 +481,6 @@ public class InputFileCard {
 	class varAnalysisListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			System.out.println("MRMC Variance analysis button clicked. RawStudyCard.varAnalysisListener");
-			
 			// Check that .imrmc input file has been read
 			// If there is no JTextFilename, then reader scores have not been read
 			String name = JTextFilename.getText();
@@ -509,10 +510,8 @@ public class InputFileCard {
 							JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			
 			// Analyze observerData
 			DBRecordStat.DBRecordStatFill(InputFile1, DBRecordStat);
-			
 			// Check if variance estimate is negative
 			if(DBRecordStat.totalVar > 0)
 				GUI.hasNegative = false;
@@ -529,6 +528,10 @@ public class InputFileCard {
 					System.out.println("cancel");
 				} else if (JOptionPane.YES_OPTION == result) {
 					FlagMLE = USE_MLE;
+					DBRecordStat.flagMLE = FlagMLE;
+					mleCheckBox.setSelected(true);
+					DBRecordStat.totalVar=DBRecordStat.totalVarMLE;
+					DBRecordStat.testStat = new StatTest(DBRecordStat);
 				} else if (JOptionPane.NO_OPTION == result) {
 					FlagMLE = NO_MLE;
 				}
