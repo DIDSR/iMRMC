@@ -21,6 +21,9 @@ package mrmc.core;
 import java.util.*;
 import java.io.*;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 import mrmc.chart.XYPair;
 
 
@@ -58,6 +61,14 @@ public class InputFile {
 	TreeMap<String, TreeMap<String, TreeMap<String, Double>>> 
 		keyedData = new TreeMap<String, TreeMap<String, TreeMap<String, Double>>>();
 	/**
+	 * Contains counts for normal and disease cases for each modality and reader
+	 */
+	public TreeMap<String, TreeMap<String,Integer[]>> casecount= new  TreeMap<String, TreeMap<String,Integer[]>>();       //modality<reader,count[][]>;
+	/**
+	 * Contains reader, normal cases and disease cases list for each modality
+	 */
+    final TreeMap<String, TreeMap<String,ArrayList<String>>> modinformation =new  TreeMap<String, TreeMap<String,ArrayList<String>>>();
+	/**
 	 *  Contains the truth status for each case organized as a TreeMap (Case, Score)
 	 */
 	TreeMap<String, Integer> 
@@ -87,7 +98,7 @@ public class InputFile {
 	 * A sorted tree (list) containing all the modalityIDs in the data (IDs of the modalities)
 	 */
 	public TreeMap<String, Integer> modalityIDs = new TreeMap<String, Integer>();
-		
+	
 	/**
 	 * Filename for the .imrmc reader study data
 	 */
@@ -287,7 +298,6 @@ public class InputFile {
 	public TreeMap<String, TreeMap<String, TreeSet<XYPair>>> generateROCpoints(String[] modchosen) {
 		int samples = 100;
 		TreeMap<String, TreeMap<String, TreeSet<XYPair>>> allrocPoints = new TreeMap<String, TreeMap<String, TreeSet<XYPair>>>(); 
-
 		for (String mod :modchosen){
 			TreeMap<String, TreeSet<XYPair>> rocPoints = new TreeMap<String, TreeSet<XYPair>>();
 			double min = getMinScore(mod);
@@ -320,12 +330,14 @@ public class InputFile {
 	
 					double fpf = (double) fp / normCount;
 					double tpf = (double) tp / disCount;
-					if (rocPoints.containsKey(r)) {
-						rocPoints.get(r).add(new XYPair(fpf, tpf));
-					} else {
-						TreeSet<XYPair> temp = new TreeSet<XYPair>();
-						temp.add(new XYPair(fpf, tpf));
-						rocPoints.put(r, temp);
+					if (normCount!=0 & disCount!=0){          // don't create treemap if there is no data.
+						if (rocPoints.containsKey(r)) {
+							rocPoints.get(r).add(new XYPair(fpf, tpf));
+						} else {
+							TreeSet<XYPair> temp = new TreeSet<XYPair>();
+							temp.add(new XYPair(fpf, tpf));
+							rocPoints.put(r, temp);
+						}
 					}
 				}
 			}
@@ -451,14 +463,21 @@ public class InputFile {
 	 * @param modalityID Modality for which to determine the study design
 	 * @return 2-D array of readers by cases
 	 */
-	public String[][]  getStudyDesign(String modalityID) {
+	public TreeMap<String,String[][]>  getStudyDesign(String modalityID) {
 		String[][] design = new String[(int) Nreader][(int) (Nnormal + Ndisease+1)];
+		String[][] readerrelation = new String[(int) Nreader][2];
+		String[][] caserelation = new String[(int) (Nnormal + Ndisease)][2];
+		TreeMap<String,String[][]> StudyDesignData= new TreeMap<String,String[][]>();
 		//String labelreaderID[]=new String[5];
 		int r = 0, i = 0;
 		for (String readerID : keyedData.keySet()) {
 			i = 0;
 			design[r][i] = readerID;
 			for (String caseID : keyedData.get(readerID).keySet()) {
+				if (r==0){
+					caserelation[i][0]=Integer.toString(i);
+					caserelation[i][1]=caseID;
+				}
 				i++;
 				if (keyedData.get(readerID).get(caseID).get(modalityID) != null) {
 					design[r][i] = "true";
@@ -466,9 +485,14 @@ public class InputFile {
 					design[r][i] = "false";
 				}
 			}
+			readerrelation[r][0]=Integer.toString(r);
+			readerrelation[r][1]=readerID;
 			r++;
 		}
-		return design;
+		StudyDesignData.put("readerrelation", readerrelation);
+		StudyDesignData.put("caserelation", caserelation);
+		StudyDesignData.put("data", design);
+		return StudyDesignData;
 	}
 	
 /*	public boolean[][] getStudyDesign(String modalityID) {
@@ -706,8 +730,8 @@ public class InputFile {
 
 			if(observerData[i][0] == null) break;
 
-			if ( observerData[i][0].equals("-1")){
-				if ( normalIDs.containsKey(observerData[i][1]) || diseaseIDs.containsKey(observerData[i][1]) ){
+			if ( observerData[i][0].equals("-1")){																 // Load truth lines
+				if ( normalIDs.containsKey(observerData[i][1]) || diseaseIDs.containsKey(observerData[i][1]) ){  // Check Duplicate case truth define 
 					dataCheckResults = "ERROR: Duplicate case found"                 + " \n";
 					dataCheckResults = dataCheckResults + "      row = " + (NrowsInHeader+i+2)+ " \n";
 					dataCheckResults = dataCheckResults + "Check for an earlier occurrence:" + " \n";
@@ -749,11 +773,26 @@ public class InputFile {
 				}
 				// New reader ID?
 				if ( !readerIDs.containsKey(observerData[i][0])  ) {
-					readerIDs.put(observerData[i][0], inr);
+					readerIDs.put(observerData[i][0], inr);					
 				}
 				// New modality ID?
 				if ( !modalityIDs.containsKey(observerData[i][2])) {
-					modalityIDs.put(observerData[i][2], inm);
+					modalityIDs.put(observerData[i][2], inm);			
+					casecount.put(observerData[i][2], new TreeMap<String, Integer[]>());
+				}
+				if (!casecount.get(observerData[i][2]).containsKey(observerData[i][0])) {
+					Integer[] startnum={0,0};
+					casecount.get(observerData[i][2]).put(observerData[i][0],startnum);		
+				}
+				if( normalIDs.containsKey(observerData[i][1]) ) {
+					Integer[] countnum = casecount.get(observerData[i][2]).get(observerData[i][0]);
+					countnum[0]++;
+					casecount.get(observerData[i][2]).put(observerData[i][0],countnum);									
+				}
+				if( diseaseIDs.containsKey(observerData[i][1]) ) {
+					Integer[] countnum = casecount.get(observerData[i][2]).get(observerData[i][0]);
+					countnum[1]++;
+					casecount.get(observerData[i][2]).put(observerData[i][0],countnum);									
 				}
 			}
 		}
@@ -814,7 +853,24 @@ public class InputFile {
 		if(verbose) {
 			System.out.println("caseIDs: " + caseIDs);
 		}
-
+		String misscasemessage="";
+		int messagecount=0;
+		for (String m : modalityIDs.keySet()){
+			for(String r : readerIDs.keySet()){
+				Integer[] countnum = casecount.get(m).get(r);
+				if (countnum==null||Math.min(countnum[0],countnum[1])<2){
+					misscasemessage = misscasemessage + "Reader: "+r+" reads less than 2 normal or disease cases in "+"Modality: "+m+"\n";
+					messagecount++;
+				}
+			}
+		}
+		if (messagecount>0){
+			misscasemessage = misscasemessage + "We ingore scores in these conditions";
+		    JFrame frame = new JFrame();
+			JOptionPane.showMessageDialog(
+					frame,misscasemessage, 
+					"Not fully data loaded", JOptionPane.INFORMATION_MESSAGE);
+		}
 	}
 	
 	/**
@@ -841,6 +897,16 @@ public class InputFile {
 				keyedData.get(r).put(d, new TreeMap<String, Double>());
 			}
 		}
+		
+		for (String m : modalityIDs.keySet()) {
+			ArrayList<String> readerlist = new ArrayList<String>();
+			ArrayList<String> normallist = new ArrayList<String>();
+			ArrayList<String> diseaselist = new ArrayList<String>();
+			modinformation.put(m, new TreeMap<String,ArrayList<String>>()) ;
+			modinformation.get(m).put("reader", readerlist);
+			modinformation.get(m).put("normal", normallist);
+			modinformation.get(m).put("disease", diseaselist);
+		}
 
 		// Determine caseIDs
 		Integer ic=0;
@@ -852,7 +918,6 @@ public class InputFile {
 		for (int i = 0; i < observerData.length; i++) {
 			
 			if(observerData[i][0] == null) break;
-
 			String readerID   = observerData[i][0];
 			String caseID     = observerData[i][1];
 			String modalityID = observerData[i][2];
@@ -872,12 +937,23 @@ public class InputFile {
 
 				}
 				else {
-					keyedData.get(readerID).get(caseID).put(modalityID, score);
+					Integer[] countnum = casecount.get(modalityID).get(readerID);
+					if (Math.min(countnum[0],countnum[1])>2){
+						keyedData.get(readerID).get(caseID).put(modalityID, score);
+						if (!modinformation.get(modalityID).get("reader").contains(readerID)){
+							modinformation.get(modalityID).get("reader").add(readerID);
+						}
+						if ( normalIDs.containsKey(caseID) & !modinformation.get(modalityID).get("normal").contains(caseID)){
+							modinformation.get(modalityID).get("normal").add(caseID);
+						}
+						if ( diseaseIDs.containsKey(caseID) & !modinformation.get(modalityID).get("disease").contains(caseID)){
+							modinformation.get(modalityID).get("disease").add(caseID);
+						}
+					}
 				}
 			}
 
 		}
-		
 	}
 
 	public void resetInputFile() {
