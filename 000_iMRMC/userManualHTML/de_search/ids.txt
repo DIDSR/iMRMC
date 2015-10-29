@@ -1,75 +1,66 @@
 1
- Ti... Advanced License is required!
+ Title
  index.htm
 2
- ... Advanced License is required!
- _.htm
+ Summary
+ summary.htm
 3
- 1. Introduction to... Advanced License is required!
+ 1. Introduction to ROC Reader Studies
  1__introduction_to_roc_reader_studies.htm
 4
- 2. Me... Advanced License is required!
+ 2. Methods
  2__methods.htm
 5
- 2.1 Varianc... Advanced License is required!
+ 2.1 Variance Estimation
  2_1_variance_estimation.htm
 6
- 2.2 Component... Advanced License is required!
+ 2.2 Components of Variance
  2_2_components_of_variance.htm
 7
- 2.3 Hypothesis Testing ... Advanced License is required!
+ 2.3 Hypothesis Testing and Confidence Intervals
  2_3_hypothesis_testing_and_confidence_intervals.htm
 8
- 2.4 Sizing a... Advanced License is required!
+ 2.4 Sizing a Future Study
  2_4_sizing_a_future_study.htm
 9
- 3. Da... Advanced License is required!
+ 3. Database
  3__database.htm
 10
- Dataset I... Advanced License is required!
- dataset_information.htm
-11
- Basic In... Advanced License is required!
- basic_information.htm
-12
- Key Inf... Advanced License is required!
- key_information.htm
-13
- 4. Using the iM... Advanced License is required!
+ 4. Using the iMRMC Application
  4__using_the_imrmc_application.htm
-14
- 4.1 Technical ... Advanced License is required!
+11
+ 4.1 Technical Specifications
  4_1_technical_specifications.htm
-15
- 4.2 First... Advanced License is required!
+12
+ 4.2 First Time Use
  4_2_first_time_use.htm
-16
- 4.3 Inp... Advanced License is required!
+13
+ 4.3 Input data
  4_3_input_data.htm
-17
- 4.4 Data Format... Advanced License is required!
+14
+ 4.4 Data Format for ROC Ratings
  4_4_data_format_for_roc_ratings.htm
-18
- 4.4.1 Study... Advanced License is required!
+15
+ 4.4.1 Study Description
  4_4_1_study_description.htm
-19
- 4.4.2 List o... Advanced License is required!
+16
+ 4.4.2 List of ROC Ratings
  4_4_2_list_of_roc_ratings.htm
-20
- 4.4.3 Forma... Advanced License is required!
+17
+ 4.4.3 Formating Errors
  4_4_3_formating_errors.htm
-21
- 4.5 Data... Advanced License is required!
+18
+ 4.5 Data Analysis
  4_5_data_analysis.htm
-22
- 4.6 Sizing a... Advanced License is required!
+19
+ 4.6 Sizing a Future Study
  4_6_sizing_a_future_study.htm
-23
- 4.7 Genera... Advanced License is required!
+20
+ 4.7 Generate a Report
  4_7_generate_a_report.htm
-24
- 4.8 Da... Advanced License is required!
+21
+ 4.8 Database
  4_8_database.htm
-25
- 5. Ref... Advanced License is required!
+22
+ 5. References
  5__references.htm
