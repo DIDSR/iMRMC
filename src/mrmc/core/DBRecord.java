@@ -704,12 +704,18 @@ public class DBRecord {
 
 		totalVar = 0.0;
 		for (int i = 0; i < 8; i++) {
-			BDG[0][i] = covMRMCstat.momentsAA[i + 1];
+	/*		BDG[0][i] = covMRMCstat.momentsAA[i + 1];
 			BDG[1][i] = covMRMCstat.momentsBB[i + 1];
 			BDG[2][i] = covMRMCstat.momentsAB[i + 1];
-			BDGbias[0][i] = covMRMCstat.momentsBiasedAA[i + 1];
+	     	BDGbias[0][i] = covMRMCstat.momentsBiasedAA[i + 1];
 			BDGbias[1][i] = covMRMCstat.momentsBiasedBB[i + 1];
-			BDGbias[2][i] = covMRMCstat.momentsBiasedAB[i + 1];
+			BDGbias[2][i] = covMRMCstat.momentsBiasedAB[i + 1];    //*/
+		    BDG[0][i] = DBRecordStat.BDG[0][i];
+			BDG[1][i] = DBRecordStat.BDG[1][i];
+			BDG[2][i] = DBRecordStat.BDG[2][i];
+			BDGbias[0][i] = DBRecordStat.BDGbias[0][i];
+			BDGbias[1][i] = DBRecordStat.BDGbias[1][i];
+			BDGbias[2][i] = DBRecordStat.BDGbias[2][i];				//*/
 			BDGcoeff[0][i] = covMRMCsize.coefficientsAA[i + 1];
 			BDGcoeff[1][i] = covMRMCsize.coefficientsBB[i + 1];
 			BDGcoeff[2][i] = covMRMCsize.coefficientsAB[i + 1];

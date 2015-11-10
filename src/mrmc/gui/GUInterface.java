@@ -91,6 +91,7 @@ public class GUInterface {
 	public MRMC MRMCobject;
 
 	public InputFileCard InputFileCard;
+	public InputSummaryCard InputSummaryCard;
 	private ManualCard MC;
 
 	/**
@@ -109,9 +110,9 @@ public class GUInterface {
 	 * These strings describe the different input methods
 	 * @see #selectedInput
 	 */
-	final static String DescInputModeOmrmc = ".omrmc file: Summary info from a reader study";
-	final static String DescInputModeImrmc = ".imrmc file: Reader study data";
-	final static String DescInputModeManual = "Manual input";
+	public final static String DescInputModeOmrmc = ".imrmc file: Summary info from a reader study";
+	public final static String DescInputModeImrmc = ".imrmc file: Reader study data";
+	public final static String DescInputModeManual = "Manual input";
 
 	/**
 	 * <code> selectedInput </code> determines the workflow: <br>
@@ -122,7 +123,7 @@ public class GUInterface {
 	 * ----<code>DescInputModeManual</code> = "Manual input" <br>
  	 * 
  	 */
-	String selectedInput = DescInputModeImrmc;
+	public static String selectedInput = DescInputModeManual;
 
 	/**
 	 * the panel that uses CardLayout. There are three cards for three different input.
@@ -136,7 +137,7 @@ public class GUInterface {
 	/**
 	 * {@link mrmc.gui.SizePanel}
 	 */
-	StatPanel StatPanel1;
+	public StatPanel StatPanel1;
 	/**
 	 * {@link mrmc.gui.StatPanel}
 	 */
@@ -162,7 +163,7 @@ public class GUInterface {
 			
 			InputFile1.resetInputFile();
 			InputFileCard.resetInputFileCard();
-
+			InputSummaryCard.resetInputFileCard();
 			StatPanel1.resetStatPanel();
 			SizePanel1.resetSizePanel();
 	
@@ -252,9 +253,12 @@ public class GUInterface {
 		// Add Pull-down select input method
 //		String comboBoxItems[] = { DB, Pilot, Manual };
 //		String comboBoxItems[] = { Pilot, Manual };
-		String comboBoxItems[] = { DescInputModeImrmc };
+		String comboBoxItems[] = { DescInputModeManual };
 		// Add Reset button
 		JComboBox<String> cb = new JComboBox<String>(comboBoxItems);
+		JComboBox<String> chooseMod = new JComboBox<String>();
+		cb.addItem(DescInputModeImrmc);
+		cb.addItem(DescInputModeOmrmc);
 		cb.setEditable(false);
 		cb.setSelectedIndex(0);
 		cb.addActionListener(new inputModListener());
@@ -273,6 +277,10 @@ public class GUInterface {
 		// create manual panel
 		JPanel InputCardManual = new JPanel();
 		MC = new ManualCard(InputCardManual, this, MRMCobject);
+		
+		// create summary panel
+		JPanel JPanel_InputSummaryCard = new JPanel();
+		InputSummaryCard = new InputSummaryCard(JPanel_InputSummaryCard, this);
 		// create DB panel
 // TODO	JPanel CardInputModeDB = new JPanel();
 // TODO	DBC = new DBCard(CardInputModeDB, this, MRMCobject);
@@ -284,6 +292,8 @@ public class GUInterface {
 //		inputCards.add(CardInputModeDB, DescInputModeDB);
 		InputPane.add(JPanel_InputFileCard, DescInputModeImrmc);
 		InputPane.add(InputCardManual, DescInputModeManual);
+		InputPane.add(JPanel_InputSummaryCard, DescInputModeOmrmc);
+		
 
 		/*
 		 * Initialize all the elements of the GUI

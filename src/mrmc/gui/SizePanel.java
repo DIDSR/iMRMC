@@ -445,14 +445,24 @@ public class SizePanel {
 			str = str + "this report uses MLE estimate of components.\r\n";
 		str = str + "\r\n*****************************************************************";
 		str = str + "\r\n" + GUI.DBRecordStat.getAUCsReaderAvgString(DBRecordSize.selectedMod);
+		String tstr = GUI.DBRecordStat.getAUCsReaderAvgString(DBRecordSize.selectedMod);
 		str = str + "\r\nStatistical Tests:\r\n" + result + SEPA;
 
 		str = str
 				+ "\r\n*****************************************************************\r\n";
+		
+		
+		str = str + "BEGIN SUMMARY\r\n";
 		str = str + "NReaderSize=" + NreaderSize + SEPA + "NnormalSize=" + NnormalSize + SEPA
 				+ "NDiseaseSize=" + NdiseaseSize + "\r\n";
-		str = str
-				+ "\r\n**********************BDG Results***************************\r\n";
+		str = str + "Average AUC"+ SEPA+GUI.DBRecordStat.getAUCsReaderAvgString(DBRecordSize.selectedMod)+"\r\n";
+		str = str + "Individual AUC" +SEPA + "AUCs_A" + SEPA +  "AUCs_B" + SEPA +  "AUCs_B";
+		for (int i = 1; i < NreaderSize+1; i++)
+		str = str + "\r\n" + "readerID" +  Integer.toString(i)+ SEPA + 
+				fiveDecE.format(GUI.DBRecordStat.AUCs[i-1][0]) + SEPA +
+				fiveDecE.format(GUI.DBRecordStat.AUCs[i-1][1]) + SEPA +
+				fiveDecE.format(GUI.DBRecordStat.AUCs[i-1][2]);
+		str = str + "\r\n**********************BDG Results***************************\r\n";
 		str = str + "Moments" + SEPA + "M1" + SEPA + "M2" + SEPA + "M3" + SEPA
 				+ "M4" + SEPA + "M5" + SEPA + "M6" + SEPA + "M7" + SEPA + "M8"
 				+ "\r\n";
@@ -462,13 +472,14 @@ public class SizePanel {
 		str = str + "\r\n" + "Modality2(AUC_B)" + SEPA;
 		for (int i = 0; i < 8; i++)
 			str = str + fiveDecE.format(BDG[1][i]) + SEPA;
-		str = str + "\r\n" + "Difference(AUC_A - AUC_B)" + SEPA;
+		str = str + "\r\n" + "comp product" + SEPA;
 		for (int i = 0; i < 8; i++)
-			str = str + fiveDecE.format(BDG[3][i]) + SEPA;
+			str = str + fiveDecE.format(BDG[2][i]) + SEPA;
 		str = str + "\r\n" + "Coeff" + SEPA;
-		for (int i = 0; i < 8; i++)
-			str = str + fiveDecE.format(BDGcoeff[0][i]) + SEPA;
 		str = str +"\r\n"; 
+		str = str +"END SUMMARY \r\n"; 
+		
+		
 		str = str
 				+ "\r\n**********************BCK Results***************************";
 		str = str + "\r\nMoments" + SEPA + "N" + SEPA + "D" + SEPA + "N~D" + SEPA

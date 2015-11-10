@@ -68,7 +68,7 @@ import org.jfree.ui.RefineryUtilities;
  * @author Brandon D. Gallas, Ph.D
  * @author Rohan Pathare
  */
-public class InputFileCard {
+public class InputSummaryCard {
 	private GUInterface GUI;
 	private InputFile InputFile1;
 	private DBRecord DBRecordStat;
@@ -106,7 +106,7 @@ public class InputFileCard {
 	 * @param CardInputModeImrmc Panel containing elements for raw study input card
 	 * @param GUInterface_temp Application's instance of the GUI
 	 */
-	public InputFileCard(JPanel CardInputModeImrmc, GUInterface GUInterface_temp) {
+	public InputSummaryCard(JPanel CardInputModeImrmc, GUInterface GUInterface_temp) {
 		GUI = GUInterface_temp;
 		InputFile1 = GUI.InputFile1;
 		DBRecordStat = GUI.DBRecordStat;
@@ -120,15 +120,6 @@ public class InputFileCard {
 		JTextFilename = new JTextField(20);
 		JButton browseButton = new JButton("Browse...");
 		browseButton.addActionListener(new brwsButtonListener());
-		// Show plots of Cases Per Reader and Readers Per Case
-		JButton readerCasesButton = new JButton("Input Statistics Charts");
-		readerCasesButton.addActionListener(new ReadersCasesButtonListener());
-		// Show reader x case image of design matrix for selected modality 
-		JButton designButton = new JButton("Show Study Design");
-		designButton.addActionListener(new designButtonListener());
-		// Show ROC curves for selected modality
-		JButton ROCcurveButton = new JButton("Show ROC Curve");
-		ROCcurveButton.addActionListener(new ROCButtonListener());
 		/*
 		 * Create RawStudyCardRow2
 		 */
@@ -136,9 +127,6 @@ public class InputFileCard {
 		RawStudyCardRow1.add(studyLabel);
 		RawStudyCardRow1.add(JTextFilename);
 		RawStudyCardRow1.add(browseButton);
-		RawStudyCardRow1.add(readerCasesButton);
-		RawStudyCardRow1.add(designButton);
-		RawStudyCardRow1.add(ROCcurveButton);
 
 		/*
 		 * Elements of RawStudyCardRow2
@@ -207,7 +195,7 @@ public class InputFileCard {
 	 */
 	class brwsButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			
+			DBRecord DBRecordStat1=DBRecordStat;;
 			GUI.resetGUI();
 			if  (GUInterface.selectedInput == GUInterface.DescInputModeManual){
 				JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
@@ -258,11 +246,10 @@ public class InputFileCard {
 			} else {
 				JOptionPane.showMessageDialog(
 						GUI.MRMCobject.getFrame(),
-						"NR = " + InputFile1.Nreader + 
-						" N0 = "+ InputFile1.Nnormal +
-						" N1 = "+ InputFile1.Ndisease +
-						" NM = "+ InputFile1.Nmodality, 
-						"Study Info", JOptionPane.INFORMATION_MESSAGE);
+						"NR = " + DBRecordStat.NreaderDB + 
+						" N0 = "+ DBRecordStat.NnormalDB +
+						" N1 = "+ DBRecordStat.NdiseaseDB, 
+						"Summary Info", JOptionPane.INFORMATION_MESSAGE);
 			}
 
 			/* 
@@ -279,131 +266,8 @@ public class InputFileCard {
 	}
 	
 	
-	/**
-	 * Handler for "Input Statistics Charts" button, displays charts for study
-	 * design at a glance
-	 */
-	class ReadersCasesButtonListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			// System.out.println("graph button pressed");
-			if (InputFile1 != null && InputFile1.isLoaded()) {
-				final BarGraph cpr = new BarGraph("Cases per Reader",
-						"Readers", "Cases", InputFile1.casesPerReader());
-				cpr.pack();
-				RefineryUtilities.centerFrameOnScreen(cpr);
-				cpr.setVisible(true);
-
-				final BarGraph rpc = new BarGraph("Readers per Case", "Cases",
-						"Readers", InputFile1.readersPerCase());
-				rpc.pack();
-				RefineryUtilities.centerFrameOnScreen(rpc);
-				RefineryUtilities.positionFrameOnScreen(rpc, 0.6, 0.6);
-				rpc.setVisible(true);
-			} else {
-				JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
-						"Pilot study data has not yet been input.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		}
-	}
 	
-	/**
-	 * Handler for "Show Study Design" button, displays charts of more detailed
-	 * study design for a given modality
-	 */
-	class designButtonListener implements ActionListener {
-		String designMod1 = "empty";
 
-		public void actionPerformed(ActionEvent e) {
-			// System.out.println("study design button pressed");
-			if (InputFile1.isLoaded()) {
-				JComboBox<String> choose1 = new JComboBox<String>();
-
-				for (String Modality : InputFile1.getModalityIDs()){
-					choose1.addItem(Modality);
-				}
-				choose1.setSelectedIndex(0);
-				Object[] message = { "Which modality would you like view?\n",
-						choose1 };
-				JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(), message,
-						"Choose Modality", JOptionPane.INFORMATION_MESSAGE,
-						null);
-				designMod1 = (String) choose1.getSelectedItem();
-				TreeMap<String,String[][]> StudyDesignData = InputFile1.getStudyDesign( (String) choose1.getSelectedItem());
-				final StudyDesignPlot chart = new StudyDesignPlot(
-						"Study Design: Modality "+designMod1, designMod1, "Case Index",
-						"Reader", StudyDesignData,InputFile1.filename);
-				chart.pack();
-				RefineryUtilities.centerFrameOnScreen(chart);
-				chart.setVisible(true);
-
-			} else {
-				JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
-						"Pilot study data has not yet been input.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		}
-	}
-	
-	/**
-	 * Handler for "Show ROC Curve" button, displays interactive ROC charts
-	 */
-	class ROCButtonListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			// If input file is loaded, then show ROC curves
-			// Otherwise as for pilot study to be inpu
-			if (InputFile1.isLoaded()) {
-				JPanel panel = new JPanel();
-				int modalitynum = InputFile1.getModalityIDs().size();
-				JCheckBox[] jCheckboxArray = new javax.swing.JCheckBox[modalitynum];
-				for (int i = 0; i < modalitynum; i++) {
-					String modID=InputFile1.getModalityIDs().get(i);
-					jCheckboxArray[i] = new JCheckBox("" + modID);
-					panel.add(jCheckboxArray[i]);
-					}
-				Object[] message = { "Which modality would you like view?\n",
-						panel };
-				JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(), message,
-						"Choose Modality",
-						JOptionPane.INFORMATION_MESSAGE, null);
-				int checkedmod=0;
-				for (int i = 0; i < modalitynum; i++) {
-					if (jCheckboxArray[i].isSelected()){
-						checkedmod++;
-					}
-				}
-				String[] rocMod= new String[checkedmod];
-				String roctitle="";
-				int selectmod=0;
-				for (int i = 0; i < modalitynum; i++) {
-					if (jCheckboxArray[i].isSelected()){
-					 String modID=InputFile1.getModalityIDs().get(i);
-					 rocMod[selectmod]=modID;
-					 roctitle=roctitle+modID+" ";
-					 selectmod++;
-					}
-				}
-				if (selectmod>0){
-					final ROCCurvePlot roc = new ROCCurvePlot(
-							"ROC Curve: Modality " + roctitle,
-							"FPF (1 - Specificity), legend shows symbols for each modalityID:readerID", "TPF (Sensitivity)",
-							InputFile1.generateROCpoints(rocMod),InputFile1.filename);
-					roc.addData(InputFile1.generatePooledROC(rocMod), "Pooled Average");
-					roc.pack();
-					RefineryUtilities.centerFrameOnScreen(roc);
-					roc.setVisible(true);
-				}else{
-					JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
-							"Please choose at list one Modality.", "Error",
-							JOptionPane.ERROR_MESSAGE);
-				}
-			} else {
-				JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
-						"Pilot study data has not yet been input.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		}
-	}
 
 	/**
 	 * Handler for checkbox to
