@@ -264,7 +264,7 @@ public class SizePanel {
 	void resetSizePanel() {
 		
 		SizeJLabelSqrtVar.setText("S.E=");
-		SizeJLabelTStat.setText(",  Test Stat=");
+//		SizeJLabelTStat.setText(",  Test Stat=");
 		
 		SizeJLabelPowerNormal.setText("Normal Approx:  df= \u221e,  Power=");
 //		SizeJLabelCINormal.setText("Conf. Int.=");
