@@ -198,7 +198,7 @@ public class StatPanel {
 		StatJLabelAUC.setText("AUC = ");
 		DBRecordStat.totalVar = -1.0;
 
-		StatJLabelDFNormal.setText("Large Sample Approx(Normal) =      ");
+		StatJLabelDFNormal.setText("Large Sample Approx(Normal)");
 		StatJLabelDFBDG.setText   ("         T-stat df(BDG) =      ");
 		StatJLabelDFHillis.setText("  T-stat df(Hillis 2008) =      ");
 
@@ -259,13 +259,13 @@ public class StatPanel {
 		}
 
 		
-		StatJLabelDFNormal.setText("Large Sample Approx(Normal) = \u221e     ");
+		StatJLabelDFNormal.setText("Large Sample Approx(Normal)");
 		output = fourDec.format(DBRecordStat.testStat.pValNormal);
 		StatJLabelPValNormal.setText("  p-Value = " + output);
 		output = fourDec.format(DBRecordStat.testStat.ciBotNormal);
 		output2 = fourDec.format(DBRecordStat.testStat.ciTopNormal);
 		StatJLabelCINormal.setText("Conf. Int. = (" + output + ", " + output2 + ")");
-		output = fourDec.format(DBRecordStat.testStat.rejectNormal);
+		output = twoDec.format(DBRecordStat.testStat.rejectNormal);
 		if (DBRecordStat.testStat.rejectNormal == 1) {
 			StatJLabelRejectNormal.setText("Reject Null? = " + "Yes" + "(" + output + ")");
 		} else {
@@ -280,7 +280,7 @@ public class StatPanel {
 		output = fourDec.format(DBRecordStat.testStat.ciBotBDG);
 		output2 = fourDec.format(DBRecordStat.testStat.ciTopBDG);
 		StatJLabelCIBDG.setText("Conf. Int. = (" + output + ", " + output2 + ")");
-		output = fourDec.format(DBRecordStat.testStat.rejectBDG);
+		output = twoDec.format(DBRecordStat.testStat.rejectBDG);
 		if (DBRecordStat.testStat.rejectBDG == 1) {
 			StatJLabelRejectBDG.setText("Reject Null? = " + "Yes" + "(" + output + ")");
 		} else {
@@ -297,7 +297,7 @@ public class StatPanel {
 			output2 = fourDec.format(DBRecordStat.testStat.ciTopHillis);
 			StatJLabelCIHillis.setText("Conf. Int. = (" + output + ", "
 					+ output2 + ")");
-			output = fourDec.format(DBRecordStat.testStat.rejectHillis);
+			output = twoDec.format(DBRecordStat.testStat.rejectHillis);
 			if (DBRecordStat.testStat.rejectHillis == 1) {
 				StatJLabelRejectHillis.setText("Reject Null? = " + "Yes" + "(" + output + ")");
 			} else {
