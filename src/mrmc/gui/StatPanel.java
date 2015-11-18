@@ -198,7 +198,7 @@ public class StatPanel {
 		StatJLabelAUC.setText("AUC = ");
 		DBRecordStat.totalVar = -1.0;
 
-		StatJLabelDFNormal.setText("T-stat df(Normal Approx) =      ");
+		StatJLabelDFNormal.setText("Large Sample Approx(Normal) =      ");
 		StatJLabelDFBDG.setText   ("         T-stat df(BDG) =      ");
 		StatJLabelDFHillis.setText("  T-stat df(Hillis 2008) =      ");
 
@@ -259,7 +259,7 @@ public class StatPanel {
 		}
 
 		
-		StatJLabelDFNormal.setText("T-stat df(Normal Approx) = \u221e     ");
+		StatJLabelDFNormal.setText("Large Sample Approx(Normal) = \u221e     ");
 		output = fourDec.format(DBRecordStat.testStat.pValNormal);
 		StatJLabelPValNormal.setText("  p-Value = " + output);
 		output = fourDec.format(DBRecordStat.testStat.ciBotNormal);
