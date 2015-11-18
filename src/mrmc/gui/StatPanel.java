@@ -266,7 +266,12 @@ public class StatPanel {
 		output2 = fourDec.format(DBRecordStat.testStat.ciTopNormal);
 		StatJLabelCINormal.setText("Conf. Int. = (" + output + ", " + output2 + ")");
 		output = fourDec.format(DBRecordStat.testStat.rejectNormal);
-		StatJLabelRejectNormal.setText("Reject Null? = " + output);
+		if (DBRecordStat.testStat.rejectNormal == 1) {
+			StatJLabelRejectNormal.setText("Reject Null? = " + "Yes" + "(" + output + ")");
+		} else {
+			StatJLabelRejectNormal.setText("Reject Null? = " + "No" + "(" + output + ")");
+		}
+		
 
 		output = twoDec.format(DBRecordStat.testStat.DF_BDG);
 		StatJLabelDFBDG.setText("  df(BDG) = " + output + "     ");
@@ -276,7 +281,12 @@ public class StatPanel {
 		output2 = fourDec.format(DBRecordStat.testStat.ciTopBDG);
 		StatJLabelCIBDG.setText("Conf. Int. = (" + output + ", " + output2 + ")");
 		output = fourDec.format(DBRecordStat.testStat.rejectBDG);
-		StatJLabelRejectBDG.setText("Reject Null? = " + output);
+		if (DBRecordStat.testStat.rejectBDG == 1) {
+			StatJLabelRejectBDG.setText("Reject Null? = " + "Yes" + "(" + output + ")");
+		} else {
+			StatJLabelRejectBDG.setText("Reject Null? = " + "No" + "(" + output + ")");
+		}
+		//StatJLabelRejectBDG.setText("Reject Null? = " + output);
 
 		if (DBRecordStat.flagFullyCrossed) {
 			output = twoDec.format(DBRecordStat.testStat.DF_Hillis);
@@ -288,7 +298,12 @@ public class StatPanel {
 			StatJLabelCIHillis.setText("Conf. Int. = (" + output + ", "
 					+ output2 + ")");
 			output = fourDec.format(DBRecordStat.testStat.rejectHillis);
-			StatJLabelRejectHillis.setText("Reject Null? = " + output);
+			if (DBRecordStat.testStat.rejectHillis == 1) {
+				StatJLabelRejectHillis.setText("Reject Null? = " + "Yes" + "(" + output + ")");
+			} else {
+				StatJLabelRejectHillis.setText("Reject Null? = " + "No" + "(" + output + ")");
+			}
+			//StatJLabelRejectHillis.setText("Reject Null? = " + output);
 		} else {
 			StatJLabelDFHillis.setText("");
 			StatJLabelPValHillis.setText("");
