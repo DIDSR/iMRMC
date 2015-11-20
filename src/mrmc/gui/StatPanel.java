@@ -8,6 +8,7 @@ import java.awt.Dimension;
 import java.text.DecimalFormat;
 
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -59,6 +60,9 @@ public class StatPanel {
 		StatJLabelRejectHillis = new JLabel("12345678901234567890",JLabel.LEFT),
 		StatJLabelTotalVar = new JLabel();
 	
+		
+	
+	
 	/**
 	 * table1 corresponds to the variance analysis
 	 */
@@ -105,6 +109,12 @@ public class StatPanel {
 		StatJLabelPValHillis.setPreferredSize(StatJLabelPValHillis.getPreferredSize());
 		StatJLabelCIHillis.setPreferredSize(StatJLabelCIHillis.getPreferredSize());
 		StatJLabelRejectHillis.setPreferredSize(StatJLabelRejectHillis.getPreferredSize());
+	
+		StatJLabelDFHillis.hide();
+		StatJLabelPValHillis.hide();
+		StatJLabelCIHillis.hide();
+		StatJLabelRejectHillis.hide();
+		
 		/*
 		 * Determine the width of the rows of the analysis results
 		 */
@@ -246,16 +256,14 @@ public class StatPanel {
 		StatJLabelH0.setText("H0: AUC = 0.50,   two-sided alternative,   95% significance,   " + 
 				DBRecordStat.getSizes());
 		StatJLabelAUC.setText(DBRecordStat.getAUCsReaderAvgString(DBRecordStat.selectedMod) +
-				",   sqrt(total var) = " + threeDecE.format(Math.sqrt(DBRecordStat.totalVar)) +
-				",   T Statistic = " + threeDecE.format(DBRecordStat.testStat.tStatEst));
+				",   S.E(total) = " + threeDecE.format(Math.sqrt(DBRecordStat.totalVar)));
 
 		if(DBRecordStat.selectedMod == 3) {
 			
 			StatJLabelH0.setText("H0: AUC_A - AUC_B = 0.00,   two-sided alternative,   95% significance,   " + 
 					DBRecordStat.getSizes());
 			StatJLabelAUC.setText(DBRecordStat.getAUCsReaderAvgString(DBRecordStat.selectedMod) +
-					",   sqrt(total var) = " + threeDecE.format(Math.sqrt(DBRecordStat.totalVar)) +
-					",   T Statistic = " + threeDecE.format(DBRecordStat.testStat.tStatEst));
+					",   S.E(total) = " + threeDecE.format(Math.sqrt(DBRecordStat.totalVar)));
 		}
 
 		
