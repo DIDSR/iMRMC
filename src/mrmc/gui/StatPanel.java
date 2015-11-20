@@ -109,7 +109,7 @@ public class StatPanel {
 		StatJLabelPValHillis.setPreferredSize(StatJLabelPValHillis.getPreferredSize());
 		StatJLabelCIHillis.setPreferredSize(StatJLabelCIHillis.getPreferredSize());
 		StatJLabelRejectHillis.setPreferredSize(StatJLabelRejectHillis.getPreferredSize());
-	
+		JButton statHillis = new JButton("Hillis Approx");
 		StatJLabelDFHillis.hide();
 		StatJLabelPValHillis.hide();
 		StatJLabelCIHillis.hide();
@@ -156,6 +156,7 @@ public class StatPanel {
 		StatPanelRow4.add(StatJLabelRejectBDG);
 
 		JPanel StatPanelRow5 = new JPanel();
+		StatPanelRow5.add(statHillis);
 		StatPanelRow5.add(StatJLabelDFHillis);
 		StatPanelRow5.add(StatJLabelPValHillis);
 		StatPanelRow5.add(StatJLabelCIHillis);

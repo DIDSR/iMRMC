@@ -295,9 +295,9 @@ public class SizePanel {
 		
 		
 		SizeJLabelSqrtVar.setText(output);
-		output = ",  Stat= "
-				+ threeDecE.format(testSize.tStatCalc);
-		SizeJLabelTStat.setText(output);
+		//output = ",  Stat= "
+		//		+ threeDecE.format(testSize.tStatCalc);
+		//SizeJLabelTStat.setText(output);
 
 		output = "Normal Approx:  df= \u221e ,  Power= "
 				+ twoDec.format(testSize.powerNormal);
