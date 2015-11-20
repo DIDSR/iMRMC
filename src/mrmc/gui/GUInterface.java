@@ -396,7 +396,7 @@ public class GUInterface {
 					bw.write(report);
 					bw.close();
 					JOptionPane.showMessageDialog(
-							thisGUI.MRMCobject.getFrame(),"The summary has been succeed export to input file directory!", 
+							thisGUI.MRMCobject.getFrame(),"The summary has been succeed export to input file directory!"+"\n"+"Filename="+summaryfilename, 
 							"Exported", JOptionPane.INFORMATION_MESSAGE);
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block

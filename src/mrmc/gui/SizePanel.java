@@ -263,8 +263,8 @@ public class SizePanel {
 	 */
 	void resetSizePanel() {
 		
-		SizeJLabelSqrtVar.setText("SqrtVar=");
-		SizeJLabelTStat.setText(",  Test Stat=");
+		SizeJLabelSqrtVar.setText("S.E=");
+//		SizeJLabelTStat.setText(",  Test Stat=");
 		
 		SizeJLabelPowerNormal.setText("Normal Approx:  df= \u221e,  Power=");
 //		SizeJLabelCINormal.setText("Conf. Int.=");
@@ -290,14 +290,14 @@ public class SizePanel {
 		StatTest testSize = DBRecordSize.testSize;
 		String output;
 		
-		output = "SqrtVar=" 
+		output = "S.E=" 
 				+ threeDecE.format(Math.sqrt(DBRecordSize.totalVar));
 		
 		
 		SizeJLabelSqrtVar.setText(output);
-		output = ",  Stat= "
-				+ threeDecE.format(testSize.tStatCalc);
-		SizeJLabelTStat.setText(output);
+		//output = ",  Stat= "
+		//		+ threeDecE.format(testSize.tStatCalc);
+		//SizeJLabelTStat.setText(output);
 
 		output = "Normal Approx:  df= \u221e ,  Power= "
 				+ twoDec.format(testSize.powerNormal);
