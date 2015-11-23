@@ -5,6 +5,8 @@ package mrmc.gui;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 
 import javax.swing.BoxLayout;
@@ -24,6 +26,7 @@ import javax.swing.table.DefaultTableModel;
 import mrmc.core.DBRecord;
 import mrmc.core.InputFile;
 import mrmc.core.Matrix;
+import mrmc.gui.InputFileCard.ReadersCasesButtonListener;
 
 
 /**
@@ -110,10 +113,6 @@ public class StatPanel {
 		StatJLabelCIHillis.setPreferredSize(StatJLabelCIHillis.getPreferredSize());
 		StatJLabelRejectHillis.setPreferredSize(StatJLabelRejectHillis.getPreferredSize());
 		JButton statHillis = new JButton("Hillis Approx");
-		StatJLabelDFHillis.hide();
-		StatJLabelPValHillis.hide();
-		StatJLabelCIHillis.hide();
-		StatJLabelRejectHillis.hide();
 		
 		/*
 		 * Determine the width of the rows of the analysis results
@@ -156,11 +155,20 @@ public class StatPanel {
 		StatPanelRow4.add(StatJLabelRejectBDG);
 
 		JPanel StatPanelRow5 = new JPanel();
+		statHillis.addActionListener(new StatHillisButtonListener());
 		StatPanelRow5.add(statHillis);
-		StatPanelRow5.add(StatJLabelDFHillis);
-		StatPanelRow5.add(StatJLabelPValHillis);
-		StatPanelRow5.add(StatJLabelCIHillis);
-		StatPanelRow5.add(StatJLabelRejectHillis);
+		
+		JPanel StatPanelRow6 = new JPanel();
+		StatPanelRow6.add(StatJLabelDFHillis);
+		StatPanelRow6.add(StatJLabelPValHillis);
+		StatPanelRow6.add(StatJLabelCIHillis);
+		StatPanelRow6.add(StatJLabelRejectHillis);
+		
+		StatPanelRow6.hide();
+		//StatJLabelDFHillis.hide();
+		//StatJLabelPValHillis.hide();
+		//StatJLabelCIHillis.hide();
+		//StatJLabelRejectHillis.hide();
 
 		// *******************************************************************
 		// *************tabbed panel 1*********************************
@@ -211,7 +219,7 @@ public class StatPanel {
 
 		StatJLabelDFNormal.setText("Large Sample Approx(Normal)");
 		StatJLabelDFBDG.setText   ("         T-stat df(BDG) =      ");
-		StatJLabelDFHillis.setText("  T-stat df(Hillis 2008) =      ");
+		StatJLabelDFHillis.setText("T-stat df(Hillis 2008) =      ");
 
 		StatJLabelPValNormal.setText("p-Value = ");
 		StatJLabelPValBDG.setText   ("p-Value = ");
@@ -773,4 +781,20 @@ public class StatPanel {
 	
 	}
 
+	
+	public class StatHillisButtonListener implements ActionListener {
+
+		public void actionPerformed(ActionEvent e) {
+			String hillisValues = StatJLabelDFHillis.getText() +"\n"+ 
+					StatJLabelPValHillis.getText() + "\n" + 
+					StatJLabelCIHillis.getText() + "\n" + 
+					StatJLabelRejectHillis.getText();
+					
+			// TODO Auto-generated method stub
+			JOptionPane.showMessageDialog(JFrameApp,
+					hillisValues, "Hillis Approximation",
+					JOptionPane.PLAIN_MESSAGE);
+		}
+
+	}
 }
