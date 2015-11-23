@@ -28,6 +28,7 @@ import java.awt.*;
 import mrmc.core.DBRecord;
 import mrmc.core.MRMC;
 import mrmc.core.StatTest;
+import mrmc.gui.StatPanel.StatHillisButtonListener;
 
 import java.text.DecimalFormat;
 
@@ -157,11 +158,15 @@ public class SizePanel {
 		SizePanelRow5.add(SizeJLabelLambdaBDG);
 		SizePanelRow5.add(SizeJLabelPowerBDG);
 		SizePanelRow5.add(SizeJLabelCIBDG);
-
-		SizePanelRow6.add(SizeJLabelDFHillis);
-		SizePanelRow6.add(SizeJLabelLambdaHillis);
-		SizePanelRow6.add(SizeJLabelPowerHillis);
-		SizePanelRow6.add(SizeJLabelCIHillis);
+		
+		JButton sizeHillis = new JButton("Hillis Approx");
+		JPanel SizePanelRow6 = new JPanel();
+		sizeHillis.addActionListener(new SizeHillisButtonListener());
+		SizePanelRow6.add(sizeHillis);
+		//SizePanelRow6.add(SizeJLabelDFHillis);
+		//SizePanelRow6.add(SizeJLabelLambdaHillis);
+		//SizePanelRow6.add(SizeJLabelPowerHillis);
+		//SizePanelRow6.add(SizeJLabelCIHillis);
 
 		// not ready to add split plot, an pairing readers or cases to sizing panel
 		// JPanelSize.add(SizePanelRow1);
@@ -266,7 +271,7 @@ public class SizePanel {
 		SizeJLabelSqrtVar.setText("S.E=");
 //		SizeJLabelTStat.setText(",  Test Stat=");
 		
-		SizeJLabelPowerNormal.setText("Normal Approx:  df= \u221e,  Power=");
+		SizeJLabelPowerNormal.setText("Large Sample Approx(Normal),  Power=");
 //		SizeJLabelCINormal.setText("Conf. Int.=");
 
 		SizeJLabelDFBDG.setText("          BDG:  df=");
@@ -274,9 +279,9 @@ public class SizePanel {
 		SizeJLabelPowerBDG.setText(",  Power=");
 //		SizeJLabelCIBDG.setText("Conf. Int.=");
 
-		SizeJLabelDFHillis.setText("  Hillis 2011:  df=");
-		SizeJLabelLambdaHillis.setText(",  Lambda=");
-		SizeJLabelPowerHillis.setText(",  Power=");
+		SizeJLabelDFHillis.setText("Hillis 2011:  df=");
+		SizeJLabelLambdaHillis.setText("Lambda=");
+		SizeJLabelPowerHillis.setText("Power=");
 //		SizeJLabelCIHillis.setText("Conf. Int.=");
 	
 	}
@@ -299,7 +304,7 @@ public class SizePanel {
 		//		+ threeDecE.format(testSize.tStatCalc);
 		//SizeJLabelTStat.setText(output);
 
-		output = "Normal Approx:  df= \u221e ,  Power= "
+		output = "Large Sample Approx(Normal) ,  Power= "
 				+ twoDec.format(testSize.powerNormal);
 		SizeJLabelPowerNormal.setText(output);
 		output = ",  Conf. Int.=("
@@ -349,9 +354,9 @@ public class SizePanel {
 					+ ")";
 //			SizeJLabelCIHillis.setText(output);
 		} else {
-			SizeJLabelDFHillis.setText("  Hillis 2011:  df=");
-			SizeJLabelLambdaHillis.setText(",  Lambda=");
-			SizeJLabelPowerHillis.setText(",  Power=");
+			SizeJLabelDFHillis.setText("Hillis 2011:  df=");
+			SizeJLabelLambdaHillis.setText("Lambda=");
+			SizeJLabelPowerHillis.setText("Power=");
 //			SizeJLabelCIHillis.setText("Conf. Int.=");
 		}
 
@@ -748,5 +753,24 @@ public class SizePanel {
 						"Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
+	}
+	
+	/**
+	 * Handler for button to Hillis Approx on specified parameters
+	 */
+	public class SizeHillisButtonListener implements ActionListener {
+
+		public void actionPerformed(ActionEvent e) {
+			String hillisValues = SizeJLabelDFHillis.getText() +"\n"+ 
+					SizeJLabelLambdaHillis.getText() + "\n" + 
+					SizeJLabelPowerHillis.getText() + "\n" + 
+					SizeJLabelCIHillis.getText();
+					
+			// TODO Auto-generated method stub
+			JOptionPane.showMessageDialog(reportFrame,
+					hillisValues, "Hillis Approximation",
+					JOptionPane.PLAIN_MESSAGE);
+		}
+
 	}
 }

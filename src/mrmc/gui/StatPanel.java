@@ -112,7 +112,7 @@ public class StatPanel {
 		StatJLabelPValHillis.setPreferredSize(StatJLabelPValHillis.getPreferredSize());
 		StatJLabelCIHillis.setPreferredSize(StatJLabelCIHillis.getPreferredSize());
 		StatJLabelRejectHillis.setPreferredSize(StatJLabelRejectHillis.getPreferredSize());
-		JButton statHillis = new JButton("Hillis Approx");
+		
 		
 		/*
 		 * Determine the width of the rows of the analysis results
@@ -153,7 +153,8 @@ public class StatPanel {
 		StatPanelRow4.add(StatJLabelPValBDG);
 		StatPanelRow4.add(StatJLabelCIBDG);
 		StatPanelRow4.add(StatJLabelRejectBDG);
-
+		
+		JButton statHillis = new JButton("Hillis Approx");
 		JPanel StatPanelRow5 = new JPanel();
 		statHillis.addActionListener(new StatHillisButtonListener());
 		StatPanelRow5.add(statHillis);
