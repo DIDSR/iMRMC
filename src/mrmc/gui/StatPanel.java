@@ -154,8 +154,8 @@ public class StatPanel {
 		// *******************************************************************
 		// *************tabbed panel 1*********************************
 		// *********************************************************************
-		String[] rowNamesDiff = new String[] { "comp M0", "coeff M0",
-				"comp M1", "coeff M1", "comp product", "- coeff product",
+		String[] rowNamesDiff = new String[] { "comp MA", "coeff MA",
+				"comp MB", "coeff MB", "comp product", "- coeff product",
 				"total" };
 		String[] rowNamesSingle = new String[] { "components", "coeff", "total" };
 

@@ -132,11 +132,11 @@ public class InputFile {
 	/**
 	 * The number of rows in .imrmc reader study data file before "BEGIN SUMMARY:"
 	 */
-	int beginsummaryposition = 0;
+	int beginSummaryPosition = 0;
 	/**
-	 * The first line of the .imrmc summary data
+	 * The number of rows in .imrmc reader study data file before "END SUMMARY:"
 	 */
-	int endsummaryposition = 0;
+	int endSummaryPosition = 0;
 	/**
 	 * The last line of the .imrmc summary data
 	 */
@@ -575,8 +575,20 @@ public class InputFile {
 			BufferedReader br = new BufferedReader(isr);
 			String strtemp;
 			try {
-				while ((strtemp = br.readLine()) != null) {
-					fileContent.add(strtemp);
+				String inputformat = filename.substring(filename.lastIndexOf(".")+1);
+				if (inputformat.equals("csv")||inputformat.equals("imrmc")||inputformat.equals("omrmc")){
+					while ((strtemp = br.readLine()) != null) {
+						if (strtemp.length()>0 && strtemp.substring(strtemp.length()-2).equals(",,"))
+						strtemp = strtemp.substring(0, strtemp.indexOf(",,"));
+						if (strtemp.length()>0 && strtemp.substring(strtemp.length()-1).equals(","))
+							strtemp = strtemp.substring(0, strtemp.length()-1);
+						fileContent.add(strtemp);
+					}
+				}else{
+					JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
+							"Please choose .imrmc, .omrmc or .csv format inputfile.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
 				}
 				din.close();
 			} catch (FileNotFoundException e1) {
@@ -613,13 +625,10 @@ public class InputFile {
 			}
 			if  (GUInterface.selectedInput == GUInterface.DescInputModeOmrmc){    // if input raw data
 				summaryPosition = 0;
-				findsummarybigen();
-				findsummaryend();				
+				findSummaryBegin();
+				findSummaryEnd();				
 				DBRecordStat = GUI.DBRecordStat;
-				loadsummarydata();
-				processsummarydata();
-				GUI.StatPanel1.setStatPanel();
-				GUI.StatPanel1.setTable1();
+				loadSummaryData();
 				System.out.println("Input Summary File Successfully Read!");
 			}
 			
@@ -631,7 +640,7 @@ public class InputFile {
 
 
 
-	private void findsummarybigen() throws IOException {
+	private void findSummaryBegin() throws IOException {
 		String toReturn = "";
 		String tempstr = fileContent.get(0).toUpperCase();
 		int dataloc = tempstr.indexOf("BEGIN SUMMARY");
@@ -645,10 +654,10 @@ public class InputFile {
 				throw new IOException(toReturn, e);
 			}
 		}
-		beginsummaryposition = summaryPosition;	
+		beginSummaryPosition = summaryPosition;	
 	}
 
-	private void findsummaryend() throws IOException {
+	private void findSummaryEnd() throws IOException {
 		// TODO Auto-generated method stub
 		String toReturn = "";
 		String tempstr = fileContent.get(0).toUpperCase();
@@ -659,119 +668,98 @@ public class InputFile {
 			tempstr = fileContent.get(summaryPosition).toUpperCase();
 			dataloc = tempstr.indexOf("END SUMMARY");
 			}catch (Exception e) {
-				toReturn = "ERROR: Can't find BEGIN SUMMARY";
+				toReturn = "ERROR: Can't find END SUMMARY";
 				throw new IOException(toReturn, e);
 			}
 		}
-		endsummaryposition = summaryPosition;	
+		endSummaryPosition = summaryPosition;	
 	}
 
-	private void loadsummarydata() throws IOException {
+	private void loadSummaryData() throws IOException {
 		// TODO Auto-generated method stub
-		//DBRecordStat = GUI.DBRecordStat;
-		//GUInterface.DBRecordStat.AUCsReaderAvg = new double[3];
 		String toReturn = "";
 		DBRecordStat.AUCsReaderAvg = new double[3];
-		for (int i = beginsummaryposition+1; i < endsummaryposition+1; i++) {
-			String tempstr = fileContent.get(i).toUpperCase();
-			int loc = tempstr.indexOf("NREADERSIZE");
-			if (loc != -1) {
-				String studyinfo[] = fileContent.get(i).split(",");
-				for (int j = 0; j<studyinfo.length;j++ ){
-					String tstr = studyinfo[j];
-					String temptitle =  tstr.substring(0,tstr.lastIndexOf("="));
-					switch (temptitle){
-					case "NReaderSize":
-						try {
-						DBRecordStat.Nreader= Integer.valueOf(tstr.substring(tstr.lastIndexOf("=")+1).trim());
-						DBRecordStat.NreaderDB= Integer.valueOf(tstr.substring(tstr.lastIndexOf("=")+1).trim());
-						} catch(NumberFormatException e) {
-							toReturn = "Found NReaderSize =: Text following is not an integer \n"+tempstr;
-							throw new IOException(toReturn);
-						}
-						break;
-					case "NnormalSize":
-						try{
-						DBRecordStat.Nnormal= Integer.valueOf(tstr.substring(tstr.lastIndexOf("=")+1).trim());
-						DBRecordStat.NnormalDB= Integer.valueOf(tstr.substring(tstr.lastIndexOf("=")+1).trim());
-						}catch(NumberFormatException e) {
-							toReturn = "Found NnormalSize =: Text following is not an integer \n"+tempstr;
-							throw new IOException(toReturn);
-						}
-						
-						break;
-					case "NDiseaseSize":
-						try{
-						DBRecordStat.Ndisease= Integer.valueOf(tstr.substring(tstr.lastIndexOf("=")+1).trim());
-						DBRecordStat.NdiseaseDB= Integer.valueOf(tstr.substring(tstr.lastIndexOf("=")+1).trim());
-						}catch(NumberFormatException e) {
-							toReturn = "Found NDiseaseSize =: Text following is not an integer \n"+tempstr;
-							throw new IOException(toReturn);
-						}
-						break;
-					default:
-						break;
-					}
-				}
-			}
+		String tempstr = fileContent.get(beginSummaryPosition+1).toUpperCase();
+		try {
+		DBRecordStat.Nreader= Integer.valueOf(tempstr.substring(tempstr.lastIndexOf("=")+1).trim());
+		DBRecordStat.NreaderDB= Integer.valueOf(tempstr.substring(tempstr.lastIndexOf("=")+1).trim());
+		}catch(NumberFormatException e) {
+			toReturn = "Found NReaderSize =: Text following is not an integer \n"+tempstr;
+			throw new IOException(toReturn);
 		}
-
-	  DBRecordStat.AUCs = new double [(int) DBRecordStat.Nreader][3];
-	   for (int i = beginsummaryposition+1; i < endsummaryposition+1; i++) {
-			String tempstr = fileContent.get(i).toUpperCase();
-			int loc = tempstr.indexOf("AVERAGE AUC");
+		tempstr = fileContent.get(beginSummaryPosition+2).toUpperCase();
+		try {
+		DBRecordStat.Nnormal= Integer.valueOf(tempstr.substring(tempstr.lastIndexOf("=")+1).trim());
+		DBRecordStat.NnormalDB= Integer.valueOf(tempstr.substring(tempstr.lastIndexOf("=")+1).trim());
+		}catch(NumberFormatException e) {
+			toReturn = "Found NReaderSize =: Text following is not an integer \n"+tempstr;
+			throw new IOException(toReturn);
+		}
+		tempstr = fileContent.get(beginSummaryPosition+3).toUpperCase();
+		try {
+		DBRecordStat.Ndisease= Integer.valueOf(tempstr.substring(tempstr.lastIndexOf("=")+1).trim());
+		DBRecordStat.NdiseaseDB= Integer.valueOf(tempstr.substring(tempstr.lastIndexOf("=")+1).trim());
+		}catch(NumberFormatException e) {
+			toReturn = "Found NReaderSize =: Text following is not an integer \n"+tempstr;
+			throw new IOException(toReturn);
+		}
+		 
+		tempstr = fileContent.get(beginSummaryPosition+5).toUpperCase();
+		try {
+		DBRecordStat.modalityA= tempstr.substring(tempstr.lastIndexOf("=")+1).trim();
+		}catch(NumberFormatException e) {
+			toReturn = "Fail to load Modality A information \n"+tempstr;
+			throw new IOException(toReturn);
+		}
+		tempstr = fileContent.get(beginSummaryPosition+6).toUpperCase();
+		try {
+			DBRecordStat.modalityB= tempstr.substring(tempstr.lastIndexOf("=")+1).trim();
+		}catch(NumberFormatException e) {
+			toReturn = "Fail to load Modality B information \n"+tempstr;
+			throw new IOException(toReturn);
+		}
+	   DBRecordStat.AUCs = new double [(int) DBRecordStat.Nreader][3];
+	   for (int i = beginSummaryPosition+7; i < endSummaryPosition+1; i++) {
+			tempstr = fileContent.get(i).toUpperCase().trim();
+			int loc = tempstr.indexOf("AUC_A =");
 			if (loc == 0) {
-				String studyinfo[] = fileContent.get(i).split(",");
-				for (int j = 1; j<studyinfo.length;j++ ){
-					String tstr = studyinfo[j];
-					String temptitle =  tstr.substring(0,tstr.lastIndexOf("=")).trim();
-					switch (temptitle){
-					case "AUC_A":
-						try{
-						DBRecordStat.AUCsReaderAvg[0]= Double.valueOf(tstr.substring(tstr.lastIndexOf("=")+1).trim());
-						}catch(NumberFormatException e) {
-							toReturn = "Found AUC_A =: Text following is not an number \n"+tempstr;
-							throw new IOException(toReturn);
-						}
-						break;
-					case "AUC_B":
-						try{
-						DBRecordStat.AUCsReaderAvg[1]= Double.valueOf(tstr.substring(tstr.lastIndexOf("=")+1).trim());
-						}catch(NumberFormatException e) {
-							toReturn = "Found AUC_B =: Text following is not an number \n"+tempstr;
-							throw new IOException(toReturn);
-						}
-						break;
-					case "AUC_A - AUC_B":
-						try{
-						DBRecordStat.AUCsReaderAvg[2]= Double.valueOf(tstr.substring(tstr.lastIndexOf("=")+1).trim());
-						}catch(NumberFormatException e) {
-							toReturn = "Found AUC_A - AUC_B =: Text following is not an number \n"+tempstr;
-							throw new IOException(toReturn);
-						}
-						break;
-					default:
-						break;
+				try{
+					DBRecordStat.AUCsReaderAvg[0]= Double.valueOf(tempstr.substring(tempstr.lastIndexOf("=")+1).trim());
+					}catch(NumberFormatException e) {
+						toReturn = "Found AUC_A =: Text following is not an number \n"+tempstr;
+						throw new IOException(toReturn);
 					}
-				}
 			}
-			// AUCs
-			loc = tempstr.indexOf("READERID");
-			if (loc != -1) {
-				String tempAUCs[] = fileContent.get(i).split(",");
-				String readername = tempAUCs[0].toUpperCase();
-				int readerid = Integer.valueOf(readername.substring(readername.lastIndexOf("READERID")+8).trim());
-				for (int j = 1; j<tempAUCs.length;j++ ){
-					try{
-					String AUCsnum = tempAUCs[j];
-					DBRecordStat.AUCs[readerid-1][j-1] = Double.valueOf(AUCsnum.trim());
-					}catch (Exception e) {
-						toReturn = "ERROR: Invalid input of AUCs";
-						toReturn = toReturn + "      row = " +   (i+1) + " \n";
-						toReturn = toReturn + fileContent.get(i) + " \n";
-
-						throw new IOException(toReturn, e);
+			loc = tempstr.indexOf("AUC_B =");
+			if (loc == 0) {
+				try{
+					DBRecordStat.AUCsReaderAvg[1]= Double.valueOf(tempstr.substring(tempstr.lastIndexOf("=")+1).trim());
+					}catch(NumberFormatException e) {
+						toReturn = "Found AUC_B =: Text following is not an number \n"+tempstr;
+						throw new IOException(toReturn);
 					}
+			}
+
+			// AUCs
+			loc = tempstr.indexOf("READER SPECIFIC AUC");
+			if (loc != -1 ) {
+				for (int k=2;k<DBRecordStat.Nreader+2;k++){
+					tempstr = fileContent.get(i+k).toUpperCase().trim();
+					String tempAUCs[] = fileContent.get(i+k).split(",");
+					readerIDs.put(tempAUCs[0].trim().toUpperCase(),k-2);
+					for (int j = 1; j<tempAUCs.length;j++ ){
+						try{
+						String AUCsnum = tempAUCs[j];
+						DBRecordStat.AUCs[k-2][j-1] = Double.valueOf(AUCsnum.trim());
+						}catch (Exception e) {
+							toReturn = "ERROR: Invalid input of AUCs";
+							toReturn = toReturn + "      row = " +   (i+k+1) + " \n";
+							toReturn = toReturn + fileContent.get(i+k) + " \n";
+
+							throw new IOException(toReturn, e);
+						}
+					}
+
 				}
 			}
 			// BDG moments
@@ -824,33 +812,17 @@ public class InputFile {
 				}
 			}
 		}		
-	}
-	
-	private void processsummarydata() {
+		DBRecordStat.AUCsReaderAvg[2]=DBRecordStat.AUCsReaderAvg[0]-DBRecordStat.AUCsReaderAvg[1];
 		// TODO Auto-generated method stub
 		if (DBRecordStat.AUCsReaderAvg[0]!=0 &DBRecordStat.AUCsReaderAvg[1]==0)
-			DBRecordStat.selectedMod = 0;
+			DBRecordStat.inputMod = 0;
 		if (DBRecordStat.AUCsReaderAvg[1]!=0 &DBRecordStat.AUCsReaderAvg[0]==0)
-			DBRecordStat.selectedMod = 1;
+			DBRecordStat.inputMod = 1;
 		if (DBRecordStat.AUCsReaderAvg[1]!=0 &DBRecordStat.AUCsReaderAvg[0]!=0)
-			DBRecordStat.selectedMod = 3;
-		DBRecordStat.totalVar=0.0;
-		DBRecordStat.BDGcoeff = DBRecord.genBDGCoeff(DBRecordStat.Nreader,DBRecordStat.Nnormal,DBRecordStat.Ndisease);
-		double[] temp= new double[8];
-		for (int i = 0; i < 8; i++) {
-		     temp[i]=1.0;
-		}
-		DBRecordStat.BDGcoeff[3] = temp;
-		for (int i = 0; i < 8; i++) {
-			DBRecordStat.BDG[3][i] =     (DBRecordStat.BDG[0][i] * DBRecordStat.BDGcoeff[0][i])
-					  +     (DBRecordStat.BDG[1][i] * DBRecordStat.BDGcoeff[1][i])
-					  - 2.0*(DBRecordStat.BDG[2][i] * DBRecordStat.BDGcoeff[2][i]);
-			DBRecordStat.totalVar += DBRecordStat.BDGcoeff[3][i] * DBRecordStat.BDG[3][i];
-		}
-		DBRecordStat.Decompositions();
-		DBRecordStat.testStat = new StatTest(DBRecordStat);
+			DBRecordStat.inputMod = 2;
+	   
 	}
-
+	
 
 
 	/**

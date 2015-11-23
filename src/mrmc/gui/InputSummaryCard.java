@@ -22,7 +22,6 @@
 
 package mrmc.gui;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,7 +29,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.TreeMap;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -41,21 +39,14 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import mrmc.chart.BarGraph;
-import mrmc.chart.ROCCurvePlot;
-import mrmc.chart.StudyDesignPlot;
 
 
 import mrmc.core.DBRecord;
 import mrmc.core.InputFile;
 import mrmc.core.StatTest;
-
-import org.jfree.ui.RefineryUtilities;
 
 
 
@@ -73,30 +64,30 @@ public class InputSummaryCard {
 	private InputFile InputFile1;
 	private DBRecord DBRecordStat;
 	private DBRecord DBRecordSize;
-
+ 
 	JTextField JTextFilename;
 	public final static int USE_MLE = 1;
 	public final static int NO_MLE = 0;
 	public int FlagMLE = NO_MLE;
-	private JCheckBox mleCheckBox;
-	private JComboBox<String> chooseA, chooseB;
-	private JButton varAnalysisButton, showAUCsButton;
+	private JCheckBox mleCheckBoxSummary;
+	private JComboBox<String> chooseA;
+	private String loadmodalityA;
+	private String loadmodalityB;
 
 	/**
 	 * Sets study panel to default values, removes modalities from drop down
 	 * menus
 	 */
-	public void resetInputFileCard() {
-		
+	public void resetInputSummaryCard() {
 		JTextFilename.setText("");
 		FlagMLE = NO_MLE;
-
+		mleCheckBoxSummary.setSelected(false);
 		chooseA.removeAllItems();
-		chooseB.removeAllItems();
-		chooseA.addItem("Choose Modality A");
-		chooseB.addItem("Choose Modality B");
-		
+		chooseA.addItem("Choose Modality");
 	}
+
+
+
 
 	/**
 	 * Sole constructor. Creates and initializes GUI elements <br>
@@ -116,7 +107,7 @@ public class InputSummaryCard {
 		 * Elements of RawStudyCardRow1
 		 */
 		// Browse for input file
-		JLabel studyLabel = new JLabel(".imrmc file  ");
+		JLabel studyLabel = new JLabel(".imrmc, .omrmc or. csv file  ");
 		JTextFilename = new JTextField(20);
 		JButton browseButton = new JButton("Browse...");
 		browseButton.addActionListener(new brwsButtonListener());
@@ -132,34 +123,22 @@ public class InputSummaryCard {
 		 * Elements of RawStudyCardRow2
 		 */
 		// MLE Checkbox
-		mleCheckBox = new JCheckBox("MLE (avoid negatives)");
-		mleCheckBox.setSelected(false);
-		mleCheckBox.addItemListener(new UseMLEListener());
+		mleCheckBoxSummary = new JCheckBox("MLE (avoid negatives)");
+		mleCheckBoxSummary.setSelected(false);
+		mleCheckBoxSummary.addItemListener(new UseMLEListener());
 		// Drop down menus to select modality
 		chooseA = new JComboBox<String>();
-		chooseB = new JComboBox<String>();
 		chooseA.addItemListener(new ModalitySelectListener());
-		chooseB.addItemListener(new ModalitySelectListener());
-		// execute variance analysis button
-		varAnalysisButton = new JButton("MRMC Variance Analysis");
-		varAnalysisButton.addActionListener(new varAnalysisListener());
-		// show the reader AUCs
-		showAUCsButton = new JButton("Show Reader AUCs");
-		showAUCsButton.addActionListener(new showAUCsButtonListener());
 		/*
 		 * Create RawStudyCardRow2
 		 */
 		JPanel RawStudyCardRow2 = new JPanel();
-		RawStudyCardRow2.add(mleCheckBox);
+		RawStudyCardRow2.add(mleCheckBoxSummary);
 		RawStudyCardRow2.add(chooseA);
-		RawStudyCardRow2.add(chooseB);
-		RawStudyCardRow2.add(varAnalysisButton);
-		RawStudyCardRow2.add(showAUCsButton);
-
 		/*
-		 * Initialize InputFileCard
+		 * Initialize InputSummaryCard
 		 */
-		resetInputFileCard();
+		resetInputSummaryCard();
 
 		/*
 		 * Create the layout of the card
@@ -195,9 +174,8 @@ public class InputSummaryCard {
 	 */
 	class brwsButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			DBRecord DBRecordStat1=DBRecordStat;;
 			GUI.resetGUI();
-			if  (GUInterface.selectedInput == GUInterface.DescInputModeManual){
+			if  (GUInterface.selectedInput == GUInterface.DescInputChooseMode){
 				JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
 						"Please choose one kind of input file.", "Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -205,7 +183,7 @@ public class InputSummaryCard {
 			}
 			JFileChooser fc = new JFileChooser();
 			FileNameExtensionFilter filter = new FileNameExtensionFilter(
-					"iMRMC Input Files (.imrmc)", "imrmc");
+					"iMRMC Input Files (.imrmc, omrmc or csv)", "imrmc","omrmc","csv");
 			fc.setFileFilter(filter);
 			int returnVal = fc.showOpenDialog((Component) e.getSource());
 			if( returnVal==JFileChooser.CANCEL_OPTION || returnVal==JFileChooser.ERROR_OPTION) return;
@@ -255,10 +233,21 @@ public class InputSummaryCard {
 			/* 
 			 * Initialze modality pulldown menus
 			 */
-			for (String ModalityID : InputFile1.getModalityIDs()) {
-				chooseA.addItem(ModalityID);
-				chooseB.addItem(ModalityID);
+
+			if (DBRecordStat.inputMod == 0)	{
+				chooseA.addItem("A:" + DBRecordStat.modalityA);
+				loadmodalityA = DBRecordStat.modalityA;
+			}else if(DBRecordStat.inputMod == 1){
+				chooseA.addItem("B:" + DBRecordStat.modalityB);
+				loadmodalityB = DBRecordStat.modalityB; 
+			}else{
+				loadmodalityA = DBRecordStat.modalityA;
+				loadmodalityB = DBRecordStat.modalityB; 
+				chooseA.addItem("A:" + DBRecordStat.modalityA);
+				chooseA.addItem("B:" + DBRecordStat.modalityB);
+				chooseA.addItem("A vs B:" + DBRecordStat.modalityA + " vs " + DBRecordStat.modalityB);
 			}
+			
 			DBRecordStat.modalityA = GUInterface.NO_MOD;
 			DBRecordStat.modalityB = GUInterface.NO_MOD;
 
@@ -274,9 +263,9 @@ public class InputSummaryCard {
 	 * "Use MLE estimates of moments to avoid negatives". Sets whether bias
 	 * should be used when performing variance analysis
 	 */
-	class UseMLEListener implements ItemListener {
+     class UseMLEListener implements ItemListener {
 		public void itemStateChanged(ItemEvent e) {
-			if (mleCheckBox.isSelected()) {
+			if (mleCheckBoxSummary.isSelected()) {
 				FlagMLE = USE_MLE;
 			} else {
 				FlagMLE = NO_MLE;
@@ -286,7 +275,8 @@ public class InputSummaryCard {
 			GUI.StatPanel1.resetStatPanel();
 			GUI.StatPanel1.resetTable1();
 			GUI.SizePanel1.resetSizePanel();
-			
+			if (GUI.resetcall == 0)
+			varianceAnalysis();
 		}
 	}
 
@@ -300,42 +290,40 @@ public class InputSummaryCard {
 		public void itemStateChanged(ItemEvent e) {
 
 			if (e.getStateChange() != ItemEvent.DESELECTED) { return; }
-			if (chooseA.getSelectedItem() == null
-				|| chooseB.getSelectedItem() == null) { return; }
+			if (chooseA.getSelectedItem() == null) { return; }
 			
 			GUI.StatPanel1.resetStatPanel();
 			GUI.StatPanel1.resetTable1();
 			GUI.SizePanel1.resetSizePanel();
 			
-			boolean modA, modB;
-			modA = !chooseA.getSelectedItem().equals("Choose Modality A");
-			modB = !chooseB.getSelectedItem().equals("Choose Modality B");
+			boolean modA;
+			modA = !chooseA.getSelectedItem().equals("Choose Modality");
 			
-			if (modA && !modB) {
-				DBRecordStat.selectedMod = 0;
+			if (modA) {	
 				DBRecordStat.modalityA = (String) chooseA.getSelectedItem();
-				DBRecordStat.modalityB = GUInterface.NO_MOD;
-				varAnalysisButton.setText("MRMC Variance Analysis (A)");
-			} else if (!modA && modB) {
-				DBRecordStat.selectedMod = 1;
-				DBRecordStat.modalityA = GUInterface.NO_MOD;
-				DBRecordStat.modalityB = (String) chooseB.getSelectedItem();
-				varAnalysisButton.setText("MRMC Variance Analysis (B)");
-			} else if (modA && modB) {
-				DBRecordStat.selectedMod = 3;
-				DBRecordStat.modalityA = (String) chooseA.getSelectedItem();
-				DBRecordStat.modalityB = (String) chooseB.getSelectedItem();
-				varAnalysisButton.setText("MRMC Variance Analysis (Difference)");
-			} else {
-				varAnalysisButton.setText("MRMC Variance Analysis");
-				DBRecordStat.modalityA = GUInterface.NO_MOD;
-				DBRecordStat.modalityB = GUInterface.NO_MOD;
-				return;
-			}
 
+			}  else {
+				DBRecordStat.modalityA = GUInterface.NO_MOD;
+			}
+			if (DBRecordStat.modalityA.equals("A vs B:" + loadmodalityA + " vs " + loadmodalityB)) {
+				DBRecordStat.modalityA =  loadmodalityA;
+				DBRecordStat.modalityB =  loadmodalityB;
+				DBRecordStat.selectedMod = 3;
+				varianceAnalysis();
+			} else if(DBRecordStat.modalityA.equals("A:" + loadmodalityA)){
+				DBRecordStat.modalityA =  loadmodalityA;
+				DBRecordStat.modalityB =  GUInterface.NO_MOD;
+				DBRecordStat.selectedMod = 0;
+				varianceAnalysis();
+			} else if (DBRecordStat.modalityA.equals("B:" + loadmodalityB)) {
+				DBRecordStat.modalityA =  GUInterface.NO_MOD;
+				DBRecordStat.modalityB =  loadmodalityB;
+				DBRecordStat.selectedMod = 1;
+				varianceAnalysis();
+			}
+			
 			DBRecordSize.selectedMod = DBRecordStat.selectedMod;
 			DBRecordSize.modalityA = DBRecordStat.modalityA;
-			DBRecordSize.modalityB = DBRecordStat.modalityB;
 
 		} // method
 	} // class
@@ -347,115 +335,73 @@ public class InputSummaryCard {
 	 * -- {@link mrmc.gui.StatPanel#setStatPanel()} <br>
 	 * -- {@link mrmc.gui.StatPanel#setTable1()}	 
 	 */
-	class varAnalysisListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			System.out.println("MRMC Variance analysis button clicked. RawStudyCard.varAnalysisListener");
-			// Check that .imrmc input file has been read
-			// If there is no JTextFilename, then reader scores have not been read
-			String name = JTextFilename.getText();
-			System.out.println("name=" + name);
-			if (name.equals(null) || name.equals("")) {
-				JFrame frame = GUI.MRMCobject.getFrame();
-				JOptionPane.showMessageDialog(frame, 
-						"Please browse for .imrmc input file", " Error",
-						JOptionPane.ERROR_MESSAGE);
-				return;
-			}
 
-			// Check that a modality has been selected
-			if (DBRecordStat.modalityA == GUInterface.NO_MOD && DBRecordStat.modalityB == GUInterface.NO_MOD) {
-				JFrame frame = GUI.MRMCobject.getFrame();
-				JOptionPane.showMessageDialog(frame,
-						"You must select at least one modality", "Error",
-						JOptionPane.ERROR_MESSAGE);
-				return;
-			}
 
-			// Don't allow both modalities to be the same
-			if(DBRecordStat.modalityA.compareTo(DBRecordStat.modalityB) == 0) {
-				JFrame frame = GUI.MRMCobject.getFrame();
-				JOptionPane.showMessageDialog(frame, 
-						"Modalities must be different", " Error",
-							JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			// Analyze observerData
-			DBRecordStat.DBRecordStatFill(InputFile1, DBRecordStat);
-			// Check if variance estimate is negative
-			if(DBRecordStat.totalVar > 0)
-				GUI.hasNegative = false;
-			else
-				GUI.hasNegative = true;
-					
-			if (GUI.hasNegative && FlagMLE == NO_MLE) {
-				JFrame frame = GUI.MRMCobject.getFrame();
-				int result = JOptionPane.showConfirmDialog(frame,
-					"The total variance estimate is negative.\n" +
-					"Please report to the program developers. This is not expected.\n" +
-					"Do you want to proceed with MLE estimates to avoid negatives?");
-				if (JOptionPane.CANCEL_OPTION == result) {
-					System.out.println("cancel");
-				} else if (JOptionPane.YES_OPTION == result) {
-					FlagMLE = USE_MLE;
-					DBRecordStat.flagMLE = FlagMLE;
-					mleCheckBox.setSelected(true);
-					DBRecordStat.totalVar=DBRecordStat.totalVarMLE;
-					DBRecordStat.testStat = new StatTest(DBRecordStat);
-				} else if (JOptionPane.NO_OPTION == result) {
-					FlagMLE = NO_MLE;
-				}
-
-			}
-
-			// Update GUI
-			DBRecordStat.flagMLE = FlagMLE;
-			DBRecordSize.flagMLE = FlagMLE;
-
-			GUI.StatPanel1.setStatPanel();
-			GUI.StatPanel1.setTable1();
-			DBRecordSize.Nreader = DBRecordStat.Nreader;
-			DBRecordSize.Nnormal = DBRecordStat.Nnormal;
-			DBRecordSize.Ndisease = DBRecordStat.Ndisease;
-			GUI.SizePanel1.NreaderJTextField.setText(Long.toString(DBRecordStat.Nreader));
-			GUI.SizePanel1.NnormalJTextField.setText(Long.toString(DBRecordStat.Nnormal));
-			GUI.SizePanel1.NdiseaseJTextField.setText(Long.toString(DBRecordStat.Ndisease));
-			
+	public void varianceAnalysis() {
+		// TODO Auto-generated method stub
+		System.out.println("MRMC Variance analysis button clicked. RawStudyCard.varAnalysisListener");
+		// Check that .imrmc input file has been read
+		// If there is no JTextFilename, then reader scores have not been read
+		String name = JTextFilename.getText();
+		System.out.println("name=" + name);
+		if (name.equals(null) || name.equals("")) {
+			JFrame frame = GUI.MRMCobject.getFrame();
+			JOptionPane.showMessageDialog(frame, 
+					"Please browse for .imrmc input file", " Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
 		}
+
+		// Check that a modality has been selected
+		if (DBRecordStat.modalityA == GUInterface.NO_MOD &&DBRecordStat.modalityB == GUInterface.NO_MOD) {
+			JFrame frame = GUI.MRMCobject.getFrame();
+			JOptionPane.showMessageDialog(frame,
+					"You must select at least one modality", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		// Analyze observerData
+		DBRecordStat.DBRecordStatFillSummary(DBRecordStat);
+		// Check if variance estimate is negative
+		if(DBRecordStat.totalVar > 0)
+			GUI.hasNegative = false;
+		else
+			GUI.hasNegative = true;
+				
+		if (GUI.hasNegative && FlagMLE == NO_MLE) {
+			JFrame frame = GUI.MRMCobject.getFrame();
+			int result = JOptionPane.showConfirmDialog(frame,
+				"The total variance estimate is negative.\n" +
+				"Please report to the program developers. This is not expected.\n" +
+				"Do you want to proceed with MLE estimates to avoid negatives?");
+			if (JOptionPane.CANCEL_OPTION == result) {
+				System.out.println("cancel");
+			} else if (JOptionPane.YES_OPTION == result) {
+				FlagMLE = USE_MLE;
+				DBRecordStat.flagMLE = FlagMLE;
+				mleCheckBoxSummary.setSelected(true);
+				DBRecordStat.totalVar=DBRecordStat.totalVarMLE;
+				DBRecordStat.testStat = new StatTest(DBRecordStat);
+			} else if (JOptionPane.NO_OPTION == result) {
+				FlagMLE = NO_MLE;
+			}
+
+		}
+
+		// Update GUI
+		DBRecordStat.flagMLE = FlagMLE;
+		DBRecordSize.flagMLE = FlagMLE;
+
+		GUI.StatPanel1.setStatPanel();
+		GUI.StatPanel1.setTable1();
+		DBRecordSize.Nreader = DBRecordStat.Nreader;
+		DBRecordSize.Nnormal = DBRecordStat.Nnormal;
+		DBRecordSize.Ndisease = DBRecordStat.Ndisease;
+		GUI.SizePanel1.NreaderJTextField.setText(Long.toString(DBRecordStat.Nreader));
+		GUI.SizePanel1.NnormalJTextField.setText(Long.toString(DBRecordStat.Nnormal));
+		GUI.SizePanel1.NdiseaseJTextField.setText(Long.toString(DBRecordStat.Ndisease));
+		
 	}
 	
-	/**
-	 * Creates a table showing individual reader AUCs
-	 * 
-	 */
-	class showAUCsButtonListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			if( DBRecordStat.totalVar > 0.0) {
-			JFrame JFrameAUC= new JFrame("AUCs for each reader and modality");
-			RefineryUtilities.centerFrameOnScreen(JFrameAUC);
-			JFrameAUC.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-			Object[] colNames = { "ReaderID", "AUC "+DBRecordStat.modalityA, "AUC "+DBRecordStat.modalityB };
-			Object[][] rowContent = new String[(int) DBRecordStat.Nreader][3];
-			int i=0;
-			for(String desc_temp : InputFile1.readerIDs.keySet() ) {
-				rowContent[i][0] = desc_temp;
-				rowContent[i][1] = Double.toString(DBRecordStat.AUCs[i][0]);
-				rowContent[i][2] = Double.toString(DBRecordStat.AUCs[i][1]);
-				i++;
-			}
-
-			JTable tableAUC = new JTable(rowContent, colNames);
-			JScrollPane scrollPaneAUC = new JScrollPane(tableAUC);
-			JFrameAUC.add(scrollPaneAUC, BorderLayout.CENTER);
-			JFrameAUC.setSize(600, 300);
-			JFrameAUC.setVisible(true);
-			}
-			else {
-				JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
-						"Pilot study data has not yet been analyzed.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-
-			}
-		}
-	}
 }

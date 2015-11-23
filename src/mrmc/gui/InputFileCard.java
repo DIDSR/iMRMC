@@ -90,7 +90,7 @@ public class InputFileCard {
 		
 		JTextFilename.setText("");
 		FlagMLE = NO_MLE;
-
+		mleCheckBox.setSelected(false);
 		chooseA.removeAllItems();
 		chooseB.removeAllItems();
 		chooseA.addItem("Choose Modality A");
@@ -116,7 +116,7 @@ public class InputFileCard {
 		 * Elements of RawStudyCardRow1
 		 */
 		// Browse for input file
-		JLabel studyLabel = new JLabel(".imrmc file  ");
+		JLabel studyLabel = new JLabel(".imrmc or .csv file  ");
 		JTextFilename = new JTextField(20);
 		JButton browseButton = new JButton("Browse...");
 		browseButton.addActionListener(new brwsButtonListener());
@@ -209,7 +209,7 @@ public class InputFileCard {
 		public void actionPerformed(ActionEvent e) {
 			
 			GUI.resetGUI();
-			if  (GUInterface.selectedInput == GUInterface.DescInputModeManual){
+			if  (GUInterface.selectedInput == GUInterface.DescInputChooseMode){
 				JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
 						"Please choose one kind of input file.", "Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -217,7 +217,7 @@ public class InputFileCard {
 			}
 			JFileChooser fc = new JFileChooser();
 			FileNameExtensionFilter filter = new FileNameExtensionFilter(
-					"iMRMC Input Files (.imrmc)", "imrmc");
+					"iMRMC Input Files (.imrmc or csv)", "csv","imrmc");
 			fc.setFileFilter(filter);
 			int returnVal = fc.showOpenDialog((Component) e.getSource());
 			if( returnVal==JFileChooser.CANCEL_OPTION || returnVal==JFileChooser.ERROR_OPTION) return;
@@ -542,7 +542,6 @@ public class InputFileCard {
 				}
 
 			}
-
 			// Update GUI
 			DBRecordStat.flagMLE = FlagMLE;
 			DBRecordSize.flagMLE = FlagMLE;

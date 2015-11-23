@@ -253,6 +253,7 @@ public class DBRecord {
 	public double[][] MS = new double[4][6], 
 			MSbias = new double[4][6], 
 			MScoeff = new double[4][6];
+	public int inputMod;
 
 	public static double[][] MSresult = new double[4][6],
 			MSbiasresult = new double[4][6],
@@ -547,7 +548,76 @@ public class DBRecord {
 		NdiseaseDB = chosendiseaselist.size();
 		testStat = new StatTest(DBRecordStat);
 	}
+	/**
+	 * Calculate DBRecord for sumary input file
+	 */	
 	
+	public void DBRecordStatFillSummary(DBRecord dBRecordStat2) {
+		// TODO Auto-generated method stub
+		DBRecordStat = dBRecordStat2;
+		double NR = Nreader;
+		double N0 = Nnormal;
+		double N1 = Ndisease;
+		double [][] unbiasToBias = {
+				{	       1,				0,				 0, 					  0,		      0, 					  0, 					  0, 							0 },
+				{	   	1/N0, 	    (N0-1)/N0,				 0, 			    	  0,		      0, 					  0, 					  0, 							0 },
+				{	    1/N1,	 	        0, 		 (N1-1)/N1, 					  0,		      0, 					  0, 					  0, 							0 },
+				{ 	 1/N0/N1, 	 (N0-1)/N0/N1, 	  (N1-1)/N0/N1, 	(N0-1)*(N1-1)/N0/N1, 	 		  0, 				 	  0, 					  0, 							0 },
+				{ 		1/NR, 		        0, 				 0,						  0,	  (NR-1)/NR, 					  0, 					  0,						    0 },
+				{ 	 1/N0/NR, 	 (N0-1)/N0/NR,				 0,						  0,   (NR-1)/N0/NR,	(N0-1)*(NR-1)/N0/NR,				      0,						    0 },
+				{    1/N1/NR, 	    	    0, 	  (N1-1)/N1/NR,						  0,   (NR-1)/N1/NR,					  0, 	(N1-1)*(NR-1)/N1/NR, 							0 },
+				{ 1/N0/N1/NR, (N0-1)/N0/N1/NR, (N1-1)/N0/N1/NR, (N0-1)*(N1-1)/N0/N1/NR, (NR-1)/N0/N1/NR, (N0-1)*(NR-1)/N0/N1/NR, (N1-1)*(NR-1)/N0/N1/NR, (N0-1)*(N1-1)*(NR-1)/N0/N1/NR}};		
+		totalVar=0.0;
+		BDGcoeff = genBDGCoeff(Nreader,Nnormal,Ndisease);
+        double[][] tempBDG = new double[4][8];
+		if(selectedMod==0)
+			tempBDG[0]=	BDG[0];
+		else if (selectedMod==1)
+			tempBDG[1] = BDG[1];
+		else if(selectedMod==3)
+			tempBDG = BDG;
+	    double [][] unbiasToBiast = Matrix.matrixTranspose(unbiasToBias);
+	    BDGbias = Matrix.multiply(tempBDG , unbiasToBiast);		
+		double totalVarnoMLE=0.0;
+		totalVarMLE=0.0;
+		totalVar=0.0;
+		BDGcoeff = genBDGCoeff(DBRecordStat.Nreader,DBRecordStat.Nnormal,DBRecordStat.Ndisease);
+	    double[] temp= new double[8];
+		for (int i = 0; i < 8; i++) {
+		     temp[i]=1.0;
+		}
+		DBRecordStat.BDGcoeff[3] = temp;
+		for (int i = 0; i < 8; i++) {
+			DBRecordStat.BDG[3][i] =     (tempBDG[0][i] * DBRecordStat.BDGcoeff[0][i])
+					  +     (tempBDG[1][i] * DBRecordStat.BDGcoeff[1][i])
+					  - 2.0*(tempBDG[2][i] * DBRecordStat.BDGcoeff[2][i]);
+			DBRecordStat.BDGbias[3][i] =     (DBRecordStat.BDGbias[0][i] * DBRecordStat.BDGcoeff[0][i])
+					  +     (DBRecordStat.BDGbias[1][i] * DBRecordStat.BDGcoeff[1][i])
+					  - 2.0*(DBRecordStat.BDGbias[2][i] * DBRecordStat.BDGcoeff[2][i]);			
+			totalVarnoMLE += BDGcoeff[3][i] * BDG[3][i];
+			totalVarMLE  += BDGcoeff[3][i] * BDGbias[3][i];
+		}
+		if (flagMLE==0){
+			totalVar= totalVarnoMLE;
+		}else{
+			totalVar=totalVarMLE;
+		}
+		
+
+		if(totalVar < 0) {
+			flagTotalVarIsNegative = 1;
+		}
+		
+		BDGresult = BDG;
+		BDGcoeffresult = BDGcoeff;
+		BDGbiasresult = BDGbias;	
+		
+		
+		DBRecordStat.Decompositions();
+		DBRecordStat.testStat = new StatTest(DBRecordStat);
+		
+		
+	}
 	
 	/**
 	 * Performs calculations for sizing a new trial based on parameters
@@ -684,8 +754,6 @@ public class DBRecord {
 		if(totalVar < 0) {
 			flagTotalVarIsNegative = 1;
 		}
-		
-		
 		/*
 		 * added for saving the results 
 		 */
@@ -704,18 +772,12 @@ public class DBRecord {
 
 		totalVar = 0.0;
 		for (int i = 0; i < 8; i++) {
-	/*		BDG[0][i] = covMRMCstat.momentsAA[i + 1];
-			BDG[1][i] = covMRMCstat.momentsBB[i + 1];
-			BDG[2][i] = covMRMCstat.momentsAB[i + 1];
-	     	BDGbias[0][i] = covMRMCstat.momentsBiasedAA[i + 1];
-			BDGbias[1][i] = covMRMCstat.momentsBiasedBB[i + 1];
-			BDGbias[2][i] = covMRMCstat.momentsBiasedAB[i + 1];    //*/
 		    BDG[0][i] = DBRecordStat.BDG[0][i];
 			BDG[1][i] = DBRecordStat.BDG[1][i];
 			BDG[2][i] = DBRecordStat.BDG[2][i];
 			BDGbias[0][i] = DBRecordStat.BDGbias[0][i];
 			BDGbias[1][i] = DBRecordStat.BDGbias[1][i];
-			BDGbias[2][i] = DBRecordStat.BDGbias[2][i];				//*/
+			BDGbias[2][i] = DBRecordStat.BDGbias[2][i];			
 			BDGcoeff[0][i] = covMRMCsize.coefficientsAA[i + 1];
 			BDGcoeff[1][i] = covMRMCsize.coefficientsBB[i + 1];
 			BDGcoeff[2][i] = covMRMCsize.coefficientsAB[i + 1];
@@ -1690,6 +1752,8 @@ public class DBRecord {
 		DBRecordTemp.flagTotalVarIsNegative *= DBRecordTemp.flagTotalVarIsNegative;
 		
 	}
+
+
 	
 
 

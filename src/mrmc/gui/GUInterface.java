@@ -89,7 +89,7 @@ public class GUInterface {
 	
 	private GUInterface thisGUI = this;
 	public MRMC MRMCobject;
-
+	public InputStartCard InputStartCard;
 	public InputFileCard InputFileCard;
 	public InputSummaryCard InputSummaryCard;
 	private ManualCard MC;
@@ -103,6 +103,7 @@ public class GUInterface {
 	 */
 	public DBRecord DBRecordStat = new DBRecord(this);
 	public DBRecord DBRecordSize = new DBRecord(this);
+	public int resetcall = 0 ;
 	public final static int USE_MLE = 1;
 	public final static int NO_MLE = 0;
 	public static String summaryfilename="";
@@ -110,9 +111,9 @@ public class GUInterface {
 	 * These strings describe the different input methods
 	 * @see #selectedInput
 	 */
-	public final static String DescInputModeOmrmc = ".imrmc file: Summary info from a reader study";
-	public final static String DescInputModeImrmc = ".imrmc file: Reader study data";
-	public final static String DescInputModeManual = "Manual input";
+	public final static String DescInputModeOmrmc = "Summary info from a reader study";
+	public final static String DescInputModeImrmc = "Reader study data";
+	public final static String DescInputChooseMode = "Please choose input file mode";
 
 	/**
 	 * <code> selectedInput </code> determines the workflow: <br>
@@ -123,7 +124,7 @@ public class GUInterface {
 	 * ----<code>DescInputModeManual</code> = "Manual input" <br>
  	 * 
  	 */
-	public static String selectedInput = DescInputModeManual;
+	public static String selectedInput = DescInputChooseMode;
 
 	/**
 	 * the panel that uses CardLayout. There are three cards for three different input.
@@ -160,10 +161,11 @@ public class GUInterface {
 		 * Sets all GUI components to their default values
 		 */
 		public void resetGUI() {
-			
 			InputFile1.resetInputFile();
+			resetcall = 1;
 			InputFileCard.resetInputFileCard();
-			InputSummaryCard.resetInputFileCard();
+			InputSummaryCard.resetInputSummaryCard();
+			resetcall = 0 ;
 			StatPanel1.resetStatPanel();
 			SizePanel1.resetSizePanel();
 	
@@ -253,7 +255,7 @@ public class GUInterface {
 		// Add Pull-down select input method
 //		String comboBoxItems[] = { DB, Pilot, Manual };
 //		String comboBoxItems[] = { Pilot, Manual };
-		String comboBoxItems[] = { DescInputModeManual };
+		String comboBoxItems[] = { DescInputChooseMode };
 		// Add Reset button
 		JComboBox<String> cb = new JComboBox<String>(comboBoxItems);
 		JComboBox<String> chooseMod = new JComboBox<String>();
@@ -273,10 +275,14 @@ public class GUInterface {
 		// create pilot/raw study panel
 		JPanel JPanel_InputFileCard = new JPanel();
 		InputFileCard = new InputFileCard(JPanel_InputFileCard, this);
+		
+		// create start panel
+		JPanel JPanel_InputStartCard = new JPanel();
+		InputStartCard = new InputStartCard(JPanel_InputStartCard, this);
 
-		// create manual panel
+		/*// create manual panel
 		JPanel InputCardManual = new JPanel();
-		MC = new ManualCard(InputCardManual, this, MRMCobject);
+		MC = new ManualCard(InputCardManual, this, MRMCobject);*/
 		
 		// create summary panel
 		JPanel JPanel_InputSummaryCard = new JPanel();
@@ -290,8 +296,8 @@ public class GUInterface {
 		// ***********************************************************************
 		InputPane = new JPanel(new CardLayout());
 //		inputCards.add(CardInputModeDB, DescInputModeDB);
+		InputPane.add(JPanel_InputStartCard, DescInputChooseMode);
 		InputPane.add(JPanel_InputFileCard, DescInputModeImrmc);
-		InputPane.add(InputCardManual, DescInputModeManual);
 		InputPane.add(JPanel_InputSummaryCard, DescInputModeOmrmc);
 		
 
@@ -371,13 +377,13 @@ public class GUInterface {
 				Date currDate = new Date();
 				final String fileTime = dateForm.format(currDate);
 				String FileName=InputFile1.filename;
-				FileName= FileName.substring(0,FileName.lastIndexOf(".imrmc"));
-				String summaryfilenamewithpath = FileName+"MRMCsummary"+fileTime+".csv";
+				FileName= FileName.substring(0,FileName.lastIndexOf("."));
+				String summaryfilenamewithpath = FileName+"MRMCsummary"+fileTime+".omrmc";
 				summaryfilename = summaryfilenamewithpath.substring(FileName.lastIndexOf("\\")+1);
-				if (selectedInput == DescInputModeManual) {
-					report = SizePanel1.genReport();
+				if (selectedInput == DescInputChooseMode) {
+					report = SizePanel1.genReport(InputFile1);
 				} else {
-					report = SizePanel1.genReport();
+					report = SizePanel1.genReport(InputFile1);
 				}
 	
 	/*			try {
