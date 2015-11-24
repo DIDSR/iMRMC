@@ -279,7 +279,7 @@ public class SizePanel {
 		SizeJLabelPowerBDG.setText(",  Power=");
 //		SizeJLabelCIBDG.setText("Conf. Int.=");
 
-		SizeJLabelDFHillis.setText("Hillis 2011:  df=");
+		SizeJLabelDFHillis.setText("df=");
 		SizeJLabelLambdaHillis.setText("Lambda=");
 		SizeJLabelPowerHillis.setText("Power=");
 //		SizeJLabelCIHillis.setText("Conf. Int.=");
@@ -338,7 +338,7 @@ public class SizePanel {
 				&& this.pairedNormalsFlag == 1
 				&& this.pairedDiseasedFlag ==1) {
 			
-			output = "Hillis 2011:  df= "
+			output = "df= "
 					+ twoDec.format(testSize.DF_Hillis);
 			SizeJLabelDFHillis.setText(output);
 			output = "Lambda= "
@@ -354,7 +354,7 @@ public class SizePanel {
 					+ ")";
 //			SizeJLabelCIHillis.setText(output);
 		} else {
-			SizeJLabelDFHillis.setText("Hillis 2011:  df=");
+			SizeJLabelDFHillis.setText("df=");
 			SizeJLabelLambdaHillis.setText("Lambda=");
 			SizeJLabelPowerHillis.setText("Power=");
 //			SizeJLabelCIHillis.setText("Conf. Int.=");
@@ -761,7 +761,8 @@ public class SizePanel {
 	public class SizeHillisButtonListener implements ActionListener {
 
 		public void actionPerformed(ActionEvent e) {
-			String hillisValues = SizeJLabelDFHillis.getText() +"\n"+ 
+			String hillisValues = "Hillis 2011:"  +"\n"+  
+					SizeJLabelDFHillis.getText() +"\n"+ 
 					SizeJLabelLambdaHillis.getText() + "\n" + 
 					SizeJLabelPowerHillis.getText() + "\n" + 
 					SizeJLabelCIHillis.getText();
