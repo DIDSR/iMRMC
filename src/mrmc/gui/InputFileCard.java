@@ -73,7 +73,6 @@ public class InputFileCard {
 	private InputFile InputFile1;
 	private DBRecord DBRecordStat;
 	private DBRecord DBRecordSize;
-
 	JTextField JTextFilename;
 	public final static int USE_MLE = 1;
 	public final static int NO_MLE = 0;
@@ -90,7 +89,7 @@ public class InputFileCard {
 		
 		JTextFilename.setText("");
 		FlagMLE = NO_MLE;
-
+		mleCheckBox.setSelected(false);
 		chooseA.removeAllItems();
 		chooseB.removeAllItems();
 		chooseA.addItem("Choose Modality A");
@@ -116,7 +115,7 @@ public class InputFileCard {
 		 * Elements of RawStudyCardRow1
 		 */
 		// Browse for input file
-		JLabel studyLabel = new JLabel(".imrmc file  ");
+		JLabel studyLabel = new JLabel(".imrmc or .csv file  ");
 		JTextFilename = new JTextField(20);
 		JButton browseButton = new JButton("Browse...");
 		browseButton.addActionListener(new brwsButtonListener());
@@ -209,14 +208,23 @@ public class InputFileCard {
 		public void actionPerformed(ActionEvent e) {
 			
 			GUI.resetGUI();
-			
+			if  (GUInterface.selectedInput == GUInterface.DescInputChooseMode){
+				JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
+						"Please choose one kind of input file.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
 			JFileChooser fc = new JFileChooser();
 			FileNameExtensionFilter filter = new FileNameExtensionFilter(
-					"iMRMC Input Files (.imrmc)", "imrmc");
+					"iMRMC Input Files (.imrmc or csv)", "csv","imrmc");
+		
+			if (GUI.inputfileDirectory!=null)
+				fc.setCurrentDirectory(GUI.inputfileDirectory);
+			
 			fc.setFileFilter(filter);
 			int returnVal = fc.showOpenDialog((Component) e.getSource());
 			if( returnVal==JFileChooser.CANCEL_OPTION || returnVal==JFileChooser.ERROR_OPTION) return;
-			
+			GUI.inputfileDirectory = fc.getCurrentDirectory(); //save last time visit directory
 			/*
 			 *  Get a pointer to the input file and the filename
 			 */
@@ -224,12 +232,12 @@ public class InputFileCard {
 			if( f==null ) return;
 			InputFile1.filename = f.getPath();
 			JTextFilename.setText(f.getPath());
-
+//			GUI.inputfileDirectory = f.getPath();
 			/*
 			 *  Read the .imrmc input file, check for exceptions
 			 */				
 			try {
-				InputFile1.ReadInputFile();
+				InputFile1.ReadInputFile(GUI);
 			} catch (IOException except) {
 				except.printStackTrace();
 				JOptionPane.showMessageDialog
@@ -488,7 +496,7 @@ public class InputFileCard {
 			if (name.equals(null) || name.equals("")) {
 				JFrame frame = GUI.MRMCobject.getFrame();
 				JOptionPane.showMessageDialog(frame, 
-						"Please browse for .imrmc input file", " Error",
+						"Please browse for .imrmc or.csv input file", " Error",
 						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
@@ -537,7 +545,6 @@ public class InputFileCard {
 				}
 
 			}
-
 			// Update GUI
 			DBRecordStat.flagMLE = FlagMLE;
 			DBRecordSize.flagMLE = FlagMLE;

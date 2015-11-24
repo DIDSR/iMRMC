@@ -76,7 +76,7 @@ public class StudyDesignPlot extends JFrame {
 			TreeMap<String,String[][]> StudyDesignData,String inputfilename) {
 		super(title);
 		filenamewithpath = inputfilename;
-		filenamewithpath= filenamewithpath.substring(0,filenamewithpath.lastIndexOf(".imrmc"));
+		filenamewithpath= filenamewithpath.substring(0,filenamewithpath.lastIndexOf("."));
 		filename = filenamewithpath.substring(filenamewithpath.lastIndexOf("\\")+1);
 		String[][] data = StudyDesignData.get("data");
 		readerrelation =  StudyDesignData.get("readerrelation");
