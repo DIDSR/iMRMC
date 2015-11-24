@@ -338,16 +338,16 @@ public class SizePanel {
 				&& this.pairedNormalsFlag == 1
 				&& this.pairedDiseasedFlag ==1) {
 			
-			output = "   Hillis 2011:  df= "
+			output = "Hillis 2011:  df= "
 					+ twoDec.format(testSize.DF_Hillis);
 			SizeJLabelDFHillis.setText(output);
-			output = ",  Lambda= "
+			output = "Lambda= "
 					+ twoDec.format(testSize.lambdaHillis);
 			SizeJLabelLambdaHillis.setText(output);
-			output = ",  Power= "
+			output = "Power= "
 					+ twoDec.format(testSize.powerHillis);
 			SizeJLabelPowerHillis.setText(output);
-			output = ",  Conf. Int.=("
+			output = "Conf. Int.=("
 					+ fourDec.format(testSize.ciBotHillis)
 					+ ", "
 					+ fourDec.format(testSize.ciTopHillis)

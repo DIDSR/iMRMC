@@ -220,7 +220,7 @@ public class StatPanel {
 
 		StatJLabelDFNormal.setText("Large Sample Approx(Normal)");
 		StatJLabelDFBDG.setText   ("         T-stat df(BDG) =      ");
-		StatJLabelDFHillis.setText("T-stat df(Hillis 2008) =      ");
+		StatJLabelDFHillis.setText("T-stat df(Hillis 2008) = ");
 
 		StatJLabelPValNormal.setText("p-Value = ");
 		StatJLabelPValBDG.setText   ("p-Value = ");
@@ -308,9 +308,9 @@ public class StatPanel {
 
 		if (DBRecordStat.flagFullyCrossed) {
 			output = twoDec.format(DBRecordStat.testStat.DF_Hillis);
-			StatJLabelDFHillis.setText("  df(Hillis 2008) = " + output + "     ");
+			StatJLabelDFHillis.setText("df(Hillis 2008) = " + output + "     ");
 			output = fourDec.format(DBRecordStat.testStat.pValHillis);
-			StatJLabelPValHillis.setText("  p-Value = " + output);
+			StatJLabelPValHillis.setText("p-Value = " + output);
 			output = fourDec.format(DBRecordStat.testStat.ciBotHillis);
 			output2 = fourDec.format(DBRecordStat.testStat.ciTopHillis);
 			StatJLabelCIHillis.setText("Conf. Int. = (" + output + ", "
