@@ -5,12 +5,9 @@ package mrmc.gui;
 
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -26,7 +23,6 @@ import javax.swing.table.DefaultTableModel;
 import mrmc.core.DBRecord;
 import mrmc.core.InputFile;
 import mrmc.core.Matrix;
-import mrmc.gui.InputFileCard.ReadersCasesButtonListener;
 
 
 /**
@@ -62,9 +58,6 @@ public class StatPanel {
 		StatJLabelRejectBDG    = new JLabel("12345678901234567890",JLabel.LEFT),
 		StatJLabelRejectHillis = new JLabel("12345678901234567890",JLabel.LEFT),
 		StatJLabelTotalVar = new JLabel();
-	
-		
-	
 	
 	/**
 	 * table1 corresponds to the variance analysis
@@ -112,8 +105,6 @@ public class StatPanel {
 		StatJLabelPValHillis.setPreferredSize(StatJLabelPValHillis.getPreferredSize());
 		StatJLabelCIHillis.setPreferredSize(StatJLabelCIHillis.getPreferredSize());
 		StatJLabelRejectHillis.setPreferredSize(StatJLabelRejectHillis.getPreferredSize());
-		
-		
 		/*
 		 * Determine the width of the rows of the analysis results
 		 */
@@ -153,23 +144,12 @@ public class StatPanel {
 		StatPanelRow4.add(StatJLabelPValBDG);
 		StatPanelRow4.add(StatJLabelCIBDG);
 		StatPanelRow4.add(StatJLabelRejectBDG);
-		
-		JButton statHillis = new JButton("Hillis Approx");
+
 		JPanel StatPanelRow5 = new JPanel();
-		statHillis.addActionListener(new StatHillisButtonListener());
-		StatPanelRow5.add(statHillis);
-		
-		JPanel StatPanelRow6 = new JPanel();
-		StatPanelRow6.add(StatJLabelDFHillis);
-		StatPanelRow6.add(StatJLabelPValHillis);
-		StatPanelRow6.add(StatJLabelCIHillis);
-		StatPanelRow6.add(StatJLabelRejectHillis);
-		
-		StatPanelRow6.hide();
-		//StatJLabelDFHillis.hide();
-		//StatJLabelPValHillis.hide();
-		//StatJLabelCIHillis.hide();
-		//StatJLabelRejectHillis.hide();
+		StatPanelRow5.add(StatJLabelDFHillis);
+		StatPanelRow5.add(StatJLabelPValHillis);
+		StatPanelRow5.add(StatJLabelCIHillis);
+		StatPanelRow5.add(StatJLabelRejectHillis);
 
 		// *******************************************************************
 		// *************tabbed panel 1*********************************
@@ -218,9 +198,9 @@ public class StatPanel {
 		StatJLabelAUC.setText("AUC = ");
 		DBRecordStat.totalVar = -1.0;
 
-		StatJLabelDFNormal.setText("Large Sample Approx(Normal)");
+		StatJLabelDFNormal.setText("T-stat df(Normal Approx) =      ");
 		StatJLabelDFBDG.setText   ("         T-stat df(BDG) =      ");
-		StatJLabelDFHillis.setText("T-stat df(Hillis 2008) = ");
+		StatJLabelDFHillis.setText("  T-stat df(Hillis 2008) =      ");
 
 		StatJLabelPValNormal.setText("p-Value = ");
 		StatJLabelPValBDG.setText   ("p-Value = ");
@@ -266,30 +246,27 @@ public class StatPanel {
 		StatJLabelH0.setText("H0: AUC = 0.50,   two-sided alternative,   95% significance,   " + 
 				DBRecordStat.getSizes());
 		StatJLabelAUC.setText(DBRecordStat.getAUCsReaderAvgString(DBRecordStat.selectedMod) +
-				",   S.E(total) = " + threeDecE.format(Math.sqrt(DBRecordStat.totalVar)));
+				",   sqrt(total var) = " + threeDecE.format(Math.sqrt(DBRecordStat.totalVar)) +
+				",   T Statistic = " + threeDecE.format(DBRecordStat.testStat.tStatEst));
 
 		if(DBRecordStat.selectedMod == 3) {
 			
 			StatJLabelH0.setText("H0: AUC_A - AUC_B = 0.00,   two-sided alternative,   95% significance,   " + 
 					DBRecordStat.getSizes());
 			StatJLabelAUC.setText(DBRecordStat.getAUCsReaderAvgString(DBRecordStat.selectedMod) +
-					",   S.E(total) = " + threeDecE.format(Math.sqrt(DBRecordStat.totalVar)));
+					",   sqrt(total var) = " + threeDecE.format(Math.sqrt(DBRecordStat.totalVar)) +
+					",   T Statistic = " + threeDecE.format(DBRecordStat.testStat.tStatEst));
 		}
 
 		
-		StatJLabelDFNormal.setText("Large Sample Approx(Normal)");
+		StatJLabelDFNormal.setText("T-stat df(Normal Approx) = \u221e     ");
 		output = fourDec.format(DBRecordStat.testStat.pValNormal);
 		StatJLabelPValNormal.setText("  p-Value = " + output);
 		output = fourDec.format(DBRecordStat.testStat.ciBotNormal);
 		output2 = fourDec.format(DBRecordStat.testStat.ciTopNormal);
 		StatJLabelCINormal.setText("Conf. Int. = (" + output + ", " + output2 + ")");
-		output = twoDec.format(DBRecordStat.testStat.rejectNormal);
-		if (DBRecordStat.testStat.rejectNormal == 1) {
-			StatJLabelRejectNormal.setText("Reject Null? = " + "Yes" + "(" + output + ")");
-		} else {
-			StatJLabelRejectNormal.setText("Reject Null? = " + "No" + "(" + output + ")");
-		}
-		
+		output = fourDec.format(DBRecordStat.testStat.rejectNormal);
+		StatJLabelRejectNormal.setText("Reject Null? = " + output);
 
 		output = twoDec.format(DBRecordStat.testStat.DF_BDG);
 		StatJLabelDFBDG.setText("  df(BDG) = " + output + "     ");
@@ -298,30 +275,20 @@ public class StatPanel {
 		output = fourDec.format(DBRecordStat.testStat.ciBotBDG);
 		output2 = fourDec.format(DBRecordStat.testStat.ciTopBDG);
 		StatJLabelCIBDG.setText("Conf. Int. = (" + output + ", " + output2 + ")");
-		output = twoDec.format(DBRecordStat.testStat.rejectBDG);
-		if (DBRecordStat.testStat.rejectBDG == 1) {
-			StatJLabelRejectBDG.setText("Reject Null? = " + "Yes" + "(" + output + ")");
-		} else {
-			StatJLabelRejectBDG.setText("Reject Null? = " + "No" + "(" + output + ")");
-		}
-		//StatJLabelRejectBDG.setText("Reject Null? = " + output);
+		output = fourDec.format(DBRecordStat.testStat.rejectBDG);
+		StatJLabelRejectBDG.setText("Reject Null? = " + output);
 
 		if (DBRecordStat.flagFullyCrossed) {
 			output = twoDec.format(DBRecordStat.testStat.DF_Hillis);
-			StatJLabelDFHillis.setText("df(Hillis 2008) = " + output + "     ");
+			StatJLabelDFHillis.setText("  df(Hillis 2008) = " + output + "     ");
 			output = fourDec.format(DBRecordStat.testStat.pValHillis);
-			StatJLabelPValHillis.setText("p-Value = " + output);
+			StatJLabelPValHillis.setText("  p-Value = " + output);
 			output = fourDec.format(DBRecordStat.testStat.ciBotHillis);
 			output2 = fourDec.format(DBRecordStat.testStat.ciTopHillis);
 			StatJLabelCIHillis.setText("Conf. Int. = (" + output + ", "
 					+ output2 + ")");
-			output = twoDec.format(DBRecordStat.testStat.rejectHillis);
-			if (DBRecordStat.testStat.rejectHillis == 1) {
-				StatJLabelRejectHillis.setText("Reject Null? = " + "Yes" + "(" + output + ")");
-			} else {
-				StatJLabelRejectHillis.setText("Reject Null? = " + "No" + "(" + output + ")");
-			}
-			//StatJLabelRejectHillis.setText("Reject Null? = " + output);
+			output = fourDec.format(DBRecordStat.testStat.rejectHillis);
+			StatJLabelRejectHillis.setText("Reject Null? = " + output);
 		} else {
 			StatJLabelDFHillis.setText("");
 			StatJLabelPValHillis.setText("");
@@ -782,20 +749,4 @@ public class StatPanel {
 	
 	}
 
-	
-	public class StatHillisButtonListener implements ActionListener {
-
-		public void actionPerformed(ActionEvent e) {
-			String hillisValues = StatJLabelDFHillis.getText() +"\n"+ 
-					StatJLabelPValHillis.getText() + "\n" + 
-					StatJLabelCIHillis.getText() + "\n" + 
-					StatJLabelRejectHillis.getText();
-					
-			// TODO Auto-generated method stub
-			JOptionPane.showMessageDialog(JFrameApp,
-					hillisValues, "Hillis Approximation",
-					JOptionPane.PLAIN_MESSAGE);
-		}
-
-	}
 }
