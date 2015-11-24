@@ -29,7 +29,6 @@ import mrmc.core.DBRecord;
 import mrmc.core.InputFile;
 import mrmc.core.MRMC;
 import mrmc.core.StatTest;
-import mrmc.gui.StatPanel.StatHillisButtonListener;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -161,15 +160,11 @@ public class SizePanel {
 		SizePanelRow5.add(SizeJLabelLambdaBDG);
 		SizePanelRow5.add(SizeJLabelPowerBDG);
 		SizePanelRow5.add(SizeJLabelCIBDG);
-		
-		JButton sizeHillis = new JButton("Hillis Approx");
-		JPanel SizePanelRow6 = new JPanel();
-		sizeHillis.addActionListener(new SizeHillisButtonListener());
-		SizePanelRow6.add(sizeHillis);
-		//SizePanelRow6.add(SizeJLabelDFHillis);
-		//SizePanelRow6.add(SizeJLabelLambdaHillis);
-		//SizePanelRow6.add(SizeJLabelPowerHillis);
-		//SizePanelRow6.add(SizeJLabelCIHillis);
+
+		SizePanelRow6.add(SizeJLabelDFHillis);
+		SizePanelRow6.add(SizeJLabelLambdaHillis);
+		SizePanelRow6.add(SizeJLabelPowerHillis);
+		SizePanelRow6.add(SizeJLabelCIHillis);
 
 		// not ready to add split plot, an pairing readers or cases to sizing panel
 		// JPanelSize.add(SizePanelRow1);
@@ -271,10 +266,10 @@ public class SizePanel {
 	 */
 	void resetSizePanel() {
 		
-		SizeJLabelSqrtVar.setText("S.E=");
-//		SizeJLabelTStat.setText(",  Test Stat=");
+		SizeJLabelSqrtVar.setText("SqrtVar=");
+		SizeJLabelTStat.setText(",  Test Stat=");
 		
-		SizeJLabelPowerNormal.setText("Large Sample Approx(Normal),  Power=");
+		SizeJLabelPowerNormal.setText("Normal Approx:  df= \u221e,  Power=");
 //		SizeJLabelCINormal.setText("Conf. Int.=");
 
 		SizeJLabelDFBDG.setText("          BDG:  df=");
@@ -282,9 +277,9 @@ public class SizePanel {
 		SizeJLabelPowerBDG.setText(",  Power=");
 //		SizeJLabelCIBDG.setText("Conf. Int.=");
 
-		SizeJLabelDFHillis.setText("df=");
-		SizeJLabelLambdaHillis.setText("Lambda=");
-		SizeJLabelPowerHillis.setText("Power=");
+		SizeJLabelDFHillis.setText("  Hillis 2011:  df=");
+		SizeJLabelLambdaHillis.setText(",  Lambda=");
+		SizeJLabelPowerHillis.setText(",  Power=");
 //		SizeJLabelCIHillis.setText("Conf. Int.=");
 	
 	}
@@ -298,16 +293,16 @@ public class SizePanel {
 		StatTest testSize = DBRecordSize.testSize;
 		String output;
 		
-		output = "S.E=" 
+		output = "SqrtVar=" 
 				+ threeDecE.format(Math.sqrt(DBRecordSize.totalVar));
 		
 		
 		SizeJLabelSqrtVar.setText(output);
-		//output = ",  Stat= "
-		//		+ threeDecE.format(testSize.tStatCalc);
-		//SizeJLabelTStat.setText(output);
+		output = ",  Stat= "
+				+ threeDecE.format(testSize.tStatCalc);
+		SizeJLabelTStat.setText(output);
 
-		output = "Large Sample Approx(Normal) ,  Power= "
+		output = "Normal Approx:  df= \u221e ,  Power= "
 				+ twoDec.format(testSize.powerNormal);
 		SizeJLabelPowerNormal.setText(output);
 		output = ",  Conf. Int.=("
@@ -341,25 +336,25 @@ public class SizePanel {
 				&& this.pairedNormalsFlag == 1
 				&& this.pairedDiseasedFlag ==1) {
 			
-			output = "df= "
+			output = "   Hillis 2011:  df= "
 					+ twoDec.format(testSize.DF_Hillis);
 			SizeJLabelDFHillis.setText(output);
-			output = "Lambda= "
+			output = ",  Lambda= "
 					+ twoDec.format(testSize.lambdaHillis);
 			SizeJLabelLambdaHillis.setText(output);
-			output = "Power= "
+			output = ",  Power= "
 					+ twoDec.format(testSize.powerHillis);
 			SizeJLabelPowerHillis.setText(output);
-			output = "Conf. Int.=("
+			output = ",  Conf. Int.=("
 					+ fourDec.format(testSize.ciBotHillis)
 					+ ", "
 					+ fourDec.format(testSize.ciTopHillis)
 					+ ")";
 //			SizeJLabelCIHillis.setText(output);
 		} else {
-			SizeJLabelDFHillis.setText("df=");
-			SizeJLabelLambdaHillis.setText("Lambda=");
-			SizeJLabelPowerHillis.setText("Power=");
+			SizeJLabelDFHillis.setText("  Hillis 2011:  df=");
+			SizeJLabelLambdaHillis.setText(",  Lambda=");
+			SizeJLabelPowerHillis.setText(",  Power=");
 //			SizeJLabelCIHillis.setText("Conf. Int.=");
 		}
 
@@ -843,25 +838,5 @@ public class SizePanel {
 						"Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
-	}
-	
-	/**
-	 * Handler for button to Hillis Approx on specified parameters
-	 */
-	public class SizeHillisButtonListener implements ActionListener {
-
-		public void actionPerformed(ActionEvent e) {
-			String hillisValues = "Hillis 2011:"  +"\n"+  
-					SizeJLabelDFHillis.getText() +"\n"+ 
-					SizeJLabelLambdaHillis.getText() + "\n" + 
-					SizeJLabelPowerHillis.getText() + "\n" + 
-					SizeJLabelCIHillis.getText();
-					
-			// TODO Auto-generated method stub
-			JOptionPane.showMessageDialog(reportFrame,
-					hillisValues, "Hillis Approximation",
-					JOptionPane.PLAIN_MESSAGE);
-		}
-
 	}
 }
