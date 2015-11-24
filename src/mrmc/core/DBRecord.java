@@ -567,8 +567,6 @@ public class DBRecord {
 				{ 	 1/N0/NR, 	 (N0-1)/N0/NR,				 0,						  0,   (NR-1)/N0/NR,	(N0-1)*(NR-1)/N0/NR,				      0,						    0 },
 				{    1/N1/NR, 	    	    0, 	  (N1-1)/N1/NR,						  0,   (NR-1)/N1/NR,					  0, 	(N1-1)*(NR-1)/N1/NR, 							0 },
 				{ 1/N0/N1/NR, (N0-1)/N0/N1/NR, (N1-1)/N0/N1/NR, (N0-1)*(N1-1)/N0/N1/NR, (NR-1)/N0/N1/NR, (N0-1)*(NR-1)/N0/N1/NR, (N1-1)*(NR-1)/N0/N1/NR, (N0-1)*(N1-1)*(NR-1)/N0/N1/NR}};		
-		totalVar=0.0;
-		BDGcoeff = genBDGCoeff(Nreader,Nnormal,Ndisease);
         double[][] tempBDG = new double[4][8];
 		if(selectedMod==0)
 			tempBDG[0]=	BDG[0];

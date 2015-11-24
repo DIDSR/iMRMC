@@ -93,6 +93,8 @@ public class GUInterface {
 	public InputFileCard InputFileCard;
 	public InputSummaryCard InputSummaryCard;
 	private ManualCard MC;
+	public File inputfileDirectory = null;   //input file last time visit directory
+	public File outputfileDirectory = null;   //input file last time visit directory
 
 	/**
 	 * InputFile1 {@link mrmc.core.InputFile}
@@ -386,9 +388,17 @@ public class GUInterface {
 					report = SizePanel1.genReport(InputFile1);
 				}
 	
-	/*			try {
+				try {
 					JFileChooser fc = new JFileChooser();
-					int fcReturn = fc.showOpenDialog((Component) e.getSource());
+					FileNameExtensionFilter filter = new FileNameExtensionFilter(
+							"iMRMC Summary Files (.omrmc or csv)", "csv","omrmc");
+					fc.setFileFilter(filter);
+					if (outputfileDirectory!=null){
+						 fc.setSelectedFile(new File(outputfileDirectory+"\\"+summaryfilename));						
+					}						
+					else					
+					    fc.setSelectedFile(new File(summaryfilenamewithpath));
+					int fcReturn = fc.showSaveDialog((Component) e.getSource());
 					if (fcReturn == JFileChooser.APPROVE_OPTION) {
 						File f = fc.getSelectedFile();
 						if (!f.exists()) {
@@ -398,15 +408,20 @@ public class GUInterface {
 						BufferedWriter bw = new BufferedWriter(fw);
 						bw.write(report);
 						bw.close();
+						outputfileDirectory = fc.getCurrentDirectory();
+					    String savedfilename = fc.getSelectedFile().getName();
+						JOptionPane.showMessageDialog(
+								thisGUI.MRMCobject.getFrame(),"The summary has been succeed export to "+outputfileDirectory+ " !\n"+ "Filename = " +savedfilename, 
+								"Exported", JOptionPane.INFORMATION_MESSAGE);
 					}
 				} catch (HeadlessException e1) {
 					e1.printStackTrace();
 				} catch (IOException e1) {
 					e1.printStackTrace();
-				} */
+				} 
 				
 
-	            try {
+	      /*      try {
 					FileWriter fw = new FileWriter(summaryfilenamewithpath);
 					BufferedWriter bw = new BufferedWriter(fw);
 					bw.write(report);
@@ -417,7 +432,7 @@ public class GUInterface {
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
-				}
+				}*/
 	            
 			}else{
 				JOptionPane.showMessageDialog(thisGUI.MRMCobject.getFrame(),

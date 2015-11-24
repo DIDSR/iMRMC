@@ -464,7 +464,7 @@ public class SizePanel {
 		str = str + "Modality A = " + GUI.DBRecordStat.modalityA + "\r\n";
 		str = str + "Modality B = " + GUI.DBRecordStat.modalityB + "\r\n" + "\r\n";
 		str = str + "Reader-Averaged AUCs" + "\r\n";
-		str = str +  GUI.DBRecordStat.getAUCsReaderAvgString(DBRecordSize.selectedMod).replaceAll(",   ", "\r\n") + "\r\n" + "\r\n";
+		str = str +  GUI.DBRecordStat.getAUCsReaderAvgString(GUI.DBRecordStat.selectedMod).replaceAll(",   ", "\r\n") + "\r\n" + "\r\n";
 		str = str +  "Reader Specific AUCs" +"\r\n";
 		int k=1;
 		int IDlength = 0;
@@ -500,34 +500,61 @@ public class SizePanel {
 						str = str + "        " + fiveDecE.format(GUI.DBRecordStat.AUCs[k-1][2]);
 			k=k+1;
 		}
-		str = str + "\r\n**********************BDG Results***************************\r\n";
-		str = str + "         Moments" + SEPA + "        M1" + SEPA + "        M2" + SEPA + "        M3" + SEPA
-				+ "        M4" + SEPA + "        M5" + SEPA + "        M6" + SEPA + "        M7" + SEPA + "        M8"
+		str = str + "\r\n**********************BDG Moments***************************\r\n";
+		str = str + "         Moments" + SEPA + "         M1" + SEPA + "         M2" + SEPA + "         M3" + SEPA
+				+ "         M4" + SEPA + "         M5" + SEPA + "         M6" + SEPA + "         M7" + SEPA + "         M8"
 				+ "\r\n";
 		str = str + "Modality1(AUC_A)" + SEPA;
 		for (int i = 0; i < 8; i++){
-			if(BDG[0][i]>0)
-				str = str + fiveDecE.format(BDG[0][i])+SEPA;
+			if(GUI.DBRecordStat.BDG[0][i]>0)
+				str = str + " " + fiveDecE.format(GUI.DBRecordStat.BDG[0][i])+SEPA;
 			else
-				str = str + " " + fiveDecE.format(BDG[0][i])+SEPA;
+				str = str + "  " + fiveDecE.format(GUI.DBRecordStat.BDG[0][i])+SEPA;
 		}
 		str = str + "\r\n" + "Modality2(AUC_B)" + SEPA;
 		for (int i = 0; i < 8; i++){
-			if(BDG[1][i]>0)
-				str = str + fiveDecE.format(BDG[1][i])+SEPA;
+			if(GUI.DBRecordStat.BDG[1][i]>0)
+				str = str + " " + fiveDecE.format(GUI.DBRecordStat.BDG[1][i])+SEPA;
 			else
-				str = str + " " + fiveDecE.format(BDG[1][i])+SEPA;
+				str = str + "  " + fiveDecE.format(GUI.DBRecordStat.BDG[1][i])+SEPA;
 		}
 		str = str + "\r\n" + "    comp product" + SEPA;
 		for (int i = 0; i < 8; i++){
-			if(BDG[2][i]>0)
-				str = str + fiveDecE.format(BDG[2][i])+SEPA;
+			if(GUI.DBRecordStat.BDG[2][i]>0)
+				str = str + " " + fiveDecE.format(GUI.DBRecordStat.BDG[2][i])+SEPA;
 			else
-				str = str + " " + fiveDecE.format(BDG[2][i])+SEPA;
+				str = str + "  " + fiveDecE.format(GUI.DBRecordStat.BDG[2][i])+SEPA;
 		}
 		str = str +"\r\n"; 
 		str = str +"END SUMMARY \r\n"; 
 		
+		
+		str = str + "\r\n**********************BDG Results***************************\r\n";
+		str = str + "         Moments" + SEPA + "         M1" + SEPA + "         M2" + SEPA + "         M3" + SEPA
+				+ "         M4" + SEPA + "         M5" + SEPA + "         M6" + SEPA + "         M7" + SEPA + "         M8"
+				+ "\r\n";
+		str = str + "Modality1(AUC_A)" + SEPA;
+		for (int i = 0; i < 8; i++){
+			if(BDG[0][i]>0)
+				str = str + " " +fiveDecE.format(BDG[0][i])+SEPA;
+			else
+				str = str + "  " + fiveDecE.format(BDG[0][i])+SEPA;
+		}
+		str = str + "\r\n" + "Modality2(AUC_B)" + SEPA;
+		for (int i = 0; i < 8; i++){
+			if(BDG[1][i]>0)
+				str = str + " " +fiveDecE.format(BDG[1][i])+SEPA;
+			else
+				str = str + "  " + fiveDecE.format(BDG[1][i])+SEPA;
+		}
+		str = str + "\r\n" + "    comp product" + SEPA;
+		for (int i = 0; i < 8; i++){
+			if(BDG[2][i]>0)
+				str = str + " " +fiveDecE.format(BDG[2][i])+SEPA;
+			else
+				str = str + "  " + fiveDecE.format(BDG[2][i])+SEPA;
+		}
+		str = str +"\r\n"; 
 		
 		str = str
 				+ "\r\n**********************BCK Results***************************";

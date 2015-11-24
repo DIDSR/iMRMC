@@ -184,10 +184,14 @@ public class InputSummaryCard {
 			JFileChooser fc = new JFileChooser();
 			FileNameExtensionFilter filter = new FileNameExtensionFilter(
 					"iMRMC Input Files (.imrmc, omrmc or csv)", "imrmc","omrmc","csv");
+			
+			if (GUI.inputfileDirectory!=null)
+				fc.setCurrentDirectory(GUI.inputfileDirectory);
+			
 			fc.setFileFilter(filter);
 			int returnVal = fc.showOpenDialog((Component) e.getSource());
 			if( returnVal==JFileChooser.CANCEL_OPTION || returnVal==JFileChooser.ERROR_OPTION) return;
-			
+			GUI.inputfileDirectory = fc.getCurrentDirectory(); //save last time visit directory
 			/*
 			 *  Get a pointer to the input file and the filename
 			 */
@@ -347,7 +351,7 @@ public class InputSummaryCard {
 		if (name.equals(null) || name.equals("")) {
 			JFrame frame = GUI.MRMCobject.getFrame();
 			JOptionPane.showMessageDialog(frame, 
-					"Please browse for .imrmc input file", " Error",
+					"Please browse for .imrmc .omrmc or .csv input file", " Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
