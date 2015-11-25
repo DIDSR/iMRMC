@@ -456,7 +456,7 @@ public class ROCCurvePlot extends JFrame {
 			Date currDate = new Date();
 			final String fileTime = dateForm.format(currDate);
 			String FileName=inputfilepath;
-			FileName= FileName.substring(0,FileName.lastIndexOf(".imrmc"));
+			FileName= FileName.substring(0,FileName.lastIndexOf("."));
             String sFileName = FileName+"ROCcurve"+fileTime+".csv";
             String sFileNameonly = sFileName.substring(FileName.lastIndexOf("\\")+1);
 			try {

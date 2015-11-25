@@ -26,10 +26,12 @@ import java.awt.event.*;
 import java.awt.*;
 
 import mrmc.core.DBRecord;
+import mrmc.core.InputFile;
 import mrmc.core.MRMC;
 import mrmc.core.StatTest;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 /**
  * Panel for sizing new trials and generating reports for given input
@@ -41,6 +43,7 @@ import java.text.DecimalFormat;
 public class SizePanel {
 	public static String viewresultnew; // added for saving the results
 	private GUInterface GUI;
+	private InputFile InputFile1;
 	private DBRecord DBRecordSize;
 	public JPanel JPanelSize = new JPanel();
 	private JFrame reportFrame;
@@ -104,7 +107,7 @@ public class SizePanel {
 	 * 
 	 */
 	public SizePanel(GUInterface GUItemp) {
-		
+
 		GUI = GUItemp;
 		DBRecordSize = GUI.DBRecordSize;
 		JPanelSize.setLayout(new BoxLayout(JPanelSize, BoxLayout.Y_AXIS));
@@ -386,8 +389,8 @@ public class SizePanel {
 	 * @return String containing experiment parameters, components, trial size
 	 *         info
 	 */
-	public String genReport() {
-
+	public String genReport(InputFile InputFile) {
+		InputFile1 = InputFile;
 		int useMLE = DBRecordSize.flagMLE;
 
 //		double[][] BDG = DBRecordSize.BDG;
@@ -437,38 +440,122 @@ public class SizePanel {
 		str = str + "Summary statistics written to file named:" + "\r\n";
 		str = str + GUInterface.summaryfilename + "\r\n";
 		str = str + DBRecordSize.recordDesc;
-		str = str + "Reader=" + Long.toString(DBRecordSize.Nreader) + SEPA
-				+ "Normal=" + Long.toString(DBRecordSize.Nnormal) + SEPA
-				+ "Disease=" + Long.toString(DBRecordSize.Ndisease);
-		
+
+		str = str + "\r\n*****************************************************************\r\n";
+		str = str + "Reader=" + Long.toString(GUI.DBRecordStat.Nreader) + "\r\n"
+				+ "Normal=" + Long.toString(GUI.DBRecordStat.Nnormal) + "\r\n"
+				+ "Disease=" + Long.toString(GUI.DBRecordStat.Ndisease)+"\r\n";
+		str = str + "Modality A = " +  GUI.DBRecordStat.modalityA + "\r\n";
+		str = str + "Modality B = " + GUI.DBRecordStat.modalityB + "\r\n";
 		if (useMLE == 1)
 			str = str + "this report uses MLE estimate of components.\r\n";
-		str = str + "\r\n*****************************************************************";
+		
 		str = str + "\r\n" + GUI.DBRecordStat.getAUCsReaderAvgString(DBRecordSize.selectedMod);
 		str = str + "\r\nStatistical Tests:\r\n" + result + SEPA;
 
 		str = str
 				+ "\r\n*****************************************************************\r\n";
-		str = str + "NReaderSize=" + NreaderSize + SEPA + "NnormalSize=" + NnormalSize + SEPA
-				+ "NDiseaseSize=" + NdiseaseSize + "\r\n";
-		str = str
-				+ "\r\n**********************BDG Results***************************\r\n";
-		str = str + "Moments" + SEPA + "M1" + SEPA + "M2" + SEPA + "M3" + SEPA
-				+ "M4" + SEPA + "M5" + SEPA + "M6" + SEPA + "M7" + SEPA + "M8"
+		
+		
+		str = str + "BEGIN SUMMARY\r\n";
+		str = str + "NReader=  " + GUI.DBRecordStat.Nreader + "\r\n";
+		str = str + "Nnormal=  " + GUI.DBRecordStat.Nnormal + "\r\n";
+		str = str + "NDisease= " + GUI.DBRecordStat.Ndisease + "\r\n" + "\r\n";
+		str = str + "Modality A = " + GUI.DBRecordStat.modalityA + "\r\n";
+		str = str + "Modality B = " + GUI.DBRecordStat.modalityB + "\r\n" + "\r\n";
+		str = str + "Reader-Averaged AUCs" + "\r\n";
+		str = str +  GUI.DBRecordStat.getAUCsReaderAvgString(GUI.DBRecordStat.selectedMod).replaceAll(",   ", "\r\n") + "\r\n" + "\r\n";
+		str = str +  "Reader Specific AUCs" +"\r\n";
+		int k=1;
+		int IDlength = 0;
+		for(String desc_temp : InputFile.readerIDs.keySet() ) {
+			IDlength = Math.max(IDlength,desc_temp.length());
+		}
+		if (IDlength>9){
+			for (int i=0; i<IDlength-9; i++){
+				str = str + " ";
+			}
+			str = str + "Reader ID";
+		    str = str+SEPA + "       AUC_A" + SEPA +  "      AUCs_B" + SEPA +  "   AUC_A - AUCs_B";
+		} else{
+			str = str + "Reader ID" +SEPA + "       AUC_A" + SEPA +  "      AUCs_B" + SEPA +  "   AUC_A - AUCs_B";
+		}
+		
+		k=1;
+		for(String desc_temp : InputFile.readerIDs.keySet() ) {
+		//for (int i = 1; i < GUI.DBRecordStat.Nreader+1; i++){
+			str = str + "\r\n";
+			for (int i=0; i<Math.max(IDlength,9) - desc_temp.length(); i++){
+				str = str + " ";
+			}
+			str = str + desc_temp;
+			str = str+ SEPA + "  " +
+					fiveDecE.format(GUI.DBRecordStat.AUCs[k-1][0]) + SEPA + "  " +
+					fiveDecE.format(GUI.DBRecordStat.AUCs[k-1][1]) + SEPA;
+					if(GUI.DBRecordStat.AUCs[k-1][2]<0)
+						str = str + "      " + fiveDecE.format(GUI.DBRecordStat.AUCs[k-1][2]);
+					else if (GUI.DBRecordStat.AUCs[k-1][2]>0)
+						str = str + "       " + fiveDecE.format(GUI.DBRecordStat.AUCs[k-1][2]);
+					else
+						str = str + "        " + fiveDecE.format(GUI.DBRecordStat.AUCs[k-1][2]);
+			k=k+1;
+		}
+		str = str + "\r\n**********************BDG Moments***************************\r\n";
+		str = str + "         Moments" + SEPA + "         M1" + SEPA + "         M2" + SEPA + "         M3" + SEPA
+				+ "         M4" + SEPA + "         M5" + SEPA + "         M6" + SEPA + "         M7" + SEPA + "         M8"
 				+ "\r\n";
 		str = str + "Modality1(AUC_A)" + SEPA;
-		for (int i = 0; i < 8; i++)
-			str = str + fiveDecE.format(BDG[0][i]) + SEPA;
+		for (int i = 0; i < 8; i++){
+			if(GUI.DBRecordStat.BDG[0][i]>0)
+				str = str + " " + fiveDecE.format(GUI.DBRecordStat.BDG[0][i])+SEPA;
+			else
+				str = str + "  " + fiveDecE.format(GUI.DBRecordStat.BDG[0][i])+SEPA;
+		}
 		str = str + "\r\n" + "Modality2(AUC_B)" + SEPA;
-		for (int i = 0; i < 8; i++)
-			str = str + fiveDecE.format(BDG[1][i]) + SEPA;
-		str = str + "\r\n" + "Difference(AUC_A - AUC_B)" + SEPA;
-		for (int i = 0; i < 8; i++)
-			str = str + fiveDecE.format(BDG[3][i]) + SEPA;
-		str = str + "\r\n" + "Coeff" + SEPA;
-		for (int i = 0; i < 8; i++)
-			str = str + fiveDecE.format(BDGcoeff[0][i]) + SEPA;
+		for (int i = 0; i < 8; i++){
+			if(GUI.DBRecordStat.BDG[1][i]>0)
+				str = str + " " + fiveDecE.format(GUI.DBRecordStat.BDG[1][i])+SEPA;
+			else
+				str = str + "  " + fiveDecE.format(GUI.DBRecordStat.BDG[1][i])+SEPA;
+		}
+		str = str + "\r\n" + "    comp product" + SEPA;
+		for (int i = 0; i < 8; i++){
+			if(GUI.DBRecordStat.BDG[2][i]>0)
+				str = str + " " + fiveDecE.format(GUI.DBRecordStat.BDG[2][i])+SEPA;
+			else
+				str = str + "  " + fiveDecE.format(GUI.DBRecordStat.BDG[2][i])+SEPA;
+		}
 		str = str +"\r\n"; 
+		str = str +"END SUMMARY \r\n"; 
+		
+		
+		str = str + "\r\n**********************BDG Results***************************\r\n";
+		str = str + "         Moments" + SEPA + "         M1" + SEPA + "         M2" + SEPA + "         M3" + SEPA
+				+ "         M4" + SEPA + "         M5" + SEPA + "         M6" + SEPA + "         M7" + SEPA + "         M8"
+				+ "\r\n";
+		str = str + "Modality1(AUC_A)" + SEPA;
+		for (int i = 0; i < 8; i++){
+			if(BDG[0][i]>0)
+				str = str + " " +fiveDecE.format(BDG[0][i])+SEPA;
+			else
+				str = str + "  " + fiveDecE.format(BDG[0][i])+SEPA;
+		}
+		str = str + "\r\n" + "Modality2(AUC_B)" + SEPA;
+		for (int i = 0; i < 8; i++){
+			if(BDG[1][i]>0)
+				str = str + " " +fiveDecE.format(BDG[1][i])+SEPA;
+			else
+				str = str + "  " + fiveDecE.format(BDG[1][i])+SEPA;
+		}
+		str = str + "\r\n" + "    comp product" + SEPA;
+		for (int i = 0; i < 8; i++){
+			if(BDG[2][i]>0)
+				str = str + " " +fiveDecE.format(BDG[2][i])+SEPA;
+			else
+				str = str + "  " + fiveDecE.format(BDG[2][i])+SEPA;
+		}
+		str = str +"\r\n"; 
+		
 		str = str
 				+ "\r\n**********************BCK Results***************************";
 		str = str + "\r\nMoments" + SEPA + "N" + SEPA + "D" + SEPA + "N~D" + SEPA
@@ -527,16 +614,16 @@ public class SizePanel {
 		/*
 		 * added for saving the results
 		 */
-		str = str + "\r\n" + "comp M0" + SEPA;
+		str = str + "\r\n" + "comp MA" + SEPA;
 		for(int i = 0; i<8; i++)
 			str = str + fiveDecE.format(DBRecord.BDGPanelresult[0][i]) + SEPA;
-		str = str + "\r\n" + "coeff M0" + SEPA;
+		str = str + "\r\n" + "coeff MA" + SEPA;
 		for(int i = 0; i<8; i++)
 			str = str + fiveDecE.format(DBRecord.BDGPanelresult[1][i]) + SEPA;
-		str = str + "\r\n" + "comp M1" + SEPA;
+		str = str + "\r\n" + "comp MB" + SEPA;
 		for(int i = 0; i<8; i++)
 			str = str + fiveDecE.format(DBRecord.BDGPanelresult[2][i]) + SEPA;
-		str = str + "\r\n" + "coeff M1" + SEPA;
+		str = str + "\r\n" + "coeff MB" + SEPA;
 		for(int i = 0; i<8; i++)
 			str = str + fiveDecE.format(DBRecord.BDGPanelresult[3][i]) + SEPA;
 		str = str + "\r\n" + "comp product" + SEPA;
@@ -553,16 +640,16 @@ public class SizePanel {
 				+ "\r\n**********************BCK output Results***************************";
 		str = str + "\r\nMoments" + SEPA + "N" + SEPA + "D" + SEPA + "N~D" + SEPA
 				+ "R" + SEPA + "N~R" + SEPA + "D~R" + SEPA + "R~N~D";
-		str = str + "\r\n" + "comp M0" + SEPA;
+		str = str + "\r\n" + "comp MA" + SEPA;
 		for (int i = 0; i < 7; i++)
 			str = str + fiveDecE.format(DBRecord.BCKPanelresult[0][i]) + SEPA;
-		str = str + "\r\n" + "coeff M0" + SEPA;
+		str = str + "\r\n" + "coeff MA" + SEPA;
 		for (int i = 0; i < 7; i++)
 			str = str + fiveDecE.format(DBRecord.BCKPanelresult[1][i]) + SEPA;
-		str = str + "\r\n" + "comp M1" + SEPA;
+		str = str + "\r\n" + "comp MB" + SEPA;
 		for (int i = 0; i < 7; i++)
 			str = str + fiveDecE.format(DBRecord.BCKPanelresult[2][i]) + SEPA;
-		str = str + "\r\n" + "coeff M1" + SEPA;
+		str = str + "\r\n" + "coeff MB" + SEPA;
 		for (int i = 0; i < 7; i++)
 			str = str + fiveDecE.format(DBRecord.BCKPanelresult[3][i]) + SEPA;
 		str = str + "\r\n" + "comp product" + SEPA;
@@ -618,10 +705,13 @@ public class SizePanel {
 			str = str + fiveDecE.format(DBRecord.MSPanelresult[2][i]) + SEPA;
 		str = str +"\r\n"; 
 		str = str
-				+ "\r\n*****************************************************************";
+				+ "\r\n*********************Sizing parameters***************************";
 		str = str + "\r\n" + "Effective Size = " + twoDec.format(statParms[1])
-				+ SEPA + "Significance Level = " + twoDec.format(statParms[0]);
-		str = str
+				+ SEPA + "Significance Level = " + twoDec.format(statParms[0])+"\r\n";
+		str = str + "NReaderSize=  " +NreaderSize + SEPA
+		          + "NnormalSize=  " + NnormalSize + SEPA
+		          + "NDiseaseSize= " + NdiseaseSize ;
+		str = str 
 				+ "\r\n*****************************************************************";
 		str = str + "\r\nSizing Results:\r\n";
 		str = str + resultnew;
@@ -708,10 +798,10 @@ public class SizePanel {
 			reportFrame.getRootPane().setWindowDecorationStyle(
 					JRootPane.PLAIN_DIALOG);
 			String str = "";
-			if (GUI.getSelectedInput() == GUInterface.DescInputModeManual)
-				str = genReport();
+			if (GUI.getSelectedInput() == GUInterface.DescInputChooseMode)
+				str = genReport(InputFile1);
 			else
-				str = genReport();
+				str = genReport(InputFile1);
 			JTextArea report = new JTextArea(str, 50, 50);
 			JScrollPane scrollPane = new JScrollPane(report,
 					JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
