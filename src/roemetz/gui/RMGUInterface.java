@@ -80,11 +80,10 @@ import umontreal.iro.lecuyer.rng.WELL1024;
 public class RMGUInterface {
 
 
-	private DBRecord avgDBRecordStat;
 	private final int USE_MLE = 1;
 	private final int NO_MLE = 0;
 	private static RoeMetz RoeMetz1;
-	private String report;
+	private File outputDirectory = null;
 	SizePanel SizePanelRoeMetz;
 	JPanel studyDesignJPanel;
 
@@ -1173,7 +1172,7 @@ public class RMGUInterface {
 			progDialog.setVisible(false);
 
 			DBRecord DBRecordStat = new DBRecord();
-			avgDBRecordStat = new DBRecord();
+			DBRecord avgDBRecordStat = new DBRecord();
 			DBRecord squareDBRecordStat = new DBRecord();
 			DBRecord avgSquareDBRecordStat = new DBRecord();
 			
@@ -1225,7 +1224,7 @@ public class RMGUInterface {
 			DBRecordStat = results[0][0];
 			
 			avgDBRecordStat.Decompositions();
-			DBRecord feedback = avgDBRecordStat;
+			String simulationFileName = "SimulationOutputBy" + JTextField_Nexp.getText() + "Experiments";
 			StatPanel StatPanel1 = new StatPanel(RoeMetz1.getFrame(), avgDBRecordStat);
 			StatPanel1.setStatPanel();
 			StatPanel1.setTable1();
@@ -1233,9 +1232,9 @@ public class RMGUInterface {
 			
 			JDialog simOutput = new JDialog(RoeMetz1.getFrame(), "Simulation Results");
 			simOutput.add(StatPanel1.JPanelStat);
-			JButton analysisExport= new JButton("Export");
-			analysisExport.addActionListener(new analysisExportListener(avgDBRecordStat));			
-			simOutput.add(analysisExport, BorderLayout.PAGE_END);
+			JButton simulationExport= new JButton("Export Analysis Result");
+			simulationExport.addActionListener(new analysisExportListener(avgDBRecordStat,simulationFileName));			
+			simOutput.add(simulationExport, BorderLayout.PAGE_END);
 			simOutput.pack();
 			simOutput.setVisible(true);
 
@@ -1462,7 +1461,6 @@ public class RMGUInterface {
 			DBRecordNumerical.InputFile1 = new InputFile();
 			for (int i=1;i<DBRecordNumerical.Nreader+1;i++)
 			DBRecordNumerical.InputFile1.readerIDs.put(Integer.toString(i), i);
-			//DBRecordNumerical.AUCsReaderAvg[2] = DBRecordNumerical.AUCsReaderAvg[0]-DBRecordNumerical.AUCsReaderAvg[1];
 			StatPanel StatPanelNumerical = new StatPanel(RoeMetz1.getFrame(), DBRecordNumerical);
 			StatPanelNumerical.setStatPanel();
 			StatPanelNumerical.setTable1();
@@ -1470,8 +1468,8 @@ public class RMGUInterface {
 			JDialog numericalOutput = new JDialog(RoeMetz1.getFrame(), "Numerical Integration Results");
 //			numericalOutput.add(studyDesignJPanel);
 			numericalOutput.add(StatPanelNumerical.JPanelStat);
-			JButton numericalOutputExport= new JButton("Export");
-			numericalOutputExport.addActionListener(new analysisExportListener(DBRecordNumerical));			
+			JButton numericalOutputExport= new JButton("Export Analysis Result");
+			numericalOutputExport.addActionListener(new analysisExportListener(DBRecordNumerical,"NumericalOutput"));			
 			numericalOutput.add(numericalOutputExport, BorderLayout.PAGE_END);
 			numericalOutput.pack();
 			numericalOutput.setVisible(true);
@@ -2164,13 +2162,20 @@ public class RMGUInterface {
 		varLabel.setText("sqrt(Var) = " + output);
 	}
 	class analysisExportListener implements ActionListener {
+		private DBRecord DB1;
+		private String subFileName;
 		@Override
      	public void actionPerformed(ActionEvent e) {
 			try {
 				JFileChooser fc = new JFileChooser();
+	            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
+				Date currDate = new Date();
+				String fileTime = dateForm.format(currDate);
+				String exportFileName = subFileName+fileTime+".omrmc";
+				fc.setSelectedFile(new File(outputDirectory+"//"+exportFileName));
 				FileNameExtensionFilter filter = new FileNameExtensionFilter(
 						"iMRMC Summary Files (.omrmc or csv)", "csv","omrmc");
-				fc.setFileFilter(filter);					
+				fc.setFileFilter(filter);	
 				int fcReturn = fc.showSaveDialog((Component) e.getSource());
 				if (fcReturn == JFileChooser.APPROVE_OPTION) {
 					File f = fc.getSelectedFile();
@@ -2179,9 +2184,15 @@ public class RMGUInterface {
 					}
 					FileWriter fw = new FileWriter(f.getAbsoluteFile());
 					BufferedWriter bw = new BufferedWriter(fw);
+					outputDirectory = fc.getCurrentDirectory();			
+					String savedFileName = fc.getSelectedFile().getName();
+					String report = "";
+					report = genReport(DB1);					
 					bw.write(report);
 					bw.close();
-				    String savedfilename = fc.getSelectedFile().getName();
+					JOptionPane.showMessageDialog(
+							RoeMetz1.getFrame(), subFileName+" has been succeed export to " + outputDirectory + " !\n"+ "Filename = " +savedFileName, 
+							"Exported", JOptionPane.INFORMATION_MESSAGE);
 				}
 			} catch (HeadlessException e1) {
 				e1.printStackTrace();
@@ -2190,11 +2201,9 @@ public class RMGUInterface {
 			} 
 				
 		 }
-		public analysisExportListener(DBRecord processDBRecordStat) {
-			report = "";
-            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
-			Date currDate = new Date();
-				report = genReport(processDBRecordStat);
+		public analysisExportListener(DBRecord DBtemp, String tempSubFileName){
+			DB1 = DBtemp;
+			subFileName = tempSubFileName;
 		}
 	
 	}
