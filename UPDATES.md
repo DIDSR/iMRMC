@@ -1,5 +1,6 @@
-=Updates=
-===iMRMC2p8===
+<h3>Updates</h3>
+
+<h5>iMRMC2p8</h5>
 12/1/15
 
 Users can click on "Save to File" button to export the statistical analysis summary to a file. Also users can input reader study analysis summary file (via "Select an input method") instead of reader study scores to view analysis results and size a future study.
