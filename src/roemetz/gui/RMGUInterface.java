@@ -83,6 +83,7 @@ public class RMGUInterface {
 	private final int USE_MLE = 1;
 	private final int NO_MLE = 0;
 	private static RoeMetz RoeMetz1;
+	public DBRecord varDBRecordStat;
 	private File outputDirectory = null;
 	SizePanel SizePanelRoeMetz;
 	JPanel studyDesignJPanel;
@@ -1218,13 +1219,12 @@ public class RMGUInterface {
 			// Calculate variances: N/(N-1) * (avg(x^2) - avg(x)^2)
 			DBRecord.add(DBRecordStat, squareDBRecordStat);
 			// Rename result
-			DBRecord varDBRecordStat = squareDBRecordStat;
+			varDBRecordStat = squareDBRecordStat;
 			squareDBRecordStat = null;
 			// Reset DBRecordStat: Access one MC trial
 			DBRecordStat = results[0][0];
 			
 			avgDBRecordStat.Decompositions();
-			String simulationFileName = "SimulationOutputBy" + JTextField_Nexp.getText() + "Experiments";
 			StatPanel StatPanel1 = new StatPanel(RoeMetz1.getFrame(), avgDBRecordStat);
 			StatPanel1.setStatPanel();
 			StatPanel1.setTable1();
@@ -1233,7 +1233,7 @@ public class RMGUInterface {
 			JDialog simOutput = new JDialog(RoeMetz1.getFrame(), "Simulation Results");
 			simOutput.add(StatPanel1.JPanelStat);
 			JButton simulationExport= new JButton("Export Analysis Result");
-			simulationExport.addActionListener(new analysisExportListener(avgDBRecordStat,simulationFileName));			
+			simulationExport.addActionListener(new analysisExportListener(avgDBRecordStat,"SimulationOutput",StatPanel1));			
 			simOutput.add(simulationExport, BorderLayout.PAGE_END);
 			simOutput.pack();
 			simOutput.setVisible(true);
@@ -1469,7 +1469,7 @@ public class RMGUInterface {
 //			numericalOutput.add(studyDesignJPanel);
 			numericalOutput.add(StatPanelNumerical.JPanelStat);
 			JButton numericalOutputExport= new JButton("Export Analysis Result");
-			numericalOutputExport.addActionListener(new analysisExportListener(DBRecordNumerical,"NumericalOutput"));			
+			numericalOutputExport.addActionListener(new analysisExportListener(DBRecordNumerical,"NumericalOutput",StatPanelNumerical));			
 			numericalOutput.add(numericalOutputExport, BorderLayout.PAGE_END);
 			numericalOutput.pack();
 			numericalOutput.setVisible(true);
@@ -2164,6 +2164,7 @@ public class RMGUInterface {
 	class analysisExportListener implements ActionListener {
 		private DBRecord DB1;
 		private String subFileName;
+		private StatPanel StatPanel1;
 		@Override
      	public void actionPerformed(ActionEvent e) {
 			try {
@@ -2187,7 +2188,9 @@ public class RMGUInterface {
 					outputDirectory = fc.getCurrentDirectory();			
 					String savedFileName = fc.getSelectedFile().getName();
 					String report = "";
-					report = genReport(DB1);					
+					report = genReport(DB1, StatPanel1);	
+					if (subFileName.equals("SimulationOutput"))
+						report = genMCresults(report);
 					bw.write(report);
 					bw.close();
 					JOptionPane.showMessageDialog(
@@ -2201,14 +2204,15 @@ public class RMGUInterface {
 			} 
 				
 		 }
-		public analysisExportListener(DBRecord DBtemp, String tempSubFileName){
+		public analysisExportListener(DBRecord DBtemp, String tempSubFileName, StatPanel tempStatPanel){
 			DB1 = DBtemp;
 			subFileName = tempSubFileName;
-		}
+			StatPanel1 = tempStatPanel;
+ 		}
 	
 	}
 	
-	public String genReport(DBRecord processDBRecordStat) {
+	public String genReport(DBRecord processDBRecordStat,  StatPanel processStatPanel) {
 //		double[][] BDGcoeff = DBRecordSize.BDGcoeff;
 //		double[][] BCKcoeff = DBRecordSize.BCKcoeff;
 //		double[][] DBMcoeff = DBRecordSize.DBMcoeff;
@@ -2218,20 +2222,19 @@ public class RMGUInterface {
 		int NreaderSize = Integer.parseInt(NreaderJTextField.getText());
 		int NnormalSize = Integer.parseInt(NnormalJTextField.getText());
 		int NdiseaseSize = Integer.parseInt(NdiseaseJTextField.getText());
-
+		String result = processStatPanel.getStatResults();
 		
 
 		String str = "";
-		str = str + "MRMC summary statistics from " +MRMC.versionname + "\r\n";
-		str = str + "Summary statistics written to file named:" + "\r\n";
-		str = str + GUInterface.summaryfilename + "\r\n";
-
+		str = str + "iRoeMetz summary statistics from " +RoeMetz.versionName + "\r\n";
+        
 		str = str + "\r\n*****************************************************************\r\n";
 		str = str + "Reader=" + NreaderJTextField.getText() + "\r\n"
 				+ "Normal=" + NnormalJTextField.getText() + "\r\n"
 				+ "Disease=" +NdiseaseJTextField.getText()+"\r\n";
 		if (useMLE == 1)
 			str = str + "this report uses MLE estimate of components.\r\n";
+		str = str + "\r\nStatistical Tests:\r\n" + result + SEPA;
 		str = str
 				+ "\r\n*****************************************************************\r\n";
 		
@@ -2411,6 +2414,21 @@ public class RMGUInterface {
 
 		return str;
 	}
+	public String genMCresults(String report) {
+		double mcVarAUC_A       = varDBRecordStat.AUCsReaderAvg[0];
+		double mcVarAUC_B       = varDBRecordStat.AUCsReaderAvg[1];
+		double mcVarAUC_AminusB = varDBRecordStat.AUCsReaderAvg[2];
+		double sqrtMCvarAUC_A       = Math.sqrt(mcVarAUC_A);
+		double sqrtMCvarAUC_B       = Math.sqrt(mcVarAUC_B);
+		double sqrtMCvarAUC_AminusB = Math.sqrt(mcVarAUC_AminusB);
+	   String str = report;
+	   str = str
+				+ "\r\n**********************MC Results***************************\r\n";	
+		str =  str + "      mcVarAUC_A = " + fourDecE.format(mcVarAUC_A) + "," + "      sqrtMCvarAUC_A = " + fourDecE.format(sqrtMCvarAUC_A) + "\r\n";
+		str =  str + "      mcVarAUC_B = " + fourDecE.format(mcVarAUC_B) + "," + "      sqrtMCvarAUC_B = " + fourDecE.format(sqrtMCvarAUC_B) + "\r\n";
+		str =  str + "mcVarAUC_AminusB = " + fourDecE.format(mcVarAUC_AminusB) + "," + "sqrtMCvarAUC_AminusB = " + fourDecE.format(sqrtMCvarAUC_AminusB) + "\r\n";
 
-
+	   return str;
+	}
+	DecimalFormat fourDecE = new DecimalFormat("0.0000E0");
 }

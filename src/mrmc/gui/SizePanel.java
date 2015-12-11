@@ -25,6 +25,7 @@ import roemetz.gui.RMGUInterface.SeedInputListener;
 import java.awt.event.*;
 import java.awt.*;
 
+import mrmc.chart.exploreExpSize;
 import mrmc.core.DBRecord;
 import mrmc.core.InputFile;
 import mrmc.core.MRMC;
@@ -88,7 +89,7 @@ public class SizePanel {
 	DecimalFormat twoDec = new DecimalFormat("0.00");
 	DecimalFormat threeDec = new DecimalFormat("0.000");
 	DecimalFormat fourDec = new DecimalFormat("0.0000");
-	DecimalFormat threeDecE = new DecimalFormat("0.000E0");
+	public DecimalFormat threeDecE = new DecimalFormat("0.000E0");
 	DecimalFormat fiveDecE = new DecimalFormat("0.00000E0");
 
 	/**
@@ -145,6 +146,10 @@ public class SizePanel {
 		JButton sizeTrial = new JButton("Size a Trial");
 		sizeTrial.addActionListener(new sizeTrialListener());
 		SizePanelRow2.add(sizeTrial);
+		//
+		JButton fullyTrial = new JButton("Expore Experment Size");
+		fullyTrial.addActionListener(new fullyTrialListener());
+		SizePanelRow2.add(fullyTrial);
 
 		/*
 		 * Populate the row by adding elements
@@ -836,6 +841,31 @@ public class SizePanel {
 
 				DBRecordSize.DBRecordSizeFill(GUI.SizePanel1);
 				setSizePanel();
+
+			} catch (NumberFormatException e1) {
+				JOptionPane.showMessageDialog(reportFrame, "Invalid Input",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+	
+	/**
+	 * Handler for button to size trial based on specified parameters
+	 */
+	class fullyTrialListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			try {
+				if (GUI.DBRecordStat.totalVar <= 0.0) {
+					JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
+							"Must perform variance analysis first.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				sigLevel = Double.parseDouble(SigLevelJTextField.getText());
+				effSize = Double.parseDouble(EffSizeJTextField.getText());
+				exploreExpSize ees =  new exploreExpSize (DBRecordSize, GUI, GUI.SizePanel1);
+		//		DBRecordSize.DBRecordSizeFill(GUI.SizePanel1);
+			//	setSizePanel();
 
 			} catch (NumberFormatException e1) {
 				JOptionPane.showMessageDialog(reportFrame, "Invalid Input",
