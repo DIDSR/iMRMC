@@ -76,7 +76,7 @@ public class exploreExpSize extends JFrame {
 		SizePanel1 = inputSizePanel;
 		DBRecordStat = GUI.DBRecordStat;
 		DBRecordSize.DBRecordStat=DBRecordStat;
-		fullyFrame= new JFrame("fully predict");    
+		fullyFrame= new JFrame("Expore Experment Size");    
 		fullydisplay = new JPanel();               
 		JPanel fullyoptions = new JPanel();         // panel for 2 pull down manual
 
