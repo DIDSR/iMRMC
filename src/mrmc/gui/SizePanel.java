@@ -147,7 +147,7 @@ public class SizePanel {
 		sizeTrial.addActionListener(new sizeTrialListener());
 		SizePanelRow2.add(sizeTrial);
 		//
-		JButton fullyTrial = new JButton("Expore Experment Size");
+		JButton fullyTrial = new JButton("Explore Experiment Size");
 		fullyTrial.addActionListener(new fullyTrialListener());
 		SizePanelRow2.add(fullyTrial);
 

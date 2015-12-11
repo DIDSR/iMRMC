@@ -51,9 +51,9 @@ public class exploreExpSize extends JFrame {
 	private DBRecord DBRecordSize;
 	private DBRecord DBRecordStat;
 	private SizePanel SizePanel1;
-	private JComboBox combination;					// pull down menu for choose R*NO, R*N1 or N0*N1
-	private JComboBox subNumber;                    // pull down menu for choose NR , N0 or N1
-	private JComboBox varPowerSwitch;                    // pull down menu for choose NR , N0 or N1
+	private JComboBox<String> combination;					// pull down menu for choose R*NO, R*N1 or N0*N1
+	private JComboBox<String> subNumber;                    // pull down menu for choose NR , N0 or N1
+	private JComboBox<String> varPowerSwitch;                    // pull down menu for choose NR , N0 or N1
 	//private ArrayList<Integer> Nreader;
 	private int[] Nreader = {5,10,15,20}; 										//Number of Reader list
 	private int[] Nnormal = {32,64,128,256,512,1024,2048,4096,8192};			//Number of Normal list
@@ -76,7 +76,7 @@ public class exploreExpSize extends JFrame {
 		SizePanel1 = inputSizePanel;
 		DBRecordStat = GUI.DBRecordStat;
 		DBRecordSize.DBRecordStat=DBRecordStat;
-		fullyFrame= new JFrame("Expore Experment Size");    
+		fullyFrame= new JFrame("Explore Experiment Size");    
 		fullydisplay = new JPanel();               
 		JPanel fullyoptions = new JPanel();         // panel for 2 pull down manual
 
@@ -320,10 +320,10 @@ public class exploreExpSize extends JFrame {
 	            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
 				Date currDate = new Date();
 				final String fileTime = dateForm.format(currDate);
-				String exportFileName = "ExploreExpermentSizeOutput"+fileTime+".csv";
+				String exportFileName = "ExploreExperimentSizeOutput"+fileTime+".csv";
 				fc.setSelectedFile(new File(GUI.outputfileDirectory+"//"+exportFileName));
 				FileNameExtensionFilter filter = new FileNameExtensionFilter(
-						"Explore Experment Size Files (csv)", "csv");
+						"Explore Experiment Size Files (csv)", "csv");
 				fc.setFileFilter(filter);	
 				int fcReturn = fc.showSaveDialog((Component) e.getSource());
 				if (fcReturn == JFileChooser.APPROVE_OPTION) {
@@ -338,7 +338,7 @@ public class exploreExpSize extends JFrame {
 					bw.write(outputTable);
 					bw.close();
 					JOptionPane.showMessageDialog(
-							GUI.MRMCobject.getFrame(), "Explore Experment Size File" + " has been succeed export to " + GUI.outputfileDirectory + " !\n"+ "Filename = " +savedFileName, 
+							GUI.MRMCobject.getFrame(), "Explore Experiment Size File" + " has been succeed export to " + GUI.outputfileDirectory + " !\n"+ "Filename = " +savedFileName, 
 							"Exported", JOptionPane.INFORMATION_MESSAGE);
 				}
 			} catch (HeadlessException e1) {
