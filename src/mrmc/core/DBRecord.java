@@ -164,6 +164,27 @@ public class DBRecord {
 	public static double[][] BDGcoeffresult = new double[4][8];
 	public static double[][] BDGPanelresult = new double[7][8];
 
+	/**
+	 * The BDG[4][4] (Barrett, Clarkson, and Kupinski) variance components <br>
+	 * ----BDG[0] are the components of variance of AUC_A <br>
+	 * ----BDG[1] are the components of variance of AUC_B <br>
+	 * ----BDG[2] are the components of the covariance between AUC_A & AUC_B <br>
+	 * ----BDG[3] are the components of variance of AUC_A - AUC_B <br>
+	 * ----BDG[i][0 thru 7] refer to the following <br>
+	 * ----Clarkson2006_Acad-Radiol_v13p1410 <br>
+	 * ----Gallas2009_Commun-Stat-A-Theor_v38p2586 <br>
+	 * 
+	 */
+	// Single
+	// added for saving the results (i.e., BDG)
+	public double[][] SingleBDG = new double[4][8],
+						SingleBDGbias = new double[4][8],
+						SingleBDGcoeff = new double[4][8];
+	// added for saving the results
+	public static double[][] SingleBDGresult = new double[4][8];
+	public static double[][] SingleBDGbiasresult = new double[4][8];
+	public static double[][] SingleBDGcoeffresult = new double[4][8];
+	public static double[][] SingleBDGPanelresult = new double[7][8];
 	
 	/**
 	 * The BCK[4][7] (Barrett, Clarkson, and Kupinski) variance components <br>
@@ -270,33 +291,6 @@ public class DBRecord {
 		GUI = GUItemp;
 		
 	}
-
-	/** Single 로 변경해야 함..
-	 * The DBM[4][6] (Dorfman, Berbaum, and Metz) variance components.
- 	 * ----DBM[0] are the components of variance of AUC_A <br>
-	 * ----DBM[1] are the components of variance of AUC_B <br>
-	 * ----DBM[2] are the components of the covariance between AUC_A & AUC_B <br>
-	 * ----DBM[3] are the components of variance of AUC_A - AUC_B <br>
-	 * ----DBM[i][0 thru 5] correspond to the following components <br>
-	 * -------- R, C, RC, TR, TC, TRC <br>
-	 * Perhaps it would be better to refer to these as the 
-	 * RM (Roe and Metz) variance components. <br>
-	 * ----RM solidified the model <br>
-	 * ----DBM presented an estimation method <br>
-	 * ---- <br>
-	 * ----Dorfman1992_Invest-Radiol_v27p723 <br>
-	 * ----Roe1997_Acad-Radiol_v4p587 <br>
-	 * 
-	 */
-	public double[][]Singlebias = new double[4][6], // Single
-						Single = new double[4][6], 
-						Singlecoeff = new double[4][6];
-	public static double[][] Singleresult = new double[4][6],
-			Singlebiasresult = new double[4][6],
-			Singlecoeffresult = new double[4][6];
-	
-	public static double[][] SinglePanelresult = new double[3][6];
-
 	
 	/**
 	 *  Constructor for RoeMetz
@@ -492,6 +486,7 @@ public class DBRecord {
 		DBRecordStat = DBRecordStatTemp;
 		covMRMCstat = new CovMRMC(InputFile1, DBRecordStatTemp);
 		BDGforStatPanel();
+		SingleBDGforStatPanel(); // single
 		Decompositions();
 		TreeMap<String, TreeMap<String,ArrayList<String>>> modinformation1 =InputFile1.modinformation;
 		ArrayList<String> chosenreaderlist = new ArrayList<String>();
@@ -787,7 +782,53 @@ public class DBRecord {
 		BDGcoeffresult = BDGcoeff;
 		BDGbiasresult = BDGbias;	
 	}
+
 	
+	private void SingleBDGforStatPanel() {
+		double totalVarnoMLE=0.0;
+		totalVarMLE=0.0;
+		for (int i = 0; i < 4; i++) {
+			SingleBDG[0][i] = covMRMCstat.momentsAA[i + 1];
+			SingleBDG[1][i] = covMRMCstat.momentsBB[i + 1];
+			SingleBDG[2][i] = covMRMCstat.momentsAB[i + 1];
+			SingleBDGbias[0][i] = covMRMCstat.momentsBiasedAA[i + 1];
+			SingleBDGbias[1][i] = covMRMCstat.momentsBiasedBB[i + 1];
+			SingleBDGbias[2][i] = covMRMCstat.momentsBiasedAB[i + 1];
+			SingleBDGcoeff[0][i] = covMRMCstat.coefficientsAA[i + 1];
+			SingleBDGcoeff[1][i] = covMRMCstat.coefficientsBB[i + 1];
+			SingleBDGcoeff[2][i] = covMRMCstat.coefficientsAB[i + 1];
+			
+			SingleBDGcoeff[3][i] = 1.0;
+
+			SingleBDG[3][i] =     (SingleBDG[0][i] * SingleBDGcoeff[0][i])
+					  +     (SingleBDG[1][i] * SingleBDGcoeff[1][i])
+					  - 2.0*(SingleBDG[2][i] * SingleBDGcoeff[2][i]);
+			SingleBDGbias[3][i] = (SingleBDGbias[0][i] * SingleBDGcoeff[0][i])
+					  +     (SingleBDGbias[1][i] * SingleBDGcoeff[1][i])
+					  - 2.0*(SingleBDGbias[2][i] * SingleBDGcoeff[2][i]);
+			totalVarnoMLE += SingleBDGcoeff[3][i] * SingleBDG[3][i];
+			totalVarMLE  += SingleBDGcoeff[3][i] * SingleBDGbias[3][i];
+			
+		}
+		if (flagMLE==0){
+			totalVar= totalVarnoMLE;
+		}else{
+			totalVar=totalVarMLE;
+		}
+		
+
+		if(totalVar < 0) {
+			flagTotalVarIsNegative = 1;
+		}
+		/*
+		 * added for saving the results 
+		 */
+		
+		SingleBDGresult = SingleBDG;
+		SingleBDGcoeffresult = SingleBDGcoeff;
+		SingleBDGbiasresult = SingleBDGbias;	
+	}
+
 	/**
 	 * Determine BDG and BDGbias from {@link #covMRMCstat}, <br>
 	 * Determine BDGcoeff from {@link #covMRMCsize}
@@ -826,6 +867,7 @@ public class DBRecord {
 
 	}
 	
+	
 	/**
 	 * Derives all decompositions and coefficient matrices from predefined BDG
 	 * components and experiment size
@@ -835,23 +877,25 @@ public class DBRecord {
 		BCKcoeff = genBCKCoeff(BDGcoeff);
 		BCK = BDG2BCK(BDG, BCKcoeff);
 		BCKbias = BDG2BCK(BDGbias, BCKcoeff);
+	
+//		// Single
+//		SingleBDGcoeff = genSingleBDGCoeff(BDGcoeff);
+//		SingleBDG = BDG2SingleBDG(BDG, SingleBDGcoeff);
+//		SingleBDGbias = BDG2SingleBDG(BDGbias, SingleBDGcoeff);
 
 		if(flagFullyCrossed) {
 			DBMcoeff = genDBMCoeff(Nreader, Nnormal, Ndisease);
 			ORcoeff = genORCoeff(Nreader, Nnormal, Ndisease);
 			MScoeff = genMSCoeff(Nreader, Nnormal, Ndisease);
-			Singlecoeff = genSingleCoeff(Nreader, Nnormal, Ndisease); // Single
 
 			DBM = BCK2DBM(BCK, Nreader, Nnormal, Ndisease);
 			BDG2OR();
 			// OR = DBM2OR(0, DBM, Nreader, Nnormal, Ndisease);
 			MS = DBM2MS(DBM, Nreader, Nnormal, Ndisease);
-			Single = BCK2DBM(BCK, Nreader, Nnormal, Ndisease); // Single
 			
 			DBMbias = BCK2DBM(BCKbias, Nreader, Nnormal, Ndisease);
 			ORbias = DBM2OR(0, DBMbias, Nreader, Nnormal, Ndisease);
 			MSbias = DBM2MS(DBMbias, Nreader, Nnormal, Ndisease);
-			Singlebias = BCK2DBM(BCKbias, Nreader, Nnormal, Ndisease); // Single
 			
 			// added for saving the results
 			DBMresult = DBM;
@@ -866,9 +910,6 @@ public class DBRecord {
 			MScoeffresult = MScoeff;
 			MSbiasresult = MSbias;
 			
-			Singleresult = Single; // Single
-			Singlecoeffresult = Singlecoeff;
-			Singlebiasresult = Singlebias;
 			
 		}
 		
@@ -876,6 +917,7 @@ public class DBRecord {
 		BCKresult = BCK;
 		BCKcoeffresult = BCKcoeff;
 		BCKbiasresult = BCKbias;
+		
 	}
 
 	/**
@@ -1086,55 +1128,38 @@ public class DBRecord {
 	 * 
 	 * @param selectedMod Which modality the analysis is performed on, or
 	 *            difference
-	 * @param DBMtemp DBM decomposition of variance components
-	 * @param DBMc Coefficient matrix for DBM decomposition
+	 * @param BDGtemp BDG decomposition of variance components
+	 * @param BDGc Coefficient matrix for BDG decomposition
 	 * @return Matrix of data for display in table
 	 */
-	public static double[][] getSingleTab(int selectedMod, double[][] Singletemp, // Single
-			double[][] Singlec) {
-		double[][] SingleTab1 = new double[3][6];
-		SingleTab1[0] = Singletemp[selectedMod];
-		SingleTab1[1] = Singlec[selectedMod];
-		SingleTab1[2] = Matrix.dotProduct(SingleTab1[0], SingleTab1[1]);
+	// Single
+	public static double[][] getSingleBDGTab(int selectedMod, double[][] SingleBDGtemp,
+			double[][] SingleBDGc) {
+		double[][] SingleBDGTab1 = new double[7][8];
+		if (selectedMod == 0) {
+			SingleBDGTab1[0] = SingleBDGtemp[0];
+			SingleBDGTab1[1] = SingleBDGc[0];
+		} else if (selectedMod == 1) {
+			SingleBDGTab1[2] = SingleBDGtemp[1];
+			SingleBDGTab1[3] = SingleBDGc[1];
+		} else if (selectedMod == 3) {
+			SingleBDGTab1[0] = SingleBDGtemp[0];
+			SingleBDGTab1[1] = SingleBDGc[0];
+			SingleBDGTab1[2] = SingleBDGtemp[1];
+			SingleBDGTab1[3] = SingleBDGc[1];
+			SingleBDGTab1[4] = SingleBDGtemp[2]; // covariance
+			SingleBDGTab1[5] = Matrix.scale(SingleBDGc[2], 2);
+		}
+		for (int i = 0; i < 7; i++) {
+			SingleBDGTab1[6][i] = (SingleBDGTab1[0][i] * SingleBDGTab1[1][i])
+					+ (SingleBDGTab1[2][i] * SingleBDGTab1[3][i])
+					- (SingleBDGTab1[4][i] * SingleBDGTab1[5][i]);
+		}
 		
-		SinglePanelresult = SingleTab1;
 		
-		return SingleTab1;
+		// added for saving the results (i.e., BDG comp m0~total)
+		return SingleBDGTab1;
 	}
-	
-	// Single ??
-	/**
-	 * Transform DBM representation of variance components into MS
-	 * representation of variance components
-	 * 
-	 * @param DBM Matrix of DBM variance components
-	 * @param Nreader2 Number of readers
-	 * @param Nnormal2 Number of normal cases
-	 * @param Ndisease2 Number of disease cases
-	 * @return Matrix of MS representation of variance components
-	 */
-	public static double[][] Single2MS(double[][] Single, long Nreader2, long Nnormal2, long Ndisease2) {
-		double[][] c = new double[4][6];
-		double[][] BAlpha = new double[][] {
-				{ 2 * (Nnormal2 + Ndisease2), 0, 2, (Nnormal2 + Ndisease2), 0, 1 },
-				{ 0, 2 * Nreader2, 2, 0, Nreader2, 1 }, 
-				{ 0, 0, 2, 0, 0, 1 },
-				{ 0, 0, 0, (Nnormal2 + Ndisease2), 0, 1 },
-				{ 0, 0, 0, 0, Nreader2, 1 }, 
-				{ 0, 0, 0, 0, 0, 1 } };
-		for (int i = 0; i < 4; i++)
-			for (int j = 0; j < 6; j++)
-				c[i][j] = 0;
-		c = Matrix.matrixTranspose(Matrix.multiply(BAlpha,
-				Matrix.matrixTranspose(Single)));
-		for (int i = 0; i < 2; i++)
-			for (int j = 0; j < 6; j++)
-				c[i][j] = c[i][j] / 2.0;
-
-		return c;
-
-	}
-
 	
 	/**
 	 * Transform DBM representation of variance components into MS
@@ -1253,7 +1278,6 @@ public class DBRecord {
 	}
 
 
-
 	/**
 	 * Determines the coefficient matrix for BDG variance components given a
 	 * fully crossed study design [4][8].
@@ -1282,6 +1306,32 @@ public class DBRecord {
 
 		return c;
 	}
+	
+	/**
+	 * Determines the coefficient matrix for BDG variance components given a
+	 * fully crossed study design [4][8].
+	 * This is only executed when the components of variance are input by hand or during iRoeMetz
+	 * 
+	 * @param Nreader2 Number of readers
+	 * @param Nnormal2 Number of normal cases
+	 * @param Ndisease2 Number of disease cases
+	 * @return Matrix containing coefficients corresponding to BDG variance
+	 *         components
+	 */
+	// Single
+	public static double[][] genSingleBDGCoeff(long Nreader2, long Nnormal2, long Ndisease2) {
+		double[][] c = new double[4][8];
+		c[0][0] = 1.0 / (Nnormal2 * Ndisease2);
+		c[0][1] = c[0][0] * (Nnormal2 - 1.0);
+		c[0][2] = c[0][0] * (Ndisease2 - 1.0);
+		c[0][3] = c[0][0] * (Nnormal2 - 1.0) * (Ndisease2 - 1.0);
+		c[1] = c[0];
+		c[2] = c[0];
+		c[3] = c[0];
+
+		return c;
+	}
+
 
 	/**
 	 * Determines the coefficient matrix for BCK variance components given <code>BDGcoeff</code> <br>
@@ -1424,44 +1474,6 @@ public class DBRecord {
 		return c;
 	}
 
-	// Single ??
-	/**
-	 * Determines the coefficient matrix for DBM variance components given a
-	 * fully crossed study design [4][6]
-	 * 
-	 * @param Nreader2 Number of readers
-	 * @param Nnormal2 Number of normal cases
-	 * @param Ndisease2 Number of disease cases
-	 * @return Matrix containing coefficients corresponding to DBM variance
-	 *         components
-	 */
-	public static double[][] genSingleCoeff(long Nreader2, long Nnormal2, long Ndisease2) {
-		// TODO calculate
-		double[][] c = new double[4][6];
-
-		/* per unit */
-		c[0][0] = 0.0;
-		c[0][1] = 1.0;
-		c[0][2] = 2.0;
-		c[0][3] = 3.0;
-		c[0][4] = 4.0;
-		c[0][5] = 5.0;
-
-		c[1] = c[0];
-		c[2] = Matrix.scale(c[0], 0);
-		c[3] = Matrix.scale(c[0], 2);
-
-		c[0][3] = 0;
-		c[0][4] = 0;
-		c[0][5] = 0;
-		c[1][3] = 0;
-		c[1][4] = 0;
-		c[1][5] = 0;
-		c[3][0] = 0;
-		c[3][1] = 0;
-		c[3][2] = 0;
-		return c;
-	}
 
 	/**
 	 * Transforms matrix of BDG variance components into matrix of OR variance
@@ -1700,34 +1712,7 @@ public class DBRecord {
 		return DBMnew;
 	}
 	
-	// Single ??
 
-	/**
-	 * Scales/resizes parts of DBM variance components matrix according to
-	 * number of normal/disease cases
-	 * 
-	 * @param dbm DBM variance components matrix
-	 * @param newR Number of readers
-	 * @param newN Number of normal cases
-	 * @param newD Number of disease cases
-	 * @return Resized DBM variance components matrix
-	 */
-	public double[][] Singleresize(double[][] single, int newR, int newN, int newD) {
-		double[][] Singlenew = new double[4][6];
-		double lamda = 1.0 / Double.valueOf(newN + newD);
-		for (int i = 0; i < 4; i++) {
-			Singlenew[i][0] = single[i][0];
-			Singlenew[i][1] = single[i][1] * lamda;
-			Singlenew[i][2] = single[i][2] * lamda;
-			Singlenew[i][3] = single[i][3];
-			Singlenew[i][4] = single[i][4] * lamda;
-			Singlenew[i][5] = single[i][5] * lamda;
-		}
-
-		return Singlenew;
-	}
-
-	
 	public static void copy(DBRecord DBRecordTemp, DBRecord copyDBRecordTemp) {
 
 		copyDBRecordTemp.AUCs = Matrix.copy(DBRecordTemp.AUCs);

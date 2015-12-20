@@ -62,10 +62,10 @@ public class StatPanel {
 	/**
 	 * table1 corresponds to the variance analysis
 	 */
-	private JTable BDGtable1, BCKtable1, DBMtable1, ORtable1, MStable1, Singletable1; // Single
+	private JTable BDGtable1, BCKtable1, DBMtable1, ORtable1, MStable1, SingleBDGtable1; // Single
 	
 	JTabbedPane tabbedPane1;
-	private JLabel BDGvar1, BCKvar1, DBMvar1, ORvar1, MSvar1, Singlevar1; // Single
+	private JLabel BDGvar1, BCKvar1, DBMvar1, ORvar1, MSvar1, SingleBDGvar1; // Single
 
 	DecimalFormat twoDec = new DecimalFormat("0.00");
 	DecimalFormat threeDec = new DecimalFormat("0.000");
@@ -170,7 +170,7 @@ public class StatPanel {
 		// create MS tab
 		JPanel panelMS1 = makeMSTab(rowNamesSingle);
 		// Single Create Single tab
-		JPanel panelSingle1 = makeSingleTab(rowNamesSingle);
+		JPanel panelSingleBDG1 = makeSingleBDGTab(rowNamesDiff);
 		
 		tabbedPane1 = new JTabbedPane();
 		tabbedPane1.addTab("BDG", panelBDG1);
@@ -178,7 +178,7 @@ public class StatPanel {
 		tabbedPane1.addTab("DBM", panelDBM1);
 		tabbedPane1.addTab("OR", panelOR1);
 		tabbedPane1.addTab("MS", panelMS1);
-		tabbedPane1.addTab("Single", panelSingle1); // Single
+		tabbedPane1.addTab("Single", panelSingleBDG1); // Single
 		
 		JPanelStat.add(StatPanelRow1);
 		JPanelStat.add(StatPanelRow2);
@@ -314,7 +314,7 @@ public class StatPanel {
 		DBMvar1.setText("total var=");
 		ORvar1.setText("total var=");
 		MSvar1.setText("total var=");
-		Singlevar1.setText("totla var="); // Single
+		SingleBDGvar1.setText("totla var="); // Single
 		StatJLabelTotalVar.setText("total var=");
 
 		for (int i = 0; i < BDGtable1.getRowCount(); i++) {
@@ -322,11 +322,16 @@ public class StatPanel {
 				BDGtable1.setValueAt(0, i, j);
 				BDGtable1.getColumnModel().getColumn(j)
 						.setCellRenderer(new DecimalFormatRenderer());
-			}
+							}
 			for (int j = 0; j < 7; j++) {
 				BCKtable1.setValueAt(0, i, j);
 				BCKtable1.getColumnModel().getColumn(j)
 						.setCellRenderer(new DecimalFormatRenderer());
+			}
+			for (int j = 0; j < 4; j++) {
+				SingleBDGtable1.setValueAt(0, i, j); // Single
+				SingleBDGtable1.getColumnModel().getColumn(j)
+						.setCellRenderer(new DecimalFormatRenderer()); // tab 에 결과 뿌려
 			}
 		}
 		for (int i = 0; i < MStable1.getRowCount(); i++) {
@@ -342,10 +347,6 @@ public class StatPanel {
 						.setCellRenderer(new DecimalFormatRenderer());
 				ORtable1.getColumnModel().getColumn(j)
 						.setCellRenderer(new DecimalFormatRenderer());
-				Singletable1.setValueAt(0, i, j); // Single
-				Singletable1.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-
 			}
 		}
 		
@@ -375,8 +376,8 @@ public class StatPanel {
 				DBRecordStat.OR, DBRecordStat.ORcoeff);
 		double[][] MSdata1 = DBRecord.getMSTab(DBRecordStat.selectedMod,
 				DBRecordStat.MS, DBRecordStat.MScoeff);
-		double[][] Singledata1 = DBRecord.getSingleTab(DBRecordStat.selectedMod, // Single
-				DBRecordStat.Single, DBRecordStat.Singlecoeff); // Single
+		double[][] SingleBDGdata1 = DBRecord.getSingleBDGTab(DBRecordStat.selectedMod, // Single
+				DBRecordStat.SingleBDG, DBRecordStat.SingleBDGcoeff); // Single
 		if(DBRecordStat.flagMLE == 1) {
 			BDGdata1 = DBRecord.getBDGTab(DBRecordStat.selectedMod,
 					DBRecordStat.BDGbias, DBRecordStat.BDGcoeff);
@@ -388,18 +389,18 @@ public class StatPanel {
 					DBRecordStat.ORbias, DBRecordStat.ORcoeff);
 			MSdata1 = DBRecord.getMSTab(DBRecordStat.selectedMod,
 					DBRecordStat.MSbias, DBRecordStat.MScoeff);			
-			Singledata1 = DBRecord.getSingleTab(DBRecordStat.selectedMod, // Single
-					DBRecordStat.Singlebias, DBRecordStat.Singlecoeff); // Single
+			SingleBDGdata1 = DBRecord.getSingleBDGTab(DBRecordStat.selectedMod, // Single
+					DBRecordStat.SingleBDGbias, DBRecordStat.SingleBDGcoeff); // Single
 		}
 		double BDGv = Matrix.total(BDGdata1[6]);
 		double BCKv = Matrix.total(BCKdata1[6]);
 		double DBMv = Matrix.total(DBMdata1[2]);
 		double ORv = Matrix.total(ORdata1[2]);
 		double MSv = Matrix.total(MSdata1[2]);
-		double Singlev = Matrix.total(Singledata1[2]); // Single
+		double SingleBDGv = Matrix.total(SingleBDGdata1[6]); // Single
 		
 		double[][][] allTableData = new double[][][] { BDGdata1, BCKdata1,
-				DBMdata1, ORdata1, MSdata1, Singledata1 }; // Single
+				DBMdata1, ORdata1, MSdata1, SingleBDGdata1 }; // Single
 	
 		for (int i = 0; i < 7; i++) {
 			for (int j = 0; j < 8; j++) {
@@ -410,6 +411,11 @@ public class StatPanel {
 			for (int j = 0; j < 7; j++) {
 				BCKtable1.setValueAt(allTableData[1][i][j], i, j);
 				BCKtable1.getColumnModel().getColumn(j)
+						.setCellRenderer(new DecimalFormatRenderer());
+			}
+			for (int j = 0; j < 4; j++) {
+				SingleBDGtable1.setValueAt(allTableData[5][i][j], i, j); // Single tab result.
+				SingleBDGtable1.getColumnModel().getColumn(j)
 						.setCellRenderer(new DecimalFormatRenderer());
 			}
 		}
@@ -423,11 +429,7 @@ public class StatPanel {
 				ORtable1.getColumnModel().getColumn(j)
 						.setCellRenderer(new DecimalFormatRenderer());
 				MStable1.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-				Singletable1.setValueAt(allTableData[5][i][j], i, j); // Single tab result.
-				Singletable1.getColumnModel().getColumn(j)
-				.setCellRenderer(new DecimalFormatRenderer());
-						
+						.setCellRenderer(new DecimalFormatRenderer());						
 				// if study is not fully crossed, DBM, OR, MS calculation is
 				// incorrect, tabs grayed out
 			}
@@ -445,8 +447,8 @@ public class StatPanel {
 		ORvar1.setText("total var=" + output);
 		output = threeDecE.format(MSv);
 		MSvar1.setText("total var=" + output);
-		output = threeDecE.format(Singlev); // Single
-		Singlevar1.setText("total var=" + output); // Single
+		output = threeDecE.format(SingleBDGv); // Single
+		SingleBDGvar1.setText("total var=" + output); // Single
 		
 		if (DBRecordStat.flagMLE == 1) {
 			tabbedPane1.setTitleAt(0, "BDG**");
@@ -650,23 +652,24 @@ public class StatPanel {
 	 * @param rowNames Names for row labels of table
 	 * @return JPanel containing Single tab
 	 */
-	private JPanel makeSingleTab(String[] rowNames) { // Single
+	// Single
+	private JPanel makeSingleBDGTab(String[] rowNames) {
 
-		JPanel panelSingle = new JPanel();
-		DefaultTableModel dm = new DefaultTableModel(3, 6);
-		String[] Singlenames = { "R", "C", "R~C", "T~R", "T~C", "T~R~C" };
-		Singletable1 = new JTable(dm);
-		JScrollPane Singlescroll = genTable(Singletable1, Singlenames, rowNames);
-		panelSingle.add(Singlescroll);
-		int height = Singletable1.getRowHeight();
-		Singletable1.setPreferredScrollableViewportSize(new Dimension(500,
-				height * 4));
-		Singletable1.setFillsViewportHeight(true);
-		Singlevar1 = new JLabel("sqrt(Var)=0.00");
-		panelSingle.add(Singlevar1);
+		JPanel panelSingleBDG = new JPanel();
+		DefaultTableModel dm = new DefaultTableModel(7, 8);
+		String[] SingleBDGnames = { "M1", "M2", "M3", "M4" };
+		SingleBDGtable1 = new JTable(dm);
+		JScrollPane SingleBDGscroll = genTable(SingleBDGtable1, SingleBDGnames, rowNames);
+		int height = SingleBDGtable1.getRowHeight();
+		panelSingleBDG.add(SingleBDGscroll);
+		SingleBDGtable1.setPreferredScrollableViewportSize(new Dimension(650,
+				height * 8));
+		SingleBDGtable1.setFillsViewportHeight(true);
+		SingleBDGvar1 = new JLabel("sqrt(Var)=0.00");
+		panelSingleBDG.add(SingleBDGvar1);
 
-		return panelSingle;
-
+		return panelSingleBDG;
+		
 	}
 
 	/**
