@@ -718,7 +718,7 @@ public class RMGUInterface {
 	 * writes information to selected file.
 	 */
 	class SaveFieldsListener implements ActionListener {
-		@Override
+		@Override		
 		public void actionPerformed(ActionEvent e) {
 			try {
 				JFileChooser fc = new JFileChooser();
@@ -760,6 +760,21 @@ public class RMGUInterface {
 					bw.write("n0: " + NnormalJTextField.getText() + "\n");
 					bw.write("n1: " + NdiseaseJTextField.getText() + "\n");
 					bw.write("nr: " + NreaderJTextField.getText() + "\n");
+					bw.write("Study Design \n");
+					bw.write("# of Split-Plot Groups: " + SizePanelRoeMetz.numSplitPlots + "\n");
+					if (SizePanelRoeMetz.pairedReadersFlag == 1)
+						bw.write("Paired Readers: Yes \n");
+					else
+						bw.write("Paired Readers: No \n");
+					if (SizePanelRoeMetz.pairedNormalsFlag == 1)
+						bw.write("Paired Normal: Yes \n");
+					else
+						bw.write("Paired Normal: No \n");
+					if (SizePanelRoeMetz.pairedDiseasedFlag == 1)
+						bw.write("Paired Disease: Yes \n");
+					else
+						bw.write("Paired Diesase: No \n");
+						
 					bw.close();
 				}
 			} catch (HeadlessException e1) {
@@ -2423,7 +2438,7 @@ public class RMGUInterface {
 		double sqrtMCvarAUC_AminusB = Math.sqrt(mcVarAUC_AminusB);
 	   String str = report;
 	   str = str
-				+ "\r\n**********************MC Results***************************\r\n";	
+				+ "\r\n**********************MC Variance Results***************************\r\n";	
 		str =  str + "      mcVarAUC_A = " + fourDecE.format(mcVarAUC_A) + "," + "      sqrtMCvarAUC_A = " + fourDecE.format(sqrtMCvarAUC_A) + "\r\n";
 		str =  str + "      mcVarAUC_B = " + fourDecE.format(mcVarAUC_B) + "," + "      sqrtMCvarAUC_B = " + fourDecE.format(sqrtMCvarAUC_B) + "\r\n";
 		str =  str + "mcVarAUC_AminusB = " + fourDecE.format(mcVarAUC_AminusB) + "," + "sqrtMCvarAUC_AminusB = " + fourDecE.format(sqrtMCvarAUC_AminusB) + "\r\n";
