@@ -66,6 +66,7 @@ public class DBRecord {
 	
 	public boolean verbose = true;
     public double totalVarMLE;
+    public double totalVarMLESingle; // Single
 	public GUInterface GUI;
 	public DBRecord DBRecordStat, DBRecordSize;
 	public InputFile InputFile1;
@@ -784,9 +785,9 @@ public class DBRecord {
 	}
 
 	
-	private void SingleBDGforStatPanel() {
+	private void SingleBDGforStatPanel() { // Single
 		double totalVarnoMLE=0.0;
-		totalVarMLE=0.0;
+		totalVarMLE=0.0; // TODO change it to totalVarMLESingle
 		for (int i = 0; i < 4; i++) {
 			SingleBDG[0][i] = covMRMCstat.momentsAA[i + 1];
 			SingleBDG[1][i] = covMRMCstat.momentsBB[i + 1];

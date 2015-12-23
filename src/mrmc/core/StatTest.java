@@ -96,10 +96,13 @@ public class StatTest {
 		// calculate p-value and cutoff assuming t-distribution with DF_BDG or DF_Hillis
 		// Use normal distribution if df > 50, since they are approximately
 		// equal at that point, and StudentDist can't handle large dfs
-		if (DF_BDG >= 50) {
+		if (DF_BDG >= 50) { 
 			pValBDG = pValNormal;
 			cutoffBDG = cutoffNormal;
-		} else {
+		} else if (DBRecordStat.Nreader == 1) { // single
+		
+		}
+		else {
 			StudentDist tdist = new StudentDist((int) DF_BDG );
 			pValBDG = 2*(1 - tdist.cdf( tStatEst ));
 			cutoffBDG = tdist.inverseF( 1-sig/2 );
@@ -108,10 +111,13 @@ public class StatTest {
 		// calculate p-value and cutoff assuming t-distribution with DF_Hillis
 		// Use normal distribution if df > 50, since they are approximately
 		// equal at that point, and FisherFDist can't handle large dfs
-		if (DF_Hillis >= 50) {
+		if (DF_Hillis >= 50) { 
 			pValHillis = pValNormal;
 			cutoffHillis = cutoffNormal;
-		} else {
+		} else if (DBRecordStat.Nreader == 1) { // single
+			
+		}
+		else {
 			StudentDist tdist = new StudentDist((int) DF_Hillis );
 			pValHillis = 2*(1 - tdist.cdf( tStatEst ));
 			cutoffHillis = tdist.inverseF( 1-sig/2 );
@@ -444,7 +450,7 @@ double DF_denom = 0.0;
 if (selectedMod == 0){
 	// DF leading term corresponding to normal cases
 	double DFnormal  = 1.0/tempBCKcoeff[selectedMod][0] - 1.0;
-	// DF leading term corresponding to disese cases
+	// DF leading term corresponding to disease cases
 	double DFdisease = 1.0/tempBCKcoeff[selectedMod][1] - 1.0;
 	// DF leading term corresponding to reader cases
 	double DFreader  = 1.0/tempBCKcoeff[selectedMod][3] - 1.0;
@@ -834,7 +840,8 @@ return DF_BDG;
 
 		// we use normal distribution for df > 50 since it is close to Fisher F
 		// and fisherF fails for DOF > 2000
-		if (df >= 50) {
+		// if (df >= 50) { <-- original 
+		if (df >= 50 || df == 0) { // <-- single		
 			cutoff = NormalDist.inverseF(0, 1, 1 - sigLevel / 2.0);
 			power = 1 - NormalDist.cdf(Math.sqrt(lambda), 1, cutoff);
 			result = PowerZtest();
