@@ -52,6 +52,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import mrmc.chart.exportToFile;
 import mrmc.core.DBRecord;
 import mrmc.core.InputFile;
 import mrmc.core.MRMC;
@@ -2203,9 +2204,23 @@ public class RMGUInterface {
 					outputDirectory = fc.getCurrentDirectory();			
 					String savedFileName = fc.getSelectedFile().getName();
 					String report = "";
-					report = genReport(DB1, StatPanel1);	
-					if (subFileName.equals("SimulationOutput"))
-						report = genMCresults(report);
+					if (subFileName.equals("SimulationOutput")){
+						report = report + "iRoeMetz simulation summary statistics from " + RoeMetz.versionName + "\r\n";
+						report = report + "Summary statistics written to file named:" + "\r\n";
+						report = report + savedFileName + "\r\n" + "\r\n";
+						report = report + "Seed for RNG: " + JTextField_seed.getText() + "\r\n";
+						report = report + "Number of Experiments: " + JTextField_Nexp.getText() + "\r\n";
+						report = exportToFile.exportSummary(report, DB1);	
+						report = exportToFile.exportStatPanel(report, DB1, StatPanel1);						
+					    report = exportToFile.exportMCvariance(report, varDBRecordStat);
+					}else{
+						report = report + "iRoeMetz Numerical summary statistics from " + RoeMetz.versionName + "\r\n";
+						report = report + "Summary statistics written to file named:" + "\r\n";
+						report = report + savedFileName + "\r\n" + "\r\n";
+						report = exportToFile.exportSummary(report, DB1);	
+						report = exportToFile.exportStatPanel(report, DB1, StatPanel1);			
+					}
+
 					bw.write(report);
 					bw.close();
 					JOptionPane.showMessageDialog(
