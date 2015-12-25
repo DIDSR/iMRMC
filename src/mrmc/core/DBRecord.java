@@ -130,6 +130,7 @@ public class DBRecord {
 	 * 
 	 */
 	public double totalVar = -1.0;
+	public double totalVarSingle = -1.0; // Single
 	/**
 	 * Indicator whether {mrmc.gui.InputFileCard#FlagMLE} is set
 	 */
@@ -177,15 +178,15 @@ public class DBRecord {
 	 * 
 	 */
 	// Single
-	// added for saving the results (i.e., BDG)
-	public double[][] SingleBDG = new double[4][8],
-						SingleBDGbias = new double[4][8],
-						SingleBDGcoeff = new double[4][8];
+	// added for saving the results (i.e., Single)
+	public double[][] SingleBDG = new double[4][8], 		// FIXME
+						SingleBDGbias = new double[4][8], 	// FIXME
+						SingleBDGcoeff = new double[4][8]; 	// FIXME
 	// added for saving the results
-	public static double[][] SingleBDGresult = new double[4][8];
-	public static double[][] SingleBDGbiasresult = new double[4][8];
-	public static double[][] SingleBDGcoeffresult = new double[4][8];
-	public static double[][] SingleBDGPanelresult = new double[7][8];
+	public static double[][] SingleBDGresult = new double[4][8]; 	    // FIXME
+	public static double[][] SingleBDGbiasresult = new double[4][8]; 	// FIXME
+	public static double[][] SingleBDGcoeffresult = new double[4][8]; 	// FIXME
+	public static double[][] SingleBDGPanelresult = new double[7][8]; 	// FIXME
 	
 	/**
 	 * The BCK[4][7] (Barrett, Clarkson, and Kupinski) variance components <br>
@@ -282,7 +283,7 @@ public class DBRecord {
 			MScoeffresult = new double[4][6];
 	
 	public static double[][] MSPanelresult = new double[3][6];
-	
+
 	/**
 	 * Constructor for iMRMC
 	 * @param GUItemp
@@ -486,8 +487,11 @@ public class DBRecord {
 		InputFile1 = InputFileTemp;
 		DBRecordStat = DBRecordStatTemp;
 		covMRMCstat = new CovMRMC(InputFile1, DBRecordStatTemp);
-		BDGforStatPanel();
-		SingleBDGforStatPanel(); // single
+		if (DBRecordStat.Nreader == 1) {
+			SingleBDGforStatPanel(); // single
+		} else {
+			BDGforStatPanel();
+		}
 		Decompositions();
 		TreeMap<String, TreeMap<String,ArrayList<String>>> modinformation1 =InputFile1.modinformation;
 		ArrayList<String> chosenreaderlist = new ArrayList<String>();
@@ -590,54 +594,106 @@ public class DBRecord {
 				{ 	 1/N0/NR, 	 (N0-1)/N0/NR,				 0,						  0,   (NR-1)/N0/NR,	(N0-1)*(NR-1)/N0/NR,				      0,						    0 },
 				{    1/N1/NR, 	    	    0, 	  (N1-1)/N1/NR,						  0,   (NR-1)/N1/NR,					  0, 	(N1-1)*(NR-1)/N1/NR, 							0 },
 				{ 1/N0/N1/NR, (N0-1)/N0/N1/NR, (N1-1)/N0/N1/NR, (N0-1)*(N1-1)/N0/N1/NR, (NR-1)/N0/N1/NR, (N0-1)*(NR-1)/N0/N1/NR, (N1-1)*(NR-1)/N0/N1/NR, (N0-1)*(N1-1)*(NR-1)/N0/N1/NR}};		
-        double[][] tempBDG = new double[4][8];
-		if(selectedMod==0)
-			tempBDG[0]=	BDG[0];
-		else if (selectedMod==1)
-			tempBDG[1] = BDG[1];
-		else if(selectedMod==3)
-			tempBDG = BDG;
-	    double [][] unbiasToBiast = Matrix.matrixTranspose(unbiasToBias);
-	    BDGbias = Matrix.multiply(tempBDG , unbiasToBiast);		
-		double totalVarnoMLE=0.0;
-		totalVarMLE=0.0;
-		totalVar=0.0;
-		BDGcoeff = genBDGCoeff(DBRecordStat.Nreader,DBRecordStat.Nnormal,DBRecordStat.Ndisease);
-	    double[] temp= new double[8];
-		for (int i = 0; i < 8; i++) {
-		     temp[i]=1.0;
-		}
-		DBRecordStat.BDGcoeff[3] = temp;
-		for (int i = 0; i < 8; i++) {
-			DBRecordStat.BDG[3][i] =     (tempBDG[0][i] * DBRecordStat.BDGcoeff[0][i])
-					  +     (tempBDG[1][i] * DBRecordStat.BDGcoeff[1][i])
-					  - 2.0*(tempBDG[2][i] * DBRecordStat.BDGcoeff[2][i]);
-			DBRecordStat.BDGbias[3][i] =     (DBRecordStat.BDGbias[0][i] * DBRecordStat.BDGcoeff[0][i])
-					  +     (DBRecordStat.BDGbias[1][i] * DBRecordStat.BDGcoeff[1][i])
-					  - 2.0*(DBRecordStat.BDGbias[2][i] * DBRecordStat.BDGcoeff[2][i]);			
-			totalVarnoMLE += BDGcoeff[3][i] * BDG[3][i];
-			totalVarMLE  += BDGcoeff[3][i] * BDGbias[3][i];
-		}
-		if (flagMLE==0){
-			totalVar= totalVarnoMLE;
-		}else{
-			totalVar=totalVarMLE;
-		}
-		
+        if (DBRecordStat.Nreader == 1) { // Single
+			double[][] tempSingleBDG = new double[4][4];
+			if (selectedMod == 0)
+				tempSingleBDG[0] = SingleBDG[0];
+			else if (selectedMod == 1)
+				tempSingleBDG[1] = SingleBDG[1];
+			else if (selectedMod == 3)
+				tempSingleBDG = SingleBDG;
+			double[][] unbiasToBiast = Matrix.matrixTranspose(unbiasToBias);
+			SingleBDGbias = Matrix.multiply(tempSingleBDG, unbiasToBiast);
+			double totalVarnoMLE = 0.0;
+			totalVarMLESingle = 0.0;
+			totalVarSingle = 0.0;
+			SingleBDGcoeff = genSingleBDGCoeff(DBRecordStat.Nreader, DBRecordStat.Nnormal, DBRecordStat.Ndisease);
+			double[] temp = new double[4];
+			for (int i = 0; i < 4; i++) {
+				temp[i] = 1.0;
+			}
+			DBRecordStat.SingleBDGcoeff[3] = temp;
+			for (int i = 0; i < 4; i++) {
+				DBRecordStat.SingleBDG[3][i] = (tempSingleBDG[0][i] * DBRecordStat.SingleBDGcoeff[0][i])
+						+ (tempSingleBDG[1][i] * DBRecordStat.SingleBDGcoeff[1][i])
+						- 2.0 * (tempSingleBDG[2][i] * DBRecordStat.SingleBDGcoeff[2][i]);
+				DBRecordStat.SingleBDGbias[3][i] = (DBRecordStat.SingleBDGbias[0][i] * DBRecordStat.SingleBDGcoeff[0][i])
+						+ (DBRecordStat.SingleBDGbias[1][i] * DBRecordStat.SingleBDGcoeff[1][i])
+						- 2.0 * (DBRecordStat.SingleBDGbias[2][i] * DBRecordStat.SingleBDGcoeff[2][i]);
+				totalVarnoMLE += SingleBDGcoeff[0][i] * SingleBDG[3][i];
+				totalVarMLESingle += SingleBDGcoeff[0][i] * SingleBDGbias[3][i];
+			}
+			if (flagMLE == 0) {
+				totalVarSingle = totalVarnoMLE;
 
-		if(totalVar < 0) {
-			flagTotalVarIsNegative = 1;
-		}
-		
-		BDGresult = BDG;
-		BDGcoeffresult = BDGcoeff;
-		BDGbiasresult = BDGbias;	
-		
-		
-		DBRecordStat.Decompositions();
-		DBRecordStat.testStat = new StatTest(DBRecordStat);
-		
-		
+
+			} else {
+				totalVarSingle = totalVarMLESingle;
+			}
+
+
+			if (totalVarSingle < 0) {
+				flagTotalVarIsNegative = 1;
+			}
+
+			SingleBDGresult = SingleBDG;
+			SingleBDGcoeffresult = SingleBDGcoeff;
+			SingleBDGbiasresult = SingleBDGbias;
+
+
+			DBRecordStat.Decompositions();
+			DBRecordStat.testStat = new StatTest(DBRecordStat);
+		} else {
+			double[][] tempBDG = new double[4][8];
+			if (selectedMod == 0)
+				tempBDG[0] = BDG[0];
+			else if (selectedMod == 1)
+				tempBDG[1] = BDG[1];
+			else if (selectedMod == 3)
+				tempBDG = BDG;
+			double[][] unbiasToBiast = Matrix.matrixTranspose(unbiasToBias);
+			BDGbias = Matrix.multiply(tempBDG, unbiasToBiast);
+			double totalVarnoMLE = 0.0;
+			totalVarMLE = 0.0;
+			totalVar = 0.0;
+			// BDGcoeff is c1 ~ c4 in one shot paper (Gallas 2006)
+			BDGcoeff = genBDGCoeff(DBRecordStat.Nreader, DBRecordStat.Nnormal, DBRecordStat.Ndisease);
+			double[] temp = new double[8];
+			for (int i = 0; i < 8; i++) {
+				temp[i] = 1.0;
+			}
+			DBRecordStat.BDGcoeff[3] = temp;
+			for (int i = 0; i < 8; i++) {
+				// DBRecordStat.BDGcoeff is normalized constance used in A.16 ~ A. 23 (Gallas 2006)
+				DBRecordStat.BDG[3][i] = (tempBDG[0][i] * DBRecordStat.BDGcoeff[0][i])
+						+ (tempBDG[1][i] * DBRecordStat.BDGcoeff[1][i])
+						- 2.0 * (tempBDG[2][i] * DBRecordStat.BDGcoeff[2][i]);
+				DBRecordStat.BDGbias[3][i] = (DBRecordStat.BDGbias[0][i] * DBRecordStat.BDGcoeff[0][i])
+						+ (DBRecordStat.BDGbias[1][i] * DBRecordStat.BDGcoeff[1][i])
+						- 2.0 * (DBRecordStat.BDGbias[2][i] * DBRecordStat.BDGcoeff[2][i]);
+				totalVarnoMLE += BDGcoeff[3][i] * BDG[3][i];
+				totalVarMLE += BDGcoeff[3][i] * BDGbias[3][i];
+			}
+			if (flagMLE == 0) {
+				totalVar = totalVarnoMLE;
+			} else {
+				totalVar = totalVarMLE;
+			}
+
+
+			if (totalVar < 0) {
+				flagTotalVarIsNegative = 1;
+			}
+
+			BDGresult = BDG;
+			BDGcoeffresult = BDGcoeff;
+			BDGbiasresult = BDGbias;
+
+
+			DBRecordStat.Decompositions();
+			DBRecordStat.testStat = new StatTest(DBRecordStat);
+
+		} // Single
 	}
 	
 	/**
@@ -784,50 +840,58 @@ public class DBRecord {
 		BDGbiasresult = BDGbias;	
 	}
 
-	
+	/** TODO Single variance..
+	 * Determine SingleBDG, SingleBDGbias, and SingleBDGcoeff from {@link #DBRecordStat}, <br>
+	 * Calculate {@link #totalVarSingle}
+	 */
 	private void SingleBDGforStatPanel() { // Single
 		double totalVarnoMLE=0.0;
-		totalVarMLE=0.0; // TODO change it to totalVarMLESingle
-		for (int i = 0; i < 4; i++) {
+		totalVarMLESingle=0.0;
+		for (int i = 0; i < 8; i++) {
 			SingleBDG[0][i] = covMRMCstat.momentsAA[i + 1];
 			SingleBDG[1][i] = covMRMCstat.momentsBB[i + 1];
 			SingleBDG[2][i] = covMRMCstat.momentsAB[i + 1];
+			System.out.println ("\nSingleBDG" + SingleBDG[0][i]);
 			SingleBDGbias[0][i] = covMRMCstat.momentsBiasedAA[i + 1];
 			SingleBDGbias[1][i] = covMRMCstat.momentsBiasedBB[i + 1];
 			SingleBDGbias[2][i] = covMRMCstat.momentsBiasedAB[i + 1];
 			SingleBDGcoeff[0][i] = covMRMCstat.coefficientsAA[i + 1];
 			SingleBDGcoeff[1][i] = covMRMCstat.coefficientsBB[i + 1];
 			SingleBDGcoeff[2][i] = covMRMCstat.coefficientsAB[i + 1];
-			
+			System.out.println ("\nSingleBDGcoeff" + SingleBDGcoeff[0][i]);
+
 			SingleBDGcoeff[3][i] = 1.0;
 
 			SingleBDG[3][i] =     (SingleBDG[0][i] * SingleBDGcoeff[0][i])
-					  +     (SingleBDG[1][i] * SingleBDGcoeff[1][i])
-					  - 2.0*(SingleBDG[2][i] * SingleBDGcoeff[2][i]);
-			SingleBDGbias[3][i] = (SingleBDGbias[0][i] * SingleBDGcoeff[0][i])
-					  +     (SingleBDGbias[1][i] * SingleBDGcoeff[1][i])
-					  - 2.0*(SingleBDGbias[2][i] * SingleBDGcoeff[2][i]);
+					        +     (SingleBDG[1][i] * SingleBDGcoeff[1][i])
+					        - 2.0*(SingleBDG[2][i] * SingleBDGcoeff[2][i]);
+			SingleBDGbias[3][i] =     (SingleBDGbias[0][i] * SingleBDGcoeff[0][i])
+					            +     (SingleBDGbias[1][i] * SingleBDGcoeff[1][i])
+					            - 2.0*(SingleBDGbias[2][i] * SingleBDGcoeff[2][i]);
 			totalVarnoMLE += SingleBDGcoeff[3][i] * SingleBDG[3][i];
-			totalVarMLE  += SingleBDGcoeff[3][i] * SingleBDGbias[3][i];
-			
+			totalVarMLESingle  += SingleBDGcoeff[3][i] * SingleBDGbias[3][i];
+
 		}
 		if (flagMLE==0){
-			totalVar= totalVarnoMLE;
-		}else{
-			totalVar=totalVarMLE;
-		}
-		
+			totalVarSingle= totalVarnoMLE;
+			System.out.println ("\ntotalvarsingle = " + totalVarSingle);
+			System.out.println ("\ntotalvarmlesingle = " + totalVarnoMLE);
 
-		if(totalVar < 0) {
+		}else{
+			totalVarSingle=totalVarMLESingle;
+		}
+
+
+		if(totalVarSingle < 0) {
 			flagTotalVarIsNegative = 1;
 		}
 		/*
-		 * added for saving the results 
+		 * added for saving the results
 		 */
-		
+
 		SingleBDGresult = SingleBDG;
 		SingleBDGcoeffresult = SingleBDGcoeff;
-		SingleBDGbiasresult = SingleBDGbias;	
+		SingleBDGbiasresult = SingleBDGbias;
 	}
 
 	/**
@@ -878,11 +942,6 @@ public class DBRecord {
 		BCKcoeff = genBCKCoeff(BDGcoeff);
 		BCK = BDG2BCK(BDG, BCKcoeff);
 		BCKbias = BDG2BCK(BDGbias, BCKcoeff);
-	
-//		// Single
-//		SingleBDGcoeff = genSingleBDGCoeff(BDGcoeff);
-//		SingleBDG = BDG2SingleBDG(BDG, SingleBDGcoeff);
-//		SingleBDGbias = BDG2SingleBDG(BDGbias, SingleBDGcoeff);
 
 		if(flagFullyCrossed) {
 			DBMcoeff = genDBMCoeff(Nreader, Nnormal, Ndisease);
@@ -1129,14 +1188,14 @@ public class DBRecord {
 	 * 
 	 * @param selectedMod Which modality the analysis is performed on, or
 	 *            difference
-	 * @param BDGtemp BDG decomposition of variance components
-	 * @param BDGc Coefficient matrix for BDG decomposition
+	 * @param SingleBDGtemp SingleBDG decomposition of variance components
+	 * @param SingleBDGc Coefficient matrix for SingleBDG decomposition
 	 * @return Matrix of data for display in table
 	 */
 	// Single
 	public static double[][] getSingleBDGTab(int selectedMod, double[][] SingleBDGtemp,
 			double[][] SingleBDGc) {
-		double[][] SingleBDGTab1 = new double[7][8];
+		double[][] SingleBDGTab1 = new double[7][4];
 		if (selectedMod == 0) {
 			SingleBDGTab1[0] = SingleBDGtemp[0];
 			SingleBDGTab1[1] = SingleBDGc[0];
@@ -1151,7 +1210,7 @@ public class DBRecord {
 			SingleBDGTab1[4] = SingleBDGtemp[2]; // covariance
 			SingleBDGTab1[5] = Matrix.scale(SingleBDGc[2], 2);
 		}
-		for (int i = 0; i < 7; i++) {
+		for (int i = 0; i < 4; i++) {
 			SingleBDGTab1[6][i] = (SingleBDGTab1[0][i] * SingleBDGTab1[1][i])
 					+ (SingleBDGTab1[2][i] * SingleBDGTab1[3][i])
 					- (SingleBDGTab1[4][i] * SingleBDGTab1[5][i]);
@@ -1319,13 +1378,14 @@ public class DBRecord {
 	 * @return Matrix containing coefficients corresponding to BDG variance
 	 *         components
 	 */
-	// Single
+	// Single TODO check c4-1*m4
 	public static double[][] genSingleBDGCoeff(long Nreader2, long Nnormal2, long Ndisease2) {
-		double[][] c = new double[4][8];
+		double[][] c = new double[4][4];
 		c[0][0] = 1.0 / (Nnormal2 * Ndisease2);
 		c[0][1] = c[0][0] * (Nnormal2 - 1.0);
 		c[0][2] = c[0][0] * (Ndisease2 - 1.0);
 		c[0][3] = c[0][0] * (Nnormal2 - 1.0) * (Ndisease2 - 1.0);
+		c[0][3] = c[0][3] - 1;
 		c[1] = c[0];
 		c[2] = c[0];
 		c[3] = c[0];
@@ -1751,6 +1811,7 @@ public class DBRecord {
 		 * TODO we need to collect totalVar for modalityA and modalityB
 		 */
 		copyDBRecordTemp.totalVar = DBRecordTemp.totalVar;
+		copyDBRecordTemp.totalVarSingle = DBRecordTemp.totalVarSingle; // ejoonie
 		copyDBRecordTemp.flagTotalVarIsNegative = DBRecordTemp.flagTotalVarIsNegative;
 
 	}
@@ -1797,6 +1858,7 @@ public class DBRecord {
 		 * TODO we need to collect totalVar for modalityA and modalityB
 		 */
 		sumDBRecordTemp.totalVar += DBRecordTemp.totalVar;
+		sumDBRecordTemp.totalVarSingle += DBRecordTemp.totalVarSingle; // ejoonie
 		sumDBRecordTemp.flagTotalVarIsNegative += DBRecordTemp.flagTotalVarIsNegative;
 		
 	}
@@ -1843,6 +1905,7 @@ public class DBRecord {
 		 * TODO we need to collect totalVar for modalityA and modalityB
 		 */
 		DBRecordTemp.totalVar *= scaleFactor;
+		DBRecordTemp.totalVarSingle *= scaleFactor; // ejoonie
 		DBRecordTemp.flagTotalVarIsNegative *= scaleFactor;
 		
 	}
@@ -1886,6 +1949,7 @@ public class DBRecord {
 		 * TODO we need to collect totalVar for modalityA and modalityB
 		 */
 		DBRecordTemp.totalVar *= DBRecordTemp.totalVar;
+		DBRecordTemp.totalVarSingle *= DBRecordTemp.totalVarSingle; // ejoonie
 		DBRecordTemp.flagTotalVarIsNegative *= DBRecordTemp.flagTotalVarIsNegative;
 		
 	}

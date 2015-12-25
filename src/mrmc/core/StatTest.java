@@ -81,7 +81,7 @@ public class StatTest {
 			meanCI = DBRecordStat.AUCsReaderAvg[0] - DBRecordStat.AUCsReaderAvg[1];
 			/* Compare difference in modality AUCs to 0.0 */
 			tStatEst = Math.sqrt(Math.pow(meanCI, 2)/DBRecordStat.totalVar);
-		}	
+		}
 
 //		DF_BDG = calcDF_BDGbckIndep(DBRecordStat);
 //		DF_BDG = calcDF_BDGbckGroup(DBRecordStat);
@@ -96,11 +96,11 @@ public class StatTest {
 		// calculate p-value and cutoff assuming t-distribution with DF_BDG or DF_Hillis
 		// Use normal distribution if df > 50, since they are approximately
 		// equal at that point, and StudentDist can't handle large dfs
-		if (DF_BDG >= 50) { 
+		if (DF_BDG >= 50) {
 			pValBDG = pValNormal;
 			cutoffBDG = cutoffNormal;
-		} else if (DBRecordStat.Nreader == 1) { // single
-		
+		} else if (DBRecordStat.Nreader == 1) {
+			// if input data is single-reader, do not calculate p-value and cutoff assuming t-distribution with DF_BDG or DG_Hillis
 		}
 		else {
 			StudentDist tdist = new StudentDist((int) DF_BDG );
@@ -108,31 +108,44 @@ public class StatTest {
 			cutoffBDG = tdist.inverseF( 1-sig/2 );
 		}
 
+
 		// calculate p-value and cutoff assuming t-distribution with DF_Hillis
 		// Use normal distribution if df > 50, since they are approximately
 		// equal at that point, and FisherFDist can't handle large dfs
 		if (DF_Hillis >= 50) { 
 			pValHillis = pValNormal;
 			cutoffHillis = cutoffNormal;
-		} else if (DBRecordStat.Nreader == 1) { // single
-			
+		} else if (DBRecordStat.Nreader == 1) {
+			// if input data is single-reader, do not calculate p-value and cutoff assuming t-distribution with DG_Hillis
 		}
 		else {
 			StudentDist tdist = new StudentDist((int) DF_Hillis );
 			pValHillis = 2*(1 - tdist.cdf( tStatEst ));
 			cutoffHillis = tdist.inverseF( 1-sig/2 );
 		}
-		
-		ciBotNormal = meanCI - Math.sqrt(DBRecordStat.totalVar) * cutoffNormal; // normal approx
-		ciTopNormal = meanCI + Math.sqrt(DBRecordStat.totalVar) * cutoffNormal; // normal approx
-		ciBotBDG = meanCI - Math.sqrt(DBRecordStat.totalVar) * cutoffBDG;
-		ciTopBDG = meanCI + Math.sqrt(DBRecordStat.totalVar) * cutoffBDG;
-		ciBotHillis = meanCI - Math.sqrt(DBRecordStat.totalVar) * cutoffHillis;
-		ciTopHillis = meanCI + Math.sqrt(DBRecordStat.totalVar) * cutoffHillis;
 
-		if(pValNormal < sig) rejectNormal = 1;
-		if(pValBDG < sig) rejectBDG = 1;
-		if(pValHillis < sig) rejectHillis = 1;
+		// Single
+		if (DBRecordStat.Nreader ==1) {
+			ciBotNormal = meanCI - Math.sqrt(DBRecordStat.totalVarSingle) * cutoffNormal; // normal approx
+			ciTopNormal = meanCI + Math.sqrt(DBRecordStat.totalVarSingle) * cutoffNormal; // normal approx
+
+		} else {
+			ciBotNormal = meanCI - Math.sqrt(DBRecordStat.totalVar) * cutoffNormal; // normal approx
+			ciTopNormal = meanCI + Math.sqrt(DBRecordStat.totalVar) * cutoffNormal; // normal approx
+			ciBotBDG = meanCI - Math.sqrt(DBRecordStat.totalVar) * cutoffBDG;
+			ciTopBDG = meanCI + Math.sqrt(DBRecordStat.totalVar) * cutoffBDG;
+			ciBotHillis = meanCI - Math.sqrt(DBRecordStat.totalVar) * cutoffHillis;
+			ciTopHillis = meanCI + Math.sqrt(DBRecordStat.totalVar) * cutoffHillis;
+		}
+
+		// Single
+		if (DBRecordStat.Nreader ==1 & pValNormal < sig) {
+			rejectNormal = 1;
+		} else {
+			if(pValNormal < sig) rejectNormal = 1;
+			if(pValBDG < sig) rejectBDG = 1;
+			if(pValHillis < sig) rejectHillis = 1;
+		}
 
 		if(DBRecordStat.verbose) {
 			System.out.println("NR=" + DBRecordStat.Nreader + 
