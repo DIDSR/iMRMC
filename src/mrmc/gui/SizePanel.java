@@ -274,7 +274,7 @@ public class SizePanel {
 	 * Clears all input fields and statistics labels
 	 */
 	void resetSizePanel() {
-		
+		DBRecordSize.totalVar = -1.0;
 		SizeJLabelSqrtVar.setText("S.E=");
 //		SizeJLabelTStat.setText(",  Test Stat=");
 		
@@ -398,7 +398,7 @@ public class SizePanel {
 	 * @return String containing experiment parameters, components, trial size
 	 *         info
 	 */
-	public String genReport(InputFile InputFile) {
+/*	public String genReport(InputFile InputFile) {
 		InputFile1 = InputFile;
 		int useMLE = DBRecordSize.flagMLE;
 
@@ -620,9 +620,9 @@ public class SizePanel {
 				+ "\r\n**********************BDG output Results***************************\r\n";
 		str = str + "Moments" + SEPA + "M1" + SEPA + "M2" + SEPA + "M3" + SEPA
 				+ "M4" + SEPA + "M5" + SEPA + "M6" + SEPA + "M7" + SEPA + "M8";
-		/*
-		 * added for saving the results
-		 */
+		
+		 // added for saving the results
+		 
 		str = str + "\r\n" + "comp MA" + SEPA;
 		for(int i = 0; i<8; i++)
 			str = str + fiveDecE.format(DBRecord.BDGPanelresult[0][i]) + SEPA;
@@ -730,6 +730,7 @@ public class SizePanel {
 		return str;
 
 	}
+  */
 
 	public class NumSplitPlotsListener implements FocusListener {
 	
@@ -798,7 +799,7 @@ public class SizePanel {
 	/**
 	 * Handler for button to generate report of analysis
 	 */
-	class genReportListener implements ActionListener {
+/*	class genReportListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 
 			reportFrame = new JFrame(
@@ -821,6 +822,7 @@ public class SizePanel {
 			reportFrame.setVisible(true);
 		}
 	}
+	*/
 
 	/**
 	 * Handler for button to size trial based on specified parameters

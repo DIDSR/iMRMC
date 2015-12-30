@@ -1474,6 +1474,9 @@ public class RMGUInterface {
 		public void processResults() {
 
 			DBRecordNumerical.Decompositions();
+			DBRecordNumerical.NreaderDB=DBRecordNumerical.Nreader;
+			DBRecordNumerical.NnormalDB=DBRecordNumerical.Nnormal;
+			DBRecordNumerical.NdiseaseDB=DBRecordNumerical.Ndisease;
 			DBRecordNumerical.InputFile1 = new InputFile();
 			for (int i=1;i<DBRecordNumerical.Nreader+1;i++)
 			DBRecordNumerical.InputFile1.readerIDs.put(Integer.toString(i), i);
@@ -2209,7 +2212,7 @@ public class RMGUInterface {
 						report = report + "Summary statistics written to file named:" + "\r\n";
 						report = report + savedFileName + "\r\n" + "\r\n";
 						report = report + "Seed for RNG: " + JTextField_seed.getText() + "\r\n";
-						report = report + "Number of Experiments: " + JTextField_Nexp.getText() + "\r\n";
+						report = report + "Number of Experiments: " + JTextField_Nexp.getText() + "\r\n" + "\r\n";
 						report = exportToFile.exportSummary(report, DB1);	
 						report = exportToFile.exportStatPanel(report, DB1, StatPanel1);						
 					    report = exportToFile.exportMCvariance(report, varDBRecordStat);
@@ -2242,7 +2245,7 @@ public class RMGUInterface {
 	
 	}
 	
-	public String genReport(DBRecord processDBRecordStat,  StatPanel processStatPanel) {
+/*	public String genReport(DBRecord processDBRecordStat,  StatPanel processStatPanel) {
 //		double[][] BDGcoeff = DBRecordSize.BDGcoeff;
 //		double[][] BCKcoeff = DBRecordSize.BCKcoeff;
 //		double[][] DBMcoeff = DBRecordSize.DBMcoeff;
@@ -2348,9 +2351,9 @@ public class RMGUInterface {
 				+ "\r\n**********************BDG output Results***************************\r\n";
 		str = str + "Moments" + SEPA + "M1" + SEPA + "M2" + SEPA + "M3" + SEPA
 				+ "M4" + SEPA + "M5" + SEPA + "M6" + SEPA + "M7" + SEPA + "M8";
-		/*
-		 * added for saving the results
-		 */
+		
+		 // added for saving the results
+		 
 		str = str + "\r\n" + "comp MA" + SEPA;
 		for(int i = 0; i<8; i++)
 			str = str + fiveDecE.format(DBRecord.BDGPanelresult[0][i]) + SEPA;
@@ -2460,5 +2463,5 @@ public class RMGUInterface {
 
 	   return str;
 	}
-	DecimalFormat fourDecE = new DecimalFormat("0.0000E0");
+	DecimalFormat fourDecE = new DecimalFormat("0.0000E0");*/
 }
