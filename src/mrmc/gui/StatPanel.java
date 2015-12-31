@@ -68,10 +68,10 @@ public class StatPanel {
 	/**
 	 * table1 corresponds to the variance analysis
 	 */
-	private JTable BDGtable1, BCKtable1, DBMtable1, ORtable1, MStable1, SingleBDGtable1; // Single
+	private JTable BDGtable1, BCKtable1, DBMtable1, ORtable1, MStable1, SingleBDGtable1;
 	
 	JTabbedPane tabbedPane1;
-	private JLabel BDGvar1, BCKvar1, DBMvar1, ORvar1, MSvar1, SingleBDGvar1; // Single
+	private JLabel BDGvar1, BCKvar1, DBMvar1, ORvar1, MSvar1, SingleBDGvar1;
 
 	DecimalFormat twoDec = new DecimalFormat("0.00");
 	DecimalFormat threeDec = new DecimalFormat("0.000");
@@ -177,7 +177,7 @@ public class StatPanel {
 		JPanel panelOR1 = makeORTab(rowNamesSingle);
 		// create MS tab
 		JPanel panelMS1 = makeMSTab(rowNamesSingle);
-		// Single Create Single tab
+		// Create Single-reader tab
 		JPanel panelSingleBDG1 = makeSingleBDGTab(rowNamesDiff);
 
 		tabbedPane1 = new JTabbedPane();
@@ -186,14 +186,14 @@ public class StatPanel {
 		tabbedPane1.addTab("DBM", panelDBM1);
 		tabbedPane1.addTab("OR", panelOR1);
 		tabbedPane1.addTab("MS", panelMS1);
-		tabbedPane1.addTab("Single", panelSingleBDG1); // Single
+		tabbedPane1.addTab("Single", panelSingleBDG1); // for Single-reader
 
 		JPanelStat.add(StatPanelRow1);
 		JPanelStat.add(StatPanelRow2);
 		JPanelStat.add(StatPanelRow3);
 		JPanelStat.add(StatPanelRow4);
 		JPanelStat.add(StatPanelRow5);
-		JPanelStat.add(StatPanelRow5); // Single
+		JPanelStat.add(StatPanelRow5); // for Single-reader
 		JPanelStat.add(tabbedPane1);
 
 	}
@@ -209,7 +209,7 @@ public class StatPanel {
 
 		StatJLabelAUC.setText("AUC = ");
 		DBRecordStat.totalVar = -1.0;
-		DBRecordStat.totalVarSingle = -1.0; // ejoonie
+		DBRecordStat.totalVarSingle = -1.0;
 
 		StatJLabelDFNormal.setText("Large Sample Approx(Normal)");
 		StatJLabelDFBDG.setText   ("         T-stat df(BDG) =      ");
@@ -247,17 +247,17 @@ public class StatPanel {
 			tabbedPane1.setEnabledAt(2, false);
 			tabbedPane1.setEnabledAt(3, false);
 			tabbedPane1.setEnabledAt(4, false);
-			tabbedPane1.setEnabledAt(5, false); // Single
+			tabbedPane1.setEnabledAt(5, false); // for Single-reader
 
 		} else {
 			tabbedPane1.setEnabledAt(2, true);
 			tabbedPane1.setEnabledAt(3, true);
 			tabbedPane1.setEnabledAt(4, true);
-			tabbedPane1.setEnabledAt(5, true); // Single
+			tabbedPane1.setEnabledAt(5, true); // for Single-reader
 		}
 
 		String output, output2;
-		// TODO .totalVarSingle 필요
+
 		if (DBRecordStat.Nreader == 1) {
 			StatJLabelH0.setText("H0: AUC = 0.50,   two-sided alternative,   95% significance,   " +
 					DBRecordStat.getSizes());
@@ -293,20 +293,31 @@ public class StatPanel {
 		}
 		
 
-		output = twoDec.format(DBRecordStat.testStat.DF_BDG);
-		StatJLabelDFBDG.setText("  df(BDG) = " + output + "     ");
-		output = fourDec.format(DBRecordStat.testStat.pValBDG);
-		StatJLabelPValBDG.setText("  p-Value = " + output);
-		output = fourDec.format(DBRecordStat.testStat.ciBotBDG);
-		output2 = fourDec.format(DBRecordStat.testStat.ciTopBDG);
-		StatJLabelCIBDG.setText("Conf. Int. = (" + output + ", " + output2 + ")");
-		output = twoDec.format(DBRecordStat.testStat.rejectBDG);
-		if (DBRecordStat.testStat.rejectBDG == 1) {
-			StatJLabelRejectBDG.setText("Reject Null? = " + "Yes" + "(" + output + ")");
+
+		if(DBRecordStat.Nreader == 1) {
+			output = "N/A";
+			output2 = "N/A";
+			StatJLabelDFBDG.setText("  df(BDG) = " + output + "     ");
+			StatJLabelPValBDG.setText("  p-Value = " + output);
+			StatJLabelCIBDG.setText("Conf. Int. = (" + output + ", " + output2 + ")");
+			StatJLabelRejectBDG.setText("Reject Null? = " + output);
+			//StatJLabelRejectBDG.setText("Reject Null? = " + output);
 		} else {
-			StatJLabelRejectBDG.setText("Reject Null? = " + "No" + "(" + output + ")");
+			output = twoDec.format(DBRecordStat.testStat.DF_BDG);
+			StatJLabelDFBDG.setText("  df(BDG) = " + output + "     ");
+			output = fourDec.format(DBRecordStat.testStat.pValBDG);
+			StatJLabelPValBDG.setText("  p-Value = " + output);
+			output = fourDec.format(DBRecordStat.testStat.ciBotBDG);
+			output2 = fourDec.format(DBRecordStat.testStat.ciTopBDG);
+			StatJLabelCIBDG.setText("Conf. Int. = (" + output + ", " + output2 + ")");
+			output = twoDec.format(DBRecordStat.testStat.rejectBDG);
+			if (DBRecordStat.testStat.rejectBDG == 1) {
+				StatJLabelRejectBDG.setText("Reject Null? = " + "Yes" + "(" + output + ")");
+			} else {
+				StatJLabelRejectBDG.setText("Reject Null? = " + "No" + "(" + output + ")");
+			}
+			//StatJLabelRejectBDG.setText("Reject Null? = " + output);
 		}
-		//StatJLabelRejectBDG.setText("Reject Null? = " + output);
 
 		if (DBRecordStat.flagFullyCrossed) {
 			output = twoDec.format(DBRecordStat.testStat.DF_Hillis);
@@ -343,7 +354,7 @@ public class StatPanel {
 		DBMvar1.setText("total var=");
 		ORvar1.setText("total var=");
 		MSvar1.setText("total var=");
-		SingleBDGvar1.setText("total var="); // Single
+		SingleBDGvar1.setText("total var="); // for Single-reader
 		StatJLabelTotalVar.setText("total var=");
 
 		for (int i = 0; i < BDGtable1.getRowCount(); i++) {
@@ -357,8 +368,8 @@ public class StatPanel {
 				BCKtable1.getColumnModel().getColumn(j)
 						.setCellRenderer(new DecimalFormatRenderer());
 			}
-			for (int j = 0; j < 4; j++) {
-				SingleBDGtable1.setValueAt(0, i, j); // Single
+			for (int j = 0; j < 4; j++) { // for Single-reader
+				SingleBDGtable1.setValueAt(0, i, j);
 				SingleBDGtable1.getColumnModel().getColumn(j)
 						.setCellRenderer(new DecimalFormatRenderer());
 			}
@@ -385,7 +396,7 @@ public class StatPanel {
 		tabbedPane1.setTitleAt(2, "DBM");
 		tabbedPane1.setTitleAt(3, "OR");
 		tabbedPane1.setTitleAt(4, "MS");
-		tabbedPane1.setTitleAt(5, "Single"); // Single
+		tabbedPane1.setTitleAt(5, "Single"); // for Single-reader
 	}
 
 	/**
@@ -405,11 +416,8 @@ public class StatPanel {
 				DBRecordStat.OR, DBRecordStat.ORcoeff);
 		double[][] MSdata1 = DBRecord.getMSTab(DBRecordStat.selectedMod,
 				DBRecordStat.MS, DBRecordStat.MScoeff);
-		double[][] SingleBDGdata1 = DBRecord.getSingleBDGTab(DBRecordStat.selectedMod, // Single
-				DBRecordStat.SingleBDG, DBRecordStat.SingleBDGcoeff); // Single
-		for (int i = 0; i < 4; i++){
-			System.out.println ("\nTEST:" + i + ":::" +SingleBDGdata1[6][i] );
-		}
+		double[][] SingleBDGdata1 = DBRecord.getSingleBDGTab(DBRecordStat.selectedMod, // for Single-reader
+				DBRecordStat.SingleBDG, DBRecordStat.SingleBDGcoeff);
 		if(DBRecordStat.flagMLE == 1) {
 			BDGdata1 = DBRecord.getBDGTab(DBRecordStat.selectedMod,
 					DBRecordStat.BDGbias, DBRecordStat.BDGcoeff);
@@ -421,8 +429,8 @@ public class StatPanel {
 					DBRecordStat.ORbias, DBRecordStat.ORcoeff);
 			MSdata1 = DBRecord.getMSTab(DBRecordStat.selectedMod,
 					DBRecordStat.MSbias, DBRecordStat.MScoeff);			
-			SingleBDGdata1 = DBRecord.getSingleBDGTab(DBRecordStat.selectedMod, // Single
-					DBRecordStat.SingleBDGbias, DBRecordStat.SingleBDGcoeff); // Single
+			SingleBDGdata1 = DBRecord.getSingleBDGTab(DBRecordStat.selectedMod, // for Single-reader
+					DBRecordStat.SingleBDGbias, DBRecordStat.SingleBDGcoeff);
 		}
 		double BDGv = Matrix.total(BDGdata1[6]);
 		double BCKv = Matrix.total(BCKdata1[6]);
@@ -430,17 +438,15 @@ public class StatPanel {
 		double ORv = Matrix.total(ORdata1[2]);
 		double MSv = Matrix.total(MSdata1[2]);
 
-		// calculate total variance for single-reader analysis (Gallas 2006)
+		/* calculate total variance for single-reader analysis <br
+		* ----refer to the following <br>
+		* ----Gallas2006_Acad-Radiol_v13p353 <br>
+		*/
 		double SingleBDGv = SingleBDGdata1[6][0]+SingleBDGdata1[6][1]+SingleBDGdata1[6][2]+
 				(SingleBDGdata1[1][3]-1)* SingleBDGdata1[0][3];
 
-		System.out.println("SingleBDGv:" + SingleBDGv);
-
 		double[][][] allTableData = new double[][][] { BDGdata1, BCKdata1,
 				DBMdata1, ORdata1, MSdata1, SingleBDGdata1 }; // Single
-		for (int i =0; i < 4; i++) {
-			System.out.println("\nTEST2"+ allTableData[5][0][i]);
-		}
 
 //		for (int i = 0; i < 7; i++) {
 //			for (int j = 0; j < 8; j++) {
@@ -490,11 +496,12 @@ public class StatPanel {
 //		output = threeDecE.format(SingleBDGv); // Single
 //		SingleBDGvar1.setText("total var=" + output); // Single
 
+
 		if (DBRecordStat.Nreader == 1) for (int i = 0; i < 7; i++) {
 			for (int j = 0; j < 4; j++) {
 				SingleBDGtable1.setValueAt(allTableData[5][i][j], i, j); // Single tab result.
 				SingleBDGtable1.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer()); // tab 에 결과 뿌려
+						.setCellRenderer(new DecimalFormatRenderer());
 			}
 		}
 		else {
@@ -532,8 +539,8 @@ public class StatPanel {
 		String output;
 
 		if (DBRecordStat.Nreader == 1) {
-			output = threeDecE.format(SingleBDGv); // Single
-			SingleBDGvar1.setText("total var=" + output); // Single
+			output = threeDecE.format(SingleBDGv); // for Single-reader
+			SingleBDGvar1.setText("total var=" + output);
 
 		} else {
 			output = threeDecE.format(BDGv);
@@ -555,14 +562,18 @@ public class StatPanel {
 			tabbedPane1.setTitleAt(2, "DBM**");
 			tabbedPane1.setTitleAt(3, "OR**");
 			tabbedPane1.setTitleAt(4, "MS**");
-			tabbedPane1.setTitleAt(5, "Single**"); // Single
+			tabbedPane1.setTitleAt(5, "Single**"); // for Single-reader
 		} else {
 			tabbedPane1.setTitleAt(0, "BDG");
 			tabbedPane1.setTitleAt(1, "BCK");
 			tabbedPane1.setTitleAt(2, "DBM");
 			tabbedPane1.setTitleAt(3, "OR");
 			tabbedPane1.setTitleAt(4, "MS");
-			tabbedPane1.setTitleAt(5, "Single"); // Single
+			tabbedPane1.setTitleAt(5, "Single"); // for Single-reader
+		}
+
+		if (DBRecordStat.Nreader == 1) {
+			tabbedPane1.setSelectedIndex(5); // for Single-reader
 		}
 		
 	}
@@ -746,12 +757,11 @@ public class StatPanel {
 	}
 
 	/**
-	 * Initializes the Single tab
+	 * Initializes the Single-reader tab
 	 * 
 	 * @param rowNames Names for row labels of table
-	 * @return JPanel containing Single tab
+	 * @return JPanel containing Single-reader tab
 	 */
-	// Single
 	private JPanel makeSingleBDGTab(String[] rowNames) {
 
 		JPanel panelSingleBDG = new JPanel();
@@ -781,7 +791,7 @@ public class StatPanel {
 		tabbedPane1.setEnabledAt(2, true);
 		tabbedPane1.setEnabledAt(3, true);
 		tabbedPane1.setEnabledAt(4, true);
-		tabbedPane1.setEnabledAt(5, true); // Single
+		tabbedPane1.setEnabledAt(5, true); // for Single-reader
 	
 	}
 
@@ -818,7 +828,7 @@ public class StatPanel {
 		tabbedPane1.setEnabledAt(2, false);
 		tabbedPane1.setEnabledAt(3, false);
 		tabbedPane1.setEnabledAt(4, false);
-		tabbedPane1.setEnabledAt(5, false); // Single
+		tabbedPane1.setEnabledAt(5, false); // for Single-reader
 		
 	}
 	

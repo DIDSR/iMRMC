@@ -66,7 +66,7 @@ public class DBRecord {
 	
 	public boolean verbose = true;
     public double totalVarMLE;
-    public double totalVarMLESingle; // Single
+    public double totalVarMLESingle;
 	public GUInterface GUI;
 	public DBRecord DBRecordStat, DBRecordSize;
 	public InputFile InputFile1;
@@ -130,7 +130,7 @@ public class DBRecord {
 	 * 
 	 */
 	public double totalVar = -1.0;
-	public double totalVarSingle = -1.0; // Single
+	public double totalVarSingle = -1.0;
 	/**
 	 * Indicator whether {mrmc.gui.InputFileCard#FlagMLE} is set
 	 */
@@ -167,26 +167,25 @@ public class DBRecord {
 	public static double[][] BDGPanelresult = new double[7][8];
 
 	/**
-	 * The BDG[4][4] (Barrett, Clarkson, and Kupinski) variance components <br>
-	 * ----BDG[0] are the components of variance of AUC_A <br>
-	 * ----BDG[1] are the components of variance of AUC_B <br>
-	 * ----BDG[2] are the components of the covariance between AUC_A & AUC_B <br>
-	 * ----BDG[3] are the components of variance of AUC_A - AUC_B <br>
-	 * ----BDG[i][0 thru 7] refer to the following <br>
+	 * The SingleBDG[4][4] (Barrett, Clarkson, and Kupinski) variance components <br>
+	 * ----SingleBDG[0] are the components of variance of AUC_A <br>
+	 * ----SingleBDG[1] are the components of variance of AUC_B <br>
+	 * ----SingleBDG[2] are the components of the covariance between AUC_A & AUC_B <br>
+	 * ----SingleBDG[3] are the components of variance of AUC_A - AUC_B <br>
+	 * ----SingleBDG[i][0 thru 7] refer to the following <br>
 	 * ----Clarkson2006_Acad-Radiol_v13p1410 <br>
 	 * ----Gallas2009_Commun-Stat-A-Theor_v38p2586 <br>
 	 * 
 	 */
-	// Single
 	// added for saving the results (i.e., Single)
-	public double[][] SingleBDG = new double[4][8], 		// FIXME
-						SingleBDGbias = new double[4][8], 	// FIXME
-						SingleBDGcoeff = new double[4][8]; 	// FIXME
+	public double[][] SingleBDG = new double[4][8],
+						SingleBDGbias = new double[4][8],
+						SingleBDGcoeff = new double[4][8];
 	// added for saving the results
-	public static double[][] SingleBDGresult = new double[4][8]; 	    // FIXME
-	public static double[][] SingleBDGbiasresult = new double[4][8]; 	// FIXME
-	public static double[][] SingleBDGcoeffresult = new double[4][8]; 	// FIXME
-	public static double[][] SingleBDGPanelresult = new double[7][8]; 	// FIXME
+	public static double[][] SingleBDGresult = new double[4][8];
+	public static double[][] SingleBDGbiasresult = new double[4][8];
+	public static double[][] SingleBDGcoeffresult = new double[4][8];
+	public static double[][] SingleBDGPanelresult = new double[7][8];
 	
 	/**
 	 * The BCK[4][7] (Barrett, Clarkson, and Kupinski) variance components <br>
@@ -488,7 +487,7 @@ public class DBRecord {
 		DBRecordStat = DBRecordStatTemp;
 		covMRMCstat = new CovMRMC(InputFile1, DBRecordStatTemp);
 		if (DBRecordStat.Nreader == 1) {
-			SingleBDGforStatPanel(); // single
+			SingleBDGforStatPanel();
 		} else {
 			BDGforStatPanel();
 		}
@@ -594,7 +593,7 @@ public class DBRecord {
 				{ 	 1/N0/NR, 	 (N0-1)/N0/NR,				 0,						  0,   (NR-1)/N0/NR,	(N0-1)*(NR-1)/N0/NR,				      0,						    0 },
 				{    1/N1/NR, 	    	    0, 	  (N1-1)/N1/NR,						  0,   (NR-1)/N1/NR,					  0, 	(N1-1)*(NR-1)/N1/NR, 							0 },
 				{ 1/N0/N1/NR, (N0-1)/N0/N1/NR, (N1-1)/N0/N1/NR, (N0-1)*(N1-1)/N0/N1/NR, (NR-1)/N0/N1/NR, (N0-1)*(NR-1)/N0/N1/NR, (N1-1)*(NR-1)/N0/N1/NR, (N0-1)*(N1-1)*(NR-1)/N0/N1/NR}};		
-        if (DBRecordStat.Nreader == 1) { // Single
+        if (DBRecordStat.Nreader == 1) {
 			double[][] tempSingleBDG = new double[4][4];
 			if (selectedMod == 0)
 				tempSingleBDG[0] = SingleBDG[0];
@@ -656,7 +655,6 @@ public class DBRecord {
 			double totalVarnoMLE = 0.0;
 			totalVarMLE = 0.0;
 			totalVar = 0.0;
-			// BDGcoeff is c1 ~ c4 in one shot paper (Gallas 2006)
 			BDGcoeff = genBDGCoeff(DBRecordStat.Nreader, DBRecordStat.Nnormal, DBRecordStat.Ndisease);
 			double[] temp = new double[8];
 			for (int i = 0; i < 8; i++) {
@@ -664,7 +662,6 @@ public class DBRecord {
 			}
 			DBRecordStat.BDGcoeff[3] = temp;
 			for (int i = 0; i < 8; i++) {
-				// DBRecordStat.BDGcoeff is normalized constance used in A.16 ~ A. 23 (Gallas 2006)
 				DBRecordStat.BDG[3][i] = (tempBDG[0][i] * DBRecordStat.BDGcoeff[0][i])
 						+ (tempBDG[1][i] * DBRecordStat.BDGcoeff[1][i])
 						- 2.0 * (tempBDG[2][i] * DBRecordStat.BDGcoeff[2][i]);
@@ -693,7 +690,7 @@ public class DBRecord {
 			DBRecordStat.Decompositions();
 			DBRecordStat.testStat = new StatTest(DBRecordStat);
 
-		} // Single
+		}
 	}
 	
 	/**
@@ -840,25 +837,23 @@ public class DBRecord {
 		BDGbiasresult = BDGbias;	
 	}
 
-	/** TODO Single variance..
+	/**
 	 * Determine SingleBDG, SingleBDGbias, and SingleBDGcoeff from {@link #DBRecordStat}, <br>
 	 * Calculate {@link #totalVarSingle}
 	 */
-	private void SingleBDGforStatPanel() { // Single
+	private void SingleBDGforStatPanel() {
 		double totalVarnoMLE=0.0;
 		totalVarMLESingle=0.0;
 		for (int i = 0; i < 8; i++) {
 			SingleBDG[0][i] = covMRMCstat.momentsAA[i + 1];
 			SingleBDG[1][i] = covMRMCstat.momentsBB[i + 1];
 			SingleBDG[2][i] = covMRMCstat.momentsAB[i + 1];
-			System.out.println ("\nSingleBDG" + SingleBDG[0][i]);
 			SingleBDGbias[0][i] = covMRMCstat.momentsBiasedAA[i + 1];
 			SingleBDGbias[1][i] = covMRMCstat.momentsBiasedBB[i + 1];
 			SingleBDGbias[2][i] = covMRMCstat.momentsBiasedAB[i + 1];
 			SingleBDGcoeff[0][i] = covMRMCstat.coefficientsAA[i + 1];
 			SingleBDGcoeff[1][i] = covMRMCstat.coefficientsBB[i + 1];
 			SingleBDGcoeff[2][i] = covMRMCstat.coefficientsAB[i + 1];
-			System.out.println ("\nSingleBDGcoeff" + SingleBDGcoeff[0][i]);
 
 			SingleBDGcoeff[3][i] = 1.0;
 
@@ -874,9 +869,6 @@ public class DBRecord {
 		}
 		if (flagMLE==0){
 			totalVarSingle= totalVarnoMLE;
-			System.out.println ("\ntotalvarsingle = " + totalVarSingle);
-			System.out.println ("\ntotalvarmlesingle = " + totalVarnoMLE);
-
 		}else{
 			totalVarSingle=totalVarMLESingle;
 		}
@@ -1038,9 +1030,49 @@ public class DBRecord {
 	}
 
 	/**
+	 * Gets the components, coefficients, and total variance for Single-reader
+	 * representation in format corresponding to display table
+	 *
+	 * @param selectedMod Which modality the analysis is performed on, or
+	 *            difference
+	 * @param SingleBDGtemp SingleBDG decomposition of variance components
+	 * @param SingleBDGc Coefficient matrix for SingleBDG decomposition
+	 * @return Matrix of data for display in table
+	 */
+	public static double[][] getSingleBDGTab(int selectedMod, double[][] SingleBDGtemp,
+											 double[][] SingleBDGc) {
+		double[][] SingleBDGTab1 = new double[7][4];
+		if (selectedMod == 0) {
+			SingleBDGTab1[0] = SingleBDGtemp[0];
+			SingleBDGTab1[1] = SingleBDGc[0];
+		} else if (selectedMod == 1) {
+			SingleBDGTab1[2] = SingleBDGtemp[1];
+			SingleBDGTab1[3] = SingleBDGc[1];
+		} else if (selectedMod == 3) {
+			SingleBDGTab1[0] = SingleBDGtemp[0];
+			SingleBDGTab1[1] = SingleBDGc[0];
+			SingleBDGTab1[2] = SingleBDGtemp[1];
+			SingleBDGTab1[3] = SingleBDGc[1];
+			SingleBDGTab1[4] = SingleBDGtemp[2]; // covariance
+			SingleBDGTab1[5] = Matrix.scale(SingleBDGc[2], 2);
+		}
+		for (int i = 0; i < 4; i++) {
+			SingleBDGTab1[6][i] = (SingleBDGTab1[0][i] * SingleBDGTab1[1][i])
+					+ (SingleBDGTab1[2][i] * SingleBDGTab1[3][i])
+					- (SingleBDGTab1[4][i] * SingleBDGTab1[5][i]);
+		}
+
+		SingleBDGPanelresult = SingleBDGTab1;
+
+		// added for saving the results (i.e., Single-reader comp m0~total)
+		return SingleBDGTab1;
+	}
+
+
+	/**
 	 * Gets the components, coefficients, and total variance for BDG
 	 * representation in format corresponding to display table
-	 * 
+	 *
 	 * @param selectedMod Which modality the analysis is performed on, or
 	 *            difference
 	 * @param BDGtemp BDG decomposition of variance components
@@ -1069,17 +1101,17 @@ public class DBRecord {
 					+ (BDGTab1[2][i] * BDGTab1[3][i])
 					- (BDGTab1[4][i] * BDGTab1[5][i]);
 		}
-		
+
 		BDGPanelresult = BDGTab1;
-		
+
 		// added for saving the results (i.e., BDG comp m0~total)
 		return BDGTab1;
 	}
-	
+
 	/**
 	 * Gets the components, coefficients, and total variance for DBM
 	 * representation in format corresponding to display table
-	 * 
+	 *
 	 * @param selectedMod Which modality the analysis is performed on, or
 	 *            difference
 	 * @param DBMtemp DBM decomposition of variance components
@@ -1092,16 +1124,16 @@ public class DBRecord {
 		DBMTab1[0] = DBMtemp[selectedMod];
 		DBMTab1[1] = DBMc[selectedMod];
 		DBMTab1[2] = Matrix.dotProduct(DBMTab1[0], DBMTab1[1]);
-		
+
 		DBMPanelresult = DBMTab1;
-		
+
 		return DBMTab1;
 	}
 
 	/**
 	 * Gets the components, coefficients, and total variance for BCK
 	 * representation in format corresponding to display table
-	 * 
+	 *
 	 * @param selectedMod Which modality the analysis is performed on, or
 	 *            difference
 	 * @param BCKtemp BCK decomposition of variance components
@@ -1130,9 +1162,9 @@ public class DBRecord {
 					+ (BCKTab1[2][i] * BCKTab1[3][i])
 					- (BCKTab1[4][i] * BCKTab1[5][i]);
 		}
-		
+
 		BCKPanelresult = BCKTab1;
-		
+
 		return BCKTab1;
 	}
 
@@ -1141,7 +1173,7 @@ public class DBRecord {
 	/**
 	 * Gets the components, coefficients, and total variance for OR
 	 * representation in format corresponding to display table
-	 * 
+	 *
 	 * @param selectedMod Which modality the analysis is performed on, or
 	 *            difference
 	 * @param ORtemp OR decomposition of variance components
@@ -1154,16 +1186,16 @@ public class DBRecord {
 		ORTab1[0] = ORtemp[selectedMod];
 		ORTab1[1] = ORc[selectedMod];
 		ORTab1[2] = Matrix.dotProduct(ORTab1[0], ORTab1[1]);
-		
+
 		ORPanelresult = ORTab1;
-		
+
 		return ORTab1;
 	}
 
 	/**
 	 * Gets the components, coefficients, and total variance for MS
 	 * representation in format corresponding to display table
-	 * 
+	 *
 	 * @param selectedMod Which modality the analysis is performed on, or
 	 *            difference
 	 * @param MStemp MS decomposition of variance components
@@ -1176,51 +1208,13 @@ public class DBRecord {
 		MSTab1[0] = MStemp[selectedMod];
 		MSTab1[1] = MSc[selectedMod];
 		MSTab1[2] = Matrix.dotProduct(MSTab1[0], MSTab1[1]);
-		
+
 		MSPanelresult = MSTab1;
-		
+
 		return MSTab1;
 	}
 
-	/**
-	 * Gets the components, coefficients, and total variance for Single
-	 * representation in format corresponding to display table
-	 * 
-	 * @param selectedMod Which modality the analysis is performed on, or
-	 *            difference
-	 * @param SingleBDGtemp SingleBDG decomposition of variance components
-	 * @param SingleBDGc Coefficient matrix for SingleBDG decomposition
-	 * @return Matrix of data for display in table
-	 */
-	// Single
-	public static double[][] getSingleBDGTab(int selectedMod, double[][] SingleBDGtemp,
-			double[][] SingleBDGc) {
-		double[][] SingleBDGTab1 = new double[7][4];
-		if (selectedMod == 0) {
-			SingleBDGTab1[0] = SingleBDGtemp[0];
-			SingleBDGTab1[1] = SingleBDGc[0];
-		} else if (selectedMod == 1) {
-			SingleBDGTab1[2] = SingleBDGtemp[1];
-			SingleBDGTab1[3] = SingleBDGc[1];
-		} else if (selectedMod == 3) {
-			SingleBDGTab1[0] = SingleBDGtemp[0];
-			SingleBDGTab1[1] = SingleBDGc[0];
-			SingleBDGTab1[2] = SingleBDGtemp[1];
-			SingleBDGTab1[3] = SingleBDGc[1];
-			SingleBDGTab1[4] = SingleBDGtemp[2]; // covariance
-			SingleBDGTab1[5] = Matrix.scale(SingleBDGc[2], 2);
-		}
-		for (int i = 0; i < 4; i++) {
-			SingleBDGTab1[6][i] = (SingleBDGTab1[0][i] * SingleBDGTab1[1][i])
-					+ (SingleBDGTab1[2][i] * SingleBDGTab1[3][i])
-					- (SingleBDGTab1[4][i] * SingleBDGTab1[5][i]);
-		}
-		
-		
-		// added for saving the results (i.e., BDG comp m0~total)
-		return SingleBDGTab1;
-	}
-	
+
 	/**
 	 * Transform DBM representation of variance components into MS
 	 * representation of variance components
@@ -1368,17 +1362,16 @@ public class DBRecord {
 	}
 	
 	/**
-	 * Determines the coefficient matrix for BDG variance components given a
-	 * fully crossed study design [4][8].
+	 * Determines the coefficient matrix for Single-reader variance components given a
+	 * fully crossed study design [4][4].
 	 * This is only executed when the components of variance are input by hand or during iRoeMetz
 	 * 
 	 * @param Nreader2 Number of readers
 	 * @param Nnormal2 Number of normal cases
 	 * @param Ndisease2 Number of disease cases
-	 * @return Matrix containing coefficients corresponding to BDG variance
+	 * @return Matrix containing coefficients corresponding to Single-reader variance
 	 *         components
 	 */
-	// Single TODO check c4-1*m4
 	public static double[][] genSingleBDGCoeff(long Nreader2, long Nnormal2, long Ndisease2) {
 		double[][] c = new double[4][4];
 		c[0][0] = 1.0 / (Nnormal2 * Ndisease2);
@@ -1811,7 +1804,7 @@ public class DBRecord {
 		 * TODO we need to collect totalVar for modalityA and modalityB
 		 */
 		copyDBRecordTemp.totalVar = DBRecordTemp.totalVar;
-		copyDBRecordTemp.totalVarSingle = DBRecordTemp.totalVarSingle; // ejoonie
+		copyDBRecordTemp.totalVarSingle = DBRecordTemp.totalVarSingle;
 		copyDBRecordTemp.flagTotalVarIsNegative = DBRecordTemp.flagTotalVarIsNegative;
 
 	}
@@ -1858,7 +1851,7 @@ public class DBRecord {
 		 * TODO we need to collect totalVar for modalityA and modalityB
 		 */
 		sumDBRecordTemp.totalVar += DBRecordTemp.totalVar;
-		sumDBRecordTemp.totalVarSingle += DBRecordTemp.totalVarSingle; // ejoonie
+		sumDBRecordTemp.totalVarSingle += DBRecordTemp.totalVarSingle;
 		sumDBRecordTemp.flagTotalVarIsNegative += DBRecordTemp.flagTotalVarIsNegative;
 		
 	}
@@ -1905,7 +1898,7 @@ public class DBRecord {
 		 * TODO we need to collect totalVar for modalityA and modalityB
 		 */
 		DBRecordTemp.totalVar *= scaleFactor;
-		DBRecordTemp.totalVarSingle *= scaleFactor; // ejoonie
+		DBRecordTemp.totalVarSingle *= scaleFactor;
 		DBRecordTemp.flagTotalVarIsNegative *= scaleFactor;
 		
 	}
@@ -1949,7 +1942,7 @@ public class DBRecord {
 		 * TODO we need to collect totalVar for modalityA and modalityB
 		 */
 		DBRecordTemp.totalVar *= DBRecordTemp.totalVar;
-		DBRecordTemp.totalVarSingle *= DBRecordTemp.totalVarSingle; // ejoonie
+		DBRecordTemp.totalVarSingle *= DBRecordTemp.totalVarSingle;
 		DBRecordTemp.flagTotalVarIsNegative *= DBRecordTemp.flagTotalVarIsNegative;
 		
 	}

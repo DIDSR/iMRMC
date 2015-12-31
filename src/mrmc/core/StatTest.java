@@ -124,7 +124,7 @@ public class StatTest {
 			cutoffHillis = tdist.inverseF( 1-sig/2 );
 		}
 
-		// Single
+
 		if (DBRecordStat.Nreader ==1) {
 			ciBotNormal = meanCI - Math.sqrt(DBRecordStat.totalVarSingle) * cutoffNormal; // normal approx
 			ciTopNormal = meanCI + Math.sqrt(DBRecordStat.totalVarSingle) * cutoffNormal; // normal approx
@@ -138,7 +138,7 @@ public class StatTest {
 			ciTopHillis = meanCI + Math.sqrt(DBRecordStat.totalVar) * cutoffHillis;
 		}
 
-		// Single
+
 		if (DBRecordStat.Nreader ==1 & pValNormal < sig) {
 			rejectNormal = 1;
 		} else {
@@ -155,6 +155,7 @@ public class StatTest {
 					         "  auc1=" + DBRecordStat.AUCsReaderAvg[1]);
 			System.out.println("auc0-auc1=" + meanCI);
 			System.out.println("totalVar=" + DBRecordStat.totalVar);
+			System.out.println("totalVarSingle=" + DBRecordStat.totalVarSingle);
 
 			System.out.println("tStatEst=" + tStatEst);
 			System.out.println("Normal approx:" + 
@@ -853,8 +854,7 @@ return DF_BDG;
 
 		// we use normal distribution for df > 50 since it is close to Fisher F
 		// and fisherF fails for DOF > 2000
-		// if (df >= 50) { <-- original 
-		if (df >= 50 || df == 0) { // <-- single		
+		if (df >= 50 || df == 0) {
 			cutoff = NormalDist.inverseF(0, 1, 1 - sigLevel / 2.0);
 			power = 1 - NormalDist.cdf(Math.sqrt(lambda), 1, cutoff);
 			result = PowerZtest();
