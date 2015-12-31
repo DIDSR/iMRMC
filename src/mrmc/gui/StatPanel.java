@@ -68,10 +68,10 @@ public class StatPanel {
 	/**
 	 * table1 corresponds to the variance analysis
 	 */
-	private JTable BDGtable1, BCKtable1, DBMtable1, ORtable1, MStable1;
+	private JTable BDGtable1, BCKtable1, DBMtable1, ORtable1, MStable1, SingleBDGtable1;
 	
 	JTabbedPane tabbedPane1;
-	private JLabel BDGvar1, BCKvar1, DBMvar1, ORvar1, MSvar1;
+	private JLabel BDGvar1, BCKvar1, DBMvar1, ORvar1, MSvar1, SingleBDGvar1;
 
 	DecimalFormat twoDec = new DecimalFormat("0.00");
 	DecimalFormat threeDec = new DecimalFormat("0.000");
@@ -88,7 +88,7 @@ public class StatPanel {
 	 * 
 	 */
 	public StatPanel(JFrame JFrameAppTemp, DBRecord DBRecordStatTemp) {
-		
+
 		DBRecordStat = DBRecordStatTemp;
 		JFrameApp = JFrameAppTemp;
 		InputFile1 = DBRecordStat.InputFile1;
@@ -137,7 +137,7 @@ public class StatPanel {
 		 */
 		JPanel StatPanelRow1 = new JPanel();
 		StatPanelRow1.add(StatJLabelH0);
-		
+
 		JPanel StatPanelRow2 = new JPanel();
 		StatPanelRow2.add(StatJLabelAUC);
 
@@ -152,7 +152,7 @@ public class StatPanel {
 		StatPanelRow4.add(StatJLabelPValBDG);
 		StatPanelRow4.add(StatJLabelCIBDG);
 		StatPanelRow4.add(StatJLabelRejectBDG);
-		
+
 		JButton statHillis = new JButton("Hillis Approx");
 		JPanel StatPanelRow5 = new JPanel();
 		statHillis.addActionListener(new StatHillisButtonListener());
@@ -177,6 +177,8 @@ public class StatPanel {
 		JPanel panelOR1 = makeORTab(rowNamesSingle);
 		// create MS tab
 		JPanel panelMS1 = makeMSTab(rowNamesSingle);
+		// Create Single-reader tab
+		JPanel panelSingleBDG1 = makeSingleBDGTab(rowNamesDiff);
 
 		tabbedPane1 = new JTabbedPane();
 		tabbedPane1.addTab("BDG", panelBDG1);
@@ -184,12 +186,14 @@ public class StatPanel {
 		tabbedPane1.addTab("DBM", panelDBM1);
 		tabbedPane1.addTab("OR", panelOR1);
 		tabbedPane1.addTab("MS", panelMS1);
+		tabbedPane1.addTab("Single", panelSingleBDG1); // for Single-reader
 
 		JPanelStat.add(StatPanelRow1);
 		JPanelStat.add(StatPanelRow2);
 		JPanelStat.add(StatPanelRow3);
 		JPanelStat.add(StatPanelRow4);
 		JPanelStat.add(StatPanelRow5);
+		JPanelStat.add(StatPanelRow5); // for Single-reader
 		JPanelStat.add(tabbedPane1);
 
 	}
@@ -205,6 +209,7 @@ public class StatPanel {
 
 		StatJLabelAUC.setText("AUC = ");
 		DBRecordStat.totalVar = -1.0;
+		DBRecordStat.totalVarSingle = -1.0;
 
 		StatJLabelDFNormal.setText("Large Sample Approx(Normal)");
 		StatJLabelDFBDG.setText   ("         T-stat df(BDG) =      ");
@@ -242,19 +247,28 @@ public class StatPanel {
 			tabbedPane1.setEnabledAt(2, false);
 			tabbedPane1.setEnabledAt(3, false);
 			tabbedPane1.setEnabledAt(4, false);
+			tabbedPane1.setEnabledAt(5, false); // for Single-reader
 
 		} else {
 			tabbedPane1.setEnabledAt(2, true);
 			tabbedPane1.setEnabledAt(3, true);
 			tabbedPane1.setEnabledAt(4, true);
+			tabbedPane1.setEnabledAt(5, true); // for Single-reader
 		}
 
 		String output, output2;
-		
-		StatJLabelH0.setText("H0: AUC = 0.50,   two-sided alternative,   95% significance,   " + 
-				DBRecordStat.getSizes());
-		StatJLabelAUC.setText(DBRecordStat.getAUCsReaderAvgString(DBRecordStat.selectedMod) +
-				",   S.E(total) = " + threeDecE.format(Math.sqrt(DBRecordStat.totalVar)));
+
+		if (DBRecordStat.Nreader == 1) {
+			StatJLabelH0.setText("H0: AUC = 0.50,   two-sided alternative,   95% significance,   " +
+					DBRecordStat.getSizes());
+			StatJLabelAUC.setText(DBRecordStat.getAUCsReaderAvgString(DBRecordStat.selectedMod) +
+					",   S.E(total) = " + threeDecE.format(Math.sqrt(DBRecordStat.totalVarSingle)));
+		} else {
+			StatJLabelH0.setText("H0: AUC = 0.50,   two-sided alternative,   95% significance,   " +
+					DBRecordStat.getSizes());
+			StatJLabelAUC.setText(DBRecordStat.getAUCsReaderAvgString(DBRecordStat.selectedMod) +
+					",   S.E(total) = " + threeDecE.format(Math.sqrt(DBRecordStat.totalVar)));
+		}
 
 		if(DBRecordStat.selectedMod == 3) {
 			
@@ -279,20 +293,31 @@ public class StatPanel {
 		}
 		
 
-		output = twoDec.format(DBRecordStat.testStat.DF_BDG);
-		StatJLabelDFBDG.setText("  df(BDG) = " + output + "     ");
-		output = fourDec.format(DBRecordStat.testStat.pValBDG);
-		StatJLabelPValBDG.setText("  p-Value = " + output);
-		output = fourDec.format(DBRecordStat.testStat.ciBotBDG);
-		output2 = fourDec.format(DBRecordStat.testStat.ciTopBDG);
-		StatJLabelCIBDG.setText("Conf. Int. = (" + output + ", " + output2 + ")");
-		output = twoDec.format(DBRecordStat.testStat.rejectBDG);
-		if (DBRecordStat.testStat.rejectBDG == 1) {
-			StatJLabelRejectBDG.setText("Reject Null? = " + "Yes" + "(" + output + ")");
+
+		if(DBRecordStat.Nreader == 1) {
+			output = "N/A";
+			output2 = "N/A";
+			StatJLabelDFBDG.setText("  df(BDG) = " + output + "     ");
+			StatJLabelPValBDG.setText("  p-Value = " + output);
+			StatJLabelCIBDG.setText("Conf. Int. = (" + output + ", " + output2 + ")");
+			StatJLabelRejectBDG.setText("Reject Null? = " + output);
+			//StatJLabelRejectBDG.setText("Reject Null? = " + output);
 		} else {
-			StatJLabelRejectBDG.setText("Reject Null? = " + "No" + "(" + output + ")");
+			output = twoDec.format(DBRecordStat.testStat.DF_BDG);
+			StatJLabelDFBDG.setText("  df(BDG) = " + output + "     ");
+			output = fourDec.format(DBRecordStat.testStat.pValBDG);
+			StatJLabelPValBDG.setText("  p-Value = " + output);
+			output = fourDec.format(DBRecordStat.testStat.ciBotBDG);
+			output2 = fourDec.format(DBRecordStat.testStat.ciTopBDG);
+			StatJLabelCIBDG.setText("Conf. Int. = (" + output + ", " + output2 + ")");
+			output = twoDec.format(DBRecordStat.testStat.rejectBDG);
+			if (DBRecordStat.testStat.rejectBDG == 1) {
+				StatJLabelRejectBDG.setText("Reject Null? = " + "Yes" + "(" + output + ")");
+			} else {
+				StatJLabelRejectBDG.setText("Reject Null? = " + "No" + "(" + output + ")");
+			}
+			//StatJLabelRejectBDG.setText("Reject Null? = " + output);
 		}
-		//StatJLabelRejectBDG.setText("Reject Null? = " + output);
 
 		if (DBRecordStat.flagFullyCrossed) {
 			output = twoDec.format(DBRecordStat.testStat.DF_Hillis);
@@ -323,12 +348,13 @@ public class StatPanel {
 	 * Empties out all values in the variance analysis table
 	 */
 	void resetTable1() {
-		
+
 		BDGvar1.setText("total var=");
 		BCKvar1.setText("total var=");
 		DBMvar1.setText("total var=");
 		ORvar1.setText("total var=");
 		MSvar1.setText("total var=");
+		SingleBDGvar1.setText("total var="); // for Single-reader
 		StatJLabelTotalVar.setText("total var=");
 
 		for (int i = 0; i < BDGtable1.getRowCount(); i++) {
@@ -342,7 +368,13 @@ public class StatPanel {
 				BCKtable1.getColumnModel().getColumn(j)
 						.setCellRenderer(new DecimalFormatRenderer());
 			}
+			for (int j = 0; j < 4; j++) { // for Single-reader
+				SingleBDGtable1.setValueAt(0, i, j);
+				SingleBDGtable1.getColumnModel().getColumn(j)
+						.setCellRenderer(new DecimalFormatRenderer());
+			}
 		}
+
 		for (int i = 0; i < MStable1.getRowCount(); i++) {
 			for (int j = 0; j < 6; j++) {
 				MStable1.setValueAt(0, i, j);
@@ -358,13 +390,13 @@ public class StatPanel {
 						.setCellRenderer(new DecimalFormatRenderer());
 			}
 		}
-		
+
 		tabbedPane1.setTitleAt(0, "BDG");
 		tabbedPane1.setTitleAt(1, "BCK");
 		tabbedPane1.setTitleAt(2, "DBM");
 		tabbedPane1.setTitleAt(3, "OR");
 		tabbedPane1.setTitleAt(4, "MS");
-		
+		tabbedPane1.setTitleAt(5, "Single"); // for Single-reader
 	}
 
 	/**
@@ -384,6 +416,8 @@ public class StatPanel {
 				DBRecordStat.OR, DBRecordStat.ORcoeff);
 		double[][] MSdata1 = DBRecord.getMSTab(DBRecordStat.selectedMod,
 				DBRecordStat.MS, DBRecordStat.MScoeff);
+		double[][] SingleBDGdata1 = DBRecord.getSingleBDGTab(DBRecordStat.selectedMod, // for Single-reader
+				DBRecordStat.SingleBDG, DBRecordStat.SingleBDGcoeff);
 		if(DBRecordStat.flagMLE == 1) {
 			BDGdata1 = DBRecord.getBDGTab(DBRecordStat.selectedMod,
 					DBRecordStat.BDGbias, DBRecordStat.BDGcoeff);
@@ -395,56 +429,132 @@ public class StatPanel {
 					DBRecordStat.ORbias, DBRecordStat.ORcoeff);
 			MSdata1 = DBRecord.getMSTab(DBRecordStat.selectedMod,
 					DBRecordStat.MSbias, DBRecordStat.MScoeff);			
+			SingleBDGdata1 = DBRecord.getSingleBDGTab(DBRecordStat.selectedMod, // for Single-reader
+					DBRecordStat.SingleBDGbias, DBRecordStat.SingleBDGcoeff);
 		}
 		double BDGv = Matrix.total(BDGdata1[6]);
 		double BCKv = Matrix.total(BCKdata1[6]);
 		double DBMv = Matrix.total(DBMdata1[2]);
 		double ORv = Matrix.total(ORdata1[2]);
 		double MSv = Matrix.total(MSdata1[2]);
-	
+
+		/* calculate total variance for single-reader analysis <br
+		* ----refer to the following <br>
+		* ----Gallas2006_Acad-Radiol_v13p353 <br>
+		*/
+		double SingleBDGv = SingleBDGdata1[6][0]+SingleBDGdata1[6][1]+SingleBDGdata1[6][2]+
+				(SingleBDGdata1[1][3]-1)* SingleBDGdata1[0][3];
+
 		double[][][] allTableData = new double[][][] { BDGdata1, BCKdata1,
-				DBMdata1, ORdata1, MSdata1 };
-	
-		for (int i = 0; i < 7; i++) {
-			for (int j = 0; j < 8; j++) {
-				BDGtable1.setValueAt(allTableData[0][i][j], i, j);
-				BDGtable1.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-			}
-			for (int j = 0; j < 7; j++) {
-				BCKtable1.setValueAt(allTableData[1][i][j], i, j);
-				BCKtable1.getColumnModel().getColumn(j)
+				DBMdata1, ORdata1, MSdata1, SingleBDGdata1 }; // Single
+
+//		for (int i = 0; i < 7; i++) {
+//			for (int j = 0; j < 8; j++) {
+//				BDGtable1.setValueAt(allTableData[0][i][j], i, j);
+//				BDGtable1.getColumnModel().getColumn(j)
+//						.setCellRenderer(new DecimalFormatRenderer());
+//			}
+//			for (int j = 0; j < 7; j++) {
+//				BCKtable1.setValueAt(allTableData[1][i][j], i, j);
+//				BCKtable1.getColumnModel().getColumn(j)
+//						.setCellRenderer(new DecimalFormatRenderer());
+//			}
+//			for (int j = 0; j < 4; j++) {
+//				SingleBDGtable1.setValueAt(allTableData[5][i][j], i, j); // Single tab result.
+//				SingleBDGtable1.getColumnModel().getColumn(j)
+//						.setCellRenderer(new DecimalFormatRenderer());
+//			}
+//		}
+//		for (int i = 0; i < 3; i++) {
+//			for (int j = 0; j < 6; j++) {
+//				DBMtable1.setValueAt(allTableData[2][i][j], i, j);
+//				ORtable1.setValueAt(allTableData[3][i][j], i, j);
+//				MStable1.setValueAt(allTableData[4][i][j], i, j);
+//				DBMtable1.getColumnModel().getColumn(j)
+//						.setCellRenderer(new DecimalFormatRenderer());
+//				ORtable1.getColumnModel().getColumn(j)
+//						.setCellRenderer(new DecimalFormatRenderer());
+//				MStable1.getColumnModel().getColumn(j)
+//						.setCellRenderer(new DecimalFormatRenderer());
+//				// if study is not fully crossed, DBM, OR, MS calculation is
+//				// incorrect, tabs grayed out
+//			}
+//		}
+//
+//		String output;
+//
+//		output = threeDecE.format(BDGv);
+//		BDGvar1.setText("total var=" + output);
+//		output = threeDecE.format(BCKv);
+//		BCKvar1.setText("total var=" + output);
+//		output = threeDecE.format(DBMv);
+//		DBMvar1.setText("total var=" + output);
+//		output = threeDecE.format(ORv);
+//		ORvar1.setText("total var=" + output);
+//		output = threeDecE.format(MSv);
+//		MSvar1.setText("total var=" + output);
+//		output = threeDecE.format(SingleBDGv); // Single
+//		SingleBDGvar1.setText("total var=" + output); // Single
+
+
+		if (DBRecordStat.Nreader == 1) for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 4; j++) {
+				SingleBDGtable1.setValueAt(allTableData[5][i][j], i, j); // Single tab result.
+				SingleBDGtable1.getColumnModel().getColumn(j)
 						.setCellRenderer(new DecimalFormatRenderer());
 			}
 		}
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 6; j++) {
-				DBMtable1.setValueAt(allTableData[2][i][j], i, j);
-				ORtable1.setValueAt(allTableData[3][i][j], i, j);
-				MStable1.setValueAt(allTableData[4][i][j], i, j);
-				DBMtable1.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-				ORtable1.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-				MStable1.getColumnModel().getColumn(j)
-						.setCellRenderer(new DecimalFormatRenderer());
-				// if study is not fully crossed, DBM, OR, MS calculation is
-				// incorrect, tabs grayed out
+		else {
+			for (int i = 0; i < 7; i++) {
+				for (int j = 0; j < 8; j++) {
+					BDGtable1.setValueAt(allTableData[0][i][j], i, j);
+					BDGtable1.getColumnModel().getColumn(j)
+							.setCellRenderer(new DecimalFormatRenderer());
+				}
+				for (int j = 0; j < 7; j++) {
+					BCKtable1.setValueAt(allTableData[1][i][j], i, j);
+					BCKtable1.getColumnModel().getColumn(j)
+							.setCellRenderer(new DecimalFormatRenderer());
+				}
+			}
+			for (int i = 0; i < 3; i++) {
+				for (int j = 0; j < 6; j++) {
+							DBMtable1.setValueAt(allTableData[2][i][j], i, j);
+							ORtable1.setValueAt(allTableData[3][i][j], i, j);
+							MStable1.setValueAt(allTableData[4][i][j], i, j);
+							DBMtable1.getColumnModel().getColumn(j)
+									.setCellRenderer(new DecimalFormatRenderer());
+							ORtable1.getColumnModel().getColumn(j)
+									.setCellRenderer(new DecimalFormatRenderer());
+							MStable1.getColumnModel().getColumn(j)
+									.setCellRenderer(new DecimalFormatRenderer());
+							// if study is not fully crossed, DBM, OR, MS calculation is
+							// incorrect, tabs grayed out
+				}
+
 			}
 		}
 
+
 		String output;
-		
-		output = threeDecE.format(BDGv);
-		BDGvar1.setText("total var=" + output);
-		output = threeDecE.format(BCKv);
-		BCKvar1.setText("total var=" + output);
-		output = threeDecE.format(DBMv);
-		DBMvar1.setText("total var=" + output);
-		output = threeDecE.format(ORv);
-		ORvar1.setText("total var=" + output);
-		output = threeDecE.format(MSv);
-		MSvar1.setText("total var=" + output);
+
+		if (DBRecordStat.Nreader == 1) {
+			output = threeDecE.format(SingleBDGv); // for Single-reader
+			SingleBDGvar1.setText("total var=" + output);
+
+		} else {
+			output = threeDecE.format(BDGv);
+			BDGvar1.setText("total var=" + output);
+			output = threeDecE.format(BCKv);
+			BCKvar1.setText("total var=" + output);
+			output = threeDecE.format(DBMv);
+			DBMvar1.setText("total var=" + output);
+			output = threeDecE.format(ORv);
+			ORvar1.setText("total var=" + output);
+			output = threeDecE.format(MSv);
+			MSvar1.setText("total var=" + output);
+		}
+
 
 		if (DBRecordStat.flagMLE == 1) {
 			tabbedPane1.setTitleAt(0, "BDG**");
@@ -452,12 +562,18 @@ public class StatPanel {
 			tabbedPane1.setTitleAt(2, "DBM**");
 			tabbedPane1.setTitleAt(3, "OR**");
 			tabbedPane1.setTitleAt(4, "MS**");
+			tabbedPane1.setTitleAt(5, "Single**"); // for Single-reader
 		} else {
 			tabbedPane1.setTitleAt(0, "BDG");
 			tabbedPane1.setTitleAt(1, "BCK");
 			tabbedPane1.setTitleAt(2, "DBM");
 			tabbedPane1.setTitleAt(3, "OR");
 			tabbedPane1.setTitleAt(4, "MS");
+			tabbedPane1.setTitleAt(5, "Single"); // for Single-reader
+		}
+
+		if (DBRecordStat.Nreader == 1) {
+			tabbedPane1.setSelectedIndex(5); // for Single-reader
 		}
 		
 	}
@@ -641,6 +757,31 @@ public class StatPanel {
 	}
 
 	/**
+	 * Initializes the Single-reader tab
+	 * 
+	 * @param rowNames Names for row labels of table
+	 * @return JPanel containing Single-reader tab
+	 */
+	private JPanel makeSingleBDGTab(String[] rowNames) {
+
+		JPanel panelSingleBDG = new JPanel();
+		DefaultTableModel dm = new DefaultTableModel(7, 4);
+		String[] SingleBDGnames = { "M1", "M2", "M3", "M4" };
+		SingleBDGtable1 = new JTable(dm);
+		JScrollPane SingleBDGscroll = genTable(SingleBDGtable1, SingleBDGnames, rowNames);
+		int height = SingleBDGtable1.getRowHeight();
+		panelSingleBDG.add(SingleBDGscroll);
+		SingleBDGtable1.setPreferredScrollableViewportSize(new Dimension(650,
+				height * 8));
+		SingleBDGtable1.setFillsViewportHeight(true);
+		SingleBDGvar1 = new JLabel("sqrt(Var)=0.00");
+		panelSingleBDG.add(SingleBDGvar1);
+
+		return panelSingleBDG;
+		
+	}
+
+	/**
 	 * Enables all tabs of variance analysis
 	 */
 	public void enableTabs() {
@@ -650,6 +791,7 @@ public class StatPanel {
 		tabbedPane1.setEnabledAt(2, true);
 		tabbedPane1.setEnabledAt(3, true);
 		tabbedPane1.setEnabledAt(4, true);
+		tabbedPane1.setEnabledAt(5, true); // for Single-reader
 	
 	}
 
@@ -686,7 +828,8 @@ public class StatPanel {
 		tabbedPane1.setEnabledAt(2, false);
 		tabbedPane1.setEnabledAt(3, false);
 		tabbedPane1.setEnabledAt(4, false);
-
+		tabbedPane1.setEnabledAt(5, false); // for Single-reader
+		
 	}
 	
 	/**
