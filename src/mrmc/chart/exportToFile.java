@@ -56,13 +56,13 @@ public class exportToFile {
 		str = str
 				+ "\r\n*****************************************************************\r\n";
 		
-		str = str
+	/*	str = str
 				+ "\r\n**********************BDG output Results***************************\r\n";
 		str = str + "Moments" + SEPA + "M1" + SEPA + "M2" + SEPA + "M3" + SEPA
 				+ "M4" + SEPA + "M5" + SEPA + "M6" + SEPA + "M7" + SEPA + "M8";
-		/*
-		 * added for saving the results
-		 */
+		
+		// added for saving the results
+		 
 		str = str + "\r\n" + "comp MA" + SEPA;
 		for(int i = 0; i<8; i++)
 			str = str + fiveDecE.format(DBRecord.BDGPanelresult[0][i]) + SEPA;
@@ -152,6 +152,132 @@ public class exportToFile {
 		str = str + "\r\n" + "total"+ SEPA;
 		for (int i = 0; i < 6; i++)
 			str = str + fiveDecE.format(DBRecord.MSPanelresult[2][i]) + SEPA;
+		str = str +"\r\n"; */
+		return str;
+	}
+	
+	
+	public static String exportTable(String oldReport, DBRecord DBRecordTable) {
+		String str = oldReport;
+		double[][] BDGdata1 = DBRecord.getBDGTab(DBRecordTable.selectedMod,
+				DBRecordTable.BDG, DBRecordTable.BDGcoeff);
+		double[][] BCKdata1 = DBRecord.getBCKTab(DBRecordTable.selectedMod,
+				DBRecordTable.BCK, DBRecordTable.BCKcoeff);
+		double[][] DBMdata1 = DBRecord.getDBMTab(DBRecordTable.selectedMod,
+				DBRecordTable.DBM, DBRecordTable.DBMcoeff);
+		double[][] ORdata1 = DBRecord.getORTab(DBRecordTable.selectedMod,
+				DBRecordTable.OR, DBRecordTable.ORcoeff);
+		double[][] MSdata1 = DBRecord.getMSTab(DBRecordTable.selectedMod,
+				DBRecordTable.MS, DBRecordTable.MScoeff);
+		if(DBRecordTable.flagMLE == 1) {
+			BDGdata1 = DBRecord.getBDGTab(DBRecordTable.selectedMod,
+					DBRecordTable.BDGbias, DBRecordTable.BDGcoeff);
+			BCKdata1 = DBRecord.getBCKTab(DBRecordTable.selectedMod,
+					DBRecordTable.BCKbias, DBRecordTable.BCKcoeff);
+			DBMdata1 = DBRecord.getDBMTab(DBRecordTable.selectedMod,
+					DBRecordTable.DBMbias, DBRecordTable.DBMcoeff);
+			ORdata1 = DBRecord.getORTab(DBRecordTable.selectedMod,
+					DBRecordTable.ORbias, DBRecordTable.ORcoeff);
+			MSdata1 = DBRecord.getMSTab(DBRecordTable.selectedMod,
+					DBRecordTable.MSbias, DBRecordTable.MScoeff);			
+		}
+		
+		str = str
+				+ "\r\n**********************BDG output Results***************************\r\n";
+		str = str + "Moments" + SEPA + "M1" + SEPA + "M2" + SEPA + "M3" + SEPA
+				+ "M4" + SEPA + "M5" + SEPA + "M6" + SEPA + "M7" + SEPA + "M8";
+		/*
+		 * added for saving the results
+		 */
+		str = str + "\r\n" + "comp MA" + SEPA;
+		for(int i = 0; i<8; i++)
+			str = str + fiveDecE.format(BDGdata1[0][i]) + SEPA;
+		str = str + "\r\n" + "coeff MA" + SEPA;
+		for(int i = 0; i<8; i++)
+			str = str + fiveDecE.format(BDGdata1[1][i]) + SEPA;
+		str = str + "\r\n" + "comp MB" + SEPA;
+		for(int i = 0; i<8; i++)
+			str = str + fiveDecE.format(BDGdata1[2][i]) + SEPA;
+		str = str + "\r\n" + "coeff MB" + SEPA;
+		for(int i = 0; i<8; i++)
+			str = str + fiveDecE.format(BDGdata1[3][i]) + SEPA;
+		str = str + "\r\n" + "comp product" + SEPA;
+		for(int i = 0; i<8; i++)
+			str = str + fiveDecE.format(BDGdata1[4][i]) + SEPA;
+		str = str + "\r\n" + "-coeff product" + SEPA;
+		for(int i = 0; i<8; i++)
+			str = str + fiveDecE.format(BDGdata1[5][i]) + SEPA;
+		str = str + "\r\n" + "total" + SEPA;
+		for(int i = 0; i<8; i++)
+			str = str + fiveDecE.format(BDGdata1[6][i]) + SEPA;
+		str = str +"\r\n"; 
+		str = str
+				+ "\r\n**********************BCK output Results***************************";
+		str = str + "\r\nMoments" + SEPA + "N" + SEPA + "D" + SEPA + "N~D" + SEPA
+				+ "R" + SEPA + "N~R" + SEPA + "D~R" + SEPA + "R~N~D";
+		str = str + "\r\n" + "comp MA" + SEPA;
+		for (int i = 0; i < 7; i++)
+			str = str + fiveDecE.format(BCKdata1[0][i]) + SEPA;
+		str = str + "\r\n" + "coeff MA" + SEPA;
+		for (int i = 0; i < 7; i++)
+			str = str + fiveDecE.format(BCKdata1[1][i]) + SEPA;
+		str = str + "\r\n" + "comp MB" + SEPA;
+		for (int i = 0; i < 7; i++)
+			str = str + fiveDecE.format(BCKdata1[2][i]) + SEPA;
+		str = str + "\r\n" + "coeff MB" + SEPA;
+		for (int i = 0; i < 7; i++)
+			str = str + fiveDecE.format(BCKdata1[3][i]) + SEPA;
+		str = str + "\r\n" + "comp product" + SEPA;
+		for (int i = 0; i < 7; i++)
+			str = str + fiveDecE.format(BCKdata1[4][i]) + SEPA;
+		str = str + "\r\n" + "-coeff product" + SEPA;
+		for (int i = 0; i < 7; i++)
+			str = str + fiveDecE.format(BCKdata1[5][i]) + SEPA;
+		str = str + "\r\n" + "total" + SEPA;
+		for (int i = 0; i < 7; i++)
+			str = str + fiveDecE.format(BCKdata1[6][i]) + SEPA;
+		str = str +"\r\n"; 
+		str = str
+				+ "\r\n**********************DBM output Results***************************";
+		str = str + "\r\nComponents" + SEPA + "R" + SEPA + "C" + SEPA + "R~C"
+				+ SEPA + "T~R" + SEPA + "T~C" + SEPA + "T~R~C";
+		str = str + "\r\n" + "components" + SEPA;
+		for (int i = 0; i < 6; i++)
+			str = str + fiveDecE.format(DBMdata1[0][i]) + SEPA;
+		str = str + "\r\n" + "coeff" + SEPA;
+		for (int i = 0; i < 6; i++)
+			str = str + fiveDecE.format(DBMdata1[1][i]) + SEPA;
+		str = str + "\r\n" + "total" + SEPA;
+		for (int i = 0; i < 6; i++)
+			str = str + fiveDecE.format(DBMdata1[2][i]) + SEPA;
+		str = str +"\r\n"; 
+		str = str
+				+ "\r\n**********************OR output Results***************************";
+		str = str + "\r\nComponents" + SEPA + "R" + SEPA + "TR" + SEPA + "COV1"
+				+ SEPA + "COV2" + SEPA + "COV3" + SEPA + "ERROR";
+		str = str + "\r\n" + "components" + SEPA;
+		for (int i = 0; i < 6; i++)
+			str = str + fiveDecE.format(ORdata1[0][i]) + SEPA;
+		str = str + "\r\n" + "coeff" + SEPA;
+		for (int i = 0; i < 6; i++)
+			str = str + fiveDecE.format(ORdata1[1][i]) + SEPA;
+		str = str + "\r\n" + "total" + SEPA;
+		for (int i = 0; i < 6; i++)
+			str = str + fiveDecE.format(ORdata1[2][i]) + SEPA;
+		str = str +"\r\n"; 
+		str = str
+				+ "\r\n**********************MS output Results***************************";
+		str = str + "\r\nComponents" + SEPA + "R" + SEPA + "C" + SEPA + "RC"
+				+ SEPA + "MR" + SEPA + "MC" + SEPA + "MRC";
+		str = str + "\r\ncomponents" + SEPA;
+		for (int i = 0; i < 6; i++)
+			str = str + fiveDecE.format(MSdata1[0][i]) + SEPA;
+		str = str + "\r\ncoeff" + SEPA;
+		for (int i = 0; i < 6; i++)
+			str = str + fiveDecE.format(MSdata1[1][i]) + SEPA;
+		str = str + "\r\n" + "total"+ SEPA;
+		for (int i = 0; i < 6; i++)
+			str = str + fiveDecE.format(MSdata1[2][i]) + SEPA;
 		str = str +"\r\n"; 
 		return str;
 	}
@@ -159,7 +285,7 @@ public class exportToFile {
 	// export sizepanel for iMRMC
 	public static String exportSizePanel(String oldReport, DBRecord SizeDBRecord, SizePanel processSizePanel) {
 		String str = oldReport;
-		double[][] BDG = SizeDBRecord.BDGresult;
+/*		double[][] BDG = SizeDBRecord.BDGresult;
 		double[][] DBM = SizeDBRecord.DBMresult;
 		double[][] BCK = SizeDBRecord.BCKresult;
 		double[][] OR = SizeDBRecord.ORresult;
@@ -178,7 +304,7 @@ public class exportToFile {
 		double[][] BCKcoeff = SizeDBRecord.BCKcoeffresult;
 		double[][] DBMcoeff = SizeDBRecord.DBMcoeffresult;
 		double[][] ORcoeff = SizeDBRecord.ORcoeffresult;
-		double[][] MScoeff = SizeDBRecord.MScoeffresult;
+		double[][] MScoeff = SizeDBRecord.MScoeffresult;*/
 		double[] statParms = new double[2];
 		
 		statParms[0] = Double.parseDouble(processSizePanel.SigLevelJTextField.getText());
@@ -198,7 +324,16 @@ public class exportToFile {
 		str = str + "NReaderSize=  " +NreaderSize + SEPA
 		          + "NnormalSize=  " + NnormalSize + SEPA
 		          + "NDiseaseSize= " + NdiseaseSize ;
-		str = str + "\r\n**********************BDG Results***************************\r\n";
+		
+		str = str 
+				+ "\r\n*****************************************************************";
+		str = str + "\r\nSizing Results:\r\n";
+		str = str + resultnew;
+		str = str
+				+ "\r\n*****************************************************************\r\n";
+
+		
+	/*	str = str + "\r\n**********************BDG Results***************************\r\n";
 		str = str + "         Moments" + SEPA + "         M1" + SEPA + "         M2" + SEPA + "         M3" + SEPA
 				+ "         M4" + SEPA + "         M5" + SEPA + "         M6" + SEPA + "         M7" + SEPA + "         M8"
 				+ "\r\n";
@@ -275,14 +410,8 @@ public class exportToFile {
 		str = str + "\r\nCoeff" + SEPA;
 		for (int i = 0; i < 6; i++)
 			str = str + fiveDecE.format(ORcoeff[3][i]) + SEPA;
-		str = str +"\r\n"; 
+		str = str +"\r\n"; */
 		
-		str = str 
-				+ "\r\n*****************************************************************";
-		str = str + "\r\nSizing Results:\r\n";
-		str = str + resultnew;
-		str = str
-				+ "\r\n*****************************************************************\r\n";
 
 		return str;
 	}

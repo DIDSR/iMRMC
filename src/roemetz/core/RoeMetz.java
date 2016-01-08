@@ -34,7 +34,7 @@ public class RoeMetz extends JApplet {
 	public static String versionName;
 	private static final long serialVersionUID = 1L;
 	private static JFrame iRMFrame;
-
+    public static RMGUInterface RMGUInterface1;
 	/**
 	 * Gets the application frame, used when launching dialog boxes
 	 * 
@@ -53,7 +53,8 @@ public class RoeMetz extends JApplet {
 		resize(6, 6);
 
 		Container cp = getContentPane();
-		new RMGUInterface(this, cp);
+		RMGUInterface1 = new RMGUInterface(this, cp);
+		
 	}
 
 	/**
@@ -75,6 +76,7 @@ public class RoeMetz extends JApplet {
 			e.printStackTrace();
 		}
 		run(new RoeMetz(), 900, 600);
+		validateFunction.validateFunction(RMGUInterface1);
 	}
 
 	/**
