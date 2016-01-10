@@ -35,6 +35,7 @@ public class RoeMetz extends JApplet {
 	private static final long serialVersionUID = 1L;
 	private static JFrame iRMFrame;
     public static RMGUInterface RMGUInterface1;
+    public static boolean doValidation = false;
 	/**
 	 * Gets the application frame, used when launching dialog boxes
 	 * 
