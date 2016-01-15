@@ -501,11 +501,11 @@ public class GUInterface {
 						report = report + sizeFilename + "\r\n" + "\r\n";
 						if (selectedInput == DescInputChooseMode) {
 							report = exportToFile.exportSizePanel(report, DBRecordSize, SizePanel1);
-							report = exportToFile.exportSummary(report, DBRecordStat);
+							report = exportToFile.exportSummary(report, DBRecordSize);
 							report = exportToFile.exportTable(report, DBRecordSize);
 						} else {
 							report = exportToFile.exportSizePanel(report, DBRecordSize, SizePanel1);
-							report = exportToFile.exportSummary(report, DBRecordStat);
+							report = exportToFile.exportSummary(report, DBRecordSize);
 							report = exportToFile.exportTable(report, DBRecordSize);
 						}
 						

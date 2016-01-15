@@ -2,6 +2,7 @@ package mrmc.chart;
 
 import java.text.DecimalFormat;
 
+import roemetz.gui.RMGUInterface;
 import mrmc.core.DBRecord;
 import mrmc.gui.InputFileCard;
 import mrmc.gui.SizePanel;
@@ -509,6 +510,60 @@ public class exportToFile {
 		}
 		str = str +"\r\n"; 
 		str = str +"END SUMMARY \r\n"; 
+		return str;
+	}
+
+
+	public static String exoprtiRoeMetzSet(String oldReport, SizePanel sizePanelRoeMetz) {
+		// TODO Auto-generated method stub
+		String str = oldReport;
+		str = str + "\r\n*******************iRoeMetz parameter************************\r\n";
+		str = str + "u_A: " + RMGUInterface.mu0.getText() + ",     ";
+		str = str + "u_B: " + RMGUInterface.mu1.getText() + "\n";
+		
+        str = str +"Input Variances Invariant to Modality: " +"\n";
+		str = str + "R0: " + RMGUInterface.v_R0.getText() + ",    ";
+		str = str + "C0: " + RMGUInterface.v_C0.getText() + ",    ";
+		str = str + "RC0: " + RMGUInterface.v_RC0.getText() + ",    ";
+		str = str + "R1: " + RMGUInterface.v_R1.getText() + ",    ";
+		str = str + "C1: " + RMGUInterface.v_C1.getText() + ",    ";
+		str = str + "RC1: " + RMGUInterface.v_RC1.getText() + "\n";
+		
+		str = str +"Input Variances Specific to Modality A: " +"\n";
+		str = str + "AR0: " + RMGUInterface.v_AR0.getText() + ",   ";
+		str = str + "AC0: " + RMGUInterface.v_AC0.getText() + ",   ";
+		str = str + "ARC0: " + RMGUInterface.v_ARC0.getText() + ",   ";
+		str = str + "AR1: " + RMGUInterface.v_AR1.getText() + ",   ";
+		str = str + "AC1: " + RMGUInterface.v_AC1.getText() + ",   ";
+		str = str + "ARC1: " + RMGUInterface.v_ARC1.getText() + "\n";
+			
+		str = str +"Input Variances Specific to Modality B: " +"\n";
+		str = str + "BR0: " + RMGUInterface.v_BR0.getText() + ",   ";
+		str = str + "BC0: " + RMGUInterface.v_BC0.getText() + ",   ";
+		str = str + "BRC0: " + RMGUInterface.v_BRC0.getText() + ",   ";
+		str = str + "BR1 " + RMGUInterface.v_BR1.getText() + ",   ";
+		str = str + "BC1: " + RMGUInterface.v_BC1.getText() + ",   ";
+		str = str + "BRC1: " + RMGUInterface.v_BRC1.getText() + "\n";
+		
+		str = str +"Input Experiment Size: " +"\n";
+		str = str + "N0: " + RMGUInterface.NnormalJTextField.getText() + ",   ";
+		str = str + "N1: " + RMGUInterface.NdiseaseJTextField.getText() + ",   ";
+		str = str + "NR: " + RMGUInterface.NreaderJTextField.getText() + "\n";
+		
+		str = str +"Study Design: " +"\n";
+		str = str +	"# of Split-Plot Groups: " + sizePanelRoeMetz.numSplitPlots + ",  ";
+		if (sizePanelRoeMetz.pairedReadersFlag == 1)
+			str = str +	"Paired Readers: Yes,  ";
+		else
+			str = str +	"Paired Readers: No,  ";
+		if (sizePanelRoeMetz.pairedNormalsFlag == 1)
+			str = str +	"Paired Normal: Yes,  ";
+		else
+			str = str +	"Paired Normal: No,  ";
+		if (sizePanelRoeMetz.pairedDiseasedFlag == 1)
+			str = str +	"Paired Diesase: Yes \n";
+		else
+			str = str +	"Paired Diesase: No \n";
 		return str;
 	}
 }

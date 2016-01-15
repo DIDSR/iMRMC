@@ -21,6 +21,7 @@ package mrmc.core;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import roemetz.core.RoeMetz;
 import mrmc.gui.GUInterface;
 import mrmc.gui.SizePanel;
 import umontreal.iro.lecuyer.probdist.BetaDist;
@@ -86,7 +87,7 @@ public class StatTest {
 //		DF_BDG = calcDF_BDGbckIndep(DBRecordStat);
 //		DF_BDG = calcDF_BDGbckGroup(DBRecordStat);
 		DF_BDG = calcDF_BDGms(DBRecordStat);
-		DF_Hillis = calcDF_Hillis(DBRecordStat);
+
 
 		// calculate p-value and cutoff assuming normality
 		NormalDist ndist = new NormalDist();
@@ -104,30 +105,35 @@ public class StatTest {
 			pValBDG = 2*(1 - tdist.cdf( tStatEst ));
 			cutoffBDG = tdist.inverseF( 1-sig/2 );
 		}
-
-		// calculate p-value and cutoff assuming t-distribution with DF_Hillis
-		// Use normal distribution if df > 50, since they are approximately
-		// equal at that point, and FisherFDist can't handle large dfs
-		if (DF_Hillis >= 50) {
-			pValHillis = pValNormal;
-			cutoffHillis = cutoffNormal;
-		} else {
-			StudentDist tdist = new StudentDist((int) DF_Hillis );
-			pValHillis = 2*(1 - tdist.cdf( tStatEst ));
-			cutoffHillis = tdist.inverseF( 1-sig/2 );
-		}
 		
 		ciBotNormal = meanCI - Math.sqrt(DBRecordStat.totalVar) * cutoffNormal; // normal approx
 		ciTopNormal = meanCI + Math.sqrt(DBRecordStat.totalVar) * cutoffNormal; // normal approx
 		ciBotBDG = meanCI - Math.sqrt(DBRecordStat.totalVar) * cutoffBDG;
 		ciTopBDG = meanCI + Math.sqrt(DBRecordStat.totalVar) * cutoffBDG;
-		ciBotHillis = meanCI - Math.sqrt(DBRecordStat.totalVar) * cutoffHillis;
-		ciTopHillis = meanCI + Math.sqrt(DBRecordStat.totalVar) * cutoffHillis;
+
 
 		if(pValNormal < sig) rejectNormal = 1;
 		if(pValBDG < sig) rejectBDG = 1;
-		if(pValHillis < sig) rejectHillis = 1;
 
+        // if study is fully crossed calculate DF_Hillis
+		// calculate p-value and cutoff assuming t-distribution with DF_Hillis
+		// Use normal distribution if df > 50, since they are approximately
+		// equal at that point, and FisherFDist can't handle large dfs
+		// And also calculate ciBotHillis , ciPotHillis and rejectHillis
+		if (DBRecordStat.flagFullyCrossed){
+			DF_Hillis = calcDF_Hillis(DBRecordStat);
+			if (DF_Hillis >= 50) {
+				pValHillis = pValNormal;
+				cutoffHillis = cutoffNormal;
+			} else {
+				StudentDist tdist = new StudentDist((int) DF_Hillis );
+				pValHillis = 2*(1 - tdist.cdf( tStatEst ));
+				cutoffHillis = tdist.inverseF( 1-sig/2 );
+			}
+			ciBotHillis = meanCI - Math.sqrt(DBRecordStat.totalVar) * cutoffHillis;
+			ciTopHillis = meanCI + Math.sqrt(DBRecordStat.totalVar) * cutoffHillis;
+			if(pValHillis < sig) rejectHillis = 1;
+		}
 		if(DBRecordStat.verbose) {
 			System.out.println("NR=" + DBRecordStat.Nreader + 
 			           ",  N0=" + DBRecordStat.Nnormal + 
@@ -144,9 +150,11 @@ public class StatTest {
 			System.out.println("DF_BDG=" + DF_BDG 
 					+ "  pValBDG=" + pValBDG + "  cutoffBDG=" + cutoffBDG 
 					+ "  ci=" + ciBotBDG + ","  + ciTopBDG);
-			System.out.println("DF_Hillis=" + DF_Hillis 
-					+ "  pValHillis=" + pValHillis + "  cutoffHillis=" + cutoffHillis 
-					+ "  ci=" + ciBotHillis + ","  + ciTopHillis);
+			if (DBRecordStat.flagFullyCrossed){
+				System.out.println("DF_Hillis=" + DF_Hillis 
+						+ "  pValHillis=" + pValHillis + "  cutoffHillis=" + cutoffHillis 
+						+ "  ci=" + ciBotHillis + ","  + ciTopHillis);
+			}
 		}
 
 	}
@@ -684,7 +692,7 @@ DF_BDG = Math.pow(totalVar, 2) / DF_denom;
  */
 // According to Gaylor1969_Technometrics_v4p691, there is a minimum DF
 if (DF_BDG < DF_min) {
-	if(verbose) {
+	if(verbose&&!RoeMetz.doValidation) {
 		JFrame frame = new JFrame();
 		JOptionPane.showMessageDialog(frame,
 				"DF_BDG is below a minimum." +
@@ -698,7 +706,7 @@ if (DF_BDG < DF_min) {
 
 //Do not return a DF_BDG that is less than 2
 if (DF_BDG < 2) {
-	if(verbose) {
+	if((verbose&&!RoeMetz.doValidation)) {
 			JFrame frame = new JFrame();
 			JOptionPane.showMessageDialog(frame,
 				"DF_BDG is below a minimum." +
@@ -806,6 +814,7 @@ return DF_BDG;
 			DF_Hillis = 2;
 		}
 		if( Double.isInfinite(DF_Hillis) ) {
+		    if (!RoeMetz.doValidation){
 			JFrame frame = new JFrame();
 			JOptionPane.showMessageDialog(frame,
 					"DF_Hillis was calculated to be infinite." + 
@@ -814,6 +823,7 @@ return DF_BDG;
 					"\nDF_Hillis is being set to 50." +
 					"\nPlease check your data.", "Error",
 					JOptionPane.ERROR_MESSAGE);
+		    }
 			DF_Hillis = 50.0;			
 		}
 

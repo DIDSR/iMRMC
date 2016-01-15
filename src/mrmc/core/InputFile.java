@@ -676,10 +676,10 @@ public class InputFile {
 	}
 
 	private void loadSummaryData() throws IOException {
-		// TODO Auto-generated method stub
+		// load data from summary file
 		String toReturn = "";
 		DBRecordStat.AUCsReaderAvg = new double[3];
-		String tempstr = fileContent.get(beginSummaryPosition+1).toUpperCase();
+		String tempstr = fileContent.get(beginSummaryPosition+1).toUpperCase();//load Nreader
 		try {
 		DBRecordStat.Nreader= Integer.valueOf(tempstr.substring(tempstr.lastIndexOf("=")+1).trim());
 		DBRecordStat.NreaderDB= Integer.valueOf(tempstr.substring(tempstr.lastIndexOf("=")+1).trim());
@@ -687,7 +687,7 @@ public class InputFile {
 			toReturn = "Found NReaderSize =: Text following is not an integer \n"+tempstr;
 			throw new IOException(toReturn);
 		}
-		tempstr = fileContent.get(beginSummaryPosition+2).toUpperCase();
+		tempstr = fileContent.get(beginSummaryPosition+2).toUpperCase();//load Nnormal
 		try {
 		DBRecordStat.Nnormal= Integer.valueOf(tempstr.substring(tempstr.lastIndexOf("=")+1).trim());
 		DBRecordStat.NnormalDB= Integer.valueOf(tempstr.substring(tempstr.lastIndexOf("=")+1).trim());
@@ -695,7 +695,7 @@ public class InputFile {
 			toReturn = "Found NReaderSize =: Text following is not an integer \n"+tempstr;
 			throw new IOException(toReturn);
 		}
-		tempstr = fileContent.get(beginSummaryPosition+3).toUpperCase();
+		tempstr = fileContent.get(beginSummaryPosition+3).toUpperCase();//load NDisease
 		try {
 		DBRecordStat.Ndisease= Integer.valueOf(tempstr.substring(tempstr.lastIndexOf("=")+1).trim());
 		DBRecordStat.NdiseaseDB= Integer.valueOf(tempstr.substring(tempstr.lastIndexOf("=")+1).trim());
@@ -704,14 +704,14 @@ public class InputFile {
 			throw new IOException(toReturn);
 		}
 		 
-		tempstr = fileContent.get(beginSummaryPosition+5).toUpperCase();
+		tempstr = fileContent.get(beginSummaryPosition+5).toUpperCase();//load Modality A
 		try {
 		DBRecordStat.modalityA= tempstr.substring(tempstr.lastIndexOf("=")+1).trim();
 		}catch(NumberFormatException e) {
 			toReturn = "Fail to load Modality A information \n"+tempstr;
 			throw new IOException(toReturn);
 		}
-		tempstr = fileContent.get(beginSummaryPosition+6).toUpperCase();
+		tempstr = fileContent.get(beginSummaryPosition+6).toUpperCase();//load Modality B
 		try {
 			DBRecordStat.modalityB= tempstr.substring(tempstr.lastIndexOf("=")+1).trim();
 		}catch(NumberFormatException e) {
@@ -719,6 +719,7 @@ public class InputFile {
 			throw new IOException(toReturn);
 		}
 	   DBRecordStat.AUCs = new double [(int) DBRecordStat.Nreader][3];
+	   // load average AUC
 	   for (int i = beginSummaryPosition+7; i < endSummaryPosition+1; i++) {
 			tempstr = fileContent.get(i).toUpperCase().trim();
 			int loc = tempstr.indexOf("AUC_A =");
@@ -740,7 +741,7 @@ public class InputFile {
 					}
 			}
 
-			// AUCs
+			// load individual AUCs
 			loc = tempstr.indexOf("READER SPECIFIC AUC");
 			if (loc != -1 ) {
 				for (int k=2;k<DBRecordStat.Nreader+2;k++){
@@ -762,14 +763,14 @@ public class InputFile {
 
 				}
 			}
-			// BDG moments
+			// load BDG moments
 			loc = tempstr.indexOf("MODALITY1(AUC_A)");
 			if (loc != -1) {
 				String studyinfo[] = fileContent.get(i).split(",");
 				for (int j = 1; j<studyinfo.length;j++ ){
 					try{
 						String tstr = studyinfo[j];
-						DBRecordStat.BDG[0][j-1]= Double.valueOf(tstr.trim());
+						DBRecordStat.LoadBDG[0][j-1]= Double.valueOf(tstr.trim());
 					}catch (Exception e) {
 						toReturn = "ERROR: Invalid input of MODALITY1(AUC_A)";
 						toReturn = toReturn + "      row = " +   (i+1) + " \n";
@@ -785,7 +786,7 @@ public class InputFile {
 				for (int j = 1; j<studyinfo.length;j++ ){
 					try{
 						String tstr = studyinfo[j];
-						DBRecordStat.BDG[1][j-1]= Double.valueOf(tstr.trim());
+						DBRecordStat.LoadBDG[1][j-1]= Double.valueOf(tstr.trim());
 					}catch (Exception e) {
 						toReturn = "ERROR: Invalid input of MODALITY2(AUC_B)";
 						toReturn = toReturn + "      row = " +   (i+1) + " \n";
@@ -801,7 +802,7 @@ public class InputFile {
 				for (int j = 1; j<studyinfo.length;j++ ){
 					try{
 						String tstr = studyinfo[j];
-						DBRecordStat.BDG[2][j-1]= Double.valueOf(tstr.trim());
+						DBRecordStat.LoadBDG[2][j-1]= Double.valueOf(tstr.trim());
 					}catch (Exception e) {
 						toReturn = "ERROR: Invalid input of COMP PRODUCT";
 						toReturn = toReturn + "      row = " +   (i+1) + " \n";

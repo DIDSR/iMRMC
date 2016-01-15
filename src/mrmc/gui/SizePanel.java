@@ -523,11 +523,16 @@ public class SizePanel {
 	public class SizeHillisButtonListener implements ActionListener {
 
 		public void actionPerformed(ActionEvent e) {
-			String hillisValues = "Hillis 2011:"  +"\n"+  
+			String hillisValues;
+			if (DBRecordSize.flagFullyCrossed){
+			hillisValues = "Hillis 2011:"  +"\n"+  
 					SizeJLabelDFHillis.getText() +"\n"+ 
 					SizeJLabelLambdaHillis.getText() + "\n" + 
 					SizeJLabelPowerHillis.getText() + "\n" + 
 					SizeJLabelCIHillis.getText();
+			}else{
+				hillisValues = "Study is not fully crossed";
+			}
 					
 			// TODO Auto-generated method stub
 			JOptionPane.showMessageDialog(reportFrame,

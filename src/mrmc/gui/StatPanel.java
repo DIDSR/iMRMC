@@ -23,6 +23,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
+import roemetz.core.RoeMetz;
 import mrmc.core.DBRecord;
 import mrmc.core.InputFile;
 import mrmc.core.Matrix;
@@ -234,7 +235,7 @@ public class StatPanel {
 		
 		// If the study is not fully crossed, then don't show other variance decomposisions.
 		if (!DBRecordStat.flagFullyCrossed) {
-			if(DBRecordStat.verbose)
+			if(DBRecordStat.verbose && !RoeMetz.doValidation)
 				JOptionPane.showMessageDialog(JFrameApp,
 					"The study is not fully crossed", "Warning",
 					JOptionPane.WARNING_MESSAGE);
@@ -774,10 +775,15 @@ public class StatPanel {
 	public class StatHillisButtonListener implements ActionListener {
 
 		public void actionPerformed(ActionEvent e) {
-			String hillisValues = StatJLabelDFHillis.getText() +"\n"+ 
+			String hillisValues;
+			if (DBRecordStat.flagFullyCrossed){
+				hillisValues = StatJLabelDFHillis.getText() +"\n"+ 
 					StatJLabelPValHillis.getText() + "\n" + 
 					StatJLabelCIHillis.getText() + "\n" + 
 					StatJLabelRejectHillis.getText();
+			}else{
+				hillisValues = "Study is not fully crossed";
+			}
 					
 			// TODO Auto-generated method stub
 			JOptionPane.showMessageDialog(JFrameApp,

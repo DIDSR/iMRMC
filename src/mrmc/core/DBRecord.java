@@ -156,6 +156,7 @@ public class DBRecord {
 	
 	// added for saving the results (i.e., BDG)
 	public double[][] BDG = new double[4][8],
+			           LoadBDG = new double[4][8], // BDG moment load from summary file
 						BDGbias = new double[4][8],
 						BDGcoeff = new double[4][8];
 	// added for saving the results
@@ -254,6 +255,7 @@ public class DBRecord {
 			MSbias = new double[4][6], 
 			MScoeff = new double[4][6];
 	public int inputMod;
+
 
 	public static double[][] MSresult = new double[4][6],
 			MSbiasresult = new double[4][6],
@@ -567,15 +569,15 @@ public class DBRecord {
 				{ 	 1/N0/NR, 	 (N0-1)/N0/NR,				 0,						  0,   (NR-1)/N0/NR,	(N0-1)*(NR-1)/N0/NR,				      0,						    0 },
 				{    1/N1/NR, 	    	    0, 	  (N1-1)/N1/NR,						  0,   (NR-1)/N1/NR,					  0, 	(N1-1)*(NR-1)/N1/NR, 							0 },
 				{ 1/N0/N1/NR, (N0-1)/N0/N1/NR, (N1-1)/N0/N1/NR, (N0-1)*(N1-1)/N0/N1/NR, (NR-1)/N0/N1/NR, (N0-1)*(NR-1)/N0/N1/NR, (N1-1)*(NR-1)/N0/N1/NR, (N0-1)*(N1-1)*(NR-1)/N0/N1/NR}};		
-        double[][] tempBDG = new double[4][8];
+		DBRecordStat.BDG = new double[4][8];
 		if(selectedMod==0)
-			tempBDG[0]=	BDG[0];
+			DBRecordStat.BDG[0]= DBRecordStat.LoadBDG[0];
 		else if (selectedMod==1)
-			tempBDG[1] = BDG[1];
+			DBRecordStat.BDG[1] = DBRecordStat.LoadBDG[1];
 		else if(selectedMod==3)
-			tempBDG = BDG;
+			DBRecordStat.BDG = DBRecordStat.LoadBDG;
 	    double [][] unbiasToBiast = Matrix.matrixTranspose(unbiasToBias);
-	    BDGbias = Matrix.multiply(tempBDG , unbiasToBiast);		
+	    BDGbias = Matrix.multiply(DBRecordStat.BDG , unbiasToBiast);		
 		double totalVarnoMLE=0.0;
 		totalVarMLE=0.0;
 		totalVar=0.0;
@@ -586,9 +588,9 @@ public class DBRecord {
 		}
 		DBRecordStat.BDGcoeff[3] = temp;
 		for (int i = 0; i < 8; i++) {
-			DBRecordStat.BDG[3][i] =     (tempBDG[0][i] * DBRecordStat.BDGcoeff[0][i])
-					  +     (tempBDG[1][i] * DBRecordStat.BDGcoeff[1][i])
-					  - 2.0*(tempBDG[2][i] * DBRecordStat.BDGcoeff[2][i]);
+			DBRecordStat.BDG[3][i] =     (DBRecordStat.BDG[0][i] * DBRecordStat.BDGcoeff[0][i])
+					  +     (DBRecordStat.BDG[1][i] * DBRecordStat.BDGcoeff[1][i])
+					  - 2.0*(DBRecordStat.BDG[2][i] * DBRecordStat.BDGcoeff[2][i]);
 			DBRecordStat.BDGbias[3][i] =     (DBRecordStat.BDGbias[0][i] * DBRecordStat.BDGcoeff[0][i])
 					  +     (DBRecordStat.BDGbias[1][i] * DBRecordStat.BDGcoeff[1][i])
 					  - 2.0*(DBRecordStat.BDGbias[2][i] * DBRecordStat.BDGcoeff[2][i]);			
