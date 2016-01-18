@@ -68,7 +68,7 @@ public class exploreExpSize extends JFrame {
 	private JScrollPane fullyScroll;
 	private String[] tableRowHeader;
 	private GUInterface GUI;
-	
+	public static boolean doFullSize = false;
 	
 	public exploreExpSize(DBRecord inputDBRecordSize, GUInterface GUIin, SizePanel inputSizePanel ) {
 		DBRecordSize = inputDBRecordSize;
@@ -126,7 +126,9 @@ public class exploreExpSize extends JFrame {
 			for (int j=0 ; j < Nnormal.length;j++){
 				DBRecordSize.BDGcoeff = DBRecordSize.genBDGCoeff(Nreader[i],Nnormal[j],ChooseNdisease);			    
 				DBRecordSize.BDGforSizeFullPanel();
+				doFullSize =true;
 				StatTest testSize = new StatTest(SizePanel1, DBRecordStat, DBRecordSize);
+				doFullSize =false;
 				String a = varOrPower;
 				if (varOrPower.equals("S.E."))
 				fullyTable.setValueAt(SizePanel1.threeDecE.format(Math.sqrt(DBRecordSize.totalVar)), i, j);
@@ -144,7 +146,9 @@ public class exploreExpSize extends JFrame {
 			for (int j=0 ; j < Ndisease.length;j++){
 				DBRecordSize.BDGcoeff = DBRecordSize.genBDGCoeff(Nreader[i],ChooseNormal,Ndisease[j]);			    
 				DBRecordSize.BDGforSizeFullPanel();
+				doFullSize =true;
 				StatTest testSize = new StatTest(SizePanel1, DBRecordStat, DBRecordSize);
+				doFullSize =false;
 				if (varOrPower.equals("S.E."))
 				fullyTable.setValueAt(SizePanel1.threeDecE.format(Math.sqrt(DBRecordSize.totalVar)), i, j);
 				else 
@@ -163,7 +167,9 @@ public class exploreExpSize extends JFrame {
 			for (int j=0 ; j <Ndisease.length;j++){
 				DBRecordSize.BDGcoeff = DBRecordSize.genBDGCoeff(ChooseReader,Nnormal[i],Ndisease[j]);			    
 				DBRecordSize.BDGforSizeFullPanel();
+				doFullSize =true;
 				StatTest testSize = new StatTest(SizePanel1, DBRecordStat, DBRecordSize);
+				doFullSize =false;
 				if (varOrPower.equals("S.E."))
 				fullyTable.setValueAt(SizePanel1.threeDecE.format(Math.sqrt(DBRecordSize.totalVar)), i, j);
 				else 

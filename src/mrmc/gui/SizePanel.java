@@ -48,7 +48,6 @@ public class SizePanel {
 	private DBRecord DBRecordSize;
 	public JPanel JPanelSize = new JPanel();
 	private JFrame reportFrame;
-	
 	public JRadioButton 
 		ButtonPairedReadersYes,
 		ButtonPairedReadersNo,
@@ -507,6 +506,7 @@ public class SizePanel {
 				sigLevel = Double.parseDouble(SigLevelJTextField.getText());
 				effSize = Double.parseDouble(EffSizeJTextField.getText());
 				exploreExpSize ees =  new exploreExpSize (DBRecordSize, GUI, GUI.SizePanel1);
+				
 		//		DBRecordSize.DBRecordSizeFill(GUI.SizePanel1);
 			//	setSizePanel();
 

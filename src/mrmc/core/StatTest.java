@@ -22,6 +22,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import roemetz.core.RoeMetz;
+import mrmc.chart.exploreExpSize;
 import mrmc.gui.GUInterface;
 import mrmc.gui.SizePanel;
 import umontreal.iro.lecuyer.probdist.BetaDist;
@@ -218,12 +219,14 @@ public class StatTest {
 					/ (var_r + resizeFactor * bracket2) / (var_r + resizeFactor * bracket2);
 		}
 		if (DF_Hillis < 2) {
-			JFrame frame = new JFrame();
-			JOptionPane.showMessageDialog(frame,
-					"DF_Hillis was calculated to be " + DF_Hillis +
-					"\nDF_Hillis less than 2 cannot be handled" +
-					"\nTherefore, it is being set to 2", "Warning",
-					JOptionPane.ERROR_MESSAGE);
+			if (!exploreExpSize.doFullSize){
+				JFrame frame = new JFrame();
+				JOptionPane.showMessageDialog(frame,
+						"DF_Hillis was calculated to be " + DF_Hillis +
+						"\nDF_Hillis less than 2 cannot be handled" +
+						"\nTherefore, it is being set to 2", "Warning",
+						JOptionPane.ERROR_MESSAGE);
+			}
 			DF_Hillis = 2;
 		}
 
