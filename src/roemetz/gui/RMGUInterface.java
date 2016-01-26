@@ -483,6 +483,20 @@ public class RMGUInterface {
 		NnormalJTextField.setText("");
 		NdiseaseJTextField.setText("");
 		NreaderJTextField.setText("");
+		// set study design to default 1, yes, yes, yes
+	    SizePanelRoeMetz.NumSplitPlotsJTextField.setText("1");
+	    SizePanelRoeMetz.numSplitPlots = 1;
+		SizePanelRoeMetz.ButtonPairedReadersYes.setSelected(true);
+		SizePanelRoeMetz.ButtonPairedReadersNo.setSelected(false);
+		SizePanelRoeMetz.pairedReadersFlag=1;
+	    SizePanelRoeMetz.ButtonPairedNormalsYes.setSelected(true);
+	    SizePanelRoeMetz.ButtonPairedNormalsNo.setSelected(false);
+	    SizePanelRoeMetz.pairedNormalsFlag=1;
+	    SizePanelRoeMetz.ButtonPairedDiseasedYes.setSelected(true);
+	    SizePanelRoeMetz.ButtonPairedDiseasedNo.setSelected(false);
+	    SizePanelRoeMetz.pairedDiseasedFlag=1;
+
+		
 	}
 
 	/**
@@ -710,6 +724,18 @@ public class RMGUInterface {
 				}
 				continue;
 			}
+			loc = tempstr.indexOf("SEED FOR RNG: ");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				JTextField_seed.setText(tempstr.substring(tmploc + 1).trim());
+				continue;
+			}
+			loc = tempstr.indexOf("NUMBER OF EXPERIMENTS:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				JTextField_Nexp.setText(tempstr.substring(tmploc + 1).trim());
+				continue;
+			}			
 		}
 	}
 
@@ -797,44 +823,46 @@ public class RMGUInterface {
 					}
 					FileWriter fw = new FileWriter(f.getAbsoluteFile());
 					BufferedWriter bw = new BufferedWriter(fw);
-					bw.write("AR0: " + v_AR0.getText() + "\n");
-					bw.write("AC0: " + v_AC0.getText() + "\n");
-					bw.write("ARC0: " + v_ARC0.getText() + "\n");
-					bw.write("AR1: " + v_AR1.getText() + "\n");
-					bw.write("AC1: " + v_AC1.getText() + "\n");
-					bw.write("ARC1: " + v_ARC1.getText() + "\n");
-					bw.write("BR0: " + v_BR0.getText() + "\n");
-					bw.write("BC0: " + v_BC0.getText() + "\n");
-					bw.write("BRC0: " + v_BRC0.getText() + "\n");
-					bw.write("BR1: " + v_BR1.getText() + "\n");
-					bw.write("BC1: " + v_BC1.getText() + "\n");
-					bw.write("BRC1: " + v_BRC1.getText() + "\n");
-					bw.write("R0: " + v_R0.getText() + "\n");
-					bw.write("C0: " + v_C0.getText() + "\n");
-					bw.write("RC0: " + v_RC0.getText() + "\n");
-					bw.write("R1: " + v_R1.getText() + "\n");
-					bw.write("C1: " + v_C1.getText() + "\n");
-					bw.write("RC1: " + v_RC1.getText() + "\n");
-					bw.write("uA: " + mu0.getText() + "\n");
-					bw.write("uB: " + mu1.getText() + "\n");
-					bw.write("n0: " + NnormalJTextField.getText() + "\n");
-					bw.write("n1: " + NdiseaseJTextField.getText() + "\n");
-					bw.write("nr: " + NreaderJTextField.getText() + "\n");
-					bw.write("Study Design \n");
-					bw.write("# of Split-Plot Groups: " + SizePanelRoeMetz.numSplitPlots + "\n");
+					bw.write("AR0: " + v_AR0.getText() + "\r\n");
+					bw.write("AC0: " + v_AC0.getText() + "\r\n");
+					bw.write("ARC0: " + v_ARC0.getText() + "\r\n");
+					bw.write("AR1: " + v_AR1.getText() + "\r\n");
+					bw.write("AC1: " + v_AC1.getText() + "\r\n");
+					bw.write("ARC1: " + v_ARC1.getText() + "\r\n");
+					bw.write("BR0: " + v_BR0.getText() + "\r\n");
+					bw.write("BC0: " + v_BC0.getText() + "\r\n");
+					bw.write("BRC0: " + v_BRC0.getText() + "\r\n");
+					bw.write("BR1: " + v_BR1.getText() + "\r\n");
+					bw.write("BC1: " + v_BC1.getText() + "\r\n");
+					bw.write("BRC1: " + v_BRC1.getText() + "\r\n");
+					bw.write("R0: " + v_R0.getText() + "\r\n");
+					bw.write("C0: " + v_C0.getText() + "\r\n");
+					bw.write("RC0: " + v_RC0.getText() + "\r\n");
+					bw.write("R1: " + v_R1.getText() + "\r\n");
+					bw.write("C1: " + v_C1.getText() + "\r\n");
+					bw.write("RC1: " + v_RC1.getText() + "\r\n");
+					bw.write("uA: " + mu0.getText() + "\r\n");
+					bw.write("uB: " + mu1.getText() + "\r\n");
+					bw.write("n0: " + NnormalJTextField.getText() + "\r\n");
+					bw.write("n1: " + NdiseaseJTextField.getText() + "\r\n");
+					bw.write("nr: " + NreaderJTextField.getText() + "\r\n");
+					bw.write("Study Design \r\n");
+					bw.write("# of Split-Plot Groups: " + SizePanelRoeMetz.numSplitPlots + "\r\n");
 					if (SizePanelRoeMetz.pairedReadersFlag == 1)
-						bw.write("Paired Readers: Yes \n");
+						bw.write("Paired Readers: Yes \r\n");
 					else
-						bw.write("Paired Readers: No \n");
+						bw.write("Paired Readers: No \r\n");
 					if (SizePanelRoeMetz.pairedNormalsFlag == 1)
-						bw.write("Paired Normal: Yes \n");
+						bw.write("Paired Normal: Yes \r\n");
 					else
-						bw.write("Paired Normal: No \n");
+						bw.write("Paired Normal: No \r\n");
 					if (SizePanelRoeMetz.pairedDiseasedFlag == 1)
-						bw.write("Paired Disease: Yes \n");
+						bw.write("Paired Disease: Yes \r\n");
 					else
-						bw.write("Paired Diesase: No \n");
-						
+						bw.write("Paired Diesase: No \r\n");
+					bw.write("Simulation parameter \r\n");
+					bw.write("Seed for RNG: " + JTextField_seed.getText() + "\r\n");
+					bw.write("Number of Experiments: " + JTextField_Nexp.getText() + "\r\n");					
 					bw.close();
 				}
 			} catch (HeadlessException e1) {
