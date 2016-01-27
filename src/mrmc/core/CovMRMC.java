@@ -182,12 +182,17 @@ public class CovMRMC {
 		
 		makeDMatrices();
 		if(DBRecordSize.selectedMod == 0) {
+			//calculatecoeff("AA");
 			doAUCcovUstatistics("AA");
 		}
 		if(DBRecordSize.selectedMod == 1) {
+			//calculatecoeff("BB");
 			doAUCcovUstatistics("BB");
 		}
 		if(DBRecordSize.selectedMod == 3) {
+			//calculatecoeff("AA");
+			//calculatecoeff("BB");
+			//calculatecoeff("AB");
 			doAUCcovUstatistics("AA");
 			doAUCcovUstatistics("BB");
 			doAUCcovUstatistics("AB");
@@ -512,6 +517,131 @@ public void doAUCcovUstatistics(String flagModality) {
 	}
 	
 }
+
+public void calculatecoeff(String flagModality) {
+
+	// The coefficients according to Gallas2009_Commun-Stat-A-Theor_v38p2586 (first element is empty)
+	double[] coefficients = new double[9];
+
+	//case AB
+	int[][][]    d0 = d0_modAB;
+	int[][][]    d1 = d1_modAB;
+	//
+	switch(flagModality) {
+	case "AA":
+		d0 = d0_modAA;
+		d1 = d1_modAA;
+		break;
+	case "BB":
+		d0 = d0_modBB;
+		d1 = d1_modBB;
+		break;
+	}
+	
+	double[][] w = new double[(int) Nreader][2];
+	double totalwada = 0;
+	double totalwbdb = 0;
+
+	double[] bdenom = new double[9];
+	double[][] wadaSumr = new double[(int) Nnormal][(int) Ndisease];
+	double[][] wbdbSumr = new double[(int) Nnormal][(int) Ndisease];
+	double[] wadaSumir = new double[(int) Ndisease];
+	double[] wbdbSumir = new double[(int) Ndisease];
+	double[] wadaSumjr = new double[(int) Nnormal];
+	double[] wbdbSumjr = new double[(int) Nnormal];
+	double wadaSumijr = 0.0;
+	double wbdbSumijr = 0.0;
+
+	for (int i = 0; i < Nreader; i++) {
+		for (int j = 0; j < 2; j++) {
+			w[i][j] = 1.0;
+		}
+	}
+
+	for (int ir = 0; ir < Nreader; ir++) {
+		// ***************for the first modality******************
+		int[][] designA0 = Matrix.extractFirstDimension(d0, ir, 0);
+		int[][] designA1 = Matrix.extractFirstDimension(d1, ir, 0);
+		int[][] da = Matrix.multiply(designA0,
+				Matrix.matrixTranspose(designA1));
+		double wa = w[ir][0];
+		double[][] wada = Matrix.linearTrans(da, wa, 0);
+		// ***************for the second modality******************
+		int[][] designB0 = Matrix.extractFirstDimension(d0, ir, 1);
+		int[][] designB1 = Matrix.extractFirstDimension(d1, ir, 1);
+		int[][] db = Matrix.multiply(designB0,
+				Matrix.matrixTranspose(designB1));
+		double wb = w[ir][1];
+		double[][] wbdb = Matrix.linearTrans(db, wb, 0);
+
+		// ***********precompute row (col???) sums***********************
+		double[] wada_sumi = Matrix.colSum(wada);
+		double[] wbdb_sumi = Matrix.colSum(wbdb);
+		// ***********precompute col (row?????) sums***********************
+		double[] wada_sumj = Matrix.rowSum(wada);
+		double[] wbdb_sumj = Matrix.rowSum(wbdb);
+		// **********precompute the matrix sums*****************
+		double wada_sumij = Matrix.total(wada);
+		double wbdb_sumij = Matrix.total(wbdb);
+
+		// *********aggregate the sum over readers that will feed M1-M4
+		bdenom[1] = bdenom[1]
+				+ Matrix.total(Matrix.elementMultiply(wada, wbdb));
+		bdenom[2] = bdenom[2]
+				+ Matrix.total(Matrix.elementMultiply(wada_sumi, wbdb_sumi));
+		bdenom[3] = bdenom[3]
+				+ Matrix.total(Matrix.elementMultiply(wada_sumj, wbdb_sumj));
+		bdenom[4] = bdenom[4] + wada_sumij * wbdb_sumij;
+
+		// *********aggregate the sum over readers that will feed M5-M8
+		wadaSumr = Matrix.add(wadaSumr, wada);
+		wbdbSumr = Matrix.add(wbdbSumr, wbdb);
+		wadaSumir = Matrix.add(wadaSumir, wada_sumi);
+		wbdbSumir = Matrix.add(wbdbSumir, wbdb_sumi);
+
+		wadaSumjr = Matrix.add(wadaSumjr, wada_sumj);
+		wbdbSumjr = Matrix.add(wbdbSumjr, wbdb_sumj);
+		wadaSumijr = wadaSumijr + wada_sumij;
+		wbdbSumijr = wbdbSumijr + wbdb_sumij;
+
+
+	} // end reader loop
+
+	bdenom[5] = Matrix.total(Matrix.elementMultiply(wadaSumr, wbdbSumr));
+	bdenom[6] = Matrix.total(Matrix.elementMultiply(wadaSumir, wbdbSumir));
+	bdenom[7] = Matrix.total(Matrix.elementMultiply(wadaSumjr, wbdbSumjr));
+	bdenom[8] = wadaSumijr * wbdbSumijr;
+
+	double[][] bias2unbias = new double[][] {
+			{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 1.0, 0, 0, 0, 0, 0, 0, 0 },
+			{ 0, -1.0, 1.0, 0, 0, 0, 0, 0, 0 },
+			{ 0, -1.0, 0, 1.0, 0, 0, 0, 0, 0 },
+			{ 0, 1.0, -1.0, -1.0, 1.0, 0, 0, 0, 0 },
+			{ 0, -1.0, 0, 0, 0, 1.0, 0, 0, 0 },
+			{ 0, 1.0, -1.0, 0, 0, -1.0, 1.0, 0, 0 },
+			{ 0, 1.0, 0, -1.0, 0, -1.0, 0, 1.0, 0 },
+			{ 0, -1.0, 1.0, 1.0, -1.0, 1.0, -1.0, -1.0, 1.0 } };
+
+	double[] denom = Matrix.multiply(bias2unbias, bdenom);
+	
+	// coefficients
+	coefficients = Matrix.linearTrans(denom, 1.0 / (totalwada * totalwbdb), 0);
+	coefficients[8] = coefficients[8] - 1.0;
+
+	switch(flagModality) {
+	case "AA":
+		coefficientsAA = coefficients;
+		break;
+	case "BB":
+		coefficientsBB = coefficients;
+		break;
+	case "AB":
+		coefficientsAB = coefficients;
+		break;
+	}
+	
+}
+
 
 /**
  * Takes study data ({@link mrmc.core.InputFile#keyedData}, {@link mrmc.core.InputFile#truthVals})
