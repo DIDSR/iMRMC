@@ -517,9 +517,19 @@ public void doAUCcovUstatistics(String flagModality) {
 	}
 	
 }
-
+// Only calculate coeff of Sizing analysis
 public void calculatecoeff(String flagModality) {
-
+    // setting default AUCs
+	AUCsReaderAvg = new double[3];
+	AUCsReaderAvg[0] = 1.0;
+	AUCsReaderAvg[1] = 1.0;
+	AUCsReaderAvg[2] = 0;
+	AUCs = new double[(int) Nreader][3];
+	for(int i=0; i<Nreader; i++) {
+		AUCs[i][0] = 1;
+		AUCs[i][1] = 1;
+		AUCs[i][2] = 0;
+	}
 	// The coefficients according to Gallas2009_Commun-Stat-A-Theor_v38p2586 (first element is empty)
 	double[] coefficients = new double[9];
 
@@ -564,6 +574,7 @@ public void calculatecoeff(String flagModality) {
 		int[][] designA1 = Matrix.extractFirstDimension(d1, ir, 0);
 		int[][] da = Matrix.multiply(designA0,
 				Matrix.matrixTranspose(designA1));
+		int totalda = Matrix.total(da);
 		double wa = w[ir][0];
 		double[][] wada = Matrix.linearTrans(da, wa, 0);
 		// ***************for the second modality******************
@@ -571,6 +582,7 @@ public void calculatecoeff(String flagModality) {
 		int[][] designB1 = Matrix.extractFirstDimension(d1, ir, 1);
 		int[][] db = Matrix.multiply(designB0,
 				Matrix.matrixTranspose(designB1));
+		int totaldb = Matrix.total(db);
 		double wb = w[ir][1];
 		double[][] wbdb = Matrix.linearTrans(db, wb, 0);
 
@@ -583,6 +595,19 @@ public void calculatecoeff(String flagModality) {
 		// **********precompute the matrix sums*****************
 		double wada_sumij = Matrix.total(wada);
 		double wbdb_sumij = Matrix.total(wbdb);
+		
+
+		// ------------------------------------------
+		// calculate AUCs
+		// ------------------------------------------
+		// evaluate AUCs modality a
+		if (totalda > 0) {
+			totalwada = totalwada + wa * totalda;
+		}
+		// evaluate AUCs modality b
+		if (totaldb > 0) {
+			totalwbdb = totalwbdb + wb * totaldb;
+		}
 
 		// *********aggregate the sum over readers that will feed M1-M4
 		bdenom[1] = bdenom[1]
