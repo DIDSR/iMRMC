@@ -157,30 +157,18 @@ public class exportToFile {
 		return str;
 	}
 	
-	
-	public static String exportTable(String oldReport, DBRecord DBRecordTable) {
+	//export BDG and BCK tables
+	public static String exportTable1(String oldReport, DBRecord DBRecordTable) {
 		String str = oldReport;
 		double[][] BDGdata1 = DBRecord.getBDGTab(DBRecordTable.selectedMod,
 				DBRecordTable.BDG, DBRecordTable.BDGcoeff);
 		double[][] BCKdata1 = DBRecord.getBCKTab(DBRecordTable.selectedMod,
 				DBRecordTable.BCK, DBRecordTable.BCKcoeff);
-		double[][] DBMdata1 = DBRecord.getDBMTab(DBRecordTable.selectedMod,
-				DBRecordTable.DBM, DBRecordTable.DBMcoeff);
-		double[][] ORdata1 = DBRecord.getORTab(DBRecordTable.selectedMod,
-				DBRecordTable.OR, DBRecordTable.ORcoeff);
-		double[][] MSdata1 = DBRecord.getMSTab(DBRecordTable.selectedMod,
-				DBRecordTable.MS, DBRecordTable.MScoeff);
 		if(DBRecordTable.flagMLE == 1) {
 			BDGdata1 = DBRecord.getBDGTab(DBRecordTable.selectedMod,
 					DBRecordTable.BDGbias, DBRecordTable.BDGcoeff);
 			BCKdata1 = DBRecord.getBCKTab(DBRecordTable.selectedMod,
-					DBRecordTable.BCKbias, DBRecordTable.BCKcoeff);
-			DBMdata1 = DBRecord.getDBMTab(DBRecordTable.selectedMod,
-					DBRecordTable.DBMbias, DBRecordTable.DBMcoeff);
-			ORdata1 = DBRecord.getORTab(DBRecordTable.selectedMod,
-					DBRecordTable.ORbias, DBRecordTable.ORcoeff);
-			MSdata1 = DBRecord.getMSTab(DBRecordTable.selectedMod,
-					DBRecordTable.MSbias, DBRecordTable.MScoeff);			
+					DBRecordTable.BCKbias, DBRecordTable.BCKcoeff);	
 		}
 		
 		str = str
@@ -238,6 +226,26 @@ public class exportToFile {
 		for (int i = 0; i < 7; i++)
 			str = str + fiveDecE.format(BCKdata1[6][i]) + SEPA;
 		str = str +"\r\n"; 
+		return str;
+	}
+	
+	//export DBM, MS, BCK tables
+	public static String exportTable2(String oldReport, DBRecord DBRecordTable) {
+		String str = oldReport;
+		double[][] DBMdata1 = DBRecord.getDBMTab(DBRecordTable.selectedMod,
+				DBRecordTable.DBM, DBRecordTable.DBMcoeff);
+		double[][] ORdata1 = DBRecord.getORTab(DBRecordTable.selectedMod,
+				DBRecordTable.OR, DBRecordTable.ORcoeff);
+		double[][] MSdata1 = DBRecord.getMSTab(DBRecordTable.selectedMod,
+				DBRecordTable.MS, DBRecordTable.MScoeff);
+		if(DBRecordTable.flagMLE == 1) {
+			DBMdata1 = DBRecord.getDBMTab(DBRecordTable.selectedMod,
+					DBRecordTable.DBMbias, DBRecordTable.DBMcoeff);
+			ORdata1 = DBRecord.getORTab(DBRecordTable.selectedMod,
+					DBRecordTable.ORbias, DBRecordTable.ORcoeff);
+			MSdata1 = DBRecord.getMSTab(DBRecordTable.selectedMod,
+					DBRecordTable.MSbias, DBRecordTable.MScoeff);			
+		}
 		str = str
 				+ "\r\n**********************DBM output Results***************************";
 		str = str + "\r\nComponents" + SEPA + "R" + SEPA + "C" + SEPA + "R~C"
@@ -282,7 +290,6 @@ public class exportToFile {
 		str = str +"\r\n"; 
 		return str;
 	}
-	
 	// export sizepanel for iMRMC
 	public static String exportSizePanel(String oldReport, DBRecord SizeDBRecord, SizePanel processSizePanel) {
 		String str = oldReport;

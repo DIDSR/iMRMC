@@ -2376,7 +2376,8 @@ public class RMGUInterface {
 						report = exportToFile.exportSummary(report, DB1);	
 						report = exportToFile.exportStatPanel(report, DB1, StatPanelIn);						
 					    report = exportToFile.exportMCvariance(report, varDBRecordStat);
-					    report = exportToFile.exportTable(report, DB1);
+					    report = exportToFile.exportTable1(report, DB1);
+					    report = exportToFile.exportTable2(report, DB1);
 					}else{
 						report = report + "iRoeMetz Numerical summary statistics from " + RoeMetz.versionName + "\r\n";
 						report = report + "Summary statistics written to file named:" + "\r\n";
@@ -2385,7 +2386,8 @@ public class RMGUInterface {
 						report = report + "\r\n************************************************************\r\n";
 						report = exportToFile.exportSummary(report, DB1);	
 						report = exportToFile.exportStatPanel(report, DB1, StatPanelIn);	
-						report = exportToFile.exportTable(report, DB1);
+						report = exportToFile.exportTable1(report, DB1);
+						report = exportToFile.exportTable2(report, DB1);
 					}
 
 					bw.write(report);

@@ -391,9 +391,14 @@ public class SizePanel {
 		results = results + "\t" + SizeJLabelPowerBDG.getText();
 		results = results + "\t" + SizeJLabelCIBDG.getText();
 		results = results + "\r\n";
-		results = results + "\t" + SizeJLabelDFHillis.getText();
-		results = results + "\t" + SizeJLabelPowerHillis.getText();
-		results = results + "\t" + SizeJLabelCIHillis.getText();
+		if (DBRecordSize.flagFullyCrossed){
+			results = results + "Hillis:" ; 
+			results = results + "\t" + SizeJLabelDFHillis.getText();
+			results = results + "\t" + SizeJLabelPowerHillis.getText();
+			results = results + "\t" + SizeJLabelCIHillis.getText();
+		}else{
+			results = "Study is not fully crossed. There is no Hillis data";
+		}
 
 		return results;
 	}

@@ -642,7 +642,13 @@ public class DBRecord {
 		covMRMCsize = new CovMRMC(SizePanel1, DBRecordSize);
 
 		BDGforSizePanel();
-		Decompositions();
+		BCKcoeff = genBCKCoeff(BDGcoeff);
+		BCK = BDG2BCK(BDG, BCKcoeff);
+		BCKbias = BDG2BCK(BDGbias, BCKcoeff);
+		BCKresult = BCK;
+		BCKcoeffresult = BCKcoeff;
+		BCKbiasresult = BCKbias;
+		//Decompositions();
 
 		if(selectedMod == 0) {
 			flagFullyCrossed = covMRMCsize.fullyCrossedA;
