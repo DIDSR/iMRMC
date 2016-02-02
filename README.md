@@ -1,6 +1,6 @@
 <h3>iMRMC Home</h3>
 
-Visit the <a href="https://github.com/DIDSR/iMRMC/releases" rel="nofollow">release Page</a><br/> to download the programs.
+Visit the <a href="https://github.com/DIDSR/iMRMC/releases" rel="nofollow">release Page</a> to download the programs.
 
 <h5>iMRMC</h5>
 
