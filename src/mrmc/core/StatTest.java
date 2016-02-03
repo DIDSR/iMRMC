@@ -81,7 +81,7 @@ public class StatTest {
 			meanCI = DBRecordStat.AUCsReaderAvg[0] - DBRecordStat.AUCsReaderAvg[1];
 			/* Compare difference in modality AUCs to 0.0 */
 			tStatEst = Math.sqrt(Math.pow(meanCI, 2)/DBRecordStat.totalVar);
-		}	
+		}
 
 //		DF_BDG = calcDF_BDGbckIndep(DBRecordStat);
 //		DF_BDG = calcDF_BDGbckGroup(DBRecordStat);
@@ -99,34 +99,53 @@ public class StatTest {
 		if (DF_BDG >= 50) {
 			pValBDG = pValNormal;
 			cutoffBDG = cutoffNormal;
-		} else {
+		} else if (DBRecordStat.Nreader == 1) {
+			// if input data is single-reader, do not calculate p-value and cutoff assuming t-distribution with DF_BDG or DG_Hillis
+		}
+		else {
 			StudentDist tdist = new StudentDist((int) DF_BDG );
 			pValBDG = 2*(1 - tdist.cdf( tStatEst ));
 			cutoffBDG = tdist.inverseF( 1-sig/2 );
 		}
 
+
 		// calculate p-value and cutoff assuming t-distribution with DF_Hillis
 		// Use normal distribution if df > 50, since they are approximately
 		// equal at that point, and FisherFDist can't handle large dfs
-		if (DF_Hillis >= 50) {
+		if (DF_Hillis >= 50) { 
 			pValHillis = pValNormal;
 			cutoffHillis = cutoffNormal;
-		} else {
+		} else if (DBRecordStat.Nreader == 1) {
+			// if input data is single-reader, do not calculate p-value and cutoff assuming t-distribution with DG_Hillis
+		}
+		else {
 			StudentDist tdist = new StudentDist((int) DF_Hillis );
 			pValHillis = 2*(1 - tdist.cdf( tStatEst ));
 			cutoffHillis = tdist.inverseF( 1-sig/2 );
 		}
-		
-		ciBotNormal = meanCI - Math.sqrt(DBRecordStat.totalVar) * cutoffNormal; // normal approx
-		ciTopNormal = meanCI + Math.sqrt(DBRecordStat.totalVar) * cutoffNormal; // normal approx
-		ciBotBDG = meanCI - Math.sqrt(DBRecordStat.totalVar) * cutoffBDG;
-		ciTopBDG = meanCI + Math.sqrt(DBRecordStat.totalVar) * cutoffBDG;
-		ciBotHillis = meanCI - Math.sqrt(DBRecordStat.totalVar) * cutoffHillis;
-		ciTopHillis = meanCI + Math.sqrt(DBRecordStat.totalVar) * cutoffHillis;
 
-		if(pValNormal < sig) rejectNormal = 1;
-		if(pValBDG < sig) rejectBDG = 1;
-		if(pValHillis < sig) rejectHillis = 1;
+
+		if (DBRecordStat.Nreader ==1) {
+			ciBotNormal = meanCI - Math.sqrt(DBRecordStat.totalVarSingle) * cutoffNormal; // normal approx
+			ciTopNormal = meanCI + Math.sqrt(DBRecordStat.totalVarSingle) * cutoffNormal; // normal approx
+
+		} else {
+			ciBotNormal = meanCI - Math.sqrt(DBRecordStat.totalVar) * cutoffNormal; // normal approx
+			ciTopNormal = meanCI + Math.sqrt(DBRecordStat.totalVar) * cutoffNormal; // normal approx
+			ciBotBDG = meanCI - Math.sqrt(DBRecordStat.totalVar) * cutoffBDG;
+			ciTopBDG = meanCI + Math.sqrt(DBRecordStat.totalVar) * cutoffBDG;
+			ciBotHillis = meanCI - Math.sqrt(DBRecordStat.totalVar) * cutoffHillis;
+			ciTopHillis = meanCI + Math.sqrt(DBRecordStat.totalVar) * cutoffHillis;
+		}
+
+
+		if (DBRecordStat.Nreader ==1 & pValNormal < sig) {
+			rejectNormal = 1;
+		} else {
+			if(pValNormal < sig) rejectNormal = 1;
+			if(pValBDG < sig) rejectBDG = 1;
+			if(pValHillis < sig) rejectHillis = 1;
+		}
 
 		if(DBRecordStat.verbose) {
 			System.out.println("NR=" + DBRecordStat.Nreader + 
@@ -136,6 +155,7 @@ public class StatTest {
 					         "  auc1=" + DBRecordStat.AUCsReaderAvg[1]);
 			System.out.println("auc0-auc1=" + meanCI);
 			System.out.println("totalVar=" + DBRecordStat.totalVar);
+			System.out.println("totalVarSingle=" + DBRecordStat.totalVarSingle);
 
 			System.out.println("tStatEst=" + tStatEst);
 			System.out.println("Normal approx:" + 
@@ -444,7 +464,7 @@ double DF_denom = 0.0;
 if (selectedMod == 0){
 	// DF leading term corresponding to normal cases
 	double DFnormal  = 1.0/tempBCKcoeff[selectedMod][0] - 1.0;
-	// DF leading term corresponding to disese cases
+	// DF leading term corresponding to disease cases
 	double DFdisease = 1.0/tempBCKcoeff[selectedMod][1] - 1.0;
 	// DF leading term corresponding to reader cases
 	double DFreader  = 1.0/tempBCKcoeff[selectedMod][3] - 1.0;
@@ -834,7 +854,7 @@ return DF_BDG;
 
 		// we use normal distribution for df > 50 since it is close to Fisher F
 		// and fisherF fails for DOF > 2000
-		if (df >= 50) {
+		if (df >= 50 || df == 0) {
 			cutoff = NormalDist.inverseF(0, 1, 1 - sigLevel / 2.0);
 			power = 1 - NormalDist.cdf(Math.sqrt(lambda), 1, cutoff);
 			result = PowerZtest();

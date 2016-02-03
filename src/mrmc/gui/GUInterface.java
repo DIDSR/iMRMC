@@ -373,7 +373,7 @@ public class GUInterface {
 		//public String sFileName="";
 		public void actionPerformed(ActionEvent e) {
 			double aaa=DBRecordStat.totalVar;
-			if( DBRecordStat.totalVar > 0.0) {
+			if( DBRecordStat.totalVar > 0.0 || DBRecordStat.totalVarSingle > 0.0) {
 				String report = "";
 	            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
 				Date currDate = new Date();

@@ -539,6 +539,7 @@ public class InputFileCard {
 					DBRecordStat.flagMLE = FlagMLE;
 					mleCheckBox.setSelected(true);
 					DBRecordStat.totalVar=DBRecordStat.totalVarMLE;
+					DBRecordStat.totalVarSingle=DBRecordStat.totalVarMLESingle;
 					DBRecordStat.testStat = new StatTest(DBRecordStat);
 				} else if (JOptionPane.NO_OPTION == result) {
 					FlagMLE = NO_MLE;
