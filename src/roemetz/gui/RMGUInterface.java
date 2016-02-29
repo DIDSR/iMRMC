@@ -1306,7 +1306,7 @@ public class RMGUInterface {
 			StatPanel1.setTable1();
 			StatPanel1.setMCresults(avgDBRecordStat, varDBRecordStat);
 			
-			JDialog simOutput = new JDialog(RoeMetz1.getFrame(), "Simulation Results");
+			JDialog simOutput = new JDialog(RoeMetz1.getFrame(), "Simulation Results: MC means");
 			simOutput.add(StatPanel1.JPanelStat);
 			JButton simulationExport= new JButton("Export Analysis Result");
 			simulationExport.addActionListener(new analysisExportListener(avgDBRecordStat,"SimulationOutput",StatPanel1));			
@@ -2246,34 +2246,29 @@ public class RMGUInterface {
 		private StatPanel StatPanelIn;
 		@Override
      	public void actionPerformed(ActionEvent e) {
-			exportResult();
-
-		 }
-		public void exportResult() {
-			// TODO Auto-generated method stub
 			try {
-				//JFileChooser fc = new JFileChooser();
+				JFileChooser fc = new JFileChooser();
 	            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
 				Date currDate = new Date();
 				String fileTime = dateForm.format(currDate);
 				String exportFileName = subFileName+fileTime+".omrmc";
-				//fc.setSelectedFile(new File(outputDirectory+"//"+exportFileName));
+				fc.setSelectedFile(new File(outputDirectory+"//"+exportFileName));
 				FileNameExtensionFilter filter = new FileNameExtensionFilter(
 						"iMRMC Summary Files (.omrmc or csv)", "csv","omrmc");
-				//fc.setFileFilter(filter);	
-				//int fcReturn = fc.showSaveDialog((Component) e.getSource());
-				int fcReturn = 0;
+				fc.setFileFilter(filter);	
+				int fcReturn = fc.showSaveDialog((Component) e.getSource());
+				//int fcReturn = 0;
 				if (fcReturn == JFileChooser.APPROVE_OPTION) {
-					//File f = fc.getSelectedFile();
-					File f = new File ("C://Users//ReaderStudy//Documents//qigong//imrmc inputfile//validate//output"+"//" + exportFileName);
+					File f = fc.getSelectedFile();
+					//File f = new File ("C://Users//ReaderStudy//Documents//qigong//imrmc inputfile//validate//output"+"//" + exportFileName);
 					if (!f.exists()) {
 						f.createNewFile();
 					}
 					FileWriter fw = new FileWriter(f.getAbsoluteFile());
 					BufferedWriter bw = new BufferedWriter(fw);
-					//outputDirectory = fc.getCurrentDirectory();			
-					//String savedFileName = fc.getSelectedFile().getName();
-					String savedFileName = exportFileName;
+					outputDirectory = fc.getCurrentDirectory();			
+					String savedFileName = fc.getSelectedFile().getName();
+					//String savedFileName = exportFileName;
 					String report = "";
 					if (subFileName.equals("SimulationOutput")){
 						report = report + "iRoeMetz simulation summary statistics from " + RoeMetz.versionName + "\r\n";

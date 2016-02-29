@@ -41,6 +41,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.xy.XYSeries;
+
 /**
  * Creates a chart displaying sizing result for multiple size of reader 
  * normal case and disease case. Consider speed of the software, we could
@@ -124,14 +125,22 @@ public class exploreExpSize extends JFrame {
 		// TODO Auto-generated method stub
 		for (int i=0 ; i<Nreader.length;i++ ){
 			for (int j=0 ; j < Nnormal.length;j++){
-				DBRecordSize.BDGcoeff = DBRecordSize.genBDGCoeff(Nreader[i],Nnormal[j],ChooseNdisease);			    
+				DBRecordSize.Nreader = Nreader[i];
+				DBRecordSize.Nnormal = Nnormal[j];
+				DBRecordSize.Ndisease = ChooseNdisease;
+				DBRecordSize.BDGcoeff = DBRecordSize.genBDGCoeff(Nreader[i],Nnormal[j],ChooseNdisease);
+				
 				DBRecordSize.BDGforSizeFullPanel();
-				StatTest testSize = new StatTest(SizePanel1, DBRecordStat, DBRecordSize);
-				String a = varOrPower;
+
 				if (varOrPower.equals("S.E."))
 				fullyTable.setValueAt(SizePanel1.threeDecE.format(Math.sqrt(DBRecordSize.totalVar)), i, j);
-				else 
-				fullyTable.setValueAt(SizePanel1.threeDecE.format(testSize.powerBDG), i, j);
+				else {
+					DBRecordSize.BCKcoeff = DBRecordSize.genBCKCoeff(DBRecordSize.BDGcoeff);
+					DBRecordSize.BCK = DBRecordSize.BDG2BCK(DBRecordSize.BDG, DBRecordSize.BCKcoeff);
+					DBRecordSize.BCKbias = DBRecordSize.BDG2BCK(DBRecordSize.BDGbias, DBRecordSize.BCKcoeff);
+					StatTest testSize = new StatTest(SizePanel1, DBRecordStat, DBRecordSize);
+					fullyTable.setValueAt(SizePanel1.threeDecE.format(testSize.powerBDG), i, j);
+				}
 			}
 		}
 	}
@@ -142,13 +151,20 @@ public class exploreExpSize extends JFrame {
 		// TODO Auto-generated method stub
 		for (int i=0 ; i<Nreader.length;i++ ){
 			for (int j=0 ; j < Ndisease.length;j++){
+				DBRecordSize.Nreader = Nreader[i];
+				DBRecordSize.Nnormal = ChooseNormal;
+				DBRecordSize.Ndisease = Ndisease[j];
 				DBRecordSize.BDGcoeff = DBRecordSize.genBDGCoeff(Nreader[i],ChooseNormal,Ndisease[j]);			    
 				DBRecordSize.BDGforSizeFullPanel();
-				StatTest testSize = new StatTest(SizePanel1, DBRecordStat, DBRecordSize);
 				if (varOrPower.equals("S.E."))
 				fullyTable.setValueAt(SizePanel1.threeDecE.format(Math.sqrt(DBRecordSize.totalVar)), i, j);
-				else 
-				fullyTable.setValueAt(SizePanel1.threeDecE.format(testSize.powerBDG), i, j);
+				else {
+					DBRecordSize.BCKcoeff = DBRecordSize.genBCKCoeff(DBRecordSize.BDGcoeff);
+					DBRecordSize.BCK = DBRecordSize.BDG2BCK(DBRecordSize.BDG, DBRecordSize.BCKcoeff);
+					DBRecordSize.BCKbias = DBRecordSize.BDG2BCK(DBRecordSize.BDGbias, DBRecordSize.BCKcoeff);
+					StatTest testSize = new StatTest(SizePanel1, DBRecordStat, DBRecordSize);
+					fullyTable.setValueAt(SizePanel1.threeDecE.format(testSize.powerBDG), i, j);
+				}
 			}
 		}
 		
@@ -161,13 +177,21 @@ public class exploreExpSize extends JFrame {
 		// TODO Auto-generated method stub
 		for (int i=0 ; i<Nnormal.length;i++ ){
 			for (int j=0 ; j <Ndisease.length;j++){
+				DBRecordSize.Nreader = ChooseReader;
+				DBRecordSize.Nnormal = Nnormal[i];
+				DBRecordSize.Ndisease = Ndisease[j];
 				DBRecordSize.BDGcoeff = DBRecordSize.genBDGCoeff(ChooseReader,Nnormal[i],Ndisease[j]);			    
 				DBRecordSize.BDGforSizeFullPanel();
-				StatTest testSize = new StatTest(SizePanel1, DBRecordStat, DBRecordSize);
 				if (varOrPower.equals("S.E."))
 				fullyTable.setValueAt(SizePanel1.threeDecE.format(Math.sqrt(DBRecordSize.totalVar)), i, j);
-				else 
-				fullyTable.setValueAt(SizePanel1.threeDecE.format(testSize.powerBDG), i, j);
+				else {
+					DBRecordSize.BCKcoeff = DBRecordSize.genBCKCoeff(DBRecordSize.BDGcoeff);
+					DBRecordSize.BCK = DBRecordSize.BDG2BCK(DBRecordSize.BDG, DBRecordSize.BCKcoeff);
+					DBRecordSize.BCKbias = DBRecordSize.BDG2BCK(DBRecordSize.BDGbias, DBRecordSize.BCKcoeff);
+					StatTest testSize = new StatTest(SizePanel1, DBRecordStat, DBRecordSize);
+					fullyTable.setValueAt(SizePanel1.threeDecE.format(testSize.powerBDG), i, j);
+				}
+				
 			}
 		}
 		

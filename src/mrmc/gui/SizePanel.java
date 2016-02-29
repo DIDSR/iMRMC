@@ -399,7 +399,24 @@ public class SizePanel {
 		return results;
 	}
 
+	/**
+	 * Gets statistics for new trial sizing in String format
+	 * 
+	 * @return String of statistics for new trial sizing for export to file
+	 */
+	public String exportSizeResults() {
+		String results = SizeJLabelSqrtVar.getText() + "\r\n";;
+		results = results + SizeJLabelTStat.getText();
+		results = results +  SizeJLabelPowerNormal.getText();
+		results = results + "\r\n";
+		results = results + SizeJLabelDFBDG.getText().trim();
+		results = results + SizeJLabelPowerBDG.getText();
+		results = results + "\r\n";
+		results = results + "Hills:" + SizeJLabelDFHillis.getText();
+		results = results + ", " + SizeJLabelPowerHillis.getText();
 
+		return results;
+	}
 	public class NumSplitPlotsListener implements FocusListener {
 	
 		@Override
