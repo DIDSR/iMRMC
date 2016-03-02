@@ -2,6 +2,7 @@ package mrmc.chart;
 
 import java.text.DecimalFormat;
 
+import roemetz.gui.RMGUInterface;
 import mrmc.core.DBRecord;
 import mrmc.gui.InputFileCard;
 import mrmc.gui.SizePanel;
@@ -50,30 +51,18 @@ public class exportToFile {
 		return str;
 	}
 	
-	
-	public static String exportTable(String oldReport, DBRecord DBRecordTable) {
+	//export BDG and BCK tables
+	public static String exportTable1(String oldReport, DBRecord DBRecordTable) {
 		String str = oldReport;
 		double[][] BDGdata1 = DBRecord.getBDGTab(DBRecordTable.selectedMod,
 				DBRecordTable.BDG, DBRecordTable.BDGcoeff);
 		double[][] BCKdata1 = DBRecord.getBCKTab(DBRecordTable.selectedMod,
 				DBRecordTable.BCK, DBRecordTable.BCKcoeff);
-		double[][] DBMdata1 = DBRecord.getDBMTab(DBRecordTable.selectedMod,
-				DBRecordTable.DBM, DBRecordTable.DBMcoeff);
-		double[][] ORdata1 = DBRecord.getORTab(DBRecordTable.selectedMod,
-				DBRecordTable.OR, DBRecordTable.ORcoeff);
-		double[][] MSdata1 = DBRecord.getMSTab(DBRecordTable.selectedMod,
-				DBRecordTable.MS, DBRecordTable.MScoeff);
 		if(DBRecordTable.flagMLE == 1) {
 			BDGdata1 = DBRecord.getBDGTab(DBRecordTable.selectedMod,
 					DBRecordTable.BDGbias, DBRecordTable.BDGcoeff);
 			BCKdata1 = DBRecord.getBCKTab(DBRecordTable.selectedMod,
-					DBRecordTable.BCKbias, DBRecordTable.BCKcoeff);
-			DBMdata1 = DBRecord.getDBMTab(DBRecordTable.selectedMod,
-					DBRecordTable.DBMbias, DBRecordTable.DBMcoeff);
-			ORdata1 = DBRecord.getORTab(DBRecordTable.selectedMod,
-					DBRecordTable.ORbias, DBRecordTable.ORcoeff);
-			MSdata1 = DBRecord.getMSTab(DBRecordTable.selectedMod,
-					DBRecordTable.MSbias, DBRecordTable.MScoeff);			
+					DBRecordTable.BCKbias, DBRecordTable.BCKcoeff);	
 		}
 		
 		str = str
@@ -131,6 +120,26 @@ public class exportToFile {
 		for (int i = 0; i < 7; i++)
 			str = str + fiveDecE.format(BCKdata1[6][i]) + SEPA;
 		str = str +"\r\n"; 
+		return str;
+	}
+	
+	//export DBM, MS, BCK tables
+	public static String exportTable2(String oldReport, DBRecord DBRecordTable) {
+		String str = oldReport;
+		double[][] DBMdata1 = DBRecord.getDBMTab(DBRecordTable.selectedMod,
+				DBRecordTable.DBM, DBRecordTable.DBMcoeff);
+		double[][] ORdata1 = DBRecord.getORTab(DBRecordTable.selectedMod,
+				DBRecordTable.OR, DBRecordTable.ORcoeff);
+		double[][] MSdata1 = DBRecord.getMSTab(DBRecordTable.selectedMod,
+				DBRecordTable.MS, DBRecordTable.MScoeff);
+		if(DBRecordTable.flagMLE == 1) {
+			DBMdata1 = DBRecord.getDBMTab(DBRecordTable.selectedMod,
+					DBRecordTable.DBMbias, DBRecordTable.DBMcoeff);
+			ORdata1 = DBRecord.getORTab(DBRecordTable.selectedMod,
+					DBRecordTable.ORbias, DBRecordTable.ORcoeff);
+			MSdata1 = DBRecord.getMSTab(DBRecordTable.selectedMod,
+					DBRecordTable.MSbias, DBRecordTable.MScoeff);			
+		}
 		str = str
 				+ "\r\n**********************DBM output Results***************************";
 		str = str + "\r\nComponents" + SEPA + "R" + SEPA + "C" + SEPA + "R~C"
@@ -175,7 +184,6 @@ public class exportToFile {
 		str = str +"\r\n"; 
 		return str;
 	}
-	
 	// export sizepanel for iMRMC
 	public static String exportSizePanel(String oldReport, DBRecord SizeDBRecord, SizePanel processSizePanel) {
 		String str = oldReport;
@@ -322,6 +330,60 @@ public class exportToFile {
 		}
 		str = str +"\r\n"; 
 		str = str +"END SUMMARY \r\n"; 
+		return str;
+	}
+
+
+	public static String exoprtiRoeMetzSet(String oldReport, SizePanel sizePanelRoeMetz) {
+		// TODO Auto-generated method stub
+		String str = oldReport;
+		str = str + "\r\n*******************iRoeMetz parameter************************\r\n";
+		str = str + "u_A: " + RMGUInterface.mu0.getText() + ",     ";
+		str = str + "u_B: " + RMGUInterface.mu1.getText() + "\n";
+		
+        str = str +"Input Variances Invariant to Modality: " +"\n";
+		str = str + "R0: " + RMGUInterface.v_R0.getText() + ",    ";
+		str = str + "C0: " + RMGUInterface.v_C0.getText() + ",    ";
+		str = str + "RC0: " + RMGUInterface.v_RC0.getText() + ",    ";
+		str = str + "R1: " + RMGUInterface.v_R1.getText() + ",    ";
+		str = str + "C1: " + RMGUInterface.v_C1.getText() + ",    ";
+		str = str + "RC1: " + RMGUInterface.v_RC1.getText() + "\n";
+		
+		str = str +"Input Variances Specific to Modality A: " +"\n";
+		str = str + "AR0: " + RMGUInterface.v_AR0.getText() + ",   ";
+		str = str + "AC0: " + RMGUInterface.v_AC0.getText() + ",   ";
+		str = str + "ARC0: " + RMGUInterface.v_ARC0.getText() + ",   ";
+		str = str + "AR1: " + RMGUInterface.v_AR1.getText() + ",   ";
+		str = str + "AC1: " + RMGUInterface.v_AC1.getText() + ",   ";
+		str = str + "ARC1: " + RMGUInterface.v_ARC1.getText() + "\n";
+			
+		str = str +"Input Variances Specific to Modality B: " +"\n";
+		str = str + "BR0: " + RMGUInterface.v_BR0.getText() + ",   ";
+		str = str + "BC0: " + RMGUInterface.v_BC0.getText() + ",   ";
+		str = str + "BRC0: " + RMGUInterface.v_BRC0.getText() + ",   ";
+		str = str + "BR1 " + RMGUInterface.v_BR1.getText() + ",   ";
+		str = str + "BC1: " + RMGUInterface.v_BC1.getText() + ",   ";
+		str = str + "BRC1: " + RMGUInterface.v_BRC1.getText() + "\n";
+		
+		str = str +"Input Experiment Size: " +"\n";
+		str = str + "N0: " + RMGUInterface.NnormalJTextField.getText() + ",   ";
+		str = str + "N1: " + RMGUInterface.NdiseaseJTextField.getText() + ",   ";
+		str = str + "NR: " + RMGUInterface.NreaderJTextField.getText() + "\n";
+		
+		str = str +"Study Design: " +"\n";
+		str = str +	"# of Split-Plot Groups: " + sizePanelRoeMetz.numSplitPlots + ",  ";
+		if (sizePanelRoeMetz.pairedReadersFlag == 1)
+			str = str +	"Paired Readers: Yes,  ";
+		else
+			str = str +	"Paired Readers: No,  ";
+		if (sizePanelRoeMetz.pairedNormalsFlag == 1)
+			str = str +	"Paired Normal: Yes,  ";
+		else
+			str = str +	"Paired Normal: No,  ";
+		if (sizePanelRoeMetz.pairedDiseasedFlag == 1)
+			str = str +	"Paired Diesase: Yes \n";
+		else
+			str = str +	"Paired Diesase: No \n";
 		return str;
 	}
 }

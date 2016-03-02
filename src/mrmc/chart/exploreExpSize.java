@@ -41,7 +41,6 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.xy.XYSeries;
-
 /**
  * Creates a chart displaying sizing result for multiple size of reader 
  * normal case and disease case. Consider speed of the software, we could
@@ -69,7 +68,7 @@ public class exploreExpSize extends JFrame {
 	private JScrollPane fullyScroll;
 	private String[] tableRowHeader;
 	private GUInterface GUI;
-	
+	public static boolean doFullSize = false;
 	
 	public exploreExpSize(DBRecord inputDBRecordSize, GUInterface GUIin, SizePanel inputSizePanel ) {
 		DBRecordSize = inputDBRecordSize;
@@ -138,7 +137,9 @@ public class exploreExpSize extends JFrame {
 					DBRecordSize.BCKcoeff = DBRecordSize.genBCKCoeff(DBRecordSize.BDGcoeff);
 					DBRecordSize.BCK = DBRecordSize.BDG2BCK(DBRecordSize.BDG, DBRecordSize.BCKcoeff);
 					DBRecordSize.BCKbias = DBRecordSize.BDG2BCK(DBRecordSize.BDGbias, DBRecordSize.BCKcoeff);
+					doFullSize =true;
 					StatTest testSize = new StatTest(SizePanel1, DBRecordStat, DBRecordSize);
+					doFullSize =false;
 					fullyTable.setValueAt(SizePanel1.threeDecE.format(testSize.powerBDG), i, j);
 				}
 			}
@@ -162,7 +163,9 @@ public class exploreExpSize extends JFrame {
 					DBRecordSize.BCKcoeff = DBRecordSize.genBCKCoeff(DBRecordSize.BDGcoeff);
 					DBRecordSize.BCK = DBRecordSize.BDG2BCK(DBRecordSize.BDG, DBRecordSize.BCKcoeff);
 					DBRecordSize.BCKbias = DBRecordSize.BDG2BCK(DBRecordSize.BDGbias, DBRecordSize.BCKcoeff);
+					doFullSize =true;
 					StatTest testSize = new StatTest(SizePanel1, DBRecordStat, DBRecordSize);
+					doFullSize =false;
 					fullyTable.setValueAt(SizePanel1.threeDecE.format(testSize.powerBDG), i, j);
 				}
 			}
@@ -188,7 +191,9 @@ public class exploreExpSize extends JFrame {
 					DBRecordSize.BCKcoeff = DBRecordSize.genBCKCoeff(DBRecordSize.BDGcoeff);
 					DBRecordSize.BCK = DBRecordSize.BDG2BCK(DBRecordSize.BDG, DBRecordSize.BCKcoeff);
 					DBRecordSize.BCKbias = DBRecordSize.BDG2BCK(DBRecordSize.BDGbias, DBRecordSize.BCKcoeff);
+					doFullSize =true;
 					StatTest testSize = new StatTest(SizePanel1, DBRecordStat, DBRecordSize);
+					doFullSize =false;
 					fullyTable.setValueAt(SizePanel1.threeDecE.format(testSize.powerBDG), i, j);
 				}
 				

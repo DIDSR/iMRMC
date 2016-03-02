@@ -415,11 +415,13 @@ public class GUInterface {
 						if (selectedInput == DescInputChooseMode) {
 							report = exportToFile.exportSummary(report, DBRecordStat);
 							report = exportToFile.exportStatPanel(report, DBRecordStat, StatPanel1);
-							report = exportToFile.exportTable(report, DBRecordStat);
+							report = exportToFile.exportTable1(report, DBRecordStat);
+							report = exportToFile.exportTable2(report, DBRecordStat);
 						} else {
 							report = exportToFile.exportSummary(report, DBRecordStat);
 							report = exportToFile.exportStatPanel(report, DBRecordStat, StatPanel1);
-							report = exportToFile.exportTable(report, DBRecordStat);
+							report = exportToFile.exportTable1(report, DBRecordStat);
+							report = exportToFile.exportTable2(report, DBRecordStat);
 						}
 						FileWriter fw = new FileWriter(f.getAbsoluteFile());
 						BufferedWriter bw = new BufferedWriter(fw);
@@ -501,10 +503,10 @@ public class GUInterface {
 						report = report + sizeFilename + "\r\n" + "\r\n";
 						if (selectedInput == DescInputChooseMode) {
 							report = exportToFile.exportSizePanel(report, DBRecordSize, SizePanel1);
-							report = exportToFile.exportTable(report, DBRecordSize);
+							report = exportToFile.exportTable1(report, DBRecordSize);
 						} else {
 							report = exportToFile.exportSizePanel(report, DBRecordSize, SizePanel1);
-							report = exportToFile.exportTable(report, DBRecordSize);
+							report = exportToFile.exportTable1(report, DBRecordSize);
 						}
 						
 						

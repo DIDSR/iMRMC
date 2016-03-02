@@ -40,6 +40,8 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -64,6 +66,7 @@ import mrmc.gui.StatPanel;
 import roemetz.core.CalcGenRoeMetz;
 import roemetz.core.RoeMetz;
 import roemetz.core.SimRoeMetz;
+import roemetz.core.validateFunction;
 import umontreal.iro.lecuyer.rng.RandomStream;
 import umontreal.iro.lecuyer.rng.WELL1024;
 
@@ -86,21 +89,23 @@ public class RMGUInterface {
 	private static RoeMetz RoeMetz1;
 	public DBRecord varDBRecordStat;
 	private File outputDirectory = null;
-	SizePanel SizePanelRoeMetz;
+	public SizePanel SizePanelRoeMetz;
+	public boolean processDone = false;
+	public DBRecord avgDBRecordStat;
+	public StatPanel StatPanel1;
+	public StatPanel StatPanelNumerical;
+	
 	JPanel studyDesignJPanel;
-    public DBRecord avgDBRecordStat;
-    public StatPanel StatPanel1;
-    public int processDone;
 	/**
 	 * Input means
 	 */
-	JTextField 
+	public static JTextField 
 		mu0 = new JTextField("1.0", 6),
 		mu1 = new JTextField("1.0", 6);
 	/**
 	 * Input variances invariant to modality
 	 */
-	JTextField 
+	public static JTextField 
 		v_R0 = new JTextField("0.166", 6),
 		v_C0 = new JTextField("0.166", 6),
 		v_RC0 = new JTextField("0.166", 6),
@@ -110,7 +115,7 @@ public class RMGUInterface {
 	/** 
 	 * Input variances specific to modality A
 	 */
-	JTextField 
+	public static JTextField 
 		v_AR0 = new JTextField("0.166", 6),
 		v_AC0 = new JTextField("0.166", 6),
 		v_ARC0 = new JTextField("0.166", 6),
@@ -120,7 +125,7 @@ public class RMGUInterface {
 	/**
 	 * Input variances specific to modality B
 	 */
-	JTextField
+	public static JTextField
 		v_BR0 = new JTextField("0.166", 6),
 		v_BC0 = new JTextField("0.166", 6),
 		v_BRC0 = new JTextField("0.166", 6),
@@ -130,7 +135,7 @@ public class RMGUInterface {
 	/**
 	 * Input experiment size
 	 */
-	JTextField
+	public static JTextField
 		NnormalJTextField = new JTextField("20", 6),
 		NdiseaseJTextField = new JTextField("20", 6),
 		NreaderJTextField = new JTextField("4", 6);
@@ -138,11 +143,11 @@ public class RMGUInterface {
 	/**
 	 * Number of experiments
 	 */
-	JTextField JTextField_Nexp = new JTextField("10",7);
+	public static JTextField JTextField_Nexp = new JTextField("10",7);
 	/**
 	 * Initial seed for RNG
 	 */
-	JTextField JTextField_seed;
+	public static JTextField JTextField_seed;
 	
 	private JDialog progDialog;
 	private JCheckBox useMLEbox = new JCheckBox("Use MLE?");
@@ -478,6 +483,20 @@ public class RMGUInterface {
 		NnormalJTextField.setText("");
 		NdiseaseJTextField.setText("");
 		NreaderJTextField.setText("");
+		// set study design to default 1, yes, yes, yes
+	    SizePanelRoeMetz.NumSplitPlotsJTextField.setText("1");
+	    SizePanelRoeMetz.numSplitPlots = 1;
+		SizePanelRoeMetz.ButtonPairedReadersYes.setSelected(true);
+		SizePanelRoeMetz.ButtonPairedReadersNo.setSelected(false);
+		SizePanelRoeMetz.pairedReadersFlag=1;
+	    SizePanelRoeMetz.ButtonPairedNormalsYes.setSelected(true);
+	    SizePanelRoeMetz.ButtonPairedNormalsNo.setSelected(false);
+	    SizePanelRoeMetz.pairedNormalsFlag=1;
+	    SizePanelRoeMetz.ButtonPairedDiseasedYes.setSelected(true);
+	    SizePanelRoeMetz.ButtonPairedDiseasedNo.setSelected(false);
+	    SizePanelRoeMetz.pairedDiseasedFlag=1;
+
+		
 	}
 
 	/**
@@ -705,6 +724,18 @@ public class RMGUInterface {
 				}
 				continue;
 			}
+			loc = tempstr.indexOf("SEED FOR RNG: ");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				JTextField_seed.setText(tempstr.substring(tmploc + 1).trim());
+				continue;
+			}
+			loc = tempstr.indexOf("NUMBER OF EXPERIMENTS:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				JTextField_Nexp.setText(tempstr.substring(tmploc + 1).trim());
+				continue;
+			}			
 		}
 	}
 
@@ -792,44 +823,46 @@ public class RMGUInterface {
 					}
 					FileWriter fw = new FileWriter(f.getAbsoluteFile());
 					BufferedWriter bw = new BufferedWriter(fw);
-					bw.write("AR0: " + v_AR0.getText() + "\n");
-					bw.write("AC0: " + v_AC0.getText() + "\n");
-					bw.write("ARC0: " + v_ARC0.getText() + "\n");
-					bw.write("AR1: " + v_AR1.getText() + "\n");
-					bw.write("AC1: " + v_AC1.getText() + "\n");
-					bw.write("ARC1: " + v_ARC1.getText() + "\n");
-					bw.write("BR0: " + v_BR0.getText() + "\n");
-					bw.write("BC0: " + v_BC0.getText() + "\n");
-					bw.write("BRC0: " + v_BRC0.getText() + "\n");
-					bw.write("BR1: " + v_BR1.getText() + "\n");
-					bw.write("BC1: " + v_BC1.getText() + "\n");
-					bw.write("BRC1: " + v_BRC1.getText() + "\n");
-					bw.write("R0: " + v_R0.getText() + "\n");
-					bw.write("C0: " + v_C0.getText() + "\n");
-					bw.write("RC0: " + v_RC0.getText() + "\n");
-					bw.write("R1: " + v_R1.getText() + "\n");
-					bw.write("C1: " + v_C1.getText() + "\n");
-					bw.write("RC1: " + v_RC1.getText() + "\n");
-					bw.write("uA: " + mu0.getText() + "\n");
-					bw.write("uB: " + mu1.getText() + "\n");
-					bw.write("n0: " + NnormalJTextField.getText() + "\n");
-					bw.write("n1: " + NdiseaseJTextField.getText() + "\n");
-					bw.write("nr: " + NreaderJTextField.getText() + "\n");
-					bw.write("Study Design \n");
-					bw.write("# of Split-Plot Groups: " + SizePanelRoeMetz.numSplitPlots + "\n");
+					bw.write("AR0: " + v_AR0.getText() + "\r\n");
+					bw.write("AC0: " + v_AC0.getText() + "\r\n");
+					bw.write("ARC0: " + v_ARC0.getText() + "\r\n");
+					bw.write("AR1: " + v_AR1.getText() + "\r\n");
+					bw.write("AC1: " + v_AC1.getText() + "\r\n");
+					bw.write("ARC1: " + v_ARC1.getText() + "\r\n");
+					bw.write("BR0: " + v_BR0.getText() + "\r\n");
+					bw.write("BC0: " + v_BC0.getText() + "\r\n");
+					bw.write("BRC0: " + v_BRC0.getText() + "\r\n");
+					bw.write("BR1: " + v_BR1.getText() + "\r\n");
+					bw.write("BC1: " + v_BC1.getText() + "\r\n");
+					bw.write("BRC1: " + v_BRC1.getText() + "\r\n");
+					bw.write("R0: " + v_R0.getText() + "\r\n");
+					bw.write("C0: " + v_C0.getText() + "\r\n");
+					bw.write("RC0: " + v_RC0.getText() + "\r\n");
+					bw.write("R1: " + v_R1.getText() + "\r\n");
+					bw.write("C1: " + v_C1.getText() + "\r\n");
+					bw.write("RC1: " + v_RC1.getText() + "\r\n");
+					bw.write("uA: " + mu0.getText() + "\r\n");
+					bw.write("uB: " + mu1.getText() + "\r\n");
+					bw.write("n0: " + NnormalJTextField.getText() + "\r\n");
+					bw.write("n1: " + NdiseaseJTextField.getText() + "\r\n");
+					bw.write("nr: " + NreaderJTextField.getText() + "\r\n");
+					bw.write("Study Design \r\n");
+					bw.write("# of Split-Plot Groups: " + SizePanelRoeMetz.numSplitPlots + "\r\n");
 					if (SizePanelRoeMetz.pairedReadersFlag == 1)
-						bw.write("Paired Readers: Yes \n");
+						bw.write("Paired Readers: Yes \r\n");
 					else
-						bw.write("Paired Readers: No \n");
+						bw.write("Paired Readers: No \r\n");
 					if (SizePanelRoeMetz.pairedNormalsFlag == 1)
-						bw.write("Paired Normal: Yes \n");
+						bw.write("Paired Normal: Yes \r\n");
 					else
-						bw.write("Paired Normal: No \n");
+						bw.write("Paired Normal: No \r\n");
 					if (SizePanelRoeMetz.pairedDiseasedFlag == 1)
-						bw.write("Paired Disease: Yes \n");
+						bw.write("Paired Disease: Yes \r\n");
 					else
-						bw.write("Paired Diesase: No \n");
-						
+						bw.write("Paired Diesase: No \r\n");
+					bw.write("Simulation parameter \r\n");
+					bw.write("Seed for RNG: " + JTextField_seed.getText() + "\r\n");
+					bw.write("Number of Experiments: " + JTextField_Nexp.getText() + "\r\n");					
 					bw.close();
 				}
 			} catch (HeadlessException e1) {
@@ -1101,7 +1134,6 @@ public class RMGUInterface {
 		public void doSimulationAnalysis() {
 			// TODO Auto-generated method stub
 			try {
-				processDone = 0;
 				SizePanelRoeMetz.NreaderJTextField = NreaderJTextField;
 				SizePanelRoeMetz.NnormalJTextField = NnormalJTextField;
 				SizePanelRoeMetz.NdiseaseJTextField = NdiseaseJTextField;
@@ -1128,13 +1160,14 @@ public class RMGUInterface {
 				long NexpStart, NexpEnd;
 
 				// Check if saving results
-				if (simSaveDirectory == null || simSaveDirectory.equals("")) {
-					JOptionPane.showMessageDialog(
-							RoeMetz1.getFrame(),
-						"Save directory not specified.\nExperiment output files will not be written.",
-						"Warning", JOptionPane.WARNING_MESSAGE);
+				if (!RoeMetz.doValidation){
+					if (simSaveDirectory == null || simSaveDirectory.equals("")) {
+						JOptionPane.showMessageDialog(
+								RoeMetz1.getFrame(),
+							"Save directory not specified.\nExperiment output files will not be written.",
+							"Warning", JOptionPane.WARNING_MESSAGE);
+					}
 				}
-
 				// Create string representation of current time to use in filename
 				DateFormat dateForm = new SimpleDateFormat("yy-MM-dd-HH-mm-ss");
 				Date currDate = new Date();
@@ -1197,6 +1230,11 @@ public class RMGUInterface {
 								if (finishedTasks == numCoresToUse) {
 									finishedTasks = 0;
 									processResults(simSaveDirectory,filenameTime);
+									if(RoeMetz.doValidation){
+										analysisExportListener analysisExportListener1 = new analysisExportListener(avgDBRecordStat,"SimulationOutput",StatPanel1);
+										analysisExportListener1.exportResult();
+										System.exit(0);
+									}
 								}
 							} catch (InterruptedException e) {
 								e.printStackTrace();
@@ -1238,6 +1276,7 @@ public class RMGUInterface {
 			pane.add(simProgress);
 			progDialog.setContentPane(pane);
 			progDialog.pack();
+			if(!RoeMetz.doValidation)
 			progDialog.setVisible(true);
 		}
 
@@ -1301,7 +1340,7 @@ public class RMGUInterface {
 			DBRecordStat = results[0][0];
 			
 			avgDBRecordStat.Decompositions();
-			StatPanel StatPanel1 = new StatPanel(RoeMetz1.getFrame(), avgDBRecordStat);
+			StatPanel1 = new StatPanel(RoeMetz1.getFrame(), avgDBRecordStat);
 			StatPanel1.setStatPanel();
 			StatPanel1.setTable1();
 			StatPanel1.setMCresults(avgDBRecordStat, varDBRecordStat);
@@ -1312,11 +1351,12 @@ public class RMGUInterface {
 			simulationExport.addActionListener(new analysisExportListener(avgDBRecordStat,"SimulationOutput",StatPanel1));			
 			simOutput.add(simulationExport, BorderLayout.PAGE_END);
 			simOutput.pack();
+			if(!RoeMetz.doValidation)
 			simOutput.setVisible(true);
-            processDone = 1;
 //			writeSummaryFile(simSaveDirectory, "Summary of Simulation Results",
 //					"results-simulation-" + filenameTime, allDecomps,
 //					allCoeffs, avgdAUC);
+
 
 		}
         
@@ -1486,8 +1526,8 @@ public class RMGUInterface {
 	 * thread and displays results in a pop-up table.
 	 * 
 	 */
-	class DoNumericalIntegrationBtnListener implements ActionListener {
-		DBRecord DBRecordNumerical; // averaged decompositions of cofv
+	public class DoNumericalIntegrationBtnListener implements ActionListener {
+		public DBRecord DBRecordNumerical; // averaged decompositions of cofv
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -1497,11 +1537,19 @@ public class RMGUInterface {
 			SizePanelRoeMetz.NdiseaseJTextField = NdiseaseJTextField;
 
 			System.out.println(NreaderJTextField.getText());
-
+			doNumericalAnalysisSEQ();
+		}
+        
+		public void doNumericalAnalysisBKG() {
+			// TODO Auto-generated method stub
 			try {
 				double[] u = getMeans();
 				double[] var_t = getVariances();
-				
+				SizePanelRoeMetz.NreaderJTextField = NreaderJTextField;
+				SizePanelRoeMetz.NnormalJTextField = NnormalJTextField;
+				SizePanelRoeMetz.NdiseaseJTextField = NdiseaseJTextField;
+				System.out.println(NreaderJTextField.getText());
+				SizePanel SizePanelRoeMetz1 =SizePanelRoeMetz;
 				final CalculateCofV calcTask = new CalculateCofV(u, var_t, SizePanelRoeMetz);
 				calcTask.addPropertyChangeListener(new PropertyChangeListener() {
 					public void propertyChange(PropertyChangeEvent evt) {
@@ -1509,6 +1557,7 @@ public class RMGUInterface {
 							try {
 								DBRecordNumerical = calcTask.get();
 								processResults();
+								processDone = true;
 							} catch (InterruptedException e) {
 								e.printStackTrace();
 							} catch (ExecutionException e) {
@@ -1525,7 +1574,29 @@ public class RMGUInterface {
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
-
+		
+		public void doNumericalAnalysisSEQ() {
+			// TODO Auto-generated method stub
+			try {
+				double[] u = getMeans();
+				double[] var_t = getVariances();
+				SizePanelRoeMetz.NreaderJTextField = NreaderJTextField;
+				SizePanelRoeMetz.NnormalJTextField = NnormalJTextField;
+				SizePanelRoeMetz.NdiseaseJTextField = NdiseaseJTextField;
+				System.out.println(NreaderJTextField.getText());
+				SizePanel SizePanelRoeMetz1 =SizePanelRoeMetz;
+				CalcGenRoeMetz.genRoeMetz(u, var_t, SizePanelRoeMetz);
+				DBRecordNumerical = CalcGenRoeMetz.DBRecordNumerical;
+				processResults();
+			} catch (NumberFormatException e1) {
+				JOptionPane.showMessageDialog(RoeMetz1.getFrame(),
+						"Incorrect / Incomplete Input", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		
+		
+		
 		/**
 		 * Gets calculation results, 
 		 * calculates decomposition coefficients and
@@ -1540,7 +1611,7 @@ public class RMGUInterface {
 			DBRecordNumerical.InputFile1 = new InputFile();
 			for (int i=1;i<DBRecordNumerical.Nreader+1;i++)
 			DBRecordNumerical.InputFile1.readerIDs.put(Integer.toString(i), i);
-			StatPanel StatPanelNumerical = new StatPanel(RoeMetz1.getFrame(), DBRecordNumerical);
+			StatPanelNumerical = new StatPanel(RoeMetz1.getFrame(), DBRecordNumerical);
 			StatPanelNumerical.setStatPanel();
 			StatPanelNumerical.setTable1();
 
@@ -1551,6 +1622,7 @@ public class RMGUInterface {
 			numericalOutputExport.addActionListener(new analysisExportListener(DBRecordNumerical,"NumericalOutput",StatPanelNumerical));			
 			numericalOutput.add(numericalOutputExport, BorderLayout.PAGE_END);
 			numericalOutput.pack();
+			if(!RoeMetz.doValidation)
 			numericalOutput.setVisible(true);
 
 			DateFormat dateForm = new SimpleDateFormat("yy-MM-dd-HH-mm-ss");
@@ -1561,6 +1633,8 @@ public class RMGUInterface {
 //					"Summary of Calculation Results", "calc-results-"
 //							+ filenameTime, allDecomps, allCoeffs, AUCs);
 		}
+
+
 
 	}
 	
@@ -2246,54 +2320,83 @@ public class RMGUInterface {
 		private StatPanel StatPanelIn;
 		@Override
      	public void actionPerformed(ActionEvent e) {
+			exportResult();
+
+		 }
+		public void exportResult() {
+			// TODO Auto-generated method stub
 			try {
-				JFileChooser fc = new JFileChooser();
-	            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
-				Date currDate = new Date();
-				String fileTime = dateForm.format(currDate);
-				String exportFileName = subFileName+fileTime+".omrmc";
-				fc.setSelectedFile(new File(outputDirectory+"//"+exportFileName));
-				FileNameExtensionFilter filter = new FileNameExtensionFilter(
-						"iMRMC Summary Files (.omrmc or csv)", "csv","omrmc");
-				fc.setFileFilter(filter);	
-				int fcReturn = fc.showSaveDialog((Component) e.getSource());
-				//int fcReturn = 0;
+				int fcReturn;
+				File f;
+				String savedFileName;
+				if (!RoeMetz.doValidation){
+					JFileChooser fc = new JFileChooser();
+					DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmmss");
+					Date currDate = new Date();
+					String fileTime = dateForm.format(currDate);
+					String exportFileName = subFileName+fileTime+".omrmc";
+					fc.setSelectedFile(new File(outputDirectory+"//"+exportFileName));
+					FileNameExtensionFilter filter = new FileNameExtensionFilter(
+							"iMRMC Summary Files (.omrmc or csv)", "csv","omrmc");
+					fc.setFileFilter(filter);	
+					//fcReturn = fc.showSaveDialog((Component) e.getSource());
+					fcReturn = fc.showSaveDialog(null);
+					f = fc.getSelectedFile();
+					outputDirectory = fc.getCurrentDirectory();			
+					savedFileName = fc.getSelectedFile().getName();
+				}else{
+					fcReturn = 0;					
+					File outputDir = new File (validateFunction.inputFile.getParent()+"//"+"output");
+					if(!outputDir.exists() && !outputDir.isDirectory()) 
+						outputDir.mkdir();					
+					String FileName=validateFunction.inputFile.getName();
+					FileName= FileName.substring(0,FileName.lastIndexOf("."));
+					String exportFileName = FileName +subFileName +".omrmc";
+				//	f = new File ("C://Users//qigong//Documents//imrmc//output"+"//" + exportFileName);
+					f = new File (outputDir +"//" + exportFileName);
+					savedFileName = exportFileName;
+				}
+				
+				
 				if (fcReturn == JFileChooser.APPROVE_OPTION) {
-					File f = fc.getSelectedFile();
-					//File f = new File ("C://Users//ReaderStudy//Documents//qigong//imrmc inputfile//validate//output"+"//" + exportFileName);
 					if (!f.exists()) {
 						f.createNewFile();
 					}
 					FileWriter fw = new FileWriter(f.getAbsoluteFile());
 					BufferedWriter bw = new BufferedWriter(fw);
-					outputDirectory = fc.getCurrentDirectory();			
-					String savedFileName = fc.getSelectedFile().getName();
-					//String savedFileName = exportFileName;
 					String report = "";
 					if (subFileName.equals("SimulationOutput")){
 						report = report + "iRoeMetz simulation summary statistics from " + RoeMetz.versionName + "\r\n";
 						report = report + "Summary statistics written to file named:" + "\r\n";
 						report = report + savedFileName + "\r\n" + "\r\n";
+						report = exportToFile.exoprtiRoeMetzSet(report,SizePanelRoeMetz);
 						report = report + "Seed for RNG: " + JTextField_seed.getText() + "\r\n";
 						report = report + "Number of Experiments: " + JTextField_Nexp.getText() + "\r\n" + "\r\n";
+						report = report + "\r\n************************************************************\r\n";
 						report = exportToFile.exportSummary(report, DB1);	
 						report = exportToFile.exportStatPanel(report, DB1, StatPanelIn);						
 					    report = exportToFile.exportMCvariance(report, varDBRecordStat);
-					    report = exportToFile.exportTable(report, DB1);
+					    report = exportToFile.exportTable1(report, DB1);
+					    report = exportToFile.exportTable2(report, DB1);
 					}else{
 						report = report + "iRoeMetz Numerical summary statistics from " + RoeMetz.versionName + "\r\n";
 						report = report + "Summary statistics written to file named:" + "\r\n";
 						report = report + savedFileName + "\r\n" + "\r\n";
+						report = exportToFile.exoprtiRoeMetzSet(report,SizePanelRoeMetz);
+						report = report + "\r\n************************************************************\r\n";
 						report = exportToFile.exportSummary(report, DB1);	
 						report = exportToFile.exportStatPanel(report, DB1, StatPanelIn);	
-						report = exportToFile.exportTable(report, DB1);
+						report = exportToFile.exportTable1(report, DB1);
+						report = exportToFile.exportTable2(report, DB1);
 					}
 
 					bw.write(report);
 					bw.close();
-					JOptionPane.showMessageDialog(
-							RoeMetz1.getFrame(), subFileName+" has been succeed export to " + outputDirectory + " !\n"+ "Filename = " +savedFileName, 
-							"Exported", JOptionPane.INFORMATION_MESSAGE);
+					if (!RoeMetz.doValidation){
+						JOptionPane.showMessageDialog(
+								RoeMetz1.getFrame(), subFileName+" has been succeed export to " + outputDirectory + " !\n"+ "Filename = " +savedFileName, 
+								"Exported", JOptionPane.INFORMATION_MESSAGE);
+					}
 				}
 			} catch (HeadlessException e1) {
 				e1.printStackTrace();
