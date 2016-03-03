@@ -397,7 +397,7 @@ public class SizePanel {
 			results = results + "\t" + SizeJLabelPowerHillis.getText();
 			results = results + "\t" + SizeJLabelCIHillis.getText();
 		}else{
-			results = results + "Study is not fully crossed. There is no Hillis data";
+			results = results + "The Hillis degrees of freedom are not calculated when the data is not fully crossed.";
 		}
 
 		return results;
@@ -420,7 +420,7 @@ public class SizePanel {
 		results = results + "Hills:" + SizeJLabelDFHillis.getText();
 		results = results + ", " + SizeJLabelPowerHillis.getText();
 		}else{
-			results = results + "Study is not fully crossed. There is no Hillis data";
+			results = results + "The Hillis degrees of freedom are not calculated when the data is not fully crossed.";
 		}
 		return results;
 	}
@@ -556,7 +556,7 @@ public class SizePanel {
 					SizeJLabelPowerHillis.getText() + "\n" + 
 					SizeJLabelCIHillis.getText();
 			}else{
-				hillisValues = "Study is not fully crossed";
+				hillisValues = "The Hillis degrees of freedom are not calculated when the data is not fully crossed.";
 			}
 					
 			// TODO Auto-generated method stub

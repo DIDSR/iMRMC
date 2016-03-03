@@ -1017,6 +1017,10 @@ public class RMGUInterface {
 			sumDBRecordStat.verbose = false;
 			squareDBRecordStat.verbose = false;
 			sumSquareDBRecordStat.verbose = false;
+			DBRecordStat.flagMLE = useMLE;
+			sumDBRecordStat.flagMLE = useMLE;
+			squareDBRecordStat.flagMLE = useMLE;
+			sumSquareDBRecordStat.flagMLE = useMLE;
 			
 			long flagTotalVarIsNegative = 0;
 

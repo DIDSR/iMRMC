@@ -32,19 +32,23 @@ public class exportToFile {
 	static DecimalFormat fourDecE = new DecimalFormat("0.0000E0");
 	static DecimalFormat fiveDecE = new DecimalFormat("0.00000E0");
 	private static String SEPA = ",";
+	private String MLEString = "(U-statistics, Not MLE)";
+	private String UstatString = "(MLE, Not U-statistics)";
 	
 	// export statpanel and table for both iMRMC and iRoeMetz
 	public static String exportStatPanel(String oldReport, DBRecord StatDBRecord, StatPanel processStatPanel ) {
 		String str = oldReport;
 		int useMLE = StatDBRecord.flagMLE;		
 		String result = processStatPanel.getStatResults();
+		String USEtitle = "(U-statistics, Not MLE)";
+		if (useMLE == 1)
+			USEtitle = "(MLE, Not U-statistics)";
 		str = str
-				+ "\r\n**********************StatPanel outputs ***************************\r\n";
+				+ "\r\n**********************StatPanel outputs " + USEtitle + "***************************\r\n";
 		str = str + StatDBRecord.recordDesc;
 		str = str + "Modality A = " + StatDBRecord.modalityA + "\r\n";
 		str = str + "Modality B = " + StatDBRecord.modalityB + "\r\n";
-		if (useMLE == 1)
-			str = str + "this report uses MLE estimate of components.\r\n";
+
 		
 		str = str + "\r\n" + StatDBRecord.getAUCsReaderAvgString(StatDBRecord.selectedMod);
 		str = str + "\r\nStatistical Tests:\r\n" + result + SEPA;		
@@ -58,15 +62,17 @@ public class exportToFile {
 				DBRecordTable.BDG, DBRecordTable.BDGcoeff);
 		double[][] BCKdata1 = DBRecord.getBCKTab(DBRecordTable.selectedMod,
 				DBRecordTable.BCK, DBRecordTable.BCKcoeff);
+		String USEtitle = "(U-statistics, Not MLE)";
 		if(DBRecordTable.flagMLE == 1) {
 			BDGdata1 = DBRecord.getBDGTab(DBRecordTable.selectedMod,
 					DBRecordTable.BDGbias, DBRecordTable.BDGcoeff);
 			BCKdata1 = DBRecord.getBCKTab(DBRecordTable.selectedMod,
-					DBRecordTable.BCKbias, DBRecordTable.BCKcoeff);	
+					DBRecordTable.BCKbias, DBRecordTable.BCKcoeff);
+			USEtitle = "(MLE, Not U-statistics)";
 		}
 		
 		str = str
-				+ "\r\n**********************BDG output Results***************************\r\n";
+				+ "\r\n**********************BDG output Results " + USEtitle + "***************************\r\n";
 		str = str + "Moments" + SEPA + "M1" + SEPA + "M2" + SEPA + "M3" + SEPA
 				+ "M4" + SEPA + "M5" + SEPA + "M6" + SEPA + "M7" + SEPA + "M8";
 		/*
@@ -95,7 +101,7 @@ public class exportToFile {
 			str = str + fiveDecE.format(BDGdata1[6][i]) + SEPA;
 		str = str +"\r\n"; 
 		str = str
-				+ "\r\n**********************BCK output Results***************************";
+				+ "\r\n**********************BCK output Results " + USEtitle + "***************************\r\n";
 		str = str + "\r\nMoments" + SEPA + "N" + SEPA + "D" + SEPA + "N~D" + SEPA
 				+ "R" + SEPA + "N~R" + SEPA + "D~R" + SEPA + "R~N~D";
 		str = str + "\r\n" + "comp MA" + SEPA;
@@ -132,16 +138,18 @@ public class exportToFile {
 				DBRecordTable.OR, DBRecordTable.ORcoeff);
 		double[][] MSdata1 = DBRecord.getMSTab(DBRecordTable.selectedMod,
 				DBRecordTable.MS, DBRecordTable.MScoeff);
+		String USEtitle = "(U-statistics, Not MLE)";
 		if(DBRecordTable.flagMLE == 1) {
 			DBMdata1 = DBRecord.getDBMTab(DBRecordTable.selectedMod,
 					DBRecordTable.DBMbias, DBRecordTable.DBMcoeff);
 			ORdata1 = DBRecord.getORTab(DBRecordTable.selectedMod,
 					DBRecordTable.ORbias, DBRecordTable.ORcoeff);
 			MSdata1 = DBRecord.getMSTab(DBRecordTable.selectedMod,
-					DBRecordTable.MSbias, DBRecordTable.MScoeff);			
+					DBRecordTable.MSbias, DBRecordTable.MScoeff);	
+			USEtitle = "(MLE, Not U-statistics)";
 		}
 		str = str
-				+ "\r\n**********************DBM output Results***************************";
+				+ "\r\n**********************DBM output Results " + USEtitle + "***************************\r\n";
 		str = str + "\r\nComponents" + SEPA + "R" + SEPA + "C" + SEPA + "R~C"
 				+ SEPA + "T~R" + SEPA + "T~C" + SEPA + "T~R~C";
 		str = str + "\r\n" + "components" + SEPA;
@@ -155,7 +163,7 @@ public class exportToFile {
 			str = str + fiveDecE.format(DBMdata1[2][i]) + SEPA;
 		str = str +"\r\n"; 
 		str = str
-				+ "\r\n**********************OR output Results***************************";
+				+ "\r\n**********************OR output Results " + USEtitle + "***************************\r\n";
 		str = str + "\r\nComponents" + SEPA + "R" + SEPA + "TR" + SEPA + "COV1"
 				+ SEPA + "COV2" + SEPA + "COV3" + SEPA + "ERROR";
 		str = str + "\r\n" + "components" + SEPA;
@@ -169,7 +177,7 @@ public class exportToFile {
 			str = str + fiveDecE.format(ORdata1[2][i]) + SEPA;
 		str = str +"\r\n"; 
 		str = str
-				+ "\r\n**********************MS output Results***************************";
+				+ "\r\n**********************MS output Results " + USEtitle + "***************************\r\n";
 		str = str + "\r\nComponents" + SEPA + "R" + SEPA + "C" + SEPA + "RC"
 				+ SEPA + "MR" + SEPA + "MC" + SEPA + "MRC";
 		str = str + "\r\ncomponents" + SEPA;
