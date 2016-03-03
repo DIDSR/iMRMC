@@ -481,9 +481,14 @@ public class StatPanel {
 		results = results + "\t" + StatJLabelPValBDG.getText();
 		results = results + "\t" + StatJLabelCIBDG.getText();
 		results = results + "\n";
-		results = results + "\t" + StatJLabelDFHillis.getText();
-		results = results + "\t" + StatJLabelPValHillis.getText();
-		results = results + "\t" + StatJLabelCIHillis.getText();
+		if (DBRecordStat.flagFullyCrossed){
+			results = results + "\t" + StatJLabelDFHillis.getText();
+			results = results + "\t" + StatJLabelPValHillis.getText();
+			results = results + "\t" + StatJLabelCIHillis.getText();
+		}else{
+			results = results + "The Hillis degrees of freedom are not calculated when the data is not fully crossed.";
+		}
+
 
 		return results;
 	}
@@ -782,7 +787,7 @@ public class StatPanel {
 					StatJLabelCIHillis.getText() + "\n" + 
 					StatJLabelRejectHillis.getText();
 			}else{
-				hillisValues = "Study is not fully crossed";
+				hillisValues = "The Hillis degrees of freedom are not calculated when the data is not fully crossed.";
 			}
 					
 			// TODO Auto-generated method stub
