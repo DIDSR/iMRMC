@@ -183,7 +183,7 @@ public class SizePanel {
 		//SizePanelRow6.add(SizeJLabelCIHillis);
 
 		// not ready to add split plot, an pairing readers or cases to sizing panel
-		// JPanelSize.add(SizePanelRow1);
+		JPanelSize.add(SizePanelRow1);
 		JPanelSize.add(SizePanelRow2);
 		JPanelSize.add(SizePanelRow3);
 		JPanelSize.add(SizePanelRow4);
@@ -297,6 +297,19 @@ public class SizePanel {
 		SizeJLabelLambdaHillis.setText("Lambda=");
 		SizeJLabelPowerHillis.setText("Power=");
 //		SizeJLabelCIHillis.setText("Conf. Int.=");
+		
+		// set study design to default 1, yes, yes, yes
+	    NumSplitPlotsJTextField.setText("1");
+	    numSplitPlots = 1;
+		ButtonPairedReadersYes.setSelected(true);
+		ButtonPairedReadersNo.setSelected(false);
+		pairedReadersFlag=1;
+	    ButtonPairedNormalsYes.setSelected(true);
+	    ButtonPairedNormalsNo.setSelected(false);
+	    pairedNormalsFlag=1;
+	    ButtonPairedDiseasedYes.setSelected(true);
+	    ButtonPairedDiseasedNo.setSelected(false);
+	    pairedDiseasedFlag=1;
 	
 	}
 	
@@ -506,7 +519,9 @@ public class SizePanel {
 				sigLevel = Double.parseDouble(SigLevelJTextField.getText());
 				effSize = Double.parseDouble(EffSizeJTextField.getText());
 
-				DBRecordSize.DBRecordSizeFill(GUI.SizePanel1);
+				boolean sizesucceed = DBRecordSize.DBRecordSizeFill(GUI.SizePanel1);
+				if (!sizesucceed)
+					return;
 				setSizePanel();
 
 			} catch (NumberFormatException e1) {

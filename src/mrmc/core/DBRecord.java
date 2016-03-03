@@ -624,8 +624,9 @@ public class DBRecord {
 	 * specified. Sets GUI label with statistics info.
 	 * 
 	 * @param SizePanelTemp
+	 * @return 
 	 */
-	public void DBRecordSizeFill(SizePanel SizePanelTemp) {
+	public boolean DBRecordSizeFill(SizePanel SizePanelTemp) {
 		
 		SizePanel1 = SizePanelTemp;
 		DBRecordSize = GUI.DBRecordSize;
@@ -635,11 +636,40 @@ public class DBRecord {
 			JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
 					"Must perform variance analysis first.", "Error",
 					JOptionPane.ERROR_MESSAGE);
-			return;
+			return false;
 		}
 
 		covMRMCstat = DBRecordStat.covMRMCstat;
-		covMRMCsize = new CovMRMC(SizePanel1, DBRecordSize);
+		Nreader = Integer.parseInt(SizePanel1.NreaderJTextField.getText());
+		Nnormal = Integer.parseInt(SizePanel1.NnormalJTextField.getText());
+		Ndisease = Integer.parseInt(SizePanel1.NdiseaseJTextField.getText());
+		int Ngroup =Integer.parseInt(SizePanel1.NumSplitPlotsJTextField.getText());
+		int Preader = SizePanel1.pairedReadersFlag; 
+		int Pnormal = SizePanel1.pairedNormalsFlag; 
+		int Pdisease = SizePanel1.pairedDiseasedFlag;
+		double Subreader = (double)Nreader/(double)Ngroup/(2-(double)Preader);
+		double Subnormal = (double)Nnormal/(double)Ngroup/(2-(double)Pnormal);
+		double Subdisease = (double)Ndisease/(double)Ngroup/(2-(double)Pdisease);
+		if (Math.floor(Subreader) != Subreader){
+			JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
+					"Reader can't be evenly distributed into each modality and group", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		if (Math.floor(Subnormal) != Subnormal){
+			JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
+					"Reader can't be evenly distributed into each modality and group", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		if (Math.floor(Subdisease) != Subdisease){
+			JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
+					"Reader can't be evenly distributed into each modality and group", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		BDGcoeff = genBDGSplitUnpairedCoeff(Nreader, Nnormal, Ndisease, Ngroup, Preader, Pnormal, Pdisease);
+		//covMRMCsize = new CovMRMC(SizePanel1, DBRecordSize);
 
 		BDGforSizePanel();
 		BCKcoeff = genBCKCoeff(BDGcoeff);
@@ -650,7 +680,7 @@ public class DBRecord {
 		BCKbiasresult = BCKbias;
 		//Decompositions();
 
-		if(selectedMod == 0) {
+		/*if(selectedMod == 0) {
 			flagFullyCrossed = covMRMCsize.fullyCrossedA;
 		}
 		if(selectedMod == 1) {
@@ -660,10 +690,16 @@ public class DBRecord {
 			flagFullyCrossed = covMRMCsize.fullyCrossedA && 
 					covMRMCsize.fullyCrossedB && 
 					covMRMCsize.fullyCrossedAB;
-		}
+		}*/
+		if (Ngroup == 1 && Preader == 1 && Pnormal ==1 && Pdisease==1)
+			flagFullyCrossed = true;
+		else
+			flagFullyCrossed = false;
+		
 
 		testSize = new StatTest(SizePanel1, DBRecordStat, DBRecordSize);
-
+		
+		return true;
 	}
 	
 	/**
@@ -784,11 +820,11 @@ public class DBRecord {
 			BDGbias[0][i] = DBRecordStat.BDGbias[0][i];
 			BDGbias[1][i] = DBRecordStat.BDGbias[1][i];
 			BDGbias[2][i] = DBRecordStat.BDGbias[2][i];			
-			BDGcoeff[0][i] = covMRMCsize.coefficientsAA[i + 1];
-			BDGcoeff[1][i] = covMRMCsize.coefficientsBB[i + 1];
-			BDGcoeff[2][i] = covMRMCsize.coefficientsAB[i + 1];
+		//	BDGcoeff[0][i] = covMRMCsize.coefficientsAA[i + 1];
+		//	BDGcoeff[1][i] = covMRMCsize.coefficientsBB[i + 1];
+		//	BDGcoeff[2][i] = covMRMCsize.coefficientsAB[i + 1];
 			
-			BDGcoeff[3][i] = 1.0;
+		//	BDGcoeff[3][i] = 1.0;
 
 			BDG[3][i] =     (BDG[0][i] * BDGcoeff[0][i])
 					  +     (BDG[1][i] * BDGcoeff[1][i])
@@ -1235,6 +1271,52 @@ public class DBRecord {
 		return c;
 	}
 
+	
+	
+	/**
+	 * Determines the coefficient matrix for BDG variance components given a
+	 * split plot and unpaired study design [4][8].
+	 * This is only executed when the components of variance are input by hand or during iRoeMetz
+	 * 
+	 * @param NreaderWhole NnormalWhole and NdiseaseWhole are Number of readers, normal and disease of whole study
+	 * @param  Nreader2 Nnormal2 and Ndisease2 Use size in each group and modality
+	 * @return Matrix containing coefficients corresponding to BDG variance
+	 *         components
+	 */
+	public static double[][] genBDGSplitUnpairedCoeff(long NreaderWhole, long Nnormal2Whole, long Ndisease2Whole, int Ngroup, int Preader, int Pnormal, int Pdisease ) {
+		double[][] c = new double[4][8];
+		double[] ones = {1,1,1,1,1,1,1,1};
+		long Nreader2 = NreaderWhole/Ngroup/(2-Preader);
+      	long Nnormal2 = Nnormal2Whole/Ngroup/(2-Pnormal);
+		long Ndisease2 = Ndisease2Whole/Ngroup/(2-Pdisease);
+		double Nm = (Nreader2 * Nnormal2 * Ndisease2)*Ngroup;
+		c[0][0] = 1.0 / Nm;
+		c[0][1] = (Nnormal2 - 1.0) / Nm;
+		c[0][2] = (Ndisease2 - 1.0) / Nm;
+		c[0][3] = (Nnormal2 - 1.0) * (Ndisease2 - 1.0) / Nm;
+		c[0][4] = (Nreader2 - 1.0) / Nm;
+		c[0][5] = (Nnormal2 - 1.0) * (Nreader2 - 1.0) / Nm;
+		c[0][6] = (Ndisease2 - 1.0) * (Nreader2 - 1.0) / Nm;
+		c[0][7] = ((Ndisease2 - 1.0) * (Nnormal2 - 1.0) * (Nreader2 - 1.0) + Ndisease2 * Nnormal2 * Nreader2 * (Ngroup-1)) / Nm;
+		c[0][7] = c[0][7] - 1;
+		// Two modalities have same coeff
+		c[1] = c[0];
+		// component
+		c[2][0] = 1.0 / Nm * Preader * Pnormal * Pdisease;
+		c[2][1] = (Nnormal2 - Pnormal) / Nm * Preader * Pdisease;
+		c[2][2] = (Ndisease2 - Pdisease) / Nm * Pnormal * Preader; 
+		c[2][3] = (Nnormal2 - Pnormal) * (Ndisease2 - Pdisease) / Nm * Preader;
+		c[2][4] = (Nreader2 - Preader) / Nm * Pnormal * Pdisease;
+		c[2][5] = (Nnormal2 - Pnormal) * (Nreader2 - Preader) / Nm * Pdisease;
+		c[2][6] = (Ndisease2 - Pdisease) * (Nreader2 - Preader) / Nm * Pnormal;
+		c[2][7] = ((Ndisease2 - Pdisease) * (Nnormal2 - Pnormal) * (Nreader2 - Preader) + Ndisease2 * Nnormal2 * Nreader2 * (Ngroup-1)) / Nm;
+		c[2][7] = c[2][7] - 1;
+		c[3] = ones;
+
+		return c;
+	}
+	
+	
 	/**
 	 * Determines the coefficient matrix for BCK variance components given <code>BDGcoeff</code> <br>
 	 * There is another function that creates the coefficients assuming a fully-crossed study design.
