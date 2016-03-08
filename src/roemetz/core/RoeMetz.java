@@ -30,10 +30,11 @@ import roemetz.gui.RMGUInterface;
  * @author Rohan Pathare
  */
 public class RoeMetz extends JApplet {
-
+    
+	public static String versionName;
 	private static final long serialVersionUID = 1L;
 	private static JFrame iRMFrame;
-
+    public static RMGUInterface RMGUInterface1;
 	/**
 	 * Gets the application frame, used when launching dialog boxes
 	 * 
@@ -52,7 +53,8 @@ public class RoeMetz extends JApplet {
 		resize(6, 6);
 
 		Container cp = getContentPane();
-		new RMGUInterface(this, cp);
+		RMGUInterface1 = new RMGUInterface(this, cp);
+		
 	}
 
 	/**
@@ -74,6 +76,7 @@ public class RoeMetz extends JApplet {
 			e.printStackTrace();
 		}
 		run(new RoeMetz(), 900, 600);
+		validateFunction.validateFunction(RMGUInterface1);
 	}
 
 	/**
@@ -85,6 +88,7 @@ public class RoeMetz extends JApplet {
 	 * @param height Height of the application frame in pixels
 	 */
 	public static void run(JApplet applet, int width, int height) {
+		versionName = "iRoeMetz 2.0";
 		iRMFrame = new JFrame("iRoeMetz 2.0");
 		iRMFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		iRMFrame.getContentPane().add(applet);

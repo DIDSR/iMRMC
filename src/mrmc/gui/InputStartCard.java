@@ -33,10 +33,11 @@ import javax.swing.JPanel;
  * performing MRMC variance analysis with data from pilot study raw data files.
  * 
  * 
- * @author Xin He, Ph.D
+ * 
  * @author Brandon D. Gallas, Ph.D
  * @author Qi Gong, MS
  * @author Rohan Pathare
+ * @author Xin He, Ph.D
  */
 public class InputStartCard {
 

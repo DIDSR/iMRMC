@@ -799,6 +799,39 @@ public class DBRecord {
 
 	}
 	
+	
+	/**
+	 * Calculate {@link #totalVar} for fullySizePredict
+	 */
+	public void BDGforSizeFullPanel() {
+
+		totalVar = 0.0;
+		for (int i = 0; i < 8; i++) {
+		    BDG[0][i] = DBRecordStat.BDG[0][i];
+			BDG[1][i] = DBRecordStat.BDG[1][i];
+			BDG[2][i] = DBRecordStat.BDG[2][i];
+			BDGbias[0][i] = DBRecordStat.BDGbias[0][i];
+			BDGbias[1][i] = DBRecordStat.BDGbias[1][i];
+			BDGbias[2][i] = DBRecordStat.BDGbias[2][i];			
+
+			BDG[3][i] =     (BDG[0][i] * BDGcoeff[0][i])
+					  +     (BDG[1][i] * BDGcoeff[1][i])
+					  - 2.0*(BDG[2][i] * BDGcoeff[2][i]);
+			BDGbias[3][i] = (BDGbias[0][i] * BDGcoeff[0][i])
+					  +     (BDGbias[1][i] * BDGcoeff[1][i])
+					  - 2.0*(BDGbias[2][i] * BDGcoeff[2][i]);
+			
+			totalVar += BDGcoeff[3][i] * BDG[3][i];
+			
+		}
+		
+		totalVar = totalVar*1.0;
+		
+	
+
+	}
+	
+	
 	/**
 	 * Derives all decompositions and coefficient matrices from predefined BDG
 	 * components and experiment size
@@ -1177,6 +1210,7 @@ public class DBRecord {
 	 */
 	public static double[][] genBDGCoeff(long Nreader2, long Nnormal2, long Ndisease2) {
 		double[][] c = new double[4][8];
+		double[] ones = {1,1,1,1,1,1,1,1};
 		c[0][0] = 1.0 / (Nreader2 * Nnormal2 * Ndisease2);
 		c[0][1] = c[0][0] * (Nnormal2 - 1.0);
 		c[0][2] = c[0][0] * (Ndisease2 - 1.0);
@@ -1188,7 +1222,7 @@ public class DBRecord {
 		c[0][7] = c[0][7] - 1;
 		c[1] = c[0];
 		c[2] = c[0];
-		c[3] = c[0];
+		c[3] = ones;
 
 		return c;
 	}

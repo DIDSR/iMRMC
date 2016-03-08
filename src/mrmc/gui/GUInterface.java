@@ -40,6 +40,7 @@ import java.util.Date;
 import mrmc.chart.BarGraph;
 import mrmc.chart.StudyDesignPlot;
 import mrmc.chart.ROCCurvePlot;
+import mrmc.chart.exportToFile;
 import mrmc.core.MRMC;
 import mrmc.core.DBRecord;
 import mrmc.core.InputFile;
@@ -338,8 +339,15 @@ public class GUInterface {
 		panelSummary.add(new JLabel("GUI Summary:"));
 		JButton saveGUI = new JButton("Save to File");
 		saveGUI.addActionListener(new SaveGUIButtonListener());
+		
 		panelSummary.add(saveGUI);
 
+		panelSummary.add(new JLabel("GUI Size:"));
+		JButton saveSize = new JButton("Save Size");
+		saveSize.addActionListener(new SaveGUISizeListener());
+		
+		panelSummary.add(saveSize);
+		
 		cp.add(inputSelectPane);
 		cp.add(InputPane);
 		cp.add(panelSep);
@@ -374,6 +382,7 @@ public class GUInterface {
 		public void actionPerformed(ActionEvent e) {
 			double aaa=DBRecordStat.totalVar;
 			if( DBRecordStat.totalVar > 0.0) {
+				DBRecordStat.InputFile1 = InputFile1;
 				String report = "";
 	            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
 				Date currDate = new Date();
@@ -382,12 +391,6 @@ public class GUInterface {
 				FileName= FileName.substring(0,FileName.lastIndexOf("."));
 				String summaryfilenamewithpath = FileName+"MRMCsummary"+fileTime+".omrmc";
 				summaryfilename = summaryfilenamewithpath.substring(FileName.lastIndexOf("\\")+1);
-				if (selectedInput == DescInputChooseMode) {
-					report = SizePanel1.genReport(InputFile1);
-				} else {
-					report = SizePanel1.genReport(InputFile1);
-				}
-	
 				try {
 					JFileChooser fc = new JFileChooser();
 					FileNameExtensionFilter filter = new FileNameExtensionFilter(
@@ -403,6 +406,20 @@ public class GUInterface {
 						File f = fc.getSelectedFile();
 						if (!f.exists()) {
 							f.createNewFile();
+						}
+						String savedFileName = f.getPath();
+						summaryfilename = savedFileName.substring(savedFileName.lastIndexOf("\\")+1);
+						report = report + "MRMC summary statistics from " +MRMC.versionname + "\r\n";
+						report = report + "Summary statistics written to file named:" + "\r\n";
+						report = report + summaryfilename + "\r\n" + "\r\n";
+						if (selectedInput == DescInputChooseMode) {
+							report = exportToFile.exportSummary(report, DBRecordStat);
+							report = exportToFile.exportStatPanel(report, DBRecordStat, StatPanel1);
+							report = exportToFile.exportTable(report, DBRecordStat);
+						} else {
+							report = exportToFile.exportSummary(report, DBRecordStat);
+							report = exportToFile.exportStatPanel(report, DBRecordStat, StatPanel1);
+							report = exportToFile.exportTable(report, DBRecordStat);
 						}
 						FileWriter fw = new FileWriter(f.getAbsoluteFile());
 						BufferedWriter bw = new BufferedWriter(fw);
@@ -443,6 +460,79 @@ public class GUInterface {
 		}
 	}
 
+	
+	/**	 * Handler for button to save current GUI state to file
+	 */
+	class SaveGUISizeListener implements ActionListener {
+
+	//	@Override
+		//public String sFileName="";
+		public void actionPerformed(ActionEvent e) {
+			if( DBRecordSize.totalVar > 0.0) {
+				DBRecordSize.InputFile1 = InputFile1;
+				String report = "";
+	            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
+				Date currDate = new Date();
+				final String fileTime = dateForm.format(currDate);
+				String FileName=InputFile1.filename;
+				FileName= FileName.substring(0,FileName.lastIndexOf("."));
+				String sizeFilenamewithpath = FileName+"MRMCSize"+fileTime+".omrmc";
+				String sizeFilename = sizeFilenamewithpath.substring(sizeFilenamewithpath.lastIndexOf("\\")+1);	
+				try {
+					JFileChooser fc = new JFileChooser();
+					FileNameExtensionFilter filter = new FileNameExtensionFilter(
+							"iMRMC Summary Files (.omrmc or csv)", "csv","omrmc");
+					fc.setFileFilter(filter);
+					if (outputfileDirectory!=null){
+						 fc.setSelectedFile(new File(outputfileDirectory+"\\"+sizeFilename));						
+					}						
+					else					
+					    fc.setSelectedFile(new File(sizeFilenamewithpath));
+					int fcReturn = fc.showSaveDialog((Component) e.getSource());
+					if (fcReturn == JFileChooser.APPROVE_OPTION) {
+						File f = fc.getSelectedFile();
+						if (!f.exists()) {
+							f.createNewFile();
+						}
+						String savedFileName = f.getPath();
+						sizeFilename = savedFileName.substring(savedFileName.lastIndexOf("\\")+1);
+						report = report + "MRMC size statistics from " +MRMC.versionname + "\r\n";
+						report = report + "Size statistics written to file named:" + "\r\n";
+						report = report + sizeFilename + "\r\n" + "\r\n";
+						if (selectedInput == DescInputChooseMode) {
+							report = exportToFile.exportSizePanel(report, DBRecordSize, SizePanel1);
+							report = exportToFile.exportTable(report, DBRecordSize);
+						} else {
+							report = exportToFile.exportSizePanel(report, DBRecordSize, SizePanel1);
+							report = exportToFile.exportTable(report, DBRecordSize);
+						}
+						
+						
+						FileWriter fw = new FileWriter(f.getAbsoluteFile());
+						BufferedWriter bw = new BufferedWriter(fw);
+						bw.write(report);
+						bw.close();
+						outputfileDirectory = fc.getCurrentDirectory();
+					    String savedfilename = fc.getSelectedFile().getName();
+						JOptionPane.showMessageDialog(
+								thisGUI.MRMCobject.getFrame(),"The size result has been succeed export to "+outputfileDirectory+ " !\n"+ "Filename = " +savedfilename, 
+								"Exported", JOptionPane.INFORMATION_MESSAGE);
+					}
+				} catch (HeadlessException e1) {
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				} 
+	            
+			}else{
+				JOptionPane.showMessageDialog(thisGUI.MRMCobject.getFrame(),
+						"Size study has not yet been predicted.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+						
+		}
+	}
+	
 	/**
 	 * Handler for drop down menu to select data input source
 	 * This changes the pane, what the user sees
