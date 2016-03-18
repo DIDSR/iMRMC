@@ -322,9 +322,10 @@ public class SizePanel {
 		StatTest testSize = DBRecordSize.testSize;
 		String output;
 		
+		//output = "S.E=" 
+		//		+ threeDecE.format(Math.sqrt(DBRecordSize.totalVar));
 		output = "S.E=" 
-				+ threeDecE.format(Math.sqrt(DBRecordSize.totalVar));
-		
+				+ threeDecE.format(DBRecordSize.SE);
 		
 		SizeJLabelSqrtVar.setText(output);
 		//output = ",  Stat= "

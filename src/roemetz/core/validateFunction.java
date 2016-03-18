@@ -21,15 +21,6 @@ public static File inputFile = null;
 		inputFile = new File (inputFileFullName);
 		RMGUInterface1.parseCofVfile(inputFile);
 		RoeMetz.doValidation = true;
-	/*	String[] readerNumberList = {"6","7","8","9","10","11","12"};
-		//String[] readerNumberList = {"7"};
-		String[] SplitPlotNumberList = {"1","2","3"};
-		for (int i=0; i<readerNumberList.length;i++){
-			RMGUInterface1.NreaderJTextField.setText(readerNumberList[i]);
-	    	for (int j=0; j<SplitPlotNumberList.length;j++){
-				// simulation
-			    RMGUInterface1.SizePanelRoeMetz.NumSplitPlotsJTextField.setText(SplitPlotNumberList[j]);
-				RMGUInterface1.SizePanelRoeMetz.numSplitPlots = Integer.parseInt(SplitPlotNumberList[j]);*/
 
 				// numerical
 				RMGUInterface.DoNumericalIntegrationBtnListener DoNumericalIntegrationBtnListener1 =  

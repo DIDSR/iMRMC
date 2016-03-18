@@ -554,7 +554,7 @@ public class InputFile {
 	 * Given .imrmc input file {@link #filename}, create {@link #fileContent}, then <br>
 	 * ----{@link #getExperimentSizeFromHeader()} <br>
 	 * ----{@link #parseObserverData()} <br>
-	 * ----{@link #verifySizesAndGetIDs(boolean)} <br>
+	 * ----{@link #verifySizesAndGetIDs(boolean,boolean)} <br>
 	 * ----{@link #processScoresAndTruth(boolean)} <br>
 	 * 
 	 * @see #dataCheckResults
@@ -617,7 +617,8 @@ public class InputFile {
 				observerData = new String[NlinesFileContent - (filePosition + 1)][4];
 				parseObserverData();
 				boolean VerboseTrue=true;
-				verifySizesAndGetIDs(VerboseTrue);		
+				boolean DisplayWarning=true;
+				verifySizesAndGetIDs(VerboseTrue, DisplayWarning);		
 				// fills keyedData and truthVals structures with proper values
 				processScoresAndTruth(VerboseTrue);
 				System.out.println("Input Raw File Successfully Read!");
@@ -952,7 +953,7 @@ public class InputFile {
 	 *            
 	 * @throws IOException 
 	 */
-	public void verifySizesAndGetIDs(boolean verbose)
+	public void verifySizesAndGetIDs(boolean verbose, boolean DisplayWarning)
 					throws IOException {
 		
 		Integer in0=-1, in1=-1, inr=-1, inm=-1;
@@ -1093,13 +1094,13 @@ public class InputFile {
 			for(String r : readerIDs.keySet()){
 				Integer[] countnum = casecount.get(m).get(r);
 				if (countnum==null||Math.min(countnum[0],countnum[1])<2){
-					misscasemessage = misscasemessage + "Reader: "+r+" reads less than 2 normal or disease cases in "+"Modality: "+m+"\n";
+					misscasemessage = misscasemessage + "Reader: "+r+" reads less than 2 normal or less than 2 disease cases in "+"Modality: "+m+"\n";
 					messagecount++;
 				}
 			}
 		}
-		if (messagecount>0){
-			misscasemessage = misscasemessage + "We ingore scores in these conditions";
+		if (messagecount>0&&DisplayWarning){
+			misscasemessage = misscasemessage + "ROC analysis is not possible and not executed for these reader-modality combinations.";
 		    JFrame frame = new JFrame();
 			JOptionPane.showMessageDialog(
 					frame,misscasemessage, 

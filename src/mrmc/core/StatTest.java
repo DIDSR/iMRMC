@@ -143,6 +143,9 @@ public class StatTest {
 					         "  auc1=" + DBRecordStat.AUCsReaderAvg[1]);
 			System.out.println("auc0-auc1=" + meanCI);
 			System.out.println("totalVar=" + DBRecordStat.totalVar);
+			System.out.println("varA=" + DBRecordStat.varA);
+			System.out.println("varB=" + DBRecordStat.varB);
+		
 
 			System.out.println("tStatEst=" + tStatEst);
 			System.out.println("Normal approx:" + 
@@ -695,7 +698,7 @@ DF_BDG = Math.pow(totalVar, 2) / DF_denom;
  */
 // According to Gaylor1969_Technometrics_v4p691, there is a minimum DF
 if (DF_BDG < DF_min) {
-	if(verbose&&!RoeMetz.doValidation) {
+	if(verbose&&!RoeMetz.doValidation&&!exploreExpSize.doFullSize) {
 		JFrame frame = new JFrame();
 		JOptionPane.showMessageDialog(frame,
 				"DF_BDG is below a minimum." +
@@ -709,7 +712,7 @@ if (DF_BDG < DF_min) {
 
 //Do not return a DF_BDG that is less than 2
 if (DF_BDG < 2) {
-	if((verbose&&!RoeMetz.doValidation)) {
+	if((verbose&&!RoeMetz.doValidation&&!exploreExpSize.doFullSize)) {
 			JFrame frame = new JFrame();
 			JOptionPane.showMessageDialog(frame,
 				"DF_BDG is below a minimum." +

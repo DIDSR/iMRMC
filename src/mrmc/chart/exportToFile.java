@@ -394,4 +394,42 @@ public class exportToFile {
 			str = str +	"Paired Diesase: No \n";
 		return str;
 	}
+	
+	public static String exportValidation(String oldReport, DBRecord VldDBRecord) {
+		String str = oldReport;
+		double AUC_A       = VldDBRecord.AUCsReaderAvg[0];
+		double AUC_B       = VldDBRecord.AUCsReaderAvg[1];
+		double AUC_AminusAUC_B = AUC_A-AUC_B;
+		double totalVar    = VldDBRecord.totalVar;
+		double varA    = VldDBRecord.varA;
+		double varB    = VldDBRecord.varB;
+		
+		str =  str + "AUC_A            : " + fourDecE.format(AUC_A) + "\r\n";
+		str =  str + "AUC_B            : " + fourDecE.format(AUC_B) + "\r\n";
+		str =  str + "AUC_A-AUC_B      : " + fourDecE.format(AUC_AminusAUC_B) + "\r\n";
+		str =  str + "varAUC_A         : " + fourDecE.format(varA) + "\r\n";
+		str =  str + "varAUC_B         : " + fourDecE.format(varB) + "\r\n";
+		str =  str + "totalVar         : " + fourDecE.format(totalVar) + "\r\n";
+		return str;
+	}
+	
+	
+	
+	public static String exportMCvarianceValidation(String oldReport, DBRecord VarDBRecord) {
+		String str = oldReport;
+		double mcVarAUC_A       = VarDBRecord.AUCsReaderAvg[0];
+		double mcVarAUC_B       = VarDBRecord.AUCsReaderAvg[1];
+		double mcVarAUC_AminusB = VarDBRecord.AUCsReaderAvg[2];
+		double mcVarvarA       = VarDBRecord.varA;
+		double mcVarvarB       = VarDBRecord.varB;
+		double mcVartotalVar    = VarDBRecord.totalVar;
+		str =  str + "mcVarAUC_A       : " + fourDecE.format(mcVarAUC_A) + "\r\n";
+		str =  str + "mcVarAUC_B       : " + fourDecE.format(mcVarAUC_B) + "\r\n";
+		str =  str + "mcVarAUC_AminusB : " + fourDecE.format(mcVarAUC_AminusB) + "\r\n";
+		str =  str + "mcVarVarAUC_A    : " + fourDecE.format(mcVarvarA) + "\r\n";
+		str =  str + "mcVarVarAUC_B    : " + fourDecE.format(mcVarvarB) + "\r\n";
+		str =  str + "mcVartotalVar    : " + fourDecE.format(mcVartotalVar) + "\r\n";
+		return str;
+	}
+	
 }

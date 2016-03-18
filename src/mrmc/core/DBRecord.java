@@ -129,6 +129,9 @@ public class DBRecord {
 	 * 
 	 */
 	public double totalVar = -1.0;
+	public double SE = -1.0;
+	public double varA = -1;
+	public double varB = -1;
 	/**
 	 * Indicator whether {mrmc.gui.InputFileCard#FlagMLE} is set
 	 */
@@ -579,8 +582,14 @@ public class DBRecord {
 	    double [][] unbiasToBiast = Matrix.matrixTranspose(unbiasToBias);
 	    BDGbias = Matrix.multiply(DBRecordStat.BDG , unbiasToBiast);		
 		double totalVarnoMLE=0.0;
+		double varAnoMLE=0.0;
+		double varBnoMLE=0.0;
+		double varAMLE=0.0;
+		double varBMLE=0.0;
 		totalVarMLE=0.0;
 		totalVar=0.0;
+		varA = 0;
+		varB = 0;
 		BDGcoeff = genBDGCoeff(DBRecordStat.Nreader,DBRecordStat.Nnormal,DBRecordStat.Ndisease);
 	    double[] temp= new double[8];
 		for (int i = 0; i < 8; i++) {
@@ -596,13 +605,22 @@ public class DBRecord {
 					  - 2.0*(DBRecordStat.BDGbias[2][i] * DBRecordStat.BDGcoeff[2][i]);			
 			totalVarnoMLE += BDGcoeff[3][i] * BDG[3][i];
 			totalVarMLE  += BDGcoeff[3][i] * BDGbias[3][i];
+			varAnoMLE +=  BDGcoeff[0][i] * BDG[0][i];
+			varBnoMLE +=  BDGcoeff[1][i] * BDG[1][i];
+			varAMLE +=  BDGcoeff[0][i] * BDGbias[0][i];
+			varBMLE +=  BDGcoeff[1][i] * BDGbias[1][i];
 		}
 		if (flagMLE==0){
 			totalVar= totalVarnoMLE;
+			varA = varAnoMLE;
+			varB = varBnoMLE;
 		}else{
 			totalVar=totalVarMLE;
+			varA = varAMLE;
+			varB = varBMLE;
 		}
 		
+		SE = Math.sqrt(totalVar);
 
 		if(totalVar < 0) {
 			flagTotalVarIsNegative = 1;
@@ -652,19 +670,19 @@ public class DBRecord {
 		double Subdisease = (double)Ndisease/(double)Ngroup/(2-(double)Pdisease);
 		if (Math.floor(Subreader) != Subreader){
 			JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
-					"Reader can't be evenly distributed into each modality and group", "Error",
+					"The sizing panel needs the number of readers \r\n to be evenly distributed into each modality and group", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		if (Math.floor(Subnormal) != Subnormal){
 			JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
-					"Reader can't be evenly distributed into each modality and group", "Error",
+					"The sizing panel needs the number of normal cases \r\n to be evenly distributed into each modality and group", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		if (Math.floor(Subdisease) != Subdisease){
 			JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
-					"Reader can't be evenly distributed into each modality and group", "Error",
+					"The sizing panel needs the number of disease cases \r\n to be evenly distributed into each modality and group", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
@@ -716,6 +734,8 @@ public class DBRecord {
 		covMRMCsize = new CovMRMC(SizePanelRoeMetz, DBRecordTemp);
 		
 		totalVar = 0.0;
+		varA = 0.0;
+		varB = 0.0;
 		for(int i=0; i<8; i++) {
 			BDGcoeff[0][i] = covMRMCsize.coefficientsAA[i+1];
 			BDGcoeff[1][i] = covMRMCsize.coefficientsBB[i+1];
@@ -727,14 +747,16 @@ public class DBRecord {
 					+    BDGcoeff[1][i]*BDG[1][i]
 					-2.0*BDGcoeff[2][i]*BDG[2][i];
 
+			varA +=  BDGcoeff[0][i] * BDG[0][i];
+			varB +=  BDGcoeff[1][i] * BDG[1][i];
 			totalVar = totalVar + BDGcoeff[3][i]*BDG[3][i];
-			
+			// why BDGbias equals BDG?
 			BDGbias[0][i] = BDG[0][i];
 			BDGbias[1][i] = BDG[1][i];
 			BDGbias[2][i] = BDG[2][i];
 			BDGbias[3][i] = BDG[3][i];
 		}
-
+		SE = Math.sqrt(totalVar);
 		if(selectedMod == 0) {
 			flagFullyCrossed = covMRMCsize.fullyCrossedA;
 		}
@@ -762,6 +784,10 @@ public class DBRecord {
 	 */
 	private void BDGforStatPanel() {
 		double totalVarnoMLE=0.0;
+		double varAnoMLE=0.0;
+		double varBnoMLE=0.0;
+		double varAMLE=0.0;
+		double varBMLE=0.0;
 		totalVarMLE=0.0;
 		for (int i = 0; i < 8; i++) {
 			BDG[0][i] = covMRMCstat.momentsAA[i + 1];
@@ -773,6 +799,12 @@ public class DBRecord {
 			BDGcoeff[0][i] = covMRMCstat.coefficientsAA[i + 1];
 			BDGcoeff[1][i] = covMRMCstat.coefficientsBB[i + 1];
 			BDGcoeff[2][i] = covMRMCstat.coefficientsAB[i + 1];
+			
+			varAnoMLE +=  BDGcoeff[0][i] * BDG[0][i];
+			varBnoMLE +=  BDGcoeff[1][i] * BDG[1][i];
+			varAMLE +=  BDGcoeff[0][i] * BDGbias[0][i];
+			varBMLE +=  BDGcoeff[1][i] * BDGbias[1][i];
+			
 			
 			BDGcoeff[3][i] = 1.0;
 
@@ -788,11 +820,15 @@ public class DBRecord {
 		}
 		if (flagMLE==0){
 			totalVar= totalVarnoMLE;
+			varA = varAnoMLE;
+			varB = varBnoMLE;
 		}else{
 			totalVar=totalVarMLE;
+			varA = varAMLE;
+			varB = varBMLE;
 		}
+		SE = Math.sqrt(totalVar);
 		
-
 		if(totalVar < 0) {
 			flagTotalVarIsNegative = 1;
 		}
@@ -813,6 +849,9 @@ public class DBRecord {
 	private void BDGforSizePanel() {
 
 		totalVar = 0.0;
+		varA = 0.0;
+		varB = 0.0;
+
 		for (int i = 0; i < 8; i++) {
 		    BDG[0][i] = DBRecordStat.BDG[0][i];
 			BDG[1][i] = DBRecordStat.BDG[1][i];
@@ -826,6 +865,9 @@ public class DBRecord {
 			
 		//	BDGcoeff[3][i] = 1.0;
 
+			varA +=  BDGcoeff[0][i] * BDG[0][i];
+			varB +=  BDGcoeff[1][i] * BDG[1][i];
+			
 			BDG[3][i] =     (BDG[0][i] * BDGcoeff[0][i])
 					  +     (BDG[1][i] * BDGcoeff[1][i])
 					  - 2.0*(BDG[2][i] * BDGcoeff[2][i]);
@@ -838,7 +880,7 @@ public class DBRecord {
 		}
 		
 		totalVar = totalVar*1.0;
-		
+		SE = Math.sqrt(totalVar);
 	
 
 	}
@@ -870,7 +912,7 @@ public class DBRecord {
 		}
 		
 		totalVar = totalVar*1.0;
-		
+		SE = Math.sqrt(totalVar);
 	
 
 	}
@@ -1736,6 +1778,9 @@ public class DBRecord {
 		 * TODO we need to collect totalVar for modalityA and modalityB
 		 */
 		copyDBRecordTemp.totalVar = DBRecordTemp.totalVar;
+		copyDBRecordTemp.SE = DBRecordTemp.SE;
+		copyDBRecordTemp.varA = DBRecordTemp.varA;
+		copyDBRecordTemp.varB = DBRecordTemp.varB;
 		copyDBRecordTemp.flagTotalVarIsNegative = DBRecordTemp.flagTotalVarIsNegative;
 
 	}
@@ -1782,6 +1827,9 @@ public class DBRecord {
 		 * TODO we need to collect totalVar for modalityA and modalityB
 		 */
 		sumDBRecordTemp.totalVar += DBRecordTemp.totalVar;
+		sumDBRecordTemp.SE += DBRecordTemp.SE;
+		sumDBRecordTemp.varA += DBRecordTemp.varA;
+		sumDBRecordTemp.varB += DBRecordTemp.varB;
 		sumDBRecordTemp.flagTotalVarIsNegative += DBRecordTemp.flagTotalVarIsNegative;
 		
 	}
@@ -1828,6 +1876,9 @@ public class DBRecord {
 		 * TODO we need to collect totalVar for modalityA and modalityB
 		 */
 		DBRecordTemp.totalVar *= scaleFactor;
+		DBRecordTemp.SE *= scaleFactor;
+		DBRecordTemp.varA *= scaleFactor;
+		DBRecordTemp.varB *= scaleFactor;
 		DBRecordTemp.flagTotalVarIsNegative *= scaleFactor;
 		
 	}
@@ -1871,6 +1922,9 @@ public class DBRecord {
 		 * TODO we need to collect totalVar for modalityA and modalityB
 		 */
 		DBRecordTemp.totalVar *= DBRecordTemp.totalVar;
+		DBRecordTemp.SE *= DBRecordTemp.SE;
+		DBRecordTemp.varA *= DBRecordTemp.varA;
+		DBRecordTemp.varB *= DBRecordTemp.varB;
 		DBRecordTemp.flagTotalVarIsNegative *= DBRecordTemp.flagTotalVarIsNegative;
 		
 	}

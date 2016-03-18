@@ -254,15 +254,19 @@ public class StatPanel {
 		
 		StatJLabelH0.setText("H0: AUC = 0.50,   two-sided alternative,   95% significance,   " + 
 				DBRecordStat.getSizes());
+//		StatJLabelAUC.setText(DBRecordStat.getAUCsReaderAvgString(DBRecordStat.selectedMod) +
+	//			",   S.E(total) = " + threeDecE.format(Math.sqrt(DBRecordStat.totalVar)));
 		StatJLabelAUC.setText(DBRecordStat.getAUCsReaderAvgString(DBRecordStat.selectedMod) +
-				",   S.E(total) = " + threeDecE.format(Math.sqrt(DBRecordStat.totalVar)));
+				",   S.E(total) = " + threeDecE.format(DBRecordStat.SE));
 
 		if(DBRecordStat.selectedMod == 3) {
 			
 			StatJLabelH0.setText("H0: AUC_A - AUC_B = 0.00,   two-sided alternative,   95% significance,   " + 
 					DBRecordStat.getSizes());
+			//StatJLabelAUC.setText(DBRecordStat.getAUCsReaderAvgString(DBRecordStat.selectedMod) +
+			//		",   S.E(total) = " + threeDecE.format(Math.sqrt(DBRecordStat.totalVar)));
 			StatJLabelAUC.setText(DBRecordStat.getAUCsReaderAvgString(DBRecordStat.selectedMod) +
-					",   S.E(total) = " + threeDecE.format(Math.sqrt(DBRecordStat.totalVar)));
+					",   S.E(total) = " + threeDecE.format(DBRecordStat.SE));
 		}
 
 		
@@ -728,6 +732,14 @@ public class StatPanel {
 		double sqrtMCvarAUC_A       = Math.sqrt(mcVarAUC_A);
 		double sqrtMCvarAUC_B       = Math.sqrt(mcVarAUC_B);
 		double sqrtMCvarAUC_AminusB = Math.sqrt(mcVarAUC_AminusB);
+		
+		System.out.println("      mcAvgvarAUC_A = " + avgDBRecordStat.varA +
+				   ",         mcAvgvarAUC_B = " + avgDBRecordStat.varB);
+		System.out.println("      mcVarvarAUC_A = " + varDBRecordStat.varA +
+				   ",         mcVarvarAUC_B = " + varDBRecordStat.varB + 
+				   ",         mcVartotalvar = " + varDBRecordStat.totalVar);
+		
+		
 		
 		System.out.println("      mcAvgAUC_A = " + mcAvgAUC_A +
 					   ",         mcVarAUC_A = " + mcVarAUC_A +

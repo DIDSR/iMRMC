@@ -495,7 +495,10 @@ public class RMGUInterface {
 	    SizePanelRoeMetz.ButtonPairedDiseasedYes.setSelected(true);
 	    SizePanelRoeMetz.ButtonPairedDiseasedNo.setSelected(false);
 	    SizePanelRoeMetz.pairedDiseasedFlag=1;
-
+		//JTextField_seed.setText("123456");
+		JTextField_Nexp.setText("10");
+	    useMLEbox.setSelected(false);
+	    useMLE = NO_MLE;
 		
 	}
 
@@ -735,7 +738,20 @@ public class RMGUInterface {
 				int tmploc = tempstr.indexOf(":");
 				JTextField_Nexp.setText(tempstr.substring(tmploc + 1).trim());
 				continue;
-			}			
+			}	
+			loc = tempstr.indexOf("MLE ANALYSIS:");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				String str = tempstr.substring(tmploc + 1).trim();
+				if (str.equals("NO")){
+				    useMLEbox.setSelected(false);
+				    useMLE = NO_MLE;
+				}else{
+				    useMLEbox.setSelected(true);
+				    useMLE = USE_MLE;
+				}
+				continue;
+			}	
 		}
 	}
 
@@ -862,7 +878,11 @@ public class RMGUInterface {
 						bw.write("Paired Diesase: No \r\n");
 					bw.write("Simulation parameter \r\n");
 					bw.write("Seed for RNG: " + JTextField_seed.getText() + "\r\n");
-					bw.write("Number of Experiments: " + JTextField_Nexp.getText() + "\r\n");					
+					bw.write("Number of Experiments: " + JTextField_Nexp.getText() + "\r\n");
+					if (useMLE == 1)
+						bw.write("MLE analysis: Yes" + "\r\n");
+					else
+						bw.write("MLE analysis: No" + "\r\n");
 					bw.close();
 				}
 			} catch (HeadlessException e1) {
@@ -1042,52 +1062,57 @@ public class RMGUInterface {
 			// write to disk
 			if (simSaveDirectory != null && !simSaveDirectory.equals("")) {
 				writeInputFile(sumDBRecordStat, filenameTime, NexpStart);
-				writeOutputFile(sumDBRecordStat, filenameTime, NexpStart);
 			}
 			
 			// continue the loop, add the simulation results to avgDBRecordStat
 			for (long i = NexpStart+1; i < NexpEnd; i++) {
-
-				// Sends data chunks to the "process" method.
-				// Below, the process method updates the progress bar.
-				publish(NexpCompleted_atomic.incrementAndGet());
-
-				// SwingWorker supports bound properties, 
-				// which are useful for communicating with other threads.
-				// Two bound properties are predefined: progress and state.
-				// As with all bound properties, progress and state can be used 
-				// to trigger event-handling tasks on the event dispatch thread.
-				// The progress bound variable is an int value that can range from 0 to 100.
-				// It has a predefined setter method (the protected SwingWorker.setProgress)
-				// and a predefined getter method (the public SwingWorker.getProgress).
-				setProgress((int) (100 * (i-NexpStart) / NexpThisCore));
 				
-				currSimRoeMetz.doSim(DBRecordStat);
-				
-				// Check if DBRecordStat.totalVar < 0
-				// Keep track of how often this happens
-				// Replace current simulation with a new simulation
-				if(DBRecordStat.totalVar < 0) {
-					flagTotalVarIsNegative++;
-					continue;
-				}
-				
-				// Accumulate DBRecord
-				DBRecord.add(DBRecordStat, sumDBRecordStat);
-				// Accumulate squareDBRecord
-				DBRecord.copy(DBRecordStat, squareDBRecordStat);
-				DBRecord.square(squareDBRecordStat);
-				DBRecord.add(squareDBRecordStat, sumSquareDBRecordStat);
-				// write to disk
-				if (simSaveDirectory != null && !simSaveDirectory.equals("")) {
-					writeInputFile(DBRecordStat, filenameTime, i);
-					writeOutputFile(DBRecordStat, filenameTime, i);
-				}
-				if(DBRecordStat.verbose) {
-					System.out.print("ThreadName:"+Thread.currentThread().getName()+":");
-					System.out.print(i+1 + " of " + Nexp + " completed\n");
-				}
+					int mm;
+					if (i == 68447)
+					    mm = 1;
+					// Sends data chunks to the "process" method.
+					// Below, the process method updates the progress bar.
+					publish(NexpCompleted_atomic.incrementAndGet());
+	
+					// SwingWorker supports bound properties, 
+					// which are useful for communicating with other threads.
+					// Two bound properties are predefined: progress and state.
+					// As with all bound properties, progress and state can be used 
+					// to trigger event-handling tasks on the event dispatch thread.
+					// The progress bound variable is an int value that can range from 0 to 100.
+					// It has a predefined setter method (the protected SwingWorker.setProgress)
+					// and a predefined getter method (the public SwingWorker.getProgress).
+					setProgress((int) (100 * (i-NexpStart) / NexpThisCore));
+				try{	
+					currSimRoeMetz.doSim(DBRecordStat);
+				} catch (Exception e) {
+					e.printStackTrace();
+				} 
+					
+					// Check if DBRecordStat.totalVar < 0
+					// Keep track of how often this happens
+					// Replace current simulation with a new simulation
+					if(DBRecordStat.totalVar < 0) {
+						flagTotalVarIsNegative++;
+						continue;
+					}
+					
+					// Accumulate DBRecord
+					DBRecord.add(DBRecordStat, sumDBRecordStat);
+					// Accumulate squareDBRecord
+					DBRecord.copy(DBRecordStat, squareDBRecordStat);
+					DBRecord.square(squareDBRecordStat);
+					DBRecord.add(squareDBRecordStat, sumSquareDBRecordStat);
+					// write to disk
+					if (simSaveDirectory != null && !simSaveDirectory.equals("")) {
+						writeInputFile(DBRecordStat, filenameTime, i);
+					}
+					if(DBRecordStat.verbose) {
+						System.out.print("ThreadName:"+Thread.currentThread().getName()+":");
+						System.out.print(i+1 + " of " + Nexp + " completed\n");
+					}
 
+			
 			}
 
 			sumDBRecordStat.flagTotalVarIsNegative = flagTotalVarIsNegative;
@@ -1756,60 +1781,6 @@ public class RMGUInterface {
 		}
 	}
 
-
-
-	/**
-	 * Writes component info, p-values, and confidence interval of a single study to file
-	 * @param filename Timestamp based filename to identify group of experiments
-	 * @param l Individual experiment number
-	 */
-	public void writeOutputFile(DBRecord currDBRecord, String filename, long l) {
-
-		StatTest tempStat = new StatTest(currDBRecord);
-		System.out.println("p-val = " + tempStat.pValNormal);
-		System.out.println("CI = " + tempStat.ciBotNormal + ", "
-				+ tempStat.ciTopNormal);
-
-		try {
-			File file = new File(simSaveDirectory + "/" + "sim-comp-"
-					+ filename + "-" + String.format("%05d", l) + ".txt");
-			if (!file.exists()) {
-				file.createNewFile();
-			}
-			FileWriter fw = new FileWriter(file.getAbsoluteFile());
-			BufferedWriter bw = new BufferedWriter(fw);
-
-			bw.write("BDG components from simulated study " + filename + "-"
-					+ l + "\n");
-
-			int col = currDBRecord.BDG[0].length;
-			int row = currDBRecord.BDG.length;
-			DecimalFormat df = new DecimalFormat("0.###E0");
-			for (int i = 0; i < row; i++) {
-				String temp = "";
-				for (int j = 0; j < col; j++) {
-					int totalWidth = 14;
-					int numWidth = df.format(currDBRecord.BDG[i][j]).length();
-					int numSpaces = totalWidth - numWidth;
-					temp = temp + df.format(currDBRecord.BDG[i][j]);
-					for (int x = 0; x < numSpaces; x++) {
-						temp = temp + " ";
-					}
-				}
-				temp = temp + "\n";
-				bw.write(temp);
-			}
-
-			bw.write("p-value: " + tempStat.pValNormal + "\n");
-			bw.write("Confidence Interval: (" + tempStat.ciBotNormal + ", "
-					+ tempStat.ciTopNormal + ")\n");
-			bw.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-	}
-
 	/**
 	 * Writes the results of a simulation (averaged results) or calculation to
 	 * file, consisting of components and AUCs.
@@ -2370,28 +2341,37 @@ public class RMGUInterface {
 					BufferedWriter bw = new BufferedWriter(fw);
 					String report = "";
 					if (subFileName.equals("SimulationOutput")){
-						report = report + "iRoeMetz simulation summary statistics from " + RoeMetz.versionName + "\r\n";
-						report = report + "Summary statistics written to file named:" + "\r\n";
-						report = report + savedFileName + "\r\n" + "\r\n";
-						report = exportToFile.exoprtiRoeMetzSet(report,SizePanelRoeMetz);
-						report = report + "Seed for RNG: " + JTextField_seed.getText() + "\r\n";
-						report = report + "Number of Experiments: " + JTextField_Nexp.getText() + "\r\n" + "\r\n";
-						report = report + "\r\n************************************************************\r\n";
-						report = exportToFile.exportSummary(report, DB1);	
-						report = exportToFile.exportStatPanel(report, DB1, StatPanelIn);						
-					    report = exportToFile.exportMCvariance(report, varDBRecordStat);
-					    report = exportToFile.exportTable1(report, DB1);
-					    report = exportToFile.exportTable2(report, DB1);
+						if (!RoeMetz.doValidation){
+							report = report + "iRoeMetz simulation summary statistics from " + RoeMetz.versionName + "\r\n";
+							report = report + "Summary statistics written to file named:" + "\r\n";
+							report = report + savedFileName + "\r\n" + "\r\n";
+							report = exportToFile.exoprtiRoeMetzSet(report,SizePanelRoeMetz);
+							report = report + "Seed for RNG: " + JTextField_seed.getText() + "\r\n";
+							report = report + "Number of Experiments: " + JTextField_Nexp.getText() + "\r\n" + "\r\n";
+							report = report + "\r\n************************************************************\r\n";
+							report = exportToFile.exportSummary(report, DB1);	
+							report = exportToFile.exportStatPanel(report, DB1, StatPanelIn);						
+						    report = exportToFile.exportMCvariance(report, varDBRecordStat);
+						    report = exportToFile.exportTable1(report, DB1);
+						    report = exportToFile.exportTable2(report, DB1);
+						}else{
+							report = exportToFile.exportValidation(report,DB1);
+							report = exportToFile.exportMCvarianceValidation(report,varDBRecordStat);
+						}
 					}else{
-						report = report + "iRoeMetz Numerical summary statistics from " + RoeMetz.versionName + "\r\n";
-						report = report + "Summary statistics written to file named:" + "\r\n";
-						report = report + savedFileName + "\r\n" + "\r\n";
-						report = exportToFile.exoprtiRoeMetzSet(report,SizePanelRoeMetz);
-						report = report + "\r\n************************************************************\r\n";
-						report = exportToFile.exportSummary(report, DB1);	
-						report = exportToFile.exportStatPanel(report, DB1, StatPanelIn);	
-						report = exportToFile.exportTable1(report, DB1);
-						report = exportToFile.exportTable2(report, DB1);
+						if (!RoeMetz.doValidation){
+							report = report + "iRoeMetz Numerical summary statistics from " + RoeMetz.versionName + "\r\n";
+							report = report + "Summary statistics written to file named:" + "\r\n";
+							report = report + savedFileName + "\r\n" + "\r\n";
+							report = exportToFile.exoprtiRoeMetzSet(report,SizePanelRoeMetz);
+							report = report + "\r\n************************************************************\r\n";
+							report = exportToFile.exportSummary(report, DB1);	
+							report = exportToFile.exportStatPanel(report, DB1, StatPanelIn);	
+							report = exportToFile.exportTable1(report, DB1);
+							report = exportToFile.exportTable2(report, DB1);
+						}else{
+							report = exportToFile.exportValidation(report,DB1);
+						}
 					}
 
 					bw.write(report);

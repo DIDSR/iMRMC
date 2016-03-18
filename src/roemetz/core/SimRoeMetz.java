@@ -256,7 +256,7 @@ public class SimRoeMetz {
 	 * Given {@link #scoreMeans}, {@link #scoreVariances},
 	 *    {@link #Nreader}, {@link #Nnormal}, {@link #Ndisease} <br>
 	 * Create {@link #observerData} then <br>
-	 * -- {@link mrmc.core.InputFile#verifySizesAndGetIDs(boolean)} <br>
+	 * -- {@link mrmc.core.InputFile#verifySizesAndGetIDs(boolean,boolean)} <br>
 	 * -- {@link mrmc.core.InputFile#processScoresAndTruth(boolean)} <br>
 	 * -- {@link mrmc.core.DBRecord#DBRecordStatFill(InputFile, DBRecord)} <br>
 	 * <br>
@@ -375,8 +375,9 @@ public class SimRoeMetz {
 		}
 		
 		boolean VerboseFalse = false;
+		boolean DisplayWarning = false;
 		InputFileStat.resetIDs();
-		InputFileStat.verifySizesAndGetIDs(VerboseFalse);
+		InputFileStat.verifySizesAndGetIDs(VerboseFalse,DisplayWarning);
 		InputFileStat.processScoresAndTruth(VerboseFalse);
 
 		DBRecordStat.DBRecordStatFill(InputFileStat, DBRecordStat);
@@ -395,6 +396,9 @@ public class SimRoeMetz {
 		double[] toReturn = new double[(int) Nreader2];
 		for (int i = 0; i < Nreader2; i++) {
 			toReturn[i] = scalar * gaussRV.nextDouble();
+			if (Double.isInfinite(toReturn[i])){
+				toReturn[i] = scalar * gaussRV.nextDouble();
+			}
 		}
 		return toReturn;
 	}
@@ -414,6 +418,9 @@ public class SimRoeMetz {
 		for (int i = 0; i < Nreader2; i++) {
 			for (int j = 0; j < Nnormal2; j++) {
 				toReturn[i][j] = scalar * gaussRV.nextDouble();
+				if (Double.isInfinite(toReturn[i][j])){
+					toReturn[i][j] = scalar * gaussRV.nextDouble();
+				}
 			}
 		}
 		return toReturn;

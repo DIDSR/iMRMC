@@ -44,6 +44,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 
 
+
 import mrmc.core.DBRecord;
 import mrmc.core.InputFile;
 import mrmc.core.StatTest;
@@ -389,6 +390,7 @@ public class InputSummaryCard {
 				DBRecordStat.flagMLE = FlagMLE;
 				mleCheckBoxSummary.setSelected(true);
 				DBRecordStat.totalVar=DBRecordStat.totalVarMLE;
+				DBRecordStat.SE=Math.sqrt(DBRecordStat.totalVar);
 				DBRecordStat.testStat = new StatTest(DBRecordStat);
 			} else if (JOptionPane.NO_OPTION == result) {
 				FlagMLE = NO_MLE;
