@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 
 import roemetz.gui.RMGUInterface;
 import mrmc.core.DBRecord;
+import mrmc.core.MRMC;
 import mrmc.gui.InputFileCard;
 import mrmc.gui.SizePanel;
 import mrmc.gui.StatPanel;
@@ -31,6 +32,7 @@ public class exportToFile {
 	static DecimalFormat threeDecE = new DecimalFormat("0.000E0");
 	static DecimalFormat fourDecE = new DecimalFormat("0.0000E0");
 	static DecimalFormat fiveDecE = new DecimalFormat("0.00000E0");
+	static DecimalFormat eightDecE = new DecimalFormat("0.00000000E0");
 	private static String SEPA = ",";
 	private String MLEString = "(U-statistics, Not MLE)";
 	private String UstatString = "(MLE, Not U-statistics)";
@@ -429,6 +431,56 @@ public class exportToFile {
 		str =  str + "mcVarVarAUC_A    : " + fourDecE.format(mcVarvarA) + "\r\n";
 		str =  str + "mcVarVarAUC_B    : " + fourDecE.format(mcVarvarB) + "\r\n";
 		str =  str + "mcVartotalVar    : " + fourDecE.format(mcVartotalVar) + "\r\n";
+		return str;
+	}
+
+	public static String exportStat(String report, DBRecord StatDBRecord,String timestring) {
+		// TODO Auto-generated method stub
+		String str = report;
+		String head =  "input file,date,iMRMC Version,NR,N0,N1,ModalityA,Modality2,AUCA,VarAUCA,AUCB,VarAUCB,AUCA-AUCB,totalVar,"
+				+"Normal p-value,Noraml botCI,Normal TOPCI,dfBDG,BDG p-value,BDGbotCI,BDGpotCI,dfHills,Hills p-value,Hills botCI,Hills potCI";
+		str = str + head + "\r\n";
+		String inputfilename =  StatDBRecord.InputFile1.filename.substring(StatDBRecord.InputFile1.filename.lastIndexOf("\\")+1);
+		str = str + inputfilename + SEPA;
+		str = str + timestring + SEPA;
+		str = str + MRMC.versionname + SEPA;
+		str = str + StatDBRecord.NreaderDB + SEPA;
+		str = str + StatDBRecord.NnormalDB + SEPA;
+		str = str + StatDBRecord.NdiseaseDB + SEPA;
+		str = str + StatDBRecord.modalityA + SEPA;
+		str = str + StatDBRecord.modalityB + SEPA;
+		if (StatDBRecord.selectedMod == 0){
+			str = str + eightDecE.format(StatDBRecord.AUCsReaderAvg[0]) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.varA) + SEPA;
+			str = str +"N/A,N/A,N/A" + SEPA;
+		}else if (StatDBRecord.selectedMod == 1){
+			str = str +"N/A,N/A" + SEPA;
+			str = str + eightDecE.format(StatDBRecord.AUCsReaderAvg[1]) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.varB) + SEPA;
+			str = str +"N/A" + SEPA;
+		} else {
+			str = str + eightDecE.format(StatDBRecord.AUCsReaderAvg[0]) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.varA) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.AUCsReaderAvg[1]) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.varB) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.AUCsReaderAvg[0]-StatDBRecord.AUCsReaderAvg[1]) + SEPA;
+		}
+		str = str + eightDecE.format(StatDBRecord.totalVar) + SEPA;
+		str = str + eightDecE.format(StatDBRecord.testStat.pValNormal) + SEPA;
+		str = str + eightDecE.format(StatDBRecord.testStat.ciBotNormal) + SEPA;
+		str = str + eightDecE.format(StatDBRecord.testStat.ciTopNormal) + SEPA;
+		str = str + eightDecE.format(StatDBRecord.testStat.DF_BDG) + SEPA;
+		str = str + eightDecE.format(StatDBRecord.testStat.pValBDG) + SEPA;
+		str = str + eightDecE.format(StatDBRecord.testStat.ciBotBDG) + SEPA;
+		str = str + eightDecE.format(StatDBRecord.testStat.ciTopBDG) + SEPA;
+		if (StatDBRecord.flagFullyCrossed){
+		str = str + eightDecE.format(StatDBRecord.testStat.DF_Hillis) + SEPA;
+		str = str + eightDecE.format(StatDBRecord.testStat.pValHillis) + SEPA;
+		str = str + eightDecE.format(StatDBRecord.testStat.ciBotHillis) + SEPA;
+		str = str + eightDecE.format(StatDBRecord.testStat.ciTopHillis);
+		}else{
+			str = str +"N/A,N/A,N/A,N/A" + SEPA;
+		}
 		return str;
 	}
 	

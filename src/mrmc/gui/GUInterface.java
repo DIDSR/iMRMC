@@ -348,6 +348,13 @@ public class GUInterface {
 		
 		panelSummary.add(saveSize);
 		
+		
+		panelSummary.add(new JLabel("GUI statistical:"));
+		JButton saveStat = new JButton("Save Stat");
+		saveStat.addActionListener(new SaveGUIStatListener());
+		
+		panelSummary.add(saveStat);
+		
 		cp.add(inputSelectPane);
 		cp.add(InputPane);
 		cp.add(panelSep);
@@ -373,7 +380,7 @@ public class GUInterface {
 
 
 
-	/**	 * Handler for button to save current GUI state to file
+	/**	 * Handler for button to save current GUI to file
 	 */
 	class SaveGUIButtonListener implements ActionListener {
 
@@ -463,7 +470,7 @@ public class GUInterface {
 	}
 
 	
-	/**	 * Handler for button to save current GUI state to file
+	/**	 * Handler for button to save current GUI size to file
 	 */
 	class SaveGUISizeListener implements ActionListener {
 
@@ -534,6 +541,78 @@ public class GUInterface {
 						
 		}
 	}
+	
+	
+	
+	/**	 * Handler for button to save current GUI state to file
+	 */
+	class SaveGUIStatListener implements ActionListener {
+
+	//	@Override
+		//public String sFileName="";
+		public void actionPerformed(ActionEvent e) {
+			if( DBRecordStat.totalVar > 0.0) {
+				DBRecordStat.InputFile1 = InputFile1;
+				String report = "";
+	            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
+				Date currDate = new Date();
+				final String fileTime = dateForm.format(currDate);
+				String FileName=InputFile1.filename;
+				FileName= FileName.substring(0,FileName.lastIndexOf("."));
+				String sizeFilenamewithpath = FileName+"MRMCStat"+fileTime+".csv";
+				String sizeFilename = sizeFilenamewithpath.substring(sizeFilenamewithpath.lastIndexOf("\\")+1);	
+				try {
+					JFileChooser fc = new JFileChooser();
+					FileNameExtensionFilter filter = new FileNameExtensionFilter(
+							"iMRMC Summary Files (.csv)", "csv");
+					fc.setFileFilter(filter);
+					if (outputfileDirectory!=null){
+						 fc.setSelectedFile(new File(outputfileDirectory+"\\"+sizeFilename));						
+					}						
+					else					
+					    fc.setSelectedFile(new File(sizeFilenamewithpath));
+					int fcReturn = fc.showSaveDialog((Component) e.getSource());
+					if (fcReturn == JFileChooser.APPROVE_OPTION) {
+						File f = fc.getSelectedFile();
+						if (!f.exists()) {
+							f.createNewFile();
+						}
+						String savedFileName = f.getPath();
+						if (selectedInput == DescInputChooseMode) {
+							report = exportToFile.exportStat(report, DBRecordStat, fileTime);
+						} else {
+							report = exportToFile.exportStat(report, DBRecordStat, fileTime);
+						}
+						
+						
+						FileWriter fw = new FileWriter(f.getAbsoluteFile());
+						BufferedWriter bw = new BufferedWriter(fw);
+						bw.write(report);
+						bw.close();
+						outputfileDirectory = fc.getCurrentDirectory();
+					    String savedfilename = fc.getSelectedFile().getName();
+						JOptionPane.showMessageDialog(
+								thisGUI.MRMCobject.getFrame(),"The size result has been succeed export to "+outputfileDirectory+ " !\n"+ "Filename = " +savedfilename, 
+								"Exported", JOptionPane.INFORMATION_MESSAGE);
+					}
+				} catch (HeadlessException e1) {
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				} 
+	            
+			}else{
+				JOptionPane.showMessageDialog(thisGUI.MRMCobject.getFrame(),
+						"Pilot study data has not yet been analyzed.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+						
+		}
+	}
+	
+	
+	
+	
 	
 	/**
 	 * Handler for drop down menu to select data input source
