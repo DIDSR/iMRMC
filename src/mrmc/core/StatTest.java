@@ -606,12 +606,19 @@ double totalVar = curRecord.totalVar;
 double[][] tempBCKbias = curRecord.BCKbias;
 double[][] tempBCKcoeff = curRecord.BCKcoeff;
 
-double DFnormalA  = 1.0/tempBCKcoeff[0][0] - 1.0;
+double DFnormalA  = Math.round(1.0/tempBCKcoeff[0][0] - 1.0);
+double DFnormalB  = Math.round(1.0/tempBCKcoeff[1][0] - 1.0);
+double DFdiseaseA = Math.round(1.0/tempBCKcoeff[0][1] - 1.0);
+double DFdiseaseB = Math.round(1.0/tempBCKcoeff[1][1] - 1.0);
+double DFreaderA  = Math.round(1.0/tempBCKcoeff[0][3] - 1.0);
+double DFreaderB  = Math.round(1.0/tempBCKcoeff[1][3] - 1.0);
+
+/*double DFnormalA  = 1.0/tempBCKcoeff[0][0] - 1.0;
 double DFnormalB  = 1.0/tempBCKcoeff[1][0] - 1.0;
 double DFdiseaseA = 1.0/tempBCKcoeff[0][1] - 1.0;
 double DFdiseaseB = 1.0/tempBCKcoeff[1][1] - 1.0;
 double DFreaderA  = 1.0/tempBCKcoeff[0][3] - 1.0;
-double DFreaderB  = 1.0/tempBCKcoeff[1][3] - 1.0;
+double DFreaderB  = 1.0/tempBCKcoeff[1][3] - 1.0;*/
 
 /*
  * The following are mean squares times 2/N0/N1/NR
