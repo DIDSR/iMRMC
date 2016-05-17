@@ -382,6 +382,7 @@ public class exportToFile {
 		
 		str = str +"Study Design: " +"\n";
 		str = str +	"# of Split-Plot Groups: " + sizePanelRoeMetz.numSplitPlots + ",  ";
+		str = str +	"Random Stream: " + Integer.toString(RMGUInterface.RandomStreamID) + ",  ";
 		if (sizePanelRoeMetz.pairedReadersFlag == 1)
 			str = str +	"Paired Readers: Yes,  ";
 		else
@@ -397,7 +398,7 @@ public class exportToFile {
 		return str;
 	}
 	
-	public static String exportValidation(String oldReport, DBRecord VldDBRecord) {
+	public static String exportMCmeanValidation(String oldReport, DBRecord VldDBRecord) {
 		String str = oldReport;
 		double AUC_A       = VldDBRecord.AUCsReaderAvg[0];
 		double AUC_B       = VldDBRecord.AUCsReaderAvg[1];
@@ -406,16 +407,32 @@ public class exportToFile {
 		double varA    = VldDBRecord.varA;
 		double varB    = VldDBRecord.varB;
 		
-		str =  str + "AUC_A            : " + fourDecE.format(AUC_A) + "\r\n";
-		str =  str + "AUC_B            : " + fourDecE.format(AUC_B) + "\r\n";
-		str =  str + "AUC_A-AUC_B      : " + fourDecE.format(AUC_AminusAUC_B) + "\r\n";
-		str =  str + "varAUC_A         : " + fourDecE.format(varA) + "\r\n";
-		str =  str + "varAUC_B         : " + fourDecE.format(varB) + "\r\n";
-		str =  str + "totalVar         : " + fourDecE.format(totalVar) + "\r\n";
+		str =  str + "mcMeanAUC_A      : " + fourDecE.format(AUC_A) + "\r\n";
+		str =  str + "mcMeanAUC_B      : " + fourDecE.format(AUC_B) + "\r\n";
+		str =  str + "mcMeanAUC_AB     : " + fourDecE.format(AUC_AminusAUC_B) + "\r\n";
+		str =  str + "mcMeanvarAUC_A   : " + fourDecE.format(varA) + "\r\n";
+		str =  str + "mcMeanvarAUC_B   : " + fourDecE.format(varB) + "\r\n";
+		str =  str + "mcMeanvarAUC_AB  : " + fourDecE.format(totalVar) + "\r\n";
 		return str;
 	}
 	
-	
+	public static String exportNumValidation(String oldReport, DBRecord VldDBRecord) {
+		String str = oldReport;
+		double AUC_A       = VldDBRecord.AUCsReaderAvg[0];
+		double AUC_B       = VldDBRecord.AUCsReaderAvg[1];
+		double AUC_AminusAUC_B = AUC_A-AUC_B;
+		double totalVar    = VldDBRecord.totalVar;
+		double varA    = VldDBRecord.varA;
+		double varB    = VldDBRecord.varB;
+		
+		str =  str + "NumAUC_A         : " + fourDecE.format(AUC_A) + "\r\n";
+		str =  str + "NumAUC_B         : " + fourDecE.format(AUC_B) + "\r\n";
+		str =  str + "NumAUC_AB        : " + fourDecE.format(AUC_AminusAUC_B) + "\r\n";
+		str =  str + "NumvarAUC_A      : " + fourDecE.format(varA) + "\r\n";
+		str =  str + "NumvarAUC_B      : " + fourDecE.format(varB) + "\r\n";
+		str =  str + "NumvarAUC_AB     : " + fourDecE.format(totalVar) + "\r\n";
+		return str;
+	}
 	
 	public static String exportMCvarianceValidation(String oldReport, DBRecord VarDBRecord) {
 		String str = oldReport;
@@ -427,10 +444,10 @@ public class exportToFile {
 		double mcVartotalVar    = VarDBRecord.totalVar;
 		str =  str + "mcVarAUC_A       : " + fourDecE.format(mcVarAUC_A) + "\r\n";
 		str =  str + "mcVarAUC_B       : " + fourDecE.format(mcVarAUC_B) + "\r\n";
-		str =  str + "mcVarAUC_AminusB : " + fourDecE.format(mcVarAUC_AminusB) + "\r\n";
-		str =  str + "mcVarVarAUC_A    : " + fourDecE.format(mcVarvarA) + "\r\n";
-		str =  str + "mcVarVarAUC_B    : " + fourDecE.format(mcVarvarB) + "\r\n";
-		str =  str + "mcVartotalVar    : " + fourDecE.format(mcVartotalVar) + "\r\n";
+		str =  str + "mcVarAUC_AB      : " + fourDecE.format(mcVarAUC_AminusB) + "\r\n";
+		str =  str + "mcVarvarAUC_A    : " + fourDecE.format(mcVarvarA) + "\r\n";
+		str =  str + "mcVarvarAUC_B    : " + fourDecE.format(mcVarvarB) + "\r\n";
+		str =  str + "mcVarvarAUC_AB   : " + fourDecE.format(mcVartotalVar) + "\r\n";
 		return str;
 	}
 
@@ -482,6 +499,20 @@ public class exportToFile {
 			str = str +"N/A,N/A,N/A,N/A" + SEPA;
 		}
 		return str;
+	}
+
+	public static void saveTrailResult(int[][] trialResultArray, DBRecord dBRecordStat, long trailID) {
+		double AUC_A       = dBRecordStat.AUCsReaderAvg[0];
+		double AUC_B       = dBRecordStat.AUCsReaderAvg[1];
+		double AUC_AminusAUC_B = AUC_A-AUC_B;
+		double totalVar    = dBRecordStat.totalVar;
+		double varA    = dBRecordStat.varA;
+		double varB    = dBRecordStat.varB;
+		String[] str = {Long.toString(trailID), fourDecE.format(AUC_A),fourDecE.format(AUC_B),fourDecE.format(AUC_AminusAUC_B) ,fourDecE.format(varA), fourDecE.format(varB) , fourDecE.format(totalVar)};
+//		trialResultArray[(int) trailID] = str;
+//		str = str + Long.toString(trailID) +"," + fourDecE.format(AUC_A) +"," + fourDecE.format(AUC_B) + ","+ fourDecE.format(AUC_AminusAUC_B) + ",";
+//		str = str + fourDecE.format(varA) + "," + fourDecE.format(varB) + "," + fourDecE.format(totalVar) + "\r\n";
+//		return str;
 	}
 	
 }

@@ -94,7 +94,8 @@ public class RMGUInterface {
 	public DBRecord avgDBRecordStat;
 	public StatPanel StatPanel1;
 	public StatPanel StatPanelNumerical;
-	
+	public static int RandomStreamID = 1;
+	private double[][] trialResultArray; 
 	JPanel studyDesignJPanel;
 	/**
 	 * Input means
@@ -160,6 +161,7 @@ public class RMGUInterface {
 	public DecimalFormat threeDecOptE = new DecimalFormat("0.###E0");
 	public DecimalFormat threeDec = new DecimalFormat("0.000");
 	public DecimalFormat threeDecE = new DecimalFormat("0.000E0");
+	public DecimalFormat fourDecE = new DecimalFormat("0.0000E0");
 	public DecimalFormat fiveDecOpt = new DecimalFormat( "0.#####");
 	public DecimalFormat fiveDecOptE = new DecimalFormat("0.#####E0");
 	public DecimalFormat fiveDec = new DecimalFormat( "0.00000");
@@ -733,6 +735,12 @@ public class RMGUInterface {
 				JTextField_seed.setText(tempstr.substring(tmploc + 1).trim());
 				continue;
 			}
+			loc = tempstr.indexOf("RANDOM STREAM");
+			if (loc != -1) {
+				int tmploc = tempstr.indexOf(":");
+				RandomStreamID = Integer.parseInt(tempstr.substring(tmploc + 1).trim());
+				continue;
+			}
 			loc = tempstr.indexOf("NUMBER OF EXPERIMENTS:");
 			if (loc != -1) {
 				int tmploc = tempstr.indexOf(":");
@@ -1041,9 +1049,9 @@ public class RMGUInterface {
 			sumDBRecordStat.flagMLE = useMLE;
 			squareDBRecordStat.flagMLE = useMLE;
 			sumSquareDBRecordStat.flagMLE = useMLE;
-			
 			long flagTotalVarIsNegative = 0;
-
+			trialResultArray = new double[(int) NexpEnd][7];
+			
 			SimRoeMetz currSimRoeMetz = new SimRoeMetz(u, var_t, RandomStreamI, sizePanel1);
 			
 			// initialize DBRecords
@@ -1059,6 +1067,10 @@ public class RMGUInterface {
 			DBRecord.copy(DBRecordStat, squareDBRecordStat);			
 			DBRecord.square(squareDBRecordStat);
 			DBRecord.copy(squareDBRecordStat, sumSquareDBRecordStat);
+			if (RoeMetz.doValidation){
+				//trailResult = exportToFile.exportTrail(trailResult,DBRecordStat,1);
+				saveTrailResult(DBRecordStat,0);
+			}
 			// write to disk
 			if (simSaveDirectory != null && !simSaveDirectory.equals("")) {
 				writeInputFile(sumDBRecordStat, filenameTime, NexpStart);
@@ -1066,10 +1078,10 @@ public class RMGUInterface {
 			
 			// continue the loop, add the simulation results to avgDBRecordStat
 			for (long i = NexpStart+1; i < NexpEnd; i++) {
-				
-					int mm;
-					if (i == 68447)
-					    mm = 1;
+					// When seed = 123456, trail 68447 will generate a Inf. Using following function to check it. 
+					//int mm;
+					//if (i == 68447)
+					//    mm = 1;
 					// Sends data chunks to the "process" method.
 					// Below, the process method updates the progress bar.
 					publish(NexpCompleted_atomic.incrementAndGet());
@@ -1094,6 +1106,7 @@ public class RMGUInterface {
 					// Replace current simulation with a new simulation
 					if(DBRecordStat.totalVar < 0) {
 						flagTotalVarIsNegative++;
+						i--;
 						continue;
 					}
 					
@@ -1103,6 +1116,11 @@ public class RMGUInterface {
 					DBRecord.copy(DBRecordStat, squareDBRecordStat);
 					DBRecord.square(squareDBRecordStat);
 					DBRecord.add(squareDBRecordStat, sumSquareDBRecordStat);
+					// pad current simulation result to trailResult. 
+					if (RoeMetz.doValidation){
+						//trailResult = exportToFile.exportTrail(trailResult,DBRecordStat,i+1);
+						saveTrailResult(DBRecordStat,i);
+					}
 					// write to disk
 					if (simSaveDirectory != null && !simSaveDirectory.equals("")) {
 						writeInputFile(DBRecordStat, filenameTime, i);
@@ -1140,6 +1158,20 @@ public class RMGUInterface {
 		protected void done() {
 			firePropertyChange("done", 0, 1);
 		}
+	}
+	/**
+	 * function to save each trial result to trialResultArray
+	 * 
+	 */
+	private void saveTrailResult( DBRecord dBRecordStat, long trailID) {
+		double AUC_A       = dBRecordStat.AUCsReaderAvg[0];
+		double AUC_B       = dBRecordStat.AUCsReaderAvg[1];
+		double AUC_AminusAUC_B = AUC_A-AUC_B;
+		double totalVar    = dBRecordStat.totalVar;
+		double varA    = dBRecordStat.varA;
+		double varB    = dBRecordStat.varB;
+		double[] tempTrial = {trailID+1, AUC_A,AUC_B,AUC_AminusAUC_B ,varA,varB,totalVar};
+		trialResultArray[(int) trailID] = tempTrial;
 	}
 
 	/**
@@ -1234,7 +1266,9 @@ public class RMGUInterface {
 				for (int i = 0; i < numCoresToUse; i++) {
 					final int taskNum = i;
 					WELL1024 RandomStreamI = new WELL1024();
-					
+					for (int ns= 1; ns<RandomStreamID; ns++){
+						RandomStreamI = new WELL1024();
+					}
 					NexpStart = NexpPerCore * i;
 					NexpEnd = NexpStart + NexpPerCore;
 					// Last core must do more experiments 
@@ -1262,6 +1296,7 @@ public class RMGUInterface {
 									if(RoeMetz.doValidation){
 										analysisExportListener analysisExportListener1 = new analysisExportListener(avgDBRecordStat,"SimulationOutput",StatPanel1);
 										analysisExportListener1.exportResult();
+										exportTrialResult();
 										System.exit(0);
 									}
 								}
@@ -1337,7 +1372,7 @@ public class RMGUInterface {
 				squareDBRecordStat = results[i][2];
 			}
 
-			if(avgDBRecordStat.flagTotalVarIsNegative > 0) {
+			if(avgDBRecordStat.flagTotalVarIsNegative > 0 &&!RoeMetz.doValidation) {
 	 			JFrame frame = new JFrame();
 	 			JOptionPane.showMessageDialog(frame,
 						"There were " + avgDBRecordStat.flagTotalVarIsNegative + 
@@ -2355,7 +2390,7 @@ public class RMGUInterface {
 						    report = exportToFile.exportTable1(report, DB1);
 						    report = exportToFile.exportTable2(report, DB1);
 						}else{
-							report = exportToFile.exportValidation(report,DB1);
+							report = exportToFile.exportMCmeanValidation(report,DB1);
 							report = exportToFile.exportMCvarianceValidation(report,varDBRecordStat);
 						}
 					}else{
@@ -2370,7 +2405,7 @@ public class RMGUInterface {
 							report = exportToFile.exportTable1(report, DB1);
 							report = exportToFile.exportTable2(report, DB1);
 						}else{
-							report = exportToFile.exportValidation(report,DB1);
+							report = exportToFile.exportNumValidation(report,DB1);
 						}
 					}
 
@@ -2395,6 +2430,40 @@ public class RMGUInterface {
 			StatPanelIn = tempStatPanel;
  		}
 	
+	}
+	private void exportTrialResult() {
+		// TODO Auto-generated method stub
+		try {
+			File f;	
+			File outputDir = new File (validateFunction.inputFile.getParent()+"//"+"output");				
+			String FileName=validateFunction.inputFile.getName();
+			FileName= FileName.substring(0,FileName.lastIndexOf("."));
+			String exportFileName = FileName +"Trail" +".csv";
+			f = new File (outputDir +"//" + exportFileName);
+			if (!f.exists()) {
+				f.createNewFile();
+			}
+			FileWriter fw;		
+			fw = new FileWriter(f.getAbsoluteFile());
+			BufferedWriter bw = new BufferedWriter(fw);
+			String [] trialResultTitle = new String[] {"TrialID","AUCA","AUCB","AUCAminusB","varAUCA","varAUCB","varAUCAandB"};
+			for (int i=0;i<trialResultTitle.length;i++){
+				bw.write(trialResultTitle[i]+",");
+			}
+			bw.write("\n");
+		    for (int i=0;i<trialResultArray.length;i++){
+		    	bw.write(Double.toString(trialResultArray[i][0])+",");
+		        for (int j=1;j<trialResultArray[0].length;j++){
+		          bw.write(fourDecE.format(trialResultArray[i][j])+",");
+		        }
+		        bw.write("\n");
+		    }
+			//bw.write(trialResultArrayfollow);
+			bw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }
