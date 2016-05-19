@@ -129,6 +129,9 @@ public class DBRecord {
 	 * 
 	 */
 	public double totalVar = -1.0;
+	public double SE = -1.0;
+	public double varA = -1;
+	public double varB = -1;
 	/**
 	 * Indicator whether {mrmc.gui.InputFileCard#FlagMLE} is set
 	 */
@@ -156,6 +159,7 @@ public class DBRecord {
 	
 	// added for saving the results (i.e., BDG)
 	public double[][] BDG = new double[4][8],
+			           LoadBDG = new double[4][8], // BDG moment load from summary file
 						BDGbias = new double[4][8],
 						BDGcoeff = new double[4][8];
 	// added for saving the results
@@ -254,6 +258,7 @@ public class DBRecord {
 			MSbias = new double[4][6], 
 			MScoeff = new double[4][6];
 	public int inputMod;
+
 
 	public static double[][] MSresult = new double[4][6],
 			MSbiasresult = new double[4][6],
@@ -567,18 +572,24 @@ public class DBRecord {
 				{ 	 1/N0/NR, 	 (N0-1)/N0/NR,				 0,						  0,   (NR-1)/N0/NR,	(N0-1)*(NR-1)/N0/NR,				      0,						    0 },
 				{    1/N1/NR, 	    	    0, 	  (N1-1)/N1/NR,						  0,   (NR-1)/N1/NR,					  0, 	(N1-1)*(NR-1)/N1/NR, 							0 },
 				{ 1/N0/N1/NR, (N0-1)/N0/N1/NR, (N1-1)/N0/N1/NR, (N0-1)*(N1-1)/N0/N1/NR, (NR-1)/N0/N1/NR, (N0-1)*(NR-1)/N0/N1/NR, (N1-1)*(NR-1)/N0/N1/NR, (N0-1)*(N1-1)*(NR-1)/N0/N1/NR}};		
-        double[][] tempBDG = new double[4][8];
+		DBRecordStat.BDG = new double[4][8];
 		if(selectedMod==0)
-			tempBDG[0]=	BDG[0];
+			DBRecordStat.BDG[0]= DBRecordStat.LoadBDG[0];
 		else if (selectedMod==1)
-			tempBDG[1] = BDG[1];
+			DBRecordStat.BDG[1] = DBRecordStat.LoadBDG[1];
 		else if(selectedMod==3)
-			tempBDG = BDG;
+			DBRecordStat.BDG = DBRecordStat.LoadBDG;
 	    double [][] unbiasToBiast = Matrix.matrixTranspose(unbiasToBias);
-	    BDGbias = Matrix.multiply(tempBDG , unbiasToBiast);		
+	    BDGbias = Matrix.multiply(DBRecordStat.BDG , unbiasToBiast);		
 		double totalVarnoMLE=0.0;
+		double varAnoMLE=0.0;
+		double varBnoMLE=0.0;
+		double varAMLE=0.0;
+		double varBMLE=0.0;
 		totalVarMLE=0.0;
 		totalVar=0.0;
+		varA = 0;
+		varB = 0;
 		BDGcoeff = genBDGCoeff(DBRecordStat.Nreader,DBRecordStat.Nnormal,DBRecordStat.Ndisease);
 	    double[] temp= new double[8];
 		for (int i = 0; i < 8; i++) {
@@ -586,21 +597,30 @@ public class DBRecord {
 		}
 		DBRecordStat.BDGcoeff[3] = temp;
 		for (int i = 0; i < 8; i++) {
-			DBRecordStat.BDG[3][i] =     (tempBDG[0][i] * DBRecordStat.BDGcoeff[0][i])
-					  +     (tempBDG[1][i] * DBRecordStat.BDGcoeff[1][i])
-					  - 2.0*(tempBDG[2][i] * DBRecordStat.BDGcoeff[2][i]);
+			DBRecordStat.BDG[3][i] =     (DBRecordStat.BDG[0][i] * DBRecordStat.BDGcoeff[0][i])
+					  +     (DBRecordStat.BDG[1][i] * DBRecordStat.BDGcoeff[1][i])
+					  - 2.0*(DBRecordStat.BDG[2][i] * DBRecordStat.BDGcoeff[2][i]);
 			DBRecordStat.BDGbias[3][i] =     (DBRecordStat.BDGbias[0][i] * DBRecordStat.BDGcoeff[0][i])
 					  +     (DBRecordStat.BDGbias[1][i] * DBRecordStat.BDGcoeff[1][i])
 					  - 2.0*(DBRecordStat.BDGbias[2][i] * DBRecordStat.BDGcoeff[2][i]);			
 			totalVarnoMLE += BDGcoeff[3][i] * BDG[3][i];
 			totalVarMLE  += BDGcoeff[3][i] * BDGbias[3][i];
+			varAnoMLE +=  BDGcoeff[0][i] * BDG[0][i];
+			varBnoMLE +=  BDGcoeff[1][i] * BDG[1][i];
+			varAMLE +=  BDGcoeff[0][i] * BDGbias[0][i];
+			varBMLE +=  BDGcoeff[1][i] * BDGbias[1][i];
 		}
 		if (flagMLE==0){
 			totalVar= totalVarnoMLE;
+			varA = varAnoMLE;
+			varB = varBnoMLE;
 		}else{
 			totalVar=totalVarMLE;
+			varA = varAMLE;
+			varB = varBMLE;
 		}
 		
+		SE = Math.sqrt(totalVar);
 
 		if(totalVar < 0) {
 			flagTotalVarIsNegative = 1;
@@ -622,8 +642,9 @@ public class DBRecord {
 	 * specified. Sets GUI label with statistics info.
 	 * 
 	 * @param SizePanelTemp
+	 * @return 
 	 */
-	public void DBRecordSizeFill(SizePanel SizePanelTemp) {
+	public boolean DBRecordSizeFill(SizePanel SizePanelTemp) {
 		
 		SizePanel1 = SizePanelTemp;
 		DBRecordSize = GUI.DBRecordSize;
@@ -633,16 +654,51 @@ public class DBRecord {
 			JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
 					"Must perform variance analysis first.", "Error",
 					JOptionPane.ERROR_MESSAGE);
-			return;
+			return false;
 		}
 
 		covMRMCstat = DBRecordStat.covMRMCstat;
-		covMRMCsize = new CovMRMC(SizePanel1, DBRecordSize);
+		Nreader = Integer.parseInt(SizePanel1.NreaderJTextField.getText());
+		Nnormal = Integer.parseInt(SizePanel1.NnormalJTextField.getText());
+		Ndisease = Integer.parseInt(SizePanel1.NdiseaseJTextField.getText());
+		int Ngroup =Integer.parseInt(SizePanel1.NumSplitPlotsJTextField.getText());
+		int Preader = SizePanel1.pairedReadersFlag; 
+		int Pnormal = SizePanel1.pairedNormalsFlag; 
+		int Pdisease = SizePanel1.pairedDiseasedFlag;
+		double Subreader = (double)Nreader/(double)Ngroup/(2-(double)Preader);
+		double Subnormal = (double)Nnormal/(double)Ngroup/(2-(double)Pnormal);
+		double Subdisease = (double)Ndisease/(double)Ngroup/(2-(double)Pdisease);
+		if (Math.floor(Subreader) != Subreader){
+			JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
+					"The sizing panel needs the number of readers \r\n to be evenly distributed into each modality and group", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		if (Math.floor(Subnormal) != Subnormal){
+			JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
+					"The sizing panel needs the number of normal cases \r\n to be evenly distributed into each modality and group", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		if (Math.floor(Subdisease) != Subdisease){
+			JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
+					"The sizing panel needs the number of disease cases \r\n to be evenly distributed into each modality and group", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		BDGcoeff = genBDGSplitUnpairedCoeff(Nreader, Nnormal, Ndisease, Ngroup, Preader, Pnormal, Pdisease);
+		//covMRMCsize = new CovMRMC(SizePanel1, DBRecordSize);
 
 		BDGforSizePanel();
-		Decompositions();
+		BCKcoeff = genBCKCoeff(BDGcoeff);
+		BCK = BDG2BCK(BDG, BCKcoeff);
+		BCKbias = BDG2BCK(BDGbias, BCKcoeff);
+		BCKresult = BCK;
+		BCKcoeffresult = BCKcoeff;
+		BCKbiasresult = BCKbias;
+		//Decompositions();
 
-		if(selectedMod == 0) {
+		/*if(selectedMod == 0) {
 			flagFullyCrossed = covMRMCsize.fullyCrossedA;
 		}
 		if(selectedMod == 1) {
@@ -652,10 +708,16 @@ public class DBRecord {
 			flagFullyCrossed = covMRMCsize.fullyCrossedA && 
 					covMRMCsize.fullyCrossedB && 
 					covMRMCsize.fullyCrossedAB;
-		}
+		}*/
+		if (Ngroup == 1 && Preader == 1 && Pnormal ==1 && Pdisease==1)
+			flagFullyCrossed = true;
+		else
+			flagFullyCrossed = false;
+		
 
 		testSize = new StatTest(SizePanel1, DBRecordStat, DBRecordSize);
-
+		
+		return true;
 	}
 	
 	/**
@@ -672,6 +734,8 @@ public class DBRecord {
 		covMRMCsize = new CovMRMC(SizePanelRoeMetz, DBRecordTemp);
 		
 		totalVar = 0.0;
+		varA = 0.0;
+		varB = 0.0;
 		for(int i=0; i<8; i++) {
 			BDGcoeff[0][i] = covMRMCsize.coefficientsAA[i+1];
 			BDGcoeff[1][i] = covMRMCsize.coefficientsBB[i+1];
@@ -683,14 +747,16 @@ public class DBRecord {
 					+    BDGcoeff[1][i]*BDG[1][i]
 					-2.0*BDGcoeff[2][i]*BDG[2][i];
 
+			varA +=  BDGcoeff[0][i] * BDG[0][i];
+			varB +=  BDGcoeff[1][i] * BDG[1][i];
 			totalVar = totalVar + BDGcoeff[3][i]*BDG[3][i];
-			
+			// why BDGbias equals BDG?
 			BDGbias[0][i] = BDG[0][i];
 			BDGbias[1][i] = BDG[1][i];
 			BDGbias[2][i] = BDG[2][i];
 			BDGbias[3][i] = BDG[3][i];
 		}
-
+		SE = Math.sqrt(totalVar);
 		if(selectedMod == 0) {
 			flagFullyCrossed = covMRMCsize.fullyCrossedA;
 		}
@@ -718,6 +784,10 @@ public class DBRecord {
 	 */
 	private void BDGforStatPanel() {
 		double totalVarnoMLE=0.0;
+		double varAnoMLE=0.0;
+		double varBnoMLE=0.0;
+		double varAMLE=0.0;
+		double varBMLE=0.0;
 		totalVarMLE=0.0;
 		for (int i = 0; i < 8; i++) {
 			BDG[0][i] = covMRMCstat.momentsAA[i + 1];
@@ -729,6 +799,12 @@ public class DBRecord {
 			BDGcoeff[0][i] = covMRMCstat.coefficientsAA[i + 1];
 			BDGcoeff[1][i] = covMRMCstat.coefficientsBB[i + 1];
 			BDGcoeff[2][i] = covMRMCstat.coefficientsAB[i + 1];
+			
+			varAnoMLE +=  BDGcoeff[0][i] * BDG[0][i];
+			varBnoMLE +=  BDGcoeff[1][i] * BDG[1][i];
+			varAMLE +=  BDGcoeff[0][i] * BDGbias[0][i];
+			varBMLE +=  BDGcoeff[1][i] * BDGbias[1][i];
+			
 			
 			BDGcoeff[3][i] = 1.0;
 
@@ -744,11 +820,15 @@ public class DBRecord {
 		}
 		if (flagMLE==0){
 			totalVar= totalVarnoMLE;
+			varA = varAnoMLE;
+			varB = varBnoMLE;
 		}else{
 			totalVar=totalVarMLE;
+			varA = varAMLE;
+			varB = varBMLE;
 		}
+		SE = Math.sqrt(totalVar);
 		
-
 		if(totalVar < 0) {
 			flagTotalVarIsNegative = 1;
 		}
@@ -769,6 +849,9 @@ public class DBRecord {
 	private void BDGforSizePanel() {
 
 		totalVar = 0.0;
+		varA = 0.0;
+		varB = 0.0;
+
 		for (int i = 0; i < 8; i++) {
 		    BDG[0][i] = DBRecordStat.BDG[0][i];
 			BDG[1][i] = DBRecordStat.BDG[1][i];
@@ -776,12 +859,15 @@ public class DBRecord {
 			BDGbias[0][i] = DBRecordStat.BDGbias[0][i];
 			BDGbias[1][i] = DBRecordStat.BDGbias[1][i];
 			BDGbias[2][i] = DBRecordStat.BDGbias[2][i];			
-			BDGcoeff[0][i] = covMRMCsize.coefficientsAA[i + 1];
-			BDGcoeff[1][i] = covMRMCsize.coefficientsBB[i + 1];
-			BDGcoeff[2][i] = covMRMCsize.coefficientsAB[i + 1];
+		//	BDGcoeff[0][i] = covMRMCsize.coefficientsAA[i + 1];
+		//	BDGcoeff[1][i] = covMRMCsize.coefficientsBB[i + 1];
+		//	BDGcoeff[2][i] = covMRMCsize.coefficientsAB[i + 1];
 			
-			BDGcoeff[3][i] = 1.0;
+		//	BDGcoeff[3][i] = 1.0;
 
+			varA +=  BDGcoeff[0][i] * BDG[0][i];
+			varB +=  BDGcoeff[1][i] * BDG[1][i];
+			
 			BDG[3][i] =     (BDG[0][i] * BDGcoeff[0][i])
 					  +     (BDG[1][i] * BDGcoeff[1][i])
 					  - 2.0*(BDG[2][i] * BDGcoeff[2][i]);
@@ -794,7 +880,7 @@ public class DBRecord {
 		}
 		
 		totalVar = totalVar*1.0;
-		
+		SE = Math.sqrt(totalVar);
 	
 
 	}
@@ -826,7 +912,7 @@ public class DBRecord {
 		}
 		
 		totalVar = totalVar*1.0;
-		
+		SE = Math.sqrt(totalVar);
 	
 
 	}
@@ -1227,6 +1313,52 @@ public class DBRecord {
 		return c;
 	}
 
+	
+	
+	/**
+	 * Determines the coefficient matrix for BDG variance components given a
+	 * split plot and unpaired study design [4][8].
+	 * This is only executed when the components of variance are input by hand or during iRoeMetz
+	 * 
+	 * @param NreaderWhole NnormalWhole and NdiseaseWhole are Number of readers, normal and disease of whole study
+	 * @param  Nreader2 Nnormal2 and Ndisease2 Use size in each group and modality
+	 * @return Matrix containing coefficients corresponding to BDG variance
+	 *         components
+	 */
+	public static double[][] genBDGSplitUnpairedCoeff(long NreaderWhole, long Nnormal2Whole, long Ndisease2Whole, int Ngroup, int Preader, int Pnormal, int Pdisease ) {
+		double[][] c = new double[4][8];
+		double[] ones = {1,1,1,1,1,1,1,1};
+		long Nreader2 = NreaderWhole/Ngroup/(2-Preader);
+      	long Nnormal2 = Nnormal2Whole/Ngroup/(2-Pnormal);
+		long Ndisease2 = Ndisease2Whole/Ngroup/(2-Pdisease);
+		double Nm = (Nreader2 * Nnormal2 * Ndisease2)*Ngroup;
+		c[0][0] = 1.0 / Nm;
+		c[0][1] = (Nnormal2 - 1.0) / Nm;
+		c[0][2] = (Ndisease2 - 1.0) / Nm;
+		c[0][3] = (Nnormal2 - 1.0) * (Ndisease2 - 1.0) / Nm;
+		c[0][4] = (Nreader2 - 1.0) / Nm;
+		c[0][5] = (Nnormal2 - 1.0) * (Nreader2 - 1.0) / Nm;
+		c[0][6] = (Ndisease2 - 1.0) * (Nreader2 - 1.0) / Nm;
+		c[0][7] = ((Ndisease2 - 1.0) * (Nnormal2 - 1.0) * (Nreader2 - 1.0) + Ndisease2 * Nnormal2 * Nreader2 * (Ngroup-1)) / Nm;
+		c[0][7] = c[0][7] - 1;
+		// Two modalities have same coeff
+		c[1] = c[0];
+		// component
+		c[2][0] = 1.0 / Nm * Preader * Pnormal * Pdisease;
+		c[2][1] = (Nnormal2 - Pnormal) / Nm * Preader * Pdisease;
+		c[2][2] = (Ndisease2 - Pdisease) / Nm * Pnormal * Preader; 
+		c[2][3] = (Nnormal2 - Pnormal) * (Ndisease2 - Pdisease) / Nm * Preader;
+		c[2][4] = (Nreader2 - Preader) / Nm * Pnormal * Pdisease;
+		c[2][5] = (Nnormal2 - Pnormal) * (Nreader2 - Preader) / Nm * Pdisease;
+		c[2][6] = (Ndisease2 - Pdisease) * (Nreader2 - Preader) / Nm * Pnormal;
+		c[2][7] = ((Ndisease2 - Pdisease) * (Nnormal2 - Pnormal) * (Nreader2 - Preader) + Ndisease2 * Nnormal2 * Nreader2 * (Ngroup-1)) / Nm;
+		c[2][7] = c[2][7] - 1;
+		c[3] = ones;
+
+		return c;
+	}
+	
+	
 	/**
 	 * Determines the coefficient matrix for BCK variance components given <code>BDGcoeff</code> <br>
 	 * There is another function that creates the coefficients assuming a fully-crossed study design.
@@ -1646,6 +1778,9 @@ public class DBRecord {
 		 * TODO we need to collect totalVar for modalityA and modalityB
 		 */
 		copyDBRecordTemp.totalVar = DBRecordTemp.totalVar;
+		copyDBRecordTemp.SE = DBRecordTemp.SE;
+		copyDBRecordTemp.varA = DBRecordTemp.varA;
+		copyDBRecordTemp.varB = DBRecordTemp.varB;
 		copyDBRecordTemp.flagTotalVarIsNegative = DBRecordTemp.flagTotalVarIsNegative;
 
 	}
@@ -1692,6 +1827,9 @@ public class DBRecord {
 		 * TODO we need to collect totalVar for modalityA and modalityB
 		 */
 		sumDBRecordTemp.totalVar += DBRecordTemp.totalVar;
+		sumDBRecordTemp.SE += DBRecordTemp.SE;
+		sumDBRecordTemp.varA += DBRecordTemp.varA;
+		sumDBRecordTemp.varB += DBRecordTemp.varB;
 		sumDBRecordTemp.flagTotalVarIsNegative += DBRecordTemp.flagTotalVarIsNegative;
 		
 	}
@@ -1738,6 +1876,9 @@ public class DBRecord {
 		 * TODO we need to collect totalVar for modalityA and modalityB
 		 */
 		DBRecordTemp.totalVar *= scaleFactor;
+		DBRecordTemp.SE *= scaleFactor;
+		DBRecordTemp.varA *= scaleFactor;
+		DBRecordTemp.varB *= scaleFactor;
 		DBRecordTemp.flagTotalVarIsNegative *= scaleFactor;
 		
 	}
@@ -1781,6 +1922,9 @@ public class DBRecord {
 		 * TODO we need to collect totalVar for modalityA and modalityB
 		 */
 		DBRecordTemp.totalVar *= DBRecordTemp.totalVar;
+		DBRecordTemp.SE *= DBRecordTemp.SE;
+		DBRecordTemp.varA *= DBRecordTemp.varA;
+		DBRecordTemp.varB *= DBRecordTemp.varB;
 		DBRecordTemp.flagTotalVarIsNegative *= DBRecordTemp.flagTotalVarIsNegative;
 		
 	}

@@ -6,24 +6,42 @@ import java.util.Scanner;
 
 import mrmc.chart.exportToFile;
 import roemetz.gui.RMGUInterface;
+import roemetz.gui.RMGUInterface.analysisExportListener;
 
 public class validateFunction {
-
-	public static void validateFunction(RMGUInterface RMGUInterface1) {
+public static File inputFile = null;
+	public static void validateFunction(RMGUInterface RMGUInterface1, String inputFileFullName) {
 		// TODO Auto-generated method stub
-		System.out.println("Input file full name:");
-		Scanner inputScanner = new Scanner(System.in);
-		String inputFileFullName = inputScanner.nextLine();
+		if (inputFileFullName.length()==0){
+			System.out.println("Input file full name:");		
+			Scanner inputScanner = new Scanner(System.in);
+			inputFileFullName = inputScanner.nextLine();
+		}
 		System.out.println(inputFileFullName);
-		File inputFile = new File (inputFileFullName);
+		inputFile = new File (inputFileFullName);
 		RMGUInterface1.parseCofVfile(inputFile);
-		RMGUInterface.DoSimBtnListener DoSimBtnListener1 =  RMGUInterface1.new DoSimBtnListener();
-		DoSimBtnListener1.doSimulationAnalysis();
-		RMGUInterface.analysisExportListener analysisExportListener1 = RMGUInterface1.new analysisExportListener(RMGUInterface1.avgDBRecordStat,"SimulationOutput",RMGUInterface1.StatPanel1);
-	//	RMGUInterface1.createProgressBar();
-	//	RMGUInterface1.simulationExport.doClick();
+		RoeMetz.doValidation = true;
 
-	//	analysisExportListener1.exportResult();
-		
+				// numerical
+				RMGUInterface.DoNumericalIntegrationBtnListener DoNumericalIntegrationBtnListener1 =  
+						RMGUInterface1.new DoNumericalIntegrationBtnListener();
+				DoNumericalIntegrationBtnListener1.doNumericalAnalysisSEQ();
+				RMGUInterface.analysisExportListener analysisExportListener2 =
+						RMGUInterface1. new analysisExportListener(DoNumericalIntegrationBtnListener1.DBRecordNumerical,"NumericalOutput",RMGUInterface1.StatPanelNumerical);
+				analysisExportListener2.exportResult();
+				
+				// simulation
+				RMGUInterface.DoSimBtnListener DoSimBtnListener1 =  RMGUInterface1.new DoSimBtnListener();
+				DoSimBtnListener1.doSimulationAnalysis();
+			/*	while(!RMGUInterface1.processDone){
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				RMGUInterface.analysisExportListener analysisExportListener1 =RMGUInterface1. new analysisExportListener(RMGUInterface1.avgDBRecordStat,"SimulationOutput",RMGUInterface1.StatPanel1);
+				analysisExportListener1.exportResult();*/
 	}
 }

@@ -554,7 +554,7 @@ public class InputFile {
 	 * Given .imrmc input file {@link #filename}, create {@link #fileContent}, then <br>
 	 * ----{@link #getExperimentSizeFromHeader()} <br>
 	 * ----{@link #parseObserverData()} <br>
-	 * ----{@link #verifySizesAndGetIDs(boolean)} <br>
+	 * ----{@link #verifySizesAndGetIDs(boolean,boolean)} <br>
 	 * ----{@link #processScoresAndTruth(boolean)} <br>
 	 * 
 	 * @see #dataCheckResults
@@ -617,7 +617,8 @@ public class InputFile {
 				observerData = new String[NlinesFileContent - (filePosition + 1)][4];
 				parseObserverData();
 				boolean VerboseTrue=true;
-				verifySizesAndGetIDs(VerboseTrue);		
+				boolean DisplayWarning=true;
+				verifySizesAndGetIDs(VerboseTrue, DisplayWarning);		
 				// fills keyedData and truthVals structures with proper values
 				processScoresAndTruth(VerboseTrue);
 				System.out.println("Input Raw File Successfully Read!");
@@ -676,10 +677,10 @@ public class InputFile {
 	}
 
 	private void loadSummaryData() throws IOException {
-		// TODO Auto-generated method stub
+		// load data from summary file
 		String toReturn = "";
 		DBRecordStat.AUCsReaderAvg = new double[3];
-		String tempstr = fileContent.get(beginSummaryPosition+1).toUpperCase();
+		String tempstr = fileContent.get(beginSummaryPosition+1).toUpperCase();//load Nreader
 		try {
 		DBRecordStat.Nreader= Integer.valueOf(tempstr.substring(tempstr.lastIndexOf("=")+1).trim());
 		DBRecordStat.NreaderDB= Integer.valueOf(tempstr.substring(tempstr.lastIndexOf("=")+1).trim());
@@ -687,7 +688,7 @@ public class InputFile {
 			toReturn = "Found NReaderSize =: Text following is not an integer \n"+tempstr;
 			throw new IOException(toReturn);
 		}
-		tempstr = fileContent.get(beginSummaryPosition+2).toUpperCase();
+		tempstr = fileContent.get(beginSummaryPosition+2).toUpperCase();//load Nnormal
 		try {
 		DBRecordStat.Nnormal= Integer.valueOf(tempstr.substring(tempstr.lastIndexOf("=")+1).trim());
 		DBRecordStat.NnormalDB= Integer.valueOf(tempstr.substring(tempstr.lastIndexOf("=")+1).trim());
@@ -695,7 +696,7 @@ public class InputFile {
 			toReturn = "Found NReaderSize =: Text following is not an integer \n"+tempstr;
 			throw new IOException(toReturn);
 		}
-		tempstr = fileContent.get(beginSummaryPosition+3).toUpperCase();
+		tempstr = fileContent.get(beginSummaryPosition+3).toUpperCase();//load NDisease
 		try {
 		DBRecordStat.Ndisease= Integer.valueOf(tempstr.substring(tempstr.lastIndexOf("=")+1).trim());
 		DBRecordStat.NdiseaseDB= Integer.valueOf(tempstr.substring(tempstr.lastIndexOf("=")+1).trim());
@@ -704,14 +705,14 @@ public class InputFile {
 			throw new IOException(toReturn);
 		}
 		 
-		tempstr = fileContent.get(beginSummaryPosition+5).toUpperCase();
+		tempstr = fileContent.get(beginSummaryPosition+5).toUpperCase();//load Modality A
 		try {
 		DBRecordStat.modalityA= tempstr.substring(tempstr.lastIndexOf("=")+1).trim();
 		}catch(NumberFormatException e) {
 			toReturn = "Fail to load Modality A information \n"+tempstr;
 			throw new IOException(toReturn);
 		}
-		tempstr = fileContent.get(beginSummaryPosition+6).toUpperCase();
+		tempstr = fileContent.get(beginSummaryPosition+6).toUpperCase();//load Modality B
 		try {
 			DBRecordStat.modalityB= tempstr.substring(tempstr.lastIndexOf("=")+1).trim();
 		}catch(NumberFormatException e) {
@@ -719,6 +720,7 @@ public class InputFile {
 			throw new IOException(toReturn);
 		}
 	   DBRecordStat.AUCs = new double [(int) DBRecordStat.Nreader][3];
+	   // load average AUC
 	   for (int i = beginSummaryPosition+7; i < endSummaryPosition+1; i++) {
 			tempstr = fileContent.get(i).toUpperCase().trim();
 			int loc = tempstr.indexOf("AUC_A =");
@@ -740,7 +742,7 @@ public class InputFile {
 					}
 			}
 
-			// AUCs
+			// load individual AUCs
 			loc = tempstr.indexOf("READER SPECIFIC AUC");
 			if (loc != -1 ) {
 				for (int k=2;k<DBRecordStat.Nreader+2;k++){
@@ -762,14 +764,14 @@ public class InputFile {
 
 				}
 			}
-			// BDG moments
+			// load BDG moments
 			loc = tempstr.indexOf("MODALITY1(AUC_A)");
 			if (loc != -1) {
 				String studyinfo[] = fileContent.get(i).split(",");
 				for (int j = 1; j<studyinfo.length;j++ ){
 					try{
 						String tstr = studyinfo[j];
-						DBRecordStat.BDG[0][j-1]= Double.valueOf(tstr.trim());
+						DBRecordStat.LoadBDG[0][j-1]= Double.valueOf(tstr.trim());
 					}catch (Exception e) {
 						toReturn = "ERROR: Invalid input of MODALITY1(AUC_A)";
 						toReturn = toReturn + "      row = " +   (i+1) + " \n";
@@ -785,7 +787,7 @@ public class InputFile {
 				for (int j = 1; j<studyinfo.length;j++ ){
 					try{
 						String tstr = studyinfo[j];
-						DBRecordStat.BDG[1][j-1]= Double.valueOf(tstr.trim());
+						DBRecordStat.LoadBDG[1][j-1]= Double.valueOf(tstr.trim());
 					}catch (Exception e) {
 						toReturn = "ERROR: Invalid input of MODALITY2(AUC_B)";
 						toReturn = toReturn + "      row = " +   (i+1) + " \n";
@@ -801,7 +803,7 @@ public class InputFile {
 				for (int j = 1; j<studyinfo.length;j++ ){
 					try{
 						String tstr = studyinfo[j];
-						DBRecordStat.BDG[2][j-1]= Double.valueOf(tstr.trim());
+						DBRecordStat.LoadBDG[2][j-1]= Double.valueOf(tstr.trim());
 					}catch (Exception e) {
 						toReturn = "ERROR: Invalid input of COMP PRODUCT";
 						toReturn = toReturn + "      row = " +   (i+1) + " \n";
@@ -951,7 +953,7 @@ public class InputFile {
 	 *            
 	 * @throws IOException 
 	 */
-	public void verifySizesAndGetIDs(boolean verbose)
+	public void verifySizesAndGetIDs(boolean verbose, boolean DisplayWarning)
 					throws IOException {
 		
 		Integer in0=-1, in1=-1, inr=-1, inm=-1;
@@ -1092,13 +1094,13 @@ public class InputFile {
 			for(String r : readerIDs.keySet()){
 				Integer[] countnum = casecount.get(m).get(r);
 				if (countnum==null||Math.min(countnum[0],countnum[1])<2){
-					misscasemessage = misscasemessage + "Reader: "+r+" reads less than 2 normal or disease cases in "+"Modality: "+m+"\n";
+					misscasemessage = misscasemessage + "Reader: "+r+" reads less than 2 normal or less than 2 disease cases in "+"Modality: "+m+"\n";
 					messagecount++;
 				}
 			}
 		}
-		if (messagecount>0){
-			misscasemessage = misscasemessage + "We ingore scores in these conditions";
+		if (messagecount>0&&DisplayWarning){
+			misscasemessage = misscasemessage + "ROC analysis is not possible and not executed for these reader-modality combinations.";
 		    JFrame frame = new JFrame();
 			JOptionPane.showMessageDialog(
 					frame,misscasemessage, 

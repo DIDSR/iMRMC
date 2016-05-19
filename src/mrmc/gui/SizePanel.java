@@ -48,7 +48,6 @@ public class SizePanel {
 	private DBRecord DBRecordSize;
 	public JPanel JPanelSize = new JPanel();
 	private JFrame reportFrame;
-	
 	public JRadioButton 
 		ButtonPairedReadersYes,
 		ButtonPairedReadersNo,
@@ -184,7 +183,7 @@ public class SizePanel {
 		//SizePanelRow6.add(SizeJLabelCIHillis);
 
 		// not ready to add split plot, an pairing readers or cases to sizing panel
-		// JPanelSize.add(SizePanelRow1);
+		JPanelSize.add(SizePanelRow1);
 		JPanelSize.add(SizePanelRow2);
 		JPanelSize.add(SizePanelRow3);
 		JPanelSize.add(SizePanelRow4);
@@ -298,6 +297,19 @@ public class SizePanel {
 		SizeJLabelLambdaHillis.setText("Lambda=");
 		SizeJLabelPowerHillis.setText("Power=");
 //		SizeJLabelCIHillis.setText("Conf. Int.=");
+		
+		// set study design to default 1, yes, yes, yes
+	    NumSplitPlotsJTextField.setText("1");
+	    numSplitPlots = 1;
+		ButtonPairedReadersYes.setSelected(true);
+		ButtonPairedReadersNo.setSelected(false);
+		pairedReadersFlag=1;
+	    ButtonPairedNormalsYes.setSelected(true);
+	    ButtonPairedNormalsNo.setSelected(false);
+	    pairedNormalsFlag=1;
+	    ButtonPairedDiseasedYes.setSelected(true);
+	    ButtonPairedDiseasedNo.setSelected(false);
+	    pairedDiseasedFlag=1;
 	
 	}
 	
@@ -310,9 +322,10 @@ public class SizePanel {
 		StatTest testSize = DBRecordSize.testSize;
 		String output;
 		
+		//output = "S.E=" 
+		//		+ threeDecE.format(Math.sqrt(DBRecordSize.totalVar));
 		output = "S.E=" 
-				+ threeDecE.format(Math.sqrt(DBRecordSize.totalVar));
-		
+				+ threeDecE.format(DBRecordSize.SE);
 		
 		SizeJLabelSqrtVar.setText(output);
 		//output = ",  Stat= "
@@ -392,9 +405,14 @@ public class SizePanel {
 		results = results + "\t" + SizeJLabelPowerBDG.getText();
 		results = results + "\t" + SizeJLabelCIBDG.getText();
 		results = results + "\r\n";
-		results = results + "\t" + SizeJLabelDFHillis.getText();
-		results = results + "\t" + SizeJLabelPowerHillis.getText();
-		results = results + "\t" + SizeJLabelCIHillis.getText();
+		if (DBRecordSize.flagFullyCrossed){
+			results = results + "Hillis:" ; 
+			results = results + "\t" + SizeJLabelDFHillis.getText();
+			results = results + "\t" + SizeJLabelPowerHillis.getText();
+			results = results + "\t" + SizeJLabelCIHillis.getText();
+		}else{
+			results = results + "The Hillis degrees of freedom are not calculated when the data is not fully crossed.";
+		}
 
 		return results;
 	}
@@ -412,9 +430,12 @@ public class SizePanel {
 		results = results + SizeJLabelDFBDG.getText().trim();
 		results = results + SizeJLabelPowerBDG.getText();
 		results = results + "\r\n";
+		if (DBRecordSize.flagFullyCrossed){
 		results = results + "Hills:" + SizeJLabelDFHillis.getText();
 		results = results + ", " + SizeJLabelPowerHillis.getText();
-
+		}else{
+			results = results + "The Hillis degrees of freedom are not calculated when the data is not fully crossed.";
+		}
 		return results;
 	}
 	public class NumSplitPlotsListener implements FocusListener {
@@ -499,7 +520,9 @@ public class SizePanel {
 				sigLevel = Double.parseDouble(SigLevelJTextField.getText());
 				effSize = Double.parseDouble(EffSizeJTextField.getText());
 
-				DBRecordSize.DBRecordSizeFill(GUI.SizePanel1);
+				boolean sizesucceed = DBRecordSize.DBRecordSizeFill(GUI.SizePanel1);
+				if (!sizesucceed)
+					return;
 				setSizePanel();
 
 			} catch (NumberFormatException e1) {
@@ -524,6 +547,7 @@ public class SizePanel {
 				sigLevel = Double.parseDouble(SigLevelJTextField.getText());
 				effSize = Double.parseDouble(EffSizeJTextField.getText());
 				exploreExpSize ees =  new exploreExpSize (DBRecordSize, GUI, GUI.SizePanel1);
+				
 		//		DBRecordSize.DBRecordSizeFill(GUI.SizePanel1);
 			//	setSizePanel();
 
@@ -540,11 +564,16 @@ public class SizePanel {
 	public class SizeHillisButtonListener implements ActionListener {
 
 		public void actionPerformed(ActionEvent e) {
-			String hillisValues = "Hillis 2011:"  +"\n"+  
+			String hillisValues;
+			if (DBRecordSize.flagFullyCrossed){
+			hillisValues = "Hillis 2011:"  +"\n"+  
 					SizeJLabelDFHillis.getText() +"\n"+ 
 					SizeJLabelLambdaHillis.getText() + "\n" + 
 					SizeJLabelPowerHillis.getText() + "\n" + 
 					SizeJLabelCIHillis.getText();
+			}else{
+				hillisValues = "The Hillis degrees of freedom are not calculated when the data is not fully crossed.";
+			}
 					
 			// TODO Auto-generated method stub
 			JOptionPane.showMessageDialog(reportFrame,

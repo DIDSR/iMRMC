@@ -23,6 +23,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
+import roemetz.core.RoeMetz;
 import mrmc.core.DBRecord;
 import mrmc.core.InputFile;
 import mrmc.core.Matrix;
@@ -234,7 +235,7 @@ public class StatPanel {
 		
 		// If the study is not fully crossed, then don't show other variance decomposisions.
 		if (!DBRecordStat.flagFullyCrossed) {
-			if(DBRecordStat.verbose)
+			if(DBRecordStat.verbose && !RoeMetz.doValidation)
 				JOptionPane.showMessageDialog(JFrameApp,
 					"The study is not fully crossed", "Warning",
 					JOptionPane.WARNING_MESSAGE);
@@ -253,15 +254,19 @@ public class StatPanel {
 		
 		StatJLabelH0.setText("H0: AUC = 0.50,   two-sided alternative,   95% significance,   " + 
 				DBRecordStat.getSizes());
+//		StatJLabelAUC.setText(DBRecordStat.getAUCsReaderAvgString(DBRecordStat.selectedMod) +
+	//			",   S.E(total) = " + threeDecE.format(Math.sqrt(DBRecordStat.totalVar)));
 		StatJLabelAUC.setText(DBRecordStat.getAUCsReaderAvgString(DBRecordStat.selectedMod) +
-				",   S.E(total) = " + threeDecE.format(Math.sqrt(DBRecordStat.totalVar)));
+				",   S.E(total) = " + threeDecE.format(DBRecordStat.SE));
 
 		if(DBRecordStat.selectedMod == 3) {
 			
 			StatJLabelH0.setText("H0: AUC_A - AUC_B = 0.00,   two-sided alternative,   95% significance,   " + 
 					DBRecordStat.getSizes());
+			//StatJLabelAUC.setText(DBRecordStat.getAUCsReaderAvgString(DBRecordStat.selectedMod) +
+			//		",   S.E(total) = " + threeDecE.format(Math.sqrt(DBRecordStat.totalVar)));
 			StatJLabelAUC.setText(DBRecordStat.getAUCsReaderAvgString(DBRecordStat.selectedMod) +
-					",   S.E(total) = " + threeDecE.format(Math.sqrt(DBRecordStat.totalVar)));
+					",   S.E(total) = " + threeDecE.format(DBRecordStat.SE));
 		}
 
 		
@@ -480,9 +485,14 @@ public class StatPanel {
 		results = results + "\t" + StatJLabelPValBDG.getText();
 		results = results + "\t" + StatJLabelCIBDG.getText();
 		results = results + "\n";
-		results = results + "\t" + StatJLabelDFHillis.getText();
-		results = results + "\t" + StatJLabelPValHillis.getText();
-		results = results + "\t" + StatJLabelCIHillis.getText();
+		if (DBRecordStat.flagFullyCrossed){
+			results = results + "\t" + StatJLabelDFHillis.getText();
+			results = results + "\t" + StatJLabelPValHillis.getText();
+			results = results + "\t" + StatJLabelCIHillis.getText();
+		}else{
+			results = results + "The Hillis degrees of freedom are not calculated when the data is not fully crossed.";
+		}
+
 
 		return results;
 	}
@@ -723,6 +733,14 @@ public class StatPanel {
 		double sqrtMCvarAUC_B       = Math.sqrt(mcVarAUC_B);
 		double sqrtMCvarAUC_AminusB = Math.sqrt(mcVarAUC_AminusB);
 		
+		System.out.println("      mcAvgvarAUC_A = " + avgDBRecordStat.varA +
+				   ",         mcAvgvarAUC_B = " + avgDBRecordStat.varB);
+		System.out.println("      mcVarvarAUC_A = " + varDBRecordStat.varA +
+				   ",         mcVarvarAUC_B = " + varDBRecordStat.varB + 
+				   ",         mcVartotalvar = " + varDBRecordStat.totalVar);
+		
+		
+		
 		System.out.println("      mcAvgAUC_A = " + mcAvgAUC_A +
 					   ",         mcVarAUC_A = " + mcVarAUC_A +
 					   ",         mcStdAUC_A = " + Math.sqrt(mcVarAUC_A));
@@ -774,10 +792,15 @@ public class StatPanel {
 	public class StatHillisButtonListener implements ActionListener {
 
 		public void actionPerformed(ActionEvent e) {
-			String hillisValues = StatJLabelDFHillis.getText() +"\n"+ 
+			String hillisValues;
+			if (DBRecordStat.flagFullyCrossed){
+				hillisValues = StatJLabelDFHillis.getText() +"\n"+ 
 					StatJLabelPValHillis.getText() + "\n" + 
 					StatJLabelCIHillis.getText() + "\n" + 
 					StatJLabelRejectHillis.getText();
+			}else{
+				hillisValues = "The Hillis degrees of freedom are not calculated when the data is not fully crossed.";
+			}
 					
 			// TODO Auto-generated method stub
 			JOptionPane.showMessageDialog(JFrameApp,
