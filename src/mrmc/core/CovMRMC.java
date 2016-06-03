@@ -80,6 +80,7 @@ public class CovMRMC {
 	 */
 	public double[][][] t0_modAB, t1_modAB, t0_modAA, t1_modAA, t0_modBB, t1_modBB;
 	public int[][][] d0_modAB, d1_modAB, d0_modAA, d1_modAA, d0_modBB, d1_modBB;
+	public int[][] N0perReader, N1perReader;
 
 	/**
 	 * The reader-averaged auc for each modality
@@ -700,7 +701,8 @@ public void makeTMatrices() {
 	d1_modBB = new int[(int) Ndisease][(int) Nreader][2];
 	d0_modAB = new int[(int) Nnormal][(int) Nreader][2];
 	d1_modAB = new int[(int) Ndisease][(int) Nreader][2];
-
+	N0perReader =new int[(int) Nreader][3];
+	N1perReader =new int[(int) Nreader][3];
 	double ScoreModA;
 	double ScoreModB;
 	int PresentModA;
@@ -755,7 +757,9 @@ public void makeTMatrices() {
 				d0_modAA[m][k][1] = PresentModA;
 				d0_modBB[m][k][0] = PresentModB;
 				d0_modBB[m][k][1] = PresentModB;
-
+				N0perReader[k][0] = N0perReader[k][0] + PresentModA;
+				N0perReader[k][1] = N0perReader[k][1] + PresentModB;
+				N0perReader[k][2] = N0perReader[k][2] + Math.max(PresentModA, PresentModB) ;
 				m++;
 			} else {
 				t1_modAB[n][k][0] = ScoreModA;
@@ -771,12 +775,15 @@ public void makeTMatrices() {
 				d1_modAA[n][k][1] = PresentModA;
 				d1_modBB[n][k][0] = PresentModB;
 				d1_modBB[n][k][1] = PresentModB;
-
+				N1perReader[k][0] = N1perReader[k][0] + PresentModA;
+				N1perReader[k][1] = N1perReader[k][1] + PresentModB;
+				N1perReader[k][2] = N1perReader[k][2] + Math.max(PresentModA, PresentModB) ;
 				n++;
 			}
 		} // loop over cases
 		k++;
 	} // loop over readers
+
 	
 }
 

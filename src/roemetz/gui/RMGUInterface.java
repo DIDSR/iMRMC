@@ -1050,7 +1050,7 @@ public class RMGUInterface {
 			squareDBRecordStat.flagMLE = useMLE;
 			sumSquareDBRecordStat.flagMLE = useMLE;
 			long flagTotalVarIsNegative = 0;
-			trialResultArray = new double[(int) NexpEnd][7];
+			trialResultArray = new double[(int) NexpEnd][21];
 			
 			SimRoeMetz currSimRoeMetz = new SimRoeMetz(u, var_t, RandomStreamI, sizePanel1);
 			
@@ -1170,7 +1170,21 @@ public class RMGUInterface {
 		double totalVar    = dBRecordStat.totalVar;
 		double varA    = dBRecordStat.varA;
 		double varB    = dBRecordStat.varB;
-		double[] tempTrial = {trailID+1, AUC_A,AUC_B,AUC_AminusAUC_B ,varA,varB,totalVar};
+		double rejectNormal    = dBRecordStat.testStat.rejectNormal;
+		double rejectBDG    = dBRecordStat.testStat.rejectBDG;
+		double rejectHillis    = dBRecordStat.testStat.rejectHillis;
+		double pValueNormal = dBRecordStat.testStat.pValNormal;
+		double botCInormal = dBRecordStat.testStat.ciBotNormal;
+		double topCInormal = dBRecordStat.testStat.ciTopNormal;
+		double dfBDG = dBRecordStat.testStat.DF_BDG;
+		double pValueBDG = dBRecordStat.testStat.pValBDG;
+		double botCIBDG = dBRecordStat.testStat.ciBotBDG;
+		double topCIBDG = dBRecordStat.testStat.ciTopBDG;
+		double dfHills = dBRecordStat.testStat.DF_Hillis;
+		double pValueHillis = dBRecordStat.testStat.pValHillis;
+		double botCIHillis = dBRecordStat.testStat.ciBotHillis;
+		double topCIHillis = dBRecordStat.testStat.ciTopHillis;
+		double[] tempTrial = {trailID+1, AUC_A,AUC_B,AUC_AminusAUC_B ,varA,varB,totalVar,pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis};
 		trialResultArray[(int) trailID] = tempTrial;
 	}
 
@@ -2446,15 +2460,20 @@ public class RMGUInterface {
 			FileWriter fw;		
 			fw = new FileWriter(f.getAbsoluteFile());
 			BufferedWriter bw = new BufferedWriter(fw);
-			String [] trialResultTitle = new String[] {"TrialID","AUCA","AUCB","AUCAminusB","varAUCA","varAUCB","varAUCAandB"};
+			String [] trialResultTitle = new String[] {"TrialID","AUCA","AUCB","AUCAminusB","varAUCA","varAUCB","varAUCAandB","pValueNormal","botCInormal","topCInormal",
+					"rejectNormal","dfBDG","pValueBDG","botCIBDG","topCIBDG","rejectBDG","dfHills","pValueHillis","botCIHillis","topCIHillis","rejectHillis"};
 			for (int i=0;i<trialResultTitle.length;i++){
 				bw.write(trialResultTitle[i]+",");
 			}
 			bw.write("\n");
 		    for (int i=0;i<trialResultArray.length;i++){
 		    	bw.write(Double.toString(trialResultArray[i][0])+",");
-		        for (int j=1;j<trialResultArray[0].length;j++){
-		          bw.write(fourDecE.format(trialResultArray[i][j])+",");
+		        for (int j=1;j<trialResultArray[0].length;j++){		
+		        	if (Double.isNaN(trialResultArray[i][j])){
+		        		bw.write("NaN,");
+		        	}else{
+		        		bw.write(fourDecE.format(trialResultArray[i][j])+",");
+		        	}
 		        }
 		        bw.write("\n");
 		    }

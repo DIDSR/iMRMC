@@ -95,7 +95,7 @@ public class GUInterface {
 	public InputSummaryCard InputSummaryCard;
 	private ManualCard MC;
 	public File inputfileDirectory = null;   //input file last time visit directory
-	public File outputfileDirectory = null;   //input file last time visit directory
+	public static File outputfileDirectory = null;   //input file last time visit directory
 
 	/**
 	 * InputFile1 {@link mrmc.core.InputFile}

@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 
 import roemetz.gui.RMGUInterface;
 import mrmc.core.DBRecord;
+import mrmc.core.InputFile;
 import mrmc.core.MRMC;
 import mrmc.gui.InputFileCard;
 import mrmc.gui.SizePanel;
@@ -406,6 +407,9 @@ public class exportToFile {
 		double totalVar    = VldDBRecord.totalVar;
 		double varA    = VldDBRecord.varA;
 		double varB    = VldDBRecord.varB;
+		double rejectNormal    = VldDBRecord.testStat.rejectNormal;
+		double rejectBDG    = VldDBRecord.testStat.rejectBDG;
+		double rejectHillis    = VldDBRecord.testStat.rejectHillis;
 		
 		str =  str + "mcMeanAUC_A      : " + fourDecE.format(AUC_A) + "\r\n";
 		str =  str + "mcMeanAUC_B      : " + fourDecE.format(AUC_B) + "\r\n";
@@ -413,6 +417,14 @@ public class exportToFile {
 		str =  str + "mcMeanvarAUC_A   : " + fourDecE.format(varA) + "\r\n";
 		str =  str + "mcMeanvarAUC_B   : " + fourDecE.format(varB) + "\r\n";
 		str =  str + "mcMeanvarAUC_AB  : " + fourDecE.format(totalVar) + "\r\n";
+		str =  str + "rejectNormal     : " + fourDecE.format(rejectNormal) + "\r\n";
+		str =  str + "rejectBDG        : " + fourDecE.format(rejectBDG) + "\r\n";
+		if (Double.isNaN(rejectHillis)){
+			str =  str + "rejectHillis     : NaN" + "\r\n";
+		}else{
+			str =  str + "rejectHillis     : " + fourDecE.format(rejectHillis) + "\r\n";
+		}
+		
 		return str;
 	}
 	
@@ -454,8 +466,8 @@ public class exportToFile {
 	public static String exportStat(String report, DBRecord StatDBRecord,String timestring) {
 		// TODO Auto-generated method stub
 		String str = report;
-		String head =  "input file,date,iMRMC Version,NR,N0,N1,ModalityA,Modality2,AUCA,VarAUCA,AUCB,VarAUCB,AUCA-AUCB,totalVar,"
-				+"Normal p-value,Noraml botCI,Normal TOPCI,dfBDG,BDG p-value,BDGbotCI,BDGpotCI,dfHills,Hills p-value,Hills botCI,Hills potCI";
+		String head =  "inputFile,date,iMRMCversion,NR,N0,N1,modalityA,modalityB,AUCA,varAUCA,AUCB,varAUCB,AUCAminusAUCB,varAUCAminusAUCB,"
+				+"pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis";
 		str = str + head + "\r\n";
 		String inputfilename =  StatDBRecord.InputFile1.filename.substring(StatDBRecord.InputFile1.filename.lastIndexOf("\\")+1);
 		str = str + inputfilename + SEPA;
@@ -469,50 +481,87 @@ public class exportToFile {
 		if (StatDBRecord.selectedMod == 0){
 			str = str + eightDecE.format(StatDBRecord.AUCsReaderAvg[0]) + SEPA;
 			str = str + eightDecE.format(StatDBRecord.varA) + SEPA;
-			str = str +"N/A,N/A,N/A" + SEPA;
+			str = str +"NA,NA,NA,NA" + SEPA;
 		}else if (StatDBRecord.selectedMod == 1){
-			str = str +"N/A,N/A" + SEPA;
+			str = str +"NA,NA" + SEPA;
 			str = str + eightDecE.format(StatDBRecord.AUCsReaderAvg[1]) + SEPA;
 			str = str + eightDecE.format(StatDBRecord.varB) + SEPA;
-			str = str +"N/A" + SEPA;
+			str = str +"NA,NA" + SEPA;
 		} else {
 			str = str + eightDecE.format(StatDBRecord.AUCsReaderAvg[0]) + SEPA;
 			str = str + eightDecE.format(StatDBRecord.varA) + SEPA;
 			str = str + eightDecE.format(StatDBRecord.AUCsReaderAvg[1]) + SEPA;
 			str = str + eightDecE.format(StatDBRecord.varB) + SEPA;
 			str = str + eightDecE.format(StatDBRecord.AUCsReaderAvg[0]-StatDBRecord.AUCsReaderAvg[1]) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.totalVar) + SEPA;
+
 		}
-		str = str + eightDecE.format(StatDBRecord.totalVar) + SEPA;
 		str = str + eightDecE.format(StatDBRecord.testStat.pValNormal) + SEPA;
 		str = str + eightDecE.format(StatDBRecord.testStat.ciBotNormal) + SEPA;
 		str = str + eightDecE.format(StatDBRecord.testStat.ciTopNormal) + SEPA;
+		str = str + eightDecE.format(StatDBRecord.testStat.rejectNormal) + SEPA;
 		str = str + eightDecE.format(StatDBRecord.testStat.DF_BDG) + SEPA;
 		str = str + eightDecE.format(StatDBRecord.testStat.pValBDG) + SEPA;
 		str = str + eightDecE.format(StatDBRecord.testStat.ciBotBDG) + SEPA;
 		str = str + eightDecE.format(StatDBRecord.testStat.ciTopBDG) + SEPA;
+		str = str + eightDecE.format(StatDBRecord.testStat.rejectBDG) + SEPA;
 		if (StatDBRecord.flagFullyCrossed){
 		str = str + eightDecE.format(StatDBRecord.testStat.DF_Hillis) + SEPA;
 		str = str + eightDecE.format(StatDBRecord.testStat.pValHillis) + SEPA;
 		str = str + eightDecE.format(StatDBRecord.testStat.ciBotHillis) + SEPA;
-		str = str + eightDecE.format(StatDBRecord.testStat.ciTopHillis);
+		str = str + eightDecE.format(StatDBRecord.testStat.ciTopHillis) + SEPA;
+		str = str + eightDecE.format(StatDBRecord.testStat.rejectHillis) ;
 		}else{
-			str = str +"N/A,N/A,N/A,N/A" + SEPA;
+			str = str +"N/A,N/A,N/A,N/A,N/A" + SEPA;
 		}
 		return str;
 	}
 
-	public static void saveTrailResult(int[][] trialResultArray, DBRecord dBRecordStat, long trailID) {
-		double AUC_A       = dBRecordStat.AUCsReaderAvg[0];
-		double AUC_B       = dBRecordStat.AUCsReaderAvg[1];
-		double AUC_AminusAUC_B = AUC_A-AUC_B;
-		double totalVar    = dBRecordStat.totalVar;
-		double varA    = dBRecordStat.varA;
-		double varB    = dBRecordStat.varB;
-		String[] str = {Long.toString(trailID), fourDecE.format(AUC_A),fourDecE.format(AUC_B),fourDecE.format(AUC_AminusAUC_B) ,fourDecE.format(varA), fourDecE.format(varB) , fourDecE.format(totalVar)};
-//		trialResultArray[(int) trailID] = str;
-//		str = str + Long.toString(trailID) +"," + fourDecE.format(AUC_A) +"," + fourDecE.format(AUC_B) + ","+ fourDecE.format(AUC_AminusAUC_B) + ",";
-//		str = str + fourDecE.format(varA) + "," + fourDecE.format(varB) + "," + fourDecE.format(totalVar) + "\r\n";
-//		return str;
+	public static String exportReaders(String report, DBRecord StatDBRecord,InputFile InputFile1,String timestring) {
+		// TODO Auto-generated method stub
+		String str = report;
+		String head =  "inputFile,date,iMRMCversion,NR,N0,N1,modalityA,modalityB,AUCA,varAUCA,AUCB,varAUCB,AUCAminusAUCB,varAUCAminusAUCB,"
+				+"pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis";
+		str = str + head + "\r\n";
+		String inputfilename =  StatDBRecord.InputFile1.filename.substring(StatDBRecord.InputFile1.filename.lastIndexOf("\\")+1);
+		int i=0;
+		for(String desc_temp : InputFile1.readerIDs.keySet() ) {
+			str = str + inputfilename + SEPA;
+			str = str + timestring + SEPA;
+			str = str + MRMC.versionname + SEPA;
+			str = str + desc_temp + SEPA;
+			if (StatDBRecord.selectedMod == 0){
+				str = str + StatDBRecord.covMRMCstat.N0perReader[i][0] + SEPA;
+				str = str + StatDBRecord.covMRMCstat.N1perReader[i][0] + SEPA;
+			}else if (StatDBRecord.selectedMod == 1){
+				str = str + StatDBRecord.covMRMCstat.N0perReader[i][1] + SEPA;
+				str = str + StatDBRecord.covMRMCstat.N1perReader[i][1] + SEPA;
+			} else {
+				str = str + StatDBRecord.covMRMCstat.N0perReader[i][2] + SEPA;
+				str = str + StatDBRecord.covMRMCstat.N1perReader[i][2] + SEPA;
+			}
+			str = str + StatDBRecord.modalityA + SEPA;
+			str = str + StatDBRecord.modalityB + SEPA;
+			if (StatDBRecord.selectedMod == 0){
+				str = str + eightDecE.format(StatDBRecord.AUCs[i][0]) + SEPA;
+				//str = str + eightDecE.format(StatDBRecord.varA) + SEPA;
+				str = str +"NA,NA,NA,NA,NA" + SEPA;
+			}else if (StatDBRecord.selectedMod == 1){
+				str = str +"NA,NA" + SEPA;
+				str = str + eightDecE.format(StatDBRecord.AUCs[i][1]) + SEPA;
+				//str = str + eightDecE.format(StatDBRecord.varB) + SEPA;
+				str = str +"NA,NA,NA" + SEPA;
+			} else {
+				str = str + eightDecE.format(StatDBRecord.AUCs[i][0]) + SEPA +"NA,";
+				str = str + eightDecE.format(StatDBRecord.AUCs[i][1]) + SEPA +"NA,";
+				str = str + eightDecE.format(StatDBRecord.AUCs[i][0]-StatDBRecord.AUCs[i][1]) + SEPA+"NA,";
+			}
+			i++;
+			str = str +"NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA" + "\r\n";
+		}
+
+			
+		return str;
 	}
 	
 }
