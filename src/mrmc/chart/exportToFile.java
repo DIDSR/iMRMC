@@ -512,7 +512,7 @@ public class exportToFile {
 		str = str + eightDecE.format(StatDBRecord.testStat.ciTopHillis) + SEPA;
 		str = str + eightDecE.format(StatDBRecord.testStat.rejectHillis) ;
 		}else{
-			str = str +"N/A,N/A,N/A,N/A,N/A" + SEPA;
+			str = str +"N/A,N/A,N/A,N/A,N/A" + "\r\n";
 		}
 		return str;
 	}

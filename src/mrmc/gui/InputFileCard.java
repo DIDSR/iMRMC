@@ -617,7 +617,7 @@ public class InputFileCard {
 			final String fileTime = dateForm.format(currDate);
 			String FileName=InputFile1.filename;
 			FileName= FileName.substring(0,FileName.lastIndexOf("."));
-			String sizeFilenamewithpath = FileName+"MRMCStatreaders"+fileTime+".csv";
+			String sizeFilenamewithpath = FileName+"MRMCStatReaders"+fileTime+".csv";
 			String sizeFilename = sizeFilenamewithpath.substring(sizeFilenamewithpath.lastIndexOf("\\")+1);	
 			try {
 				JFileChooser fc = new JFileChooser();
