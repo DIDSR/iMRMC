@@ -24,12 +24,18 @@ package mrmc.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.TreeMap;
 
 import javax.swing.GroupLayout;
@@ -49,12 +55,13 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import mrmc.chart.BarGraph;
 import mrmc.chart.ROCCurvePlot;
 import mrmc.chart.StudyDesignPlot;
-
-
+import mrmc.chart.WrapLayout;
+import mrmc.chart.exportToFile;
 import mrmc.core.DBRecord;
 import mrmc.core.InputFile;
 import mrmc.core.StatTest;
 
+import org.jfree.data.xy.XYSeries;
 import org.jfree.ui.RefineryUtilities;
 
 
@@ -569,25 +576,30 @@ public class InputFileCard {
 	class showAUCsButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			if( DBRecordStat.totalVar > 0.0) {
-			JFrame JFrameAUC= new JFrame("AUCs for each reader and modality");
-			RefineryUtilities.centerFrameOnScreen(JFrameAUC);
-			JFrameAUC.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-			Object[] colNames = { "ReaderID", "AUC "+DBRecordStat.modalityA, "AUC "+DBRecordStat.modalityB };
-			Object[][] rowContent = new String[(int) DBRecordStat.Nreader][3];
-			int i=0;
-			for(String desc_temp : InputFile1.readerIDs.keySet() ) {
-				rowContent[i][0] = desc_temp;
-				rowContent[i][1] = Double.toString(DBRecordStat.AUCs[i][0]);
-				rowContent[i][2] = Double.toString(DBRecordStat.AUCs[i][1]);
-				i++;
-			}
-
-			JTable tableAUC = new JTable(rowContent, colNames);
-			JScrollPane scrollPaneAUC = new JScrollPane(tableAUC);
-			JFrameAUC.add(scrollPaneAUC, BorderLayout.CENTER);
-			JFrameAUC.setSize(600, 300);
-			JFrameAUC.setVisible(true);
+				JFrame JFrameAUC= new JFrame("AUCs for each reader and modality");
+				RefineryUtilities.centerFrameOnScreen(JFrameAUC);
+				JFrameAUC.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+	
+				Object[] colNames = { "ReaderID", "AUC "+DBRecordStat.modalityA, "AUC "+DBRecordStat.modalityB };
+				Object[][] rowContent = new String[(int) DBRecordStat.Nreader][3];
+				int i=0;
+				for(String desc_temp : InputFile1.readerIDs.keySet() ) {
+					rowContent[i][0] = desc_temp;
+					rowContent[i][1] = Double.toString(DBRecordStat.AUCs[i][0]);
+					rowContent[i][2] = Double.toString(DBRecordStat.AUCs[i][1]);
+					i++;
+				}
+	
+				JTable tableAUC = new JTable(rowContent, colNames);
+				JScrollPane scrollPaneAUC = new JScrollPane(tableAUC);
+				JFrameAUC.add(scrollPaneAUC, BorderLayout.CENTER);
+				JFrameAUC.setSize(600, 300);
+				JFrameAUC.setVisible(true);
+				JButton exportreader = new JButton("Export");
+				exportreader.addActionListener(new exportreaderresult());
+				JPanel exportPanel = new JPanel(new WrapLayout());
+				exportPanel.add(exportreader);
+				JFrameAUC.add(exportPanel, BorderLayout.PAGE_END);
 			}
 			else {
 				JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
@@ -595,6 +607,55 @@ public class InputFileCard {
 						JOptionPane.ERROR_MESSAGE);
 
 			}
+		}
+	}
+	class exportreaderresult implements ActionListener{
+		public void actionPerformed(ActionEvent e) {
+			String report = "";
+            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
+			Date currDate = new Date();
+			final String fileTime = dateForm.format(currDate);
+			String FileName=InputFile1.filename;
+			FileName= FileName.substring(0,FileName.lastIndexOf("."));
+			String sizeFilenamewithpath = FileName+"MRMCStatreaders"+fileTime+".csv";
+			String sizeFilename = sizeFilenamewithpath.substring(sizeFilenamewithpath.lastIndexOf("\\")+1);	
+			try {
+				JFileChooser fc = new JFileChooser();
+				FileNameExtensionFilter filter = new FileNameExtensionFilter(
+						"iMRMC Summary Files (.csv)", "csv");
+				fc.setFileFilter(filter);
+				if (GUInterface.outputfileDirectory!=null){
+					 fc.setSelectedFile(new File(GUInterface.outputfileDirectory+"\\"+sizeFilename));						
+				}						
+				else					
+				    fc.setSelectedFile(new File(sizeFilenamewithpath));
+				int fcReturn = fc.showSaveDialog((Component) e.getSource());
+				if (fcReturn == JFileChooser.APPROVE_OPTION) {
+					File f = fc.getSelectedFile();
+					if (!f.exists()) {
+						f.createNewFile();
+					}
+					String savedFileName = f.getPath();
+					
+					report = exportToFile.exportReaders(report, DBRecordStat,InputFile1, fileTime);		
+					
+					FileWriter fw = new FileWriter(f.getAbsoluteFile());
+					BufferedWriter bw = new BufferedWriter(fw);
+					bw.write(report);
+					bw.close();
+					GUInterface.outputfileDirectory = fc.getCurrentDirectory();
+				    String savedfilename = fc.getSelectedFile().getName();
+				    JFrame frame = new JFrame();
+					JOptionPane.showMessageDialog(
+							frame,"The size result has been succeed export to "+GUInterface.outputfileDirectory+ " !\n"+ "Filename = " +savedfilename, 
+							"Exported", JOptionPane.INFORMATION_MESSAGE);
+				}
+			} catch (HeadlessException e1) {
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			} 
+
 		}
 	}
 }

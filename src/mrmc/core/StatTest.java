@@ -115,7 +115,7 @@ public class StatTest {
 
 		if(pValNormal < sig) rejectNormal = 1;
 		if(pValBDG < sig) rejectBDG = 1;
-
+		
         // if study is fully crossed calculate DF_Hillis
 		// calculate p-value and cutoff assuming t-distribution with DF_Hillis
 		// Use normal distribution if df > 50, since they are approximately
@@ -134,6 +134,8 @@ public class StatTest {
 			ciBotHillis = meanCI - Math.sqrt(DBRecordStat.totalVar) * cutoffHillis;
 			ciTopHillis = meanCI + Math.sqrt(DBRecordStat.totalVar) * cutoffHillis;
 			if(pValHillis < sig) rejectHillis = 1;
+		}else{
+			rejectHillis = Double.NaN;
 		}
 		if(DBRecordStat.verbose) {
 			System.out.println("NR=" + DBRecordStat.Nreader + 

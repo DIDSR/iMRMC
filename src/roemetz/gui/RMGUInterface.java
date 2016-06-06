@@ -1050,7 +1050,7 @@ public class RMGUInterface {
 			squareDBRecordStat.flagMLE = useMLE;
 			sumSquareDBRecordStat.flagMLE = useMLE;
 			long flagTotalVarIsNegative = 0;
-			trialResultArray = new double[(int) NexpEnd][7];
+			trialResultArray = new double[(int) NexpEnd][21];
 			
 			SimRoeMetz currSimRoeMetz = new SimRoeMetz(u, var_t, RandomStreamI, sizePanel1);
 			
@@ -1068,8 +1068,7 @@ public class RMGUInterface {
 			DBRecord.square(squareDBRecordStat);
 			DBRecord.copy(squareDBRecordStat, sumSquareDBRecordStat);
 			if (RoeMetz.doValidation){
-				//trailResult = exportToFile.exportTrail(trailResult,DBRecordStat,1);
-				saveTrailResult(DBRecordStat,0);
+				saveTrialResult(DBRecordStat,0);
 			}
 			// write to disk
 			if (simSaveDirectory != null && !simSaveDirectory.equals("")) {
@@ -1078,7 +1077,7 @@ public class RMGUInterface {
 			
 			// continue the loop, add the simulation results to avgDBRecordStat
 			for (long i = NexpStart+1; i < NexpEnd; i++) {
-					// When seed = 123456, trail 68447 will generate a Inf. Using following function to check it. 
+					// When seed = 123456, trial 68447 will generate a Inf. Using following function to check it. 
 					//int mm;
 					//if (i == 68447)
 					//    mm = 1;
@@ -1116,10 +1115,9 @@ public class RMGUInterface {
 					DBRecord.copy(DBRecordStat, squareDBRecordStat);
 					DBRecord.square(squareDBRecordStat);
 					DBRecord.add(squareDBRecordStat, sumSquareDBRecordStat);
-					// pad current simulation result to trailResult. 
+					// pad current simulation result to trialResult. 
 					if (RoeMetz.doValidation){
-						//trailResult = exportToFile.exportTrail(trailResult,DBRecordStat,i+1);
-						saveTrailResult(DBRecordStat,i);
+						saveTrialResult(DBRecordStat,i);
 					}
 					// write to disk
 					if (simSaveDirectory != null && !simSaveDirectory.equals("")) {
@@ -1163,15 +1161,29 @@ public class RMGUInterface {
 	 * function to save each trial result to trialResultArray
 	 * 
 	 */
-	private void saveTrailResult( DBRecord dBRecordStat, long trailID) {
+	private void saveTrialResult( DBRecord dBRecordStat, long trialID) {
 		double AUC_A       = dBRecordStat.AUCsReaderAvg[0];
 		double AUC_B       = dBRecordStat.AUCsReaderAvg[1];
 		double AUC_AminusAUC_B = AUC_A-AUC_B;
 		double totalVar    = dBRecordStat.totalVar;
 		double varA    = dBRecordStat.varA;
 		double varB    = dBRecordStat.varB;
-		double[] tempTrial = {trailID+1, AUC_A,AUC_B,AUC_AminusAUC_B ,varA,varB,totalVar};
-		trialResultArray[(int) trailID] = tempTrial;
+		double rejectNormal    = dBRecordStat.testStat.rejectNormal;
+		double rejectBDG    = dBRecordStat.testStat.rejectBDG;
+		double rejectHillis    = dBRecordStat.testStat.rejectHillis;
+		double pValueNormal = dBRecordStat.testStat.pValNormal;
+		double botCInormal = dBRecordStat.testStat.ciBotNormal;
+		double topCInormal = dBRecordStat.testStat.ciTopNormal;
+		double dfBDG = dBRecordStat.testStat.DF_BDG;
+		double pValueBDG = dBRecordStat.testStat.pValBDG;
+		double botCIBDG = dBRecordStat.testStat.ciBotBDG;
+		double topCIBDG = dBRecordStat.testStat.ciTopBDG;
+		double dfHills = dBRecordStat.testStat.DF_Hillis;
+		double pValueHillis = dBRecordStat.testStat.pValHillis;
+		double botCIHillis = dBRecordStat.testStat.ciBotHillis;
+		double topCIHillis = dBRecordStat.testStat.ciTopHillis;
+		double[] tempTrial = {trialID+1, AUC_A,AUC_B,AUC_AminusAUC_B ,varA,varB,totalVar,pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis};
+		trialResultArray[(int) trialID] = tempTrial;
 	}
 
 	/**
@@ -2438,7 +2450,7 @@ public class RMGUInterface {
 			File outputDir = new File (validateFunction.inputFile.getParent()+"//"+"output");				
 			String FileName=validateFunction.inputFile.getName();
 			FileName= FileName.substring(0,FileName.lastIndexOf("."));
-			String exportFileName = FileName +"Trail" +".csv";
+			String exportFileName = FileName +"Trial" +".csv";
 			f = new File (outputDir +"//" + exportFileName);
 			if (!f.exists()) {
 				f.createNewFile();
@@ -2446,15 +2458,20 @@ public class RMGUInterface {
 			FileWriter fw;		
 			fw = new FileWriter(f.getAbsoluteFile());
 			BufferedWriter bw = new BufferedWriter(fw);
-			String [] trialResultTitle = new String[] {"TrialID","AUCA","AUCB","AUCAminusB","varAUCA","varAUCB","varAUCAandB"};
+			String [] trialResultTitle = new String[] {"TrialID","AUCA","AUCB","AUCAminusB","varAUCA","varAUCB","varAUCAandB","pValueNormal","botCInormal","topCInormal",
+					"rejectNormal","dfBDG","pValueBDG","botCIBDG","topCIBDG","rejectBDG","dfHills","pValueHillis","botCIHillis","topCIHillis","rejectHillis"};
 			for (int i=0;i<trialResultTitle.length;i++){
 				bw.write(trialResultTitle[i]+",");
 			}
 			bw.write("\n");
 		    for (int i=0;i<trialResultArray.length;i++){
 		    	bw.write(Double.toString(trialResultArray[i][0])+",");
-		        for (int j=1;j<trialResultArray[0].length;j++){
-		          bw.write(fourDecE.format(trialResultArray[i][j])+",");
+		        for (int j=1;j<trialResultArray[0].length;j++){		
+		        	if (Double.isNaN(trialResultArray[i][j])){
+		        		bw.write("NaN,");
+		        	}else{
+		        		bw.write(fourDecE.format(trialResultArray[i][j])+",");
+		        	}
 		        }
 		        bw.write("\n");
 		    }
