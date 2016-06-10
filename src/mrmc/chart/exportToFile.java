@@ -2,6 +2,9 @@ package mrmc.chart;
 
 import java.text.DecimalFormat;
 
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+
 import roemetz.gui.RMGUInterface;
 import mrmc.core.DBRecord;
 import mrmc.core.InputFile;
@@ -462,13 +465,10 @@ public class exportToFile {
 		str =  str + "mcVarvarAUC_AB   : " + fourDecE.format(mcVartotalVar) + "\r\n";
 		return str;
 	}
-
+	
+	// Export stat result in one line
 	public static String exportStat(String report, DBRecord StatDBRecord,String timestring) {
-		// TODO Auto-generated method stub
 		String str = report;
-		String head =  "inputFile,date,iMRMCversion,NR,N0,N1,modalityA,modalityB,AUCA,varAUCA,AUCB,varAUCB,AUCAminusAUCB,varAUCAminusAUCB,"
-				+"pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis";
-		str = str + head + "\r\n";
 		String inputfilename =  StatDBRecord.InputFile1.filename.substring(StatDBRecord.InputFile1.filename.lastIndexOf("\\")+1);
 		str = str + inputfilename + SEPA;
 		str = str + timestring + SEPA;
@@ -496,33 +496,36 @@ public class exportToFile {
 			str = str + eightDecE.format(StatDBRecord.totalVar) + SEPA;
 
 		}
-		str = str + eightDecE.format(StatDBRecord.testStat.pValNormal) + SEPA;
-		str = str + eightDecE.format(StatDBRecord.testStat.ciBotNormal) + SEPA;
-		str = str + eightDecE.format(StatDBRecord.testStat.ciTopNormal) + SEPA;
-		str = str + eightDecE.format(StatDBRecord.testStat.rejectNormal) + SEPA;
-		str = str + eightDecE.format(StatDBRecord.testStat.DF_BDG) + SEPA;
-		str = str + eightDecE.format(StatDBRecord.testStat.pValBDG) + SEPA;
-		str = str + eightDecE.format(StatDBRecord.testStat.ciBotBDG) + SEPA;
-		str = str + eightDecE.format(StatDBRecord.testStat.ciTopBDG) + SEPA;
-		str = str + eightDecE.format(StatDBRecord.testStat.rejectBDG) + SEPA;
-		if (StatDBRecord.flagFullyCrossed){
-		str = str + eightDecE.format(StatDBRecord.testStat.DF_Hillis) + SEPA;
-		str = str + eightDecE.format(StatDBRecord.testStat.pValHillis) + SEPA;
-		str = str + eightDecE.format(StatDBRecord.testStat.ciBotHillis) + SEPA;
-		str = str + eightDecE.format(StatDBRecord.testStat.ciTopHillis) + SEPA;
-		str = str + eightDecE.format(StatDBRecord.testStat.rejectHillis) ;
+		if (StatDBRecord.totalVar>0){
+			str = str + eightDecE.format(StatDBRecord.testStat.pValNormal) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.testStat.ciBotNormal) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.testStat.ciTopNormal) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.testStat.rejectNormal) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.testStat.DF_BDG) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.testStat.pValBDG) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.testStat.ciBotBDG) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.testStat.ciTopBDG) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.testStat.rejectBDG) + SEPA;
+			if (StatDBRecord.flagFullyCrossed){
+			str = str + eightDecE.format(StatDBRecord.testStat.DF_Hillis) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.testStat.pValHillis) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.testStat.ciBotHillis) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.testStat.ciTopHillis) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.testStat.rejectHillis) + "\r\n" ;
+			}else{
+				str = str +"NA,NA,NA,NA,NA" + "\r\n";
+			}
 		}else{
-			str = str +"N/A,N/A,N/A,N/A,N/A" + "\r\n";
+			str = str + "NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA" +"\r\n";
 		}
+
 		return str;
 	}
 
+	// export each readers analysis result
 	public static String exportReaders(String report, DBRecord StatDBRecord,InputFile InputFile1,String timestring) {
-		// TODO Auto-generated method stub
+		
 		String str = report;
-		String head =  "inputFile,date,iMRMCversion,NR,N0,N1,modalityA,modalityB,AUCA,varAUCA,AUCB,varAUCB,AUCAminusAUCB,varAUCAminusAUCB,"
-				+"pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis";
-		str = str + head + "\r\n";
 		String inputfilename =  StatDBRecord.InputFile1.filename.substring(StatDBRecord.InputFile1.filename.lastIndexOf("\\")+1);
 		int i=0;
 		for(String desc_temp : InputFile1.readerIDs.keySet() ) {
@@ -561,6 +564,29 @@ public class exportToFile {
 		}
 
 			
+		return str;
+	}
+
+	// export ROC curve information 
+	public static String exportROC(XYSeriesCollection seriesCollection,String report) {
+		String str = report;
+		str = str + "ModalityID:ReaderID,Number of points,Axises"+"\r\n";
+		int a =seriesCollection.getSeriesCount();
+        for (int j=0;j<seriesCollection.getSeriesCount();j++){
+            String serisekey =(String) seriesCollection.getSeriesKey(j); 
+            XYSeries seriesget = seriesCollection.getSeries(serisekey);             
+            str = str +serisekey+SEPA;
+            str = str + Integer.toString(seriesget.getItemCount()) + SEPA;
+            str = str + "FPF" + SEPA; 
+    	    for (int i=0; i<seriesget.getItemCount(); i++){
+    	    	str = str + fourDec.format(seriesget.getX(i)) + SEPA;
+    	    }
+    	    str = str + "\r\n" + SEPA + SEPA +"TPF" + SEPA;
+    	    for (int i=0; i<seriesget.getItemCount(); i++){
+    	    	str = str + fourDec.format(seriesget.getY(i)) + SEPA;
+    	    }
+    	    str = str + "\r\n";
+        } 			
 		return str;
 	}
 	

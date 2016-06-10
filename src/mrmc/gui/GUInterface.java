@@ -106,6 +106,7 @@ public class GUInterface {
 	 */
 	public DBRecord DBRecordStat = new DBRecord(this);
 	public DBRecord DBRecordSize = new DBRecord(this);
+	private DBRecord DBRecordStatAll = new DBRecord(this);
 	public int resetcall = 0 ;
 	public final static int USE_MLE = 1;
 	public final static int NO_MLE = 0;
@@ -336,24 +337,25 @@ public class GUInterface {
 		 * This panel should allow for writing results of the current analysis to the hard drive.
 		 */
 		JPanel panelSummary = new JPanel();
-		panelSummary.add(new JLabel("GUI Summary:"));
-		JButton saveGUI = new JButton("Save to File");
+		JButton saveGUI = new JButton("Save Stat Summary");
 		saveGUI.addActionListener(new SaveGUIButtonListener());
 		
 		panelSummary.add(saveGUI);
 
-		panelSummary.add(new JLabel("GUI Size:"));
 		JButton saveSize = new JButton("Save Size");
 		saveSize.addActionListener(new SaveGUISizeListener());
 		
 		panelSummary.add(saveSize);
-		
-		
-		panelSummary.add(new JLabel("GUI statistical:"));
+
 		JButton saveStat = new JButton("Save Stat");
 		saveStat.addActionListener(new SaveGUIStatListener());
 		
 		panelSummary.add(saveStat);
+		
+		JButton saveAll = new JButton("Save All Stat");
+		saveAll.addActionListener(new SaveAllStatListener());
+		
+		panelSummary.add(saveAll);
 		
 		cp.add(inputSelectPane);
 		cp.add(InputPane);
@@ -553,7 +555,9 @@ public class GUInterface {
 		public void actionPerformed(ActionEvent e) {
 			if( DBRecordStat.totalVar > 0.0) {
 				DBRecordStat.InputFile1 = InputFile1;
-				String report = "";
+	    		String head =  "inputFile,date,iMRMCversion,NR,N0,N1,modalityA,modalityB,AUCA,varAUCA,AUCB,varAUCB,AUCAminusAUCB,varAUCAminusAUCB,"
+	    				+"pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis";
+				String report = head +"\r\n";
 	            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
 				Date currDate = new Date();
 				final String fileTime = dateForm.format(currDate);
@@ -610,7 +614,111 @@ public class GUInterface {
 		}
 	}
 	
-	
+	/**	 * Handler for button to save all stat analysis result to file
+	 */
+	class SaveAllStatListener implements ActionListener {
+
+	//	@Override
+		//public String sFileName="";
+		public void actionPerformed(ActionEvent e) {
+			if (InputFile1.isLoaded()) {    	// check raw data is loaded
+				System.out.println("MRMC Save All Stat button clicked");
+				// Create a list for all combination of modality
+				int numMod = InputFile1.getModalityIDs().size();
+				int modCombination  = calFactorial(numMod)/calFactorial(numMod-2)/calFactorial(2)+3;      // find how many combination in total
+				String[][] modCombinationList = new String[modCombination] [2];
+				String[] rocMod = new String[numMod];
+				int count = 0;
+				for (String ModalityID : InputFile1.getModalityIDs()) {
+					modCombinationList[count][0]= ModalityID;
+					modCombinationList[count][1]= "NO_MOD";
+					rocMod[count] = ModalityID;
+					count++;
+				}
+				for (int i=0; i<numMod-1; i++) {
+					for(int j=i+1 ; j<numMod; j++){
+						modCombinationList[count][0]= modCombinationList[i][0];
+						modCombinationList[count][1]= modCombinationList[j][0];
+						count++;
+					}
+				}
+				
+	            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
+				Date currDate = new Date();
+				final String fileTime = dateForm.format(currDate);
+				String FileName=InputFile1.filename;
+				FileName= FileName.substring(0,FileName.lastIndexOf("."));
+				// create file save all stat analysis result
+				String AllStatPath = FileName+"MRMCAllStat"+fileTime+".csv";
+	            String AllStatName = AllStatPath.substring(FileName.lastIndexOf("\\")+1);
+				// create file save all stat analysis result
+				String AllAUCsPath = FileName+"MRMCAllAUCs"+fileTime+".csv";
+	            String AllAUCsName = AllAUCsPath.substring(FileName.lastIndexOf("\\")+1);
+				// create file save all stat analysis result
+				String AllROCPath = FileName+"MRMCAllROC"+fileTime+".csv";
+	            String AllROCName = AllROCPath.substring(FileName.lastIndexOf("\\")+1);
+	            // initial 3 string to save All stat, AUCs and ROC result
+	    		String head =  "inputFile,date,iMRMCversion,NR,N0,N1,modalityA,modalityB,AUCA,varAUCA,AUCB,varAUCB,AUCAminusAUCB,varAUCAminusAUCB,"
+	    				+"pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis";
+	            String AllStatreport = head+"\r\n";
+	            String AllAUCsreport = head+"\r\n";
+	            String AllROCreport = "";
+				
+	            //Do simulation for each group of modality, save Stat and reader AUC result
+				for (int i = 0; i<count; i ++ ){
+					DBRecordStatAll.flagMLE = 0;
+					DBRecordStatAll.modalityA = modCombinationList[i][0];
+					DBRecordStatAll.modalityB = modCombinationList[i][1];
+					if (i<numMod){
+						DBRecordStatAll.selectedMod = 0;
+					}else{
+						DBRecordStatAll.selectedMod = 3;
+					}
+					DBRecord DBRecordStattrack = DBRecordStatAll;
+					DBRecordStatAll.DBRecordStatFill(InputFile1, DBRecordStatAll);
+					AllStatreport = exportToFile.exportStat(AllStatreport, DBRecordStatAll, fileTime);
+					AllAUCsreport = exportToFile.exportReaders(AllAUCsreport, DBRecordStatAll,InputFile1, fileTime);		
+					int a=1;
+				}
+				
+				//Get ROC result
+				final ROCCurvePlot roc = new ROCCurvePlot(
+						"ROC Curve: All Modality ",
+						"FPF (1 - Specificity), legend shows symbols for each modalityID:readerID", "TPF (Sensitivity)",
+						InputFile1.generateROCpoints(rocMod),InputFile1.filename);
+				roc.addData(InputFile1.generatePooledROC(rocMod), "Pooled Average");
+				AllROCreport = exportToFile.exportROC(roc.seriesCollection,AllROCreport);
+				
+				// export 3 strings to files
+				try {
+					FileWriter fwAllStat = new FileWriter(AllStatPath);
+					FileWriter fwAllAUCs = new FileWriter(AllAUCsPath);
+					FileWriter fwAllROC = new FileWriter(AllROCPath);
+					BufferedWriter bwAllStat = new BufferedWriter(fwAllStat);
+					BufferedWriter bwAllAUCs = new BufferedWriter(fwAllAUCs);
+					BufferedWriter bwAllROC = new BufferedWriter(fwAllROC);
+					bwAllStat.write(AllStatreport);
+					bwAllStat.close();
+					bwAllAUCs.write(AllAUCsreport);
+					bwAllAUCs.close();
+					bwAllROC.write(AllROCreport);
+					bwAllROC.close();
+					JOptionPane.showMessageDialog(
+									thisGUI.MRMCobject.getFrame(),"All modalities combinations statistic analysis, AUCs and  ROC have been succeed export to input file directory!", 
+									"Exported", JOptionPane.INFORMATION_MESSAGE);
+				} catch (HeadlessException e1) {
+						e1.printStackTrace();
+				} catch (IOException e1) {
+						e1.printStackTrace();
+				} 
+			}else{
+				JOptionPane.showMessageDialog(thisGUI.MRMCobject.getFrame(),
+						"Please load Reader study data input file.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+						
+		}
+	}
 	
 	
 	
@@ -728,9 +836,17 @@ public class GUInterface {
 		}
 	}
 
+	/**
+     * Calculate Factorial for a number
+	 */
 
-
-
+	public int calFactorial(int n){
+		int factorial = 1;
+		for (int i = 1; i<=n; i++){
+			factorial = factorial * i;
+		}
+		return factorial;
+	}
 
 
 

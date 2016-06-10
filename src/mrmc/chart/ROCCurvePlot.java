@@ -65,7 +65,7 @@ public class ROCCurvePlot extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private XYLineAndShapeRenderer renderer;
-	private XYSeriesCollection seriesCollection;          //ROC curve data
+	public XYSeriesCollection seriesCollection;          //ROC curve data
 	private ArrayList<InterpolatedLine> allLines;
 	private ArrayList<String> readerSeriesTitles;         //readers ID
 	private ArrayList<JCheckBox> readerSeriesBoxes;

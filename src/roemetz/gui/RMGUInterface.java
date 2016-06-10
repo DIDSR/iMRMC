@@ -1067,9 +1067,7 @@ public class RMGUInterface {
 			DBRecord.copy(DBRecordStat, squareDBRecordStat);			
 			DBRecord.square(squareDBRecordStat);
 			DBRecord.copy(squareDBRecordStat, sumSquareDBRecordStat);
-			if (RoeMetz.doValidation){
-				saveTrialResult(DBRecordStat,0);
-			}
+			saveTrialResult(DBRecordStat,0);
 			// write to disk
 			if (simSaveDirectory != null && !simSaveDirectory.equals("")) {
 				writeInputFile(sumDBRecordStat, filenameTime, NexpStart);
@@ -1105,20 +1103,19 @@ public class RMGUInterface {
 					// Replace current simulation with a new simulation
 					if(DBRecordStat.totalVar < 0) {
 						flagTotalVarIsNegative++;
-						i--;
+						// pad current simulation result to trialResult even totalvar < 0. 
+						saveTrialResult(DBRecordStat,i);
 						continue;
 					}
-					
+					// pad current simulation result to trialResult. 
+					saveTrialResult(DBRecordStat,i);
 					// Accumulate DBRecord
 					DBRecord.add(DBRecordStat, sumDBRecordStat);
 					// Accumulate squareDBRecord
 					DBRecord.copy(DBRecordStat, squareDBRecordStat);
 					DBRecord.square(squareDBRecordStat);
 					DBRecord.add(squareDBRecordStat, sumSquareDBRecordStat);
-					// pad current simulation result to trialResult. 
-					if (RoeMetz.doValidation){
-						saveTrialResult(DBRecordStat,i);
-					}
+					
 					// write to disk
 					if (simSaveDirectory != null && !simSaveDirectory.equals("")) {
 						writeInputFile(DBRecordStat, filenameTime, i);
@@ -1397,16 +1394,17 @@ public class RMGUInterface {
 			}
 			
  			final double Nexp = Integer.valueOf(JTextField_Nexp.getText());
-			DBRecord.scale(avgDBRecordStat, 1.0/Nexp);
-			DBRecord.scale(avgSquareDBRecordStat, 1.0/Nexp);
+ 			double UseTrial = Nexp - avgDBRecordStat.flagTotalVarIsNegative;
+			DBRecord.scale(avgDBRecordStat, 1.0/UseTrial);
+			DBRecord.scale(avgSquareDBRecordStat, 1.0/UseTrial);
 
 			// Calculate second order moments
 			DBRecord.copy(avgSquareDBRecordStat, squareDBRecordStat);
-			DBRecord.scale(squareDBRecordStat, Nexp/(Nexp-1));
+			DBRecord.scale(squareDBRecordStat, UseTrial/(UseTrial-1));
 			// Calculate squared means
 			DBRecord.copy(avgDBRecordStat, DBRecordStat);
 			DBRecord.square(DBRecordStat);
-			DBRecord.scale(DBRecordStat, -Nexp/(Nexp-1));
+			DBRecord.scale(DBRecordStat, -UseTrial/(UseTrial-1));
 			// Calculate variances: N/(N-1) * (avg(x^2) - avg(x)^2)
 			DBRecord.add(DBRecordStat, squareDBRecordStat);
 			// Rename result
