@@ -631,6 +631,7 @@ public class InputFile {
 				DBRecordStat = GUI.DBRecordStat;
 				loadSummaryData();
 				System.out.println("Input Summary File Successfully Read!");
+				isLoaded = true;
 			}
 			
 

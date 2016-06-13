@@ -75,8 +75,8 @@ public class InputSummaryCard {
 	public int FlagMLE = NO_MLE;
 	private JCheckBox mleCheckBoxSummary;
 	private JComboBox<String> chooseA;
-	private String loadmodalityA;
-	private String loadmodalityB;
+	public String loadmodalityA;
+	public String loadmodalityB;
 
 	/**
 	 * Sets study panel to default values, removes modalities from drop down

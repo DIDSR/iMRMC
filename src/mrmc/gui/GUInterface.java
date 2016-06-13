@@ -167,12 +167,12 @@ public class GUInterface {
 		public void resetGUI() {
 			InputFile1.resetInputFile();
 			resetcall = 1;
+			DBRecordStat.resetDBRecord();
 			InputFileCard.resetInputFileCard();
 			InputSummaryCard.resetInputSummaryCard();
 			resetcall = 0 ;
 			StatPanel1.resetStatPanel();
 			SizePanel1.resetSizePanel();
-	
 			StatPanel1.enableTabs();
 
 		}
@@ -622,27 +622,6 @@ public class GUInterface {
 		//public String sFileName="";
 		public void actionPerformed(ActionEvent e) {
 			if (InputFile1.isLoaded()) {    	// check raw data is loaded
-				System.out.println("MRMC Save All Stat button clicked");
-				// Create a list for all combination of modality
-				int numMod = InputFile1.getModalityIDs().size();
-				int modCombination  = calFactorial(numMod)/calFactorial(numMod-2)/calFactorial(2)+3;      // find how many combination in total
-				String[][] modCombinationList = new String[modCombination] [2];
-				String[] rocMod = new String[numMod];
-				int count = 0;
-				for (String ModalityID : InputFile1.getModalityIDs()) {
-					modCombinationList[count][0]= ModalityID;
-					modCombinationList[count][1]= "NO_MOD";
-					rocMod[count] = ModalityID;
-					count++;
-				}
-				for (int i=0; i<numMod-1; i++) {
-					for(int j=i+1 ; j<numMod; j++){
-						modCombinationList[count][0]= modCombinationList[i][0];
-						modCombinationList[count][1]= modCombinationList[j][0];
-						count++;
-					}
-				}
-				
 	            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
 				Date currDate = new Date();
 				final String fileTime = dateForm.format(currDate);
@@ -663,54 +642,115 @@ public class GUInterface {
 	            String AllStatreport = head+"\r\n";
 	            String AllAUCsreport = head+"\r\n";
 	            String AllROCreport = "";
-				
-	            //Do simulation for each group of modality, save Stat and reader AUC result
-				for (int i = 0; i<count; i ++ ){
-					DBRecordStatAll.flagMLE = 0;
-					DBRecordStatAll.modalityA = modCombinationList[i][0];
-					DBRecordStatAll.modalityB = modCombinationList[i][1];
-					if (i<numMod){
-						DBRecordStatAll.selectedMod = 0;
-					}else{
-						DBRecordStatAll.selectedMod = 3;
+				if  (GUInterface.selectedInput == GUInterface.DescInputModeImrmc){
+					System.out.println("MRMC Save All Stat button clicked");
+					// Create a list for all combination of modality
+					int numMod = InputFile1.getModalityIDs().size();
+					int modCombination  = calFactorial(numMod)/calFactorial(numMod-2)/calFactorial(2)+3;      // find how many combination in total
+					String[][] modCombinationList = new String[modCombination] [2];
+					String[] rocMod = new String[numMod];
+					int count = 0;
+					for (String ModalityID : InputFile1.getModalityIDs()) {
+						modCombinationList[count][0]= ModalityID;
+						modCombinationList[count][1]= "NO_MOD";
+						rocMod[count] = ModalityID;
+						count++;
 					}
-					DBRecord DBRecordStattrack = DBRecordStatAll;
-					DBRecordStatAll.DBRecordStatFill(InputFile1, DBRecordStatAll);
+					for (int i=0; i<numMod-1; i++) {
+						for(int j=i+1 ; j<numMod; j++){
+							modCombinationList[count][0]= modCombinationList[i][0];
+							modCombinationList[count][1]= modCombinationList[j][0];
+							count++;
+						}
+					}
+					
+		            //Do simulation for each group of modality, save Stat and reader AUC result
+					for (int i = 0; i<count; i ++ ){
+						DBRecordStatAll.flagMLE = 0;
+						DBRecordStatAll.modalityA = modCombinationList[i][0];
+						DBRecordStatAll.modalityB = modCombinationList[i][1];
+						if (i<numMod){
+							DBRecordStatAll.selectedMod = 0;
+						}else{
+							DBRecordStatAll.selectedMod = 3;
+						}
+						DBRecordStatAll.DBRecordStatFill(InputFile1, DBRecordStatAll);
+						AllStatreport = exportToFile.exportStat(AllStatreport, DBRecordStatAll, fileTime);
+						AllAUCsreport = exportToFile.exportReaders(AllAUCsreport, DBRecordStatAll,InputFile1, fileTime);		
+						int a=1;
+					}
+					
+					//Get ROC result
+					final ROCCurvePlot roc = new ROCCurvePlot(
+							"ROC Curve: All Modality ",
+							"FPF (1 - Specificity), legend shows symbols for each modalityID:readerID", "TPF (Sensitivity)",
+							InputFile1.generateROCpoints(rocMod),InputFile1.filename);
+					roc.addData(InputFile1.generatePooledROC(rocMod), "Pooled Average");
+					AllROCreport = exportToFile.exportROC(roc.seriesCollection,AllROCreport);
+					
+					// export 3 strings to files
+					try {
+						FileWriter fwAllStat = new FileWriter(AllStatPath);
+						FileWriter fwAllAUCs = new FileWriter(AllAUCsPath);
+						FileWriter fwAllROC = new FileWriter(AllROCPath);
+						BufferedWriter bwAllStat = new BufferedWriter(fwAllStat);
+						BufferedWriter bwAllAUCs = new BufferedWriter(fwAllAUCs);
+						BufferedWriter bwAllROC = new BufferedWriter(fwAllROC);
+						bwAllStat.write(AllStatreport);
+						bwAllStat.close();
+						bwAllAUCs.write(AllAUCsreport);
+						bwAllAUCs.close();
+						bwAllROC.write(AllROCreport);
+						bwAllROC.close();
+						JOptionPane.showMessageDialog(
+										thisGUI.MRMCobject.getFrame(),"All modalities combinations statistic analysis, AUCs and  ROC have been succeed export to input file directory!", 
+										"Exported", JOptionPane.INFORMATION_MESSAGE);
+					} catch (HeadlessException e1) {
+							e1.printStackTrace();
+					} catch (IOException e1) {
+							e1.printStackTrace();
+					} 
+				}else{
+					DBRecordStatAll = DBRecordStat;
+					DBRecordStatAll.InputFile1 = InputFile1;
+					DBRecordStatAll.modalityA = InputSummaryCard.loadmodalityA;
+					DBRecordStatAll.modalityB = "NO_MOD";
+					DBRecordStatAll.selectedMod = 0;
+					DBRecordStatAll.DBRecordStatFillSummary(DBRecordStatAll);
+					AllStatreport = exportToFile.exportStat(AllStatreport, DBRecordStatAll, fileTime);	
+					AllAUCsreport = exportToFile.exportReaders(AllAUCsreport, DBRecordStatAll,InputFile1, fileTime);
+					DBRecord track = DBRecordStatAll;
+					DBRecordStatAll.modalityA = "NO_MOD";
+					DBRecordStatAll.modalityB = InputSummaryCard.loadmodalityB;
+					DBRecordStatAll.selectedMod = 1;
+					DBRecordStatAll.DBRecordStatFillSummary(DBRecordStatAll);
 					AllStatreport = exportToFile.exportStat(AllStatreport, DBRecordStatAll, fileTime);
-					AllAUCsreport = exportToFile.exportReaders(AllAUCsreport, DBRecordStatAll,InputFile1, fileTime);		
-					int a=1;
+					AllAUCsreport = exportToFile.exportReaders(AllAUCsreport, DBRecordStatAll,InputFile1, fileTime);
+					DBRecordStatAll.modalityA = InputSummaryCard.loadmodalityA;
+					DBRecordStatAll.modalityB = InputSummaryCard.loadmodalityB;
+					DBRecordStatAll.selectedMod = 3;
+					DBRecordStatAll.DBRecordStatFillSummary(DBRecordStatAll);
+					AllStatreport = exportToFile.exportStat(AllStatreport, DBRecordStatAll, fileTime);	
+					AllAUCsreport = exportToFile.exportReaders(AllAUCsreport, DBRecordStatAll,InputFile1, fileTime);
+					try {
+						FileWriter fwAllStat = new FileWriter(AllStatPath);
+						BufferedWriter bwAllStat = new BufferedWriter(fwAllStat);
+						bwAllStat.write(AllStatreport);
+						bwAllStat.close();
+						FileWriter fwAllAUCs = new FileWriter(AllAUCsPath);
+						BufferedWriter bwAllAUCs = new BufferedWriter(fwAllAUCs);
+						bwAllAUCs.write(AllAUCsreport);
+						bwAllAUCs.close();
+						JOptionPane.showMessageDialog(
+										thisGUI.MRMCobject.getFrame(),"All modalities combinations statistic analysis and AUCs have been succeed export to input file directory!", 
+										"Exported", JOptionPane.INFORMATION_MESSAGE);
+					} catch (HeadlessException e1) {
+							e1.printStackTrace();
+					} catch (IOException e1) {
+							e1.printStackTrace();
+					} 
+					
 				}
-				
-				//Get ROC result
-				final ROCCurvePlot roc = new ROCCurvePlot(
-						"ROC Curve: All Modality ",
-						"FPF (1 - Specificity), legend shows symbols for each modalityID:readerID", "TPF (Sensitivity)",
-						InputFile1.generateROCpoints(rocMod),InputFile1.filename);
-				roc.addData(InputFile1.generatePooledROC(rocMod), "Pooled Average");
-				AllROCreport = exportToFile.exportROC(roc.seriesCollection,AllROCreport);
-				
-				// export 3 strings to files
-				try {
-					FileWriter fwAllStat = new FileWriter(AllStatPath);
-					FileWriter fwAllAUCs = new FileWriter(AllAUCsPath);
-					FileWriter fwAllROC = new FileWriter(AllROCPath);
-					BufferedWriter bwAllStat = new BufferedWriter(fwAllStat);
-					BufferedWriter bwAllAUCs = new BufferedWriter(fwAllAUCs);
-					BufferedWriter bwAllROC = new BufferedWriter(fwAllROC);
-					bwAllStat.write(AllStatreport);
-					bwAllStat.close();
-					bwAllAUCs.write(AllAUCsreport);
-					bwAllAUCs.close();
-					bwAllROC.write(AllROCreport);
-					bwAllROC.close();
-					JOptionPane.showMessageDialog(
-									thisGUI.MRMCobject.getFrame(),"All modalities combinations statistic analysis, AUCs and  ROC have been succeed export to input file directory!", 
-									"Exported", JOptionPane.INFORMATION_MESSAGE);
-				} catch (HeadlessException e1) {
-						e1.printStackTrace();
-				} catch (IOException e1) {
-						e1.printStackTrace();
-				} 
 			}else{
 				JOptionPane.showMessageDialog(thisGUI.MRMCobject.getFrame(),
 						"Please load Reader study data input file.", "Error",

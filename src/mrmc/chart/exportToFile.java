@@ -534,14 +534,14 @@ public class exportToFile {
 			str = str + MRMC.versionname + SEPA;
 			str = str + desc_temp + SEPA;
 			if (StatDBRecord.selectedMod == 0){
-				str = str + StatDBRecord.covMRMCstat.N0perReader[i][0] + SEPA;
-				str = str + StatDBRecord.covMRMCstat.N1perReader[i][0] + SEPA;
+				str = str + StatDBRecord.N0perReader[i][0] + SEPA;
+				str = str + StatDBRecord.N1perReader[i][0] + SEPA;
 			}else if (StatDBRecord.selectedMod == 1){
-				str = str + StatDBRecord.covMRMCstat.N0perReader[i][1] + SEPA;
-				str = str + StatDBRecord.covMRMCstat.N1perReader[i][1] + SEPA;
+				str = str + StatDBRecord.N0perReader[i][1] + SEPA;
+				str = str + StatDBRecord.N1perReader[i][1] + SEPA;
 			} else {
-				str = str + StatDBRecord.covMRMCstat.N0perReader[i][2] + SEPA;
-				str = str + StatDBRecord.covMRMCstat.N1perReader[i][2] + SEPA;
+				str = str + StatDBRecord.N0perReader[i][2] + SEPA;
+				str = str + StatDBRecord.N1perReader[i][2] + SEPA;
 			}
 			str = str + StatDBRecord.modalityA + SEPA;
 			str = str + StatDBRecord.modalityB + SEPA;
