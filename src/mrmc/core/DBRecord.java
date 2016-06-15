@@ -670,14 +670,6 @@ public class DBRecord {
 		
 		DBRecordStat.Decompositions();
 		DBRecordStat.testStat = new StatTest(DBRecordStat);
-		N0perReader =new int[(int) Nreader][3];
-		N1perReader =new int[(int) Nreader][3];
-		int[] normalsize = {(int) N0,(int) N0,(int) N0};
-		int[] diseasesize = {(int) N1,(int) N1,(int) N1};
-		for(int i = 0; i<Nreader;i++ ) {
-			DBRecordStat.N0perReader[i] = normalsize; 
-			DBRecordStat.N1perReader[i] = diseasesize; 
-		}
 		
 	}
 	

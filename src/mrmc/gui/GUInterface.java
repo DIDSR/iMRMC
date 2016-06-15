@@ -631,15 +631,19 @@ public class GUInterface {
 				String AllStatPath = FileName+"MRMCAllStat"+fileTime+".csv";
 	            String AllStatName = AllStatPath.substring(FileName.lastIndexOf("\\")+1);
 				// create file save all stat analysis result
+				String AllStatMLEPath = FileName+"MRMCAllStatMLE"+fileTime+".csv";
+	            String AllStatMLEName = AllStatMLEPath.substring(FileName.lastIndexOf("\\")+1);
+				// create file save all readers analysis result
 				String AllAUCsPath = FileName+"MRMCAllAUCs"+fileTime+".csv";
 	            String AllAUCsName = AllAUCsPath.substring(FileName.lastIndexOf("\\")+1);
-				// create file save all stat analysis result
+				// create file save ROC result
 				String AllROCPath = FileName+"MRMCAllROC"+fileTime+".csv";
 	            String AllROCName = AllROCPath.substring(FileName.lastIndexOf("\\")+1);
 	            // initial 3 string to save All stat, AUCs and ROC result
-	    		String head =  "inputFile,date,iMRMCversion,NR,N0,N1,modalityA,modalityB,AUCA,varAUCA,AUCB,varAUCB,AUCAminusAUCB,varAUCAminusAUCB,"
+	    		String head =  "inputFile,date,iMRMCversion,NR,N0,N1,modalityA,modalityB,MLE,AUCA,varAUCA,AUCB,varAUCB,AUCAminusAUCB,varAUCAminusAUCB,"
 	    				+"pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis";
 	            String AllStatreport = head+"\r\n";
+	            String AllStatMLEreport = head+"\r\n";
 	            String AllAUCsreport = head+"\r\n";
 	            String AllROCreport = "";
 				if  (GUInterface.selectedInput == GUInterface.DescInputModeImrmc){
@@ -677,7 +681,9 @@ public class GUInterface {
 						DBRecordStatAll.DBRecordStatFill(InputFile1, DBRecordStatAll);
 						AllStatreport = exportToFile.exportStat(AllStatreport, DBRecordStatAll, fileTime);
 						AllAUCsreport = exportToFile.exportReaders(AllAUCsreport, DBRecordStatAll,InputFile1, fileTime);		
-						int a=1;
+						DBRecordStatAll.flagMLE = 1;
+						DBRecordStatAll.DBRecordStatFill(InputFile1, DBRecordStatAll);
+						AllStatMLEreport = exportToFile.exportStat(AllStatMLEreport, DBRecordStatAll, fileTime);
 					}
 					
 					//Get ROC result
@@ -688,22 +694,26 @@ public class GUInterface {
 					roc.addData(InputFile1.generatePooledROC(rocMod), "Pooled Average");
 					AllROCreport = exportToFile.exportROC(roc.seriesCollection,AllROCreport);
 					
-					// export 3 strings to files
+					// export 4 strings to files
 					try {
 						FileWriter fwAllStat = new FileWriter(AllStatPath);
+						FileWriter fwAllStatMLE = new FileWriter(AllStatMLEPath);
 						FileWriter fwAllAUCs = new FileWriter(AllAUCsPath);
-						FileWriter fwAllROC = new FileWriter(AllROCPath);
+						FileWriter fwAllROC = new FileWriter(AllROCPath);					
 						BufferedWriter bwAllStat = new BufferedWriter(fwAllStat);
+						BufferedWriter bwAllStatMLE = new BufferedWriter(fwAllStatMLE);
 						BufferedWriter bwAllAUCs = new BufferedWriter(fwAllAUCs);
-						BufferedWriter bwAllROC = new BufferedWriter(fwAllROC);
+						BufferedWriter bwAllROC = new BufferedWriter(fwAllROC);			
 						bwAllStat.write(AllStatreport);
 						bwAllStat.close();
+						bwAllStatMLE.write(AllStatMLEreport);
+						bwAllStatMLE.close();
 						bwAllAUCs.write(AllAUCsreport);
 						bwAllAUCs.close();
 						bwAllROC.write(AllROCreport);
 						bwAllROC.close();
 						JOptionPane.showMessageDialog(
-										thisGUI.MRMCobject.getFrame(),"All modalities combinations statistic analysis, AUCs and  ROC have been succeed export to input file directory!", 
+										thisGUI.MRMCobject.getFrame(),"All modalities combinations MLE and NonMLE statistic analysis, AUCs and  ROC have been succeed export to input file directory!", 
 										"Exported", JOptionPane.INFORMATION_MESSAGE);
 					} catch (HeadlessException e1) {
 							e1.printStackTrace();
@@ -713,36 +723,48 @@ public class GUInterface {
 				}else{
 					DBRecordStatAll = DBRecordStat;
 					DBRecordStatAll.InputFile1 = InputFile1;
+					// Analysis modality A
 					DBRecordStatAll.modalityA = InputSummaryCard.loadmodalityA;
 					DBRecordStatAll.modalityB = "NO_MOD";
 					DBRecordStatAll.selectedMod = 0;
+					DBRecordStatAll.flagMLE = 0;
 					DBRecordStatAll.DBRecordStatFillSummary(DBRecordStatAll);
 					AllStatreport = exportToFile.exportStat(AllStatreport, DBRecordStatAll, fileTime);	
-					AllAUCsreport = exportToFile.exportReaders(AllAUCsreport, DBRecordStatAll,InputFile1, fileTime);
-					DBRecord track = DBRecordStatAll;
+					DBRecordStatAll.flagMLE = 1;
+					DBRecordStatAll.DBRecordStatFillSummary(DBRecordStatAll);
+					AllStatMLEreport = exportToFile.exportStat(AllStatMLEreport, DBRecordStatAll, fileTime);
+					// Analysis modality B
 					DBRecordStatAll.modalityA = "NO_MOD";
 					DBRecordStatAll.modalityB = InputSummaryCard.loadmodalityB;
 					DBRecordStatAll.selectedMod = 1;
+					DBRecordStatAll.flagMLE = 0;
 					DBRecordStatAll.DBRecordStatFillSummary(DBRecordStatAll);
-					AllStatreport = exportToFile.exportStat(AllStatreport, DBRecordStatAll, fileTime);
-					AllAUCsreport = exportToFile.exportReaders(AllAUCsreport, DBRecordStatAll,InputFile1, fileTime);
+					AllStatreport = exportToFile.exportStat(AllStatreport, DBRecordStatAll, fileTime);	
+					DBRecordStatAll.flagMLE = 1;
+					DBRecordStatAll.DBRecordStatFillSummary(DBRecordStatAll);
+					AllStatMLEreport = exportToFile.exportStat(AllStatMLEreport, DBRecordStatAll, fileTime);
+					// Analysis modality A and B
 					DBRecordStatAll.modalityA = InputSummaryCard.loadmodalityA;
 					DBRecordStatAll.modalityB = InputSummaryCard.loadmodalityB;
 					DBRecordStatAll.selectedMod = 3;
 					DBRecordStatAll.DBRecordStatFillSummary(DBRecordStatAll);
+					DBRecordStatAll.flagMLE = 0;
+					DBRecordStatAll.DBRecordStatFillSummary(DBRecordStatAll);
 					AllStatreport = exportToFile.exportStat(AllStatreport, DBRecordStatAll, fileTime);	
-					AllAUCsreport = exportToFile.exportReaders(AllAUCsreport, DBRecordStatAll,InputFile1, fileTime);
+					DBRecordStatAll.flagMLE = 1;
+					DBRecordStatAll.DBRecordStatFillSummary(DBRecordStatAll);
+					AllStatMLEreport = exportToFile.exportStat(AllStatMLEreport, DBRecordStatAll, fileTime);
 					try {
 						FileWriter fwAllStat = new FileWriter(AllStatPath);
 						BufferedWriter bwAllStat = new BufferedWriter(fwAllStat);
 						bwAllStat.write(AllStatreport);
 						bwAllStat.close();
-						FileWriter fwAllAUCs = new FileWriter(AllAUCsPath);
-						BufferedWriter bwAllAUCs = new BufferedWriter(fwAllAUCs);
-						bwAllAUCs.write(AllAUCsreport);
-						bwAllAUCs.close();
+						FileWriter fwAllStatMLE = new FileWriter(AllStatMLEPath);
+						BufferedWriter bwAllStatMLE = new BufferedWriter(fwAllStatMLE);
+						bwAllStatMLE.write(AllStatMLEreport);
+						bwAllStatMLE.close();
 						JOptionPane.showMessageDialog(
-										thisGUI.MRMCobject.getFrame(),"All modalities combinations statistic analysis and AUCs have been succeed export to input file directory!", 
+										thisGUI.MRMCobject.getFrame(),"All modalities combinations MLE and NonMLE statistic analysis have been succeed export to input file directory!", 
 										"Exported", JOptionPane.INFORMATION_MESSAGE);
 					} catch (HeadlessException e1) {
 							e1.printStackTrace();

@@ -478,6 +478,11 @@ public class exportToFile {
 		str = str + StatDBRecord.NdiseaseDB + SEPA;
 		str = str + StatDBRecord.modalityA + SEPA;
 		str = str + StatDBRecord.modalityB + SEPA;
+		if (StatDBRecord.flagMLE == 1){
+			str = str + "YES" + SEPA;
+		}else{
+			str = str + "NO" + SEPA;
+		}
 		if (StatDBRecord.selectedMod == 0){
 			str = str + eightDecE.format(StatDBRecord.AUCsReaderAvg[0]) + SEPA;
 			str = str + eightDecE.format(StatDBRecord.varA) + SEPA;
