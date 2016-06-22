@@ -54,14 +54,12 @@
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer">
       <footer class="inner">
+      	
       	<!-- Download Count-->
-  	
-	<button onclick="processRequest()">Download Counts</button>
-	<label id="1">test</label>
+  	<label id="1">test</label>
 	<label id="2">test</label>
-	  <script>
-	  	
-	  	var xhr = new XMLHttpRequest();
+	<script>
+		var xhr = new XMLHttpRequest();
 			xhr.open('GET', "https://api.github.com/repos/DIDSR/iMRMC/releases", true);
 			xhr.send();
 			xhr.addEventListener("readystatechange", processRequest, false);
@@ -79,8 +77,7 @@
 										"<br>"+ response[1].assets[1].name + " Download Count = " + response[1].assets[1].download_count;
     				}
 			}
- 
-		</script>
+	</script>
       	
       	
       	
