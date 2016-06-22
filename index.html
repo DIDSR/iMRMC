@@ -59,6 +59,7 @@
 	<label id="2">test</label>
 
 	  <script>
+	  	<button onclick="processRequest(e)">Download Counts</button>
 	  	var xhr = new XMLHttpRequest();
 			xhr.open('GET', "https://api.github.com/repos/DIDSR/iMRMC/releases", true);
 			xhr.send();
