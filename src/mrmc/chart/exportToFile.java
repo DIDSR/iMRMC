@@ -60,6 +60,172 @@ public class exportToFile {
 		str = str + "\r\nStatistical Tests:\r\n" + result + SEPA;		
 		return str;
 	}
+	//export BDG table
+	public static String exportTableBDG(String oldReport, DBRecord DBRecordTable) {
+		String str = oldReport;
+		double[][] BDGdata1 = DBRecord.getBDGTab(DBRecordTable.selectedMod,
+				DBRecordTable.BDG, DBRecordTable.BDGcoeff);
+		String analysisMethod = "Ustat";
+		if(DBRecordTable.flagMLE == 1) {
+			BDGdata1 = DBRecord.getBDGTab(DBRecordTable.selectedMod,
+					DBRecordTable.BDGbias, DBRecordTable.BDGcoeff);
+			analysisMethod = "MLE";
+		}
+		str = str + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "comp_A" + SEPA;
+		for(int i = 0; i<8; i++)
+			str = str + fiveDecE.format(BDGdata1[0][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "coeff_A" + SEPA;
+		for(int i = 0; i<8; i++)
+			str = str + fiveDecE.format(BDGdata1[1][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "comp_B" + SEPA;
+		for(int i = 0; i<8; i++)
+			str = str + fiveDecE.format(BDGdata1[2][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "coeff_B" + SEPA;
+		for(int i = 0; i<8; i++)
+			str = str + fiveDecE.format(BDGdata1[3][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "comp_product" + SEPA;
+		for(int i = 0; i<8; i++)
+			str = str + fiveDecE.format(BDGdata1[4][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "coeff_product" + SEPA;
+		for(int i = 0; i<8; i++)
+			str = str + fiveDecE.format(BDGdata1[5][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "total" + SEPA;
+		for(int i = 0; i<8; i++)
+			str = str + fiveDecE.format(BDGdata1[6][i]) + SEPA;
+		str = str + "\r\n";
+		return str;
+	}
+	
+	//export BDG table
+	public static String exportTableBCK(String oldReport, DBRecord DBRecordTable) {
+		String str = oldReport;
+		double[][] BCKdata1 = DBRecord.getBCKTab(DBRecordTable.selectedMod,
+				DBRecordTable.BCK, DBRecordTable.BCKcoeff);
+		String analysisMethod = "Ustat";
+		if(DBRecordTable.flagMLE == 1) {
+			BCKdata1 = DBRecord.getBCKTab(DBRecordTable.selectedMod,
+					DBRecordTable.BCKbias, DBRecordTable.BCKcoeff);
+			analysisMethod = "MLE";
+		}
+		str = str + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "comp_A" + SEPA;
+		for (int i = 0; i < 7; i++)
+			str = str + fiveDecE.format(BCKdata1[0][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "coeff_A" + SEPA;
+		for (int i = 0; i < 7; i++)
+			str = str + fiveDecE.format(BCKdata1[1][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "comp_B" + SEPA;
+		for (int i = 0; i < 7; i++)
+			str = str + fiveDecE.format(BCKdata1[2][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "coeff_B" + SEPA;
+		for (int i = 0; i < 7; i++)
+			str = str + fiveDecE.format(BCKdata1[3][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "comp_product" + SEPA;
+		for (int i = 0; i < 7; i++)
+			str = str + fiveDecE.format(BCKdata1[4][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "coeff_product" + SEPA;
+		for (int i = 0; i < 7; i++)
+			str = str + fiveDecE.format(BCKdata1[5][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "total" + SEPA;
+		for (int i = 0; i < 7; i++)
+			str = str + fiveDecE.format(BCKdata1[6][i]) + SEPA;
+		str = str +"\r\n"; 
+		return str;
+	}
+	
+	//export BDG table
+	public static String exportTableDBM(String oldReport, DBRecord DBRecordTable) {
+		String str = oldReport;
+		double[][] DBMdata1 = DBRecord.getDBMTab(DBRecordTable.selectedMod,
+				DBRecordTable.DBM, DBRecordTable.DBMcoeff);
+		String analysisMethod = "Ustat";
+		if(DBRecordTable.flagMLE == 1) {
+			DBMdata1 = DBRecord.getDBMTab(DBRecordTable.selectedMod,
+					DBRecordTable.DBMbias, DBRecordTable.DBMcoeff);
+			analysisMethod = "MLE";
+		}
+		str = str + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "components" + SEPA;
+		for (int i = 0; i < 6; i++)
+			str = str + fiveDecE.format(DBMdata1[0][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "coeff" + SEPA;
+		for (int i = 0; i < 6; i++)
+			str = str + fiveDecE.format(DBMdata1[1][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "total" + SEPA;
+		for (int i = 0; i < 6; i++)
+			str = str + fiveDecE.format(DBMdata1[2][i]) + SEPA;
+		str = str +"\r\n"; 
+		return str;
+	}
+	
+	//export BDG table
+	public static String exportTableOR(String oldReport, DBRecord DBRecordTable) {
+		String str = oldReport;
+		double[][] ORdata1 = DBRecord.getORTab(DBRecordTable.selectedMod,
+				DBRecordTable.OR, DBRecordTable.ORcoeff);
+		String analysisMethod = "Ustat";
+		if(DBRecordTable.flagMLE == 1) {
+			ORdata1 = DBRecord.getORTab(DBRecordTable.selectedMod,
+					DBRecordTable.ORbias, DBRecordTable.ORcoeff);	
+			analysisMethod = "MLE";
+		}
+		str = str + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "components" + SEPA;
+		for (int i = 0; i < 6; i++)
+			str = str + fiveDecE.format(ORdata1[0][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "coeff" + SEPA;
+		for (int i = 0; i < 6; i++)
+			str = str + fiveDecE.format(ORdata1[1][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "total" + SEPA;
+		for (int i = 0; i < 6; i++)
+			str = str + fiveDecE.format(ORdata1[2][i]) + SEPA;
+		str = str +"\r\n"; 
+		return str;
+	}
+	
+	//export BDG table
+	public static String exportTableMS(String oldReport, DBRecord DBRecordTable) {
+		String str = oldReport;
+		double[][] MSdata1 = DBRecord.getMSTab(DBRecordTable.selectedMod,
+				DBRecordTable.MS, DBRecordTable.MScoeff);
+		String analysisMethod = "Ustat";
+		if(DBRecordTable.flagMLE == 1) {
+			MSdata1 = DBRecord.getMSTab(DBRecordTable.selectedMod,
+					DBRecordTable.MSbias, DBRecordTable.MScoeff);	
+			analysisMethod = "MLE";
+		}
+		str = str + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "components" + SEPA;
+		for (int i = 0; i < 6; i++)
+			str = str + fiveDecE.format(MSdata1[0][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "coeff" + SEPA;
+		for (int i = 0; i < 6; i++)
+			str = str + fiveDecE.format(MSdata1[1][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "total" + SEPA;
+		for (int i = 0; i < 6; i++)
+			str = str + fiveDecE.format(MSdata1[2][i]) + SEPA;
+		str = str +"\r\n"; 
+		return str;
+	}
 	
 	//export BDG and BCK tables
 	public static String exportTable1(String oldReport, DBRecord DBRecordTable) {
