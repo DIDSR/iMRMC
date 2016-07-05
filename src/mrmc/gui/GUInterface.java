@@ -654,7 +654,7 @@ public class GUInterface {
 				// create file save MS table
 				String MStable = outputDir+ "//MStable.csv";
 	            // initial 3 string to save All stat, AUCs and ROC result
-	    		String statHead =  "inputFile,date,iMRMCversion,NR,N0,N1,modalityA,modalityB,MLE,AUCA,varAUCA,AUCB,varAUCB,AUCAminusAUCB,varAUCAminusAUCB,"
+	    		String statHead =  "inputFile,date,iMRMCversion,NR,N0,N1,modalityA,modalityB,UstatOrMLE,AUCA,varAUCA,AUCB,varAUCB,AUCAminusAUCB,varAUCAminusAUCB,"
 	    				+"pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis";
 	    		BDGout =  "modalityA,modalityB,UstatOrMLE,compOrCoeff,M1,M2,M3,M4,M5,M6,M7,M8" +"\r\n";
 	    		BCKout =  "modalityA,modalityB,UstatOrMLE,Moments,N,D,ND,R,NR,DR,RND" +"\r\n";
@@ -663,7 +663,8 @@ public class GUInterface {
 	    		MSout =  "modalityA,modalityB,UstatOrMLE,Components,R,C,RC,MR,MC,MRC" +"\r\n";
 	            String AllStatreport = statHead+"\r\n";
 	            String AllStatMLEreport = statHead+"\r\n";
-	            String AllAUCsreport = statHead+"\r\n";
+	            String AllAUCsreport = "inputFile,date,iMRMCversion,readerID,N0,N1,modalityA,modalityB,AUCA,varAUCA,AUCB,varAUCB,AUCAminusAUCB,varAUCAminusAUCB,"
+	    				+"pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis"+"\r\n";
 	            String AllROCreport = "";
 				if  (GUInterface.selectedInput == GUInterface.DescInputModeImrmc){
 					System.out.println("MRMC Save All Stat button clicked");
@@ -789,6 +790,7 @@ public class GUInterface {
 					bwMStable.write(MSout);
 					bwMStable.close();					
 					
+					// only export ROC and each reader information for raw data 
 					if  (GUInterface.selectedInput == GUInterface.DescInputModeImrmc){
 						FileWriter fwAllAUCs = new FileWriter(AllAUCsPath);
 						FileWriter fwAllROC = new FileWriter(AllROCPath);

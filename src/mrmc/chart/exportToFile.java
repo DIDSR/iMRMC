@@ -103,7 +103,7 @@ public class exportToFile {
 		return str;
 	}
 	
-	//export BDG table
+	//export BCK table
 	public static String exportTableBCK(String oldReport, DBRecord DBRecordTable) {
 		String str = oldReport;
 		double[][] BCKdata1 = DBRecord.getBCKTab(DBRecordTable.selectedMod,
@@ -146,7 +146,7 @@ public class exportToFile {
 		return str;
 	}
 	
-	//export BDG table
+	//export DBM table
 	public static String exportTableDBM(String oldReport, DBRecord DBRecordTable) {
 		String str = oldReport;
 		double[][] DBMdata1 = DBRecord.getDBMTab(DBRecordTable.selectedMod,
@@ -173,7 +173,7 @@ public class exportToFile {
 		return str;
 	}
 	
-	//export BDG table
+	//export OR table
 	public static String exportTableOR(String oldReport, DBRecord DBRecordTable) {
 		String str = oldReport;
 		double[][] ORdata1 = DBRecord.getORTab(DBRecordTable.selectedMod,
@@ -200,7 +200,7 @@ public class exportToFile {
 		return str;
 	}
 	
-	//export BDG table
+	//export MS table
 	public static String exportTableMS(String oldReport, DBRecord DBRecordTable) {
 		String str = oldReport;
 		double[][] MSdata1 = DBRecord.getMSTab(DBRecordTable.selectedMod,
@@ -645,9 +645,9 @@ public class exportToFile {
 		str = str + StatDBRecord.modalityA + SEPA;
 		str = str + StatDBRecord.modalityB + SEPA;
 		if (StatDBRecord.flagMLE == 1){
-			str = str + "YES" + SEPA;
+			str = str + "MLE" + SEPA;
 		}else{
-			str = str + "NO" + SEPA;
+			str = str + "Ustat" + SEPA;
 		}
 		if (StatDBRecord.selectedMod == 0){
 			str = str + eightDecE.format(StatDBRecord.AUCsReaderAvg[0]) + SEPA;
