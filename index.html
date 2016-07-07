@@ -54,8 +54,7 @@
         <p class="copyright">iMRMC maintained by <a href="https://github.com/DIDSR">DIDSR</a></p>
         <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
         
-        <label id = "1" style="color:white">release1</label>
-	<label id = "2" style="color:white">release2</label>
+	<p>Download Count <a href="https://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
 		
@@ -71,29 +70,8 @@
           </script>
 
 
-      	      	<!-- Download Count-->
+      	      
 
-	
-	<script type="text/javascript">
-		var xhr = new XMLHttpRequest();
-			xhr.open('GET', "https://api.github.com/repos/DIDSR/iMRMC/releases", true);
-			xhr.send();
-			xhr.addEventListener("readystatechange", processRequest, false);
-			xhr.onreadystatechange = processRequest;
- 
-			function processRequest(e) {
-				if (xhr.readyState == 4 && xhr.status == 200) {
-        				var response = JSON.parse(xhr.response);
-					document.getElementById('1').innerHTML = response[0].tag_name + "<br>" +
-										response[0].assets[0].name + " Download Count = " + response[0].assets[0].download_count + 
-										"<br>"+ response[0].assets[1].name + " Download Count = " + response[0].assets[1].download_count 
-										+ "<br>"+ "<br>";
-					document.getElementById('2').innerHTML = response[1].tag_name + "<br>" +
-										response[1].assets[0].name + " Download Count = " + response[1].assets[0].download_count + 
-										"<br>"+ response[1].assets[1].name + " Download Count = " + response[1].assets[1].download_count;
-    				}
-			}
-	</script>
 
       	
   </body>
