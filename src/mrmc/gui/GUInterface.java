@@ -102,7 +102,7 @@ public class GUInterface {
 	/**
 	 * InputFile1 {@link mrmc.core.InputFile}
 	 */
-	InputFile InputFile1 = new InputFile();
+	public InputFile InputFile1 = new InputFile();
 	/**
 	 * DBrecord object holds all the processed info related to a reader study
 	 */
@@ -557,7 +557,7 @@ public class GUInterface {
 		public void actionPerformed(ActionEvent e) {
 			if( DBRecordStat.totalVar > 0.0) {
 				DBRecordStat.InputFile1 = InputFile1;
-	    		String head =  "inputFile,date,iMRMCversion,NR,N0,N1,modalityA,modalityB,AUCA,varAUCA,AUCB,varAUCB,AUCAminusAUCB,varAUCAminusAUCB,"
+	    		String head =  "inputFile,date,iMRMCversion,NR,N0,N1,modalityA,modalityB,UstatOrMLE,AUCA,varAUCA,AUCB,varAUCB,AUCAminusAUCB,varAUCAminusAUCB,"
 	    				+"pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis";
 				String report = head +"\r\n";
 	            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
@@ -618,13 +618,16 @@ public class GUInterface {
 	
 	/**	 * Handler for button to save all stat analysis result to file
 	 */
-	class SaveAllStatListener implements ActionListener {
+	public class SaveAllStatListener implements ActionListener {
 
 	//	@Override
 		//public String sFileName="";
 		private String BDGout,BCKout,DBMout,ORout,MSout;
-		
-		public void actionPerformed(ActionEvent e) {
+     	public void actionPerformed(ActionEvent e) {
+			exportResult();
+
+		 }
+		public void exportResult() {
 			if (InputFile1.isLoaded()) {    	// check raw data is loaded
 	            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
 				Date currDate = new Date();
@@ -800,13 +803,21 @@ public class GUInterface {
 						bwAllAUCs.close();
 						bwAllROC.write(AllROCreport);
 						bwAllROC.close();
-						JOptionPane.showMessageDialog(
-										thisGUI.MRMCobject.getFrame(),"All modalities combinations analysis table, result, AUCs and ROC have been succeed export to \n " + outputDir, 
-										"Exported", JOptionPane.INFORMATION_MESSAGE);
+						if (!MRMC.commandStart){
+							JOptionPane.showMessageDialog(
+											thisGUI.MRMCobject.getFrame(),"All modalities combinations analysis table, result, AUCs and ROC have been succeed export to \n " + outputDir, 
+											"Exported", JOptionPane.INFORMATION_MESSAGE);
+						}else{
+							System.exit(0);
+						}
 					} else{
-						JOptionPane.showMessageDialog(
-								thisGUI.MRMCobject.getFrame(),"All modalities combinations analysis table and result have been succeed export to \n " + outputDir, 
-								"Exported", JOptionPane.INFORMATION_MESSAGE);
+						if (!MRMC.commandStart){
+							JOptionPane.showMessageDialog(
+									thisGUI.MRMCobject.getFrame(),"All modalities combinations analysis table and result have been succeed export to \n " + outputDir, 
+									"Exported", JOptionPane.INFORMATION_MESSAGE);
+						}else{
+							System.exit(0);
+						}
 					}
 				} catch (HeadlessException e1) {
 						e1.printStackTrace();

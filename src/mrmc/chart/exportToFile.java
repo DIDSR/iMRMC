@@ -576,24 +576,28 @@ public class exportToFile {
 		double totalVar    = VldDBRecord.totalVar;
 		double varA    = VldDBRecord.varA;
 		double varB    = VldDBRecord.varB;
+		double pValueNormal = VldDBRecord.testStat.pValNormal;
+		double botCInormal = VldDBRecord.testStat.ciBotNormal;
+		double topCInormal = VldDBRecord.testStat.ciTopNormal;		
 		double rejectNormal    = VldDBRecord.testStat.rejectNormal;
+		double dfBDG = VldDBRecord.testStat.DF_BDG;
+	    double pValueBDG = VldDBRecord.testStat.pValBDG;
+		double botCIBDG = VldDBRecord.testStat.ciBotBDG;
+		double topCIBDG = VldDBRecord.testStat.ciTopBDG;
 		double rejectBDG    = VldDBRecord.testStat.rejectBDG;
+		double dfHills = VldDBRecord.testStat.DF_Hillis;
+		double pValueHillis = VldDBRecord.testStat.pValHillis;
+		double botCIHillis = VldDBRecord.testStat.ciBotHillis;
+		double topCIHillis = VldDBRecord.testStat.ciTopHillis;
 		double rejectHillis    = VldDBRecord.testStat.rejectHillis;
-		
-		str =  str + "mcMeanAUC_A      : " + fourDecE.format(AUC_A) + "\r\n";
-		str =  str + "mcMeanAUC_B      : " + fourDecE.format(AUC_B) + "\r\n";
-		str =  str + "mcMeanAUC_AB     : " + fourDecE.format(AUC_AminusAUC_B) + "\r\n";
-		str =  str + "mcMeanvarAUC_A   : " + fourDecE.format(varA) + "\r\n";
-		str =  str + "mcMeanvarAUC_B   : " + fourDecE.format(varB) + "\r\n";
-		str =  str + "mcMeanvarAUC_AB  : " + fourDecE.format(totalVar) + "\r\n";
-		str =  str + "rejectNormal     : " + fourDecE.format(rejectNormal) + "\r\n";
-		str =  str + "rejectBDG        : " + fourDecE.format(rejectBDG) + "\r\n";
+		str = str + "MCmean" + SEPA + fourDecE.format(AUC_A) + SEPA + fourDecE.format(AUC_B) + SEPA + fourDecE.format(AUC_AminusAUC_B) + SEPA + fourDecE.format(varA) + SEPA + fourDecE.format(varB) + SEPA + fourDecE.format(totalVar) +SEPA;
+		str = str + fourDecE.format(pValueNormal) + SEPA + fourDecE.format(botCInormal) + SEPA + fourDecE.format(topCInormal) + SEPA + fourDecE.format(rejectNormal) + SEPA ;			
+		str = str + fourDecE.format(dfBDG) + SEPA + fourDecE.format(pValueBDG) + SEPA + fourDecE.format(botCIBDG) + SEPA + fourDecE.format(topCIBDG) + SEPA + fourDecE.format(rejectBDG) + SEPA;
 		if (Double.isNaN(rejectHillis)){
-			str =  str + "rejectHillis     : NaN" + "\r\n";
+			str =  str + "NaN,NaN,NaN,NaN,NaN" + "\r\n";
 		}else{
-			str =  str + "rejectHillis     : " + fourDecE.format(rejectHillis) + "\r\n";
+			str = str + fourDecE.format(dfHills) + SEPA + fourDecE.format(pValueHillis) + SEPA + fourDecE.format(botCIHillis) + SEPA + fourDecE.format(topCIHillis) + SEPA + fourDecE.format(rejectHillis)+"\r\n";	
 		}
-		
 		return str;
 	}
 	
@@ -605,13 +609,7 @@ public class exportToFile {
 		double totalVar    = VldDBRecord.totalVar;
 		double varA    = VldDBRecord.varA;
 		double varB    = VldDBRecord.varB;
-		
-		str =  str + "NumAUC_A         : " + fourDecE.format(AUC_A) + "\r\n";
-		str =  str + "NumAUC_B         : " + fourDecE.format(AUC_B) + "\r\n";
-		str =  str + "NumAUC_AB        : " + fourDecE.format(AUC_AminusAUC_B) + "\r\n";
-		str =  str + "NumvarAUC_A      : " + fourDecE.format(varA) + "\r\n";
-		str =  str + "NumvarAUC_B      : " + fourDecE.format(varB) + "\r\n";
-		str =  str + "NumvarAUC_AB     : " + fourDecE.format(totalVar) + "\r\n";
+		str =  str + fourDecE.format(AUC_A) + SEPA + fourDecE.format(AUC_B) + SEPA + fourDecE.format(AUC_AminusAUC_B) + SEPA + fourDecE.format(varA) + SEPA + fourDecE.format(varB) + SEPA + fourDecE.format(totalVar);
 		return str;
 	}
 	
@@ -623,12 +621,28 @@ public class exportToFile {
 		double mcVarvarA       = VarDBRecord.varA;
 		double mcVarvarB       = VarDBRecord.varB;
 		double mcVartotalVar    = VarDBRecord.totalVar;
-		str =  str + "mcVarAUC_A       : " + fourDecE.format(mcVarAUC_A) + "\r\n";
-		str =  str + "mcVarAUC_B       : " + fourDecE.format(mcVarAUC_B) + "\r\n";
-		str =  str + "mcVarAUC_AB      : " + fourDecE.format(mcVarAUC_AminusB) + "\r\n";
-		str =  str + "mcVarvarAUC_A    : " + fourDecE.format(mcVarvarA) + "\r\n";
-		str =  str + "mcVarvarAUC_B    : " + fourDecE.format(mcVarvarB) + "\r\n";
-		str =  str + "mcVarvarAUC_AB   : " + fourDecE.format(mcVartotalVar) + "\r\n";
+		double mcVarpValueNormal = VarDBRecord.testStat.pValNormal;
+		double mcVarbotCInormal = VarDBRecord.testStat.ciBotNormal;
+		double mcVartopCInormal = VarDBRecord.testStat.ciTopNormal;		
+		double mcVarrejectNormal    = VarDBRecord.testStat.rejectNormal;
+		double mcVardfBDG = VarDBRecord.testStat.DF_BDG;
+	    double mcVarpValueBDG = VarDBRecord.testStat.pValBDG;
+		double mcVarbotCIBDG = VarDBRecord.testStat.ciBotBDG;
+		double mcVartopCIBDG = VarDBRecord.testStat.ciTopBDG;
+		double mcVarrejectBDG    = VarDBRecord.testStat.rejectBDG;
+		double mcVardfHills = VarDBRecord.testStat.DF_Hillis;
+		double mcVarpValueHillis = VarDBRecord.testStat.pValHillis;
+		double mcVarbotCIHillis = VarDBRecord.testStat.ciBotHillis;
+		double mcVartopCIHillis = VarDBRecord.testStat.ciTopHillis;
+		double mcVarrejectHillis    = VarDBRecord.testStat.rejectHillis;
+		str = str + "MCvar" + SEPA + fourDecE.format(mcVarAUC_A) + SEPA + fourDecE.format(mcVarAUC_B) + SEPA + fourDecE.format(mcVarAUC_AminusB) + SEPA + fourDecE.format(mcVarvarA) + SEPA + fourDecE.format(mcVarvarB) + SEPA + fourDecE.format(mcVartotalVar) +SEPA;
+		str = str + fourDecE.format(mcVarpValueNormal) + SEPA + fourDecE.format(mcVarbotCInormal) + SEPA + fourDecE.format(mcVartopCInormal) + SEPA + fourDecE.format(mcVarrejectNormal) + SEPA ;			
+		str = str + fourDecE.format(mcVardfBDG) + SEPA + fourDecE.format(mcVarpValueBDG) + SEPA + fourDecE.format(mcVarbotCIBDG) + SEPA + fourDecE.format(mcVartopCIBDG) + SEPA + fourDecE.format(mcVarrejectBDG) + SEPA;
+		if (Double.isNaN(mcVarrejectHillis)){
+			str =  str + "NaN,NaN,NaN,NaN,NaN" + "\r\n";
+		}else{
+			str = str + fourDecE.format(mcVardfHills) + SEPA + fourDecE.format(mcVarpValueHillis) + SEPA + fourDecE.format(mcVarbotCIHillis) + SEPA + fourDecE.format(mcVartopCIHillis) + SEPA + fourDecE.format(mcVarrejectHillis)+"\r\n";	
+		}
 		return str;
 	}
 	

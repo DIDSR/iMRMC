@@ -27,7 +27,7 @@ public static File inputFile = null;
 						RMGUInterface1.new DoNumericalIntegrationBtnListener();
 				DoNumericalIntegrationBtnListener1.doNumericalAnalysisSEQ();
 				RMGUInterface.analysisExportListener analysisExportListener2 =
-						RMGUInterface1. new analysisExportListener(DoNumericalIntegrationBtnListener1.DBRecordNumerical,"NumericalOutput",RMGUInterface1.StatPanelNumerical);
+						RMGUInterface1. new analysisExportListener(DoNumericalIntegrationBtnListener1.DBRecordNumerical,"Numerical",RMGUInterface1.StatPanelNumerical);
 				analysisExportListener2.exportResult();
 				
 				// simulation

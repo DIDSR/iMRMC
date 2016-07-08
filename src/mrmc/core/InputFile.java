@@ -601,6 +601,7 @@ public class InputFile {
 		} catch (Exception e) {
 			System.err
 					.println("Error reading file" + filename + e.getMessage());
+			return;
 		}
 		
 			NlinesFileContent = fileContent.size();

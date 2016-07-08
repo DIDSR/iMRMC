@@ -40,6 +40,7 @@ public class MRMC extends JApplet {
 	private static final long serialVersionUID = 1L;
 	private static JFrame mrmcFrame;
 	public static final String versionname ="iMRMC Version 2p9 Beta";
+	public static boolean commandStart = false;
 	static GUInterface gui;
 	GUImenubar menuBar;
 
@@ -91,9 +92,15 @@ public class MRMC extends JApplet {
 		} catch (UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
 		}
-
+		String inputFileFullName = "";
+		if (args.length != 0){
+			inputFileFullName = args[0];
+			commandStart = true;			
+		}
 		int width = 1000, height = 750;
 		run(new MRMC(), width, height);
+		cmonnandStartFunction cmonnandStartFunction1 = new cmonnandStartFunction();
+		cmonnandStartFunction1.cmonnandStartFunction(gui, inputFileFullName);
 	}
 
 	/**
@@ -115,6 +122,7 @@ public class MRMC extends JApplet {
 		// Please refer to the init method in this (sub)class 
 		MRMC.init();
 		MRMC.start();
+		if (!commandStart)
 		mrmcFrame.setVisible(true);
 	}
 }

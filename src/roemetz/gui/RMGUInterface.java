@@ -88,7 +88,9 @@ public class RMGUInterface {
 	private final int NO_MLE = 0;
 	private static RoeMetz RoeMetz1;
 	public DBRecord varDBRecordStat;
+	private File inputDirectory = null;
 	private File outputDirectory = null;
+	private String inputFileName ="";
 	public SizePanel SizePanelRoeMetz;
 	public boolean processDone = false;
 	public DBRecord avgDBRecordStat;
@@ -401,7 +403,7 @@ public class RMGUInterface {
 		simExpButtons.add(Box.createHorizontalStrut(20));
 
 		// Output location button
-		JButton saveLoc = new JButton("Output Location");
+		JButton saveLoc = new JButton("Output Raw Data");
 		saveLoc.addActionListener(new SaveSimulationListener());
 		simExpButtons.add(saveLoc);
 
@@ -820,6 +822,9 @@ public class RMGUInterface {
 			int fcReturn = fc.showOpenDialog((Component) e.getSource());
 			File f = fc.getSelectedFile();
 			parseCofVfile(f);
+			inputDirectory = fc.getCurrentDirectory();
+			String savedFileName = f.getPath();
+			inputFileName = savedFileName.substring(savedFileName.lastIndexOf("\\")+1,savedFileName.lastIndexOf(".irm"));	
 		}
 	}
 
@@ -1303,9 +1308,9 @@ public class RMGUInterface {
 									finishedTasks = 0;
 									processResults(simSaveDirectory,filenameTime);
 									if(RoeMetz.doValidation){
-										analysisExportListener analysisExportListener1 = new analysisExportListener(avgDBRecordStat,"SimulationOutput",StatPanel1);
+										analysisExportListener analysisExportListener1 = new analysisExportListener(avgDBRecordStat,"Simulation",StatPanel1);
 										analysisExportListener1.exportResult();
-										exportTrialResult();
+										exportTrialResult(null);
 										System.exit(0);
 									}
 								}
@@ -1422,7 +1427,7 @@ public class RMGUInterface {
 			JDialog simOutput = new JDialog(RoeMetz1.getFrame(), "Simulation Results: MC means");
 			simOutput.add(StatPanel1.JPanelStat);
 			JButton simulationExport= new JButton("Export Analysis Result");
-			simulationExport.addActionListener(new analysisExportListener(avgDBRecordStat,"SimulationOutput",StatPanel1));			
+			simulationExport.addActionListener(new analysisExportListener(avgDBRecordStat,"Simulation",StatPanel1));			
 			simOutput.add(simulationExport, BorderLayout.PAGE_END);
 			simOutput.pack();
 			if(!RoeMetz.doValidation)
@@ -1658,7 +1663,6 @@ public class RMGUInterface {
 				SizePanelRoeMetz.NnormalJTextField = NnormalJTextField;
 				SizePanelRoeMetz.NdiseaseJTextField = NdiseaseJTextField;
 				System.out.println(NreaderJTextField.getText());
-				SizePanel SizePanelRoeMetz1 =SizePanelRoeMetz;
 				CalcGenRoeMetz.genRoeMetz(u, var_t, SizePanelRoeMetz);
 				DBRecordNumerical = CalcGenRoeMetz.DBRecordNumerical;
 				processResults();
@@ -1693,7 +1697,7 @@ public class RMGUInterface {
 //			numericalOutput.add(studyDesignJPanel);
 			numericalOutput.add(StatPanelNumerical.JPanelStat);
 			JButton numericalOutputExport= new JButton("Export Analysis Result");
-			numericalOutputExport.addActionListener(new analysisExportListener(DBRecordNumerical,"NumericalOutput",StatPanelNumerical));			
+			numericalOutputExport.addActionListener(new analysisExportListener(DBRecordNumerical,"Numerical",StatPanelNumerical));			
 			numericalOutput.add(numericalOutputExport, BorderLayout.PAGE_END);
 			numericalOutput.pack();
 			if(!RoeMetz.doValidation)
@@ -2336,7 +2340,7 @@ public class RMGUInterface {
 	}
 	public class analysisExportListener implements ActionListener {
 		private DBRecord DB1;
-		private String subFileName;
+		private String analysisMethod;
 		private StatPanel StatPanelIn;
 		@Override
      	public void actionPerformed(ActionEvent e) {
@@ -2347,22 +2351,30 @@ public class RMGUInterface {
 			// TODO Auto-generated method stub
 			try {
 				int fcReturn;
-				File f;
+				File fGUI = null;
+				File fVal = null;
+				File outputPackage = null;
 				String savedFileName;
 				if (!RoeMetz.doValidation){
 					JFileChooser fc = new JFileChooser();
 					DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmmss");
 					Date currDate = new Date();
 					String fileTime = dateForm.format(currDate);
-					String exportFileName = subFileName+fileTime+".omrmc";
-					fc.setSelectedFile(new File(outputDirectory+"//"+exportFileName));
-					FileNameExtensionFilter filter = new FileNameExtensionFilter(
-							"iMRMC Summary Files (.omrmc or csv)", "csv","omrmc");
-					fc.setFileFilter(filter);	
-					//fcReturn = fc.showSaveDialog((Component) e.getSource());
+					String exportFolderName = inputFileName + analysisMethod + "Result" + fileTime;
+					if (outputDirectory!=null){
+						fc.setSelectedFile(new File(outputDirectory+"//"+exportFolderName));						
+					}else if (inputDirectory!=null){
+						fc.setSelectedFile(new File(inputDirectory+"//"+exportFolderName));
+					}else{
+						fc.setSelectedFile(new File(exportFolderName));
+					}
 					fcReturn = fc.showSaveDialog(null);
-					f = fc.getSelectedFile();
-					outputDirectory = fc.getCurrentDirectory();			
+					outputPackage = fc.getSelectedFile();					
+					if(!outputPackage.exists() && !outputPackage.isDirectory()) 
+						outputPackage.mkdir();		
+					fGUI = new File (outputPackage +"//" + analysisMethod +"Summary.omrmc" );
+					fVal = new File (outputPackage +"//" + analysisMethod +"Summary.csv");
+					outputDirectory = fc.getCurrentDirectory();
 					savedFileName = fc.getSelectedFile().getName();
 				}else{
 					fcReturn = 0;					
@@ -2371,59 +2383,63 @@ public class RMGUInterface {
 						outputDir.mkdir();					
 					String FileName=validateFunction.inputFile.getName();
 					FileName= FileName.substring(0,FileName.lastIndexOf("."));
-					String exportFileName = FileName +subFileName +".omrmc";
-				//	f = new File ("C://Users//qigong//Documents//imrmc//output"+"//" + exportFileName);
-					f = new File (outputDir +"//" + exportFileName);
+					String exportFileName = FileName +analysisMethod +"Summary" +".csv";
+					fVal = new File (outputDir +"//" + exportFileName);
 					savedFileName = exportFileName;
 				}
 				
 				
 				if (fcReturn == JFileChooser.APPROVE_OPTION) {
-					if (!f.exists()) {
-						f.createNewFile();
-					}
-					FileWriter fw = new FileWriter(f.getAbsoluteFile());
-					BufferedWriter bw = new BufferedWriter(fw);
-					String report = "";
-					if (subFileName.equals("SimulationOutput")){
+
+					String reportGUI = "";
+					String reportValidation = "";
+					if (analysisMethod.equals("Simulation")){
 						if (!RoeMetz.doValidation){
-							report = report + "iRoeMetz simulation summary statistics from " + RoeMetz.versionName + "\r\n";
-							report = report + "Summary statistics written to file named:" + "\r\n";
-							report = report + savedFileName + "\r\n" + "\r\n";
-							report = exportToFile.exoprtiRoeMetzSet(report,SizePanelRoeMetz);
-							report = report + "Seed for RNG: " + JTextField_seed.getText() + "\r\n";
-							report = report + "Number of Experiments: " + JTextField_Nexp.getText() + "\r\n" + "\r\n";
-							report = report + "\r\n************************************************************\r\n";
-							report = exportToFile.exportSummary(report, DB1);	
-							report = exportToFile.exportStatPanel(report, DB1, StatPanelIn);						
-						    report = exportToFile.exportMCvariance(report, varDBRecordStat);
-						    report = exportToFile.exportTable1(report, DB1);
-						    report = exportToFile.exportTable2(report, DB1);
-						}else{
-							report = exportToFile.exportMCmeanValidation(report,DB1);
-							report = exportToFile.exportMCvarianceValidation(report,varDBRecordStat);
+							reportGUI = reportGUI + "iRoeMetz simulation summary statistics from " + RoeMetz.versionName + "\r\n";
+							reportGUI = reportGUI + "Summary statistics written to file named:" + "\r\n";
+							reportGUI = reportGUI + savedFileName + "\r\n" + "\r\n";
+							reportGUI = exportToFile.exoprtiRoeMetzSet(reportGUI,SizePanelRoeMetz);
+							reportGUI = reportGUI + "Seed for RNG: " + JTextField_seed.getText() + "\r\n";
+							reportGUI = reportGUI + "Number of Experiments: " + JTextField_Nexp.getText() + "\r\n" + "\r\n";
+							reportGUI = reportGUI + "\r\n************************************************************\r\n";
+							reportGUI = exportToFile.exportSummary(reportGUI, DB1);	
+							reportGUI = exportToFile.exportStatPanel(reportGUI, DB1, StatPanelIn);						
+							reportGUI = exportToFile.exportMCvariance(reportGUI, varDBRecordStat);
+							reportGUI = exportToFile.exportTable1(reportGUI, DB1);
+							reportGUI = exportToFile.exportTable2(reportGUI, DB1);
+						    exportTrialResult(outputPackage);
 						}
+						reportValidation = "MCmeanOrvar,AUC_A,AUC_B,AUC_AminusAUC_B ,varA,varB,totalVar,pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis" + "\r\n";
+						reportValidation = exportToFile.exportMCmeanValidation(reportValidation,DB1);
+						reportValidation = exportToFile.exportMCvarianceValidation(reportValidation,varDBRecordStat);
+						
 					}else{
 						if (!RoeMetz.doValidation){
-							report = report + "iRoeMetz Numerical summary statistics from " + RoeMetz.versionName + "\r\n";
-							report = report + "Summary statistics written to file named:" + "\r\n";
-							report = report + savedFileName + "\r\n" + "\r\n";
-							report = exportToFile.exoprtiRoeMetzSet(report,SizePanelRoeMetz);
-							report = report + "\r\n************************************************************\r\n";
-							report = exportToFile.exportSummary(report, DB1);	
-							report = exportToFile.exportStatPanel(report, DB1, StatPanelIn);	
-							report = exportToFile.exportTable1(report, DB1);
-							report = exportToFile.exportTable2(report, DB1);
-						}else{
-							report = exportToFile.exportNumValidation(report,DB1);
+							reportGUI = reportGUI + "iRoeMetz Numerical summary statistics from " + RoeMetz.versionName + "\r\n";
+							reportGUI = reportGUI + "Summary statistics written to file named:" + "\r\n";
+							reportGUI = reportGUI + savedFileName + "\r\n" + "\r\n";
+							reportGUI = exportToFile.exoprtiRoeMetzSet(reportGUI,SizePanelRoeMetz);
+							reportGUI = reportGUI + "\r\n************************************************************\r\n";
+							reportGUI = exportToFile.exportSummary(reportGUI, DB1);	
+							reportGUI = exportToFile.exportStatPanel(reportGUI, DB1, StatPanelIn);	
+							reportGUI = exportToFile.exportTable1(reportGUI, DB1);
+							reportGUI = exportToFile.exportTable2(reportGUI, DB1);
 						}
+						reportValidation = "NumAUC_A,NumAUC_B,NumAUC_AB,NumvarAUC_A,NumvarAUC_B,NumvarAUC_AB" + "\r\n";
+						reportValidation = exportToFile.exportNumValidation(reportValidation,DB1);
+						
 					}
-
-					bw.write(report);
-					bw.close();
+					FileWriter fwVal = new FileWriter(fVal.getAbsoluteFile());
+					BufferedWriter bwVal = new BufferedWriter(fwVal);
+					bwVal.write(reportValidation);
+					bwVal.close();
 					if (!RoeMetz.doValidation){
+						FileWriter fwGUI = new FileWriter(fGUI.getAbsoluteFile());
+						BufferedWriter bwGUI = new BufferedWriter(fwGUI);
+						bwGUI.write(reportGUI);
+						bwGUI.close();
 						JOptionPane.showMessageDialog(
-								RoeMetz1.getFrame(), subFileName+" has been succeed export to " + outputDirectory + " !\n"+ "Filename = " +savedFileName, 
+								RoeMetz1.getFrame(), analysisMethod+" has been succeed export to " + outputDirectory + " !\n"+ "Filename = " +savedFileName, 
 								"Exported", JOptionPane.INFORMATION_MESSAGE);
 					}
 				}
@@ -2434,24 +2450,28 @@ public class RMGUInterface {
 			} 
 				
 		}
-		public analysisExportListener(DBRecord DBtemp, String tempSubFileName, StatPanel tempStatPanel){
+		public analysisExportListener(DBRecord DBtemp, String tempanalysisMethod, StatPanel tempStatPanel){
 			DB1 = DBtemp;
-			subFileName = tempSubFileName;
+			analysisMethod = tempanalysisMethod;
 			StatPanelIn = tempStatPanel;
  		}
 	
 	}
-	private void exportTrialResult() {
+	private void exportTrialResult(File GUIoutputDir) {
 		// TODO Auto-generated method stub
 		try {
 			File f;	
-			File outputDir = new File (validateFunction.inputFile.getParent()+"//"+"output");				
-			String FileName=validateFunction.inputFile.getName();
-			FileName= FileName.substring(0,FileName.lastIndexOf("."));
-			String exportFileName = FileName +"Trial" +".csv";
-			f = new File (outputDir +"//" + exportFileName);
-			if (!f.exists()) {
-				f.createNewFile();
+			if (RoeMetz.doValidation){
+				File outputDir = new File (validateFunction.inputFile.getParent()+"//"+"output");				
+				String FileName=validateFunction.inputFile.getName();
+				FileName= FileName.substring(0,FileName.lastIndexOf("."));
+				String exportFileName = FileName +"simulationTrials" +".csv";
+				f = new File (outputDir +"//" + exportFileName);
+				if (!f.exists()) {
+					f.createNewFile();
+				}
+			}else{
+				f = new File (GUIoutputDir + "//" + "simulationTrials" +".csv");
 			}
 			FileWriter fw;		
 			fw = new FileWriter(f.getAbsoluteFile());
