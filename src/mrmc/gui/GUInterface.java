@@ -721,46 +721,72 @@ public class GUInterface {
 					roc.addData(InputFile1.generatePooledROC(rocMod), "Pooled Average");
 					AllROCreport = exportToFile.exportROC(roc.seriesCollection,AllROCreport);
 					
-					// export 4 strings to files
+					// summary input
 				}else{
-					DBRecordStatAll = DBRecordStat;
+					DBRecord a = DBRecordStat;
+					DBRecordStatAll.AUCs = Matrix.copy(DBRecordStat.AUCs);
+					DBRecordStatAll.AUCsReaderAvg = Matrix.copy(DBRecordStat.AUCsReaderAvg);
+					DBRecordStatAll.LoadBDG = Matrix.copy(DBRecordStat.LoadBDG);
+					DBRecordStatAll.Ndisease = DBRecordStat.Ndisease;
+					DBRecordStatAll.NdiseaseDB = DBRecordStat.NdiseaseDB;
+					DBRecordStatAll.Nnormal = DBRecordStat.Nnormal;
+					DBRecordStatAll.NnormalDB = DBRecordStat.NnormalDB;
+					DBRecordStatAll.Nreader = DBRecordStat.Nreader;
+					DBRecordStatAll.NreaderDB = DBRecordStat.NreaderDB;
+					DBRecord track = DBRecordStatAll;
 					DBRecordStatAll.InputFile1 = InputFile1;
+					String tempModA = "";
+					String tempModB = "";
+					if (MRMC.commandStart){
+						tempModA = DBRecordStat.modalityA;
+						tempModB = DBRecordStat.modalityB;
+					}else{
+						tempModA = InputSummaryCard.loadmodalityA;
+						tempModB = InputSummaryCard.loadmodalityB;
+					}
 					// Analysis modality A
-					DBRecordStatAll.modalityA = InputSummaryCard.loadmodalityA;
-					DBRecordStatAll.modalityB = "NO_MOD";
-					DBRecordStatAll.selectedMod = 0;
-					DBRecordStatAll.flagMLE = 0;
-					DBRecordStatAll.DBRecordStatFillSummary(DBRecordStatAll);
-					AllStatreport = exportToFile.exportStat(AllStatreport, DBRecordStatAll, fileTime);	
-					savetable();
-					DBRecordStatAll.flagMLE = 1;
-					DBRecordStatAll.DBRecordStatFillSummary(DBRecordStatAll);
-					AllStatMLEreport = exportToFile.exportStat(AllStatMLEreport, DBRecordStatAll, fileTime);
-					savetable();
+					if (!tempModA.equals("NO_MOD")){
+						DBRecordStatAll.modalityA = tempModA;
+						DBRecordStatAll.modalityB = "NO_MOD";
+						DBRecordStatAll.selectedMod = 0;
+						DBRecordStatAll.flagMLE = 0;
+						DBRecordStatAll.DBRecordStatFillSummary(DBRecordStatAll);
+						AllStatreport = exportToFile.exportStat(AllStatreport, DBRecordStatAll, fileTime);	
+						savetable();
+						DBRecordStatAll.flagMLE = 1;
+						DBRecordStatAll.DBRecordStatFillSummary(DBRecordStatAll);
+						AllStatMLEreport = exportToFile.exportStat(AllStatMLEreport, DBRecordStatAll, fileTime);
+						savetable();
+					}
+					DBRecord track1 = DBRecordStat;
 					// Analysis modality B
-					DBRecordStatAll.modalityA = "NO_MOD";
-					DBRecordStatAll.modalityB = InputSummaryCard.loadmodalityB;
-					DBRecordStatAll.selectedMod = 1;
-					DBRecordStatAll.flagMLE = 0;
-					DBRecordStatAll.DBRecordStatFillSummary(DBRecordStatAll);
-					AllStatreport = exportToFile.exportStat(AllStatreport, DBRecordStatAll, fileTime);	
-					savetable();
-					DBRecordStatAll.flagMLE = 1;
-					DBRecordStatAll.DBRecordStatFillSummary(DBRecordStatAll);
-					AllStatMLEreport = exportToFile.exportStat(AllStatMLEreport, DBRecordStatAll, fileTime);
-					savetable();
+					if (!tempModB.equals("NO_MOD")){
+						DBRecordStatAll.modalityA = "NO_MOD";
+						DBRecordStatAll.modalityB = tempModB;
+						DBRecordStatAll.selectedMod = 1;
+						DBRecordStatAll.flagMLE = 0;
+						DBRecordStatAll.DBRecordStatFillSummary(DBRecordStatAll);
+						AllStatreport = exportToFile.exportStat(AllStatreport, DBRecordStatAll, fileTime);	
+						savetable();
+						DBRecordStatAll.flagMLE = 1;
+						DBRecordStatAll.DBRecordStatFillSummary(DBRecordStatAll);
+						AllStatMLEreport = exportToFile.exportStat(AllStatMLEreport, DBRecordStatAll, fileTime);
+						savetable();
+					}
 					// Analysis modality A and B
-					DBRecordStatAll.modalityA = InputSummaryCard.loadmodalityA;
-					DBRecordStatAll.modalityB = InputSummaryCard.loadmodalityB;
-					DBRecordStatAll.selectedMod = 3;
-					DBRecordStatAll.flagMLE = 0;
-					DBRecordStatAll.DBRecordStatFillSummary(DBRecordStatAll);
-					AllStatreport = exportToFile.exportStat(AllStatreport, DBRecordStatAll, fileTime);	
-					savetable();
-					DBRecordStatAll.flagMLE = 1;
-					DBRecordStatAll.DBRecordStatFillSummary(DBRecordStatAll);
-					AllStatMLEreport = exportToFile.exportStat(AllStatMLEreport, DBRecordStatAll, fileTime);
-					savetable();
+					if ((!tempModA.equals("NO_MOD"))&(!tempModB.equals("NO_MOD"))){
+						DBRecordStatAll.modalityA = tempModA;
+						DBRecordStatAll.modalityB = tempModB;
+						DBRecordStatAll.selectedMod = 3;
+						DBRecordStatAll.flagMLE = 0;
+						DBRecordStatAll.DBRecordStatFillSummary(DBRecordStatAll);
+						AllStatreport = exportToFile.exportStat(AllStatreport, DBRecordStatAll, fileTime);	
+						savetable();
+						DBRecordStatAll.flagMLE = 1;
+						DBRecordStatAll.DBRecordStatFillSummary(DBRecordStatAll);
+						AllStatMLEreport = exportToFile.exportStat(AllStatMLEreport, DBRecordStatAll, fileTime);
+						savetable();
+					}
 				}
 				// export result to disk
 				try {
@@ -808,6 +834,7 @@ public class GUInterface {
 											thisGUI.MRMCobject.getFrame(),"All modalities combinations analysis table, result, AUCs and ROC have been succeed export to \n " + outputDir, 
 											"Exported", JOptionPane.INFORMATION_MESSAGE);
 						}else{
+							System.out.println("All modalities combinations analysis table, result, AUCs and ROC have been succeed export to \n " + outputDir);		
 							System.exit(0);
 						}
 					} else{
@@ -816,6 +843,7 @@ public class GUInterface {
 									thisGUI.MRMCobject.getFrame(),"All modalities combinations analysis table and result have been succeed export to \n " + outputDir, 
 									"Exported", JOptionPane.INFORMATION_MESSAGE);
 						}else{
+							System.out.println("All modalities combinations analysis table and result have been succeed export to \n" + outputDir);		
 							System.exit(0);
 						}
 					}
