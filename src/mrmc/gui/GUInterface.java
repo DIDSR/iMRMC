@@ -49,6 +49,8 @@ import mrmc.core.StatTest;
 
 import org.jfree.ui.RefineryUtilities;
 
+import roemetz.core.validateFunction;
+
 /**
  * This class describes the graphic interface. From top to bottom, the GUI
  * includes <br>
@@ -100,12 +102,13 @@ public class GUInterface {
 	/**
 	 * InputFile1 {@link mrmc.core.InputFile}
 	 */
-	InputFile InputFile1 = new InputFile();
+	public InputFile InputFile1 = new InputFile();
 	/**
 	 * DBrecord object holds all the processed info related to a reader study
 	 */
 	public DBRecord DBRecordStat = new DBRecord(this);
 	public DBRecord DBRecordSize = new DBRecord(this);
+	private DBRecord DBRecordStatAll = new DBRecord(this);
 	public int resetcall = 0 ;
 	public final static int USE_MLE = 1;
 	public final static int NO_MLE = 0;
@@ -166,12 +169,12 @@ public class GUInterface {
 		public void resetGUI() {
 			InputFile1.resetInputFile();
 			resetcall = 1;
+			DBRecordStat.resetDBRecord();
 			InputFileCard.resetInputFileCard();
 			InputSummaryCard.resetInputSummaryCard();
 			resetcall = 0 ;
 			StatPanel1.resetStatPanel();
 			SizePanel1.resetSizePanel();
-	
 			StatPanel1.enableTabs();
 
 		}
@@ -336,24 +339,25 @@ public class GUInterface {
 		 * This panel should allow for writing results of the current analysis to the hard drive.
 		 */
 		JPanel panelSummary = new JPanel();
-		panelSummary.add(new JLabel("GUI Summary:"));
-		JButton saveGUI = new JButton("Save to File");
+		JButton saveGUI = new JButton("Save Stat Summary");
 		saveGUI.addActionListener(new SaveGUIButtonListener());
 		
 		panelSummary.add(saveGUI);
 
-		panelSummary.add(new JLabel("GUI Size:"));
 		JButton saveSize = new JButton("Save Size");
 		saveSize.addActionListener(new SaveGUISizeListener());
 		
 		panelSummary.add(saveSize);
-		
-		
-		panelSummary.add(new JLabel("GUI statistical:"));
+
 		JButton saveStat = new JButton("Save Stat");
 		saveStat.addActionListener(new SaveGUIStatListener());
 		
 		panelSummary.add(saveStat);
+		
+		JButton saveAll = new JButton("Save All Stat");
+		saveAll.addActionListener(new SaveAllStatListener());
+		
+		panelSummary.add(saveAll);
 		
 		cp.add(inputSelectPane);
 		cp.add(InputPane);
@@ -553,7 +557,9 @@ public class GUInterface {
 		public void actionPerformed(ActionEvent e) {
 			if( DBRecordStat.totalVar > 0.0) {
 				DBRecordStat.InputFile1 = InputFile1;
-				String report = "";
+	    		String head =  "inputFile,date,iMRMCversion,NR,N0,N1,modalityA,modalityB,UstatOrMLE,AUCA,varAUCA,AUCB,varAUCB,AUCAminusAUCB,varAUCAminusAUCB,"
+	    				+"pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis";
+				String report = head +"\r\n";
 	            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
 				Date currDate = new Date();
 				final String fileTime = dateForm.format(currDate);
@@ -610,7 +616,259 @@ public class GUInterface {
 		}
 	}
 	
-	
+	/**	 * Handler for button to save all stat analysis result to file
+	 */
+	public class SaveAllStatListener implements ActionListener {
+
+	//	@Override
+		//public String sFileName="";
+		private String BDGout,BCKout,DBMout,ORout,MSout;
+     	public void actionPerformed(ActionEvent e) {
+			exportResult();
+
+		 }
+		public void exportResult() {
+			if (InputFile1.isLoaded()) {    	// check raw data is loaded
+	            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
+				Date currDate = new Date();
+				final String fileTime = dateForm.format(currDate);
+				String fileWholeName=InputFile1.filename;
+				String fileName= fileWholeName.substring(fileWholeName.lastIndexOf("\\")+1,fileWholeName.lastIndexOf("."));
+				String filePath = fileWholeName.substring(0,fileWholeName.lastIndexOf("\\"));
+				File outputDir = new File (filePath + "//"+ fileName + fileTime);
+				if(!outputDir.exists() && !outputDir.isDirectory()) 
+					outputDir.mkdir();		
+				// create file save all stat analysis result
+				String AllStatPath = outputDir+ "//statAnalysis.csv";
+				// create file save all stat analysis MLE result
+				String AllStatMLEPath = outputDir+ "//statAnalysisMLE.csv";
+				// create file save all readers analysis result
+				String AllAUCsPath = outputDir+ "//AUCperReader.csv";
+				// create file save ROC result
+				String AllROCPath = outputDir+ "//ROCcurves.csv";
+				// create file save BDG table
+				String BDGtable = outputDir+ "//BDGtable.csv";
+				// create file save BCK table
+				String BCKtable = outputDir+ "//BCKtable.csv";
+				// create file save DBM table
+				String DBMtable = outputDir+ "//DBMtable.csv";
+				// create file save OR table
+				String ORtable = outputDir+ "//ORtable.csv";
+				// create file save MS table
+				String MStable = outputDir+ "//MStable.csv";
+	            // initial 3 string to save All stat, AUCs and ROC result
+	    		String statHead =  "inputFile,date,iMRMCversion,NR,N0,N1,modalityA,modalityB,UstatOrMLE,AUCA,varAUCA,AUCB,varAUCB,AUCAminusAUCB,varAUCAminusAUCB,"
+	    				+"pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis";
+	    		BDGout =  "modalityA,modalityB,UstatOrMLE,compOrCoeff,M1,M2,M3,M4,M5,M6,M7,M8" +"\r\n";
+	    		BCKout =  "modalityA,modalityB,UstatOrMLE,Moments,N,D,ND,R,NR,DR,RND" +"\r\n";
+	    		DBMout =  "modalityA,modalityB,UstatOrMLE,Components,R,C,RC,TR,TC,TRC" +"\r\n";
+	    		ORout =  "modalityA,modalityB,UstatOrMLE,Components,R,TR,COV1,COV2,COV3,ERROR" +"\r\n";
+	    		MSout =  "modalityA,modalityB,UstatOrMLE,Components,R,C,RC,MR,MC,MRC" +"\r\n";
+	            String AllStatreport = statHead+"\r\n";
+	            String AllStatMLEreport = statHead+"\r\n";
+	            String AllAUCsreport = "inputFile,date,iMRMCversion,readerID,N0,N1,modalityA,modalityB,AUCA,varAUCA,AUCB,varAUCB,AUCAminusAUCB,varAUCAminusAUCB,"
+	    				+"pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis"+"\r\n";
+	            String AllROCreport = "";
+				if  (GUInterface.selectedInput == GUInterface.DescInputModeImrmc){
+					System.out.println("MRMC Save All Stat button clicked");
+					// Create a list for all combination of modality
+					int numMod = InputFile1.getModalityIDs().size();
+					int modCombination  = calFactorial(numMod)/calFactorial(numMod-2)/calFactorial(2)+3;      // find how many combination in total
+					String[][] modCombinationList = new String[modCombination] [2];
+					String[] rocMod = new String[numMod];
+					int count = 0;
+					for (String ModalityID : InputFile1.getModalityIDs()) {
+						modCombinationList[count][0]= ModalityID;
+						modCombinationList[count][1]= "NO_MOD";
+						rocMod[count] = ModalityID;
+						count++;
+					}
+					for (int i=0; i<numMod-1; i++) {
+						for(int j=i+1 ; j<numMod; j++){
+							modCombinationList[count][0]= modCombinationList[i][0];
+							modCombinationList[count][1]= modCombinationList[j][0];
+							count++;
+						}
+					}
+					
+		            //Do simulation for each group of modality, save Stat and reader AUC result
+					for (int i = 0; i<count; i ++ ){
+						DBRecordStatAll.flagMLE = 0;
+						DBRecordStatAll.modalityA = modCombinationList[i][0];
+						DBRecordStatAll.modalityB = modCombinationList[i][1];
+						if (i<numMod){
+							DBRecordStatAll.selectedMod = 0;
+						}else{
+							DBRecordStatAll.selectedMod = 3;
+						}
+						// calculate and save Ustat result
+						DBRecordStatAll.DBRecordStatFill(InputFile1, DBRecordStatAll);
+						AllStatreport = exportToFile.exportStat(AllStatreport, DBRecordStatAll, fileTime);
+						AllAUCsreport = exportToFile.exportReaders(AllAUCsreport, DBRecordStatAll,InputFile1, fileTime);
+						savetable();
+						// calculate and save MLE result
+						DBRecordStatAll.flagMLE = 1;
+						DBRecordStatAll.DBRecordStatFill(InputFile1, DBRecordStatAll);
+						AllStatMLEreport = exportToFile.exportStat(AllStatMLEreport, DBRecordStatAll, fileTime);
+						savetable();
+					}
+					
+					//Get ROC result
+					final ROCCurvePlot roc = new ROCCurvePlot(
+							"ROC Curve: All Modality ",
+							"FPF (1 - Specificity), legend shows symbols for each modalityID:readerID", "TPF (Sensitivity)",
+							InputFile1.generateROCpoints(rocMod),InputFile1.filename);
+					roc.addData(InputFile1.generatePooledROC(rocMod), "Pooled Average");
+					AllROCreport = exportToFile.exportROC(roc.seriesCollection,AllROCreport);
+					
+					// summary input
+				}else{
+					DBRecord a = DBRecordStat;
+					DBRecordStatAll.AUCs = Matrix.copy(DBRecordStat.AUCs);
+					DBRecordStatAll.AUCsReaderAvg = Matrix.copy(DBRecordStat.AUCsReaderAvg);
+					DBRecordStatAll.LoadBDG = Matrix.copy(DBRecordStat.LoadBDG);
+					DBRecordStatAll.Ndisease = DBRecordStat.Ndisease;
+					DBRecordStatAll.NdiseaseDB = DBRecordStat.NdiseaseDB;
+					DBRecordStatAll.Nnormal = DBRecordStat.Nnormal;
+					DBRecordStatAll.NnormalDB = DBRecordStat.NnormalDB;
+					DBRecordStatAll.Nreader = DBRecordStat.Nreader;
+					DBRecordStatAll.NreaderDB = DBRecordStat.NreaderDB;
+					DBRecord track = DBRecordStatAll;
+					DBRecordStatAll.InputFile1 = InputFile1;
+					String tempModA = "";
+					String tempModB = "";
+					if (MRMC.commandStart){
+						tempModA = DBRecordStat.modalityA;
+						tempModB = DBRecordStat.modalityB;
+					}else{
+						tempModA = InputSummaryCard.loadmodalityA;
+						tempModB = InputSummaryCard.loadmodalityB;
+					}
+					// Analysis modality A
+					if (!tempModA.equals("NO_MOD")){
+						DBRecordStatAll.modalityA = tempModA;
+						DBRecordStatAll.modalityB = "NO_MOD";
+						DBRecordStatAll.selectedMod = 0;
+						DBRecordStatAll.flagMLE = 0;
+						DBRecordStatAll.DBRecordStatFillSummary(DBRecordStatAll);
+						AllStatreport = exportToFile.exportStat(AllStatreport, DBRecordStatAll, fileTime);	
+						savetable();
+						DBRecordStatAll.flagMLE = 1;
+						DBRecordStatAll.DBRecordStatFillSummary(DBRecordStatAll);
+						AllStatMLEreport = exportToFile.exportStat(AllStatMLEreport, DBRecordStatAll, fileTime);
+						savetable();
+					}
+					DBRecord track1 = DBRecordStat;
+					// Analysis modality B
+					if (!tempModB.equals("NO_MOD")){
+						DBRecordStatAll.modalityA = "NO_MOD";
+						DBRecordStatAll.modalityB = tempModB;
+						DBRecordStatAll.selectedMod = 1;
+						DBRecordStatAll.flagMLE = 0;
+						DBRecordStatAll.DBRecordStatFillSummary(DBRecordStatAll);
+						AllStatreport = exportToFile.exportStat(AllStatreport, DBRecordStatAll, fileTime);	
+						savetable();
+						DBRecordStatAll.flagMLE = 1;
+						DBRecordStatAll.DBRecordStatFillSummary(DBRecordStatAll);
+						AllStatMLEreport = exportToFile.exportStat(AllStatMLEreport, DBRecordStatAll, fileTime);
+						savetable();
+					}
+					// Analysis modality A and B
+					if ((!tempModA.equals("NO_MOD"))&(!tempModB.equals("NO_MOD"))){
+						DBRecordStatAll.modalityA = tempModA;
+						DBRecordStatAll.modalityB = tempModB;
+						DBRecordStatAll.selectedMod = 3;
+						DBRecordStatAll.flagMLE = 0;
+						DBRecordStatAll.DBRecordStatFillSummary(DBRecordStatAll);
+						AllStatreport = exportToFile.exportStat(AllStatreport, DBRecordStatAll, fileTime);	
+						savetable();
+						DBRecordStatAll.flagMLE = 1;
+						DBRecordStatAll.DBRecordStatFillSummary(DBRecordStatAll);
+						AllStatMLEreport = exportToFile.exportStat(AllStatMLEreport, DBRecordStatAll, fileTime);
+						savetable();
+					}
+				}
+				// export result to disk
+				try {
+					FileWriter fwAllStat = new FileWriter(AllStatPath);
+					FileWriter fwAllStatMLE = new FileWriter(AllStatMLEPath);
+					FileWriter fwBDGtable = new FileWriter(BDGtable);
+					FileWriter fwBCKtable = new FileWriter(BCKtable);
+					FileWriter fwDBMtable = new FileWriter(DBMtable);
+					FileWriter fwORtable = new FileWriter(ORtable);
+					FileWriter fwMStable = new FileWriter(MStable);				
+					BufferedWriter bwAllStat = new BufferedWriter(fwAllStat);
+					BufferedWriter bwAllStatMLE = new BufferedWriter(fwAllStatMLE);
+					BufferedWriter bwBDGtable = new BufferedWriter(fwBDGtable);
+					BufferedWriter bwBCKtable = new BufferedWriter(fwBCKtable);
+					BufferedWriter bwDBMtable = new BufferedWriter(fwDBMtable);
+					BufferedWriter bwORtable = new BufferedWriter(fwORtable);
+					BufferedWriter bwMStable = new BufferedWriter(fwMStable);										
+					bwAllStat.write(AllStatreport);
+					bwAllStat.close();
+					bwAllStatMLE.write(AllStatMLEreport);
+					bwAllStatMLE.close();
+					bwBDGtable.write(BDGout);
+					bwBDGtable.close();
+					bwBCKtable.write(BCKout);
+					bwBCKtable.close();
+					bwDBMtable.write(DBMout);
+					bwDBMtable.close();
+					bwORtable.write(ORout);
+					bwORtable.close();
+					bwMStable.write(MSout);
+					bwMStable.close();					
+					
+					// only export ROC and each reader information for raw data 
+					if  (GUInterface.selectedInput == GUInterface.DescInputModeImrmc){
+						FileWriter fwAllAUCs = new FileWriter(AllAUCsPath);
+						FileWriter fwAllROC = new FileWriter(AllROCPath);
+						BufferedWriter bwAllAUCs = new BufferedWriter(fwAllAUCs);
+						BufferedWriter bwAllROC = new BufferedWriter(fwAllROC);	
+						bwAllAUCs.write(AllAUCsreport);
+						bwAllAUCs.close();
+						bwAllROC.write(AllROCreport);
+						bwAllROC.close();
+						if (!MRMC.commandStart){
+							JOptionPane.showMessageDialog(
+											thisGUI.MRMCobject.getFrame(),"All modalities combinations analysis table, result, AUCs and ROC have been succeed export to \n " + outputDir, 
+											"Exported", JOptionPane.INFORMATION_MESSAGE);
+						}else{
+							System.out.println("All modalities combinations analysis table, result, AUCs and ROC have been succeed export to \n " + outputDir);		
+							System.exit(0);
+						}
+					} else{
+						if (!MRMC.commandStart){
+							JOptionPane.showMessageDialog(
+									thisGUI.MRMCobject.getFrame(),"All modalities combinations analysis table and result have been succeed export to \n " + outputDir, 
+									"Exported", JOptionPane.INFORMATION_MESSAGE);
+						}else{
+							System.out.println("All modalities combinations analysis table and result have been succeed export to \n" + outputDir);		
+							System.exit(0);
+						}
+					}
+				} catch (HeadlessException e1) {
+						e1.printStackTrace();
+				} catch (IOException e1) {
+						e1.printStackTrace();
+				} 
+			}else{
+				JOptionPane.showMessageDialog(thisGUI.MRMCobject.getFrame(),
+						"Please load Reader study data input file.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+						
+		}
+		private void savetable() {
+			// save tables result
+			BDGout = exportToFile.exportTableBDG(BDGout,DBRecordStatAll);
+    		BCKout = exportToFile.exportTableBCK(BCKout,DBRecordStatAll);
+    		DBMout = exportToFile.exportTableDBM(DBMout,DBRecordStatAll);
+    		ORout = exportToFile.exportTableOR(ORout,DBRecordStatAll);
+			MSout = exportToFile.exportTableMS(MSout,DBRecordStatAll);
+			
+		}
+	}
 	
 	
 	
@@ -728,9 +986,17 @@ public class GUInterface {
 		}
 	}
 
+	/**
+     * Calculate Factorial for a number
+	 */
 
-
-
+	public int calFactorial(int n){
+		int factorial = 1;
+		for (int i = 1; i<=n; i++){
+			factorial = factorial * i;
+		}
+		return factorial;
+	}
 
 
 

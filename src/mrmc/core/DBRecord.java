@@ -123,6 +123,10 @@ public class DBRecord {
 	 */
 	public double[][] AUCs;
 	/**
+	 * number of cases for each reader and modality [Nreader][3]
+	 */
+	public int[][] N0perReader, N1perReader;
+	/**
 	 * Total variance of the reader-averaged AUC for <br>
 	 * ----the modality selected <br>
 	 * ----the difference in modalities
@@ -265,6 +269,37 @@ public class DBRecord {
 			MScoeffresult = new double[4][6];
 	
 	public static double[][] MSPanelresult = new double[3][6];
+	
+	
+	
+	// Reset DBRecord
+    public void resetDBRecord() {
+		// TODO Auto-generated method stub
+		Nreader = -1;
+		Nnormal = -1;
+		Ndisease = -1;
+		NreaderDB = -1;
+		NnormalDB = -1;
+		NdiseaseDB = -1;
+		totalVar = -1.0;
+		SE = -1.0;
+		varA = -1;
+		varB = -1;
+		flagMLE = 0;
+		flagTotalVarIsNegative = 0;
+		flagFullyCrossed = true;
+		BDG = new double[4][8];
+		LoadBDG = new double[4][8]; // BDG moment load from 
+		BDGbias = new double[4][8];
+		BDGcoeff = new double[4][8];
+		BDGresult = new double[4][8];
+		BDGbiasresult = new double[4][8];
+		BDGcoeffresult = new double[4][8];
+		BDGPanelresult = new double[7][8];
+
+		
+	}
+	
 	
 	/**
 	 * Constructor for iMRMC
@@ -551,6 +586,8 @@ public class DBRecord {
 		NreaderDB = chosenreaderlist.size();
 		NnormalDB = chosennormallist.size();
 		NdiseaseDB = chosendiseaselist.size();
+		N0perReader = covMRMCstat.N0perReader;
+		N1perReader = covMRMCstat.N1perReader;
 		testStat = new StatTest(DBRecordStat);
 	}
 	/**
@@ -633,7 +670,6 @@ public class DBRecord {
 		
 		DBRecordStat.Decompositions();
 		DBRecordStat.testStat = new StatTest(DBRecordStat);
-		
 		
 	}
 	

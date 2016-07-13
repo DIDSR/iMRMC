@@ -2,6 +2,9 @@ package mrmc.chart;
 
 import java.text.DecimalFormat;
 
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+
 import roemetz.gui.RMGUInterface;
 import mrmc.core.DBRecord;
 import mrmc.core.InputFile;
@@ -55,6 +58,172 @@ public class exportToFile {
 		
 		str = str + "\r\n" + StatDBRecord.getAUCsReaderAvgString(StatDBRecord.selectedMod);
 		str = str + "\r\nStatistical Tests:\r\n" + result + SEPA;		
+		return str;
+	}
+	//export BDG table
+	public static String exportTableBDG(String oldReport, DBRecord DBRecordTable) {
+		String str = oldReport;
+		double[][] BDGdata1 = DBRecord.getBDGTab(DBRecordTable.selectedMod,
+				DBRecordTable.BDG, DBRecordTable.BDGcoeff);
+		String analysisMethod = "Ustat";
+		if(DBRecordTable.flagMLE == 1) {
+			BDGdata1 = DBRecord.getBDGTab(DBRecordTable.selectedMod,
+					DBRecordTable.BDGbias, DBRecordTable.BDGcoeff);
+			analysisMethod = "MLE";
+		}
+		str = str + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "comp_A" + SEPA;
+		for(int i = 0; i<8; i++)
+			str = str + fiveDecE.format(BDGdata1[0][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "coeff_A" + SEPA;
+		for(int i = 0; i<8; i++)
+			str = str + fiveDecE.format(BDGdata1[1][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "comp_B" + SEPA;
+		for(int i = 0; i<8; i++)
+			str = str + fiveDecE.format(BDGdata1[2][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "coeff_B" + SEPA;
+		for(int i = 0; i<8; i++)
+			str = str + fiveDecE.format(BDGdata1[3][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "comp_product" + SEPA;
+		for(int i = 0; i<8; i++)
+			str = str + fiveDecE.format(BDGdata1[4][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "coeff_product" + SEPA;
+		for(int i = 0; i<8; i++)
+			str = str + fiveDecE.format(BDGdata1[5][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "total" + SEPA;
+		for(int i = 0; i<8; i++)
+			str = str + fiveDecE.format(BDGdata1[6][i]) + SEPA;
+		str = str + "\r\n";
+		return str;
+	}
+	
+	//export BCK table
+	public static String exportTableBCK(String oldReport, DBRecord DBRecordTable) {
+		String str = oldReport;
+		double[][] BCKdata1 = DBRecord.getBCKTab(DBRecordTable.selectedMod,
+				DBRecordTable.BCK, DBRecordTable.BCKcoeff);
+		String analysisMethod = "Ustat";
+		if(DBRecordTable.flagMLE == 1) {
+			BCKdata1 = DBRecord.getBCKTab(DBRecordTable.selectedMod,
+					DBRecordTable.BCKbias, DBRecordTable.BCKcoeff);
+			analysisMethod = "MLE";
+		}
+		str = str + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "comp_A" + SEPA;
+		for (int i = 0; i < 7; i++)
+			str = str + fiveDecE.format(BCKdata1[0][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "coeff_A" + SEPA;
+		for (int i = 0; i < 7; i++)
+			str = str + fiveDecE.format(BCKdata1[1][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "comp_B" + SEPA;
+		for (int i = 0; i < 7; i++)
+			str = str + fiveDecE.format(BCKdata1[2][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "coeff_B" + SEPA;
+		for (int i = 0; i < 7; i++)
+			str = str + fiveDecE.format(BCKdata1[3][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "comp_product" + SEPA;
+		for (int i = 0; i < 7; i++)
+			str = str + fiveDecE.format(BCKdata1[4][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "coeff_product" + SEPA;
+		for (int i = 0; i < 7; i++)
+			str = str + fiveDecE.format(BCKdata1[5][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "total" + SEPA;
+		for (int i = 0; i < 7; i++)
+			str = str + fiveDecE.format(BCKdata1[6][i]) + SEPA;
+		str = str +"\r\n"; 
+		return str;
+	}
+	
+	//export DBM table
+	public static String exportTableDBM(String oldReport, DBRecord DBRecordTable) {
+		String str = oldReport;
+		double[][] DBMdata1 = DBRecord.getDBMTab(DBRecordTable.selectedMod,
+				DBRecordTable.DBM, DBRecordTable.DBMcoeff);
+		String analysisMethod = "Ustat";
+		if(DBRecordTable.flagMLE == 1) {
+			DBMdata1 = DBRecord.getDBMTab(DBRecordTable.selectedMod,
+					DBRecordTable.DBMbias, DBRecordTable.DBMcoeff);
+			analysisMethod = "MLE";
+		}
+		str = str + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "components" + SEPA;
+		for (int i = 0; i < 6; i++)
+			str = str + fiveDecE.format(DBMdata1[0][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "coeff" + SEPA;
+		for (int i = 0; i < 6; i++)
+			str = str + fiveDecE.format(DBMdata1[1][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "total" + SEPA;
+		for (int i = 0; i < 6; i++)
+			str = str + fiveDecE.format(DBMdata1[2][i]) + SEPA;
+		str = str +"\r\n"; 
+		return str;
+	}
+	
+	//export OR table
+	public static String exportTableOR(String oldReport, DBRecord DBRecordTable) {
+		String str = oldReport;
+		double[][] ORdata1 = DBRecord.getORTab(DBRecordTable.selectedMod,
+				DBRecordTable.OR, DBRecordTable.ORcoeff);
+		String analysisMethod = "Ustat";
+		if(DBRecordTable.flagMLE == 1) {
+			ORdata1 = DBRecord.getORTab(DBRecordTable.selectedMod,
+					DBRecordTable.ORbias, DBRecordTable.ORcoeff);	
+			analysisMethod = "MLE";
+		}
+		str = str + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "components" + SEPA;
+		for (int i = 0; i < 6; i++)
+			str = str + fiveDecE.format(ORdata1[0][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "coeff" + SEPA;
+		for (int i = 0; i < 6; i++)
+			str = str + fiveDecE.format(ORdata1[1][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "total" + SEPA;
+		for (int i = 0; i < 6; i++)
+			str = str + fiveDecE.format(ORdata1[2][i]) + SEPA;
+		str = str +"\r\n"; 
+		return str;
+	}
+	
+	//export MS table
+	public static String exportTableMS(String oldReport, DBRecord DBRecordTable) {
+		String str = oldReport;
+		double[][] MSdata1 = DBRecord.getMSTab(DBRecordTable.selectedMod,
+				DBRecordTable.MS, DBRecordTable.MScoeff);
+		String analysisMethod = "Ustat";
+		if(DBRecordTable.flagMLE == 1) {
+			MSdata1 = DBRecord.getMSTab(DBRecordTable.selectedMod,
+					DBRecordTable.MSbias, DBRecordTable.MScoeff);	
+			analysisMethod = "MLE";
+		}
+		str = str + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "components" + SEPA;
+		for (int i = 0; i < 6; i++)
+			str = str + fiveDecE.format(MSdata1[0][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "coeff" + SEPA;
+		for (int i = 0; i < 6; i++)
+			str = str + fiveDecE.format(MSdata1[1][i]) + SEPA;
+		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+				+ analysisMethod + SEPA + "total" + SEPA;
+		for (int i = 0; i < 6; i++)
+			str = str + fiveDecE.format(MSdata1[2][i]) + SEPA;
+		str = str +"\r\n"; 
 		return str;
 	}
 	
@@ -407,24 +576,28 @@ public class exportToFile {
 		double totalVar    = VldDBRecord.totalVar;
 		double varA    = VldDBRecord.varA;
 		double varB    = VldDBRecord.varB;
+		double pValueNormal = VldDBRecord.testStat.pValNormal;
+		double botCInormal = VldDBRecord.testStat.ciBotNormal;
+		double topCInormal = VldDBRecord.testStat.ciTopNormal;		
 		double rejectNormal    = VldDBRecord.testStat.rejectNormal;
+		double dfBDG = VldDBRecord.testStat.DF_BDG;
+	    double pValueBDG = VldDBRecord.testStat.pValBDG;
+		double botCIBDG = VldDBRecord.testStat.ciBotBDG;
+		double topCIBDG = VldDBRecord.testStat.ciTopBDG;
 		double rejectBDG    = VldDBRecord.testStat.rejectBDG;
+		double dfHills = VldDBRecord.testStat.DF_Hillis;
+		double pValueHillis = VldDBRecord.testStat.pValHillis;
+		double botCIHillis = VldDBRecord.testStat.ciBotHillis;
+		double topCIHillis = VldDBRecord.testStat.ciTopHillis;
 		double rejectHillis    = VldDBRecord.testStat.rejectHillis;
-		
-		str =  str + "mcMeanAUC_A      : " + fourDecE.format(AUC_A) + "\r\n";
-		str =  str + "mcMeanAUC_B      : " + fourDecE.format(AUC_B) + "\r\n";
-		str =  str + "mcMeanAUC_AB     : " + fourDecE.format(AUC_AminusAUC_B) + "\r\n";
-		str =  str + "mcMeanvarAUC_A   : " + fourDecE.format(varA) + "\r\n";
-		str =  str + "mcMeanvarAUC_B   : " + fourDecE.format(varB) + "\r\n";
-		str =  str + "mcMeanvarAUC_AB  : " + fourDecE.format(totalVar) + "\r\n";
-		str =  str + "rejectNormal     : " + fourDecE.format(rejectNormal) + "\r\n";
-		str =  str + "rejectBDG        : " + fourDecE.format(rejectBDG) + "\r\n";
+		str = str + "MCmean" + SEPA + fourDecE.format(AUC_A) + SEPA + fourDecE.format(AUC_B) + SEPA + fourDecE.format(AUC_AminusAUC_B) + SEPA + fourDecE.format(varA) + SEPA + fourDecE.format(varB) + SEPA + fourDecE.format(totalVar) +SEPA;
+		str = str + fourDecE.format(pValueNormal) + SEPA + fourDecE.format(botCInormal) + SEPA + fourDecE.format(topCInormal) + SEPA + fourDecE.format(rejectNormal) + SEPA ;			
+		str = str + fourDecE.format(dfBDG) + SEPA + fourDecE.format(pValueBDG) + SEPA + fourDecE.format(botCIBDG) + SEPA + fourDecE.format(topCIBDG) + SEPA + fourDecE.format(rejectBDG) + SEPA;
 		if (Double.isNaN(rejectHillis)){
-			str =  str + "rejectHillis     : NaN" + "\r\n";
+			str =  str + "NaN,NaN,NaN,NaN,NaN" + "\r\n";
 		}else{
-			str =  str + "rejectHillis     : " + fourDecE.format(rejectHillis) + "\r\n";
+			str = str + fourDecE.format(dfHills) + SEPA + fourDecE.format(pValueHillis) + SEPA + fourDecE.format(botCIHillis) + SEPA + fourDecE.format(topCIHillis) + SEPA + fourDecE.format(rejectHillis)+"\r\n";	
 		}
-		
 		return str;
 	}
 	
@@ -436,13 +609,7 @@ public class exportToFile {
 		double totalVar    = VldDBRecord.totalVar;
 		double varA    = VldDBRecord.varA;
 		double varB    = VldDBRecord.varB;
-		
-		str =  str + "NumAUC_A         : " + fourDecE.format(AUC_A) + "\r\n";
-		str =  str + "NumAUC_B         : " + fourDecE.format(AUC_B) + "\r\n";
-		str =  str + "NumAUC_AB        : " + fourDecE.format(AUC_AminusAUC_B) + "\r\n";
-		str =  str + "NumvarAUC_A      : " + fourDecE.format(varA) + "\r\n";
-		str =  str + "NumvarAUC_B      : " + fourDecE.format(varB) + "\r\n";
-		str =  str + "NumvarAUC_AB     : " + fourDecE.format(totalVar) + "\r\n";
+		str =  str + fourDecE.format(AUC_A) + SEPA + fourDecE.format(AUC_B) + SEPA + fourDecE.format(AUC_AminusAUC_B) + SEPA + fourDecE.format(varA) + SEPA + fourDecE.format(varB) + SEPA + fourDecE.format(totalVar);
 		return str;
 	}
 	
@@ -454,21 +621,34 @@ public class exportToFile {
 		double mcVarvarA       = VarDBRecord.varA;
 		double mcVarvarB       = VarDBRecord.varB;
 		double mcVartotalVar    = VarDBRecord.totalVar;
-		str =  str + "mcVarAUC_A       : " + fourDecE.format(mcVarAUC_A) + "\r\n";
-		str =  str + "mcVarAUC_B       : " + fourDecE.format(mcVarAUC_B) + "\r\n";
-		str =  str + "mcVarAUC_AB      : " + fourDecE.format(mcVarAUC_AminusB) + "\r\n";
-		str =  str + "mcVarvarAUC_A    : " + fourDecE.format(mcVarvarA) + "\r\n";
-		str =  str + "mcVarvarAUC_B    : " + fourDecE.format(mcVarvarB) + "\r\n";
-		str =  str + "mcVarvarAUC_AB   : " + fourDecE.format(mcVartotalVar) + "\r\n";
+		double mcVarpValueNormal = VarDBRecord.testStat.pValNormal;
+		double mcVarbotCInormal = VarDBRecord.testStat.ciBotNormal;
+		double mcVartopCInormal = VarDBRecord.testStat.ciTopNormal;		
+		double mcVarrejectNormal    = VarDBRecord.testStat.rejectNormal;
+		double mcVardfBDG = VarDBRecord.testStat.DF_BDG;
+	    double mcVarpValueBDG = VarDBRecord.testStat.pValBDG;
+		double mcVarbotCIBDG = VarDBRecord.testStat.ciBotBDG;
+		double mcVartopCIBDG = VarDBRecord.testStat.ciTopBDG;
+		double mcVarrejectBDG    = VarDBRecord.testStat.rejectBDG;
+		double mcVardfHills = VarDBRecord.testStat.DF_Hillis;
+		double mcVarpValueHillis = VarDBRecord.testStat.pValHillis;
+		double mcVarbotCIHillis = VarDBRecord.testStat.ciBotHillis;
+		double mcVartopCIHillis = VarDBRecord.testStat.ciTopHillis;
+		double mcVarrejectHillis    = VarDBRecord.testStat.rejectHillis;
+		str = str + "MCvar" + SEPA + fourDecE.format(mcVarAUC_A) + SEPA + fourDecE.format(mcVarAUC_B) + SEPA + fourDecE.format(mcVarAUC_AminusB) + SEPA + fourDecE.format(mcVarvarA) + SEPA + fourDecE.format(mcVarvarB) + SEPA + fourDecE.format(mcVartotalVar) +SEPA;
+		str = str + fourDecE.format(mcVarpValueNormal) + SEPA + fourDecE.format(mcVarbotCInormal) + SEPA + fourDecE.format(mcVartopCInormal) + SEPA + fourDecE.format(mcVarrejectNormal) + SEPA ;			
+		str = str + fourDecE.format(mcVardfBDG) + SEPA + fourDecE.format(mcVarpValueBDG) + SEPA + fourDecE.format(mcVarbotCIBDG) + SEPA + fourDecE.format(mcVartopCIBDG) + SEPA + fourDecE.format(mcVarrejectBDG) + SEPA;
+		if (Double.isNaN(mcVarrejectHillis)){
+			str =  str + "NaN,NaN,NaN,NaN,NaN" + "\r\n";
+		}else{
+			str = str + fourDecE.format(mcVardfHills) + SEPA + fourDecE.format(mcVarpValueHillis) + SEPA + fourDecE.format(mcVarbotCIHillis) + SEPA + fourDecE.format(mcVartopCIHillis) + SEPA + fourDecE.format(mcVarrejectHillis)+"\r\n";	
+		}
 		return str;
 	}
-
+	
+	// Export stat result in one line
 	public static String exportStat(String report, DBRecord StatDBRecord,String timestring) {
-		// TODO Auto-generated method stub
 		String str = report;
-		String head =  "inputFile,date,iMRMCversion,NR,N0,N1,modalityA,modalityB,AUCA,varAUCA,AUCB,varAUCB,AUCAminusAUCB,varAUCAminusAUCB,"
-				+"pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis";
-		str = str + head + "\r\n";
 		String inputfilename =  StatDBRecord.InputFile1.filename.substring(StatDBRecord.InputFile1.filename.lastIndexOf("\\")+1);
 		str = str + inputfilename + SEPA;
 		str = str + timestring + SEPA;
@@ -478,6 +658,11 @@ public class exportToFile {
 		str = str + StatDBRecord.NdiseaseDB + SEPA;
 		str = str + StatDBRecord.modalityA + SEPA;
 		str = str + StatDBRecord.modalityB + SEPA;
+		if (StatDBRecord.flagMLE == 1){
+			str = str + "MLE" + SEPA;
+		}else{
+			str = str + "Ustat" + SEPA;
+		}
 		if (StatDBRecord.selectedMod == 0){
 			str = str + eightDecE.format(StatDBRecord.AUCsReaderAvg[0]) + SEPA;
 			str = str + eightDecE.format(StatDBRecord.varA) + SEPA;
@@ -496,33 +681,36 @@ public class exportToFile {
 			str = str + eightDecE.format(StatDBRecord.totalVar) + SEPA;
 
 		}
-		str = str + eightDecE.format(StatDBRecord.testStat.pValNormal) + SEPA;
-		str = str + eightDecE.format(StatDBRecord.testStat.ciBotNormal) + SEPA;
-		str = str + eightDecE.format(StatDBRecord.testStat.ciTopNormal) + SEPA;
-		str = str + eightDecE.format(StatDBRecord.testStat.rejectNormal) + SEPA;
-		str = str + eightDecE.format(StatDBRecord.testStat.DF_BDG) + SEPA;
-		str = str + eightDecE.format(StatDBRecord.testStat.pValBDG) + SEPA;
-		str = str + eightDecE.format(StatDBRecord.testStat.ciBotBDG) + SEPA;
-		str = str + eightDecE.format(StatDBRecord.testStat.ciTopBDG) + SEPA;
-		str = str + eightDecE.format(StatDBRecord.testStat.rejectBDG) + SEPA;
-		if (StatDBRecord.flagFullyCrossed){
-		str = str + eightDecE.format(StatDBRecord.testStat.DF_Hillis) + SEPA;
-		str = str + eightDecE.format(StatDBRecord.testStat.pValHillis) + SEPA;
-		str = str + eightDecE.format(StatDBRecord.testStat.ciBotHillis) + SEPA;
-		str = str + eightDecE.format(StatDBRecord.testStat.ciTopHillis) + SEPA;
-		str = str + eightDecE.format(StatDBRecord.testStat.rejectHillis) ;
+		if (StatDBRecord.totalVar>0){
+			str = str + eightDecE.format(StatDBRecord.testStat.pValNormal) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.testStat.ciBotNormal) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.testStat.ciTopNormal) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.testStat.rejectNormal) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.testStat.DF_BDG) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.testStat.pValBDG) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.testStat.ciBotBDG) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.testStat.ciTopBDG) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.testStat.rejectBDG) + SEPA;
+			if (StatDBRecord.flagFullyCrossed){
+			str = str + eightDecE.format(StatDBRecord.testStat.DF_Hillis) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.testStat.pValHillis) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.testStat.ciBotHillis) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.testStat.ciTopHillis) + SEPA;
+			str = str + eightDecE.format(StatDBRecord.testStat.rejectHillis) + "\r\n" ;
+			}else{
+				str = str +"NA,NA,NA,NA,NA" + "\r\n";
+			}
 		}else{
-			str = str +"N/A,N/A,N/A,N/A,N/A" + "\r\n";
+			str = str + "NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA" +"\r\n";
 		}
+
 		return str;
 	}
 
+	// export each readers analysis result
 	public static String exportReaders(String report, DBRecord StatDBRecord,InputFile InputFile1,String timestring) {
-		// TODO Auto-generated method stub
+		
 		String str = report;
-		String head =  "inputFile,date,iMRMCversion,NR,N0,N1,modalityA,modalityB,AUCA,varAUCA,AUCB,varAUCB,AUCAminusAUCB,varAUCAminusAUCB,"
-				+"pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis";
-		str = str + head + "\r\n";
 		String inputfilename =  StatDBRecord.InputFile1.filename.substring(StatDBRecord.InputFile1.filename.lastIndexOf("\\")+1);
 		int i=0;
 		for(String desc_temp : InputFile1.readerIDs.keySet() ) {
@@ -531,14 +719,14 @@ public class exportToFile {
 			str = str + MRMC.versionname + SEPA;
 			str = str + desc_temp + SEPA;
 			if (StatDBRecord.selectedMod == 0){
-				str = str + StatDBRecord.covMRMCstat.N0perReader[i][0] + SEPA;
-				str = str + StatDBRecord.covMRMCstat.N1perReader[i][0] + SEPA;
+				str = str + StatDBRecord.N0perReader[i][0] + SEPA;
+				str = str + StatDBRecord.N1perReader[i][0] + SEPA;
 			}else if (StatDBRecord.selectedMod == 1){
-				str = str + StatDBRecord.covMRMCstat.N0perReader[i][1] + SEPA;
-				str = str + StatDBRecord.covMRMCstat.N1perReader[i][1] + SEPA;
+				str = str + StatDBRecord.N0perReader[i][1] + SEPA;
+				str = str + StatDBRecord.N1perReader[i][1] + SEPA;
 			} else {
-				str = str + StatDBRecord.covMRMCstat.N0perReader[i][2] + SEPA;
-				str = str + StatDBRecord.covMRMCstat.N1perReader[i][2] + SEPA;
+				str = str + StatDBRecord.N0perReader[i][2] + SEPA;
+				str = str + StatDBRecord.N1perReader[i][2] + SEPA;
 			}
 			str = str + StatDBRecord.modalityA + SEPA;
 			str = str + StatDBRecord.modalityB + SEPA;
@@ -561,6 +749,29 @@ public class exportToFile {
 		}
 
 			
+		return str;
+	}
+
+	// export ROC curve information 
+	public static String exportROC(XYSeriesCollection seriesCollection,String report) {
+		String str = report;
+		str = str + "ModalityID:ReaderID,Number of points,Axises"+"\r\n";
+		int a =seriesCollection.getSeriesCount();
+        for (int j=0;j<seriesCollection.getSeriesCount();j++){
+            String serisekey =(String) seriesCollection.getSeriesKey(j); 
+            XYSeries seriesget = seriesCollection.getSeries(serisekey);             
+            str = str +serisekey+SEPA;
+            str = str + Integer.toString(seriesget.getItemCount()) + SEPA;
+            str = str + "FPF" + SEPA; 
+    	    for (int i=0; i<seriesget.getItemCount(); i++){
+    	    	str = str + fourDec.format(seriesget.getX(i)) + SEPA;
+    	    }
+    	    str = str + "\r\n" + SEPA + SEPA +"TPF" + SEPA;
+    	    for (int i=0; i<seriesget.getItemCount(); i++){
+    	    	str = str + fourDec.format(seriesget.getY(i)) + SEPA;
+    	    }
+    	    str = str + "\r\n";
+        } 			
 		return str;
 	}
 	

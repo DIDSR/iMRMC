@@ -397,7 +397,7 @@ public double calcDF_BDGbckIndep(DBRecord curRecord) {
 	 */
 	// According to Gaylor1969_Technometrics_v4p691, there is a minimum DF
 	if (DF_BDG < DF_min) {
-		if(verbose) {
+		if(verbose&&!MRMC.commandStart) {
 			JFrame frame = new JFrame();
 			JOptionPane.showMessageDialog(frame,
 					"DF_BDG is below a minimum." +
@@ -411,7 +411,7 @@ public double calcDF_BDGbckIndep(DBRecord curRecord) {
 
 	// Do not return a DF_BDG that is less than 2
 	if (DF_BDG < 2) {
-		if(verbose) {
+		if(verbose&&!MRMC.commandStart) {
  			JFrame frame = new JFrame();
  			JOptionPane.showMessageDialog(frame,
  					"DF_BDG is below a minimum." +
@@ -556,7 +556,7 @@ DF_BDG = Math.pow(totalVar, 2) / DF_denom;
  */
 //According to Gaylor1969_Technometrics_v4p691, there is a minimum DF
 if (DF_BDG < DF_min) {
-	if(verbose) {
+	if(verbose&&!MRMC.commandStart) {
 		JFrame frame = new JFrame();
 		JOptionPane.showMessageDialog(frame,
 				"DF_BDG is below a minimum." +
@@ -570,7 +570,7 @@ if (DF_BDG < DF_min) {
 
 //Do not return a DF_BDG that is less than 2
 if (DF_BDG < 2) {
-	if(verbose) {
+	if(verbose&&!MRMC.commandStart) {
 			JFrame frame = new JFrame();
 			JOptionPane.showMessageDialog(frame,
 				"DF_BDG is below a minimum." +
@@ -707,7 +707,7 @@ DF_BDG = Math.pow(totalVar, 2) / DF_denom;
  */
 // According to Gaylor1969_Technometrics_v4p691, there is a minimum DF
 if (DF_BDG < DF_min) {
-	if(verbose&&!RoeMetz.doValidation&&!exploreExpSize.doFullSize) {
+	if(verbose&&!RoeMetz.doValidation&&!exploreExpSize.doFullSize&&!MRMC.commandStart) {
 		JFrame frame = new JFrame();
 		JOptionPane.showMessageDialog(frame,
 				"DF_BDG is below a minimum." +
@@ -721,7 +721,7 @@ if (DF_BDG < DF_min) {
 
 //Do not return a DF_BDG that is less than 2
 if (DF_BDG < 2) {
-	if((verbose&&!RoeMetz.doValidation&&!exploreExpSize.doFullSize)) {
+	if((verbose&&!RoeMetz.doValidation&&!exploreExpSize.doFullSize&&!MRMC.commandStart)) {
 			JFrame frame = new JFrame();
 			JOptionPane.showMessageDialog(frame,
 				"DF_BDG is below a minimum." +

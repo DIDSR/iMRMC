@@ -601,6 +601,7 @@ public class InputFile {
 		} catch (Exception e) {
 			System.err
 					.println("Error reading file" + filename + e.getMessage());
+			return;
 		}
 		
 			NlinesFileContent = fileContent.size();
@@ -624,13 +625,14 @@ public class InputFile {
 				System.out.println("Input Raw File Successfully Read!");
 				isLoaded = true;
 			}
-			if  (GUInterface.selectedInput == GUInterface.DescInputModeOmrmc){    // if input raw data
+			if  (GUInterface.selectedInput == GUInterface.DescInputModeOmrmc){    // if input summary data
 				summaryPosition = 0;
 				findSummaryBegin();
 				findSummaryEnd();				
 				DBRecordStat = GUI.DBRecordStat;
 				loadSummaryData();
 				System.out.println("Input Summary File Successfully Read!");
+				isLoaded = true;
 			}
 			
 
@@ -1194,7 +1196,7 @@ public class InputFile {
 	public void resetInputFile() {
 
 		observerData = null;
-		
+		isLoaded = false;
 		keyedData.clear();
 		truthVals.clear();
 
