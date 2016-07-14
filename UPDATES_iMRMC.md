@@ -6,16 +6,16 @@
 <h4>iMRMC3p0</h4>
 *7/14/16*
 
-Add split-plot and unpaired study option for sizing analysis.
+Add split-plot and unpaired study design options for sizing analysis.
 
-Add “Explore Experiment Size” button to predict multiple size studies variance and power.
+Add “Explore Experiment Size” button to predict multiple size studies of variance and power.
 
-Update output files 
-•	Add “Save Stat” button to save statistical analysis results into one line and export to disk for easier reading by other software.
-•	Add “Save All Stat” button to export all modalities combination analysis tables, results, each reader AUC and ROC information to disk for easier reading by other software.
-•	Add “Save Size” button to export sizing analysis results to disk.
+Update output files:
+  * Add “Save Stat” button to save statistical analysis results into one line and export to disk for easier reading by other software.
+  * Add “Save Size” button to export sizing analysis results to disk.
+  * Add “Save All Stat” button to export analysis results from all modalities and all combinations of modalities. This includes variance components, individual reader AUCs and all the ROC curves. Most data are saved as .csv files for easier reading by other software.
 
-iMRMC could run in command line. And software will do analysis and export results as "Save All Stat" button.
+Add option to run iMRMC in command line mode. Software will do analysis and export the same results as the "Save All Stat" button.
 
 
 <h4>iMRMC2p8</h4>
