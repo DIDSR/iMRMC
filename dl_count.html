@@ -14,8 +14,11 @@
 
 
 		<script>
+			var repo = "iMRMC"
+			var owner = "DIDSR"
 			var xhr = new XMLHttpRequest();
-			xhr.open('GET', "https://api.github.com/repos/DIDSR/iMRMC/releases", true);
+			
+			xhr.open('GET', "https://api.github.com/repos/"+ owner + "/" + repo + "/releases", true);
 			xhr.send();
 			xhr.addEventListener("readystatechange", processRequest, false);
 			
