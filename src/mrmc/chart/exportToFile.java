@@ -40,6 +40,7 @@ public class exportToFile {
 	private static String SEPA = ",";
 	private String MLEString = "(U-statistics, Not MLE)";
 	private String UstatString = "(MLE, Not U-statistics)";
+	private static String NAlist = "NA,NA,NA,NA,NA,NA";
 	
 	// export statpanel and table for both iMRMC and iRoeMetz
 	public static String exportStatPanel(String oldReport, DBRecord StatDBRecord, StatPanel processStatPanel ) {
@@ -157,19 +158,28 @@ public class exportToFile {
 					DBRecordTable.DBMbias, DBRecordTable.DBMcoeff);
 			analysisMethod = "MLE";
 		}
-		str = str + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
-				+ analysisMethod + SEPA + "components" + SEPA;
-		for (int i = 0; i < 6; i++)
-			str = str + fiveDecE.format(DBMdata1[0][i]) + SEPA;
-		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
-				+ analysisMethod + SEPA + "coeff" + SEPA;
-		for (int i = 0; i < 6; i++)
-			str = str + fiveDecE.format(DBMdata1[1][i]) + SEPA;
-		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
-				+ analysisMethod + SEPA + "total" + SEPA;
-		for (int i = 0; i < 6; i++)
-			str = str + fiveDecE.format(DBMdata1[2][i]) + SEPA;
-		str = str +"\r\n"; 
+		if (DBRecordTable.flagFullyCrossed){
+			str = str + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+					+ analysisMethod + SEPA + "components" + SEPA;
+			for (int i = 0; i < 6; i++)
+				str = str + fiveDecE.format(DBMdata1[0][i]) + SEPA;
+			str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+					+ analysisMethod + SEPA + "coeff" + SEPA;
+			for (int i = 0; i < 6; i++)
+				str = str + fiveDecE.format(DBMdata1[1][i]) + SEPA;
+			str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+					+ analysisMethod + SEPA + "total" + SEPA;
+			for (int i = 0; i < 6; i++)
+				str = str + fiveDecE.format(DBMdata1[2][i]) + SEPA;
+			str = str +"\r\n"; 
+		}else{
+			str = str + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+					+ analysisMethod + SEPA + "components" + SEPA + NAlist;
+			str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+					+ analysisMethod + SEPA + "coeff" + SEPA + NAlist;
+			str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+					+ analysisMethod + SEPA + "total" + SEPA + NAlist + "\r\n";
+		}
 		return str;
 	}
 	
@@ -184,19 +194,28 @@ public class exportToFile {
 					DBRecordTable.ORbias, DBRecordTable.ORcoeff);	
 			analysisMethod = "MLE";
 		}
-		str = str + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
-				+ analysisMethod + SEPA + "components" + SEPA;
-		for (int i = 0; i < 6; i++)
-			str = str + fiveDecE.format(ORdata1[0][i]) + SEPA;
-		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
-				+ analysisMethod + SEPA + "coeff" + SEPA;
-		for (int i = 0; i < 6; i++)
-			str = str + fiveDecE.format(ORdata1[1][i]) + SEPA;
-		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
-				+ analysisMethod + SEPA + "total" + SEPA;
-		for (int i = 0; i < 6; i++)
-			str = str + fiveDecE.format(ORdata1[2][i]) + SEPA;
-		str = str +"\r\n"; 
+		if (DBRecordTable.flagFullyCrossed){
+			str = str + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+					+ analysisMethod + SEPA + "components" + SEPA;
+			for (int i = 0; i < 6; i++)
+				str = str + fiveDecE.format(ORdata1[0][i]) + SEPA;
+			str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+					+ analysisMethod + SEPA + "coeff" + SEPA;
+			for (int i = 0; i < 6; i++)
+				str = str + fiveDecE.format(ORdata1[1][i]) + SEPA;
+			str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+					+ analysisMethod + SEPA + "total" + SEPA;
+			for (int i = 0; i < 6; i++)
+				str = str + fiveDecE.format(ORdata1[2][i]) + SEPA;
+			str = str +"\r\n"; 
+		}else{
+			str = str + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+					+ analysisMethod + SEPA + "components" + SEPA + NAlist;
+			str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+					+ analysisMethod + SEPA + "coeff" + SEPA + NAlist;
+			str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+					+ analysisMethod + SEPA + "total" + SEPA + NAlist + "\r\n";
+		}
 		return str;
 	}
 	
@@ -211,19 +230,28 @@ public class exportToFile {
 					DBRecordTable.MSbias, DBRecordTable.MScoeff);	
 			analysisMethod = "MLE";
 		}
-		str = str + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
-				+ analysisMethod + SEPA + "components" + SEPA;
-		for (int i = 0; i < 6; i++)
-			str = str + fiveDecE.format(MSdata1[0][i]) + SEPA;
-		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
-				+ analysisMethod + SEPA + "coeff" + SEPA;
-		for (int i = 0; i < 6; i++)
-			str = str + fiveDecE.format(MSdata1[1][i]) + SEPA;
-		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
-				+ analysisMethod + SEPA + "total" + SEPA;
-		for (int i = 0; i < 6; i++)
-			str = str + fiveDecE.format(MSdata1[2][i]) + SEPA;
-		str = str +"\r\n"; 
+		if (DBRecordTable.flagFullyCrossed){
+			str = str + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+					+ analysisMethod + SEPA + "components" + SEPA;
+			for (int i = 0; i < 6; i++)
+				str = str + fiveDecE.format(MSdata1[0][i]) + SEPA;
+			str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+					+ analysisMethod + SEPA + "coeff" + SEPA;
+			for (int i = 0; i < 6; i++)
+				str = str + fiveDecE.format(MSdata1[1][i]) + SEPA;
+			str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+					+ analysisMethod + SEPA + "total" + SEPA;
+			for (int i = 0; i < 6; i++)
+				str = str + fiveDecE.format(MSdata1[2][i]) + SEPA;
+			str = str +"\r\n"; 
+		}else{
+			str = str + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+					+ analysisMethod + SEPA + "components" + SEPA + NAlist;
+			str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+					+ analysisMethod + SEPA + "coeff" + SEPA + NAlist;
+			str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
+					+ analysisMethod + SEPA + "total" + SEPA + NAlist + "\r\n";
+		}
 		return str;
 	}
 	

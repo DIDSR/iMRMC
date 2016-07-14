@@ -745,7 +745,7 @@ public class GUInterface {
 						tempModB = InputSummaryCard.loadmodalityB;
 					}
 					// Analysis modality A
-					if (!tempModA.equals("NO_MOD")){
+					if (tempModA!=null&&!tempModA.equals("NO_MOD")){
 						DBRecordStatAll.modalityA = tempModA;
 						DBRecordStatAll.modalityB = "NO_MOD";
 						DBRecordStatAll.selectedMod = 0;
@@ -760,7 +760,7 @@ public class GUInterface {
 					}
 					DBRecord track1 = DBRecordStat;
 					// Analysis modality B
-					if (!tempModB.equals("NO_MOD")){
+					if (tempModB!=null&&!tempModB.equals("NO_MOD")){
 						DBRecordStatAll.modalityA = "NO_MOD";
 						DBRecordStatAll.modalityB = tempModB;
 						DBRecordStatAll.selectedMod = 1;
@@ -774,7 +774,7 @@ public class GUInterface {
 						savetable();
 					}
 					// Analysis modality A and B
-					if ((!tempModA.equals("NO_MOD"))&(!tempModB.equals("NO_MOD"))){
+					if (tempModA!=null&&tempModB!=null&&!tempModA.equals("NO_MOD")&&!tempModB.equals("NO_MOD")){
 						DBRecordStatAll.modalityA = tempModA;
 						DBRecordStatAll.modalityB = tempModB;
 						DBRecordStatAll.selectedMod = 3;
@@ -863,11 +863,10 @@ public class GUInterface {
 			// save tables result
 			BDGout = exportToFile.exportTableBDG(BDGout,DBRecordStatAll);
     		BCKout = exportToFile.exportTableBCK(BCKout,DBRecordStatAll);
-    		DBMout = exportToFile.exportTableDBM(DBMout,DBRecordStatAll);
-    		ORout = exportToFile.exportTableOR(ORout,DBRecordStatAll);
-			MSout = exportToFile.exportTableMS(MSout,DBRecordStatAll);
+	    	DBMout = exportToFile.exportTableDBM(DBMout,DBRecordStatAll);
+	    	ORout = exportToFile.exportTableOR(ORout,DBRecordStatAll);
+			MSout = exportToFile.exportTableMS(MSout,DBRecordStatAll);}
 			
-		}
 	}
 	
 	
