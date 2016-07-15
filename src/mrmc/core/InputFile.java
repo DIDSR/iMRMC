@@ -104,7 +104,10 @@ public class InputFile {
 	/**
 	 * Filename for the .imrmc reader study data
 	 */
-	public String filename;
+//	public String filename;
+	public String filePathAndName;
+	public String filePath;
+	public String fileName;
 	public SizePanel SizePanel1;
 	/**
 	 * to do
@@ -569,13 +572,14 @@ public class InputFile {
 		try {
 			//InputStreamReader isr;
 			//DataInputStream din;
-			FileInputStream fstream = new FileInputStream(filename);
+			FileInputStream fstream = new FileInputStream(filePathAndName);
 			DataInputStream din = new DataInputStream(fstream);
 			InputStreamReader isr = new InputStreamReader(din);
 			BufferedReader br = new BufferedReader(isr);
 			String strtemp;
 			try {
-				String inputformat = filename.substring(filename.lastIndexOf(".")+1);
+				//String inputformat = filename.substring(filename.lastIndexOf(".")+1);
+				String inputformat = filePathAndName.substring(filePathAndName.lastIndexOf(".")+1);
 				if (inputformat.equals("csv")||inputformat.equals("imrmc")||inputformat.equals("omrmc")){
 					while ((strtemp = br.readLine()) != null) {
 						if (strtemp.length()>0 && strtemp.substring(strtemp.length()-2).equals(",,"))
@@ -600,7 +604,7 @@ public class InputFile {
 
 		} catch (Exception e) {
 			System.err
-					.println("Error reading file" + filename + e.getMessage());
+					.println("Error reading file" + filePathAndName + e.getMessage());
 			return;
 		}
 		
@@ -1207,7 +1211,9 @@ public class InputFile {
 		
 		resetIDs();
 
-		filename = "";
+		filePathAndName = "";
+		filePath = "";
+		fileName = "";
 		fileContent.clear();
 		NlinesFileContent = 0;
 		filePosition = 0;

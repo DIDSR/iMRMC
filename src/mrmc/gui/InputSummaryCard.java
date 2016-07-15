@@ -201,7 +201,10 @@ public class InputSummaryCard {
 			 */
 			File f = fc.getSelectedFile();
 			if( f==null ) return;
-			InputFile1.filename = f.getPath();
+			//InputFile1.filename = f.getPath();
+			InputFile1.fileName = f.getName();
+			InputFile1.filePath = f.getParent();
+			InputFile1.filePathAndName = f.getPath();
 			JTextFilename.setText(f.getPath());
 
 			/*

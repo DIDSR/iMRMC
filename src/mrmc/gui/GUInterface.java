@@ -398,17 +398,24 @@ public class GUInterface {
 	            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
 				Date currDate = new Date();
 				final String fileTime = dateForm.format(currDate);
-				String FileName=InputFile1.filename;
+				//String FileName=InputFile1.filename;
+				//FileName= FileName.substring(0,FileName.lastIndexOf("."));
+				//String summaryfilenamewithpath = FileName+"MRMCsummary"+fileTime+".omrmc";
+				//summaryfilename = summaryfilenamewithpath.substring(FileName.lastIndexOf("\\")+1);
+				String FileName=InputFile1.fileName;
+				String FilePathAndName=InputFile1.filePathAndName;
+				FilePathAndName= FilePathAndName.substring(0,FilePathAndName.lastIndexOf("."));
 				FileName= FileName.substring(0,FileName.lastIndexOf("."));
-				String summaryfilenamewithpath = FileName+"MRMCsummary"+fileTime+".omrmc";
-				summaryfilename = summaryfilenamewithpath.substring(FileName.lastIndexOf("\\")+1);
+				String summaryfilenamewithpath = FilePathAndName+"MRMCsummary"+fileTime+".omrmc";
+				summaryfilename = FileName+"MRMCsize"+fileTime+".omrmc";
 				try {
 					JFileChooser fc = new JFileChooser();
 					FileNameExtensionFilter filter = new FileNameExtensionFilter(
 							"iMRMC Summary Files (.omrmc or csv)", "csv","omrmc");
 					fc.setFileFilter(filter);
 					if (outputfileDirectory!=null){
-						 fc.setSelectedFile(new File(outputfileDirectory+"\\"+summaryfilename));						
+						// fc.setSelectedFile(new File(outputfileDirectory+"\\"+summaryfilename));		
+						fc.setSelectedFile(new File(outputfileDirectory+"//"+summaryfilename));	
 					}						
 					else					
 					    fc.setSelectedFile(new File(summaryfilenamewithpath));
@@ -418,8 +425,9 @@ public class GUInterface {
 						if (!f.exists()) {
 							f.createNewFile();
 						}
-						String savedFileName = f.getPath();
-						summaryfilename = savedFileName.substring(savedFileName.lastIndexOf("\\")+1);
+						//String savedFileName = f.getPath();
+						//summaryfilename = savedFileName.substring(savedFileName.lastIndexOf("\\")+1);
+						summaryfilename = f.getName();
 						report = report + "MRMC summary statistics from " +MRMC.versionname + "\r\n";
 						report = report + "Summary statistics written to file named:" + "\r\n";
 						report = report + summaryfilename + "\r\n" + "\r\n";
@@ -487,17 +495,24 @@ public class GUInterface {
 	            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
 				Date currDate = new Date();
 				final String fileTime = dateForm.format(currDate);
-				String FileName=InputFile1.filename;
+				//String FileName=InputFile1.filename;
+				//FileName= FileName.substring(0,FileName.lastIndexOf("."));
+				//String sizeFilenamewithpath = FileName+"MRMCSize"+fileTime+".omrmc";
+				//String sizeFilename = sizeFilenamewithpath.substring(sizeFilenamewithpath.lastIndexOf("\\")+1);	
+				String FileName=InputFile1.fileName;
+				String FilePathAndName=InputFile1.filePathAndName;
+				FilePathAndName= FilePathAndName.substring(0,FilePathAndName.lastIndexOf("."));
 				FileName= FileName.substring(0,FileName.lastIndexOf("."));
-				String sizeFilenamewithpath = FileName+"MRMCSize"+fileTime+".omrmc";
-				String sizeFilename = sizeFilenamewithpath.substring(sizeFilenamewithpath.lastIndexOf("\\")+1);	
+				String sizeFilenamewithpath = FilePathAndName+"MRMCSize"+fileTime+".omrmc";
+				String sizeFilename = FileName+"MRMCsize"+fileTime+".omrmc";
 				try {
 					JFileChooser fc = new JFileChooser();
 					FileNameExtensionFilter filter = new FileNameExtensionFilter(
 							"iMRMC Summary Files (.omrmc or csv)", "csv","omrmc");
 					fc.setFileFilter(filter);
 					if (outputfileDirectory!=null){
-						 fc.setSelectedFile(new File(outputfileDirectory+"\\"+sizeFilename));						
+						// fc.setSelectedFile(new File(outputfileDirectory+"\\"+sizeFilename));			
+						fc.setSelectedFile(new File(outputfileDirectory+"//"+sizeFilename));			
 					}						
 					else					
 					    fc.setSelectedFile(new File(sizeFilenamewithpath));
@@ -507,8 +522,9 @@ public class GUInterface {
 						if (!f.exists()) {
 							f.createNewFile();
 						}
-						String savedFileName = f.getPath();
-						sizeFilename = savedFileName.substring(savedFileName.lastIndexOf("\\")+1);
+						//String savedFileName = f.getPath();
+						//sizeFilename = savedFileName.substring(savedFileName.lastIndexOf("\\")+1);
+						sizeFilename = f.getName();
 						report = report + "MRMC size statistics from " +MRMC.versionname + "\r\n";
 						report = report + "Size statistics written to file named:" + "\r\n";
 						report = report + sizeFilename + "\r\n" + "\r\n";
@@ -563,20 +579,27 @@ public class GUInterface {
 	            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
 				Date currDate = new Date();
 				final String fileTime = dateForm.format(currDate);
-				String FileName=InputFile1.filename;
+				//String FileName=InputFile1.filename;
+				//FileName= FileName.substring(0,FileName.lastIndexOf("."));
+				//String sizeFilenamewithpath = FileName+"MRMCStat"+fileTime+".csv";
+				//String sizeFilename = sizeFilenamewithpath.substring(sizeFilenamewithpath.lastIndexOf("\\")+1);	
+				String FileName=InputFile1.fileName;
+				String FilePathAndName=InputFile1.filePathAndName;
+				FilePathAndName= FilePathAndName.substring(0,FilePathAndName.lastIndexOf("."));
 				FileName= FileName.substring(0,FileName.lastIndexOf("."));
-				String sizeFilenamewithpath = FileName+"MRMCStat"+fileTime+".csv";
-				String sizeFilename = sizeFilenamewithpath.substring(sizeFilenamewithpath.lastIndexOf("\\")+1);	
+				String saveStatFilePathAndName = FilePathAndName+"MRMCStat"+fileTime+".csv";
+				String saveStatFileName = FileName+"MRMCStat"+fileTime+".csv";
 				try {
 					JFileChooser fc = new JFileChooser();
 					FileNameExtensionFilter filter = new FileNameExtensionFilter(
 							"iMRMC Summary Files (.csv)", "csv");
 					fc.setFileFilter(filter);
 					if (outputfileDirectory!=null){
-						 fc.setSelectedFile(new File(outputfileDirectory+"\\"+sizeFilename));						
+						// fc.setSelectedFile(new File(outputfileDirectory+"\\"+saveStatFileName));		
+						fc.setSelectedFile(new File(outputfileDirectory+"//"+saveStatFileName));			
 					}						
 					else					
-					    fc.setSelectedFile(new File(sizeFilenamewithpath));
+					    fc.setSelectedFile(new File(saveStatFilePathAndName));
 					int fcReturn = fc.showSaveDialog((Component) e.getSource());
 					if (fcReturn == JFileChooser.APPROVE_OPTION) {
 						File f = fc.getSelectedFile();
@@ -632,10 +655,13 @@ public class GUInterface {
 	            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
 				Date currDate = new Date();
 				final String fileTime = dateForm.format(currDate);
-				String fileWholeName=InputFile1.filename;
-				String fileName= fileWholeName.substring(fileWholeName.lastIndexOf("\\")+1,fileWholeName.lastIndexOf("."));
-				String filePath = fileWholeName.substring(0,fileWholeName.lastIndexOf("\\"));
-				File outputDir = new File (filePath + "//"+ fileName + fileTime);
+				//String fileWholeName=InputFile1.filename;
+				//String fileName= fileWholeName.substring(fileWholeName.lastIndexOf("\\")+1,fileWholeName.lastIndexOf("."));
+				//String filePath = fileWholeName.substring(0,fileWholeName.lastIndexOf("\\"));
+				//String fileWholeName=InputFile1.filename;
+				String filePathAndName =InputFile1.filePathAndName;
+				filePathAndName = filePathAndName.substring(0,filePathAndName.lastIndexOf("."));
+				File outputDir = new File (filePathAndName+ fileTime);
 				if(!outputDir.exists() && !outputDir.isDirectory()) 
 					outputDir.mkdir();		
 				// create file save all stat analysis result
@@ -717,7 +743,7 @@ public class GUInterface {
 					final ROCCurvePlot roc = new ROCCurvePlot(
 							"ROC Curve: All Modality ",
 							"FPF (1 - Specificity), legend shows symbols for each modalityID:readerID", "TPF (Sensitivity)",
-							InputFile1.generateROCpoints(rocMod),InputFile1.filename);
+							InputFile1.generateROCpoints(rocMod),InputFile1.filePathAndName,InputFile1.fileName);
 					roc.addData(InputFile1.generatePooledROC(rocMod), "Pooled Average");
 					AllROCreport = exportToFile.exportROC(roc.seriesCollection,AllROCreport);
 					

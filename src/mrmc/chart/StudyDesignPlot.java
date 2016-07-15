@@ -73,11 +73,14 @@ public class StudyDesignPlot extends JFrame {
 	 * @param data Mapping of x-y data
 	 */
 	public StudyDesignPlot(final String title, String mod, String xaxis, String yaxis,
-			TreeMap<String,String[][]> StudyDesignData,String inputfilename) {
+			TreeMap<String,String[][]> StudyDesignData,String filePathAndName,String fileName) {
 		super(title);
-		filenamewithpath = inputfilename;
+//		filenamewithpath = inputfilename;
+//		filenamewithpath= filenamewithpath.substring(0,filenamewithpath.lastIndexOf("."));
+//		filename = filenamewithpath.substring(filenamewithpath.lastIndexOf("\\")+1);
+		filenamewithpath = filePathAndName;
 		filenamewithpath= filenamewithpath.substring(0,filenamewithpath.lastIndexOf("."));
-		filename = filenamewithpath.substring(filenamewithpath.lastIndexOf("\\")+1);
+		filename = fileName.substring(0,fileName.lastIndexOf("."));
 		String[][] data = StudyDesignData.get("data");
 		readerrelation =  StudyDesignData.get("readerrelation");
 		caserelation =  StudyDesignData.get("caserelation");

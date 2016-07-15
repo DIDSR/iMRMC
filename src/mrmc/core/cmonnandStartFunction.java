@@ -36,7 +36,10 @@ public class cmonnandStartFunction {
 		}
 		GUI = gui;
 		InputFile1 = GUI.InputFile1;
-		InputFile1.filename = inputFileFullName;	
+		File f = new File(inputFileFullName);
+		InputFile1.fileName = f.getName();
+		InputFile1.filePath = f.getParent();
+	    InputFile1.filePathAndName = f.getPath();
 		
 		try {
 			InputFile1.ReadInputFile(GUI);

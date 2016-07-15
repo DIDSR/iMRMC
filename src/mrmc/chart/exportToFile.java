@@ -677,7 +677,8 @@ public class exportToFile {
 	// Export stat result in one line
 	public static String exportStat(String report, DBRecord StatDBRecord,String timestring) {
 		String str = report;
-		String inputfilename =  StatDBRecord.InputFile1.filename.substring(StatDBRecord.InputFile1.filename.lastIndexOf("\\")+1);
+		//String inputfilename =  StatDBRecord.InputFile1.filename.substring(StatDBRecord.InputFile1.filename.lastIndexOf("\\")+1);
+		String inputfilename =  StatDBRecord.InputFile1.fileName;
 		str = str + inputfilename + SEPA;
 		str = str + timestring + SEPA;
 		str = str + MRMC.versionname + SEPA;
@@ -739,7 +740,8 @@ public class exportToFile {
 	public static String exportReaders(String report, DBRecord StatDBRecord,InputFile InputFile1,String timestring) {
 		
 		String str = report;
-		String inputfilename =  StatDBRecord.InputFile1.filename.substring(StatDBRecord.InputFile1.filename.lastIndexOf("\\")+1);
+	//	String inputfilename =  StatDBRecord.InputFile1.filename.substring(StatDBRecord.InputFile1.filename.lastIndexOf("\\")+1);
+		String inputfilename =  StatDBRecord.InputFile1.fileName;
 		int i=0;
 		for(String desc_temp : InputFile1.readerIDs.keySet() ) {
 			str = str + inputfilename + SEPA;

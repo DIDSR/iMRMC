@@ -824,7 +824,9 @@ public class RMGUInterface {
 			parseCofVfile(f);
 			inputDirectory = fc.getCurrentDirectory();
 			String savedFileName = f.getPath();
-			inputFileName = savedFileName.substring(savedFileName.lastIndexOf("\\")+1,savedFileName.lastIndexOf(".irm"));	
+			//inputFileName = savedFileName.substring(savedFileName.lastIndexOf("\\")+1,savedFileName.lastIndexOf(".irm"));	
+			inputFileName = f.getPath();
+			inputFileName = inputFileName.substring(0,inputFileName.lastIndexOf(".irm"));	
 		}
 	}
 
@@ -1848,7 +1850,7 @@ public class RMGUInterface {
 				System.out.println("No save directory specified.");
 			} else {
 				System.out.println("filename: " + filename);
-				File file = new File(saveDirectory + "/" + filename + ".txt");
+				File file = new File(saveDirectory + "//" + filename + ".txt");
 				if (!file.exists()) {
 					file.createNewFile();
 				}

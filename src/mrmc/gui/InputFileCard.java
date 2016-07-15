@@ -237,7 +237,10 @@ public class InputFileCard {
 			 */
 			File f = fc.getSelectedFile();
 			if( f==null ) return;
-			InputFile1.filename = f.getPath();
+			//InputFile1.filename = f.getPath();
+			InputFile1.fileName = f.getName();
+			InputFile1.filePath = f.getParent();
+			InputFile1.filePathAndName = f.getPath();
 			JTextFilename.setText(f.getPath());
 //			GUI.inputfileDirectory = f.getPath();
 			/*
@@ -342,7 +345,7 @@ public class InputFileCard {
 				TreeMap<String,String[][]> StudyDesignData = InputFile1.getStudyDesign( (String) choose1.getSelectedItem());
 				final StudyDesignPlot chart = new StudyDesignPlot(
 						"Study Design: Modality "+designMod1, designMod1, "Case Index",
-						"Reader", StudyDesignData,InputFile1.filename);
+						"Reader", StudyDesignData,InputFile1.filePathAndName,InputFile1.fileName);
 				chart.pack();
 				RefineryUtilities.centerFrameOnScreen(chart);
 				chart.setVisible(true);
@@ -397,7 +400,7 @@ public class InputFileCard {
 					final ROCCurvePlot roc = new ROCCurvePlot(
 							"ROC Curve: Modality " + roctitle,
 							"FPF (1 - Specificity), legend shows symbols for each modalityID:readerID", "TPF (Sensitivity)",
-							InputFile1.generateROCpoints(rocMod),InputFile1.filename);
+							InputFile1.generateROCpoints(rocMod),InputFile1.filePathAndName,InputFile1.fileName);
 					roc.addData(InputFile1.generatePooledROC(rocMod), "Pooled Average");
 					roc.pack();
 					RefineryUtilities.centerFrameOnScreen(roc);
@@ -617,20 +620,24 @@ public class InputFileCard {
             DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
 			Date currDate = new Date();
 			final String fileTime = dateForm.format(currDate);
-			String FileName=InputFile1.filename;
+		/*	String FileName=InputFile1.filename;
 			FileName= FileName.substring(0,FileName.lastIndexOf("."));
 			String sizeFilenamewithpath = FileName+"MRMCStatReaders"+fileTime+".csv";
-			String sizeFilename = sizeFilenamewithpath.substring(sizeFilenamewithpath.lastIndexOf("\\")+1);	
+			String sizeFilename = sizeFilenamewithpath.substring(sizeFilenamewithpath.lastIndexOf("\\")+1);	*/
+			String inputFileName=InputFile1.fileName;
+			String inputFilePathAndName=InputFile1.filePathAndName;
+			String readerFilenamewithpath = inputFilePathAndName.substring(0,inputFilePathAndName.lastIndexOf(".")) +"MRMCStatReaders"+fileTime+".csv";
+			String readerFilename = inputFileName.substring(0,inputFileName.lastIndexOf(".")) +"MRMCStatReaders"+fileTime+".csv";
 			try {
 				JFileChooser fc = new JFileChooser();
 				FileNameExtensionFilter filter = new FileNameExtensionFilter(
 						"iMRMC Summary Files (.csv)", "csv");
 				fc.setFileFilter(filter);
 				if (GUInterface.outputfileDirectory!=null){
-					 fc.setSelectedFile(new File(GUInterface.outputfileDirectory+"\\"+sizeFilename));						
+					 fc.setSelectedFile(new File(GUInterface.outputfileDirectory+"//"+readerFilename));						
 				}						
 				else					
-				    fc.setSelectedFile(new File(sizeFilenamewithpath));
+				    fc.setSelectedFile(new File(readerFilenamewithpath));
 				int fcReturn = fc.showSaveDialog((Component) e.getSource());
 				if (fcReturn == JFileChooser.APPROVE_OPTION) {
 					File f = fc.getSelectedFile();
