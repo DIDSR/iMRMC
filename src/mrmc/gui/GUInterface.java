@@ -339,22 +339,22 @@ public class GUInterface {
 		 * This panel should allow for writing results of the current analysis to the hard drive.
 		 */
 		JPanel panelSummary = new JPanel();
-		JButton saveGUI = new JButton("Save Stat Summary");
-		saveGUI.addActionListener(new SaveGUIButtonListener());
+		JButton saveStatAnalysis = new JButton("Save Stat Analysis");
+		saveStatAnalysis.addActionListener(new SaveStatAnalysisButtonListener());
 		
-		panelSummary.add(saveGUI);
+		panelSummary.add(saveStatAnalysis);
 
-		JButton saveSize = new JButton("Save Size");
+		JButton saveSize = new JButton("Save Size Analysis");
 		saveSize.addActionListener(new SaveGUISizeListener());
 		
 		panelSummary.add(saveSize);
 
-		JButton saveStat = new JButton("Save Stat");
-		saveStat.addActionListener(new SaveGUIStatListener());
+		//Use Save Stat Analysis replace this button 
+		//JButton saveStat = new JButton("Save Stat");
+		//saveStat.addActionListener(new SaveGUIStatListener());	
+		//panelSummary.add(saveStat);
 		
-		panelSummary.add(saveStat);
-		
-		JButton saveAll = new JButton("Save All Stat");
+		JButton saveAll = new JButton("Analysis All Modalities");
 		saveAll.addActionListener(new SaveAllStatListener());
 		
 		panelSummary.add(saveAll);
@@ -386,7 +386,7 @@ public class GUInterface {
 
 	/**	 * Handler for button to save current GUI to file
 	 */
-	class SaveGUIButtonListener implements ActionListener {
+	class SaveStatAnalysisButtonListener implements ActionListener {
 
 	//	@Override
 		//public String sFileName="";
@@ -394,7 +394,10 @@ public class GUInterface {
 			double aaa=DBRecordStat.totalVar;
 			if( DBRecordStat.totalVar > 0.0) {
 				DBRecordStat.InputFile1 = InputFile1;
-				String report = "";
+	    		String head =  "inputFile,date,iMRMCversion,NR,N0,N1,modalityA,modalityB,UstatOrMLE,AUCA,varAUCA,AUCB,varAUCB,AUCAminusAUCB,varAUCAminusAUCB,"
+	    				+"pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis";
+				String reportData = head +"\r\n";
+				String reportSummary = "";
 	            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
 				Date currDate = new Date();
 				final String fileTime = dateForm.format(currDate);
@@ -403,53 +406,71 @@ public class GUInterface {
 				//String summaryfilenamewithpath = FileName+"MRMCsummary"+fileTime+".omrmc";
 				//summaryfilename = summaryfilenamewithpath.substring(FileName.lastIndexOf("\\")+1);
 				String FileName=InputFile1.fileName;
-				String FilePathAndName=InputFile1.filePathAndName;
-				FilePathAndName= FilePathAndName.substring(0,FilePathAndName.lastIndexOf("."));
+				//String FilePathAndName=InputFile1.filePathAndName;
+				String FilePath = InputFile1.filePath;
+				//FilePathAndName= FilePathAndName.substring(0,FilePathAndName.lastIndexOf("."));
 				FileName= FileName.substring(0,FileName.lastIndexOf("."));
-				String summaryfilenamewithpath = FilePathAndName+"MRMCsummary"+fileTime+".omrmc";
 				summaryfilename = FileName+"MRMCsize"+fileTime+".omrmc";
 				try {
+					
+					
 					JFileChooser fc = new JFileChooser();
-					FileNameExtensionFilter filter = new FileNameExtensionFilter(
-							"iMRMC Summary Files (.omrmc or csv)", "csv","omrmc");
-					fc.setFileFilter(filter);
+					String exportFolderName = FileName + "StatResults" + fileTime;
 					if (outputfileDirectory!=null){
-						// fc.setSelectedFile(new File(outputfileDirectory+"\\"+summaryfilename));		
-						fc.setSelectedFile(new File(outputfileDirectory+"//"+summaryfilename));	
-					}						
-					else					
-					    fc.setSelectedFile(new File(summaryfilenamewithpath));
+						fc.setSelectedFile(new File(outputfileDirectory+"//"+exportFolderName));						
+					}else{
+						fc.setSelectedFile(new File(FilePath+"//"+exportFolderName));
+					}
 					int fcReturn = fc.showSaveDialog((Component) e.getSource());
+					File outputPackage = fc.getSelectedFile();					
+					if(!outputPackage.exists() && !outputPackage.isDirectory()) 
+						outputPackage.mkdir();		
+					File fSummary = new File (outputPackage +"//"+"MRMCSummary.omrmc" );
+					File fData = new File (outputPackage +"//" + "MRMCStat.csv");
+					outputfileDirectory = fc.getCurrentDirectory();		
+					
 					if (fcReturn == JFileChooser.APPROVE_OPTION) {
-						File f = fc.getSelectedFile();
-						if (!f.exists()) {
-							f.createNewFile();
-						}
+						//File f = fc.getSelectedFile();
+						//if (!f.exists()) {
+						//	f.createNewFile();
+						//}
 						//String savedFileName = f.getPath();
 						//summaryfilename = savedFileName.substring(savedFileName.lastIndexOf("\\")+1);
-						summaryfilename = f.getName();
-						report = report + "MRMC summary statistics from " +MRMC.versionname + "\r\n";
-						report = report + "Summary statistics written to file named:" + "\r\n";
-						report = report + summaryfilename + "\r\n" + "\r\n";
+						summaryfilename = fSummary.getName();
+						reportSummary = reportSummary + "MRMC summary statistics from " +MRMC.versionname + "\r\n";
+						reportSummary = reportSummary + "Summary statistics written to file named:" + "\r\n";
+						reportSummary = reportSummary + summaryfilename + "\r\n" + "\r\n";
 						if (selectedInput == DescInputChooseMode) {
-							report = exportToFile.exportSummary(report, DBRecordStat);
-							report = exportToFile.exportStatPanel(report, DBRecordStat, StatPanel1);
-							report = exportToFile.exportTable1(report, DBRecordStat);
-							report = exportToFile.exportTable2(report, DBRecordStat);
+							// generate summary string
+							reportSummary = exportToFile.exportSummary(reportSummary, DBRecordStat);
+							reportSummary = exportToFile.exportStatPanel(reportSummary, DBRecordStat, StatPanel1);
+							reportSummary = exportToFile.exportTable1(reportSummary, DBRecordStat);
+							reportSummary = exportToFile.exportTable2(reportSummary, DBRecordStat);
+							// generate one line data string
+							reportData = exportToFile.exportStat(reportData, DBRecordStat, fileTime);
 						} else {
-							report = exportToFile.exportSummary(report, DBRecordStat);
-							report = exportToFile.exportStatPanel(report, DBRecordStat, StatPanel1);
-							report = exportToFile.exportTable1(report, DBRecordStat);
-							report = exportToFile.exportTable2(report, DBRecordStat);
+							// generate summary string
+							reportSummary = exportToFile.exportSummary(reportSummary, DBRecordStat);
+							reportSummary = exportToFile.exportStatPanel(reportSummary, DBRecordStat, StatPanel1);
+							reportSummary = exportToFile.exportTable1(reportSummary, DBRecordStat);
+							reportSummary = exportToFile.exportTable2(reportSummary, DBRecordStat);
+							// generate one line data string
+							reportData = exportToFile.exportStat(reportData, DBRecordStat, fileTime);
 						}
-						FileWriter fw = new FileWriter(f.getAbsoluteFile());
-						BufferedWriter bw = new BufferedWriter(fw);
-						bw.write(report);
-						bw.close();
+						// write summary to disk
+						FileWriter fwSummary = new FileWriter(fSummary.getAbsoluteFile());
+						BufferedWriter bwSummary = new BufferedWriter(fwSummary);
+						bwSummary.write(reportSummary);
+						bwSummary.close();
+						// write one line data to disk
+						FileWriter fwData = new FileWriter(fData.getAbsoluteFile());
+						BufferedWriter bwData = new BufferedWriter(fwData);
+						bwData.write(reportData);
+						bwData.close();
 						outputfileDirectory = fc.getCurrentDirectory();
 					    String savedfilename = fc.getSelectedFile().getName();
 						JOptionPane.showMessageDialog(
-								thisGUI.MRMCobject.getFrame(),"The summary has been succeed export to "+outputfileDirectory+ " !\n"+ "Filename = " +savedfilename, 
+								thisGUI.MRMCobject.getFrame(),"The stat analysis results and summary has been succeed export to "+outputfileDirectory+ " !\n"+ "Foldername = " +exportFolderName, 
 								"Exported", JOptionPane.INFORMATION_MESSAGE);
 					}
 				} catch (HeadlessException e1) {
@@ -566,6 +587,7 @@ public class GUInterface {
 	
 	/**	 * Handler for button to save current GUI state to file
 	 */
+	/* Use Save Stat Analysis replace this button 
 	class SaveGUIStatListener implements ActionListener {
 
 	//	@Override
@@ -638,6 +660,7 @@ public class GUInterface {
 						
 		}
 	}
+	*/
 	
 	/**	 * Handler for button to save all stat analysis result to file
 	 */
