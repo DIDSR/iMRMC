@@ -2411,7 +2411,7 @@ public class RMGUInterface {
 							reportGUI = exportToFile.exportTable2(reportGUI, DB1);
 						    exportTrialResult(outputPackage);
 						}
-						reportValidation = "MCmeanOrvar,AUCA,AUCB,AUCAminusAUCB,varA,varB,varAUCAminusAUCB,pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis" + "\r\n";
+						reportValidation = "MCstat,AUCA,AUCB,AUCAminusAUCB,varA,varB,varAUCAminusAUCB,pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis" + "\r\n";
 						reportValidation = exportToFile.exportMCmeanValidation(reportValidation,DB1);
 						reportValidation = exportToFile.exportMCvarianceValidation(reportValidation,varDBRecordStat);
 						
@@ -2427,7 +2427,8 @@ public class RMGUInterface {
 							reportGUI = exportToFile.exportTable1(reportGUI, DB1);
 							reportGUI = exportToFile.exportTable2(reportGUI, DB1);
 						}
-						reportValidation = "NumAUCA,NumAUCB,NumAUCAminusAUCB,NumvarAUCA,NumvarAUCB,NumVarAUCAminusAUCB" + "\r\n";
+						//reportValidation = "NumAUCA,NumAUCB,NumAUCAminusAUCB,NumvarAUCA,NumvarAUCB,NumVarAUCAminusAUCB" + "\r\n";
+						reportValidation =  "AnalysisStat,AUCA,AUCB,AUCAminusAUCB,varA,varB,varAUCAminusAUCB,pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis" + "\r\n";
 						reportValidation = exportToFile.exportNumValidation(reportValidation,DB1);
 						
 					}

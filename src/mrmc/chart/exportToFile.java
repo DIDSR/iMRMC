@@ -630,7 +630,7 @@ public class exportToFile {
 	}
 	
 	public static String exportNumValidation(String oldReport, DBRecord VldDBRecord) {
-		String str = oldReport;
+		/*String str = oldReport;
 		double AUC_A       = VldDBRecord.AUCsReaderAvg[0];
 		double AUC_B       = VldDBRecord.AUCsReaderAvg[1];
 		double AUC_AminusAUC_B = AUC_A-AUC_B;
@@ -638,6 +638,36 @@ public class exportToFile {
 		double varA    = VldDBRecord.varA;
 		double varB    = VldDBRecord.varB;
 		str =  str + fourDecE.format(AUC_A) + SEPA + fourDecE.format(AUC_B) + SEPA + fourDecE.format(AUC_AminusAUC_B) + SEPA + fourDecE.format(varA) + SEPA + fourDecE.format(varB) + SEPA + fourDecE.format(totalVar);
+		return str;*/
+		String str = oldReport;
+		double AUC_A       = VldDBRecord.AUCsReaderAvg[0];
+		double AUC_B       = VldDBRecord.AUCsReaderAvg[1];
+		double AUC_AminusAUC_B = AUC_A-AUC_B;
+		double totalVar    = VldDBRecord.totalVar;
+		double varA    = VldDBRecord.varA;
+		double varB    = VldDBRecord.varB;
+		double pValueNormal = VldDBRecord.testStat.pValNormal;
+		double botCInormal = VldDBRecord.testStat.ciBotNormal;
+		double topCInormal = VldDBRecord.testStat.ciTopNormal;		
+		double rejectNormal    = VldDBRecord.testStat.rejectNormal;
+		double dfBDG = VldDBRecord.testStat.DF_BDG;
+	    double pValueBDG = VldDBRecord.testStat.pValBDG;
+		double botCIBDG = VldDBRecord.testStat.ciBotBDG;
+		double topCIBDG = VldDBRecord.testStat.ciTopBDG;
+		double rejectBDG    = VldDBRecord.testStat.rejectBDG;
+		double dfHills = VldDBRecord.testStat.DF_Hillis;
+		double pValueHillis = VldDBRecord.testStat.pValHillis;
+		double botCIHillis = VldDBRecord.testStat.ciBotHillis;
+		double topCIHillis = VldDBRecord.testStat.ciTopHillis;
+		double rejectHillis    = VldDBRecord.testStat.rejectHillis;
+		str = str + "NumStat" + SEPA + fourDecE.format(AUC_A) + SEPA + fourDecE.format(AUC_B) + SEPA + fourDecE.format(AUC_AminusAUC_B) + SEPA + fourDecE.format(varA) + SEPA + fourDecE.format(varB) + SEPA + fourDecE.format(totalVar) +SEPA;
+		str = str + fourDecE.format(pValueNormal) + SEPA + fourDecE.format(botCInormal) + SEPA + fourDecE.format(topCInormal) + SEPA + fourDecE.format(rejectNormal) + SEPA ;			
+		str = str + fourDecE.format(dfBDG) + SEPA + fourDecE.format(pValueBDG) + SEPA + fourDecE.format(botCIBDG) + SEPA + fourDecE.format(topCIBDG) + SEPA + fourDecE.format(rejectBDG) + SEPA;
+		if (Double.isNaN(rejectHillis)){
+			str =  str + "NaN,NaN,NaN,NaN,NaN" + "\r\n";
+		}else{
+			str = str + fourDecE.format(dfHills) + SEPA + fourDecE.format(pValueHillis) + SEPA + fourDecE.format(botCIHillis) + SEPA + fourDecE.format(topCIHillis) + SEPA + fourDecE.format(rejectHillis)+"\r\n";	
+		}
 		return str;
 	}
 	
