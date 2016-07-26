@@ -1,0 +1,723 @@
+\documentclass{article}%
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}%
+\setcounter{MaxMatrixCols}{30}
+%TCIDATA{OutputFilter=latex2.dll}
+%TCIDATA{Version=5.50.0.2960}
+%TCIDATA{CSTFile=40 LaTeX article.cst}
+%TCIDATA{Created=Thursday, August 21, 2014 11:43:24}
+%TCIDATA{LastRevised=Tuesday, July 26, 2016 15:28:57}
+%TCIDATA{<META NAME="GraphicsSave" CONTENT="32">}
+%TCIDATA{<META NAME="SaveForMode" CONTENT="1">}
+%TCIDATA{BibliographyScheme=Manual}
+%TCIDATA{<META NAME="DocumentShell" CONTENT="Standard LaTeX\Blank - Standard LaTeX Article">}
+%BeginMSIPreambleData
+\providecommand{\U}[1]{\protect\rule{.1in}{.1in}}
+%EndMSIPreambleData
+\newtheorem{theorem}{Theorem}
+\newtheorem{acknowledgement}[theorem]{Acknowledgement}
+\newtheorem{algorithm}[theorem]{Algorithm}
+\newtheorem{axiom}[theorem]{Axiom}
+\newtheorem{case}[theorem]{Case}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{conclusion}[theorem]{Conclusion}
+\newtheorem{condition}[theorem]{Condition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{criterion}[theorem]{Criterion}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{exercise}[theorem]{Exercise}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{notation}[theorem]{Notation}
+\newtheorem{problem}[theorem]{Problem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{solution}[theorem]{Solution}
+\newtheorem{summary}[theorem]{Summary}
+\newenvironment{proof}[1][Proof]{\noindent\textbf{#1.} }{\ \rule{0.5em}{0.5em}}
+\begin{document}
+\section{\bigskip UserManual}
+
+Discuss MLE checkbox. The software now checks whether the total variance is
+negative (very rare); if negative, the software alerts/prompts the user to use
+the MLE analysis.
+
+\bigskip
+
+Describe the three hypothesis tests: normal, t-stat df(bdg), t-stat df(hillis)
+
+\bigskip
+
+\section{FAQ}
+
+\subsection{DF set to be DF\_min}
+
+With some data, I get a message similar to the one attached.
+
+In the results I get two (or sometimes three) different p values, depending on
+the different degrees of freedom used. I know I have limited data for some
+modalities, but I still would be interested in calculating the variance
+analysis. I have seen that DF is set to be a different value depending on the
+case, should I make any considerations on the results based on that?
+
+\subsubsection{Response}
+
+This is a lengthy response because you have asked a difficult question. First
+I will discuss why there are \textquotedblleft two (or sometimes three)
+different p values.\textquotedblright\ Then I will discuss your error and your
+related question.
+
+Let's assume you are doing an MRMC variance analysis of the difference of two modalities.
+
+There are two levels of statistical analysis. In the first level analysis, we
+estimate the AUCs, the difference in AUCs (delta), and the variance of the
+difference (V). If we take the difference in AUCs and divide it by the square
+root of the variance of the difference, we get the test statistic, call it T.
+
+In the second level of statistical analysis, we assume a distribution for the
+test statistic. If we make the \textquotedblleft normal\textquotedblright%
+\ approximation \ldots
+
+\begin{itemize}
+\item The p-value of the hypothesis test is 2*(1-F(
+%TCIMACRO{\TEXTsymbol{\vert}}%
+%BeginExpansion
+$\vert$%
+%EndExpansion
+T%
+%TCIMACRO{\TEXTsymbol{\vert} }%
+%BeginExpansion
+$\vert$
+%EndExpansion
+)), where
+%TCIMACRO{\TEXTsymbol{\vert}}%
+%BeginExpansion
+$\vert$%
+%EndExpansion
+T%
+%TCIMACRO{\TEXTsymbol{\vert} }%
+%BeginExpansion
+$\vert$
+%EndExpansion
+is the absolute value of T and F() is the cumulative distribution function of
+the normal distribution.
+
+\item The lower bound on the confidence interval is delta - 1.96 * sqrt(V).
+
+\item The upper bound on the confidence interval is delta + 1.96 * sqrt(V).
+
+\item If zero is contained in the confidence interval, we cannot reject the
+null. If zero is not contained in the confidence interval, we reject the null.
+\end{itemize}
+
+Alternatively, we can assume that the distribution of the test statistic is
+Student's T. This T distribution acknowledges that the variance is being
+estimated. The normal approximation assumes you know the variance perfectly.
+Consequently, the T distribution is broader than the normal distribution
+because it accounts for the uncertainty in the knowledge of the variance. The
+normal approximation is optimistically biased; it yields confidence intervals
+that are too small.
+
+The amount of uncertainty in the knowledge of the variance is determined by
+the degrees of freedom, df. In simple problems, df=N-1, where N is the number
+of samples. For the MRMC analysis of the difference in AUCs, df is very complicated.
+
+In the iMRMC gui we present three approaches for the second level of
+statistical analysis.
+
+\begin{enumerate}
+\item The normal approximation, which is equivalent to the T distribution with
+an infinite df. Note that the T distribution is essentially the normal
+distribution when df
+%TCIMACRO{\TEXTsymbol{>} }%
+%BeginExpansion
+$>$
+%EndExpansion
+25.
+
+\item The T distribution where the method to estimate df was derived by
+Brandon D. Gallas in Obuchowski2012\_Acad-Radiol\_v19p1508.
+
+\item The T distribution where the method to estimate df was derived by
+Stephen Hillis in Hillis2008\_Acad-Radiol\_v15p647.
+\end{enumerate}
+
+The method to estimate df derived by Hillis in 2008 can only be used when the
+data is fully crossed: every reader reads every case in both modalities. So
+this approach doesn't appear when your data is not fully crossed. While not
+implemented in iMRMC, Hillis has recently published estimates of df for
+special study designs in Hillis2014\_Stat-Med\_v33p330. This probably explains
+why you \textquotedblleft get two (or sometimes three) different p
+values.\textquotedblright
+
+Regarding the message that your DF\_BDG is being set to a minimum: I was able
+to replicate this problem given your data files that you shared (thanks for
+that). I uncovered two kinds of problems. The first is a problem with the
+data. The second is a problem with the results.
+
+\begin{enumerate}
+\item In three of the files, I found one reader (\#8) had no signal present
+data and another reader (\#16) had no signal absent data. I noticed this when
+I first checked \textquotedblleft Input Statistics Charts\textquotedblright.
+These readers had half the number of observations as the other readers. That
+alone may be ok, but when I checked the \textquotedblleft Show Study
+Design\textquotedblright, one reader was missing the first half of the data
+and another reader was missing the second half of the data.
+
+\item In the last of the files, the performance averaged over your readers in
+modality \textquotedblleft3\textquotedblright\ was near perfect, 0.98: two of
+the readers had perfect AUC, three had AUC 0.997, and one had AUC 0.993. iMRMC
+cannot handle this. You may be able to refer to
+Obuchowski2002\_Acad-Radiol\_v09p526, but I'm not ready to analyze this data.
+Regrets. You do not want to run studies where you get perfect performance; AUC
+has a limited useful dynamic range.
+\end{enumerate}
+
+I have one more comment on the minimum df. Gaylor1969\_Technometrics\_v4p691
+indicates that the minimum df of the sum of two mean squares is the minimum of
+the separate degrees of freedom of the two mean squares. For our problem, we
+only need to focus on the number of readers. The leading terms of the variance
+of the difference in AUCs are the mean squares from (modality 1 x readers) and
+(modality 2 x readers). The minimum df of the sum of these two terms is the
+minimum of the number of readers in modality 1 (minus 1) and the number of
+readers in modality 2 (minus 1). This is what drives the minimum df to change.
+There are no considerations to be made by the change in this minimum. If df is
+below the minimum, the analysis is very suspect. Hopefully you only got your
+warnings for cases that had missing data or for cases where you can understand
+why the analysis is limited: perfect performance.
+
+\appendix{}
+
+\section{Converting BCK Components of Variance to DBM Parameters}
+
+In 1992, DBM presented a for estimating the variance of the reader-averaged
+AUC that accounts for random readers and random cases. They used the Jackknife
+to create AUC pseudovalues that fit a linear mixed-effect model. Some have
+argued that the pseudovalues are not appropriate, but there is nothing wrong
+with the model. In 1997, Roe and Metz discussed the model at length, relating
+the model variance components to observable variances.
+
+Here is the model:%
+
+\begin{equation}
+\widehat{\theta}_{ijk}=\mu_{i}+r_{j}+c_{k}+\left(  mr\right)  _{ij}+\left(
+mc\right)  _{ik}+\left(  rc\right)  _{jk}+\left(  mrc\right)  _{ijk},
+\end{equation}
+where $i$ indicates a particular imaging modality, $j$ a particular image
+reader (or in the context of paired estimates, a particular pair of readers
+that has been matched in some nonrandom way), $k$ a particular case sample,
+and $\widehat{\theta}_{ijkn}$ the particular estimate of $\theta$ for the
+$i^{th}$ imaging modality that is obtained from the $j^{th}$ reader and the
+$k^{th}$ case sample in the $n^{th}$ replication. We have dropped an index
+referring to replications and the corresponding variance term. We shall refer
+to a single-modality model; it is given by%
+
+\begin{equation}
+\widehat{\theta}_{ijkn}=\mu_{i}+r_{j}+c_{k}+\left(  rc\right)  _{jk},
+\end{equation}
+where we have left the modality index to allow for the separate analysis of
+different modalities.
+
+In 2009, Gallas et al. linked the BCK components (single-modality model) to
+the DBM components as follows \cite{Gallas2009_Commun-Stat-A-Theor_v38p2586}:%
+
+\begin{align}
+\frac{\sigma_{\text{DBM,case}}^{2}}{N_{0}+N_{1}}  &  =\frac{1}{N_{0}}%
+\sigma_{0}^{2}+\frac{1}{N_{1}}\sigma_{1}^{2}+\frac{1}{N_{0}N_{1}}\sigma
+_{01}^{2},\\
+\frac{\sigma_{\text{DBM,reader}}^{2}}{N_{2}}  &  =\frac{1}{N_{2}}\sigma
+_{2}^{2},\\
+\frac{\sigma_{\text{DBM,reader}\times\text{case}}^{2}}{N_{2}\left(
+N_{0}+N_{1}\right)  }  &  =\frac{1}{N_{0}N_{2}}\sigma_{02}^{2}+\frac{1}%
+{N_{1}N_{2}}\sigma_{12}^{2}+\frac{1}{N_{0}N_{1}N_{2}}\sigma_{012}^{2}.
+\end{align}
+When we are comparing two modalities (A, B), we get%
+
+\begin{align}
+\frac{\sigma_{\text{DBM,case}}^{2}}{N_{0}+N_{1}}  &  =\frac{1}{N_{0}%
+}\operatorname{cov}_{\text{AB}0}+\frac{1}{N_{1}}\operatorname{cov}%
+_{\text{AB}1}+\frac{1}{N_{0}N_{1}}\operatorname{cov}_{\text{AB}01},\\
+\frac{\sigma_{\text{DBM,reader}}^{2}}{N_{2}}  &  =\frac{1}{N_{2}%
+}\operatorname{cov}_{\text{AB}2},\\
+\frac{\sigma_{\text{DBM,reader}\times\text{case}}^{2}}{N_{2}\left(
+N_{0}+N_{1}\right)  }  &  =\frac{1}{N_{0}N_{2}}\operatorname{cov}%
+_{\text{AB}02}+\frac{1}{N_{1}N_{2}}\operatorname{cov}_{\text{AB}12}+\frac
+{1}{N_{0}N_{1}N_{2}}\operatorname{cov}_{\text{AB}012}.
+\end{align}
+%
+
+\begin{align}
+\frac{2\sigma_{\text{DBM,modality}\times\text{case}}^{2}}{N_{0}+N_{1}}  &  =%
+\begin{array}
+[c]{c}%
+\frac{1}{N_{0}}\sigma_{\text{A}0}^{2}+\frac{1}{N_{1}}\sigma_{\text{A}1}%
+^{2}+\frac{1}{N_{0}N_{1}}\sigma_{\text{A}01}^{2}\\
+\frac{1}{N_{0}}\sigma_{\text{B}0}^{2}+\frac{1}{N_{1}}\sigma_{\text{B}1}%
+^{2}+\frac{1}{N_{0}N_{1}}\sigma_{\text{B}01}^{2}\\
+-2\left(  \frac{1}{N_{0}}\operatorname{cov}_{\text{AB}0}+\frac{1}{N_{1}%
+}\operatorname{cov}_{\text{AB}1}+\frac{1}{N_{0}N_{1}}\operatorname{cov}%
+_{\text{AB}01}\right)
+\end{array}
+,\\
+\frac{2\sigma_{\text{DBM,modality}\times\text{reader}}^{2}}{N_{2}}  &
+=\frac{1}{N_{2}}\sigma_{\text{A}2}^{2}+\frac{1}{N_{2}}\sigma_{\text{B}2}%
+^{2}-\frac{2}{N_{2}}\operatorname{cov}_{\text{AB}2},\\
+\frac{2\sigma_{\text{DBM,modality}\times\text{reader}\times\text{case}}^{2}%
+}{N_{2}\left(  N_{0}+N_{1}\right)  }  &  =%
+\begin{array}
+[c]{c}%
+\frac{1}{N_{0}N_{2}}\sigma_{\text{A}02}^{2}+\frac{1}{N_{1}N_{2}}%
+\sigma_{\text{A}12}^{2}+\frac{1}{N_{0}N_{1}N_{2}}\sigma_{\text{A}012}^{2}\\
+\frac{1}{N_{0}N_{2}}\sigma_{\text{B}02}^{2}+\frac{1}{N_{1}N_{2}}%
+\sigma_{\text{B}12}^{2}+\frac{1}{N_{0}N_{1}N_{2}}\sigma_{\text{B}012}^{2}\\
+-2\left(  \frac{1}{N_{0}N_{2}}\operatorname{cov}_{\text{AB}02}+\frac{1}%
+{N_{1}N_{2}}\operatorname{cov}_{\text{AB}12}+\frac{1}{N_{0}N_{1}N_{2}%
+}\operatorname{cov}_{\text{AB}012}\right)
+\end{array}
+.
+\end{align}
+
+
+\section{Converting DBM Parameters to BCK Components of Variance}
+
+For the single modality model, there are 3 DBM components of variance compared
+to 7 BCK components of variance. So we need to make some assumptions. First,
+we shall let all the BCK case-related components of variance to be equal to
+1/4 the DBM case component of variance and all the BCK reader-case-related
+components of variance to be equal to 1/4 the DBM reader-case components of
+variance:%
+\begin{align}
+\sigma_{0}^{2}  &  =\sigma_{1}^{2}=\sigma_{01}^{2}=\frac{1}{4}\sigma
+_{\text{DBM,case}}^{2},\\
+\sigma_{2}^{2}  &  =\sigma_{\text{DBM,reader}}^{2}\\
+\sigma_{02}^{2}  &  =\sigma_{12}^{2}=\sigma_{012}^{2}=\frac{1}{4}%
+\sigma_{\text{DBM,reader}\times\text{case}}^{2}.
+\end{align}
+We will also assume that $N_{0}=N_{1}=N.$ This gives%
+
+\begin{align}
+\frac{\sigma_{\text{DBM,case}}^{2}}{2N}  &  =\frac{1}{2N}\sigma
+_{\text{DBM,case}}^{2}+\frac{1}{N^{2}}\frac{1}{4}\sigma_{\text{DBM,case}}%
+^{2},\\
+\sigma_{\text{DBM,reader}}^{2}  &  =\sigma_{2}^{2},\\
+\frac{\sigma_{\text{DBM,reader}\times\text{case}}^{2}}{2N_{2}N}  &  =\frac
+{1}{2NN_{2}}\sigma_{\text{DBM,reader}\times\text{case}}^{2}+\frac{1}%
+{N^{2}N_{2}}\frac{1}{4}\sigma_{\text{DBM,reader}\times\text{case}}^{2}.
+\end{align}
+We next assume that $N$ is large enough we can ignore the higher order terms
+and we find the equivalences:%
+
+\begin{align}
+\sigma_{\text{DBM,case}}^{2}  &  =\sigma_{\text{DBM,case}}^{2},\\
+\sigma_{\text{DBM,reader}}^{2}  &  =\sigma_{2}^{2},\\
+\sigma_{\text{DBM,reader}\times\text{case}}^{2}  &  =\sigma_{\text{DBM,reader}%
+\times\text{case}}^{2}.
+\end{align}
+
+
+A similar process is used defend the following substitutions%
+\begin{align}
+\operatorname{cov}_{\text{AB}0}  &  =\operatorname{cov}_{\text{AB}%
+1}=\operatorname{cov}_{\text{AB}01}=\frac{1}{4}\sigma_{\text{DBM,case}}^{2},\\
+\operatorname{cov}_{\text{AB}2}  &  =\sigma_{\text{DBM,reader}}^{2}\\
+\operatorname{cov}_{\text{AB}02}  &  =\operatorname{cov}_{\text{AB}%
+12}=\operatorname{cov}_{\text{AB}012}=\frac{1}{4}\sigma_{\text{DBM,reader}%
+\times\text{case}}^{2}.
+\end{align}%
+\begin{align}
+\sigma_{\text{A}0}^{2}  &  =\sigma_{\text{A}1}^{2}=\sigma_{\text{A}01}%
+^{2}=\sigma_{\text{B}0}^{2}=\sigma_{\text{B}1}^{2}=\sigma_{\text{B}01}%
+^{2}=\frac{1}{4}\left(  \sigma_{\text{DBM,modality}\times\text{case}}%
+^{2}+\sigma_{\text{DBM,case}}^{2}\right)  ,\\
+\sigma_{\text{A}2}^{2}  &  =\sigma_{\text{B}2}^{2}=\sigma_{\text{DBM,modality}%
+\times\text{reader}}^{2}+\sigma_{\text{DBM,reader}}^{2}\\
+\sigma_{\text{A}02}^{2}  &  =\sigma_{\text{A}12}^{2}=\sigma_{\text{A}012}%
+^{2}=\sigma_{\text{B}02}^{2}=\sigma_{\text{B}12}^{2}=\sigma_{\text{B}012}%
+^{2}=\frac{1}{4}\left(  \sigma_{\text{DBM,modality}\times\text{reader}%
+\times\text{case}}^{2}+\sigma_{\text{DBM,reader}\times\text{case}}^{2}\right)
+.
+\end{align}
+
+
+\section{Converting BCK Components of Variance to OR Parameters}
+
+From Obuchowski:
+
+Consider the mixed model:%
+
+\begin{equation}
+\widehat{\theta}_{ijk}=\mu+\alpha_{i}+\beta_{j}+\left(  \alpha\beta\right)
+_{ij}+e_{ijk},
+\end{equation}
+where $i=1,2,...,I$ is the index for tests, $j=1,2,...,J$ is the index for
+readers, and $k=1,2,...K$ is the index for replicated readings with the same
+modality, reader and patient. In the expression,
+
+\begin{itemize}
+\item $\widehat{\theta}_{ijk}$ is the estimated index of diagnostic
+performance $\left(  \operatorname{AUC}\right)  ,$
+
+\item $\left(  \mu+\alpha_{i}\right)  $ is a fixed component representing the
+mean diagnostic accuracy of test $i,$
+
+\item $\beta_{j}$ is a random variable that has mean zero and variance
+$\sigma_{b}^{2},$ reflecting the variation between readers,
+
+\item $\left(  \alpha\beta\right)  _{ij}$ is a random variable that has mean
+zero and variance $\sigma_{ab}^{2},$ reflecting the interaction between reader
+and test,
+
+\item $e_{ijk}$ is a random variable that has mean zero and variance
+$\sigma_{c}^{2}+\sigma_{w}^{2}$
+
+\begin{itemize}
+\item $\sigma_{c}^{2}$ reflects variation between groups of patients and is a
+function of $N$ and $M$
+
+\item $\sigma_{w}^{2}$ reflects within-reader variation
+\end{itemize}
+
+\item $e_{ijk}$ is an element of the vector of length $\left(  I\times J\times
+K\right)  $ with mean vector zero and covariance matrix $\Sigma$ given by
+\end{itemize}
+
+%
+
+\begin{equation}
+E\left(  e_{ijk},e_{i^{\prime}j^{\prime}k^{\prime}}\right)  =%
+\begin{array}
+[c]{ccc}%
+\sigma_{e}^{2} &  & \text{if }i=i^{\prime},j=j^{\prime},k\neq k^{\prime}\\
+\sigma_{e}^{2}r_{1}=\operatorname{cov}_{1} &  & \text{if }i\neq i^{\prime
+},j=j^{\prime}~\left(  \text{implicitly }k\neq k^{\prime}\right) \\
+\sigma_{e}^{2}r_{2}=\operatorname{cov}_{2} &  & \text{if }i=i^{\prime},j\neq
+j^{\prime}~\left(  \text{implicitly }k\neq k^{\prime}\right) \\
+\sigma_{e}^{2}r_{3}=\operatorname{cov}_{3} &  & \text{if }i\neq i^{\prime
+},j\neq j^{\prime}~\left(  \text{implicitly }k\neq k^{\prime}\right)
+\end{array}
+\end{equation}
+
+
+The variances and covariances (correlations)\ between readers and tests are
+assumed to be independent of the readers (equi-variance, equi-covariance,
+equi-correlation). As such, they are estimated by averaging over the variances
+and covariances (correlations) between readers and tests.
+
+Here we shall estimate the variances and covariances using U-statistics. We
+shall do this first for a single modality analysis (A for example), using only
+the data from the single modality, defining some new notation that has obvious
+relationships to above. Specifically,%
+\begin{align}
+\widehat{\sigma}_{AAe}^{2}  &  =\left[  \underline{c}_{AA}\right]  _{1}\left[
+\widehat{M}_{AA}\right]  _{1}+\left[  \underline{c}_{AA}\right]  _{2}\left[
+\widehat{M}_{AA}\right]  _{2}+\left[  \underline{c}_{AA}\right]  _{3}\left[
+\widehat{M}_{AA}\right]  _{3}+\left(  \left[  \underline{c}_{AA}\right]
+_{4}-1\right)  \left[  \widehat{M}_{AA}\right]  _{4},\\
+\operatorname{cov}_{AA1}  &  =0.0,\\
+\operatorname{cov}_{AA2}  &  =\left[  \underline{c}_{AA}\right]  _{5}\left[
+\widehat{M}_{AA}\right]  _{5}+\left[  \underline{c}_{AA}\right]  _{6}\left[
+\widehat{M}_{AA}\right]  _{6}+\left[  \underline{c}_{AA}\right]  _{7}\left[
+\widehat{M}_{AA}\right]  _{7}+\left(  \left[  \underline{c}_{AA}\right]
+_{8}-1\right)  \left[  \widehat{M}_{AA}\right]  _{8},\\
+\operatorname{cov}_{AA3}  &  =0.0.
+\end{align}
+The covariances $\operatorname{cov}_{AA1}=\operatorname{cov}_{AA3}$ equal zero
+because there is only one modality being analyzed.
+
+When analyzing the difference in modalities, we get%
+\begin{align}
+\sigma_{e}^{2}  &  =\frac{1}{2}\left(  \sigma_{AAe}^{2}+\sigma_{BBe}%
+^{2}\right)  ,\\
+\operatorname{cov}_{1}  &  =\left[  \underline{c}_{AB}\right]  _{1}\left[
+\widehat{M}_{AB}\right]  _{1}+\left[  \underline{c}_{AB}\right]  _{2}\left[
+\widehat{M}_{AB}\right]  _{2}+\left[  \underline{c}_{AB}\right]  _{3}\left[
+\widehat{M}_{AB}\right]  _{3}+\left(  \left[  \underline{c}_{AB}\right]
+_{4}-1\right)  \left[  \widehat{M}_{AB}\right]  _{4c0},\\
+\operatorname{cov}_{2}  &  =\frac{1}{2}\left(  \operatorname{cov}%
+_{AA2}+\operatorname{cov}_{BB2}\right)  ,\\
+\operatorname{cov}_{3}  &  =\left[  \underline{c}_{AB}\right]  _{5}\left[
+\widehat{M}_{AB}\right]  _{5}+\left[  \underline{c}_{AB}\right]  _{6}\left[
+\widehat{M}_{AB}\right]  _{6}+\left[  \underline{c}_{AB}\right]  _{7}\left[
+\widehat{M}_{AB}\right]  _{7}+\left(  \left[  \underline{c}_{AB}\right]
+_{8}-1\right)  \left[  \widehat{M}_{AB}\right]  _{8}.
+\end{align}
+
+
+\bigskip
+
+\section{\bigskip Developer manual}
+
+\bigskip
+
+\section{Panes}
+
+SelectMod
+
+Cards
+
+StatPanel
+
+SizePanel
+
+\section{Primary Listeners:}
+
+\subsection{GUInterface.brwsButtonListener}
+
+\qquad fill InputFile object
+
+\subsection{RawStudyCard.ModalitySelectListener}
+
+\qquad create DBRecordStat object\bigskip
+
+\subsection{RawStudyCard.varAnalysisListener}
+
+\qquad run DBRecord.DBRecordInputFile
+
+\qquad\qquad run makeTMatrices
+
+\qquad\qquad run calculateCovMRMC
+
+\qquad\qquad run generateDecompositions
+
+\subsection{SizePanel.sizeTrialListener}
+
+\qquad DBRecordSize.DBRecordsizeTrial
+
+\section{Validate Hillis Methods}
+
+Use the Van Dyke Pilot Study as the input parameters for a future study with 8
+readers and 240 cases (140 non diseased, 100 diseased). The statistical
+analysis of the pilot study from Hillis using DeLong covariance estimates
+yield the following.
+
+\subsection{Mean AUCs:}%
+
+\begin{tabular}
+[c]{lllll}
+& AUC1 & var(AUC1) & AUC2 & var(AUC2)\\
+Hillis & 0.897037037 & 0.001094 & 0.9408373591 & 0.00046247\\
+Gallas & 0.8970370370370371 & 0.001094 & 0.9408373590982286 & 0.0004619
+\end{tabular}
+
+
+\subsection{Treatment x Reader ANOVA:}%
+
+\begin{tabular}
+[c]{llll}
+& MS(T) & MS(R) & MS(TR)\\
+Hillis & 0.00479617 & 0.00383620 & 0.00055103\\
+Gallas & 0.004796170531660259 & 0.003836199989109044 & 0.000551030621744058
+\end{tabular}
+
+
+\subsection{Reader ANOVA (for a single modality analysis):}%
+
+\begin{tabular}
+[c]{lll}
+& modality 1, MS(R) & modality 2, MS(R)\\
+Hillis & 0.00308263 & 0.00130460\\
+Gallas & 0.0030826286624088236 & 0.0013046019484442778
+\end{tabular}
+
+
+\subsection{Variance components:}%
+
+\begin{tabular}
+[c]{llll}
+& var\_r & var\_tr & error\\
+Hillis & 0.0015364254 & 0.000204584 & 0.0007921325\\
+Gallas & 0.0015365289725903417 & 0.00020775880070958582 &
+0.0007883925116993987
+\end{tabular}
+%
+
+\begin{tabular}
+[c]{llll}
+& cov1 & cov2 & cov3\\
+Hillis & 0.000342009 & 0.0003395265 & 0.0002358497\\
+Gallas & 0.00034167055664123536 & 0.00033906497957277536 &
+0.00023561484554908418
+\end{tabular}
+%
+
+\begin{tabular}
+[c]{llll}
+& DBM var\_r & DBM var\_c & DBM var\_tr\\
+Hillis & 0.0015364254 & 0.0268868605 & 0.000204584\\
+Gallas & 0.0015365289725902675 & 0.026860092392598806 & 0.00020775880070966757
+\end{tabular}
+%
+
+\begin{tabular}
+[c]{llll}
+& DBM var\_tc & DBM var\_rc & dbm var\_trc\\
+Hillis & 0.0118191641 & 0.0121021607 & 0.0394949144\\
+Gallas & 0.011793315278700093 & 0.012090351064504401 & 0.03913298759793112
+\end{tabular}
+
+
+\subsection{ANOVA test for H0: treatments have the same AUC}
+
+Analysis 1:\ Random Readers and Random Cases%
+
+\begin{tabular}
+[c]{lllll}
+& denominator & F & df2 & p-value\\
+Hillis & 0.001069415 & 4.48485 & 15.0661 & 0.051233\\
+Gallas & 0.001068281291862514 & 4.4896 & 15.03418081366654 &
+0.05120198087071426
+\end{tabular}
+
+
+Note that I use the t-distribution.
+
+\subsection{95\% CIs and tests for treatment AUC differences}%
+
+\begin{tabular}
+[c]{llll}
+& StErr & CI\_L & CI\_U\\
+Hillis & 0.020683 & -0.000266552 & 0.087867\\
+Gallas & 0.020671 & -0.0002600199399431652 & 0.08786066406232627
+\end{tabular}
+
+
+\subsection{95\% single treatment AUC CIs}
+
+based on reader ANOVA and cov2 estimate computed for each treatment (i.e.,
+each analysis is based only on data for the specified treatment)%
+
+\begin{tabular}
+[c]{llllll}%
+modality 1 & StErr & cov2 & df & CI\_L & CI\_U\\
+Hillis & 0.033076 & 0.000477524 & 12.5960 & 0.82535 & 0.96873\\
+Gallas & 0.033071 & 0.0004771787573982257 & 12.588024097214007 &
+0.8249810749229766 & 0.9690929991510976
+\end{tabular}
+%
+
+\begin{tabular}
+[c]{llllll}%
+modality 2 & StErr & cov2 & df & CI\_L & CI\_U\\
+Hillis & 0.021505 & 0.000201529 & 12.5653 & 0.89422 & 0.98746\\
+Gallas & 0.021491 & 0.000200951201747325 & 12.533906648322679 &
+0.8940120611728839 & 0.9876626570235734
+\end{tabular}
+
+
+\subsection{Sizing Analysis}
+
+\textbf{Effect size} is given by $d=\left\vert \operatorname{AUC}%
+_{1}-\operatorname{AUC}_{2}\right\vert =0.05$
+
+Variance of the modality$\times$reader effect:%
+\begin{align}
+\widehat{\sigma}_{TR}^{2}  &  =\overline{MS}\left(  T\ast R\right)
+-\widehat{\sigma}_{\varepsilon}^{2}+\widehat{\operatorname{cov}}_{1}+H\left(
+\widehat{\operatorname{cov}}_{2}-\widehat{\operatorname{cov}}_{3}\right)  .\\
+&  =0.000551-0.000788+0.000342+\left(  0.000339-0.000236\right) \\
+&  =0.000208\text{ from Gallas (0.00020775880070958582)}\\
+&  =0.000204583\text{ from Hillis}%
+\end{align}
+
+
+\textbf{Degrees of freedom} from \cite{Hillis2011_Acad-Radiol_v18p129} pg 133:%
+\begin{equation}
+\widehat{df}_{2}=\frac{\left(  \frac{2}{r}\right)  ^{2}\left[  \widehat{\sigma
+}_{TR}^{2}+\frac{c^{\ast}}{c}\left(  \widehat{\sigma}_{\varepsilon}%
+^{2}-\widehat{\operatorname{cov}}_{1}+\left(  r-1\right)  H\left(
+\widehat{\operatorname{cov}}_{2}-\widehat{\operatorname{cov}}_{3}\right)
+\right)  \right]  ^{2}}{\left(  \frac{2}{r}\right)  ^{2}\frac{\left[
+\widehat{\sigma}_{TR}^{2}+\frac{c^{\ast}}{c}\left(  \widehat{\sigma
+}_{\varepsilon}^{2}-\widehat{\operatorname{cov}}_{1}-H\left(
+\widehat{\operatorname{cov}}_{2}-\widehat{\operatorname{cov}}_{3}\right)
+\right)  \right]  ^{2}}{r-1}}%
+\end{equation}
+The numerator is the expected variance squared.%
+\begin{align}
+\widehat{df}_{2}  &  =\frac{\left[  0.000208+\frac{114}{240}\left(
+0.000788-0.000342+\left(  8-1\right)  \left(  0.000339-0.000236\right)
+\right)  \right]  ^{2}}{\frac{\left[  0.000208+\frac{114}{240}\left(
+0.000788-0.000342-\left(  0.000339-0.000236\right)  \right)  \right]  ^{2}%
+}{8-1}}\\
+&  =29.\,\allowbreak567\text{ from Gallas (29.708996994953456)}\\
+&  =29.9148\text{ from Hillis}%
+\end{align}
+
+
+\textbf{Noncentrality parameter} from \cite{Hillis2011_Acad-Radiol_v18p129} pg 135.%
+
+\begin{equation}
+\widehat{\Delta}=\frac{d^{2}}{\frac{2}{r}\left(  \widehat{\sigma}_{TR}%
+^{2}+\frac{c^{\ast}}{c}\left(  \widehat{\sigma}_{\varepsilon}^{2}%
+-\widehat{\operatorname{cov}}_{1}+\left(  r-1\right)  H\left(
+\widehat{\operatorname{cov}}_{2}-\widehat{\operatorname{cov}}_{3}\right)
+\right)  \right)  }%
+\end{equation}
+The denominator is the expected variance.%
+
+\begin{align}
+\widehat{\Delta}  &  =\frac{\left(  0.05\right)  ^{2}}{\frac{2}{8}\left(
+0.000208+\frac{114}{240}\left(  0.000788-0.000342+\left(  8-1\right)  \left(
+0.000339-0.000236\right)  \right)  \right)  }\\
+&  =13.118\text{ from Gallas (13.090317265919671)}\\
+&  =13.1041\text{ from Hillis}%
+\end{align}
+
+
+\textbf{Power} is 0.9375639556754571 from Gallas
+
+\textbf{Power} is 0.93841 from Hillis
+
+\section{Secondary Listeners:}
+
+GUInterface.ROCButtonListener
+
+GUInterface.ReadersCasesButtonListener
+
+GUInterface.designButtonListener
+
+\section{TO DO}
+
+* FIX: When calculating power and CI, degrees of freedom are converted to
+integer, need interpolation to preserve precision.
+
+* FIX:\ RoeMetz simulation cannot reproduce identical results given identical seeds.
+
+* Change:\ Nreader, Nnormal, Ndisease from long to int.
+
+* Delete:\ InputFile.getStudyDesign. It is called in one place GUInterface.designButtonListener
+
+* Move:\ brwsButtonListener to RawStudyCard.java
+
+* Delete: GUInterface.sizeTrial
+
+* Delete GUInterface.pilotFile
+
+* Delete sample sizes from DBRecord
+
+* Add feature: reset the study design and hypothesis test elements in ResetSizePanel
+
+* Delete: SizePanel constructor argument expSizes
+
+* Delete:\ genSP.SetNumbers
+
+* Delete:\ GUInterface.setSizePanel
+
+* Delete:\ setters and getters for BDG, BCK, ...
+
+* Move: sizeTrial from GUInterface.java to DBRecord.java
+
+* Delete: filename from GUInterface
+
+\section{TO DO Completed}
+
+\subsection{Delete: RSC(RawStudyCard) contains gui(GUInterface).}
+
+There should only be one instance of gui. Actually, RSC was pointing to the
+one and only instance of gui. It was not copying gui to a local variable.
+
+
+\end{document}
