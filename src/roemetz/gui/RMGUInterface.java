@@ -385,7 +385,7 @@ public class RMGUInterface {
 		JTextField_seed.setText(String_seed);
 
 		// Number of experiments
-		JLabel NexpLabel = new JLabel("# of Experiments");
+		JLabel NexpLabel = new JLabel("# of MC Trials");
 		//
 		simExp.add(NexpLabel);
 		//
