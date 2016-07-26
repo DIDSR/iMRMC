@@ -27,6 +27,7 @@ de_search\0xu0043.txt
 de_search\0xu0042.txt
 de_search\0xu0041.txt
 de_search\0xu0039.txt
+de_search\0xu0038.txt
 de_search\0xu0037.txt
 de_search\0xu0036.txt
 de_search\0xu0035.txt
@@ -76,9 +77,6 @@ drex_4_3_input_data_custom.png
 4_2_first_time_use.htm
 4_1_technical_specifications.htm
 4__using_the_imrmc_application.htm
-key_information.htm
-basic_information.htm
-dataset_information.htm
 3__database.htm
 2_4_sizing_a_future_study.htm
 2_3_hypothesis_testing_and_confidence_intervals.htm
@@ -86,7 +84,6 @@ dataset_information.htm
 2_1_variance_estimation.htm
 2__methods.htm
 1__introduction_to_roc_reader_studies.htm
-_.htm
-drex_index_custom.png
+summary.htm
 index.htm
 drex_file_list

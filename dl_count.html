@@ -1,0 +1,45 @@
+<!-- Download Count-->
+<!DOCTYPE html>
+<html>
+ 
+	<head>
+		<title>Display Github Count</title>
+	</head>
+ 
+	<body>
+		<div id="container">
+  		</div>
+
+
+
+
+		<script>
+			var repo = "iMRMC"
+			var owner = "DIDSR"
+			var xhr = new XMLHttpRequest();
+			
+			xhr.open('GET', "https://api.github.com/repos/"+ owner + "/" + repo + "/releases", true);
+			xhr.send();
+			xhr.addEventListener("readystatechange", processRequest, false);
+			
+
+			function processRequest(e) {
+				if (xhr.readyState == 4 && xhr.status == 200) {
+
+        				var response = JSON.parse(xhr.response);
+
+                			for (i = 0; i < response.length; i++) {
+                  				var response_text = response[i].tag_name;
+                  				for (j = 0; j < response[i].assets.length; j++) {
+                    					var text = "Version: " + response_text + ", Package: " + response[i].assets[j].name + 
+								", Downloads = " + response[i].assets[j].download_count  + "<br>"
+                    					var node = document.createElement('div');
+                    					node.innerHTML = '<label for="check' + i + '">'+ text + "<br>" +'</label>';
+							document.getElementById('container').appendChild(node)
+                  				}	
+               				}
+				}
+			}
+
+		</script>
+</html>
