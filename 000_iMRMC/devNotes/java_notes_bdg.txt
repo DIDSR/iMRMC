@@ -1,0 +1,54 @@
+Java Programming:
+
+Package is typically defined/organized in a directory, or a directory tree.
+	for example there is a directory structure mrmc/chart, mrmc/core, mrmc/gui
+	these correspond to packages defined as mrmc.chart, mrmc.core, mrmc.gui
+
+Class is typically a file in a package directory. It is assigned to a package at the top of the file
+	with the line "package mrmc.gui"
+
+When referncing classes from another package, they are imported at the top of the file
+	with the line "import mrmc.core.Matrix"
+
+Constructor has same name as class, no return type, not even void.
+	It creates an object from the class.
+	There may be many objects from the same class.
+	There may be many costructors for a class.
+
+Methods are class specific functions that are applied to an object in a class.
+
+There are 3 kinds of variables + methods defined in a class before any constructors or methods are defined.
+	private -- class private
+	unspecified -- package private
+	public -- for all to see
+
+Static variables are part of the class, not any one object.
+
+Within an instance method or a constructor, this is a reference to the current object — the object whose method or constructor is being called.
+
+system.out.pringln( string );
+
+TreeMap is a unique sorted set
+
+ERRORS: Throwing an exception
+
+try { 
+	read_the_data
+	throw new IOException( "string describing exception");
+	 }
+catch(IOException except){
+	examine error
+	except.printStackTrace();
+	above, except is an IOException object
+	above, printStackTrace() is a method
+
+	show the error to the user
+	System.err.println("Error" + e.getMessage());
+
+	alternatively:
+	JOptionPane.showMessageDialog(lst.getFrame(), except.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+	above, lst.getFrame() must reference the current frame
+		
+	the "string describing exception" is stored by the getMessage() method
+	("Invalid input at line " + (line_number), e);
+}
