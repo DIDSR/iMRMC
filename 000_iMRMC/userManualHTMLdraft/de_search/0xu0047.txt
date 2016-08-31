@@ -50,7 +50,5 @@ GROW
  35
 GUI
  6,5
-GUIDE
- 1
 GUR
  33
