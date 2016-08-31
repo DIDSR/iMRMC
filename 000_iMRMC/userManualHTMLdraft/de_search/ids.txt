@@ -2,65 +2,104 @@
  Ti... Advanced License is required!
  index.htm
 2
- Sum... Advanced License is required!
- summary.htm
+ 1. Intr... Advanced License is required!
+ introduction.htm
 3
- 1. Introduction to... Advanced License is required!
- 1__introduction_to_roc_reader_studies.htm
+ Cre... Advanced License is required!
+ credits.htm
 4
- 2. Me... Advanced License is required!
- 2__methods.htm
+ 2. Gettin... Advanced License is required!
+ getting_started.htm
 5
- 2.1 Varianc... Advanced License is required!
- 2_1_variance_estimation.htm
+ 3. Run... Advanced License is required!
+ 3__run_imrmc.htm
 6
- 2.2 Component... Advanced License is required!
- 2_2_components_of_variance.htm
+ 3.1 GUI ... Advanced License is required!
+ 3_1_gui_interface.htm
 7
- 2.3 Hypothesis Testing ... Advanced License is required!
- 2_3_hypothesis_testing_and_confidence_intervals.htm
+ 3.1.1 Reade... Advanced License is required!
+ 3_1_1_reader_study_data.htm
 8
- 2.4 Sizing a... Advanced License is required!
- 2_4_sizing_a_future_study.htm
+ 3.1.1.1 D... Advanced License is required!
+ 3_1_1_1_data_checks.htm
 9
- 3. Da... Advanced License is required!
- 3__database.htm
+ 3.1.1.2 ... Advanced License is required!
+ 3_1_1_2_roc_curve.htm
 10
- 4. Using the iM... Advanced License is required!
- 4__using_the_imrmc_application.htm
+ 3.1.1.3 Re... Advanced License is required!
+ 3_1_1_3_reader_aucs_.htm
 11
- 4.1 Technical ... Advanced License is required!
- 4_1_technical_specifications.htm
+ 3.1.2 Summary Informatio... Advanced License is required!
+ 3_1_2_summary_information_from_reader_study_data_.htm
 12
- 4.2 First... Advanced License is required!
- 4_2_first_time_use.htm
+ 3.1.3 Statistical... Advanced License is required!
+ 3_1_3_statistical_analysis_results.htm
 13
- 4.3 Inp... Advanced License is required!
- 4_3_input_data.htm
+ 3.1.4 Sizing... Advanced License is required!
+ 3_1_4_sizing_future_study.htm
 14
- 4.4 Data Format... Advanced License is required!
- 4_4_data_format_for_roc_ratings.htm
+ 3.1.4.1 Explore... Advanced License is required!
+ 3_1_4_1_explore_experiment_size.htm
 15
- 4.4.1 Study... Advanced License is required!
- 4_4_1_study_description.htm
+ 3.1.5 Expo... Advanced License is required!
+ 3_1_5_export_results.htm
 16
- 4.4.2 List o... Advanced License is required!
- 4_4_2_list_of_roc_ratings.htm
+ 3.2 Comm... Advanced License is required!
+ 3_2_command_line.htm
 17
- 4.4.3 Forma... Advanced License is required!
- 4_4_3_formating_errors.htm
+ 4. Input ... Advanced License is required!
+ 4__input_and_output.htm
 18
- 4.5 Data... Advanced License is required!
- 4_5_data_analysis.htm
+ 4.1 Inp... Advanced License is required!
+ 4_1_input_file.htm
 19
- 4.6 Sizing a... Advanced License is required!
- 4_6_sizing_a_future_study.htm
+ 4.1.1 Stud... Advanced License is required!
+ 4_1_1_study_raw_data.htm
 20
- 4.7 Genera... Advanced License is required!
- 4_7_generate_a_report.htm
+ 4.1.2 Sum... Advanced License is required!
+ 4_1_2_summary_data.htm
 21
- 4.8 Da... Advanced License is required!
- 4_8_database.htm
+ 4.1.3 Possible F... Advanced License is required!
+ 4_1_3_possible_formatting_errors.htm
 22
- 5. Ref... Advanced License is required!
- 5__references.htm
+ 4.2 Out... Advanced License is required!
+ 4_2_output_file.htm
+23
+ 4.2.1 Statistical An... Advanced License is required!
+ 4_2_1_statistical_analysis_result__omrmc_.htm
+24
+ 4.2.2 Sizing A... Advanced License is required!
+ 4_2_2_sizing_analysis_results.htm
+25
+ 5. Me... Advanced License is required!
+ 5__methods.htm
+26
+ 5.1 Introduction to... Advanced License is required!
+ 5_1_introduction_to_roc_reader_studies.htm
+27
+ 5.2 Varianc... Advanced License is required!
+ 5_2_variance_estimation.htm
+28
+ 5.3 Component... Advanced License is required!
+ 5_3_components_of_variance.htm
+29
+ 5.4 Hypothesis Testing a... Advanced License is required!
+ 5_4_hypothesis_testing_and_confidence_intervals_.htm
+30
+ 5.5 Sizing a... Advanced License is required!
+ 5_5_sizing_a_future_study.htm
+31
+ 6. Da... Advanced License is required!
+ 6__database.htm
+32
+ 7. References and... Advanced License is required!
+ 7__references_and_other_information.htm
+33
+ 7.1 Ref... Advanced License is required!
+ 7_1_references.htm
+34
+ 7.2 Abbr... Advanced License is required!
+ 7_2_abbrevations.htm
+35
+ 7.3 App... Advanced License is required!
+ 7_3_appendix_a.htm

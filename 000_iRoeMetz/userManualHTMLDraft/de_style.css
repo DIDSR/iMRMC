@@ -1,0 +1,159 @@
+.detbl
+{
+direction:ltr; border-spacing:0px;
+border-collapse: collapse;
+border: 0px none black;
+}
+.de_list
+{
+margin: 0;padding: 0;
+}
+div.p
+{
+margin-top:0px;
+margin-bottom:0px;
+font-weight:normal;
+}
+
+div.description_on_page div.p,
+ div.description_on_page div.p a,
+ .m-pageContent__side__header div.p,
+ .m-pageContent__side__header div.p a,
+ .m-pageContent__side__footer div.p,
+ .m-pageContent__side__footer div.p a,
+ .m-pageContent__side__right div.p,
+ .m-pageContent__side__right div.p a,
+ .m-pageContent__side__left div.p,
+ .m-pageContent__side__left div.p a
+{
+font-family:"Arial";
+font-size: 11pt;color:#000000;
+font-style:normal;
+text-decoration:none;
+font-weight:normal;
+}
+h1
+{
+font-family:"Arial";
+font-size: 13pt;color:#375db0;
+font-style:normal;
+text-decoration:none;
+font-weight:normal;
+display:inline;
+margin:0;
+padding:0;
+}
+h2
+{
+font-family:"Arial";
+font-size: 11pt;color:#4f87fd;
+font-style:normal;
+text-decoration:none;
+font-weight:normal;
+display:inline;
+margin:0;
+padding:0;
+}
+span.code
+{
+font-family:"Courier New";
+font-size: 11pt;color:#000000;
+font-style:normal;
+text-decoration:none;
+font-weight:normal;
+}
+span.quote
+{
+font-family:"Georgia";
+font-size: 11pt;color:#000000;
+font-style:italic;
+text-decoration:none;
+font-weight:normal;
+}
+img.de_75F9C4A440
+{
+margin-top: 3px; margin-right: 3px; margin-bottom: 3px; margin-left: 3px;}
+img.de_780D01ADE8
+{
+margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px;}
+span.de_04C3525EEA
+{
+	font-family: "Arial";
+	font-size: 10pt;
+	color:#222222;
+}
+span.de_111311456D
+{
+	font-family: "Arial";
+	font-size: 10pt;
+	color:#000000;
+	font-style:italic;
+}
+span.de_2B94C39861
+{
+	color:#0000ff;
+	text-decoration:underline;
+}
+span.de_4AF4BF9DD6
+{
+	font-family: "Arial";
+	font-size: 11pt;
+	color:#000000;
+}
+span.de_4CD179DA38
+{
+	font-family: "Calibri";
+	font-size: 11pt;
+	color:#000000;
+}
+span.de_51752156DC
+{
+	color:#000000;
+}
+span.de_56F4564E24
+{
+	font-family: "Arial";
+	font-size: 12pt;
+	color:#000000;
+}
+span.de_57F6756949
+{
+	font-size: 11pt;
+	color:#0000ff;
+	text-decoration:underline;
+}
+span.de_68B99ACC5C
+{
+	font-family: "Arial";
+}
+span.de_823826CA2C
+{
+	font-style:italic;
+}
+span.de_CC7DAF531E
+{
+	font-family: "Arial";
+	font-size: 10pt;
+	color:#000000;
+}
+span.de_FB7823514D
+{
+	font-family: "Arial";
+	font-size: 10pt;
+	color:#222222;
+	font-style:italic;
+}
+span.de_FE04B87F3C
+{
+	font-family: "Arial";
+	font-size: 11pt;
+	color:#0000ff;
+	text-decoration:underline;
+}
+span.de_FFB638AC42
+{
+	font-size: 11pt;
+}
+.list-element {
+	list-style-type: none;
+}
