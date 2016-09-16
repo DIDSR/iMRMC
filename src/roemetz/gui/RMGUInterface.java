@@ -437,13 +437,10 @@ public class RMGUInterface {
 		 */
 		JPanel cofvResults = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-		JButton saveCalcResults = new JButton("Output Location");
-		saveCalcResults.addActionListener(new saveCalcResultsListener());
 		JButton doGenRoeMetz = new JButton("Do Numerical Integration");
 		doGenRoeMetz.addActionListener(new DoNumericalIntegrationBtnListener());
 
 		cofvResults.add(Box.createHorizontalStrut(20));
-		cofvResults.add(saveCalcResults);
 		cofvResults.add(doGenRoeMetz);
 
 		calculatePanel.add(cofvResultsDesc);
@@ -941,28 +938,6 @@ public class RMGUInterface {
 			}
 		}
 	}
-
-	/**
-	 * Handler for "Output Location" button in calculation panel. Displays a
-	 * file browser and designates selected directory as path to save
-	 * calculation output
-	 */
-	class saveCalcResultsListener implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			JFileChooser fc = new JFileChooser();
-			fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			int fcReturn = fc.showSaveDialog((JComponent) e.getSource());
-			if (fcReturn == JFileChooser.APPROVE_OPTION) {
-				calcSaveDirectory = fc.getSelectedFile().toString();
-				System.out.println(calcSaveDirectory);
-			} else {
-				System.out.println("No save directory selected");
-				calcSaveDirectory = null;
-			}
-		}
-	}
-
 
 	
 	/**

@@ -392,29 +392,11 @@ public class exportToFile {
 		str = str +"\r\n"; 
 		return str;
 	}
-	// export sizepanel for iMRMC
+	
+	
+	// export sizepanel for iMRMC omrmc version
 	public static String exportSizePanel(String oldReport, DBRecord SizeDBRecord, SizePanel processSizePanel) {
 		String str = oldReport;
-/*		double[][] BDG = SizeDBRecord.BDGresult;
-		double[][] DBM = SizeDBRecord.DBMresult;
-		double[][] BCK = SizeDBRecord.BCKresult;
-		double[][] OR = SizeDBRecord.ORresult;
-		double[][] MS = SizeDBRecord.MSresult;
-		int useMLE = SizeDBRecord.flagMLE;		
-		if(useMLE == 1) {
-			BDG = SizeDBRecord.BDGbiasresult;
-			DBM = SizeDBRecord.DBMbiasresult;
-			BCK = SizeDBRecord.BCKbiasresult;
-			OR = SizeDBRecord.ORbiasresult;
-			MS = SizeDBRecord.MSbiasresult;
-		}
-
-		
-		double[][] BDGcoeff = SizeDBRecord.BDGcoeffresult;
-		double[][] BCKcoeff = SizeDBRecord.BCKcoeffresult;
-		double[][] DBMcoeff = SizeDBRecord.DBMcoeffresult;
-		double[][] ORcoeff = SizeDBRecord.ORcoeffresult;
-		double[][] MScoeff = SizeDBRecord.MScoeffresult;*/
 		double[] statParms = new double[2];
 		
 		statParms[0] = Double.parseDouble(processSizePanel.SigLevelJTextField.getText());
@@ -433,7 +415,20 @@ public class exportToFile {
 				+ SEPA + "Significance Level = " + twoDec.format(statParms[0])+"\r\n";
 		str = str + "NReaderSize=  " +NreaderSize + SEPA
 		          + "NnormalSize=  " + NnormalSize + SEPA
-		          + "NDiseaseSize= " + NdiseaseSize ;
+		          + "NDiseaseSize= " + NdiseaseSize + "\r\n";
+		str = str + "# of split plot= "+processSizePanel.numSplitPlots  + "\r\n"; 
+		if(processSizePanel.pairedReadersFlag==1)
+			str = str + "Paired Reader: Yes " + "\r\n"; 
+		else
+			str = str + "Paired Reader: No " + "\r\n"; 
+		if(processSizePanel.pairedNormalsFlag==1)
+			str = str + "Paired Normal Case: Yes " + "\r\n"; 
+		else
+			str = str + "Paired Normal Case: No " + "\r\n"; 
+		if(processSizePanel.pairedDiseasedFlag==1)
+			str = str + "Paired Diseaseed Case: Yes " + "\r\n"; 
+		else
+			str = str + "Paired Diseaseed Case: No " + "\r\n"; 
 		
 		str = str 
 				+ "\r\n*****************************************************************";
@@ -444,6 +439,54 @@ public class exportToFile {
 				+ "\r\n*****************************************************************\r\n";
 		return str;
 	}
+	
+	
+	
+	// export sizepanel for iMRMC omrmc version
+	public static String exportSizeCsv(String report, DBRecord SizeDBRecord,SizePanel processSizePanel, String timestring) {
+		String str = report;
+		double[] statParms = new double[2];		
+		statParms[0] = Double.parseDouble(processSizePanel.SigLevelJTextField.getText());
+		statParms[1] = Double.parseDouble(processSizePanel.EffSizeJTextField.getText());
+		String inputfilename =  SizeDBRecord.InputFile1.fileName;
+		str = str + inputfilename + SEPA;
+		str = str + timestring + SEPA;
+		str = str + MRMC.versionname + SEPA;
+		str = str + SizeDBRecord.modalityA + SEPA;
+		str = str + SizeDBRecord.modalityB + SEPA;
+		str = str + Integer.parseInt(processSizePanel.NreaderJTextField.getText()) + SEPA;
+		str = str + Integer.parseInt(processSizePanel.NnormalJTextField.getText()) + SEPA;
+		str = str + Integer.parseInt(processSizePanel.NdiseaseJTextField.getText()) + SEPA;
+		str = str + processSizePanel.numSplitPlots +SEPA;
+		str = str + twoDec.format(statParms[1]) + SEPA;
+		str = str + twoDec.format(statParms[0]) + SEPA;
+		if (SizeDBRecord.flagMLE == 1){
+			str = str + "MLE" + SEPA;
+		}else{
+			str = str + "Ustat" + SEPA;
+		}
+		String tempstr="";
+		tempstr = processSizePanel.SizeJLabelPowerNormal.getText();
+		str = str + tempstr.substring(tempstr.lastIndexOf("=")+1) + SEPA;
+		tempstr = processSizePanel.SizeJLabelDFBDG.getText();
+		str = str + tempstr.substring(tempstr.lastIndexOf("=")+1) + SEPA;
+		tempstr = processSizePanel.SizeJLabelSqrtVar.getText();
+		str = str + tempstr.substring(tempstr.lastIndexOf("=")+1) + SEPA;
+		tempstr = processSizePanel.SizeJLabelPowerBDG.getText();
+		str = str + tempstr.substring(tempstr.lastIndexOf("=")+1) + SEPA;
+		if (SizeDBRecord.flagFullyCrossed){
+			tempstr =  processSizePanel.SizeJLabelDFHillis.getText();
+			str = str +  tempstr.substring(tempstr.lastIndexOf("=")+1) + SEPA;
+			tempstr = processSizePanel.SizeJLabelPowerHillis.getText();
+			str = str +  tempstr.substring(tempstr.lastIndexOf("=")+1) + "\r\n";
+		}else{
+			str = str +"NA,NA" + "\r\n";
+		}
+		return str;
+	}
+	
+	
+	
 	
 	// export MC variance result for iRoeMetz
 	public static String exportMCvariance(String oldReport, DBRecord VarDBRecord) {
@@ -834,5 +877,6 @@ public class exportToFile {
         } 			
 		return str;
 	}
+
 	
 }

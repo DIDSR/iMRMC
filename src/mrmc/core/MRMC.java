@@ -97,7 +97,7 @@ public class MRMC extends JApplet {
 			inputFileFullName = args[0];
 			commandStart = true;			
 		}
-		int width = 1000, height = 750;
+		int width = 1100, height = 750;
 		run(new MRMC(), width, height);
 		cmonnandStartFunction cmonnandStartFunction1 = new cmonnandStartFunction();
 		cmonnandStartFunction1.cmonnandStartFunction(gui, inputFileFullName);
@@ -117,7 +117,7 @@ public class MRMC extends JApplet {
 		mrmcFrame.getContentPane().add(MRMC);
 		mrmcFrame.pack();
 		mrmcFrame.setSize(width, height);
-
+		mrmcFrame.setMinimumSize(new Dimension(width, height));
 		// We shall override the normal init method.
 		// Please refer to the init method in this (sub)class 
 		MRMC.init();

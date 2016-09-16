@@ -546,6 +546,9 @@ public class SizePanel {
 				}
 				sigLevel = Double.parseDouble(SigLevelJTextField.getText());
 				effSize = Double.parseDouble(EffSizeJTextField.getText());
+				JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
+						"All results in this feature assume fully crossed study", "Notice",
+						JOptionPane.INFORMATION_MESSAGE);
 				exploreExpSize ees =  new exploreExpSize (DBRecordSize, GUI, GUI.SizePanel1);
 				
 		//		DBRecordSize.DBRecordSizeFill(GUI.SizePanel1);

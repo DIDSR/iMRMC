@@ -512,7 +512,9 @@ public class GUInterface {
 		public void actionPerformed(ActionEvent e) {
 			if( DBRecordSize.totalVar > 0.0) {
 				DBRecordSize.InputFile1 = InputFile1;
-				String report = "";
+				String head =  "inputFile,date,iMRMCversion,modalityA,modalityB,NR,N0,N1,NG,EffectiveSize,SignificanceLevel,UstatOrMLE,NormalPower,BDGDf,BDGSE,BDGPower,HillisDf,HillisPower";
+				String reportcsv = head +"\r\n";
+				String reportomrmc = "";
 	            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
 				Date currDate = new Date();
 				final String fileTime = dateForm.format(currDate);
@@ -522,12 +524,31 @@ public class GUInterface {
 				//String sizeFilename = sizeFilenamewithpath.substring(sizeFilenamewithpath.lastIndexOf("\\")+1);	
 				String FileName=InputFile1.fileName;
 				String FilePathAndName=InputFile1.filePathAndName;
+				String FilePath = InputFile1.filePath;
 				FilePathAndName= FilePathAndName.substring(0,FilePathAndName.lastIndexOf("."));
 				FileName= FileName.substring(0,FileName.lastIndexOf("."));
-				String sizeFilenamewithpath = FilePathAndName+"MRMCSize"+fileTime+".omrmc";
+				//String sizeFilenamewithpath = FilePathAndName+"MRMCSize"+fileTime+".omrmc";
 				String sizeFilename = FileName+"MRMCsize"+fileTime+".omrmc";
 				try {
+					
 					JFileChooser fc = new JFileChooser();
+					String exportFolderName = FileName + "SizeResults" + fileTime;
+					if (outputfileDirectory!=null){
+						fc.setSelectedFile(new File(outputfileDirectory+"//"+exportFolderName));						
+					}else{
+						fc.setSelectedFile(new File(FilePath+"//"+exportFolderName));
+					}
+					int fcReturn = fc.showSaveDialog((Component) e.getSource());
+					File outputPackage = fc.getSelectedFile();					
+					if(!outputPackage.exists() && !outputPackage.isDirectory()) 
+						outputPackage.mkdir();		
+					File fomrmc = new File (outputPackage +"//"+"MRMCsize.omrmc" );
+					File fcsv = new File (outputPackage +"//" + "MRMCsize.csv");
+					outputfileDirectory = fc.getCurrentDirectory();		
+					
+					
+					
+				/*	JFileChooser fc = new JFileChooser();
 					FileNameExtensionFilter filter = new FileNameExtensionFilter(
 							"iMRMC Summary Files (.omrmc or csv)", "csv","omrmc");
 					fc.setFileFilter(filter);
@@ -537,28 +558,49 @@ public class GUInterface {
 					}						
 					else					
 					    fc.setSelectedFile(new File(sizeFilenamewithpath));
-					int fcReturn = fc.showSaveDialog((Component) e.getSource());
+					int fcReturn = fc.showSaveDialog((Component) e.getSource());*/
 					if (fcReturn == JFileChooser.APPROVE_OPTION) {
-						File f = fc.getSelectedFile();
+						/*File f = fc.getSelectedFile();
 						if (!f.exists()) {
 							f.createNewFile();
-						}
+						}*/
 						//String savedFileName = f.getPath();
 						//sizeFilename = savedFileName.substring(savedFileName.lastIndexOf("\\")+1);
-						sizeFilename = f.getName();
-						report = report + "MRMC size statistics from " +MRMC.versionname + "\r\n";
-						report = report + "Size statistics written to file named:" + "\r\n";
-						report = report + sizeFilename + "\r\n" + "\r\n";
+						sizeFilename = fomrmc.getName();
+						reportomrmc = reportomrmc + "MRMC size statistics from " +MRMC.versionname + "\r\n";
+						reportomrmc = reportomrmc + "Size statistics written to file named:" + "\r\n";
+						reportomrmc = reportomrmc + sizeFilename + "\r\n" + "\r\n";
+						
 						if (selectedInput == DescInputChooseMode) {
-							report = exportToFile.exportSizePanel(report, DBRecordSize, SizePanel1);
-							report = exportToFile.exportTable1(report, DBRecordSize);
+							// generate omrmc string
+							reportomrmc = exportToFile.exportSizePanel(reportomrmc, DBRecordSize, SizePanel1);
+							reportomrmc = exportToFile.exportTable1(reportomrmc, DBRecordSize);
+							// generate csv string
+							reportcsv = exportToFile.exportSizeCsv(reportcsv, DBRecordSize, SizePanel1,fileTime);
 						} else {
-							report = exportToFile.exportSizePanel(report, DBRecordSize, SizePanel1);
-							report = exportToFile.exportTable1(report, DBRecordSize);
+							// generate omrmc string
+							reportomrmc = exportToFile.exportSizePanel(reportomrmc, DBRecordSize, SizePanel1);
+							reportomrmc = exportToFile.exportTable1(reportomrmc, DBRecordSize);
+							// generate csv string
+							reportcsv = exportToFile.exportSizeCsv(reportcsv, DBRecordSize, SizePanel1,fileTime);
 						}
 						
-						
-						FileWriter fw = new FileWriter(f.getAbsoluteFile());
+						// write omrmc to disk
+						FileWriter fwomrmc = new FileWriter(fomrmc.getAbsoluteFile());
+						BufferedWriter bwomrmc = new BufferedWriter(fwomrmc);
+						bwomrmc.write(reportomrmc);
+						bwomrmc.close();
+						// write one line data to disk
+						FileWriter fwcsv = new FileWriter(fcsv.getAbsoluteFile());
+						BufferedWriter bwcsv = new BufferedWriter(fwcsv);
+						bwcsv.write(reportcsv);
+						bwcsv.close();
+						outputfileDirectory = fc.getCurrentDirectory();
+					    String savedfilename = fc.getSelectedFile().getName();
+						JOptionPane.showMessageDialog(
+								thisGUI.MRMCobject.getFrame(),"The size analysis results and summary has been succeed export to "+outputfileDirectory+ " !\n"+ "Foldername = " +exportFolderName, 
+								"Exported", JOptionPane.INFORMATION_MESSAGE);
+						/*FileWriter fw = new FileWriter(f.getAbsoluteFile());
 						BufferedWriter bw = new BufferedWriter(fw);
 						bw.write(report);
 						bw.close();
@@ -566,7 +608,7 @@ public class GUInterface {
 					    String savedfilename = fc.getSelectedFile().getName();
 						JOptionPane.showMessageDialog(
 								thisGUI.MRMCobject.getFrame(),"The size result has been succeed export to "+outputfileDirectory+ " !\n"+ "Filename = " +savedfilename, 
-								"Exported", JOptionPane.INFORMATION_MESSAGE);
+								"Exported", JOptionPane.INFORMATION_MESSAGE);*/
 					}
 				} catch (HeadlessException e1) {
 					e1.printStackTrace();

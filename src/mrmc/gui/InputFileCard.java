@@ -127,7 +127,7 @@ public class InputFileCard {
 		JButton browseButton = new JButton("Browse...");
 		browseButton.addActionListener(new brwsButtonListener());
 		// Show plots of Cases Per Reader and Readers Per Case
-		JButton readerCasesButton = new JButton("Input Statistics Charts");
+		JButton readerCasesButton = new JButton("Show Statistics Charts");
 		readerCasesButton.addActionListener(new ReadersCasesButtonListener());
 		// Show reader x case image of design matrix for selected modality 
 		JButton designButton = new JButton("Show Study Design");
@@ -293,7 +293,7 @@ public class InputFileCard {
 	
 	
 	/**
-	 * Handler for "Input Statistics Charts" button, displays charts for study
+	 * Handler for "Show Statistics Charts" button, displays charts for study
 	 * design at a glance
 	 */
 	class ReadersCasesButtonListener implements ActionListener {
