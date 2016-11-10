@@ -4,20 +4,20 @@ This software and documentation (the "Software") were developed at the Food and 
 
 The software included several libraries with their own licenses
 
-1.	Stochastic Simulation in Java: Copyright (C) 2008-2016  Pierre L'Ecuyer and Université de Montréal
+1.	Stochastic Simulation in Java: Copyright (C) 2008-2016  Pierre L'Ecuyer and Université de Montréal, 
 Apache 2.0 License, http://simul.iro.umontreal.ca/ssj/indexe.html
 
-2.	Uncommons Maths:  Copyright (C)  2006 - 2012 Daniel W. Dyer 
+2.	Uncommons Maths:  Copyright (C)  2006 - 2012 Daniel W. Dyer,  
 Apache 2.0 License, http://maths.uncommons.org/
 
-3.	Commons Math: Copyright (C) 2003-2016 The Apache Software Foundation
+3.	Commons Math: Copyright (C) 2003-2016 The Apache Software Foundation, 
 Apache 2.0 License, http://commons.apache.org/proper/commons-math/
 
-4.	JCommon: Copyright (C) 2007-2014 Object Refinery Limited
+4.	JCommon: Copyright (C) 2007-2014 Object Refinery Limited, 
 GNU Lesser General Public License (LGPL) version 2.1 or later, http://www.jfree.org/jcommon/index.html
 
-5.	JFreeChart: Copyright (C) 2005-2014 Object Refinery Limited
+5.	JFreeChart: Copyright (C) 2005-2014 Object Refinery Limited, 
 GNU Lesser General Public License (LGPL), http://www.jfree.org/jfreechart/
 
-6.	Itextpdf: Copyright (C)2016 iText Group
+6.	Itextpdf: Copyright (C)2016 iText Group, 
 GNU Affero General Public License (AGPL), http://developers.itextpdf.com/itext-java 
