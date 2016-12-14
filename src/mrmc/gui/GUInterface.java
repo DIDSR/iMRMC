@@ -51,6 +51,22 @@ import org.jfree.ui.RefineryUtilities;
 
 import roemetz.core.validateFunction;
 
+/*import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;*/
+
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
+
+
+
 /**
  * This class describes the graphic interface. From top to bottom, the GUI
  * includes <br>
@@ -398,6 +414,8 @@ public class GUInterface {
 	    				+"pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis";
 				String reportData = head +"\r\n";
 				String reportSummary = "";
+				String reportResult1 = "";
+				String reportResult2 = "";
 	            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
 				Date currDate = new Date();
 				final String fileTime = dateForm.format(currDate);
@@ -408,9 +426,10 @@ public class GUInterface {
 				String FileName=InputFile1.fileName;
 				//String FilePathAndName=InputFile1.filePathAndName;
 				String FilePath = InputFile1.filePath;
+				String FilePathName = InputFile1.filePathAndName;
 				//FilePathAndName= FilePathAndName.substring(0,FilePathAndName.lastIndexOf("."));
 				FileName= FileName.substring(0,FileName.lastIndexOf("."));
-				summaryfilename = FileName+"MRMCsize"+fileTime+".omrmc";
+				//summaryfilename = FileName+"MRMCsize"+fileTime+".omrmc";
 				try {
 					
 					
@@ -427,8 +446,15 @@ public class GUInterface {
 						outputPackage.mkdir();		
 					File fSummary = new File (outputPackage +"//"+"MRMCSummary.omrmc" );
 					File fData = new File (outputPackage +"//" + "MRMCStat.csv");
-					outputfileDirectory = fc.getCurrentDirectory();		
-					
+					String fPdfPathName = outputPackage +"//"+"MRMCResult.pdf";
+					File fPdf = new File(fPdfPathName);
+					outputfileDirectory = fc.getCurrentDirectory();	
+					PdfPTable[] pdfAUCTable = new PdfPTable[3];
+					for ( int i = 0; i<3;i++ ){
+				        pdfAUCTable[i] = new PdfPTable(5);
+				        pdfAUCTable[i].setTotalWidth(new float[]{300,550,550,250,350});
+					}
+
 					if (fcReturn == JFileChooser.APPROVE_OPTION) {
 						//File f = fc.getSelectedFile();
 						//if (!f.exists()) {
@@ -439,6 +465,10 @@ public class GUInterface {
 						summaryfilename = fSummary.getName();
 						reportSummary = reportSummary + "MRMC summary statistics from " +MRMC.versionname + "\r\n";
 						reportSummary = reportSummary + "Summary statistics written to file named:" + "\r\n";
+						reportResult1 = "This file," + "\r\n" + fPdf.getAbsolutePath() + ",\r\n" ;
+						reportResult1 = reportResult1 + "shows the MRMN ROC analysis results for the data in:" + "\r\n";
+						reportResult1 = reportResult1 + FilePathName + "\r\n";
+						reportResult1 = reportResult1 + "using " + MRMC.versionname + ", https://github.com/DIDSR/iMRMC/releases" + "\r\n" + "\r\n";
 						reportSummary = reportSummary + summaryfilename + "\r\n" + "\r\n";
 						if (selectedInput == DescInputChooseMode) {
 							// generate summary string
@@ -446,6 +476,10 @@ public class GUInterface {
 							reportSummary = exportToFile.exportStatPanel(reportSummary, DBRecordStat, StatPanel1);
 							reportSummary = exportToFile.exportTable1(reportSummary, DBRecordStat);
 							reportSummary = exportToFile.exportTable2(reportSummary, DBRecordStat);
+							// generate pdf result 
+							reportResult1 = exportToFile.pdfResult1(reportResult1, DBRecordStat);
+							pdfAUCTable = exportToFile.pdfTable(pdfAUCTable, DBRecordStat);
+							reportResult2 = exportToFile.pdfResult2(DBRecordStat);
 							// generate one line data string
 							reportData = exportToFile.exportStat(reportData, DBRecordStat, fileTime);
 						} else {
@@ -454,6 +488,10 @@ public class GUInterface {
 							reportSummary = exportToFile.exportStatPanel(reportSummary, DBRecordStat, StatPanel1);
 							reportSummary = exportToFile.exportTable1(reportSummary, DBRecordStat);
 							reportSummary = exportToFile.exportTable2(reportSummary, DBRecordStat);
+							// generate pdf result 
+							reportResult1 = exportToFile.pdfResult1(reportResult1, DBRecordStat);
+							pdfAUCTable = exportToFile.pdfTable(pdfAUCTable, DBRecordStat);
+							reportResult2 = exportToFile.pdfResult2(DBRecordStat);
 							// generate one line data string
 							reportData = exportToFile.exportStat(reportData, DBRecordStat, fileTime);
 						}
@@ -467,15 +505,29 @@ public class GUInterface {
 						BufferedWriter bwData = new BufferedWriter(fwData);
 						bwData.write(reportData);
 						bwData.close();
+						// output pdf
+						Document document = new Document();
+						PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(fPdfPathName));
+						document.open();
+				        document.add(new Paragraph(reportResult1));
+				        for (int i = 0; i<3;i++ ){
+				        	document.add(pdfAUCTable[i]);
+				        	 document.add(new Paragraph("\r\n"));
+				        }
+				        document.add(new Paragraph(reportResult2));
+				        document.close();
 						outputfileDirectory = fc.getCurrentDirectory();
 					    String savedfilename = fc.getSelectedFile().getName();
 						JOptionPane.showMessageDialog(
-								thisGUI.MRMCobject.getFrame(),"The stat analysis results and summary has been succeed export to "+outputfileDirectory+ " !\n"+ "Foldername = " +exportFolderName, 
+								thisGUI.MRMCobject.getFrame(),"The stat analysis results and summary has been succeed export to "+outputfileDirectory+ " !\n"+ "Foldername = " +outputPackage, 
 								"Exported", JOptionPane.INFORMATION_MESSAGE);
 					}
 				} catch (HeadlessException e1) {
 					e1.printStackTrace();
 				} catch (IOException e1) {
+					e1.printStackTrace();
+				} catch (DocumentException e1) {
+					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} 
 				
@@ -598,7 +650,7 @@ public class GUInterface {
 						outputfileDirectory = fc.getCurrentDirectory();
 					    String savedfilename = fc.getSelectedFile().getName();
 						JOptionPane.showMessageDialog(
-								thisGUI.MRMCobject.getFrame(),"The size analysis results and summary has been succeed export to "+outputfileDirectory+ " !\n"+ "Foldername = " +exportFolderName, 
+								thisGUI.MRMCobject.getFrame(),"The size analysis results and summary has been succeed export to "+outputfileDirectory+ " !\n"+ "Foldername = " +outputPackage, 
 								"Exported", JOptionPane.INFORMATION_MESSAGE);
 						/*FileWriter fw = new FileWriter(f.getAbsoluteFile());
 						BufferedWriter bw = new BufferedWriter(fw);

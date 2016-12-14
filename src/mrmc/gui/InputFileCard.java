@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TreeMap;
@@ -87,7 +88,7 @@ public class InputFileCard {
 	private JCheckBox mleCheckBox;
 	private JComboBox<String> chooseA, chooseB;
 	private JButton varAnalysisButton, showAUCsButton;
-
+	static DecimalFormat fiveDecE = new DecimalFormat("0.00000E0");
 	/**
 	 * Sets study panel to default values, removes modalities from drop down
 	 * menus
@@ -583,20 +584,35 @@ public class InputFileCard {
 				RefineryUtilities.centerFrameOnScreen(JFrameAUC);
 				JFrameAUC.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	
-				Object[] colNames = { "ReaderID", "AUC "+DBRecordStat.modalityA, "AUC "+DBRecordStat.modalityB };
-				Object[][] rowContent = new String[(int) DBRecordStat.Nreader][3];
+				Object[] colNames = { "ReaderID", "AUC "+DBRecordStat.modalityA, "AUC_STD " + DBRecordStat.modalityA,"AUC "+DBRecordStat.modalityB,"AUC_STD "+DBRecordStat.modalityB, "AUC difference", "AUC differencce STD" };
+				Object[][] rowContent = new String[(int) DBRecordStat.Nreader][7];
 				int i=0;
 				for(String desc_temp : InputFile1.readerIDs.keySet() ) {
 					rowContent[i][0] = desc_temp;
 					rowContent[i][1] = Double.toString(DBRecordStat.AUCs[i][0]);
-					rowContent[i][2] = Double.toString(DBRecordStat.AUCs[i][1]);
+					rowContent[i][2] = fiveDecE.format(Math.sqrt(DBRecordStat.readerVarA[i]));
+					rowContent[i][3] = Double.toString(DBRecordStat.AUCs[i][1]);
+					rowContent[i][4] = fiveDecE.format(Math.sqrt(DBRecordStat.readerVarB[i]));
+					rowContent[i][5] = Double.toString(DBRecordStat.AUCs[i][1]);
+					rowContent[i][6] = fiveDecE.format(Math.sqrt(DBRecordStat.readerVarB[i]));
+					if (DBRecordStat.selectedMod == 0){
+						rowContent[i][3] = "N/A";
+						rowContent[i][4] = "N/A";
+						rowContent[i][5] = "N/A";
+						rowContent[i][6] = "N/A";
+					}else if (DBRecordStat.selectedMod == 1){
+						rowContent[i][1] = "N/A";
+						rowContent[i][2] = "N/A";
+						rowContent[i][5] = "N/A";
+						rowContent[i][6] = "N/A";
+					}
 					i++;
 				}
 	
 				JTable tableAUC = new JTable(rowContent, colNames);
 				JScrollPane scrollPaneAUC = new JScrollPane(tableAUC);
 				JFrameAUC.add(scrollPaneAUC, BorderLayout.CENTER);
-				JFrameAUC.setSize(600, 300);
+				JFrameAUC.setSize(800, 300);
 				JFrameAUC.setVisible(true);
 				JButton exportreader = new JButton("Export");
 				exportreader.addActionListener(new exportreaderresult());

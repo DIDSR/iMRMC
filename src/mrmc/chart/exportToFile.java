@@ -5,6 +5,18 @@ import java.text.DecimalFormat;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+/*import com.itextpdf.text.Element;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;*/
+
+
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+
 import roemetz.gui.RMGUInterface;
 import mrmc.core.DBRecord;
 import mrmc.core.InputFile;
@@ -33,11 +45,13 @@ public class exportToFile {
 	static DecimalFormat twoDec = new DecimalFormat("0.00");
 	static DecimalFormat threeDec = new DecimalFormat("0.000");
 	static DecimalFormat fourDec = new DecimalFormat("0.0000");
+	static DecimalFormat twoDecE = new DecimalFormat("0.00E0");
 	static DecimalFormat threeDecE = new DecimalFormat("0.000E0");
 	static DecimalFormat fourDecE = new DecimalFormat("0.0000E0");
 	static DecimalFormat fiveDecE = new DecimalFormat("0.00000E0");
 	static DecimalFormat eightDecE = new DecimalFormat("0.00000000E0");
 	private static String SEPA = ",";
+	private static String dot = ". ";
 	private String MLEString = "(U-statistics, Not MLE)";
 	private String UstatString = "(MLE, Not U-statistics)";
 	private static String NAlist = "NA,NA,NA,NA,NA,NA";
@@ -511,19 +525,20 @@ public class exportToFile {
 	public static String exportSummary(String oldReport, DBRecord SummaryDBRecord) {
 		String str = oldReport;
 		str = str + "BEGIN SUMMARY\r\n";
-		str = str + "NReader=  " + SummaryDBRecord.Nreader + "\r\n";
-		str = str + "Nnormal=  " + SummaryDBRecord.Nnormal + "\r\n";
-		str = str + "NDisease= " + SummaryDBRecord.Ndisease + "\r\n" + "\r\n";
+		str = str + "NReader=  " + SummaryDBRecord.NreaderDB + "\r\n";
+		str = str + "Nnormal=  " + SummaryDBRecord.NnormalDB + "\r\n";
+		str = str + "NDisease= " + SummaryDBRecord.NdiseaseDB + "\r\n" + "\r\n";
 		str = str + "Modality A = " + SummaryDBRecord.modalityA + "\r\n";
 		str = str + "Modality B = " + SummaryDBRecord.modalityB + "\r\n" + "\r\n";
 		str = str + "Reader-Averaged AUCs" + "\r\n";
 		str = str +  SummaryDBRecord.getAUCsReaderAvgString(SummaryDBRecord.selectedMod).replaceAll(",   ", "\r\n") + "\r\n" + "\r\n";
 		str = str +  "Reader Specific AUCs" +"\r\n";
-		int k=1;
+		int k=0;
 		int IDlength = 0;
 		for(String desc_temp : SummaryDBRecord.InputFile1.readerIDs.keySet() ) {
 			IDlength = Math.max(IDlength,desc_temp.length());
 		}
+		/* old function
 		if (IDlength>9){
 			for (int i=0; i<IDlength-9; i++){
 				str = str + " ";
@@ -536,24 +551,154 @@ public class exportToFile {
 		
 		k=1;
 		for(String desc_temp : SummaryDBRecord.InputFile1.readerIDs.keySet() ) {
-		//for (int i = 1; i < GUI.DBRecordStat.Nreader+1; i++){
 			str = str + "\r\n";
 			for (int i=0; i<Math.max(IDlength,9) - desc_temp.length(); i++){
 				str = str + " ";
 			}
 			str = str + desc_temp;
-			str = str+ SEPA + "  " +
-					fiveDecE.format(SummaryDBRecord.AUCs[k-1][0]) + SEPA + "  " +
-					fiveDecE.format(SummaryDBRecord.AUCs[k-1][1]) + SEPA;
-				double AUC_dif = SummaryDBRecord.AUCs[k-1][0]-SummaryDBRecord.AUCs[k-1][1];
-					if(AUC_dif<0)
-						str = str + "      " + fiveDecE.format(AUC_dif);
-					else if (AUC_dif>0)
-						str = str + "       " + fiveDecE.format(AUC_dif);
-					else
-						str = str + "        " + fiveDecE.format(AUC_dif);
+			if (SummaryDBRecord.selectedMod==0){
+				str = str+ SEPA + "  " +
+						fiveDecE.format(SummaryDBRecord.AUCs[k-1][0]) + SEPA + "  " +
+						"         0" + SEPA + "                0";
+			}else if (SummaryDBRecord.selectedMod==1){
+				str = str+ SEPA + "  " +
+						"         0" + SEPA + "  " +
+						fiveDecE.format(SummaryDBRecord.AUCs[k-1][1]) + SEPA +
+						"                0";
+			}else{
+				str = str+ SEPA + "  " +
+						fiveDecE.format(SummaryDBRecord.AUCs[k-1][0]) + SEPA + "  " +
+						fiveDecE.format(SummaryDBRecord.AUCs[k-1][1]) + SEPA;
+					double AUC_dif = SummaryDBRecord.AUCs[k-1][0]-SummaryDBRecord.AUCs[k-1][1];
+						if(AUC_dif<0)
+							str = str + "      " + fiveDecE.format(AUC_dif);
+						else if (AUC_dif>0)
+							str = str + "       " + fiveDecE.format(AUC_dif);
+						else
+							str = str + "        " + fiveDecE.format(AUC_dif);
+			}
+
 			k=k+1;
+		}*/
+		if (SummaryDBRecord.selectedMod == 0 ||SummaryDBRecord.selectedMod == 3){
+			str = str +  "MOD A" +"\r\n";
+			if (IDlength>9){
+				for (int i=0; i<IDlength-9; i++){
+					str = str + " ";
+				}
+				str = str + "Reader ID";
+			    str = str+ SEPA + "  Normal_Case" + SEPA + "  Disease_Case" + SEPA + "         AUC" + SEPA +  "      STDAUC";
+			} else{
+				str = str + "Reader ID" + SEPA + "  Normal_Case" + SEPA + "  Disease_Case" + SEPA + "         AUC" + SEPA +  "      STDAUC";
+			}
+			
+			k=0;
+			for(String desc_temp : SummaryDBRecord.InputFile1.readerIDs.keySet() ) {
+				str = str + "\r\n";
+				for (int i=0; i<Math.max(IDlength,9) - desc_temp.length(); i++){
+					str = str + " ";
+				}
+				str = str + desc_temp + SEPA;
+				String Rnormal = Integer.toString(SummaryDBRecord.N0perReader[k][0]);
+				for (int i=0; i<13 - Rnormal.length(); i++){
+					str = str + " ";
+				}
+				str = str + Rnormal +  SEPA;
+				String Rdisease = Integer.toString(SummaryDBRecord.N1perReader[k][0]);
+				for (int i=0; i<14 - Rdisease.length(); i++){
+					str = str + " ";
+				}
+				str = str + Rdisease;
+				str = str+ SEPA + "  " +
+							fiveDecE.format(SummaryDBRecord.AUCs[k][0]) + SEPA + "  " +
+							fiveDecE.format(SummaryDBRecord.readerVarA[k]);	
+				k=k+1;
+			}
+			str = str + "\r\n";
+		}	
+				
+		if (SummaryDBRecord.selectedMod == 1 ||SummaryDBRecord.selectedMod == 3){
+			str = str +  "MOD B" +"\r\n";
+			if (IDlength>9){
+				for (int i=0; i<IDlength-9; i++){
+					str = str + " ";
+				}
+				str = str + "Reader ID";
+			    str = str+ SEPA + "  Normal_Case" + SEPA + "  Disease_Case" + SEPA + "         AUC" + SEPA +  "      STDAUC";
+			} else{
+				str = str + "Reader ID" + SEPA + "  Normal_Case" + SEPA + "  Disease_Case" + SEPA + "         AUC" + SEPA +  "      STDAUC";
+			}
+			
+			k=0;
+			for(String desc_temp : SummaryDBRecord.InputFile1.readerIDs.keySet() ) {
+				str = str + "\r\n";
+				for (int i=0; i<Math.max(IDlength,9) - desc_temp.length(); i++){
+					str = str + " ";
+				}
+				str = str + desc_temp + SEPA;
+				String Rnormal = Integer.toString(SummaryDBRecord.N0perReader[k][1]);
+				for (int i=0; i<13 - Rnormal.length(); i++){
+					str = str + " ";
+				}
+				str = str + Rnormal +  SEPA;
+				String Rdisease = Integer.toString(SummaryDBRecord.N1perReader[k][1]);
+				for (int i=0; i<14 - Rdisease.length(); i++){
+					str = str + " ";
+				}
+				str = str + Rdisease;
+				str = str+ SEPA + "  " +
+							fiveDecE.format(SummaryDBRecord.AUCs[k][1]) + SEPA + "  " +
+							fiveDecE.format(SummaryDBRecord.readerVarB[k]);	
+				k=k+1;
+			}
+			str = str + "\r\n";
 		}
+		
+		if (SummaryDBRecord.selectedMod == 3){
+			str = str +  "Difference between MODs A and B" +"\r\n";
+			if (IDlength>9){
+				for (int i=0; i<IDlength-9; i++){
+					str = str + " ";
+				}
+				str = str + "Reader ID";
+			    str = str+ SEPA + "  Normal_Case" + SEPA + "  Disease_Case" + SEPA + "         AUC" + SEPA +  "      STDAUC";
+			} else{
+				str = str + "Reader ID" + SEPA + "  Normal_Case" + SEPA + "  Disease_Case" + SEPA + "         AUC" + SEPA +  "      STDAUC";
+			}
+			
+			k=0;
+			for(String desc_temp : SummaryDBRecord.InputFile1.readerIDs.keySet() ) {
+				str = str + "\r\n";
+				for (int i=0; i<Math.max(IDlength,9) - desc_temp.length(); i++){
+					str = str + " ";
+				}
+				str = str + desc_temp + SEPA;
+				String Rnormal = Integer.toString(SummaryDBRecord.N0perReader[k][2]);
+				for (int i=0; i<13 - Rnormal.length(); i++){
+					str = str + " ";
+				}
+				str = str + Rnormal +  SEPA;
+				String Rdisease = Integer.toString(SummaryDBRecord.N1perReader[k][2]);
+				for (int i=0; i<14 - Rdisease.length(); i++){
+					str = str + " ";
+				}
+				str = str + Rdisease;
+				double AUC_dif = SummaryDBRecord.AUCs[k][0]-SummaryDBRecord.AUCs[k][1];
+				str = str + SEPA;
+				if(AUC_dif<0)
+						str = str + " " + fiveDecE.format(AUC_dif) + SEPA + "  " +
+								fiveDecE.format(SummaryDBRecord.readerTotalVar[k]);	
+					else if (AUC_dif>0)
+						str = str + "  " + fiveDecE.format(AUC_dif) + SEPA + "  " +
+								fiveDecE.format(SummaryDBRecord.readerTotalVar[k]);	
+					else
+						str = str + "   " + fiveDecE.format(AUC_dif) + SEPA + "  " +
+								fiveDecE.format(SummaryDBRecord.readerTotalVar[k]);	
+				k=k+1;
+			}
+			str = str + "\r\n";
+		}
+		
 		str = str + "\r\n**********************BDG Moments***************************\r\n";
 		str = str + "         Moments" + SEPA + "         M1" + SEPA + "         M2" + SEPA + "         M3" + SEPA
 				+ "         M4" + SEPA + "         M5" + SEPA + "         M6" + SEPA + "         M7" + SEPA + "         M8"
@@ -583,7 +728,322 @@ public class exportToFile {
 		str = str +"END SUMMARY \r\n"; 
 		return str;
 	}
+	
+	//first part of pdf result
+	public static String pdfResult1(String oldReport, DBRecord SummaryDBRecord) {
+		String str = oldReport;
+		
+		str = str + "The data analyzed are based on "  +SummaryDBRecord.NreaderDB + " readers scoring " + SummaryDBRecord.NnormalDB + " signal-absent cases and " + SummaryDBRecord.NdiseaseDB + " signal-present cases ";
+		if (SummaryDBRecord.selectedMod == 0){
+			str = str + "in modality A (named \""+  SummaryDBRecord.modalityA + "\" in input file). ";
+		}else if (SummaryDBRecord.selectedMod == 1){
+			str = str + "in modality B (named \""+  SummaryDBRecord.modalityB + "\" in input file). ";
+		}else{
+			str = str + "in modalities A (named \"" + SummaryDBRecord.modalityA + "\" in input file) and B (named \"" + SummaryDBRecord.modalityB + "\" in input file). ";
 
+		}		
+		
+		if (SummaryDBRecord.flagFullyCrossed){
+			str = str + "The study design was fully crossed. ";
+		}else{
+			str = str + "The study design was not fully crossed. ";
+		}
+		/*int averageNormal=0, averageDisease=0;
+		for (int i = 0; i <SummaryDBRecord.Nreader;i++){
+			if (SummaryDBRecord.selectedMod == 0){
+				averageNormal = averageNormal + SummaryDBRecord.N0perReader[i][0];
+				averageDisease = averageDisease + SummaryDBRecord.N1perReader[i][0];
+			}else if (SummaryDBRecord.selectedMod == 1){
+				averageNormal = averageNormal + SummaryDBRecord.N0perReader[i][1];
+				averageDisease = averageDisease + SummaryDBRecord.N1perReader[i][1];
+			}else{
+				averageNormal = averageNormal + SummaryDBRecord.N0perReader[i][2];
+				averageDisease = averageDisease + SummaryDBRecord.N1perReader[i][2];
+			}		
+		}
+		averageNormal = (int) (averageNormal/SummaryDBRecord.Nreader);
+		averageDisease = (int) (averageDisease/SummaryDBRecord.Nreader);
+		str = str +  "On average, each reader scored " + averageNormal + " signal-absent cases and " + averageDisease + " signal-present cases. ";
+		if (SummaryDBRecord.flagMLE == 0){
+			str = str + "The non-parametric (U-statistic) AUC of each reader showed below. "
+				 + "The last row of the table shows the reader-averaged AUC. This average and the standard errors are based on U-statistics [1,2,3]. ";
+		}else{
+			str = str + "The non-parametric (MLE) AUC of each reader showed below. "
+			+ "The last row of the table shows the reader-averaged AUC. This average and the standard errors are based on MLE [1,2,3]. ";
+		}*/
+		if (SummaryDBRecord.flagMLE == 0){
+			str = str + "In the table below we show the non-parametric (U-statistic) AUC of each reader and the signal reader estimate standard error. "
+			          + "The last row of the table shows the reader-averaged AUC and MRMC estimate of standard error base on U-statistics [1,2,3]. ";
+		}else{
+			str = str + "In the table below we show the non-parametric (MLE) AUC of each reader and the signal reader estimate standard error. "
+					  + "The last row of the table shows the reader-averaged AUC and MRMC estimate of standard error base on MLE [1,2,3]. ";
+		}
+		if(SummaryDBRecord.selectedMod == 3){
+			str = str + "In last table, The number of signal-absent and signal-present cases are the numebr of cases be read in both modalities.* ";
+		}
+		if (SummaryDBRecord.flagFullyCrossed){
+			str =str + "As the study design was fully crossed, we used an extension that can treat arbitrary study designs [4,3].";
+		}else{
+			str =str + "As the study design was not fully crossed, we used an extension that can treat arbitrary study designs [4,3].";
+		}
+		str =str +"\r\n" + "\r\n";
+		return str;
+	}
+	//second part of pdf result
+	public static String pdfResult2(DBRecord SummaryDBRecord) {
+		String str = "";
+		str = str + "Consider the following hypothesis test: " +"\r\n" + "\r\n";
+		
+		if (SummaryDBRecord.selectedMod == 0){
+			str = str + "H0: AUC(ModalityA) equals 0.5," + "\r\n";
+			str = str + "H1: AUC(ModalityA) does not equal 0.5. " + "\r\n" + "\r\n";
+		}else if (SummaryDBRecord.selectedMod == 1){
+			str = str + "H0: AUC(ModalityB) equals 0.5," + "\r\n";
+			str = str + "H1: AUC(ModalityB) does not equal 0.5. " + "\r\n" + "\r\n";
+		}else{
+			str = str + "H0: AUC(ModalityA) equals AUC(ModalityB)," + "\r\n";
+			str = str + "H1: AUC(ModalityA) does not equal AUC(ModalityB)," + "\r\n" + "\r\n";
+		}		
+		
+		if (SummaryDBRecord.testStat.rejectBDG==1){
+			str = str + "For the hypothesis test above at 95% significance, we reject the null hypothesis ";
+		}else{
+			str = str + "For the hypothesis test above at 95% significance, we cannot reject the null hypothesis ";
+		}
+		
+		if (SummaryDBRecord.selectedMod == 0){
+			str = str + "that the AUC of Modality A is equal to 0.5: ";
+		}else if (SummaryDBRecord.selectedMod == 1){
+			str = str + "that the AUC of Modality B is equal to 0.5: ";
+		}else{
+			str = str + "that the AUCs of the two modalities are equal: ";
+		}		
+		str = str + "p-value = " + twoDec.format(SummaryDBRecord.testStat.pValBDG) + 
+				", Confidence Interval = [" + twoDec.format(SummaryDBRecord.testStat.ciBotBDG) +" , " + twoDec.format(SummaryDBRecord.testStat.ciTopBDG) +"]. ";
+		
+		if (SummaryDBRecord.selectedMod == 0){
+			str = str + "This result is based on the t-statistic equal to AUC of Modality A divided by its standard error, ";
+		}else if (SummaryDBRecord.selectedMod == 1){
+			str = str + "This result is based on the t-statistic equal to AUC of Modality B divided by its standard error, ";
+		}else{
+			str = str + "This result is based on the t-statistic equal to the difference in AUCs divided by the standard error, ";
+		}	
+		if (SummaryDBRecord.flagMLE == 0){
+			str = str + "each estimated by U-statistics as above. ";
+		}else{
+			str = str + "each estimated by MLE as above. ";
+			
+		}
+		str = str + "The degrees of freedom of this t-statistic are estimated by an equation motivated by the Satterthwaite approximation [5,6,3]."  + "\r\n" + "\r\n";
+        str = str + "   1.	Gallas, B. D. (2006), 'One-Shot Estimate of MRMC Variance: AUC.' Acad Radiol, Vol. 13, (3), 353-362." + "\r\n";
+        str = str + "   2.	Gallas, B. D.; Bandos, A.; Samuelson, F. & Wagner, R. F. (2009), 'A Framework for Random-Effects ROC Analysis: Biases with the Bootstrap and Other Variance Estimators.' Commun Stat A-Theory, Vol. 38, (15), 2586-2603." + "\r\n";
+        str = str + "   3.	Gallas, B. D. (2013), 'iMRMC v2p8 Application for Analyzing and Sizing MRMC Reader Studies.', Division of Imaging and Applied Mathematics, CDRH, FDA, Silver Spring, MD, https://github.com/DIDSR/iMRMC/releases." + "\r\n";
+        str = str + "   4.	Gallas, B. D. & Brown, D. G. (2008), 'Reader Studies for Validation of CAD Systems.' Neural Networks Special Conference Issue, Vol. 21, (2-3), 387-397." + "\r\n";
+        str = str + "   5.	Satterthwaite, F. E. (1941), 'Synthesis of Variance.' Psychometrika, Vol. 6, 309-316." + "\r\n";
+        str = str + "   6.	Obuchowski, N.; Gallas, B. D. & Hillis, S. L. (2012), 'Multi-Reader ROC Studies with Split-Plot Designs: A Comparison of Statistical Methods.' Acad Radiol, Vol. 19, (12), 1508-1517." + "\r\n";
+
+		return str;
+	}
+	/*// ACUs table in pdf result
+	public static PdfPTable[] pdfTable(PdfPTable AUCtable, DBRecord SummaryDBRecord) {
+		PdfPCell titlecell = new PdfPCell (new Paragraph("Table 1 "));
+		titlecell.setColspan(7);
+		titlecell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		AUCtable.addCell(titlecell);
+		AUCtable.addCell("Reader ID");
+		int count = 1;
+		if (SummaryDBRecord.selectedMod == 0){
+			AUCtable.addCell("AUC ModalityA");
+			AUCtable.addCell("AUC_STD ModalityA");
+			AUCtable.addCell("None");
+			AUCtable.addCell("None");
+			AUCtable.addCell("AUC difference");
+			AUCtable.addCell("AUC difference STD");
+			for(String desc_temp : SummaryDBRecord.InputFile1.readerIDs.keySet()){
+				AUCtable.addCell(desc_temp);
+				AUCtable.addCell(twoDec.format(SummaryDBRecord.AUCs[count-1][0]));
+				AUCtable.addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.readerVarA[count-1])));
+				AUCtable.addCell("N/A");
+				AUCtable.addCell("N/A");
+				AUCtable.addCell("N/A");
+				AUCtable.addCell("N/A");
+				count =count + 1;
+				
+			}
+			for (int i = 0; i<7;i++){
+				AUCtable.addCell(" ");
+			}
+			AUCtable.addCell("Average");
+			AUCtable.addCell(twoDec.format(SummaryDBRecord.AUCsReaderAvg[0]));
+			AUCtable.addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.varA)));
+			AUCtable.addCell("N/A");
+			AUCtable.addCell("N/A");
+			AUCtable.addCell("N/A");
+			AUCtable.addCell("N/A");
+		}else if (SummaryDBRecord.selectedMod == 1){
+			AUCtable.addCell("None");
+			AUCtable.addCell("None");
+			AUCtable.addCell("AUC ModalityB");
+			AUCtable.addCell("AUC_STD ModalityB");
+			AUCtable.addCell("AUC difference");
+			AUCtable.addCell("AUC difference STD");
+			for(String desc_temp : SummaryDBRecord.InputFile1.readerIDs.keySet()){
+				AUCtable.addCell(desc_temp);
+				AUCtable.addCell("N/A");
+				AUCtable.addCell("N/A");
+				AUCtable.addCell(twoDec.format(SummaryDBRecord.AUCs[count-1][1]));
+				AUCtable.addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.readerVarB[count-1])));
+				AUCtable.addCell("N/A");
+				AUCtable.addCell("N/A");
+				count =count + 1;
+			}
+			for (int i = 0; i<7;i++){
+				AUCtable.addCell(" ");
+			}
+			AUCtable.addCell("Average");
+			AUCtable.addCell("N/A");
+			AUCtable.addCell("N/A");
+			AUCtable.addCell(twoDec.format(SummaryDBRecord.AUCsReaderAvg[1]));
+			AUCtable.addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.varB)));
+			AUCtable.addCell("N/A");
+			AUCtable.addCell("N/A");
+		}else{
+			AUCtable.addCell("AUC ModalityA");
+			AUCtable.addCell("AUC_STD ModalityA");
+			AUCtable.addCell("AUC ModalityB");
+			AUCtable.addCell("AUC_STD ModalityB");
+			AUCtable.addCell("AUC difference");
+			AUCtable.addCell("AUC difference STD");
+			for(String desc_temp : SummaryDBRecord.InputFile1.readerIDs.keySet()){
+				AUCtable.addCell(desc_temp);
+				AUCtable.addCell(twoDec.format(SummaryDBRecord.AUCs[count-1][0]));
+				AUCtable.addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.readerVarA[count-1])));
+				AUCtable.addCell(twoDec.format(SummaryDBRecord.AUCs[count-1][1]));
+				AUCtable.addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.readerVarB[count-1])));
+				AUCtable.addCell(twoDec.format(SummaryDBRecord.AUCs[count-1][0]-SummaryDBRecord.AUCs[count-1][1]));
+				AUCtable.addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.readerTotalVar[count-1])));
+				count =count + 1;
+			}
+			for (int i = 0; i<7;i++){
+				AUCtable.addCell(" ");
+			}
+			AUCtable.addCell("Average");
+			AUCtable.addCell(twoDec.format(SummaryDBRecord.AUCsReaderAvg[0]));
+			AUCtable.addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.varA)));
+			AUCtable.addCell(twoDec.format(SummaryDBRecord.AUCsReaderAvg[1]));
+			AUCtable.addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.varB)));
+			AUCtable.addCell(twoDec.format(SummaryDBRecord.AUCsReaderAvg[0]-SummaryDBRecord.AUCsReaderAvg[1]));
+			AUCtable.addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.totalVar)));
+		}
+		return AUCtable;
+	}*/
+	public static PdfPTable[] pdfTable(PdfPTable[] AUCtable, DBRecord SummaryDBRecord) {
+		if (SummaryDBRecord.selectedMod == 0||SummaryDBRecord.selectedMod == 3){
+			PdfPCell titlecell = new PdfPCell (new Paragraph("Modality A"));
+			titlecell.setColspan(5);
+			titlecell.setHorizontalAlignment(Element.ALIGN_CENTER);
+			AUCtable[0].addCell(titlecell);
+			AUCtable[0].addCell("Reader ID");
+			int count = 1;
+			int averageNormal=0, averageDisease=0;
+			AUCtable[0].addCell("# of signal-absent");
+			AUCtable[0].addCell("# of signal-present");
+			AUCtable[0].addCell("AUC");
+			AUCtable[0].addCell("AUC_SE");
+			for(String desc_temp : SummaryDBRecord.InputFile1.readerIDs.keySet()){
+				AUCtable[0].addCell(desc_temp);
+				AUCtable[0].addCell(Integer.toString(SummaryDBRecord.N0perReader[count-1][0]));
+				AUCtable[0].addCell(Integer.toString(SummaryDBRecord.N1perReader[count-1][0]));
+				AUCtable[0].addCell(twoDec.format(SummaryDBRecord.AUCs[count-1][0]));
+				AUCtable[0].addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.readerVarA[count-1])));
+				averageNormal = averageNormal + SummaryDBRecord.N0perReader[count-1][0];
+				averageDisease = averageDisease + SummaryDBRecord.N1perReader[count-1][0];
+				count =count + 1;		
+			}
+			for (int i = 0; i<5;i++){
+				AUCtable[0].addCell(" ");
+			}
+			averageNormal = (int) (averageNormal/SummaryDBRecord.Nreader);
+			averageDisease = (int) (averageDisease/SummaryDBRecord.Nreader);
+			
+			AUCtable[0].addCell("Average");
+			AUCtable[0].addCell(Integer.toString(averageNormal));
+			AUCtable[0].addCell(Integer.toString(averageDisease));
+			AUCtable[0].addCell(twoDec.format(SummaryDBRecord.AUCsReaderAvg[0]));
+			AUCtable[0].addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.varA)));
+		}
+		
+		if (SummaryDBRecord.selectedMod == 1||SummaryDBRecord.selectedMod == 3){
+			PdfPCell titlecell = new PdfPCell (new Paragraph("Modality B"));
+			titlecell.setColspan(5);
+			titlecell.setHorizontalAlignment(Element.ALIGN_CENTER);
+			AUCtable[1].addCell(titlecell);
+			AUCtable[1].addCell("Reader ID");
+			int count = 1;
+			int averageNormal=0, averageDisease=0;
+			AUCtable[1].addCell("# of signal-absent");
+			AUCtable[1].addCell("# of signal-present");
+			AUCtable[1].addCell("AUC");
+			AUCtable[1].addCell("AUC_SE");
+			for(String desc_temp : SummaryDBRecord.InputFile1.readerIDs.keySet()){
+				AUCtable[1].addCell(desc_temp);
+				AUCtable[1].addCell(Integer.toString(SummaryDBRecord.N0perReader[count-1][1]));
+				AUCtable[1].addCell(Integer.toString(SummaryDBRecord.N1perReader[count-1][1]));
+				AUCtable[1].addCell(twoDec.format(SummaryDBRecord.AUCs[count-1][1]));
+				AUCtable[1].addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.readerVarB[count-1])));
+				averageNormal = averageNormal + SummaryDBRecord.N0perReader[count-1][1];
+				averageDisease = averageDisease + SummaryDBRecord.N1perReader[count-1][1];
+				count =count + 1;		
+			}
+			for (int i = 0; i<5;i++){
+				AUCtable[1].addCell(" ");
+			}
+			averageNormal = (int) (averageNormal/SummaryDBRecord.Nreader);
+			averageDisease = (int) (averageDisease/SummaryDBRecord.Nreader);
+			
+			AUCtable[1].addCell("Average");
+			AUCtable[1].addCell(Integer.toString(averageNormal));
+			AUCtable[1].addCell(Integer.toString(averageDisease));
+			AUCtable[1].addCell(twoDec.format(SummaryDBRecord.AUCsReaderAvg[1]));
+			AUCtable[1].addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.varB)));
+		}
+		if(SummaryDBRecord.selectedMod == 3){
+			PdfPCell titlecell = new PdfPCell (new Paragraph("Difference between modalities A and B"));
+			titlecell.setColspan(5);
+			titlecell.setHorizontalAlignment(Element.ALIGN_CENTER);
+			AUCtable[2].addCell(titlecell);
+			AUCtable[2].addCell("Reader ID");
+			int count = 1;
+			int averageNormal=0, averageDisease=0;
+			AUCtable[2].addCell("# of signal-absent*");
+			AUCtable[2].addCell("# of signal-present*");
+			AUCtable[2].addCell("AUC");
+			AUCtable[2].addCell("AUC_SE");
+			for(String desc_temp : SummaryDBRecord.InputFile1.readerIDs.keySet()){
+				AUCtable[2].addCell(desc_temp);
+				AUCtable[2].addCell(Integer.toString(SummaryDBRecord.N0perReader[count-1][2]));
+				AUCtable[2].addCell(Integer.toString(SummaryDBRecord.N1perReader[count-1][2]));
+				AUCtable[2].addCell(twoDec.format(SummaryDBRecord.AUCs[count-1][2]));
+				AUCtable[2].addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.readerTotalVar[count-1])));
+				averageNormal = averageNormal + SummaryDBRecord.N0perReader[count-1][2];
+				averageDisease = averageDisease + SummaryDBRecord.N1perReader[count-1][2];
+				count =count + 1;		
+			}
+			for (int i = 0; i<5;i++){
+				AUCtable[2].addCell(" ");
+			}
+			averageNormal = (int) (averageNormal/SummaryDBRecord.Nreader);
+			averageDisease = (int) (averageDisease/SummaryDBRecord.Nreader);
+			
+			AUCtable[2].addCell("Average");
+			AUCtable[2].addCell(Integer.toString(averageNormal));
+			AUCtable[2].addCell(Integer.toString(averageDisease));
+			AUCtable[2].addCell(twoDec.format(SummaryDBRecord.AUCsReaderAvg[0] - SummaryDBRecord.AUCsReaderAvg[1]));
+			AUCtable[2].addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.varB)));
+		}
+
+		return AUCtable;
+	}
 
 	public static String exoprtiRoeMetzSet(String oldReport, SizePanel sizePanelRoeMetz) {
 		// TODO Auto-generated method stub
@@ -835,17 +1295,20 @@ public class exportToFile {
 			str = str + StatDBRecord.modalityB + SEPA;
 			if (StatDBRecord.selectedMod == 0){
 				str = str + eightDecE.format(StatDBRecord.AUCs[i][0]) + SEPA;
-				//str = str + eightDecE.format(StatDBRecord.varA) + SEPA;
-				str = str +"NA,NA,NA,NA,NA" + SEPA;
+				str = str + eightDecE.format(Math.sqrt(StatDBRecord.readerVarA[i])) + SEPA;
+				str = str +"NA,NA,NA,NA" + SEPA;
 			}else if (StatDBRecord.selectedMod == 1){
 				str = str +"NA,NA" + SEPA;
 				str = str + eightDecE.format(StatDBRecord.AUCs[i][1]) + SEPA;
-				//str = str + eightDecE.format(StatDBRecord.varB) + SEPA;
-				str = str +"NA,NA,NA" + SEPA;
+				str = str + eightDecE.format(Math.sqrt(StatDBRecord.readerVarB[i])) + SEPA;
+				str = str +"NA,NA" + SEPA;
 			} else {
-				str = str + eightDecE.format(StatDBRecord.AUCs[i][0]) + SEPA +"NA,";
-				str = str + eightDecE.format(StatDBRecord.AUCs[i][1]) + SEPA +"NA,";
-				str = str + eightDecE.format(StatDBRecord.AUCs[i][0]-StatDBRecord.AUCs[i][1]) + SEPA+"NA,";
+				str = str + eightDecE.format(StatDBRecord.AUCs[i][0]) + SEPA;
+				str = str + eightDecE.format(Math.sqrt(StatDBRecord.readerVarA[i])) + SEPA;
+				str = str + eightDecE.format(StatDBRecord.AUCs[i][1]) + SEPA;
+				str = str + eightDecE.format(Math.sqrt(StatDBRecord.readerVarB[i])) + SEPA;
+				str = str + eightDecE.format(StatDBRecord.AUCs[i][0]-StatDBRecord.AUCs[i][1]) + SEPA;
+				str = str + eightDecE.format(Math.sqrt(StatDBRecord.readerTotalVar[i])) + SEPA;
 			}
 			i++;
 			str = str +"NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA" + "\r\n";
@@ -859,7 +1322,6 @@ public class exportToFile {
 	public static String exportROC(XYSeriesCollection seriesCollection,String report) {
 		String str = report;
 		str = str + "ModalityID:ReaderID,Number of points,Axises"+"\r\n";
-		int a =seriesCollection.getSeriesCount();
         for (int j=0;j<seriesCollection.getSeriesCount();j++){
             String serisekey =(String) seriesCollection.getSeriesKey(j); 
             XYSeries seriesget = seriesCollection.getSeries(serisekey);             
@@ -877,6 +1339,7 @@ public class exportToFile {
         } 			
 		return str;
 	}
+
 
 	
 }

@@ -137,6 +137,13 @@ public class DBRecord {
 	public double varA = -1;
 	public double varB = -1;
 	/**
+	 * Total variance of each reader AUCs for <br>
+	 * ----the modality selected <br>
+	 * ----the difference in modalities
+	 * 
+	 */
+	public double[] readerTotalVar, readerVarA, readerVarB;
+	/**
 	 * Indicator whether {mrmc.gui.InputFileCard#FlagMLE} is set
 	 */
 	public int flagMLE = 0;
@@ -756,6 +763,73 @@ public class DBRecord {
 		return true;
 	}
 	
+	
+	/**
+	 * Size validation functions
+	 */
+	public  double[] DBRecordSizeValidation(DBRecord DBRecordTrial,int Nreader,int Nnormal,int Ndisease,int Ngroup, int Preader,int Pnormal,int Pdisease) {
+		
+		SizePanel SizePanel1 = new SizePanel();
+		SizePanel1.sigLevel= 0.05;
+		SizePanel1.effSize= DBRecordTrial.AUCsReaderAvg[0]-DBRecordTrial.AUCsReaderAvg[1] ;
+		//SizePanel1.effSize= 0.05 ;
+		DBRecordSize = DBRecordTrial;
+		DBRecordStat = DBRecordTrial;
+
+		/*if (DBRecordStat.totalVar <= 0.0) {
+			JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
+					"Must perform variance analysis first.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+
+		double Subreader = (double)Nreader/(double)Ngroup/(2-(double)Preader);
+		double Subnormal = (double)Nnormal/(double)Ngroup/(2-(double)Pnormal);
+		double Subdisease = (double)Ndisease/(double)Ngroup/(2-(double)Pdisease);
+		if (Math.floor(Subreader) != Subreader){
+			JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
+					"The sizing panel needs the number of readers \r\n to be evenly distributed into each modality and group", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		if (Math.floor(Subnormal) != Subnormal){
+			JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
+					"The sizing panel needs the number of normal cases \r\n to be evenly distributed into each modality and group", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		if (Math.floor(Subdisease) != Subdisease){
+			JOptionPane.showMessageDialog(GUI.MRMCobject.getFrame(),
+					"The sizing panel needs the number of disease cases \r\n to be evenly distributed into each modality and group", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return false;
+		}*/
+		BDGcoeff = genBDGSplitUnpairedCoeff(Nreader, Nnormal, Ndisease, Ngroup, Preader, Pnormal, Pdisease);
+		//covMRMCsize = new CovMRMC(SizePanel1, DBRecordSize);
+
+		BDGforSizePanel();
+		BCKcoeff = genBCKCoeff(BDGcoeff);
+		BCK = BDG2BCK(BDG, BCKcoeff);
+		BCKbias = BDG2BCK(BDGbias, BCKcoeff);
+		BCKresult = BCK;
+		BCKcoeffresult = BCKcoeff;
+		BCKbiasresult = BCKbias;
+
+		if (Ngroup == 1 && Preader == 1 && Pnormal ==1 && Pdisease==1)
+			flagFullyCrossed = true;
+		else
+			flagFullyCrossed = false;
+		
+
+		testSize = new StatTest(SizePanel1, DBRecordStat, DBRecordSize);
+		double[] sizingresult = {Nreader,Nnormal,Ndisease,Ngroup,Preader,Pnormal,Pdisease,testSize.powerNormal,testSize.DF_BDG, DBRecordSize.SE,testSize.powerBDG,testSize.DF_Hillis,testSize.powerHillis};
+					
+		return sizingresult;
+	}
+	
+	
+	
+	
 	/**
 	 *
 	 * 
@@ -824,6 +898,15 @@ public class DBRecord {
 		double varBnoMLE=0.0;
 		double varAMLE=0.0;
 		double varBMLE=0.0;
+		double readerTotalVarnoMLE[]= new double[(int) Nreader];
+		double readerTotalVarMLE[] = new double[(int) Nreader];
+		double readerVarAnoMLE[]= new double[(int) Nreader];
+		double readerVarBnoMLE[]= new double[(int) Nreader];
+		double readerVarAMLE[]= new double[(int) Nreader];
+		double readerVarBMLE[]= new double[(int) Nreader];
+		readerTotalVar = new double[(int) Nreader];
+		readerVarA = new double[(int) Nreader];
+		readerVarB = new double[(int) Nreader];
 		totalVarMLE=0.0;
 		for (int i = 0; i < 8; i++) {
 			BDG[0][i] = covMRMCstat.momentsAA[i + 1];
@@ -854,17 +937,62 @@ public class DBRecord {
 			totalVarMLE  += BDGcoeff[3][i] * BDGbias[3][i];
 			
 		}
+		
+		// calculate readers var
+		double[][] readerBDG = new double [4][4]; 
+		double[][] readerBDGbias = new double [4][4]; 
+		double[][] readerBDGcoeff = new double [4][4];
+
+		for (int ir = 0; ir<Nreader;ir++ ){
+			for (int i = 0; i < 4; i++) {
+				readerBDG[0][i] = covMRMCstat.readerMomentsAA[ir][i + 1];
+				readerBDG[1][i] = covMRMCstat.readerMomentsBB[ir][i + 1];
+				readerBDG[2][i] = covMRMCstat.readerMomentsAB[ir][i + 1];
+				readerBDGbias[0][i] = covMRMCstat.readerMomentsBiasedAA[ir][i + 1];
+				readerBDGbias[1][i] = covMRMCstat.readerMomentsBiasedBB[ir][i + 1];
+				readerBDGbias[2][i] = covMRMCstat.readerMomentsBiasedAB[ir][i + 1];
+				
+				readerBDGcoeff[0][i] = covMRMCstat.readerCoefficientsAA[ir][i + 1];
+				readerBDGcoeff[1][i] = covMRMCstat.readerCoefficientsBB[ir][i + 1];
+				readerBDGcoeff[2][i] = covMRMCstat.readerCoefficientsAB[ir][i + 1];
+				
+				readerBDGcoeff[3][i] = 1.0;
+				
+				readerVarAnoMLE[ir] +=  readerBDGcoeff[0][i] * readerBDG[0][i];
+				readerVarBnoMLE[ir] +=  readerBDGcoeff[1][i] * readerBDG[1][i];
+				readerVarAMLE[ir] +=  readerBDGcoeff[0][i] * readerBDGbias[0][i];
+				readerVarBMLE[ir] +=  readerBDGcoeff[1][i] * readerBDGbias[1][i];
+				
+
+				readerBDG[3][i] =     (readerBDG[0][i] * readerBDGcoeff[0][i])
+						  +     (readerBDG[1][i] * readerBDGcoeff[1][i])
+						  - 2.0*(readerBDG[2][i] * readerBDGcoeff[2][i]);
+				readerBDGbias[3][i] = (readerBDGbias[0][i] * readerBDGcoeff[0][i])
+						  +     (readerBDGbias[1][i] * readerBDGcoeff[1][i])
+						  - 2.0*(readerBDGbias[2][i] * readerBDGcoeff[2][i]);
+				readerTotalVarnoMLE[ir] += readerBDGcoeff[3][i] * readerBDG[3][i];
+				readerTotalVarMLE[ir]  += readerBDGcoeff[3][i] * readerBDGbias[3][i];
+				
+			}
+		}
+
 		if (flagMLE==0){
 			totalVar= totalVarnoMLE;
 			varA = varAnoMLE;
 			varB = varBnoMLE;
+			readerTotalVar = readerTotalVarnoMLE;
+			readerVarA = readerVarAnoMLE;
+			readerVarB = readerVarBnoMLE;
 		}else{
 			totalVar=totalVarMLE;
 			varA = varAMLE;
 			varB = varBMLE;
+			readerTotalVar = readerTotalVarMLE;
+			readerVarA = readerVarAMLE;
+			readerVarB = readerVarBMLE;
 		}
 		SE = Math.sqrt(totalVar);
-		
+	
 		if(totalVar < 0) {
 			flagTotalVarIsNegative = 1;
 		}
