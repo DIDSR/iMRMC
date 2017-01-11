@@ -18,6 +18,8 @@
 
 package mrmc.core;
 
+import java.util.ArrayList;
+
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -97,6 +99,7 @@ public class CovMRMC {
 	public double[][][] t0_modAB, t1_modAB, t0_modAA, t1_modAA, t0_modBB, t1_modBB;
 	public int[][][] d0_modAB, d1_modAB, d0_modAA, d1_modAA, d0_modBB, d1_modBB;
 	public int[][] N0perReader, N1perReader;
+	public int totalscoredA, totalscoredB, totalscoredAB;
 
 	/**
 	 * The reader-averaged auc for each modality
@@ -648,7 +651,10 @@ public void makeTMatrices() {
 	double ScoreModB;
 	int PresentModA;
 	int PresentModB;
-
+	totalscoredA = 0;
+	totalscoredB = 0;
+	totalscoredAB = 0;
+	
 	int m = 0; // signal-absent case counter
 	int n = 0; // signal-present case counter
 	int k = 0; // reader counter
@@ -701,6 +707,9 @@ public void makeTMatrices() {
 				N0perReader[k][0] = N0perReader[k][0] + PresentModA;
 				N0perReader[k][1] = N0perReader[k][1] + PresentModB;
 				N0perReader[k][2] = N0perReader[k][2] + Math.min(PresentModA, PresentModB) ;
+				totalscoredA = totalscoredA + PresentModA;
+				totalscoredB = totalscoredB + PresentModB;
+				totalscoredAB = totalscoredAB + PresentModA*PresentModB;
 				m++;
 			} else {
 				t1_modAB[n][k][0] = ScoreModA;
@@ -719,6 +728,9 @@ public void makeTMatrices() {
 				N1perReader[k][0] = N1perReader[k][0] + PresentModA;
 				N1perReader[k][1] = N1perReader[k][1] + PresentModB;
 				N1perReader[k][2] = N1perReader[k][2] + Math.min(PresentModA, PresentModB) ;
+				totalscoredA = totalscoredA + PresentModA;
+				totalscoredB = totalscoredB + PresentModB;
+				totalscoredAB = totalscoredAB + PresentModA*PresentModB;
 				n++;
 			}
 		} // loop over cases

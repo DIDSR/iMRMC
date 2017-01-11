@@ -393,6 +393,11 @@ public class InputSummaryCard {
 				DBRecordStat.flagMLE = FlagMLE;
 				mleCheckBoxSummary.setSelected(true);
 				DBRecordStat.totalVar=DBRecordStat.totalVarMLE;
+				DBRecordStat.varA = DBRecordStat.varAMLE;
+				DBRecordStat.varB = DBRecordStat.varBMLE;
+				DBRecordStat.readerTotalVar = DBRecordStat.readerTotalVarMLE;
+				DBRecordStat.readerVarA = DBRecordStat.readerVarAMLE;
+				DBRecordStat.readerVarB = DBRecordStat.readerVarBMLE;
 				DBRecordStat.SE=Math.sqrt(DBRecordStat.totalVar);
 				DBRecordStat.testStat = new StatTest(DBRecordStat);
 			} else if (JOptionPane.NO_OPTION == result) {

@@ -466,7 +466,7 @@ public class GUInterface {
 						reportSummary = reportSummary + "MRMC summary statistics from " +MRMC.versionname + "\r\n";
 						reportSummary = reportSummary + "Summary statistics written to file named:" + "\r\n";
 						reportResult1 = "This file," + "\r\n" + fPdf.getAbsolutePath() + ",\r\n" ;
-						reportResult1 = reportResult1 + "shows the MRMN ROC analysis results for the data in:" + "\r\n";
+						reportResult1 = reportResult1 + "shows the MRMC ROC analysis results for the data in:" + "\r\n";
 						reportResult1 = reportResult1 + FilePathName + "\r\n";
 						reportResult1 = reportResult1 + "using " + MRMC.versionname + ", https://github.com/DIDSR/iMRMC/releases" + "\r\n" + "\r\n";
 						reportSummary = reportSummary + summaryfilename + "\r\n" + "\r\n";

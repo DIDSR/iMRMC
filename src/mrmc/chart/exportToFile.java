@@ -743,11 +743,7 @@ public class exportToFile {
 
 		}		
 		
-		if (SummaryDBRecord.flagFullyCrossed){
-			str = str + "The study design was fully crossed. ";
-		}else{
-			str = str + "The study design was not fully crossed. ";
-		}
+
 		/*int averageNormal=0, averageDisease=0;
 		for (int i = 0; i <SummaryDBRecord.Nreader;i++){
 			if (SummaryDBRecord.selectedMod == 0){
@@ -772,20 +768,21 @@ public class exportToFile {
 			+ "The last row of the table shows the reader-averaged AUC. This average and the standard errors are based on MLE [1,2,3]. ";
 		}*/
 		if (SummaryDBRecord.flagMLE == 0){
-			str = str + "In the table below we show the non-parametric (U-statistic) AUC of each reader and the signal reader estimate standard error. "
-			          + "The last row of the table shows the reader-averaged AUC and MRMC estimate of standard error base on U-statistics [1,2,3]. ";
+			str = str + "In the table below we show the non-parametric (U-statistic) AUC of each reader and the single-reader estimate of standard error. "
+			          + "The last row shows the reader-averaged AUC and the MRMC estimate of standard error based on U-statistics [1,2,3]. ";
 		}else{
-			str = str + "In the table below we show the non-parametric (MLE) AUC of each reader and the signal reader estimate standard error. "
-					  + "The last row of the table shows the reader-averaged AUC and MRMC estimate of standard error base on MLE [1,2,3]. ";
+			str = str + "In the table below we show the non-parametric (MLE) AUC of each reader and the single-reader estimate of standard error. "
+					  + "The last row shows the reader-averaged AUC and the MRMC estimate of standard error based on MLE [1,2,3]. ";
 		}
 		if(SummaryDBRecord.selectedMod == 3){
-			str = str + "In last table, The number of signal-absent and signal-present cases are the numebr of cases be read in both modalities.* ";
+			str = str + "In the last table, the number of signal-absent and signal-present cases shown correspond to the number of cases read in both modalities.* ";
 		}
 		if (SummaryDBRecord.flagFullyCrossed){
-			str =str + "As the study design was fully crossed, we used an extension that can treat arbitrary study designs [4,3].";
+			str = str + "The study design was fully crossed. ";
 		}else{
-			str =str + "As the study design was not fully crossed, we used an extension that can treat arbitrary study designs [4,3].";
+			str = str + "The study design was not fully crossed. ";
 		}
+		str =str + "When the study design is not fully crossed, we use an extension that can treat arbitrary study designs [3,4].";
 		str =str +"\r\n" + "\r\n";
 		return str;
 	}
@@ -834,7 +831,7 @@ public class exportToFile {
 			str = str + "each estimated by MLE as above. ";
 			
 		}
-		str = str + "The degrees of freedom of this t-statistic are estimated by an equation motivated by the Satterthwaite approximation [5,6,3]."  + "\r\n" + "\r\n";
+		str = str + "The degrees of freedom of this t-statistic are estimated by an equation motivated by the Satterthwaite approximation [3,5,6]."  + "\r\n" + "\r\n";
         str = str + "   1.	Gallas, B. D. (2006), 'One-Shot Estimate of MRMC Variance: AUC.' Acad Radiol, Vol. 13, (3), 353-362." + "\r\n";
         str = str + "   2.	Gallas, B. D.; Bandos, A.; Samuelson, F. & Wagner, R. F. (2009), 'A Framework for Random-Effects ROC Analysis: Biases with the Bootstrap and Other Variance Estimators.' Commun Stat A-Theory, Vol. 38, (15), 2586-2603." + "\r\n";
         str = str + "   3.	Gallas, B. D. (2013), 'iMRMC v2p8 Application for Analyzing and Sizing MRMC Reader Studies.', Division of Imaging and Applied Mathematics, CDRH, FDA, Silver Spring, MD, https://github.com/DIDSR/iMRMC/releases." + "\r\n";
@@ -955,7 +952,7 @@ public class exportToFile {
 				AUCtable[0].addCell(Integer.toString(SummaryDBRecord.N0perReader[count-1][0]));
 				AUCtable[0].addCell(Integer.toString(SummaryDBRecord.N1perReader[count-1][0]));
 				AUCtable[0].addCell(twoDec.format(SummaryDBRecord.AUCs[count-1][0]));
-				AUCtable[0].addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.readerVarA[count-1])));
+				AUCtable[0].addCell(SummaryDBRecord.readerVarA[count-1]>=0? twoDecE.format(Math.sqrt(SummaryDBRecord.readerVarA[count-1])): "NaN");
 				averageNormal = averageNormal + SummaryDBRecord.N0perReader[count-1][0];
 				averageDisease = averageDisease + SummaryDBRecord.N1perReader[count-1][0];
 				count =count + 1;		
@@ -970,7 +967,7 @@ public class exportToFile {
 			AUCtable[0].addCell(Integer.toString(averageNormal));
 			AUCtable[0].addCell(Integer.toString(averageDisease));
 			AUCtable[0].addCell(twoDec.format(SummaryDBRecord.AUCsReaderAvg[0]));
-			AUCtable[0].addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.varA)));
+			AUCtable[0].addCell(SummaryDBRecord.varA>=0? twoDecE.format(Math.sqrt(SummaryDBRecord.varA)): "NaN");
 		}
 		
 		if (SummaryDBRecord.selectedMod == 1||SummaryDBRecord.selectedMod == 3){
@@ -990,7 +987,7 @@ public class exportToFile {
 				AUCtable[1].addCell(Integer.toString(SummaryDBRecord.N0perReader[count-1][1]));
 				AUCtable[1].addCell(Integer.toString(SummaryDBRecord.N1perReader[count-1][1]));
 				AUCtable[1].addCell(twoDec.format(SummaryDBRecord.AUCs[count-1][1]));
-				AUCtable[1].addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.readerVarB[count-1])));
+				AUCtable[1].addCell(SummaryDBRecord.readerVarB[count-1]>=0? twoDecE.format(Math.sqrt(SummaryDBRecord.readerVarB[count-1])): "NaN");
 				averageNormal = averageNormal + SummaryDBRecord.N0perReader[count-1][1];
 				averageDisease = averageDisease + SummaryDBRecord.N1perReader[count-1][1];
 				count =count + 1;		
@@ -1005,7 +1002,7 @@ public class exportToFile {
 			AUCtable[1].addCell(Integer.toString(averageNormal));
 			AUCtable[1].addCell(Integer.toString(averageDisease));
 			AUCtable[1].addCell(twoDec.format(SummaryDBRecord.AUCsReaderAvg[1]));
-			AUCtable[1].addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.varB)));
+			AUCtable[1].addCell(SummaryDBRecord.varB>=0 ? twoDecE.format(Math.sqrt(SummaryDBRecord.varB)):"NaN");
 		}
 		if(SummaryDBRecord.selectedMod == 3){
 			PdfPCell titlecell = new PdfPCell (new Paragraph("Difference between modalities A and B"));
@@ -1039,7 +1036,7 @@ public class exportToFile {
 			AUCtable[2].addCell(Integer.toString(averageNormal));
 			AUCtable[2].addCell(Integer.toString(averageDisease));
 			AUCtable[2].addCell(twoDec.format(SummaryDBRecord.AUCsReaderAvg[0] - SummaryDBRecord.AUCsReaderAvg[1]));
-			AUCtable[2].addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.varB)));
+			AUCtable[2].addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.totalVar)));
 		}
 
 		return AUCtable;

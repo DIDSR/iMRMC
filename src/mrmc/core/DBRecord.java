@@ -66,6 +66,11 @@ public class DBRecord {
 	
 	public boolean verbose = true;
     public double totalVarMLE;
+	public double varAMLE=0.0;
+	public double varBMLE=0.0;
+	public double[] readerTotalVarMLE;
+	public double[] readerVarAMLE;
+	public double[] readerVarBMLE;
 	public GUInterface GUI;
 	public DBRecord DBRecordStat, DBRecordSize;
 	public InputFile InputFile1;
@@ -521,7 +526,7 @@ public class DBRecord {
 			chosenreaderlist = modinformation1.get(modalityA).get("reader");
 			chosennormallist = modinformation1.get(modalityA).get("normal");
 			chosendiseaselist = modinformation1.get(modalityA).get("disease");
-			flagFullyCrossed = covMRMCstat.fullyCrossedA;
+			//flagFullyCrossed = covMRMCstat.fullyCrossedA;
 			if(AUCsReaderAvg[0] < 0) {
 				JFrame frame = new JFrame();
 				JOptionPane.showMessageDialog(frame,
@@ -535,7 +540,7 @@ public class DBRecord {
 			chosenreaderlist = modinformation1.get(modalityB).get("reader");
 			chosennormallist = modinformation1.get(modalityB).get("normal");
 			chosendiseaselist = modinformation1.get(modalityB).get("disease");
-			flagFullyCrossed = covMRMCstat.fullyCrossedB;
+			//flagFullyCrossed = covMRMCstat.fullyCrossedB;
 			if(AUCsReaderAvg[1] < 0) {
 				JFrame frame = new JFrame();
 				JOptionPane.showMessageDialog(frame,
@@ -570,9 +575,9 @@ public class DBRecord {
 					chosendiseaselist.add(dis);
 				}
 			}
-			flagFullyCrossed = covMRMCstat.fullyCrossedA && 
-					covMRMCstat.fullyCrossedB && 
-					covMRMCstat.fullyCrossedAB;
+			//flagFullyCrossed = covMRMCstat.fullyCrossedA && 
+				//	covMRMCstat.fullyCrossedB && 
+					//covMRMCstat.fullyCrossedAB;
 			if(AUCsReaderAvg[0] < 0) {
 				JFrame frame = new JFrame();
 				JOptionPane.showMessageDialog(frame,
@@ -593,6 +598,27 @@ public class DBRecord {
 		NreaderDB = chosenreaderlist.size();
 		NnormalDB = chosennormallist.size();
 		NdiseaseDB = chosendiseaselist.size();
+		if(selectedMod == 0){
+			if(covMRMCstat.totalscoredA == NreaderDB*(NnormalDB+NdiseaseDB)){
+				flagFullyCrossed=true;
+			}else{
+				flagFullyCrossed=false;
+			}
+		}
+		if(selectedMod == 1){
+			if(covMRMCstat.totalscoredB == NreaderDB*(NnormalDB+NdiseaseDB)){
+				flagFullyCrossed=true;
+			}else{
+				flagFullyCrossed=false;
+			}
+		}
+		if(selectedMod == 3){
+			if(covMRMCstat.totalscoredAB == NreaderDB*(NnormalDB+NdiseaseDB)){
+				flagFullyCrossed=true;
+			}else{
+				flagFullyCrossed=false;
+			}
+		}
 		N0perReader = covMRMCstat.N0perReader;
 		N1perReader = covMRMCstat.N1perReader;
 		testStat = new StatTest(DBRecordStat);
@@ -896,14 +922,14 @@ public class DBRecord {
 		double totalVarnoMLE=0.0;
 		double varAnoMLE=0.0;
 		double varBnoMLE=0.0;
-		double varAMLE=0.0;
-		double varBMLE=0.0;
+		varAMLE=0.0;
+		varBMLE=0.0;
 		double readerTotalVarnoMLE[]= new double[(int) Nreader];
-		double readerTotalVarMLE[] = new double[(int) Nreader];
+		readerTotalVarMLE = new double[(int) Nreader];
 		double readerVarAnoMLE[]= new double[(int) Nreader];
 		double readerVarBnoMLE[]= new double[(int) Nreader];
-		double readerVarAMLE[]= new double[(int) Nreader];
-		double readerVarBMLE[]= new double[(int) Nreader];
+		readerVarAMLE= new double[(int) Nreader];
+		readerVarBMLE= new double[(int) Nreader];
 		readerTotalVar = new double[(int) Nreader];
 		readerVarA = new double[(int) Nreader];
 		readerVarB = new double[(int) Nreader];
