@@ -469,7 +469,7 @@ public class GUInterface {
 						reportResult1 = reportResult1 + "shows the MRMC ROC analysis results for the data in:" + "\r\n";
 						reportResult1 = reportResult1 + FilePathName + "\r\n";
 						reportResult1 = reportResult1 + "using " + MRMC.versionname + ", https://github.com/DIDSR/iMRMC/releases" + "\r\n" + "\r\n";
-						reportSummary = reportSummary + InputFile1.fileName + "\r\n" + "\r\n";
+						reportSummary = reportSummary + InputFile1.filePathAndName + "\r\n" + "\r\n";
 						if (selectedInput == DescInputChooseMode) {
 							// generate summary string
 							reportSummary = exportToFile.exportSummary(reportSummary, DBRecordStat);
