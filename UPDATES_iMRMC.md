@@ -6,11 +6,9 @@
 <h4>iMRMC3p1</h4>
 *1/12/17*
 
-Estimate variance for individual readers. 
+Variance estimates for individual readers can now be found by the "Show Reader AUCs" button.
 
-Provide pdf version output for statistical analysis and export it by " Save Stat Analysis". The button can also export summary .omrmc and.csv files.
-
-Change fully-crossed judgment method (Whether chosen modality data is fully crossed).
+A pdf version of the statistical analysis is available by the " Save Stat Analysis". The button also exports summary .omrmc and .csv files.
 
 
 <h4>iMRMC3p0</h4>
