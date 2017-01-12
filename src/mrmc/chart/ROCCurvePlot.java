@@ -73,7 +73,8 @@ public class ROCCurvePlot extends JFrame {
 	private JCheckBox horiz;
 	private JCheckBox diag;
 	private JCheckBox pooled;
-	private String inputfilepath ;
+	private String inputfilepathandname ;
+	private String filename;                                    // input file name
 	private Set<String> modalityID;
 
 	/**
@@ -85,11 +86,14 @@ public class ROCCurvePlot extends JFrame {
 	 * @param treeMap Mapping of readers to a set of points defining an ROC curve
 	 */
 	public ROCCurvePlot(final String title, String xaxis, String yaxis,
-			TreeMap<String, TreeMap<String, TreeSet<XYPair>>> fulltreeMap,String filepath) {
+			TreeMap<String, TreeMap<String, TreeSet<XYPair>>> fulltreeMap,String filePathAndName, String fileName) {
 		super(title);
-		inputfilepath = filepath;
-	    String inputfiletitle = inputfilepath.substring(inputfilepath.lastIndexOf("\\") + 1);
-		TextTitle subtitle = new TextTitle(inputfiletitle);
+		//inputfilepath = filepath;
+	    //String inputfiletitle = inputfilepath.substring(inputfilepath.lastIndexOf("\\") + 1);
+		//TextTitle subtitle = new TextTitle(inputfiletitle);
+		inputfilepathandname = filePathAndName;
+		filename = fileName.substring(0,fileName.lastIndexOf("."));;
+		TextTitle subtitle = new TextTitle(fileName);
 		seriesCollection = new XYSeriesCollection();
 		readerSeriesTitles = new ArrayList<String>();       
 		modalityID =fulltreeMap.keySet();
@@ -455,10 +459,10 @@ public class ROCCurvePlot extends JFrame {
             DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
 			Date currDate = new Date();
 			final String fileTime = dateForm.format(currDate);
-			String FileName=inputfilepath;
-			FileName= FileName.substring(0,FileName.lastIndexOf("."));
-            String sFileName = FileName+"ROCcurve"+fileTime+".csv";
-            String sFileNameonly = sFileName.substring(FileName.lastIndexOf("\\")+1);
+			String FilePathAndName=inputfilepathandname;
+			FilePathAndName= FilePathAndName.substring(0,FilePathAndName.lastIndexOf("."));
+            String sFileName = FilePathAndName+"ROCcurve"+fileTime+".csv";
+            String sFileNameonly = filename + "ROCcurve"+fileTime+".csv";
 			try {
 				 //generate whatever data you want	    		
 				FileWriter writer = new FileWriter(sFileName);	   		

@@ -98,6 +98,8 @@ public class RMGUInterface {
 	public StatPanel StatPanelNumerical;
 	public static int RandomStreamID = 1;
 	private double[][] trialResultArray; 
+	private double[][][] SizingResultArray; 
+	private double[][] SizingResultMean;
 	JPanel studyDesignJPanel;
 	/**
 	 * Input means
@@ -385,7 +387,7 @@ public class RMGUInterface {
 		JTextField_seed.setText(String_seed);
 
 		// Number of experiments
-		JLabel NexpLabel = new JLabel("# of Experiments");
+		JLabel NexpLabel = new JLabel("# of MC Trials");
 		//
 		simExp.add(NexpLabel);
 		//
@@ -437,13 +439,10 @@ public class RMGUInterface {
 		 */
 		JPanel cofvResults = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-		JButton saveCalcResults = new JButton("Output Location");
-		saveCalcResults.addActionListener(new saveCalcResultsListener());
 		JButton doGenRoeMetz = new JButton("Do Numerical Integration");
 		doGenRoeMetz.addActionListener(new DoNumericalIntegrationBtnListener());
 
 		cofvResults.add(Box.createHorizontalStrut(20));
-		cofvResults.add(saveCalcResults);
 		cofvResults.add(doGenRoeMetz);
 
 		calculatePanel.add(cofvResultsDesc);
@@ -824,7 +823,9 @@ public class RMGUInterface {
 			parseCofVfile(f);
 			inputDirectory = fc.getCurrentDirectory();
 			String savedFileName = f.getPath();
-			inputFileName = savedFileName.substring(savedFileName.lastIndexOf("\\")+1,savedFileName.lastIndexOf(".irm"));	
+			//inputFileName = savedFileName.substring(savedFileName.lastIndexOf("\\")+1,savedFileName.lastIndexOf(".irm"));	
+			inputFileName = f.getPath();
+			inputFileName = inputFileName.substring(0,inputFileName.lastIndexOf(".irm"));	
 		}
 	}
 
@@ -940,28 +941,6 @@ public class RMGUInterface {
 		}
 	}
 
-	/**
-	 * Handler for "Output Location" button in calculation panel. Displays a
-	 * file browser and designates selected directory as path to save
-	 * calculation output
-	 */
-	class saveCalcResultsListener implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			JFileChooser fc = new JFileChooser();
-			fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			int fcReturn = fc.showSaveDialog((JComponent) e.getSource());
-			if (fcReturn == JFileChooser.APPROVE_OPTION) {
-				calcSaveDirectory = fc.getSelectedFile().toString();
-				System.out.println(calcSaveDirectory);
-			} else {
-				System.out.println("No save directory selected");
-				calcSaveDirectory = null;
-			}
-		}
-	}
-
-
 	
 	/**
 	 * extends SwingWorker, Performs multiple consecutive simulation experiments in a separate
@@ -1056,7 +1035,8 @@ public class RMGUInterface {
 			sumSquareDBRecordStat.flagMLE = useMLE;
 			long flagTotalVarIsNegative = 0;
 			trialResultArray = new double[(int) NexpEnd][21];
-			
+			SizingResultArray = new double[8][(int) NexpEnd][13];
+			SizingResultMean = new double[8][14];
 			SimRoeMetz currSimRoeMetz = new SimRoeMetz(u, var_t, RandomStreamI, sizePanel1);
 			
 			// initialize DBRecords
@@ -1073,6 +1053,8 @@ public class RMGUInterface {
 			DBRecord.square(squareDBRecordStat);
 			DBRecord.copy(squareDBRecordStat, sumSquareDBRecordStat);
 			saveTrialResult(DBRecordStat,0);
+			// validate sizing feature
+			sizeValidation(DBRecordStat,0);
 			// write to disk
 			if (simSaveDirectory != null && !simSaveDirectory.equals("")) {
 				writeInputFile(sumDBRecordStat, filenameTime, NexpStart);
@@ -1110,10 +1092,15 @@ public class RMGUInterface {
 						flagTotalVarIsNegative++;
 						// pad current simulation result to trialResult even totalvar < 0. 
 						saveTrialResult(DBRecordStat,i);
+						//sizeValidation(DBRecordStat,i);
+						// validate sizing feature
+						sizeValidation(DBRecordStat,i);
 						continue;
 					}
 					// pad current simulation result to trialResult. 
 					saveTrialResult(DBRecordStat,i);
+					// validate sizing feature
+					sizeValidation(DBRecordStat,i);
 					// Accumulate DBRecord
 					DBRecord.add(DBRecordStat, sumDBRecordStat);
 					// Accumulate squareDBRecord
@@ -1146,6 +1133,7 @@ public class RMGUInterface {
 			return currDBRecord;
 			
 		}
+
 
 		/**
 		 * Move the progress bar along.
@@ -1187,7 +1175,32 @@ public class RMGUInterface {
 		double[] tempTrial = {trialID+1, AUC_A,AUC_B,AUC_AminusAUC_B ,varA,varB,totalVar,pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis};
 		trialResultArray[(int) trialID] = tempTrial;
 	}
+	/**
+	 * function to do the sizing validation
+	 * 
+	 */
+	private void sizeValidation(DBRecord dBRecordStat, long Trial) {
+		// TODO Auto-generated method stub
 
+		int Ngroup,Preader, Pnormal,Pdisease;
+		int[] NgroupList = {1,3}; 
+		int[] pairedList = {0,1};
+		int count=0;
+		for (int i = 0; i <2;i++){
+			Ngroup = NgroupList[i];
+			for (int j = 0; j <2;j++){			
+				Preader = pairedList[j];
+				for (int k = 0; k <2;k++){
+					Pdisease = pairedList[k];
+					Pnormal = pairedList[k];
+					double[] tempTrial=dBRecordStat.DBRecordSizeValidation(dBRecordStat,12,90,90,Ngroup, Preader,Pnormal,Pdisease);
+					SizingResultArray[count][(int)Trial]=tempTrial;
+					count=count+1;
+				}
+			}
+		}
+		
+	}
 	/**
 	 * Handler for "Perform Simulation Experiments" button. Sets up
 	 * multi-threaded, multi-core spread of experiment tasks if possible.
@@ -1311,6 +1324,7 @@ public class RMGUInterface {
 										analysisExportListener analysisExportListener1 = new analysisExportListener(avgDBRecordStat,"Simulation",StatPanel1);
 										analysisExportListener1.exportResult();
 										exportTrialResult(null);
+										exportSizeValResult(null);
 										System.exit(0);
 									}
 								}
@@ -1430,6 +1444,27 @@ public class RMGUInterface {
 			simulationExport.addActionListener(new analysisExportListener(avgDBRecordStat,"Simulation",StatPanel1));			
 			simOutput.add(simulationExport, BorderLayout.PAGE_END);
 			simOutput.pack();
+			for (int i =0 ; i<8; i++){
+				double[][] oneSetting = SizingResultArray[i];
+				for(int j =0; j<7;j++){
+					SizingResultMean[i][j]=oneSetting[0][j];
+				}
+				int[] NanCount = {0,0,0,0,0,0};
+				for(int j =7; j<13;j++){
+					double tempsum=0;
+					for(int k =0; k<oneSetting.length; k++){
+						if (Double.isNaN(oneSetting[k][j])){
+							NanCount[j-7]= NanCount[j-7]+1;
+						}else{
+							tempsum = tempsum + oneSetting[k][j];
+						}			
+					}
+					SizingResultMean[i][j]=tempsum/(oneSetting.length-NanCount[j-7]);
+				}
+				SizingResultMean[i][13] = NanCount[2];
+			}
+			// Processing sizing results
+			double[][] tracking = SizingResultMean;
 			if(!RoeMetz.doValidation)
 			simOutput.setVisible(true);
 //			writeSummaryFile(simSaveDirectory, "Summary of Simulation Results",
@@ -1848,7 +1883,7 @@ public class RMGUInterface {
 				System.out.println("No save directory specified.");
 			} else {
 				System.out.println("filename: " + filename);
-				File file = new File(saveDirectory + "/" + filename + ".txt");
+				File file = new File(saveDirectory + "//" + filename + ".txt");
 				if (!file.exists()) {
 					file.createNewFile();
 				}
@@ -2408,8 +2443,9 @@ public class RMGUInterface {
 							reportGUI = exportToFile.exportTable1(reportGUI, DB1);
 							reportGUI = exportToFile.exportTable2(reportGUI, DB1);
 						    exportTrialResult(outputPackage);
+						    exportSizeValResult(outputPackage);
 						}
-						reportValidation = "MCmeanOrvar,AUCA,AUCB,AUCAminusAUCB,varA,varB,varAUCAminusAUCB,pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis" + "\r\n";
+						reportValidation = "MCstat,AUCA,AUCB,AUCAminusAUCB,varA,varB,varAUCAminusAUCB,pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis" + "\r\n";
 						reportValidation = exportToFile.exportMCmeanValidation(reportValidation,DB1);
 						reportValidation = exportToFile.exportMCvarianceValidation(reportValidation,varDBRecordStat);
 						
@@ -2425,7 +2461,8 @@ public class RMGUInterface {
 							reportGUI = exportToFile.exportTable1(reportGUI, DB1);
 							reportGUI = exportToFile.exportTable2(reportGUI, DB1);
 						}
-						reportValidation = "NumAUCA,NumAUCB,NumAUCAminusAUCB,NumvarAUCA,NumvarAUCB,NumVarAUCAminusAUCB" + "\r\n";
+						//reportValidation = "NumAUCA,NumAUCB,NumAUCAminusAUCB,NumvarAUCA,NumvarAUCB,NumVarAUCAminusAUCB" + "\r\n";
+						reportValidation =  "AnalysisStat,AUCA,AUCB,AUCAminusAUCB,varA,varB,varAUCAminusAUCB,pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis" + "\r\n";
 						reportValidation = exportToFile.exportNumValidation(reportValidation,DB1);
 						
 					}
@@ -2501,4 +2538,49 @@ public class RMGUInterface {
 		}
 	}
 
+	// export sizing validation results
+	private void exportSizeValResult(File GUIoutputDir) {
+		// TODO Auto-generated method stub
+		try {
+			File f;	
+			if (RoeMetz.doValidation){
+				File outputDir = new File (validateFunction.inputFile.getParent()+"//"+"output");				
+				String FileName=validateFunction.inputFile.getName();
+				FileName= FileName.substring(0,FileName.lastIndexOf("."));
+				String exportFileName = FileName +"SizingVald" +".csv";
+				f = new File (outputDir +"//" + exportFileName);
+				if (!f.exists()) {
+					f.createNewFile();
+				}
+			}else{
+				f = new File (GUIoutputDir + "//" + "SizingVald" +".csv");
+			}
+			FileWriter fw;		
+			fw = new FileWriter(f.getAbsoluteFile());
+			BufferedWriter bw = new BufferedWriter(fw);
+			String [] trialResultTitle = new String[] {"Nreader","Nnormal","Ndisease","Ngroup","Preader","Pnormal","Pdisease","powerNormal","DF_BDG", "SEBDG","powerBDG","DF_Hillis","powerHillis","NnegSEBDG"};
+			for (int i=0;i<trialResultTitle.length;i++){
+				bw.write(trialResultTitle[i]+",");
+			}
+			bw.write("\n");
+		    for (int i=0;i<SizingResultMean.length;i++){
+		    	//bw.write(Double.toString(trialResultArray[i][0])+",");
+		        for (int j=0;j<SizingResultMean[0].length;j++){		
+		        	if (Double.isNaN(SizingResultMean[i][j])){
+		        		bw.write("NaN,");
+		        	}else{
+		        		bw.write(fourDecE.format(SizingResultMean[i][j])+",");
+		        	}
+		        }
+		        bw.write("\n");
+		    }
+			//bw.write(trialResultArrayfollow);
+			bw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
 }

@@ -12,5 +12,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/optimization"/>
+	<classpathentry kind="lib" path="lib/itext-2.1.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

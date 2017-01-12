@@ -18,6 +18,8 @@
 
 package mrmc.core;
 
+import java.util.ArrayList;
+
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -69,6 +71,15 @@ public class CovMRMC {
 			momentsBiasedBB = new double[9],
 			momentsBiasedAB = new double[9];
 	/**
+	 * The U-statistic readers moments according to Gallas2009_Commun-Stat-A-Theor_v38p2586 (first element is empty).
+	 */
+	public double[][] readerMomentsAA, readerMomentsBB, readerMomentsAB;
+	/**
+	 * The MLE moments according to Gallas2009_Commun-Stat-A-Theor_v38p2586 (first element is empty).
+	 */
+	public double[][] readerMomentsBiasedAA, readerMomentsBiasedBB, readerMomentsBiasedAB;
+	
+	/**
 	 * The coefficients according to Gallas2009_Commun-Stat-A-Theor_v38p2586 (first element is empty)
 	 */
 	public double[] 
@@ -76,11 +87,19 @@ public class CovMRMC {
 			coefficientsBB = new double[9],
 			coefficientsAB = new double[9];
 	/**
+	 * The coefficients for each reader according to Gallas2008_Neural-Networks_v21p387 and Gallas2006_Acad-Radiol_v13p353 (first element is empty)
+	 */
+	public double[][] 
+			readerCoefficientsAA,
+			readerCoefficientsBB,
+			readerCoefficientsAB;
+	/**
 	 * The scores from the readers
 	 */
 	public double[][][] t0_modAB, t1_modAB, t0_modAA, t1_modAA, t0_modBB, t1_modBB;
 	public int[][][] d0_modAB, d1_modAB, d0_modAA, d1_modAA, d0_modBB, d1_modBB;
 	public int[][] N0perReader, N1perReader;
+	public int totalscoredA, totalscoredB, totalscoredAB;
 
 	/**
 	 * The reader-averaged auc for each modality
@@ -118,6 +137,18 @@ public class CovMRMC {
 		DBRecordStat.Nnormal = Nnormal;
 		DBRecordStat.Ndisease = Ndisease;
 		DBRecordStat.Nreader = Nreader;
+		
+		readerMomentsAA = new double[(int)Nreader][5];
+		readerMomentsBiasedAA = new double[(int)Nreader][5];
+		readerMomentsBB = new double[(int)Nreader][5];
+		readerMomentsBiasedBB = new double[(int)Nreader][5];
+		readerMomentsAB = new double[(int)Nreader][5];
+		readerMomentsBiasedAB = new double[(int)Nreader][5];
+		
+		readerCoefficientsAA = new double[(int)Nreader][5];
+		readerCoefficientsBB = new double[(int)Nreader][5];
+		readerCoefficientsAB = new double[(int)Nreader][5];
+		
 		
 		makeTMatrices();
 		if(DBRecordStatTemp.selectedMod == 0) {
@@ -181,19 +212,25 @@ public class CovMRMC {
 		DBRecordSize.Ndisease = Ndisease;
 		DBRecordSize.Nreader = Nreader;
 		
+		readerMomentsAA = new double[(int)Nreader][5];
+		readerMomentsBiasedAA = new double[(int)Nreader][5];
+		readerMomentsBB = new double[(int)Nreader][5];
+		readerMomentsBiasedBB = new double[(int)Nreader][5];
+		readerMomentsAB = new double[(int)Nreader][5];
+		readerMomentsBiasedAB = new double[(int)Nreader][5];		
+		
+		readerCoefficientsAA = new double[(int)Nreader][5];
+		readerCoefficientsBB = new double[(int)Nreader][5];
+		readerCoefficientsAB = new double[(int)Nreader][5];
+		
 		makeDMatrices();
 		if(DBRecordSize.selectedMod == 0) {
-			//calculatecoeff("AA");
 			doAUCcovUstatistics("AA");
 		}
 		if(DBRecordSize.selectedMod == 1) {
-			//calculatecoeff("BB");
 			doAUCcovUstatistics("BB");
 		}
 		if(DBRecordSize.selectedMod == 3) {
-			//calculatecoeff("AA");
-			//calculatecoeff("BB");
-			//calculatecoeff("AB");
 			doAUCcovUstatistics("AA");
 			doAUCcovUstatistics("BB");
 			doAUCcovUstatistics("AB");
@@ -235,11 +272,13 @@ public void doAUCcovUstatistics(String flagModality) {
 	}
 
 	double[] moments = new double[9];
+	double[][] readerMoments = new double[(int) Nreader][5];
 	 // The MLE moments according to Gallas2009_Commun-Stat-A-Theor_v38p2586 (first element is empty).
 	double[] momentsBiased = new double[9];
+	double[][] readerMomentsBiased = new double[(int) Nreader][5];
 	// The coefficients according to Gallas2009_Commun-Stat-A-Theor_v38p2586 (first element is empty)
 	double[] coefficients = new double[9];
-
+	double[][] readerCoefficients = new double [(int)Nreader][5];
 	//case AB
 	double[][][] t0 = t0_modAB;
 	double[][][] t1 = t1_modAB;
@@ -268,7 +307,10 @@ public void doAUCcovUstatistics(String flagModality) {
 	int[] pairs = new int[3];
 	double totalwada = 0;
 	double totalwbdb = 0;
+	double[] readerTotalwada = new double[(int)Nreader];
+	double[] readerTotalwbdb = new double[(int)Nreader];
 	double[] bnumer = new double[9];
+	double[][] readerBnumer = new double[(int)Nreader][5];
 	double[][] wadasaSumr = new double[(int) Nnormal][(int) Ndisease];
 	double[][] wbdbsbSumr = new double[(int) Nnormal][(int) Ndisease];
 	double[] wadasaSumir = new double[(int) Ndisease];
@@ -279,6 +321,7 @@ public void doAUCcovUstatistics(String flagModality) {
 	double wbdbsbSumijr = 0.0;
 
 	double[] bdenom = new double[9];
+	double[][] readerBdenom = new double[(int)Nreader][5];
 	double[][] wadaSumr = new double[(int) Nnormal][(int) Ndisease];
 	double[][] wbdbSumr = new double[(int) Nnormal][(int) Ndisease];
 	double[] wadaSumir = new double[(int) Ndisease];
@@ -393,6 +436,20 @@ public void doAUCcovUstatistics(String flagModality) {
 				+ Matrix.total(Matrix.elementMultiply(wadasa_sumj,
 						wbdbsb_sumj));
 		bnumer[4] = bnumer[4] + wadasa_sumij * wbdbsb_sumij;
+		
+		
+
+		// *********the sum for each reader that will feed ReaderM1-ReaderM4
+		readerBdenom[ir][1]= Matrix.total(Matrix.elementMultiply(wada, wbdb));
+		readerBdenom[ir][2] = Matrix.total(Matrix.elementMultiply(wada_sumi, wbdb_sumi));
+		readerBdenom[ir][3] = Matrix.total(Matrix.elementMultiply(wada_sumj, wbdb_sumj));
+		readerBdenom[ir][4] = wada_sumij * wbdb_sumij;
+		readerBnumer[ir][1] = Matrix.total(Matrix.elementMultiply(wadasa, wbdbsb));
+		readerBnumer[ir][2] = Matrix.total(Matrix.elementMultiply(wadasa_sumi,wbdbsb_sumi));
+		readerBnumer[ir][3] = Matrix.total(Matrix.elementMultiply(wadasa_sumj,wbdbsb_sumj));
+		readerBnumer[ir][4] = wadasa_sumij * wbdbsb_sumij;
+		
+		
 
 		// *********aggregate the sum over readers that will feed M5-M8
 		wadaSumr = Matrix.add(wadaSumr, wada);
@@ -419,16 +476,18 @@ public void doAUCcovUstatistics(String flagModality) {
 		// evaluate AUCs modality a
 		if (totalda > 0) {
 			totalwada = totalwada + wa * totalda;
+			readerTotalwada[ir] = wa * totalda;
 			AUCs[ir][0] = Matrix.total(wadasa) / totalda;
 			aucA = aucA + totalda * AUCs[ir][0];
 		}
 		// evaluate AUCs modality b
 		if (totaldb > 0) {
 			totalwbdb = totalwbdb + wb * totaldb;
+			readerTotalwbdb[ir] = wb * totaldb;
 			AUCs[ir][1] = Matrix.total(wbdbsb) / totaldb;
 			aucB = aucB + totaldb * AUCs[ir][1];
 		}
-		if(totalda > 0 && totaldb > 0) AUCs[ir][2] = AUCs[ir][0] - AUCs[ir][1];
+		if(totalda > 0 && totaldb > 0 ) AUCs[ir][2] = AUCs[ir][0] - AUCs[ir][1];
 
 	} // end reader loop
 
@@ -470,7 +529,32 @@ public void doAUCcovUstatistics(String flagModality) {
 		if (denom[i] > Matrix.min(w) / 2.0)
 			moments[i] = moments[i] / denom[i];
 	}
-
+	// readers moment
+	double[][] readerDenom = new double[(int)Nreader][5];
+	double[][] readerNumer = new double[(int)Nreader][5];
+	double[][] readerBias2unbias = new double[][] {
+				{ 0, 0, 0, 0, 0}, { 0, 1.0, 0, 0, 0},
+				{ 0, -1.0, 1.0, 0, 0},{ 0, -1.0, 0, 1.0, 0},
+				{ 0, 1.0, -1.0, -1.0, 1.0},};
+	for (int ir = 0; ir < Nreader; ir++) {
+		readerDenom[ir] = Matrix.multiply(readerBias2unbias, readerBdenom[ir]);
+		readerNumer[ir] = Matrix.multiply(readerBias2unbias, readerBnumer[ir]);
+		readerMomentsBiased = readerBnumer;
+		// biased moment
+		for (int i = 0; i < readerMomentsBiased[0].length; i++) {
+			if (readerBdenom[ir][i] > Matrix.min(w) / 2.0)
+				readerMomentsBiased[ir][i] = readerMomentsBiased[ir][i]/readerBdenom[ir][i];
+		}
+		// unbiased moment
+		readerMoments = readerNumer;
+		for (int i = 0; i < readerMoments[0].length; i++) {
+			if (readerDenom[ir][i] > Matrix.min(w) / 2.0)
+				readerMoments[ir][i] = readerMoments[ir][i]/readerDenom[ir][i];
+		}
+		// coefficients
+		readerCoefficients[ir] = Matrix.linearTrans(readerDenom[ir], 1.0 / (readerTotalwada[ir] * readerTotalwbdb[ir]), 0);
+		readerCoefficients[ir][4] = readerCoefficients[ir][4] - 1.0;
+	}
 	// coefficients
 	coefficients = Matrix.linearTrans(denom, 1.0 / (totalwada * totalwbdb), 0);
 	coefficients[8] = coefficients[8] - 1.0;
@@ -485,7 +569,10 @@ public void doAUCcovUstatistics(String flagModality) {
 		AUCsReaderAvg[0] = aucA / totalwada;
 		momentsAA = moments;
 		momentsBiasedAA = momentsBiased;
+		readerMomentsAA = readerMoments;
+		readerMomentsBiasedAA = readerMomentsBiased;
 		coefficientsAA = coefficients;
+		readerCoefficientsAA = readerCoefficients;
 		break;
 	case "BB":
 		if( Double.isInfinite(1.0/totalwbdb) ) {
@@ -496,7 +583,10 @@ public void doAUCcovUstatistics(String flagModality) {
 		AUCsReaderAvg[1] = aucB / totalwbdb;
 		momentsBB = moments;
 		momentsBiasedBB = momentsBiased;
+		readerMomentsBB = readerMoments;
+		readerMomentsBiasedBB = readerMomentsBiased;
 		coefficientsBB = coefficients;
+		readerCoefficientsBB = readerCoefficients;
 		break;
 	case "AB":
 		if( Double.isInfinite(1.0/totalwada) ) {
@@ -513,156 +603,10 @@ public void doAUCcovUstatistics(String flagModality) {
 		AUCsReaderAvg[2] = AUCsReaderAvg[0] - AUCsReaderAvg[1];
 		momentsAB = moments;
 		momentsBiasedAB = momentsBiased;
+		readerMomentsAB = readerMoments;
+		readerMomentsBiasedAB = readerMomentsBiased;
 		coefficientsAB = coefficients;
-		break;
-	}
-	
-}
-// Only calculate coeff of Sizing analysis
-public void calculatecoeff(String flagModality) {
-    // setting default AUCs
-	AUCsReaderAvg = new double[3];
-	AUCsReaderAvg[0] = 1.0;
-	AUCsReaderAvg[1] = 1.0;
-	AUCsReaderAvg[2] = 0;
-	AUCs = new double[(int) Nreader][3];
-	for(int i=0; i<Nreader; i++) {
-		AUCs[i][0] = 1;
-		AUCs[i][1] = 1;
-		AUCs[i][2] = 0;
-	}
-	// The coefficients according to Gallas2009_Commun-Stat-A-Theor_v38p2586 (first element is empty)
-	double[] coefficients = new double[9];
-
-	//case AB
-	int[][][]    d0 = d0_modAB;
-	int[][][]    d1 = d1_modAB;
-	//
-	switch(flagModality) {
-	case "AA":
-		d0 = d0_modAA;
-		d1 = d1_modAA;
-		break;
-	case "BB":
-		d0 = d0_modBB;
-		d1 = d1_modBB;
-		break;
-	}
-	
-	double[][] w = new double[(int) Nreader][2];
-	double totalwada = 0;
-	double totalwbdb = 0;
-
-	double[] bdenom = new double[9];
-	double[][] wadaSumr = new double[(int) Nnormal][(int) Ndisease];
-	double[][] wbdbSumr = new double[(int) Nnormal][(int) Ndisease];
-	double[] wadaSumir = new double[(int) Ndisease];
-	double[] wbdbSumir = new double[(int) Ndisease];
-	double[] wadaSumjr = new double[(int) Nnormal];
-	double[] wbdbSumjr = new double[(int) Nnormal];
-	double wadaSumijr = 0.0;
-	double wbdbSumijr = 0.0;
-
-	for (int i = 0; i < Nreader; i++) {
-		for (int j = 0; j < 2; j++) {
-			w[i][j] = 1.0;
-		}
-	}
-
-	for (int ir = 0; ir < Nreader; ir++) {
-		// ***************for the first modality******************
-		int[][] designA0 = Matrix.extractFirstDimension(d0, ir, 0);
-		int[][] designA1 = Matrix.extractFirstDimension(d1, ir, 0);
-		int[][] da = Matrix.multiply(designA0,
-				Matrix.matrixTranspose(designA1));
-		int totalda = Matrix.total(da);
-		double wa = w[ir][0];
-		double[][] wada = Matrix.linearTrans(da, wa, 0);
-		// ***************for the second modality******************
-		int[][] designB0 = Matrix.extractFirstDimension(d0, ir, 1);
-		int[][] designB1 = Matrix.extractFirstDimension(d1, ir, 1);
-		int[][] db = Matrix.multiply(designB0,
-				Matrix.matrixTranspose(designB1));
-		int totaldb = Matrix.total(db);
-		double wb = w[ir][1];
-		double[][] wbdb = Matrix.linearTrans(db, wb, 0);
-
-		// ***********precompute row (col???) sums***********************
-		double[] wada_sumi = Matrix.colSum(wada);
-		double[] wbdb_sumi = Matrix.colSum(wbdb);
-		// ***********precompute col (row?????) sums***********************
-		double[] wada_sumj = Matrix.rowSum(wada);
-		double[] wbdb_sumj = Matrix.rowSum(wbdb);
-		// **********precompute the matrix sums*****************
-		double wada_sumij = Matrix.total(wada);
-		double wbdb_sumij = Matrix.total(wbdb);
-		
-
-		// ------------------------------------------
-		// calculate AUCs
-		// ------------------------------------------
-		// evaluate AUCs modality a
-		if (totalda > 0) {
-			totalwada = totalwada + wa * totalda;
-		}
-		// evaluate AUCs modality b
-		if (totaldb > 0) {
-			totalwbdb = totalwbdb + wb * totaldb;
-		}
-
-		// *********aggregate the sum over readers that will feed M1-M4
-		bdenom[1] = bdenom[1]
-				+ Matrix.total(Matrix.elementMultiply(wada, wbdb));
-		bdenom[2] = bdenom[2]
-				+ Matrix.total(Matrix.elementMultiply(wada_sumi, wbdb_sumi));
-		bdenom[3] = bdenom[3]
-				+ Matrix.total(Matrix.elementMultiply(wada_sumj, wbdb_sumj));
-		bdenom[4] = bdenom[4] + wada_sumij * wbdb_sumij;
-
-		// *********aggregate the sum over readers that will feed M5-M8
-		wadaSumr = Matrix.add(wadaSumr, wada);
-		wbdbSumr = Matrix.add(wbdbSumr, wbdb);
-		wadaSumir = Matrix.add(wadaSumir, wada_sumi);
-		wbdbSumir = Matrix.add(wbdbSumir, wbdb_sumi);
-
-		wadaSumjr = Matrix.add(wadaSumjr, wada_sumj);
-		wbdbSumjr = Matrix.add(wbdbSumjr, wbdb_sumj);
-		wadaSumijr = wadaSumijr + wada_sumij;
-		wbdbSumijr = wbdbSumijr + wbdb_sumij;
-
-
-	} // end reader loop
-
-	bdenom[5] = Matrix.total(Matrix.elementMultiply(wadaSumr, wbdbSumr));
-	bdenom[6] = Matrix.total(Matrix.elementMultiply(wadaSumir, wbdbSumir));
-	bdenom[7] = Matrix.total(Matrix.elementMultiply(wadaSumjr, wbdbSumjr));
-	bdenom[8] = wadaSumijr * wbdbSumijr;
-
-	double[][] bias2unbias = new double[][] {
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 1.0, 0, 0, 0, 0, 0, 0, 0 },
-			{ 0, -1.0, 1.0, 0, 0, 0, 0, 0, 0 },
-			{ 0, -1.0, 0, 1.0, 0, 0, 0, 0, 0 },
-			{ 0, 1.0, -1.0, -1.0, 1.0, 0, 0, 0, 0 },
-			{ 0, -1.0, 0, 0, 0, 1.0, 0, 0, 0 },
-			{ 0, 1.0, -1.0, 0, 0, -1.0, 1.0, 0, 0 },
-			{ 0, 1.0, 0, -1.0, 0, -1.0, 0, 1.0, 0 },
-			{ 0, -1.0, 1.0, 1.0, -1.0, 1.0, -1.0, -1.0, 1.0 } };
-
-	double[] denom = Matrix.multiply(bias2unbias, bdenom);
-	
-	// coefficients
-	coefficients = Matrix.linearTrans(denom, 1.0 / (totalwada * totalwbdb), 0);
-	coefficients[8] = coefficients[8] - 1.0;
-
-	switch(flagModality) {
-	case "AA":
-		coefficientsAA = coefficients;
-		break;
-	case "BB":
-		coefficientsBB = coefficients;
-		break;
-	case "AB":
-		coefficientsAB = coefficients;
+		readerCoefficientsAB = readerCoefficients;
 		break;
 	}
 	
@@ -707,7 +651,10 @@ public void makeTMatrices() {
 	double ScoreModB;
 	int PresentModA;
 	int PresentModB;
-
+	totalscoredA = 0;
+	totalscoredB = 0;
+	totalscoredAB = 0;
+	
 	int m = 0; // signal-absent case counter
 	int n = 0; // signal-present case counter
 	int k = 0; // reader counter
@@ -759,7 +706,10 @@ public void makeTMatrices() {
 				d0_modBB[m][k][1] = PresentModB;
 				N0perReader[k][0] = N0perReader[k][0] + PresentModA;
 				N0perReader[k][1] = N0perReader[k][1] + PresentModB;
-				N0perReader[k][2] = N0perReader[k][2] + Math.max(PresentModA, PresentModB) ;
+				N0perReader[k][2] = N0perReader[k][2] + Math.min(PresentModA, PresentModB) ;
+				totalscoredA = totalscoredA + PresentModA;
+				totalscoredB = totalscoredB + PresentModB;
+				totalscoredAB = totalscoredAB + PresentModA*PresentModB;
 				m++;
 			} else {
 				t1_modAB[n][k][0] = ScoreModA;
@@ -777,7 +727,10 @@ public void makeTMatrices() {
 				d1_modBB[n][k][1] = PresentModB;
 				N1perReader[k][0] = N1perReader[k][0] + PresentModA;
 				N1perReader[k][1] = N1perReader[k][1] + PresentModB;
-				N1perReader[k][2] = N1perReader[k][2] + Math.max(PresentModA, PresentModB) ;
+				N1perReader[k][2] = N1perReader[k][2] + Math.min(PresentModA, PresentModB) ;
+				totalscoredA = totalscoredA + PresentModA;
+				totalscoredB = totalscoredB + PresentModB;
+				totalscoredAB = totalscoredAB + PresentModA*PresentModB;
 				n++;
 			}
 		} // loop over cases

@@ -201,7 +201,10 @@ public class InputSummaryCard {
 			 */
 			File f = fc.getSelectedFile();
 			if( f==null ) return;
-			InputFile1.filename = f.getPath();
+			//InputFile1.filename = f.getPath();
+			InputFile1.fileName = f.getName();
+			InputFile1.filePath = f.getParent();
+			InputFile1.filePathAndName = f.getPath();
 			JTextFilename.setText(f.getPath());
 
 			/*
@@ -390,6 +393,11 @@ public class InputSummaryCard {
 				DBRecordStat.flagMLE = FlagMLE;
 				mleCheckBoxSummary.setSelected(true);
 				DBRecordStat.totalVar=DBRecordStat.totalVarMLE;
+				DBRecordStat.varA = DBRecordStat.varAMLE;
+				DBRecordStat.varB = DBRecordStat.varBMLE;
+				DBRecordStat.readerTotalVar = DBRecordStat.readerTotalVarMLE;
+				DBRecordStat.readerVarA = DBRecordStat.readerVarAMLE;
+				DBRecordStat.readerVarB = DBRecordStat.readerVarBMLE;
 				DBRecordStat.SE=Math.sqrt(DBRecordStat.totalVar);
 				DBRecordStat.testStat = new StatTest(DBRecordStat);
 			} else if (JOptionPane.NO_OPTION == result) {

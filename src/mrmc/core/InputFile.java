@@ -104,7 +104,10 @@ public class InputFile {
 	/**
 	 * Filename for the .imrmc reader study data
 	 */
-	public String filename;
+//	public String filename;
+	public String filePathAndName;
+	public String filePath;
+	public String fileName;
 	public SizePanel SizePanel1;
 	/**
 	 * to do
@@ -569,13 +572,14 @@ public class InputFile {
 		try {
 			//InputStreamReader isr;
 			//DataInputStream din;
-			FileInputStream fstream = new FileInputStream(filename);
+			FileInputStream fstream = new FileInputStream(filePathAndName);
 			DataInputStream din = new DataInputStream(fstream);
 			InputStreamReader isr = new InputStreamReader(din);
 			BufferedReader br = new BufferedReader(isr);
 			String strtemp;
 			try {
-				String inputformat = filename.substring(filename.lastIndexOf(".")+1);
+				//String inputformat = filename.substring(filename.lastIndexOf(".")+1);
+				String inputformat = filePathAndName.substring(filePathAndName.lastIndexOf(".")+1);
 				if (inputformat.equals("csv")||inputformat.equals("imrmc")||inputformat.equals("omrmc")){
 					while ((strtemp = br.readLine()) != null) {
 						if (strtemp.length()>0 && strtemp.substring(strtemp.length()-2).equals(",,"))
@@ -600,7 +604,7 @@ public class InputFile {
 
 		} catch (Exception e) {
 			System.err
-					.println("Error reading file" + filename + e.getMessage());
+					.println("Error reading file" + filePathAndName + e.getMessage());
 			return;
 		}
 		
@@ -722,6 +726,11 @@ public class InputFile {
 			throw new IOException(toReturn);
 		}
 	   DBRecordStat.AUCs = new double [(int) DBRecordStat.Nreader][3];
+	   DBRecordStat.N0perReader = new int [(int) DBRecordStat.Nreader][3];
+	   DBRecordStat.N1perReader = new int [(int) DBRecordStat.Nreader][3];
+	   DBRecordStat.readerVarA = new double [(int) DBRecordStat.Nreader];
+	   DBRecordStat.readerVarB = new double [(int) DBRecordStat.Nreader];
+	   DBRecordStat.readerTotalVar = new double [(int) DBRecordStat.Nreader];
 	   // load average AUC
 	   for (int i = beginSummaryPosition+7; i < endSummaryPosition+1; i++) {
 			tempstr = fileContent.get(i).toUpperCase().trim();
@@ -743,8 +752,8 @@ public class InputFile {
 						throw new IOException(toReturn);
 					}
 			}
-
-			// load individual AUCs
+			/*
+			// load individual AUCs old
 			loc = tempstr.indexOf("READER SPECIFIC AUC");
 			if (loc != -1 ) {
 				for (int k=2;k<DBRecordStat.Nreader+2;k++){
@@ -764,6 +773,64 @@ public class InputFile {
 						}
 					}
 
+				}
+			}*/
+			// load individual AUCs 
+			loc = tempstr.indexOf("MOD A");
+			if (loc != -1 ) {
+				for (int k=2;k<DBRecordStat.Nreader+2;k++){
+					tempstr = fileContent.get(i+k).toUpperCase().trim();
+					String tempAUCs[] = fileContent.get(i+k).split(",");
+					readerIDs.put(tempAUCs[0].trim(),k-2);
+					try{
+						DBRecordStat.N0perReader[k-2][0] = Integer.valueOf(tempAUCs[1].trim());
+						DBRecordStat.N1perReader[k-2][0] = Integer.valueOf(tempAUCs[2].trim());
+						DBRecordStat.AUCs[k-2][0] = Double.valueOf(tempAUCs[3].trim());
+						DBRecordStat.readerVarA[k-2] = Double.valueOf(tempAUCs[4].trim());
+					}catch (Exception e) {
+						toReturn = "ERROR: Invalid input of AUCs";
+						toReturn = toReturn + "      row = " +   (i+k+1) + " \n";
+						toReturn = toReturn + fileContent.get(i+k) + " \n";
+						throw new IOException(toReturn, e);
+					}
+				}
+			}
+			loc = tempstr.indexOf("MOD B");
+			if (loc != -1 ) {
+				for (int k=2;k<DBRecordStat.Nreader+2;k++){
+					tempstr = fileContent.get(i+k).toUpperCase().trim();
+					String tempAUCs[] = fileContent.get(i+k).split(",");
+					readerIDs.put(tempAUCs[0].trim(),k-2);
+					try{
+						DBRecordStat.N0perReader[k-2][1] = Integer.valueOf(tempAUCs[1].trim());
+						DBRecordStat.N1perReader[k-2][1] = Integer.valueOf(tempAUCs[2].trim());
+						DBRecordStat.AUCs[k-2][1] = Double.valueOf(tempAUCs[3].trim());
+						DBRecordStat.readerVarB[k-2] = Double.valueOf(tempAUCs[4].trim());
+					}catch (Exception e) {
+						toReturn = "ERROR: Invalid input of AUCs";
+						toReturn = toReturn + "      row = " +   (i+k+1) + " \n";
+						toReturn = toReturn + fileContent.get(i+k) + " \n";
+						throw new IOException(toReturn, e);
+					}
+				}
+			}
+			loc = tempstr.indexOf("DIFFERENCE BETWEEN MODS A AND B");
+			if (loc != -1 ) {
+				for (int k=2;k<DBRecordStat.Nreader+2;k++){
+					tempstr = fileContent.get(i+k).toUpperCase().trim();
+					String tempAUCs[] = fileContent.get(i+k).split(",");
+					readerIDs.put(tempAUCs[0].trim(),k-2);
+					try{
+						DBRecordStat.N0perReader[k-2][2] = Integer.valueOf(tempAUCs[1].trim());
+						DBRecordStat.N1perReader[k-2][2] = Integer.valueOf(tempAUCs[2].trim());
+						DBRecordStat.AUCs[k-2][2] = Double.valueOf(tempAUCs[3].trim());
+						DBRecordStat.readerTotalVar[k-2] = Double.valueOf(tempAUCs[4].trim());
+					}catch (Exception e) {
+						toReturn = "ERROR: Invalid input of AUCs";
+						toReturn = toReturn + "      row = " +   (i+k+1) + " \n";
+						toReturn = toReturn + fileContent.get(i+k) + " \n";
+						throw new IOException(toReturn, e);
+					}
 				}
 			}
 			// load BDG moments
@@ -1207,7 +1274,9 @@ public class InputFile {
 		
 		resetIDs();
 
-		filename = "";
+		filePathAndName = "";
+		filePath = "";
+		fileName = "";
 		fileContent.clear();
 		NlinesFileContent = 0;
 		filePosition = 0;

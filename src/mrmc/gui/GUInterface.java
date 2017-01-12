@@ -51,6 +51,22 @@ import org.jfree.ui.RefineryUtilities;
 
 import roemetz.core.validateFunction;
 
+/*import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;*/
+
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
+
+
+
 /**
  * This class describes the graphic interface. From top to bottom, the GUI
  * includes <br>
@@ -339,22 +355,22 @@ public class GUInterface {
 		 * This panel should allow for writing results of the current analysis to the hard drive.
 		 */
 		JPanel panelSummary = new JPanel();
-		JButton saveGUI = new JButton("Save Stat Summary");
-		saveGUI.addActionListener(new SaveGUIButtonListener());
+		JButton saveStatAnalysis = new JButton("Save Stat Analysis");
+		saveStatAnalysis.addActionListener(new SaveStatAnalysisButtonListener());
 		
-		panelSummary.add(saveGUI);
+		panelSummary.add(saveStatAnalysis);
 
-		JButton saveSize = new JButton("Save Size");
+		JButton saveSize = new JButton("Save Size Analysis");
 		saveSize.addActionListener(new SaveGUISizeListener());
 		
 		panelSummary.add(saveSize);
 
-		JButton saveStat = new JButton("Save Stat");
-		saveStat.addActionListener(new SaveGUIStatListener());
+		//Use Save Stat Analysis replace this button 
+		//JButton saveStat = new JButton("Save Stat");
+		//saveStat.addActionListener(new SaveGUIStatListener());	
+		//panelSummary.add(saveStat);
 		
-		panelSummary.add(saveStat);
-		
-		JButton saveAll = new JButton("Save All Stat");
+		JButton saveAll = new JButton("Analysis All Modalities");
 		saveAll.addActionListener(new SaveAllStatListener());
 		
 		panelSummary.add(saveAll);
@@ -386,7 +402,7 @@ public class GUInterface {
 
 	/**	 * Handler for button to save current GUI to file
 	 */
-	class SaveGUIButtonListener implements ActionListener {
+	class SaveStatAnalysisButtonListener implements ActionListener {
 
 	//	@Override
 		//public String sFileName="";
@@ -394,59 +410,124 @@ public class GUInterface {
 			double aaa=DBRecordStat.totalVar;
 			if( DBRecordStat.totalVar > 0.0) {
 				DBRecordStat.InputFile1 = InputFile1;
-				String report = "";
+	    		String head =  "inputFile,date,iMRMCversion,NR,N0,N1,modalityA,modalityB,UstatOrMLE,AUCA,varAUCA,AUCB,varAUCB,AUCAminusAUCB,varAUCAminusAUCB,"
+	    				+"pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis";
+				String reportData = head +"\r\n";
+				String reportSummary = "";
+				String reportResult1 = "";
+				String reportResult2 = "";
 	            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
 				Date currDate = new Date();
 				final String fileTime = dateForm.format(currDate);
-				String FileName=InputFile1.filename;
+				//String FileName=InputFile1.filename;
+				//FileName= FileName.substring(0,FileName.lastIndexOf("."));
+				//String summaryfilenamewithpath = FileName+"MRMCsummary"+fileTime+".omrmc";
+				//summaryfilename = summaryfilenamewithpath.substring(FileName.lastIndexOf("\\")+1);
+				String FileName=InputFile1.fileName;
+				//String FilePathAndName=InputFile1.filePathAndName;
+				String FilePath = InputFile1.filePath;
+				String FilePathName = InputFile1.filePathAndName;
+				//FilePathAndName= FilePathAndName.substring(0,FilePathAndName.lastIndexOf("."));
 				FileName= FileName.substring(0,FileName.lastIndexOf("."));
-				String summaryfilenamewithpath = FileName+"MRMCsummary"+fileTime+".omrmc";
-				summaryfilename = summaryfilenamewithpath.substring(FileName.lastIndexOf("\\")+1);
+				//summaryfilename = FileName+"MRMCsize"+fileTime+".omrmc";
 				try {
+					
+					
 					JFileChooser fc = new JFileChooser();
-					FileNameExtensionFilter filter = new FileNameExtensionFilter(
-							"iMRMC Summary Files (.omrmc or csv)", "csv","omrmc");
-					fc.setFileFilter(filter);
+					String exportFolderName = FileName + "StatResults" + fileTime;
 					if (outputfileDirectory!=null){
-						 fc.setSelectedFile(new File(outputfileDirectory+"\\"+summaryfilename));						
-					}						
-					else					
-					    fc.setSelectedFile(new File(summaryfilenamewithpath));
+						fc.setSelectedFile(new File(outputfileDirectory+"//"+exportFolderName));						
+					}else{
+						fc.setSelectedFile(new File(FilePath+"//"+exportFolderName));
+					}
 					int fcReturn = fc.showSaveDialog((Component) e.getSource());
+					File outputPackage = fc.getSelectedFile();					
+					if(!outputPackage.exists() && !outputPackage.isDirectory()) 
+						outputPackage.mkdir();		
+					File fSummary = new File (outputPackage +"//"+"MRMCSummary.omrmc" );
+					File fData = new File (outputPackage +"//" + "MRMCStat.csv");
+					String fPdfPathName = outputPackage +"//"+"MRMCResult.pdf";
+					File fPdf = new File(fPdfPathName);
+					outputfileDirectory = fc.getCurrentDirectory();	
+					PdfPTable[] pdfAUCTable = new PdfPTable[3];
+					for ( int i = 0; i<3;i++ ){
+				        pdfAUCTable[i] = new PdfPTable(5);
+				        pdfAUCTable[i].setTotalWidth(new float[]{300,550,550,250,350});
+					}
+
 					if (fcReturn == JFileChooser.APPROVE_OPTION) {
-						File f = fc.getSelectedFile();
-						if (!f.exists()) {
-							f.createNewFile();
-						}
-						String savedFileName = f.getPath();
-						summaryfilename = savedFileName.substring(savedFileName.lastIndexOf("\\")+1);
-						report = report + "MRMC summary statistics from " +MRMC.versionname + "\r\n";
-						report = report + "Summary statistics written to file named:" + "\r\n";
-						report = report + summaryfilename + "\r\n" + "\r\n";
+						//File f = fc.getSelectedFile();
+						//if (!f.exists()) {
+						//	f.createNewFile();
+						//}
+						//String savedFileName = f.getPath();
+						//summaryfilename = savedFileName.substring(savedFileName.lastIndexOf("\\")+1);
+						summaryfilename = fSummary.getName();
+						reportSummary = reportSummary + "MRMC summary statistics from " +MRMC.versionname + "\r\n";
+						reportSummary = reportSummary + "Summary statistics based on input file named:" + "\r\n";
+						reportResult1 = "This file," + "\r\n" + fPdf.getAbsolutePath() + ",\r\n" ;
+						reportResult1 = reportResult1 + "shows the MRMC ROC analysis results for the data in:" + "\r\n";
+						reportResult1 = reportResult1 + FilePathName + "\r\n";
+						reportResult1 = reportResult1 + "using " + MRMC.versionname + ", https://github.com/DIDSR/iMRMC/releases" + "\r\n" + "\r\n";
+						reportSummary = reportSummary + InputFile1.filePathAndName + "\r\n" + "\r\n";
 						if (selectedInput == DescInputChooseMode) {
-							report = exportToFile.exportSummary(report, DBRecordStat);
-							report = exportToFile.exportStatPanel(report, DBRecordStat, StatPanel1);
-							report = exportToFile.exportTable1(report, DBRecordStat);
-							report = exportToFile.exportTable2(report, DBRecordStat);
+							// generate summary string
+							reportSummary = exportToFile.exportSummary(reportSummary, DBRecordStat);
+							reportSummary = exportToFile.exportStatPanel(reportSummary, DBRecordStat, StatPanel1);
+							reportSummary = exportToFile.exportTable1(reportSummary, DBRecordStat);
+							reportSummary = exportToFile.exportTable2(reportSummary, DBRecordStat);
+							// generate pdf result 
+							reportResult1 = exportToFile.pdfResult1(reportResult1, DBRecordStat);
+							pdfAUCTable = exportToFile.pdfTable(pdfAUCTable, DBRecordStat);
+							reportResult2 = exportToFile.pdfResult2(DBRecordStat);
+							// generate one line data string
+							reportData = exportToFile.exportStat(reportData, DBRecordStat, fileTime);
 						} else {
-							report = exportToFile.exportSummary(report, DBRecordStat);
-							report = exportToFile.exportStatPanel(report, DBRecordStat, StatPanel1);
-							report = exportToFile.exportTable1(report, DBRecordStat);
-							report = exportToFile.exportTable2(report, DBRecordStat);
+							// generate summary string
+							reportSummary = exportToFile.exportSummary(reportSummary, DBRecordStat);
+							reportSummary = exportToFile.exportStatPanel(reportSummary, DBRecordStat, StatPanel1);
+							reportSummary = exportToFile.exportTable1(reportSummary, DBRecordStat);
+							reportSummary = exportToFile.exportTable2(reportSummary, DBRecordStat);
+							// generate pdf result 
+							reportResult1 = exportToFile.pdfResult1(reportResult1, DBRecordStat);
+							pdfAUCTable = exportToFile.pdfTable(pdfAUCTable, DBRecordStat);
+							reportResult2 = exportToFile.pdfResult2(DBRecordStat);
+							// generate one line data string
+							reportData = exportToFile.exportStat(reportData, DBRecordStat, fileTime);
 						}
-						FileWriter fw = new FileWriter(f.getAbsoluteFile());
-						BufferedWriter bw = new BufferedWriter(fw);
-						bw.write(report);
-						bw.close();
+						// write summary to disk
+						FileWriter fwSummary = new FileWriter(fSummary.getAbsoluteFile());
+						BufferedWriter bwSummary = new BufferedWriter(fwSummary);
+						bwSummary.write(reportSummary);
+						bwSummary.close();
+						// write one line data to disk
+						FileWriter fwData = new FileWriter(fData.getAbsoluteFile());
+						BufferedWriter bwData = new BufferedWriter(fwData);
+						bwData.write(reportData);
+						bwData.close();
+						// output pdf
+						Document document = new Document();
+						PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(fPdfPathName));
+						document.open();
+				        document.add(new Paragraph(reportResult1));
+				        for (int i = 0; i<3;i++ ){
+				        	document.add(pdfAUCTable[i]);
+				        	 document.add(new Paragraph("\r\n"));
+				        }
+				        document.add(new Paragraph(reportResult2));
+				        document.close();
 						outputfileDirectory = fc.getCurrentDirectory();
 					    String savedfilename = fc.getSelectedFile().getName();
 						JOptionPane.showMessageDialog(
-								thisGUI.MRMCobject.getFrame(),"The summary has been succeed export to "+outputfileDirectory+ " !\n"+ "Filename = " +savedfilename, 
+								thisGUI.MRMCobject.getFrame(),"The stat analysis results and summary has been succeed export to "+outputfileDirectory+ " !\n"+ "Foldername = " +outputPackage, 
 								"Exported", JOptionPane.INFORMATION_MESSAGE);
 					}
 				} catch (HeadlessException e1) {
 					e1.printStackTrace();
 				} catch (IOException e1) {
+					e1.printStackTrace();
+				} catch (DocumentException e1) {
+					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} 
 				
@@ -483,45 +564,95 @@ public class GUInterface {
 		public void actionPerformed(ActionEvent e) {
 			if( DBRecordSize.totalVar > 0.0) {
 				DBRecordSize.InputFile1 = InputFile1;
-				String report = "";
+				String head =  "inputFile,date,iMRMCversion,modalityA,modalityB,NR,N0,N1,NG,EffectiveSize,SignificanceLevel,UstatOrMLE,NormalPower,BDGDf,BDGSE,BDGPower,HillisDf,HillisPower";
+				String reportcsv = head +"\r\n";
+				String reportomrmc = "";
 	            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
 				Date currDate = new Date();
 				final String fileTime = dateForm.format(currDate);
-				String FileName=InputFile1.filename;
+				//String FileName=InputFile1.filename;
+				//FileName= FileName.substring(0,FileName.lastIndexOf("."));
+				//String sizeFilenamewithpath = FileName+"MRMCSize"+fileTime+".omrmc";
+				//String sizeFilename = sizeFilenamewithpath.substring(sizeFilenamewithpath.lastIndexOf("\\")+1);	
+				String FileName=InputFile1.fileName;
+				String FilePathAndName=InputFile1.filePathAndName;
+				String FilePath = InputFile1.filePath;
+				FilePathAndName= FilePathAndName.substring(0,FilePathAndName.lastIndexOf("."));
 				FileName= FileName.substring(0,FileName.lastIndexOf("."));
-				String sizeFilenamewithpath = FileName+"MRMCSize"+fileTime+".omrmc";
-				String sizeFilename = sizeFilenamewithpath.substring(sizeFilenamewithpath.lastIndexOf("\\")+1);	
+				//String sizeFilenamewithpath = FilePathAndName+"MRMCSize"+fileTime+".omrmc";
+				String sizeFilename = FileName+"MRMCsize"+fileTime+".omrmc";
 				try {
+					
 					JFileChooser fc = new JFileChooser();
+					String exportFolderName = FileName + "SizeResults" + fileTime;
+					if (outputfileDirectory!=null){
+						fc.setSelectedFile(new File(outputfileDirectory+"//"+exportFolderName));						
+					}else{
+						fc.setSelectedFile(new File(FilePath+"//"+exportFolderName));
+					}
+					int fcReturn = fc.showSaveDialog((Component) e.getSource());
+					File outputPackage = fc.getSelectedFile();					
+					if(!outputPackage.exists() && !outputPackage.isDirectory()) 
+						outputPackage.mkdir();		
+					File fomrmc = new File (outputPackage +"//"+"MRMCsize.omrmc" );
+					File fcsv = new File (outputPackage +"//" + "MRMCsize.csv");
+					outputfileDirectory = fc.getCurrentDirectory();		
+					
+					
+					
+				/*	JFileChooser fc = new JFileChooser();
 					FileNameExtensionFilter filter = new FileNameExtensionFilter(
 							"iMRMC Summary Files (.omrmc or csv)", "csv","omrmc");
 					fc.setFileFilter(filter);
 					if (outputfileDirectory!=null){
-						 fc.setSelectedFile(new File(outputfileDirectory+"\\"+sizeFilename));						
+						// fc.setSelectedFile(new File(outputfileDirectory+"\\"+sizeFilename));			
+						fc.setSelectedFile(new File(outputfileDirectory+"//"+sizeFilename));			
 					}						
 					else					
 					    fc.setSelectedFile(new File(sizeFilenamewithpath));
-					int fcReturn = fc.showSaveDialog((Component) e.getSource());
+					int fcReturn = fc.showSaveDialog((Component) e.getSource());*/
 					if (fcReturn == JFileChooser.APPROVE_OPTION) {
-						File f = fc.getSelectedFile();
+						/*File f = fc.getSelectedFile();
 						if (!f.exists()) {
 							f.createNewFile();
-						}
-						String savedFileName = f.getPath();
-						sizeFilename = savedFileName.substring(savedFileName.lastIndexOf("\\")+1);
-						report = report + "MRMC size statistics from " +MRMC.versionname + "\r\n";
-						report = report + "Size statistics written to file named:" + "\r\n";
-						report = report + sizeFilename + "\r\n" + "\r\n";
+						}*/
+						//String savedFileName = f.getPath();
+						//sizeFilename = savedFileName.substring(savedFileName.lastIndexOf("\\")+1);
+						sizeFilename = fomrmc.getName();
+						reportomrmc = reportomrmc + "MRMC size statistics from " +MRMC.versionname + "\r\n";
+						reportomrmc = reportomrmc + "Size statistics written to file named:" + "\r\n";
+						reportomrmc = reportomrmc + sizeFilename + "\r\n" + "\r\n";
+						
 						if (selectedInput == DescInputChooseMode) {
-							report = exportToFile.exportSizePanel(report, DBRecordSize, SizePanel1);
-							report = exportToFile.exportTable1(report, DBRecordSize);
+							// generate omrmc string
+							reportomrmc = exportToFile.exportSizePanel(reportomrmc, DBRecordSize, SizePanel1);
+							reportomrmc = exportToFile.exportTable1(reportomrmc, DBRecordSize);
+							// generate csv string
+							reportcsv = exportToFile.exportSizeCsv(reportcsv, DBRecordSize, SizePanel1,fileTime);
 						} else {
-							report = exportToFile.exportSizePanel(report, DBRecordSize, SizePanel1);
-							report = exportToFile.exportTable1(report, DBRecordSize);
+							// generate omrmc string
+							reportomrmc = exportToFile.exportSizePanel(reportomrmc, DBRecordSize, SizePanel1);
+							reportomrmc = exportToFile.exportTable1(reportomrmc, DBRecordSize);
+							// generate csv string
+							reportcsv = exportToFile.exportSizeCsv(reportcsv, DBRecordSize, SizePanel1,fileTime);
 						}
 						
-						
-						FileWriter fw = new FileWriter(f.getAbsoluteFile());
+						// write omrmc to disk
+						FileWriter fwomrmc = new FileWriter(fomrmc.getAbsoluteFile());
+						BufferedWriter bwomrmc = new BufferedWriter(fwomrmc);
+						bwomrmc.write(reportomrmc);
+						bwomrmc.close();
+						// write one line data to disk
+						FileWriter fwcsv = new FileWriter(fcsv.getAbsoluteFile());
+						BufferedWriter bwcsv = new BufferedWriter(fwcsv);
+						bwcsv.write(reportcsv);
+						bwcsv.close();
+						outputfileDirectory = fc.getCurrentDirectory();
+					    String savedfilename = fc.getSelectedFile().getName();
+						JOptionPane.showMessageDialog(
+								thisGUI.MRMCobject.getFrame(),"The size analysis results and summary has been succeed export to "+outputfileDirectory+ " !\n"+ "Foldername = " +outputPackage, 
+								"Exported", JOptionPane.INFORMATION_MESSAGE);
+						/*FileWriter fw = new FileWriter(f.getAbsoluteFile());
 						BufferedWriter bw = new BufferedWriter(fw);
 						bw.write(report);
 						bw.close();
@@ -529,7 +660,7 @@ public class GUInterface {
 					    String savedfilename = fc.getSelectedFile().getName();
 						JOptionPane.showMessageDialog(
 								thisGUI.MRMCobject.getFrame(),"The size result has been succeed export to "+outputfileDirectory+ " !\n"+ "Filename = " +savedfilename, 
-								"Exported", JOptionPane.INFORMATION_MESSAGE);
+								"Exported", JOptionPane.INFORMATION_MESSAGE);*/
 					}
 				} catch (HeadlessException e1) {
 					e1.printStackTrace();
@@ -550,6 +681,7 @@ public class GUInterface {
 	
 	/**	 * Handler for button to save current GUI state to file
 	 */
+	/* Use Save Stat Analysis replace this button 
 	class SaveGUIStatListener implements ActionListener {
 
 	//	@Override
@@ -563,20 +695,27 @@ public class GUInterface {
 	            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
 				Date currDate = new Date();
 				final String fileTime = dateForm.format(currDate);
-				String FileName=InputFile1.filename;
+				//String FileName=InputFile1.filename;
+				//FileName= FileName.substring(0,FileName.lastIndexOf("."));
+				//String sizeFilenamewithpath = FileName+"MRMCStat"+fileTime+".csv";
+				//String sizeFilename = sizeFilenamewithpath.substring(sizeFilenamewithpath.lastIndexOf("\\")+1);	
+				String FileName=InputFile1.fileName;
+				String FilePathAndName=InputFile1.filePathAndName;
+				FilePathAndName= FilePathAndName.substring(0,FilePathAndName.lastIndexOf("."));
 				FileName= FileName.substring(0,FileName.lastIndexOf("."));
-				String sizeFilenamewithpath = FileName+"MRMCStat"+fileTime+".csv";
-				String sizeFilename = sizeFilenamewithpath.substring(sizeFilenamewithpath.lastIndexOf("\\")+1);	
+				String saveStatFilePathAndName = FilePathAndName+"MRMCStat"+fileTime+".csv";
+				String saveStatFileName = FileName+"MRMCStat"+fileTime+".csv";
 				try {
 					JFileChooser fc = new JFileChooser();
 					FileNameExtensionFilter filter = new FileNameExtensionFilter(
 							"iMRMC Summary Files (.csv)", "csv");
 					fc.setFileFilter(filter);
 					if (outputfileDirectory!=null){
-						 fc.setSelectedFile(new File(outputfileDirectory+"\\"+sizeFilename));						
+						// fc.setSelectedFile(new File(outputfileDirectory+"\\"+saveStatFileName));		
+						fc.setSelectedFile(new File(outputfileDirectory+"//"+saveStatFileName));			
 					}						
 					else					
-					    fc.setSelectedFile(new File(sizeFilenamewithpath));
+					    fc.setSelectedFile(new File(saveStatFilePathAndName));
 					int fcReturn = fc.showSaveDialog((Component) e.getSource());
 					if (fcReturn == JFileChooser.APPROVE_OPTION) {
 						File f = fc.getSelectedFile();
@@ -615,6 +754,7 @@ public class GUInterface {
 						
 		}
 	}
+	*/
 	
 	/**	 * Handler for button to save all stat analysis result to file
 	 */
@@ -632,10 +772,13 @@ public class GUInterface {
 	            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
 				Date currDate = new Date();
 				final String fileTime = dateForm.format(currDate);
-				String fileWholeName=InputFile1.filename;
-				String fileName= fileWholeName.substring(fileWholeName.lastIndexOf("\\")+1,fileWholeName.lastIndexOf("."));
-				String filePath = fileWholeName.substring(0,fileWholeName.lastIndexOf("\\"));
-				File outputDir = new File (filePath + "//"+ fileName + fileTime);
+				//String fileWholeName=InputFile1.filename;
+				//String fileName= fileWholeName.substring(fileWholeName.lastIndexOf("\\")+1,fileWholeName.lastIndexOf("."));
+				//String filePath = fileWholeName.substring(0,fileWholeName.lastIndexOf("\\"));
+				//String fileWholeName=InputFile1.filename;
+				String filePathAndName =InputFile1.filePathAndName;
+				filePathAndName = filePathAndName.substring(0,filePathAndName.lastIndexOf("."));
+				File outputDir = new File (filePathAndName+ fileTime);
 				if(!outputDir.exists() && !outputDir.isDirectory()) 
 					outputDir.mkdir();		
 				// create file save all stat analysis result
@@ -717,7 +860,7 @@ public class GUInterface {
 					final ROCCurvePlot roc = new ROCCurvePlot(
 							"ROC Curve: All Modality ",
 							"FPF (1 - Specificity), legend shows symbols for each modalityID:readerID", "TPF (Sensitivity)",
-							InputFile1.generateROCpoints(rocMod),InputFile1.filename);
+							InputFile1.generateROCpoints(rocMod),InputFile1.filePathAndName,InputFile1.fileName);
 					roc.addData(InputFile1.generatePooledROC(rocMod), "Pooled Average");
 					AllROCreport = exportToFile.exportROC(roc.seriesCollection,AllROCreport);
 					
@@ -745,7 +888,7 @@ public class GUInterface {
 						tempModB = InputSummaryCard.loadmodalityB;
 					}
 					// Analysis modality A
-					if (!tempModA.equals("NO_MOD")){
+					if (tempModA!=null&&!tempModA.equals("NO_MOD")){
 						DBRecordStatAll.modalityA = tempModA;
 						DBRecordStatAll.modalityB = "NO_MOD";
 						DBRecordStatAll.selectedMod = 0;
@@ -760,7 +903,7 @@ public class GUInterface {
 					}
 					DBRecord track1 = DBRecordStat;
 					// Analysis modality B
-					if (!tempModB.equals("NO_MOD")){
+					if (tempModB!=null&&!tempModB.equals("NO_MOD")){
 						DBRecordStatAll.modalityA = "NO_MOD";
 						DBRecordStatAll.modalityB = tempModB;
 						DBRecordStatAll.selectedMod = 1;
@@ -774,7 +917,7 @@ public class GUInterface {
 						savetable();
 					}
 					// Analysis modality A and B
-					if ((!tempModA.equals("NO_MOD"))&(!tempModB.equals("NO_MOD"))){
+					if (tempModA!=null&&tempModB!=null&&!tempModA.equals("NO_MOD")&&!tempModB.equals("NO_MOD")){
 						DBRecordStatAll.modalityA = tempModA;
 						DBRecordStatAll.modalityB = tempModB;
 						DBRecordStatAll.selectedMod = 3;
@@ -863,11 +1006,10 @@ public class GUInterface {
 			// save tables result
 			BDGout = exportToFile.exportTableBDG(BDGout,DBRecordStatAll);
     		BCKout = exportToFile.exportTableBCK(BCKout,DBRecordStatAll);
-    		DBMout = exportToFile.exportTableDBM(DBMout,DBRecordStatAll);
-    		ORout = exportToFile.exportTableOR(ORout,DBRecordStatAll);
-			MSout = exportToFile.exportTableMS(MSout,DBRecordStatAll);
+	    	DBMout = exportToFile.exportTableDBM(DBMout,DBRecordStatAll);
+	    	ORout = exportToFile.exportTableOR(ORout,DBRecordStatAll);
+			MSout = exportToFile.exportTableMS(MSout,DBRecordStatAll);}
 			
-		}
 	}
 	
 	
