@@ -3,6 +3,16 @@
 <h4>Version Under Development</h4>
 ...
 
+<h4>iMRMC3p1</h4>
+*1/12/17*
+
+Estimate variance for individual readers. 
+
+Provide pdf version output for statistical analysis and export it by " Save Stat Analysis". The button can also export summary .omrmc and.csv files.
+
+Change fully-crossed judgment method (Whether chosen modality data is fully crossed).
+
+
 <h4>iMRMC3p0</h4>
 *7/14/16*
 
