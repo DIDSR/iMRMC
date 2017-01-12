@@ -464,12 +464,12 @@ public class GUInterface {
 						//summaryfilename = savedFileName.substring(savedFileName.lastIndexOf("\\")+1);
 						summaryfilename = fSummary.getName();
 						reportSummary = reportSummary + "MRMC summary statistics from " +MRMC.versionname + "\r\n";
-						reportSummary = reportSummary + "Summary statistics written to file named:" + "\r\n";
+						reportSummary = reportSummary + "Summary statistics based on input file named:" + "\r\n";
 						reportResult1 = "This file," + "\r\n" + fPdf.getAbsolutePath() + ",\r\n" ;
 						reportResult1 = reportResult1 + "shows the MRMC ROC analysis results for the data in:" + "\r\n";
 						reportResult1 = reportResult1 + FilePathName + "\r\n";
 						reportResult1 = reportResult1 + "using " + MRMC.versionname + ", https://github.com/DIDSR/iMRMC/releases" + "\r\n" + "\r\n";
-						reportSummary = reportSummary + summaryfilename + "\r\n" + "\r\n";
+						reportSummary = reportSummary + InputFile1.fileName + "\r\n" + "\r\n";
 						if (selectedInput == DescInputChooseMode) {
 							// generate summary string
 							reportSummary = exportToFile.exportSummary(reportSummary, DBRecordStat);
