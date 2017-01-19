@@ -11,6 +11,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;*/
 
 
+
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Paragraph;
@@ -1318,7 +1319,17 @@ public class exportToFile {
 	// export ROC curve information 
 	public static String exportROC(XYSeriesCollection seriesCollection,String report) {
 		String str = report;
-		str = str + "ModalityID:ReaderID,Number of points,Axises"+"\r\n";
+		int maxColumn = 0;
+		for (int j=0;j<seriesCollection.getSeriesCount();j++){
+			 String serisekey =(String) seriesCollection.getSeriesKey(j); 
+			 XYSeries seriesget = seriesCollection.getSeries(serisekey);  
+			 maxColumn = Math.max(maxColumn, seriesget.getItemCount());
+		}
+		str = str + "ModalityID:ReaderID,Number of points,Axises";
+	    for (int i=0; i<maxColumn; i++){
+	    	str = str + SEPA;
+	    }
+	    str = str + "\r\n";
         for (int j=0;j<seriesCollection.getSeriesCount();j++){
             String serisekey =(String) seriesCollection.getSeriesKey(j); 
             XYSeries seriesget = seriesCollection.getSeries(serisekey);             
@@ -1328,9 +1339,15 @@ public class exportToFile {
     	    for (int i=0; i<seriesget.getItemCount(); i++){
     	    	str = str + fourDec.format(seriesget.getX(i)) + SEPA;
     	    }
-    	    str = str + "\r\n" + SEPA + SEPA +"TPF" + SEPA;
+    	    for (int i = seriesget.getItemCount(); i< maxColumn; i++){
+    	    	str = str + SEPA;
+    	    }
+    	    str = str + "\r\n" +serisekey + SEPA + Integer.toString(seriesget.getItemCount()) + SEPA +"TPF" + SEPA;
     	    for (int i=0; i<seriesget.getItemCount(); i++){
     	    	str = str + fourDec.format(seriesget.getY(i)) + SEPA;
+    	    }
+    	    for (int i = seriesget.getItemCount(); i< maxColumn; i++){
+    	    	str = str + SEPA;
     	    }
     	    str = str + "\r\n";
         } 			

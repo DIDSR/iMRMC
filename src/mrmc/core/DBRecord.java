@@ -20,7 +20,10 @@ package mrmc.core;
 
 import java.util.*;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -160,7 +163,7 @@ public class DBRecord {
 	 * Indicator whether the data is fully crossed or not.
 	 */
 	public boolean flagFullyCrossed = true;
-
+	public NumberFormat formatter = new DecimalFormat("#0.00");
 	/**
 	 * The BDG[4][8] (Barrett, Clarkson, and Kupinski) variance components <br>
 	 * ----BDG[0] are the components of variance of AUC_A <br>
@@ -1000,8 +1003,13 @@ public class DBRecord {
 				readerTotalVarMLE[ir]  += readerBDGcoeff[3][i] * readerBDGbias[3][i];
 				
 			}
+			readerVarAnoMLE[ir] =  new BigDecimal(readerVarAnoMLE[ir]).setScale(8, RoundingMode.HALF_UP).doubleValue();
+			readerVarBnoMLE[ir] =  new BigDecimal(readerVarBnoMLE[ir]).setScale(8, RoundingMode.HALF_UP).doubleValue();
+			readerVarAMLE[ir] =  new BigDecimal(readerVarAMLE[ir]).setScale(8, RoundingMode.HALF_UP).doubleValue();
+			readerVarBMLE[ir] =  new BigDecimal(readerVarBMLE[ir]).setScale(8, RoundingMode.HALF_UP).doubleValue();
+			readerTotalVarnoMLE[ir] =  new BigDecimal(readerTotalVarnoMLE[ir]).setScale(8, RoundingMode.HALF_UP).doubleValue();
+			readerTotalVarMLE[ir] =  new BigDecimal(readerTotalVarMLE[ir]).setScale(8, RoundingMode.HALF_UP).doubleValue();
 		}
-
 		if (flagMLE==0){
 			totalVar= totalVarnoMLE;
 			varA = varAnoMLE;

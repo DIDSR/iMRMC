@@ -120,6 +120,11 @@ public class GUInterface {
 	 */
 	public InputFile InputFile1 = new InputFile();
 	/**
+	 * All analysis output files directory {@link mrmc.core.InputFile}
+	 */
+	
+	public String allAnalysisOutput="";
+	/**
 	 * DBrecord object holds all the processed info related to a reader study
 	 */
 	public DBRecord DBRecordStat = new DBRecord(this);
@@ -777,10 +782,16 @@ public class GUInterface {
 				//String filePath = fileWholeName.substring(0,fileWholeName.lastIndexOf("\\"));
 				//String fileWholeName=InputFile1.filename;
 				String filePathAndName =InputFile1.filePathAndName;
-				filePathAndName = filePathAndName.substring(0,filePathAndName.lastIndexOf("."));
-				File outputDir = new File (filePathAndName+ fileTime);
+				filePathAndName = filePathAndName.substring(0,filePathAndName.lastIndexOf("."));	
+				// allow user choose output directory. If not define use input file directory
+				if (allAnalysisOutput.length()!=0 ){
+					filePathAndName = allAnalysisOutput;					
+				}else{
+					filePathAndName = filePathAndName+ fileTime;
+				}
+				File outputDir = new File (filePathAndName);				
 				if(!outputDir.exists() && !outputDir.isDirectory()) 
-					outputDir.mkdir();		
+					outputDir.mkdir();					
 				// create file save all stat analysis result
 				String AllStatPath = outputDir+ "//statAnalysis.csv";
 				// create file save all stat analysis MLE result
