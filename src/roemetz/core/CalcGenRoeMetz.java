@@ -23,7 +23,9 @@ import mrmc.core.DBRecord;
 import mrmc.core.Matrix;
 import mrmc.gui.SizePanel;
 
-import org.apache.commons.math3.distribution.NormalDistribution;
+//import org.apache.commons.math3.distribution.NormalDistribution;
+
+import umontreal.iro.lecuyer.probdist.NormalDist;
 
 /**
  * Calculates product moments from a generalized Roe and Metz model that allows
@@ -102,8 +104,8 @@ public class CalcGenRoeMetz {
 	 * @return Integrated product moment
 	 */
 	public static double prodMoment1(double[] u, double[] scale, int numSamples) {
-		NormalDistribution gauss = new NormalDistribution();
-
+		//NormalDistribution gauss = new NormalDistribution();
+		NormalDist gaussNew = new NormalDist();
 		double scale1 = scale[0];
 		double scale20 = scale[1];
 		double scale21 = scale[2];
@@ -126,10 +128,28 @@ public class CalcGenRoeMetz {
 
 		double[] phi = new double[numSamples];
 		for (int i = 0; i < numSamples; i++) {
-			phi[i] = gauss.cumulativeProbability((u[0] + x[i])
+			//old
+			/*phi[i] = gauss.cumulativeProbability((u[0] + x[i])
+					/ Math.sqrt(scale20))
+					* gauss.cumulativeProbability((u[1] + x[i])
+							/ Math.sqrt(scale21));*/
+			//new
+			phi[i] = gaussNew.cdf((u[0] + x[i])
+					/ Math.sqrt(scale20))
+					* gaussNew.cdf((u[1] + x[i])
+							/ Math.sqrt(scale21));
+			//check
+			/*double oldcdf = gauss.cumulativeProbability((u[0] + x[i])
 					/ Math.sqrt(scale20))
 					* gauss.cumulativeProbability((u[1] + x[i])
 							/ Math.sqrt(scale21));
+			double newcdf = gaussNew.cdf((u[0] + x[i])
+					/ Math.sqrt(scale20))
+					* gaussNew.cdf((u[1] + x[i])
+							/ Math.sqrt(scale21));
+			System.out.println("old = "+ oldcdf);	
+			System.out.println("new = " + newcdf);	
+			int a = 1;*/
 		}
 
 		double[] toTotal = new double[numSamples];
@@ -149,7 +169,8 @@ public class CalcGenRoeMetz {
 	 * @return Integrated product moment
 	 */
 	public static double prodMoment(double[] u, double[] scale, int numSamples) {
-		NormalDistribution gauss = new NormalDistribution();
+		//NormalDistribution gauss = new NormalDistribution();
+		NormalDist gaussNew = new NormalDist();
 		double scaleFixed = scale[0];
 		double scaleIndependentA = scale[1] + scale[3];
 		double scaleIndependentB = scale[2] + scale[4];
@@ -158,7 +179,7 @@ public class CalcGenRoeMetz {
 		double dx = lx / (double) numSamples;
 		double[] x = new double[numSamples];
 		double Integral = 0.0;
-		
+		double IntegralNew = 0.0;
 		for (int i = 0; i < numSamples; i++) {
 			x[i] = ((double) i * dx) - (0.5 * lx);
 		}
@@ -170,13 +191,46 @@ public class CalcGenRoeMetz {
 		for (int i = 0; i < numSamples; i++) {
 			phi_x[i] = Math.exp(-(x[i] * x[i]) / 2.0 )
 					/ Math.sqrt(Math.PI * 2.0);
-			cdf_A[i] = gauss.cumulativeProbability(
+			// old
+			/*cdf_A[i] = gauss.cumulativeProbability(
 					(u[0] + x[i]*Math.sqrt(scaleFixed))
 					/ Math.sqrt(scaleIndependentA));
 			cdf_B[i] = gauss.cumulativeProbability(
 					(u[1] + x[i]*Math.sqrt(scaleFixed))
 					/ Math.sqrt(scaleIndependentB));
+			Integral = Integral + dx*phi_x[i]*cdf_A[i]*cdf_B[i];*/
+			//new
+			cdf_A[i] = gaussNew.cdf(
+					(u[0] + x[i]*Math.sqrt(scaleFixed))
+					/ Math.sqrt(scaleIndependentA));
+			cdf_B[i] = gaussNew.cdf(
+					(u[1] + x[i]*Math.sqrt(scaleFixed))
+					/ Math.sqrt(scaleIndependentB));;
 			Integral = Integral + dx*phi_x[i]*cdf_A[i]*cdf_B[i];
+			//check
+/*			double oldA = gauss.cumulativeProbability(
+					(u[0] + x[i]*Math.sqrt(scaleFixed))
+					/ Math.sqrt(scaleIndependentA));
+			double oldB = gauss.cumulativeProbability(
+					(u[1] + x[i]*Math.sqrt(scaleFixed))
+					/ Math.sqrt(scaleIndependentB));
+			double newA = gaussNew.cdf(
+					(u[0] + x[i]*Math.sqrt(scaleFixed))
+					/ Math.sqrt(scaleIndependentA));
+			double newB = gaussNew.cdf(
+					(u[1] + x[i]*Math.sqrt(scaleFixed))
+					/ Math.sqrt(scaleIndependentB));
+			IntegralNew = IntegralNew + dx*phi_x[i]*newA*newB;
+			System.out.println("oldA = "+ oldA);	
+			System.out.println("oldB = " + oldB);	
+			System.out.println("oldint = "+ Integral);	
+			System.out.println("newA = " + newA);	
+			System.out.println("newB = "+ newB);	
+			System.out.println("newint = " + IntegralNew);	
+			int a = 1;*/
+			
+			
+			
 		}
 
 		return Integral;
@@ -202,8 +256,8 @@ public class CalcGenRoeMetz {
 		// number of samples for numerical integration, can change
 		final int numSamples = 256;
 
-		NormalDistribution gauss = new NormalDistribution();
-
+	//	NormalDistribution gauss = new NormalDistribution();
+		NormalDist gaussNew = new NormalDist();
 		double v_AR0 = var_t[0];
 		double v_AC0 = var_t[1];
 		double v_ARC0 = var_t[2];
@@ -230,10 +284,28 @@ public class CalcGenRoeMetz {
 
 		DBRecordNumerical.AUCsReaderAvg = new double[2];
 		DBRecordNumerical.AUCs = new double[(int) DBRecordNumerical.Nreader][2];
-		DBRecordNumerical.AUCsReaderAvg[0] = 
+		//old
+		/*DBRecordNumerical.AUCsReaderAvg[0] = 
 			gauss.cumulativeProbability(u[0] / Math.sqrt(scale1 + scale20));
 		DBRecordNumerical.AUCsReaderAvg[1] = 
-			gauss.cumulativeProbability(u[1] / Math.sqrt(scale1 + scale21));
+			gauss.cumulativeProbability(u[1] / Math.sqrt(scale1 + scale21));*/
+		//new
+		DBRecordNumerical.AUCsReaderAvg[0] = 
+				gaussNew.cdf(u[0] / Math.sqrt(scale1 + scale20));
+		DBRecordNumerical.AUCsReaderAvg[1] = 
+				gaussNew.cdf(u[1] / Math.sqrt(scale1 + scale21));
+		//check
+		/*double AUC1old = gauss.cumulativeProbability(u[0] / Math.sqrt(scale1 + scale20));
+		double AUC2old = gauss.cumulativeProbability(u[1] / Math.sqrt(scale1 + scale21));
+		double AUC1new = gaussNew.cdf(u[0] / Math.sqrt(scale1 + scale20));
+		double AUC2new = gaussNew.cdf(u[1] / Math.sqrt(scale1 + scale21));
+			System.out.println("AUC1old = "+ AUC1old);	
+			System.out.println("AUC2old = " + AUC2old);	
+			System.out.println("AUC1new = "+ AUC1new);	
+			System.out.println("AUC2new = " + AUC2new);	
+			int a = 1;*/
+		
+		
 		for(int r=0; r<DBRecordNumerical.Nreader; r++) {
 			DBRecordNumerical.AUCs[r][0] = DBRecordNumerical.AUCsReaderAvg[0];
 			DBRecordNumerical.AUCs[r][1] = DBRecordNumerical.AUCsReaderAvg[1];

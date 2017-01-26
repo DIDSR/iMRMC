@@ -894,8 +894,41 @@ public class DBRecord {
 			BDGbias[1][i] = BDG[1][i];
 			BDGbias[2][i] = BDG[2][i];
 			BDGbias[3][i] = BDG[3][i];
+						
+			
 		}
 		SE = Math.sqrt(totalVar);
+		// calculate readers var
+		double[][] readerBDG = new double [4][4]; 
+		double[][] readerBDGbias = new double [4][4]; 
+		double[][] readerBDGcoeff = new double [4][4];
+		for (int ir = 0; ir<Nreader;ir++ ){
+			for (int i = 0; i < 4; i++) {
+
+				
+				readerBDGcoeff[0][i] = covMRMCstat.readerCoefficientsAA[ir][i + 1];
+				readerBDGcoeff[1][i] = covMRMCstat.readerCoefficientsBB[ir][i + 1];
+				readerBDGcoeff[2][i] = covMRMCstat.readerCoefficientsAB[ir][i + 1];
+				
+				readerBDGcoeff[3][i] = 1.0;
+				
+				readerVarAnoMLE[ir] +=  readerBDGcoeff[0][i] * readerBDG[0][i];
+				readerVarBnoMLE[ir] +=  readerBDGcoeff[1][i] * readerBDG[1][i];
+				readerVarAMLE[ir] +=  readerBDGcoeff[0][i] * readerBDGbias[0][i];
+				readerVarBMLE[ir] +=  readerBDGcoeff[1][i] * readerBDGbias[1][i];
+				
+
+				readerBDG[3][i] =     (readerBDG[0][i] * readerBDGcoeff[0][i])
+						  +     (readerBDG[1][i] * readerBDGcoeff[1][i])
+						  - 2.0*(readerBDG[2][i] * readerBDGcoeff[2][i]);
+				readerBDGbias[3][i] = (readerBDGbias[0][i] * readerBDGcoeff[0][i])
+						  +     (readerBDGbias[1][i] * readerBDGcoeff[1][i])
+						  - 2.0*(readerBDGbias[2][i] * readerBDGcoeff[2][i]);
+				readerTotalVarnoMLE[ir] += readerBDGcoeff[3][i] * readerBDG[3][i];
+				readerTotalVarMLE[ir]  += readerBDGcoeff[3][i] * readerBDGbias[3][i];
+				
+			}
+		}
 		if(selectedMod == 0) {
 			flagFullyCrossed = covMRMCsize.fullyCrossedA;
 		}
@@ -1979,6 +2012,10 @@ public class DBRecord {
 		copyDBRecordTemp.SE = DBRecordTemp.SE;
 		copyDBRecordTemp.varA = DBRecordTemp.varA;
 		copyDBRecordTemp.varB = DBRecordTemp.varB;
+		copyDBRecordTemp.readerVarA = Matrix.copy(DBRecordTemp.readerVarA);
+		copyDBRecordTemp.readerVarB = Matrix.copy(DBRecordTemp.readerVarB);
+		copyDBRecordTemp.readerTotalVar = Matrix.copy(DBRecordTemp.readerTotalVar);
+
 		copyDBRecordTemp.flagTotalVarIsNegative = DBRecordTemp.flagTotalVarIsNegative;
 
 	}
@@ -2028,6 +2065,13 @@ public class DBRecord {
 		sumDBRecordTemp.SE += DBRecordTemp.SE;
 		sumDBRecordTemp.varA += DBRecordTemp.varA;
 		sumDBRecordTemp.varB += DBRecordTemp.varB;
+		sumDBRecordTemp.readerVarA = 
+				Matrix.add(sumDBRecordTemp.readerVarA, DBRecordTemp.readerVarA);
+		sumDBRecordTemp.readerVarB = 
+				Matrix.add(sumDBRecordTemp.readerVarB, DBRecordTemp.readerVarB);
+		sumDBRecordTemp.readerTotalVar = 
+				Matrix.add(sumDBRecordTemp.readerTotalVar, DBRecordTemp.readerTotalVar);
+
 		sumDBRecordTemp.flagTotalVarIsNegative += DBRecordTemp.flagTotalVarIsNegative;
 		
 	}
@@ -2077,6 +2121,13 @@ public class DBRecord {
 		DBRecordTemp.SE *= scaleFactor;
 		DBRecordTemp.varA *= scaleFactor;
 		DBRecordTemp.varB *= scaleFactor;
+		DBRecordTemp.readerVarA = 
+				Matrix.scale(DBRecordTemp.readerVarA, scaleFactor);
+		DBRecordTemp.readerVarB = 
+				Matrix.scale(DBRecordTemp.readerVarB, scaleFactor);
+		DBRecordTemp.readerTotalVar = 
+				Matrix.scale(DBRecordTemp.readerTotalVar, scaleFactor);
+		
 		DBRecordTemp.flagTotalVarIsNegative *= scaleFactor;
 		
 	}
@@ -2123,6 +2174,13 @@ public class DBRecord {
 		DBRecordTemp.SE *= DBRecordTemp.SE;
 		DBRecordTemp.varA *= DBRecordTemp.varA;
 		DBRecordTemp.varB *= DBRecordTemp.varB;
+		DBRecordTemp.readerVarA = 
+				Matrix.squareTerms(DBRecordTemp.readerVarA);
+		DBRecordTemp.readerVarB = 
+				Matrix.squareTerms(DBRecordTemp.readerVarB);
+		DBRecordTemp.readerTotalVar = 
+				Matrix.squareTerms(DBRecordTemp.readerTotalVar);
+
 		DBRecordTemp.flagTotalVarIsNegative *= DBRecordTemp.flagTotalVarIsNegative;
 		
 	}
