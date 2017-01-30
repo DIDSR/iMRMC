@@ -760,7 +760,8 @@ public void makeDMatrices() {
 	d1_modAA = new int[(int) Ndisease][(int) Nreader][2];
 	d1_modBB = new int[(int) Ndisease][(int) Nreader][2];
 	d1_modAB = new int[(int) Ndisease][(int) Nreader][2];
-
+	N0perReader = new int[1][3];
+	N1perReader = new int[1][3];
 	int NreaderPerModality, NreaderPerGroup;
 	int NnormalPerModality, NnormalPerGroup;
 	int NdiseasePerModality, NdiseasePerGroup;
@@ -799,7 +800,20 @@ public void makeDMatrices() {
 	NreaderPerGroup = NreaderPerModality / SizePanel1.numSplitPlots;
 	NnormalPerGroup = NnormalPerModality / SizePanel1.numSplitPlots;
 	NdiseasePerGroup = NdiseasePerModality / SizePanel1.numSplitPlots;
-
+	N0perReader[0][0]= NnormalPerGroup;
+	N0perReader[0][1]= NnormalPerGroup;
+	if (SizePanel1.pairedNormalsFlag == 1) {
+		N0perReader[0][2] = NnormalPerGroup;
+	} else {
+		N0perReader[0][2] = 0;
+	}
+	N1perReader[0][0]= NdiseasePerGroup;
+	N1perReader[0][1]= NdiseasePerGroup;
+	if (SizePanel1.pairedDiseasedFlag == 1) {
+		N1perReader[0][2] = NdiseasePerGroup;
+	} else {
+		N1perReader[0][2] = 0;
+	}
 	int readerID_modA, caseID_modA;
 	int readerID_modB, caseID_modB;
 	for (int s = 0; s < SizePanel1.numSplitPlots; s++) {

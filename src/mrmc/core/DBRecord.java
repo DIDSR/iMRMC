@@ -900,33 +900,39 @@ public class DBRecord {
 		SE = Math.sqrt(totalVar);
 		// calculate readers var
 		double[][] readerBDG = new double [4][4]; 
-		double[][] readerBDGbias = new double [4][4]; 
 		double[][] readerBDGcoeff = new double [4][4];
+		N0perReader = new int[(int)Nreader][3];
+		N1perReader = new int[(int)Nreader][3];
+		readerTotalVar = new double[(int) Nreader];
+		readerVarA = new double[(int) Nreader];
+		readerVarB = new double[(int) Nreader];
 		for (int ir = 0; ir<Nreader;ir++ ){
-			for (int i = 0; i < 4; i++) {
-
+			N0perReader[ir][0] = covMRMCsize.N0perReader[0][0];
+		    N0perReader[ir][1] = covMRMCsize.N0perReader[0][1];
+		    N0perReader[ir][2] = covMRMCsize.N0perReader[0][2];
+			N1perReader[ir][0] = covMRMCsize.N1perReader[0][0];
+		    N1perReader[ir][1] = covMRMCsize.N1perReader[0][1];
+		    N1perReader[ir][2] = covMRMCsize.N1perReader[0][2];
+			for (int i = 0; i < 4; i++) {	
+				readerBDG[0][i] = BDG[0][i];
+				readerBDG[1][i] = BDG[1][i];
+				readerBDG[2][i] = BDG[2][i];
+				readerBDG[3][i] = BDG[3][i];
 				
-				readerBDGcoeff[0][i] = covMRMCstat.readerCoefficientsAA[ir][i + 1];
-				readerBDGcoeff[1][i] = covMRMCstat.readerCoefficientsBB[ir][i + 1];
-				readerBDGcoeff[2][i] = covMRMCstat.readerCoefficientsAB[ir][i + 1];
+				readerBDGcoeff[0][i] = covMRMCsize.readerCoefficientsAA[ir][i + 1];
+				readerBDGcoeff[1][i] = covMRMCsize.readerCoefficientsBB[ir][i + 1];
+				readerBDGcoeff[2][i] = covMRMCsize.readerCoefficientsAB[ir][i + 1];
 				
 				readerBDGcoeff[3][i] = 1.0;
-				
-				readerVarAnoMLE[ir] +=  readerBDGcoeff[0][i] * readerBDG[0][i];
-				readerVarBnoMLE[ir] +=  readerBDGcoeff[1][i] * readerBDG[1][i];
-				readerVarAMLE[ir] +=  readerBDGcoeff[0][i] * readerBDGbias[0][i];
-				readerVarBMLE[ir] +=  readerBDGcoeff[1][i] * readerBDGbias[1][i];
-				
+
+				readerVarA[ir] +=  readerBDGcoeff[0][i] * readerBDG[0][i];
+				readerVarB[ir] +=  readerBDGcoeff[1][i] * readerBDG[1][i];				
 
 				readerBDG[3][i] =     (readerBDG[0][i] * readerBDGcoeff[0][i])
 						  +     (readerBDG[1][i] * readerBDGcoeff[1][i])
 						  - 2.0*(readerBDG[2][i] * readerBDGcoeff[2][i]);
-				readerBDGbias[3][i] = (readerBDGbias[0][i] * readerBDGcoeff[0][i])
-						  +     (readerBDGbias[1][i] * readerBDGcoeff[1][i])
-						  - 2.0*(readerBDGbias[2][i] * readerBDGcoeff[2][i]);
-				readerTotalVarnoMLE[ir] += readerBDGcoeff[3][i] * readerBDG[3][i];
-				readerTotalVarMLE[ir]  += readerBDGcoeff[3][i] * readerBDGbias[3][i];
-				
+
+				readerTotalVar[ir] += readerBDGcoeff[3][i] * readerBDG[3][i];
 			}
 		}
 		if(selectedMod == 0) {
