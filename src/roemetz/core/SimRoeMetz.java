@@ -367,7 +367,7 @@ public class SimRoeMetz {
 					observerData[irow][0] = "reader"+String.format("%03d", readerID);
 //					observerData[irow][1] = "disease"+Integer.toString(diseaseID);
 					observerData[irow][1] = "disease"+String.format("%06d", diseaseID);
-				observerData[irow][2] = DBRecordStat.modalityB;
+					observerData[irow][2] = DBRecordStat.modalityB;
 					observerData[irow][3] = Double.toString(tB1[readerID][diseaseID]);
 					irow++;
 				}

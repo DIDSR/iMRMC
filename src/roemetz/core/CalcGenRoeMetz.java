@@ -490,7 +490,23 @@ public class CalcGenRoeMetz {
 		
 		// Set the coefficients
 		DBRecordNumerical.DBRecordRoeMetzNumericalFill(SizePanelRoeMetz);
-		
+		if (SizePanelRoeMetz.pairedReadersFlag == 0) {
+			for(int i= 0; i<(DBRecordNumerical.Nreader/2);i++){
+				DBRecordNumerical.N0perReader[i][1] = 0;
+				DBRecordNumerical.N1perReader[i][1] = 0;
+				DBRecordNumerical.N0perReader[i][2] = 0;
+				DBRecordNumerical.N1perReader[i][2] = 0;
+				DBRecordNumerical.AUCs[i][1] = Double.NaN;	
+			}
+			for(int i= (int) (DBRecordNumerical.Nreader/2); i<DBRecordNumerical.Nreader;i++){
+				DBRecordNumerical.N0perReader[i][0] = 0;
+				DBRecordNumerical.N1perReader[i][0] = 0;
+				DBRecordNumerical.N0perReader[i][2] = 0;
+				DBRecordNumerical.N1perReader[i][2] = 0;
+				DBRecordNumerical.AUCs[i][0] = Double.NaN;
+			}
+			
+		} 
 	}
 
 }

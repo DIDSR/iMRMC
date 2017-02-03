@@ -863,7 +863,7 @@ public class DBRecord {
 	 *
 	 * 
 	 * 
-	 * @param SizePanelTemp
+	 * @param SizePanelTemp for iRoeMetz Numerical Button
 	 */
 	public void DBRecordRoeMetzNumericalFill(SizePanel SizePanelRoeMetz) {
 		
@@ -880,7 +880,6 @@ public class DBRecord {
 			BDGcoeff[1][i] = covMRMCsize.coefficientsBB[i+1];
 			BDGcoeff[2][i] = covMRMCsize.coefficientsAB[i+1];
 			BDGcoeff[3][i] = 1.0;
-			
 			BDG[3][i] = 
 					+    BDGcoeff[0][i]*BDG[0][i]
 					+    BDGcoeff[1][i]*BDG[1][i]
@@ -917,8 +916,7 @@ public class DBRecord {
 				readerBDG[0][i] = BDG[0][i];
 				readerBDG[1][i] = BDG[1][i];
 				readerBDG[2][i] = BDG[2][i];
-				readerBDG[3][i] = BDG[3][i];
-				
+
 				readerBDGcoeff[0][i] = covMRMCsize.readerCoefficientsAA[ir][i + 1];
 				readerBDGcoeff[1][i] = covMRMCsize.readerCoefficientsBB[ir][i + 1];
 				readerBDGcoeff[2][i] = covMRMCsize.readerCoefficientsAB[ir][i + 1];
@@ -1042,12 +1040,18 @@ public class DBRecord {
 				readerTotalVarMLE[ir]  += readerBDGcoeff[3][i] * readerBDGbias[3][i];
 				
 			}
-			readerVarAnoMLE[ir] =  new BigDecimal(readerVarAnoMLE[ir]).setScale(8, RoundingMode.HALF_UP).doubleValue();
-			readerVarBnoMLE[ir] =  new BigDecimal(readerVarBnoMLE[ir]).setScale(8, RoundingMode.HALF_UP).doubleValue();
-			readerVarAMLE[ir] =  new BigDecimal(readerVarAMLE[ir]).setScale(8, RoundingMode.HALF_UP).doubleValue();
-			readerVarBMLE[ir] =  new BigDecimal(readerVarBMLE[ir]).setScale(8, RoundingMode.HALF_UP).doubleValue();
-			readerTotalVarnoMLE[ir] =  new BigDecimal(readerTotalVarnoMLE[ir]).setScale(8, RoundingMode.HALF_UP).doubleValue();
-			readerTotalVarMLE[ir] =  new BigDecimal(readerTotalVarMLE[ir]).setScale(8, RoundingMode.HALF_UP).doubleValue();
+			if (!Double.isNaN(readerVarAnoMLE[ir]))
+				readerVarAnoMLE[ir] =  new BigDecimal(readerVarAnoMLE[ir]).setScale(8, RoundingMode.HALF_UP).doubleValue();
+			if (!Double.isNaN(readerVarBnoMLE[ir]))
+				readerVarBnoMLE[ir] =  new BigDecimal(readerVarBnoMLE[ir]).setScale(8, RoundingMode.HALF_UP).doubleValue();
+			if (!Double.isNaN(readerVarAMLE[ir]))
+				readerVarAMLE[ir] =  new BigDecimal(readerVarAMLE[ir]).setScale(8, RoundingMode.HALF_UP).doubleValue();
+			if (!Double.isNaN(readerVarBMLE[ir]))
+				readerVarBMLE[ir] =  new BigDecimal(readerVarBMLE[ir]).setScale(8, RoundingMode.HALF_UP).doubleValue();
+			if (!Double.isNaN(readerTotalVarnoMLE[ir]))
+				readerTotalVarnoMLE[ir] =  new BigDecimal(readerTotalVarnoMLE[ir]).setScale(8, RoundingMode.HALF_UP).doubleValue();
+			if (!Double.isNaN(readerTotalVarMLE[ir]))
+				readerTotalVarMLE[ir] =  new BigDecimal(readerTotalVarMLE[ir]).setScale(8, RoundingMode.HALF_UP).doubleValue();
 		}
 		if (flagMLE==0){
 			totalVar= totalVarnoMLE;
@@ -1065,7 +1069,6 @@ public class DBRecord {
 			readerVarB = readerVarBMLE;
 		}
 		SE = Math.sqrt(totalVar);
-	
 		if(totalVar < 0) {
 			flagTotalVarIsNegative = 1;
 		}

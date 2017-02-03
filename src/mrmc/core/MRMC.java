@@ -102,7 +102,7 @@ public class MRMC extends JApplet {
 			outputFolderFullName = args[1];
 			commandStart = true;
 		}
-		int width = 900, height = 800;
+		int width = 900, height = 620;
 		run(new MRMC(), width, height);
 		cmonnandStartFunction cmonnandStartFunction1 = new cmonnandStartFunction();
 		cmonnandStartFunction1.cmonnandStartFunction(gui, inputFileFullName,outputFolderFullName);

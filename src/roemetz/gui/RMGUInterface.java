@@ -1099,15 +1099,15 @@ public class RMGUInterface {
 					}
 					// pad current simulation result to trialResult. 
 					saveTrialResult(DBRecordStat,i);
-					// validate sizing feature
-					sizeValidation(DBRecordStat,i);
+
 					// Accumulate DBRecord
 					DBRecord.add(DBRecordStat, sumDBRecordStat);
 					// Accumulate squareDBRecord
 					DBRecord.copy(DBRecordStat, squareDBRecordStat);
 					DBRecord.square(squareDBRecordStat);
 					DBRecord.add(squareDBRecordStat, sumSquareDBRecordStat);
-					
+					// validate sizing feature
+					sizeValidation(DBRecordStat,i);
 					// write to disk
 					if (simSaveDirectory != null && !simSaveDirectory.equals("")) {
 						writeInputFile(DBRecordStat, filenameTime, i);
@@ -1431,7 +1431,6 @@ public class RMGUInterface {
 			squareDBRecordStat = null;
 			// Reset DBRecordStat: Access one MC trial
 			DBRecordStat = results[0][0];
-			
 			avgDBRecordStat.Decompositions();
 			StatPanel1 = new StatPanel(RoeMetz1.getFrame(), avgDBRecordStat);
 			StatPanel1.setStatPanel();

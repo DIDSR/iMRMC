@@ -3,6 +3,7 @@
  */
 package mrmc.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -23,10 +24,15 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
+import org.jfree.ui.RefineryUtilities;
+
 import roemetz.core.RoeMetz;
+import mrmc.chart.WrapLayout;
 import mrmc.core.DBRecord;
 import mrmc.core.InputFile;
 import mrmc.core.Matrix;
+import mrmc.gui.InputFileCard.exportreaderresult;
+import mrmc.gui.InputFileCard.showAUCsButtonListener;
 
 
 /**
@@ -167,7 +173,9 @@ public class StatPanel {
 				"comp MB", "coeff MB", "comp product", "- coeff product",
 				"total" };
 		String[] rowNamesSingle = new String[] { "components", "coeff", "total" };
-
+		JButton showCompButton = new JButton("Show Variance Component");
+		showCompButton.addActionListener(new showVarComponent());
+		
 		// Create BDG tab
 		JPanel panelBDG1 = makeBDGTab(rowNamesDiff);
 		// Create BCK tab
@@ -185,15 +193,33 @@ public class StatPanel {
 		tabbedPane1.addTab("DBM", panelDBM1);
 		tabbedPane1.addTab("OR", panelOR1);
 		tabbedPane1.addTab("MS", panelMS1);
-
+		StatPanelRow5.add(showCompButton);
+		
 		JPanelStat.add(StatPanelRow1);
 		JPanelStat.add(StatPanelRow2);
 		JPanelStat.add(StatPanelRow3);
 		JPanelStat.add(StatPanelRow4);
 		JPanelStat.add(StatPanelRow5);
-		JPanelStat.add(tabbedPane1);
+//		JPanelStat.add(tabbedPane1);
 
 	}
+	
+	/**
+	 * Creates a table showing individual reader AUCs
+	 * 
+	 */
+	class showVarComponent implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+				JFrame JFrameAUC= new JFrame("Variance Component");
+				RefineryUtilities.centerFrameOnScreen(JFrameAUC);
+				JFrameAUC.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				JFrameAUC.add(tabbedPane1, BorderLayout.CENTER);
+				JFrameAUC.setSize(900, 250);
+				JFrameAUC.setVisible(true);
+		}
+	}
+	
+	
 
 	/**
 	 * Clears all input fields and statistics labels
