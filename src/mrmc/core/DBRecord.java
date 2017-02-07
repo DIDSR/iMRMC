@@ -1089,6 +1089,7 @@ public class DBRecord {
 	private void BDGforSizePanel() {
 
 		totalVar = 0.0;
+		totalVarMLE = 0.0;
 		varA = 0.0;
 		varB = 0.0;
 
@@ -1116,9 +1117,13 @@ public class DBRecord {
 					  - 2.0*(BDGbias[2][i] * BDGcoeff[2][i]);
 			
 			totalVar += BDGcoeff[3][i] * BDG[3][i];
+			totalVarMLE  += BDGcoeff[3][i] * BDGbias[3][i];
 			
 		}
 		
+		if (flagMLE==1){
+			totalVar= totalVarMLE;
+		}
 		totalVar = totalVar*1.0;
 		SE = Math.sqrt(totalVar);
 	

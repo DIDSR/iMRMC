@@ -457,7 +457,7 @@ public class InputFileCard {
 				FlagMLE = NO_MLE;
 			}
 			DBRecordStat.flagMLE = FlagMLE;
-			DBRecordSize.flagMLE = FlagMLE;
+			//DBRecordSize.flagMLE = FlagMLE;
 			GUI.StatPanel1.resetStatPanel();
 			GUI.StatPanel1.resetTable1();
 			GUI.SizePanel1.resetSizePanel();
@@ -589,17 +589,19 @@ public class InputFileCard {
 			}
 			// Update GUI
 			DBRecordStat.flagMLE = FlagMLE;
-			DBRecordSize.flagMLE = FlagMLE;
+			//DBRecordSize.flagMLE = FlagMLE;
 
 			GUI.StatPanel1.setStatPanel();
 			GUI.StatPanel1.setTable1();
 			DBRecordSize.Nreader = DBRecordStat.Nreader;
 			DBRecordSize.Nnormal = DBRecordStat.Nnormal;
 			DBRecordSize.Ndisease = DBRecordStat.Ndisease;
-			GUI.SizePanel1.NreaderJTextField.setText(Long.toString(DBRecordStat.Nreader));
-			GUI.SizePanel1.NnormalJTextField.setText(Long.toString(DBRecordStat.Nnormal));
-			GUI.SizePanel1.NdiseaseJTextField.setText(Long.toString(DBRecordStat.Ndisease));
-			
+			//GUI.SizePanel1.NreaderJTextField.setText(Long.toString(DBRecordStat.Nreader));
+			//GUI.SizePanel1.NnormalJTextField.setText(Long.toString(DBRecordStat.Nnormal));
+			//GUI.SizePanel1.NdiseaseJTextField.setText(Long.toString(DBRecordStat.Ndisease));
+			GUI.SizePanel1.NreaderJTextField.setText(Long.toString(DBRecordStat.NreaderDB));
+			GUI.SizePanel1.NnormalJTextField.setText(Long.toString(DBRecordStat.NnormalDB));
+			GUI.SizePanel1.NdiseaseJTextField.setText(Long.toString(DBRecordStat.NdiseaseDB));
 		}
 	}
 	

@@ -487,6 +487,24 @@ public class CalcGenRoeMetz {
 				DBRecordNumerical.AUCsReaderAvg[1]*DBRecordNumerical.AUCsReaderAvg[1];
 		DBRecordNumerical.BDG[2][7] = 
 				DBRecordNumerical.AUCsReaderAvg[0]*DBRecordNumerical.AUCsReaderAvg[1];
+		if (SizePanelRoeMetz.pairedReadersFlag == 0) {
+			DBRecordNumerical.BDG[2][0]=0;
+			DBRecordNumerical.BDG[2][1]=0;
+			DBRecordNumerical.BDG[2][2]=0;
+			DBRecordNumerical.BDG[2][3]=0;
+		}
+		if (SizePanelRoeMetz.pairedNormalsFlag == 0) {
+			DBRecordNumerical.BDG[2][0]=0;
+			DBRecordNumerical.BDG[2][2]=0;
+			DBRecordNumerical.BDG[2][4]=0;
+			DBRecordNumerical.BDG[2][6]=0;
+		}
+		if (SizePanelRoeMetz.pairedDiseasedFlag == 0) {
+			DBRecordNumerical.BDG[2][0]=0;
+			DBRecordNumerical.BDG[2][1]=0;
+			DBRecordNumerical.BDG[2][4]=0;
+			DBRecordNumerical.BDG[2][5]=0;
+		}
 		
 		// Set the coefficients
 		DBRecordNumerical.DBRecordRoeMetzNumericalFill(SizePanelRoeMetz);
