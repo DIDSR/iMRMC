@@ -282,7 +282,7 @@ public class InputSummaryCard {
 				FlagMLE = NO_MLE;
 			}
 			DBRecordStat.flagMLE = FlagMLE;
-			DBRecordSize.flagMLE = FlagMLE;
+			//DBRecordSize.flagMLE = FlagMLE;
 			GUI.StatPanel1.resetStatPanel();
 			GUI.StatPanel1.resetTable1();
 			GUI.SizePanel1.resetSizePanel();
@@ -408,7 +408,7 @@ public class InputSummaryCard {
 
 		// Update GUI
 		DBRecordStat.flagMLE = FlagMLE;
-		DBRecordSize.flagMLE = FlagMLE;
+		//DBRecordSize.flagMLE = FlagMLE;
 
 		GUI.StatPanel1.setStatPanel();
 		GUI.StatPanel1.setTable1();

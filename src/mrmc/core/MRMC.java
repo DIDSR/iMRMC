@@ -39,7 +39,7 @@ public class MRMC extends JApplet {
 	 */
 	private static final long serialVersionUID = 1L;
 	private static JFrame mrmcFrame;
-	public static final String versionname ="iMRMC Version 3p0";
+	public static final String versionname ="iMRMC Version 3p1";
 	public static boolean commandStart = false;
 	static GUInterface gui;
 	GUImenubar menuBar;
@@ -93,14 +93,19 @@ public class MRMC extends JApplet {
 			e.printStackTrace();
 		}
 		String inputFileFullName = "";
-		if (args.length != 0){
+		String outputFolderFullName = "";
+		if (args.length == 1){
 			inputFileFullName = args[0];
 			commandStart = true;			
+		}else if(args.length == 2){
+			inputFileFullName = args[0];
+			outputFolderFullName = args[1];
+			commandStart = true;
 		}
-		int width = 1100, height = 750;
+		int width = 900, height = 620;
 		run(new MRMC(), width, height);
 		cmonnandStartFunction cmonnandStartFunction1 = new cmonnandStartFunction();
-		cmonnandStartFunction1.cmonnandStartFunction(gui, inputFileFullName);
+		cmonnandStartFunction1.cmonnandStartFunction(gui, inputFileFullName,outputFolderFullName);
 	}
 
 	/**

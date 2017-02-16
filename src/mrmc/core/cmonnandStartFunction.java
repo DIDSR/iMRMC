@@ -16,15 +16,20 @@ import roemetz.gui.RMGUInterface.analysisExportListener;
 public class cmonnandStartFunction {
 	private GUInterface GUI;
 	private InputFile InputFile1;
-	public void cmonnandStartFunction(GUInterface gui, String inputFileFullName) {
+	public void cmonnandStartFunction(GUInterface gui, String inputFileFullName, String outputFolderFullName) {
 		// TODO Auto-generated method stub
-		
+		String inputAndOutput = "";
 		if (inputFileFullName.length()==0){
 			System.out.println("Input file full name:");		
 			Scanner inputScanner = new Scanner(System.in);
-			inputFileFullName = inputScanner.nextLine();
+			inputAndOutput = inputScanner.nextLine();
+			if (inputAndOutput.lastIndexOf(" ")==-1)
+				inputFileFullName = inputAndOutput;
+			else{
+				inputFileFullName = inputAndOutput.substring(0,inputAndOutput.lastIndexOf(" ")).trim();
+				outputFolderFullName = inputAndOutput.substring(inputAndOutput.lastIndexOf(" ")+1).trim();
+			}
 		}
-		System.out.println(inputFileFullName);
 		String inputFormat = inputFileFullName.substring(inputFileFullName.lastIndexOf(".")+1);
 		if (inputFormat.equals("imrmc")){
 			GUInterface.selectedInput = GUInterface.DescInputModeImrmc;
@@ -48,6 +53,7 @@ public class cmonnandStartFunction {
 			e.printStackTrace();
 		}
 		MRMC.commandStart = true;
+		GUI.allAnalysisOutput = outputFolderFullName;
 		GUInterface.SaveAllStatListener ExportAllListener1 = GUI. new SaveAllStatListener();
 		ExportAllListener1.exportResult();
 	}

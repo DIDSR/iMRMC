@@ -127,6 +127,17 @@ public class InputFileCard {
 		JTextFilename = new JTextField(20);
 		JButton browseButton = new JButton("Browse...");
 		browseButton.addActionListener(new brwsButtonListener());
+		/*
+		 * Create RawStudyCardRow1
+		 */
+		JPanel RawStudyCardRow1 = new JPanel();
+		RawStudyCardRow1.add(studyLabel);
+		RawStudyCardRow1.add(JTextFilename);
+		RawStudyCardRow1.add(browseButton);
+
+		/*
+		 * Elements of RawStudyCardRow2
+		 */
 		// Show plots of Cases Per Reader and Readers Per Case
 		JButton readerCasesButton = new JButton("Show Statistics Charts");
 		readerCasesButton.addActionListener(new ReadersCasesButtonListener());
@@ -139,16 +150,12 @@ public class InputFileCard {
 		/*
 		 * Create RawStudyCardRow2
 		 */
-		JPanel RawStudyCardRow1 = new JPanel();
-		RawStudyCardRow1.add(studyLabel);
-		RawStudyCardRow1.add(JTextFilename);
-		RawStudyCardRow1.add(browseButton);
-		RawStudyCardRow1.add(readerCasesButton);
-		RawStudyCardRow1.add(designButton);
-		RawStudyCardRow1.add(ROCcurveButton);
-
+		JPanel RawStudyCardRow2 = new JPanel();
+		RawStudyCardRow2.add(readerCasesButton);
+		RawStudyCardRow2.add(designButton);
+		RawStudyCardRow2.add(ROCcurveButton);		
 		/*
-		 * Elements of RawStudyCardRow2
+		 * Elements of RawStudyCardRow3
 		 */
 		// MLE Checkbox
 		mleCheckBox = new JCheckBox("MLE (avoid negatives)");
@@ -159,6 +166,18 @@ public class InputFileCard {
 		chooseB = new JComboBox<String>();
 		chooseA.addItemListener(new ModalitySelectListener());
 		chooseB.addItemListener(new ModalitySelectListener());
+
+		/*
+		 * Create RawStudyCardRow3
+		 */
+		JPanel RawStudyCardRow3 = new JPanel();
+		RawStudyCardRow3.add(mleCheckBox);
+		RawStudyCardRow3.add(chooseA);
+		RawStudyCardRow3.add(chooseB);
+
+		/*
+		 * Elements of RawStudyCardRow4
+		 */
 		// execute variance analysis button
 		varAnalysisButton = new JButton("MRMC Variance Analysis");
 		varAnalysisButton.addActionListener(new varAnalysisListener());
@@ -166,15 +185,13 @@ public class InputFileCard {
 		showAUCsButton = new JButton("Show Reader AUCs");
 		showAUCsButton.addActionListener(new showAUCsButtonListener());
 		/*
-		 * Create RawStudyCardRow2
+		 * Create RawStudyCardRow4
 		 */
-		JPanel RawStudyCardRow2 = new JPanel();
-		RawStudyCardRow2.add(mleCheckBox);
-		RawStudyCardRow2.add(chooseA);
-		RawStudyCardRow2.add(chooseB);
-		RawStudyCardRow2.add(varAnalysisButton);
-		RawStudyCardRow2.add(showAUCsButton);
-
+		JPanel RawStudyCardRow4 = new JPanel();
+		RawStudyCardRow4.add(varAnalysisButton);
+		RawStudyCardRow4.add(showAUCsButton);
+		
+		
 		/*
 		 * Initialize InputFileCard
 		 */
@@ -193,13 +210,21 @@ public class InputFileCard {
 					.addGroup(layout.createSequentialGroup()
 							.addComponent(RawStudyCardRow1)) // Sequential=Horizontal
 					.addGroup(layout.createSequentialGroup()
-							.addComponent(RawStudyCardRow2)))); // Sequential=Horizontal
+							.addComponent(RawStudyCardRow2))
+					.addGroup(layout.createSequentialGroup()
+							.addComponent(RawStudyCardRow3))
+					.addGroup(layout.createSequentialGroup()
+							.addComponent(RawStudyCardRow4)))); // Sequential=Horizontal
 
 		layout.setVerticalGroup(layout.createSequentialGroup()
 			.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE) // Parallel=Horizontal?
 				.addComponent(RawStudyCardRow1))
+			.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE) // Parallel=Horizontal?
+				.addComponent(RawStudyCardRow2))
 			.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING) // Parallel=Horizontal?
-				.addComponent(RawStudyCardRow2)));
+				.addComponent(RawStudyCardRow3))
+			.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING) // Parallel=Horizontal?
+				.addComponent(RawStudyCardRow4)));
 		
 	}
 	
@@ -432,7 +457,7 @@ public class InputFileCard {
 				FlagMLE = NO_MLE;
 			}
 			DBRecordStat.flagMLE = FlagMLE;
-			DBRecordSize.flagMLE = FlagMLE;
+			//DBRecordSize.flagMLE = FlagMLE;
 			GUI.StatPanel1.resetStatPanel();
 			GUI.StatPanel1.resetTable1();
 			GUI.SizePanel1.resetSizePanel();
@@ -564,17 +589,19 @@ public class InputFileCard {
 			}
 			// Update GUI
 			DBRecordStat.flagMLE = FlagMLE;
-			DBRecordSize.flagMLE = FlagMLE;
+			//DBRecordSize.flagMLE = FlagMLE;
 
 			GUI.StatPanel1.setStatPanel();
 			GUI.StatPanel1.setTable1();
 			DBRecordSize.Nreader = DBRecordStat.Nreader;
 			DBRecordSize.Nnormal = DBRecordStat.Nnormal;
 			DBRecordSize.Ndisease = DBRecordStat.Ndisease;
-			GUI.SizePanel1.NreaderJTextField.setText(Long.toString(DBRecordStat.Nreader));
-			GUI.SizePanel1.NnormalJTextField.setText(Long.toString(DBRecordStat.Nnormal));
-			GUI.SizePanel1.NdiseaseJTextField.setText(Long.toString(DBRecordStat.Ndisease));
-			
+			//GUI.SizePanel1.NreaderJTextField.setText(Long.toString(DBRecordStat.Nreader));
+			//GUI.SizePanel1.NnormalJTextField.setText(Long.toString(DBRecordStat.Nnormal));
+			//GUI.SizePanel1.NdiseaseJTextField.setText(Long.toString(DBRecordStat.Ndisease));
+			GUI.SizePanel1.NreaderJTextField.setText(Long.toString(DBRecordStat.NreaderDB));
+			GUI.SizePanel1.NnormalJTextField.setText(Long.toString(DBRecordStat.NnormalDB));
+			GUI.SizePanel1.NdiseaseJTextField.setText(Long.toString(DBRecordStat.NdiseaseDB));
 		}
 	}
 	

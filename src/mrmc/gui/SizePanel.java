@@ -30,6 +30,7 @@ import mrmc.core.DBRecord;
 import mrmc.core.InputFile;
 import mrmc.core.MRMC;
 import mrmc.core.StatTest;
+import mrmc.gui.InputFileCard.UseMLEListener;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ public class SizePanel {
 	private InputFile InputFile1;
 	private DBRecord DBRecordSize;
 	public JPanel JPanelSize = new JPanel();
+	public JCheckBox sizeMleCheckBox;
 	private JFrame reportFrame;
 	public JRadioButton 
 		ButtonPairedReadersYes,
@@ -149,6 +151,12 @@ public class SizePanel {
 		NdiseaseJTextField = new JTextField("0",3);
 		SizePanelRow2.add(new Label("#Diseased"));
 		SizePanelRow2.add(NdiseaseJTextField);
+		//
+		// Size MLE Checkbox
+		sizeMleCheckBox = new JCheckBox("Size MLE");
+		sizeMleCheckBox.setSelected(false);
+		sizeMleCheckBox.addItemListener(new SizeMLEListener());
+		SizePanelRow2.add(sizeMleCheckBox);
 		//
 		JButton sizeTrial = new JButton("Size a Trial");
 		sizeTrial.addActionListener(new sizeTrialListener());
@@ -502,7 +510,18 @@ public class SizePanel {
 		}
 	}
 
-
+	class SizeMLEListener implements ItemListener {
+		public void itemStateChanged(ItemEvent e) {
+			if (sizeMleCheckBox.isSelected()) {
+				DBRecordSize.flagMLE = 1;
+			} else {
+				DBRecordSize.flagMLE = 0;
+			}
+			GUI.SizePanel1.resetSizePanel();
+			
+		}
+	}
+	
 	/**
 	 * Handler for button to size trial based on specified parameters
 	 */

@@ -11,6 +11,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;*/
 
 
+
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Paragraph;
@@ -538,48 +539,6 @@ public class exportToFile {
 		for(String desc_temp : SummaryDBRecord.InputFile1.readerIDs.keySet() ) {
 			IDlength = Math.max(IDlength,desc_temp.length());
 		}
-		/* old function
-		if (IDlength>9){
-			for (int i=0; i<IDlength-9; i++){
-				str = str + " ";
-			}
-			str = str + "Reader ID";
-		    str = str+SEPA + "       AUC_A" + SEPA +  "      AUCs_B" + SEPA +  "   AUC_A - AUCs_B";
-		} else{
-			str = str + "Reader ID" +SEPA + "       AUC_A" + SEPA +  "      AUCs_B" + SEPA +  "   AUC_A - AUCs_B";
-		}
-		
-		k=1;
-		for(String desc_temp : SummaryDBRecord.InputFile1.readerIDs.keySet() ) {
-			str = str + "\r\n";
-			for (int i=0; i<Math.max(IDlength,9) - desc_temp.length(); i++){
-				str = str + " ";
-			}
-			str = str + desc_temp;
-			if (SummaryDBRecord.selectedMod==0){
-				str = str+ SEPA + "  " +
-						fiveDecE.format(SummaryDBRecord.AUCs[k-1][0]) + SEPA + "  " +
-						"         0" + SEPA + "                0";
-			}else if (SummaryDBRecord.selectedMod==1){
-				str = str+ SEPA + "  " +
-						"         0" + SEPA + "  " +
-						fiveDecE.format(SummaryDBRecord.AUCs[k-1][1]) + SEPA +
-						"                0";
-			}else{
-				str = str+ SEPA + "  " +
-						fiveDecE.format(SummaryDBRecord.AUCs[k-1][0]) + SEPA + "  " +
-						fiveDecE.format(SummaryDBRecord.AUCs[k-1][1]) + SEPA;
-					double AUC_dif = SummaryDBRecord.AUCs[k-1][0]-SummaryDBRecord.AUCs[k-1][1];
-						if(AUC_dif<0)
-							str = str + "      " + fiveDecE.format(AUC_dif);
-						else if (AUC_dif>0)
-							str = str + "       " + fiveDecE.format(AUC_dif);
-						else
-							str = str + "        " + fiveDecE.format(AUC_dif);
-			}
-
-			k=k+1;
-		}*/
 		if (SummaryDBRecord.selectedMod == 0 ||SummaryDBRecord.selectedMod == 3){
 			str = str +  "MOD A" +"\r\n";
 			if (IDlength>9){
@@ -610,8 +569,11 @@ public class exportToFile {
 				}
 				str = str + Rdisease;
 				str = str+ SEPA + "  " +
-							fiveDecE.format(SummaryDBRecord.AUCs[k][0]) + SEPA + "  " +
-							fiveDecE.format(SummaryDBRecord.readerVarA[k]);	
+						((Double.isNaN(SummaryDBRecord.AUCs[k][0])||SummaryDBRecord.AUCs[k][0]<0) ? "       NaN" : fiveDecE.format(SummaryDBRecord.AUCs[k][0])) + SEPA + "  " + 
+							(Double.isNaN(SummaryDBRecord.readerVarA[k]) ? "       NaN" : fiveDecE.format(Math.sqrt(SummaryDBRecord.readerVarA[k])));
+				//str = str+ SEPA + "  " +
+				//		fiveDecE.format(SummaryDBRecord.AUCs[k][0]) + SEPA + "  " +  
+				//			fiveDecE.format(SummaryDBRecord.readerVarA[k]);	
 				k=k+1;
 			}
 			str = str + "\r\n";
@@ -647,8 +609,8 @@ public class exportToFile {
 				}
 				str = str + Rdisease;
 				str = str+ SEPA + "  " +
-							fiveDecE.format(SummaryDBRecord.AUCs[k][1]) + SEPA + "  " +
-							fiveDecE.format(SummaryDBRecord.readerVarB[k]);	
+							((Double.isNaN(SummaryDBRecord.AUCs[k][1])||SummaryDBRecord.AUCs[k][1]<0) ? "       NaN" : fiveDecE.format(SummaryDBRecord.AUCs[k][1])) + SEPA + "  " +  //fiveDecE.format(SummaryDBRecord.AUCs[k][1]) + SEPA + "  " +
+							(Double.isNaN(SummaryDBRecord.readerVarB[k]) ? "       NaN" : fiveDecE.format(Math.sqrt(SummaryDBRecord.readerVarB[k])));//fiveDecE.format(SummaryDBRecord.readerVarB[k]);	
 				k=k+1;
 			}
 			str = str + "\r\n";
@@ -684,16 +646,18 @@ public class exportToFile {
 				}
 				str = str + Rdisease;
 				double AUC_dif = SummaryDBRecord.AUCs[k][0]-SummaryDBRecord.AUCs[k][1];
+				if(SummaryDBRecord.AUCs[k][1]<0||SummaryDBRecord.AUCs[k][0]<0)
+					AUC_dif = Double.NaN;
 				str = str + SEPA;
 				if(AUC_dif<0)
-						str = str + " " + fiveDecE.format(AUC_dif) + SEPA + "  " +
-								fiveDecE.format(SummaryDBRecord.readerTotalVar[k]);	
+						str = str +  " " + (Double.isNaN(AUC_dif) ? "      NaN" : fiveDecE.format(AUC_dif)) + SEPA + "  " + //fiveDecE.format(AUC_dif) + SEPA + "  " +
+								(Double.isNaN(SummaryDBRecord.readerTotalVar[k]) ? "       NaN" : fiveDecE.format(Math.sqrt(SummaryDBRecord.readerTotalVar[k])));//fiveDecE.format(SummaryDBRecord.readerTotalVar[k]);	
 					else if (AUC_dif>0)
-						str = str + "  " + fiveDecE.format(AUC_dif) + SEPA + "  " +
-								fiveDecE.format(SummaryDBRecord.readerTotalVar[k]);	
+						str = str + "  " + (Double.isNaN(AUC_dif) ? "      NaN" : fiveDecE.format(AUC_dif)) + SEPA + "  " + // + fiveDecE.format(AUC_dif) + SEPA + "  " +
+								(Double.isNaN(SummaryDBRecord.readerTotalVar[k]) ? "       NaN" : fiveDecE.format(Math.sqrt(SummaryDBRecord.readerTotalVar[k])));//fiveDecE.format(SummaryDBRecord.readerTotalVar[k]);	
 					else
-						str = str + "   " + fiveDecE.format(AUC_dif) + SEPA + "  " +
-								fiveDecE.format(SummaryDBRecord.readerTotalVar[k]);	
+						str = str + "   " + (Double.isNaN(AUC_dif) ? "      NaN" : fiveDecE.format(AUC_dif)) + SEPA + "  " + // + fiveDecE.format(AUC_dif) + SEPA + "  " +
+								(Double.isNaN(SummaryDBRecord.readerTotalVar[k]) ? "       NaN" : fiveDecE.format(Math.sqrt(SummaryDBRecord.readerTotalVar[k])));//fiveDecE.format(SummaryDBRecord.readerTotalVar[k]);	
 				k=k+1;
 			}
 			str = str + "\r\n";
@@ -841,99 +805,7 @@ public class exportToFile {
 
 		return str;
 	}
-	/*// ACUs table in pdf result
-	public static PdfPTable[] pdfTable(PdfPTable AUCtable, DBRecord SummaryDBRecord) {
-		PdfPCell titlecell = new PdfPCell (new Paragraph("Table 1 "));
-		titlecell.setColspan(7);
-		titlecell.setHorizontalAlignment(Element.ALIGN_CENTER);
-		AUCtable.addCell(titlecell);
-		AUCtable.addCell("Reader ID");
-		int count = 1;
-		if (SummaryDBRecord.selectedMod == 0){
-			AUCtable.addCell("AUC ModalityA");
-			AUCtable.addCell("AUC_STD ModalityA");
-			AUCtable.addCell("None");
-			AUCtable.addCell("None");
-			AUCtable.addCell("AUC difference");
-			AUCtable.addCell("AUC difference STD");
-			for(String desc_temp : SummaryDBRecord.InputFile1.readerIDs.keySet()){
-				AUCtable.addCell(desc_temp);
-				AUCtable.addCell(twoDec.format(SummaryDBRecord.AUCs[count-1][0]));
-				AUCtable.addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.readerVarA[count-1])));
-				AUCtable.addCell("N/A");
-				AUCtable.addCell("N/A");
-				AUCtable.addCell("N/A");
-				AUCtable.addCell("N/A");
-				count =count + 1;
-				
-			}
-			for (int i = 0; i<7;i++){
-				AUCtable.addCell(" ");
-			}
-			AUCtable.addCell("Average");
-			AUCtable.addCell(twoDec.format(SummaryDBRecord.AUCsReaderAvg[0]));
-			AUCtable.addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.varA)));
-			AUCtable.addCell("N/A");
-			AUCtable.addCell("N/A");
-			AUCtable.addCell("N/A");
-			AUCtable.addCell("N/A");
-		}else if (SummaryDBRecord.selectedMod == 1){
-			AUCtable.addCell("None");
-			AUCtable.addCell("None");
-			AUCtable.addCell("AUC ModalityB");
-			AUCtable.addCell("AUC_STD ModalityB");
-			AUCtable.addCell("AUC difference");
-			AUCtable.addCell("AUC difference STD");
-			for(String desc_temp : SummaryDBRecord.InputFile1.readerIDs.keySet()){
-				AUCtable.addCell(desc_temp);
-				AUCtable.addCell("N/A");
-				AUCtable.addCell("N/A");
-				AUCtable.addCell(twoDec.format(SummaryDBRecord.AUCs[count-1][1]));
-				AUCtable.addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.readerVarB[count-1])));
-				AUCtable.addCell("N/A");
-				AUCtable.addCell("N/A");
-				count =count + 1;
-			}
-			for (int i = 0; i<7;i++){
-				AUCtable.addCell(" ");
-			}
-			AUCtable.addCell("Average");
-			AUCtable.addCell("N/A");
-			AUCtable.addCell("N/A");
-			AUCtable.addCell(twoDec.format(SummaryDBRecord.AUCsReaderAvg[1]));
-			AUCtable.addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.varB)));
-			AUCtable.addCell("N/A");
-			AUCtable.addCell("N/A");
-		}else{
-			AUCtable.addCell("AUC ModalityA");
-			AUCtable.addCell("AUC_STD ModalityA");
-			AUCtable.addCell("AUC ModalityB");
-			AUCtable.addCell("AUC_STD ModalityB");
-			AUCtable.addCell("AUC difference");
-			AUCtable.addCell("AUC difference STD");
-			for(String desc_temp : SummaryDBRecord.InputFile1.readerIDs.keySet()){
-				AUCtable.addCell(desc_temp);
-				AUCtable.addCell(twoDec.format(SummaryDBRecord.AUCs[count-1][0]));
-				AUCtable.addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.readerVarA[count-1])));
-				AUCtable.addCell(twoDec.format(SummaryDBRecord.AUCs[count-1][1]));
-				AUCtable.addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.readerVarB[count-1])));
-				AUCtable.addCell(twoDec.format(SummaryDBRecord.AUCs[count-1][0]-SummaryDBRecord.AUCs[count-1][1]));
-				AUCtable.addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.readerTotalVar[count-1])));
-				count =count + 1;
-			}
-			for (int i = 0; i<7;i++){
-				AUCtable.addCell(" ");
-			}
-			AUCtable.addCell("Average");
-			AUCtable.addCell(twoDec.format(SummaryDBRecord.AUCsReaderAvg[0]));
-			AUCtable.addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.varA)));
-			AUCtable.addCell(twoDec.format(SummaryDBRecord.AUCsReaderAvg[1]));
-			AUCtable.addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.varB)));
-			AUCtable.addCell(twoDec.format(SummaryDBRecord.AUCsReaderAvg[0]-SummaryDBRecord.AUCsReaderAvg[1]));
-			AUCtable.addCell(twoDecE.format(Math.sqrt(SummaryDBRecord.totalVar)));
-		}
-		return AUCtable;
-	}*/
+
 	public static PdfPTable[] pdfTable(PdfPTable[] AUCtable, DBRecord SummaryDBRecord) {
 		if (SummaryDBRecord.selectedMod == 0||SummaryDBRecord.selectedMod == 3){
 			PdfPCell titlecell = new PdfPCell (new Paragraph("Modality A"));
@@ -1318,7 +1190,17 @@ public class exportToFile {
 	// export ROC curve information 
 	public static String exportROC(XYSeriesCollection seriesCollection,String report) {
 		String str = report;
-		str = str + "ModalityID:ReaderID,Number of points,Axises"+"\r\n";
+		int maxColumn = 0;
+		for (int j=0;j<seriesCollection.getSeriesCount();j++){
+			 String serisekey =(String) seriesCollection.getSeriesKey(j); 
+			 XYSeries seriesget = seriesCollection.getSeries(serisekey);  
+			 maxColumn = Math.max(maxColumn, seriesget.getItemCount());
+		}
+		str = str + "ModalityID:ReaderID,Number of points,Axises";
+	    for (int i=0; i<maxColumn; i++){
+	    	str = str + SEPA;
+	    }
+	    str = str + "\r\n";
         for (int j=0;j<seriesCollection.getSeriesCount();j++){
             String serisekey =(String) seriesCollection.getSeriesKey(j); 
             XYSeries seriesget = seriesCollection.getSeries(serisekey);             
@@ -1328,9 +1210,15 @@ public class exportToFile {
     	    for (int i=0; i<seriesget.getItemCount(); i++){
     	    	str = str + fourDec.format(seriesget.getX(i)) + SEPA;
     	    }
-    	    str = str + "\r\n" + SEPA + SEPA +"TPF" + SEPA;
+    	    for (int i = seriesget.getItemCount(); i< maxColumn; i++){
+    	    	str = str + SEPA;
+    	    }
+    	    str = str + "\r\n" +serisekey + SEPA + Integer.toString(seriesget.getItemCount()) + SEPA +"TPF" + SEPA;
     	    for (int i=0; i<seriesget.getItemCount(); i++){
     	    	str = str + fourDec.format(seriesget.getY(i)) + SEPA;
+    	    }
+    	    for (int i = seriesget.getItemCount(); i< maxColumn; i++){
+    	    	str = str + SEPA;
     	    }
     	    str = str + "\r\n";
         } 			

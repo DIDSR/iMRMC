@@ -465,12 +465,21 @@ public class ROCCurvePlot extends JFrame {
             String sFileNameonly = filename + "ROCcurve"+fileTime+".csv";
 			try {
 				 //generate whatever data you want	    		
+				int maxColumn = 0;
+				for (int j=0;j<seriesCollection.getSeriesCount();j++){
+					 String serisekey =(String) seriesCollection.getSeriesKey(j); 
+					 XYSeries seriesget = seriesCollection.getSeries(serisekey);  
+					 maxColumn = Math.max(maxColumn, seriesget.getItemCount());
+				}
 				FileWriter writer = new FileWriter(sFileName);	   		
 	            writer.append("ModalityID:ReaderID");
 	            writer.append(',');
 	            writer.append("Number of points");
 	            writer.append(',');
 	            writer.append("Axises");
+	    	    for (int i=0; i<maxColumn; i++){
+	    	    	writer.append(',');
+	    	    }
 	            writer.append('\n');
 	            for (int j=0;j<seriesCollection.getSeriesCount();j++){
 		            String serisekey =(String) seriesCollection.getSeriesKey(j); 
@@ -486,8 +495,13 @@ public class ROCCurvePlot extends JFrame {
 		    	    writer.append(tempx);
 		    	    writer.append(',');	
 		    	    }
+		    	    for (int i = seriesget.getItemCount(); i< maxColumn; i++){
+		    	    	writer.append(',');	
+		    	    }
 		    	    writer.append('\n');
-		    	    writer.append(',');
+		    	    writer.append(serisekey);
+		    	    writer.append(','); 
+		    	    writer.append(Integer.toString(seriesget.getItemCount()));
 		    	    writer.append(',');
 		    	    writer.append("TPF"); 
 		    	    writer.append(','); 
@@ -495,6 +509,9 @@ public class ROCCurvePlot extends JFrame {
 		    	    	String tempx=String.valueOf(seriesget.getY(i));
 		    	    writer.append(tempx);
 		    	    writer.append(',');	
+		    	    }
+		    	    for (int i = seriesget.getItemCount(); i< maxColumn; i++){
+		    	    	writer.append(',');	
 		    	    }
 		    	    writer.append('\n');
 	            } 			

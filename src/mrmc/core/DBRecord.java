@@ -20,7 +20,10 @@ package mrmc.core;
 
 import java.util.*;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -160,7 +163,7 @@ public class DBRecord {
 	 * Indicator whether the data is fully crossed or not.
 	 */
 	public boolean flagFullyCrossed = true;
-
+	public NumberFormat formatter = new DecimalFormat("#0.00");
 	/**
 	 * The BDG[4][8] (Barrett, Clarkson, and Kupinski) variance components <br>
 	 * ----BDG[0] are the components of variance of AUC_A <br>
@@ -860,7 +863,7 @@ public class DBRecord {
 	 *
 	 * 
 	 * 
-	 * @param SizePanelTemp
+	 * @param SizePanelTemp for iRoeMetz Numerical Button
 	 */
 	public void DBRecordRoeMetzNumericalFill(SizePanel SizePanelRoeMetz) {
 		
@@ -877,7 +880,6 @@ public class DBRecord {
 			BDGcoeff[1][i] = covMRMCsize.coefficientsBB[i+1];
 			BDGcoeff[2][i] = covMRMCsize.coefficientsAB[i+1];
 			BDGcoeff[3][i] = 1.0;
-			
 			BDG[3][i] = 
 					+    BDGcoeff[0][i]*BDG[0][i]
 					+    BDGcoeff[1][i]*BDG[1][i]
@@ -891,8 +893,46 @@ public class DBRecord {
 			BDGbias[1][i] = BDG[1][i];
 			BDGbias[2][i] = BDG[2][i];
 			BDGbias[3][i] = BDG[3][i];
+						
+			
 		}
 		SE = Math.sqrt(totalVar);
+		// calculate readers var
+		double[][] readerBDG = new double [4][4]; 
+		double[][] readerBDGcoeff = new double [4][4];
+		N0perReader = new int[(int)Nreader][3];
+		N1perReader = new int[(int)Nreader][3];
+		readerTotalVar = new double[(int) Nreader];
+		readerVarA = new double[(int) Nreader];
+		readerVarB = new double[(int) Nreader];
+		for (int ir = 0; ir<Nreader;ir++ ){
+			N0perReader[ir][0] = covMRMCsize.N0perReader[0][0];
+		    N0perReader[ir][1] = covMRMCsize.N0perReader[0][1];
+		    N0perReader[ir][2] = covMRMCsize.N0perReader[0][2];
+			N1perReader[ir][0] = covMRMCsize.N1perReader[0][0];
+		    N1perReader[ir][1] = covMRMCsize.N1perReader[0][1];
+		    N1perReader[ir][2] = covMRMCsize.N1perReader[0][2];
+			for (int i = 0; i < 4; i++) {	
+				readerBDG[0][i] = BDG[0][i];
+				readerBDG[1][i] = BDG[1][i];
+				readerBDG[2][i] = BDG[2][i];
+
+				readerBDGcoeff[0][i] = covMRMCsize.readerCoefficientsAA[ir][i + 1];
+				readerBDGcoeff[1][i] = covMRMCsize.readerCoefficientsBB[ir][i + 1];
+				readerBDGcoeff[2][i] = covMRMCsize.readerCoefficientsAB[ir][i + 1];
+				
+				readerBDGcoeff[3][i] = 1.0;
+
+				readerVarA[ir] +=  readerBDGcoeff[0][i] * readerBDG[0][i];
+				readerVarB[ir] +=  readerBDGcoeff[1][i] * readerBDG[1][i];				
+
+				readerBDG[3][i] =     (readerBDG[0][i] * readerBDGcoeff[0][i])
+						  +     (readerBDG[1][i] * readerBDGcoeff[1][i])
+						  - 2.0*(readerBDG[2][i] * readerBDGcoeff[2][i]);
+
+				readerTotalVar[ir] += readerBDGcoeff[3][i] * readerBDG[3][i];
+			}
+		}
 		if(selectedMod == 0) {
 			flagFullyCrossed = covMRMCsize.fullyCrossedA;
 		}
@@ -1000,8 +1040,19 @@ public class DBRecord {
 				readerTotalVarMLE[ir]  += readerBDGcoeff[3][i] * readerBDGbias[3][i];
 				
 			}
+			if (!Double.isNaN(readerVarAnoMLE[ir]))
+				readerVarAnoMLE[ir] =  new BigDecimal(readerVarAnoMLE[ir]).setScale(8, RoundingMode.HALF_UP).doubleValue();
+			if (!Double.isNaN(readerVarBnoMLE[ir]))
+				readerVarBnoMLE[ir] =  new BigDecimal(readerVarBnoMLE[ir]).setScale(8, RoundingMode.HALF_UP).doubleValue();
+			if (!Double.isNaN(readerVarAMLE[ir]))
+				readerVarAMLE[ir] =  new BigDecimal(readerVarAMLE[ir]).setScale(8, RoundingMode.HALF_UP).doubleValue();
+			if (!Double.isNaN(readerVarBMLE[ir]))
+				readerVarBMLE[ir] =  new BigDecimal(readerVarBMLE[ir]).setScale(8, RoundingMode.HALF_UP).doubleValue();
+			if (!Double.isNaN(readerTotalVarnoMLE[ir]))
+				readerTotalVarnoMLE[ir] =  new BigDecimal(readerTotalVarnoMLE[ir]).setScale(8, RoundingMode.HALF_UP).doubleValue();
+			if (!Double.isNaN(readerTotalVarMLE[ir]))
+				readerTotalVarMLE[ir] =  new BigDecimal(readerTotalVarMLE[ir]).setScale(8, RoundingMode.HALF_UP).doubleValue();
 		}
-
 		if (flagMLE==0){
 			totalVar= totalVarnoMLE;
 			varA = varAnoMLE;
@@ -1018,7 +1069,6 @@ public class DBRecord {
 			readerVarB = readerVarBMLE;
 		}
 		SE = Math.sqrt(totalVar);
-	
 		if(totalVar < 0) {
 			flagTotalVarIsNegative = 1;
 		}
@@ -1039,6 +1089,7 @@ public class DBRecord {
 	private void BDGforSizePanel() {
 
 		totalVar = 0.0;
+		totalVarMLE = 0.0;
 		varA = 0.0;
 		varB = 0.0;
 
@@ -1066,9 +1117,13 @@ public class DBRecord {
 					  - 2.0*(BDGbias[2][i] * BDGcoeff[2][i]);
 			
 			totalVar += BDGcoeff[3][i] * BDG[3][i];
+			totalVarMLE  += BDGcoeff[3][i] * BDGbias[3][i];
 			
 		}
 		
+		if (flagMLE==1){
+			totalVar= totalVarMLE;
+		}
 		totalVar = totalVar*1.0;
 		SE = Math.sqrt(totalVar);
 	
@@ -1971,6 +2026,10 @@ public class DBRecord {
 		copyDBRecordTemp.SE = DBRecordTemp.SE;
 		copyDBRecordTemp.varA = DBRecordTemp.varA;
 		copyDBRecordTemp.varB = DBRecordTemp.varB;
+		copyDBRecordTemp.readerVarA = Matrix.copy(DBRecordTemp.readerVarA);
+		copyDBRecordTemp.readerVarB = Matrix.copy(DBRecordTemp.readerVarB);
+		copyDBRecordTemp.readerTotalVar = Matrix.copy(DBRecordTemp.readerTotalVar);
+
 		copyDBRecordTemp.flagTotalVarIsNegative = DBRecordTemp.flagTotalVarIsNegative;
 
 	}
@@ -2020,6 +2079,13 @@ public class DBRecord {
 		sumDBRecordTemp.SE += DBRecordTemp.SE;
 		sumDBRecordTemp.varA += DBRecordTemp.varA;
 		sumDBRecordTemp.varB += DBRecordTemp.varB;
+		sumDBRecordTemp.readerVarA = 
+				Matrix.add(sumDBRecordTemp.readerVarA, DBRecordTemp.readerVarA);
+		sumDBRecordTemp.readerVarB = 
+				Matrix.add(sumDBRecordTemp.readerVarB, DBRecordTemp.readerVarB);
+		sumDBRecordTemp.readerTotalVar = 
+				Matrix.add(sumDBRecordTemp.readerTotalVar, DBRecordTemp.readerTotalVar);
+
 		sumDBRecordTemp.flagTotalVarIsNegative += DBRecordTemp.flagTotalVarIsNegative;
 		
 	}
@@ -2069,6 +2135,13 @@ public class DBRecord {
 		DBRecordTemp.SE *= scaleFactor;
 		DBRecordTemp.varA *= scaleFactor;
 		DBRecordTemp.varB *= scaleFactor;
+		DBRecordTemp.readerVarA = 
+				Matrix.scale(DBRecordTemp.readerVarA, scaleFactor);
+		DBRecordTemp.readerVarB = 
+				Matrix.scale(DBRecordTemp.readerVarB, scaleFactor);
+		DBRecordTemp.readerTotalVar = 
+				Matrix.scale(DBRecordTemp.readerTotalVar, scaleFactor);
+		
 		DBRecordTemp.flagTotalVarIsNegative *= scaleFactor;
 		
 	}
@@ -2115,6 +2188,13 @@ public class DBRecord {
 		DBRecordTemp.SE *= DBRecordTemp.SE;
 		DBRecordTemp.varA *= DBRecordTemp.varA;
 		DBRecordTemp.varB *= DBRecordTemp.varB;
+		DBRecordTemp.readerVarA = 
+				Matrix.squareTerms(DBRecordTemp.readerVarA);
+		DBRecordTemp.readerVarB = 
+				Matrix.squareTerms(DBRecordTemp.readerVarB);
+		DBRecordTemp.readerTotalVar = 
+				Matrix.squareTerms(DBRecordTemp.readerTotalVar);
+
 		DBRecordTemp.flagTotalVarIsNegative *= DBRecordTemp.flagTotalVarIsNegative;
 		
 	}
