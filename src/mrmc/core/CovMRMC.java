@@ -75,9 +75,17 @@ public class CovMRMC {
 	 */
 	public double[][] readerMomentsAA, readerMomentsBB, readerMomentsAB;
 	/**
+	 * The U-statistic readers Cov moments.
+	 */
+	public double[][][] readerMomentsAACov, readerMomentsBBCov, readerMomentsABCov;
+	/**
 	 * The MLE moments according to Gallas2009_Commun-Stat-A-Theor_v38p2586 (first element is empty).
 	 */
 	public double[][] readerMomentsBiasedAA, readerMomentsBiasedBB, readerMomentsBiasedAB;
+	/**
+	 * The MLE Cov moments.
+	 */
+	public double[][][] readerMomentsBiasedAACov, readerMomentsBiasedBBCov, readerMomentsBiasedABCov;
 	
 	/**
 	 * The coefficients according to Gallas2009_Commun-Stat-A-Theor_v38p2586 (first element is empty)
@@ -93,6 +101,13 @@ public class CovMRMC {
 			readerCoefficientsAA,
 			readerCoefficientsBB,
 			readerCoefficientsAB;
+	/**
+	 * The coefficients for each reader according to Gallas2008_Neural-Networks_v21p387 and Gallas2006_Acad-Radiol_v13p353 (first element is empty)
+	 */
+	public double[][][] 
+			readerCoefficientsAACov,
+			readerCoefficientsBBCov,
+			readerCoefficientsABCov;
 	/**
 	 * The scores from the readers
 	 */
@@ -145,9 +160,20 @@ public class CovMRMC {
 		readerMomentsAB = new double[(int)Nreader][5];
 		readerMomentsBiasedAB = new double[(int)Nreader][5];
 		
+		readerMomentsAACov = new double[(int)Nreader][(int)Nreader][5];
+		readerMomentsBiasedAACov = new double[(int)Nreader][(int)Nreader][5];
+		readerMomentsBBCov = new double[(int)Nreader][(int)Nreader][5];
+		readerMomentsBiasedBBCov = new double[(int)Nreader][(int)Nreader][5];
+		readerMomentsABCov = new double[(int)Nreader][(int)Nreader][5];
+		readerMomentsBiasedABCov = new double[(int)Nreader][(int)Nreader][5];
+		
 		readerCoefficientsAA = new double[(int)Nreader][5];
 		readerCoefficientsBB = new double[(int)Nreader][5];
 		readerCoefficientsAB = new double[(int)Nreader][5];
+		
+		readerCoefficientsAACov = new double[(int)Nreader][(int)Nreader][5];
+		readerCoefficientsBBCov = new double[(int)Nreader][(int)Nreader][5];
+		readerCoefficientsABCov = new double[(int)Nreader][(int)Nreader][5];
 		
 		
 		makeTMatrices();
@@ -223,6 +249,18 @@ public class CovMRMC {
 		readerCoefficientsBB = new double[(int)Nreader][5];
 		readerCoefficientsAB = new double[(int)Nreader][5];
 		
+		readerMomentsAACov = new double[(int)Nreader][(int)Nreader][5];
+		readerMomentsBiasedAACov = new double[(int)Nreader][(int)Nreader][5];
+		readerMomentsBBCov = new double[(int)Nreader][(int)Nreader][5];
+		readerMomentsBiasedBBCov = new double[(int)Nreader][(int)Nreader][5];
+		readerMomentsABCov = new double[(int)Nreader][(int)Nreader][5];
+		readerMomentsBiasedABCov = new double[(int)Nreader][(int)Nreader][5];
+		
+		readerCoefficientsAACov = new double[(int)Nreader][(int)Nreader][5];
+		readerCoefficientsBBCov = new double[(int)Nreader][(int)Nreader][5];
+		readerCoefficientsABCov = new double[(int)Nreader][(int)Nreader][5];
+		
+		
 		makeDMatrices();
 		if(DBRecordSize.selectedMod == 0) {
 			doAUCcovUstatistics("AA");
@@ -273,12 +311,15 @@ public void doAUCcovUstatistics(String flagModality) {
 
 	double[] moments = new double[9];
 	double[][] readerMoments = new double[(int) Nreader][5];
+	double[][][] readerMomentsCov = new double[(int) Nreader][(int) Nreader][5];
 	 // The MLE moments according to Gallas2009_Commun-Stat-A-Theor_v38p2586 (first element is empty).
 	double[] momentsBiased = new double[9];
 	double[][] readerMomentsBiased = new double[(int) Nreader][5];
+	double[][][] readerMomentsBiasedCov = new double[(int) Nreader][(int) Nreader][5];
 	// The coefficients according to Gallas2009_Commun-Stat-A-Theor_v38p2586 (first element is empty)
 	double[] coefficients = new double[9];
 	double[][] readerCoefficients = new double [(int)Nreader][5];
+	double[][][] readerCoefficientsCov = new double [(int)Nreader][(int)Nreader][5];
 	//case AB
 	double[][][] t0 = t0_modAB;
 	double[][][] t1 = t1_modAB;
@@ -307,10 +348,13 @@ public void doAUCcovUstatistics(String flagModality) {
 	int[] pairs = new int[3];
 	double totalwada = 0;
 	double totalwbdb = 0;
+	double totalwbdbCov = 0;
 	double[] readerTotalwada = new double[(int)Nreader];
 	double[] readerTotalwbdb = new double[(int)Nreader];
+	double[][] readerTotalwbdbCov = new double[(int)Nreader][(int)Nreader];
 	double[] bnumer = new double[9];
 	double[][] readerBnumer = new double[(int)Nreader][5];
+	double[][][] readerBnumerCov = new double[(int)Nreader][(int)Nreader][5];
 	double[][] wadasaSumr = new double[(int) Nnormal][(int) Ndisease];
 	double[][] wbdbsbSumr = new double[(int) Nnormal][(int) Ndisease];
 	double[] wadasaSumir = new double[(int) Ndisease];
@@ -322,6 +366,7 @@ public void doAUCcovUstatistics(String flagModality) {
 
 	double[] bdenom = new double[9];
 	double[][] readerBdenom = new double[(int)Nreader][5];
+	double[][][] readerBdenomCov = new double[(int)Nreader][(int)Nreader][5];
 	double[][] wadaSumr = new double[(int) Nnormal][(int) Ndisease];
 	double[][] wbdbSumr = new double[(int) Nnormal][(int) Ndisease];
 	double[] wadaSumir = new double[(int) Ndisease];
@@ -488,6 +533,64 @@ public void doAUCcovUstatistics(String flagModality) {
 			aucB = aucB + totaldb * AUCs[ir][1];
 		}
 		if(totalda > 0 && totaldb > 0 ) AUCs[ir][2] = AUCs[ir][0] - AUCs[ir][1];
+		// Coveriance
+		for (int irCov = 0; irCov < Nreader; irCov++) {
+			// ***************for the second modality******************
+			int[][] designB0Cov = Matrix.extractFirstDimension(d0, irCov, 1);
+			int[][] designB1Cov = Matrix.extractFirstDimension(d1, irCov, 1);
+			int[][] dbCov = Matrix.multiply(designB0Cov,
+					Matrix.matrixTranspose(designB1Cov));
+			int totaldbCov = Matrix.total(dbCov);
+			if (totaldbCov > 0) {
+				totalwbdbCov = totalwbdbCov + wb * totaldbCov;
+				readerTotalwbdbCov[ir][irCov] = wb * totaldbCov;
+			}
+			double wbCov = w[irCov][1];
+			double[][] t0B_irCov = Matrix.extractFirstDimension(t0, irCov, 1);
+			double[][] t1B_irCov = Matrix.extractFirstDimension(t1, irCov, 1);
+
+			double[][] sb0Cov = Matrix.multiply(t0B_irCov,
+					Matrix.matrixTranspose(ones_vect1));
+			double[][] sb1Cov = Matrix.multiply(ones_vect0,
+					Matrix.matrixTranspose(t1B_irCov));
+			double[][] sbCov = Matrix.subtract(sb1Cov, sb0Cov);
+			for (int i = 0; i < Nnormal; i++)
+				for (int j = 0; j < Ndisease; j++) {
+					if (sbCov[i][j] < 0)
+						sbCov[i][j] = 0.0;
+					else if (sbCov[i][j] == 0)
+						sbCov[i][j] = 0.5;
+					else if (sbCov[i][j] > 0)
+						sbCov[i][j] = 1.0;
+				}
+			double[][] wbdbCov = Matrix.linearTrans(dbCov, wbCov, 0);
+			double[][] wbdbsbCov = Matrix.elementMultiply(wbdbCov, sbCov);
+			
+			// ***********precompute row (col???) sums***********************
+			double[] wada_sumiCov = Matrix.colSum(wada);
+			double[] wbdb_sumiCov = Matrix.colSum(wbdbCov);
+			double[] wadasa_sumiCov = Matrix.colSum(wadasa);
+			double[] wbdbsb_sumiCov = Matrix.colSum(wbdbsbCov);
+			// ***********precompute col (row?????) sums***********************
+			double[] wada_sumjCov = Matrix.rowSum(wada);
+			double[] wbdb_sumjCov = Matrix.rowSum(wbdbCov);
+			double[] wadasa_sumjCov = Matrix.rowSum(wadasa);
+			double[] wbdbsb_sumjCov = Matrix.rowSum(wbdbsbCov);
+			// **********precompute the matrix sums*****************
+			double wada_sumijCov = Matrix.total(wada);
+			double wbdb_sumijCov = Matrix.total(wbdbCov);
+			double wadasa_sumijCov = Matrix.total(wadasa);
+			double wbdbsb_sumijCov = Matrix.total(wbdbsbCov);
+			// *********the sum for reader Cov that will feed ReaderM1-ReaderM4
+			readerBdenomCov[ir][irCov][1]= Matrix.total(Matrix.elementMultiply(wada, wbdbCov));
+			readerBdenomCov[ir][irCov][2] = Matrix.total(Matrix.elementMultiply(wada_sumiCov, wbdb_sumiCov));
+			readerBdenomCov[ir][irCov][3] = Matrix.total(Matrix.elementMultiply(wada_sumjCov, wbdb_sumjCov));
+			readerBdenomCov[ir][irCov][4] = wada_sumijCov * wbdb_sumijCov;
+			readerBnumerCov[ir][irCov][1] = Matrix.total(Matrix.elementMultiply(wadasa, wbdbsbCov));
+			readerBnumerCov[ir][irCov][2] = Matrix.total(Matrix.elementMultiply(wadasa_sumiCov,wbdbsb_sumiCov));
+			readerBnumerCov[ir][irCov][3] = Matrix.total(Matrix.elementMultiply(wadasa_sumjCov,wbdbsb_sumjCov));
+			readerBnumerCov[ir][irCov][4] = wadasa_sumijCov * wbdbsb_sumijCov;
+		}
 
 	} // end reader loop
 
@@ -532,6 +635,8 @@ public void doAUCcovUstatistics(String flagModality) {
 	// readers moment
 	double[][] readerDenom = new double[(int)Nreader][5];
 	double[][] readerNumer = new double[(int)Nreader][5];
+	double[][][] readerDenomCov = new double[(int)Nreader][(int)Nreader][5];
+	double[][][] readerNumerCov = new double[(int)Nreader][(int)Nreader][5];
 	double[][] readerBias2unbias = new double[][] {
 				{ 0, 0, 0, 0, 0}, { 0, 1.0, 0, 0, 0},
 				{ 0, -1.0, 1.0, 0, 0},{ 0, -1.0, 0, 1.0, 0},
@@ -554,6 +659,27 @@ public void doAUCcovUstatistics(String flagModality) {
 		// coefficients
 		readerCoefficients[ir] = Matrix.linearTrans(readerDenom[ir], 1.0 / (readerTotalwada[ir] * readerTotalwbdb[ir]), 0);
 		readerCoefficients[ir][4] = readerCoefficients[ir][4] - 1.0;
+		// reader Covariance
+		for (int irCov = 0; irCov < Nreader; irCov++) {
+			readerDenomCov[ir][irCov] = Matrix.multiply(readerBias2unbias, readerBdenomCov[ir][irCov]);
+			readerNumerCov[ir][irCov] = Matrix.multiply(readerBias2unbias, readerBnumerCov[ir][irCov]);
+			readerMomentsBiasedCov = readerBnumerCov;
+			// biased moment
+			for (int i = 0; i < readerMomentsBiasedCov[0][0].length; i++) {
+				if (readerBdenomCov[ir][irCov][i] > Matrix.min(w) / 2.0)
+					readerMomentsBiasedCov[ir][irCov][i] = readerMomentsBiasedCov[ir][irCov][i]/readerBdenomCov[ir][irCov][i];
+			}
+			// unbiased moment
+			readerMomentsCov = readerNumerCov;
+			for (int i = 0; i < readerMomentsCov[0][0].length; i++) {
+				if (readerDenomCov[ir][irCov][i] > Matrix.min(w) / 2.0)
+					readerMomentsCov[ir][irCov][i] = readerMomentsCov[ir][irCov][i]/(readerDenomCov[ir][irCov][i]);
+			}
+			// coefficients
+			readerCoefficientsCov[ir][irCov] = Matrix.linearTrans(readerDenomCov[ir][irCov], 1.0 / (readerTotalwada[ir] * readerTotalwbdbCov[ir][irCov]), 0);
+			readerCoefficientsCov[ir][irCov][4] = readerCoefficientsCov[ir][irCov][4] - 1.0;
+		}
+		
 	}
 	// coefficients
 	coefficients = Matrix.linearTrans(denom, 1.0 / (totalwada * totalwbdb), 0);
@@ -573,6 +699,9 @@ public void doAUCcovUstatistics(String flagModality) {
 		readerMomentsBiasedAA = readerMomentsBiased;
 		coefficientsAA = coefficients;
 		readerCoefficientsAA = readerCoefficients;
+		readerMomentsAACov = readerMomentsCov;
+		readerMomentsBiasedAACov = readerMomentsBiasedCov;
+		readerCoefficientsAACov = readerCoefficientsCov;
 		break;
 	case "BB":
 		if( Double.isInfinite(1.0/totalwbdb) ) {
@@ -587,6 +716,9 @@ public void doAUCcovUstatistics(String flagModality) {
 		readerMomentsBiasedBB = readerMomentsBiased;
 		coefficientsBB = coefficients;
 		readerCoefficientsBB = readerCoefficients;
+		readerMomentsBBCov = readerMomentsCov;
+		readerMomentsBiasedBBCov = readerMomentsBiasedCov;
+		readerCoefficientsBBCov = readerCoefficientsCov;
 		break;
 	case "AB":
 		if( Double.isInfinite(1.0/totalwada) ) {
@@ -607,6 +739,9 @@ public void doAUCcovUstatistics(String flagModality) {
 		readerMomentsBiasedAB = readerMomentsBiased;
 		coefficientsAB = coefficients;
 		readerCoefficientsAB = readerCoefficients;
+		readerMomentsABCov = readerMomentsCov;
+		readerMomentsBiasedABCov = readerMomentsBiasedCov;
+		readerCoefficientsABCov = readerCoefficientsCov;
 		break;
 	}
 	

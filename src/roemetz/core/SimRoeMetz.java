@@ -303,7 +303,8 @@ public class SimRoeMetz {
 		 */
 		int irow=0;
 		for(int normalID=0; normalID<Nnormal; normalID++) {
-			observerData[irow][0] = "-1";
+			//observerData[irow][0] = "-1";
+			observerData[irow][0] = "truth";
 //			observerData[irow][1] = "normal"+Integer.toString(normalID);
 			observerData[irow][1] = "normal"+String.format("%06d", normalID);
 			observerData[irow][2] = "truth";
@@ -311,7 +312,8 @@ public class SimRoeMetz {
 			irow++;
 		}
 		for(int diseaseID=0; diseaseID<Ndisease; diseaseID++) {
-			observerData[irow][0] = "-1";
+			//observerData[irow][0] = "-1";
+			observerData[irow][0] = "truth";
 //			observerData[irow][1] = "disease"+Integer.toString(diseaseID);
 			observerData[irow][1] = "disease"+String.format("%06d", diseaseID);
 			observerData[irow][2] = "truth";

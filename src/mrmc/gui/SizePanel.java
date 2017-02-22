@@ -132,6 +132,12 @@ public class SizePanel {
 		/*
 		 * Populate the row by adding elements
 		 */
+		// Size MLE Checkbox
+		sizeMleCheckBox = new JCheckBox("Size MLE");
+		sizeMleCheckBox.setSelected(false);
+		sizeMleCheckBox.addItemListener(new SizeMLEListener());
+		SizePanelRow2.add(sizeMleCheckBox);
+		//
 		SigLevelJTextField = new JTextField("0.05", 3);
 		SizePanelRow2.add(new JLabel("Significance level"));
 		SizePanelRow2.add(SigLevelJTextField);
@@ -151,12 +157,7 @@ public class SizePanel {
 		NdiseaseJTextField = new JTextField("0",3);
 		SizePanelRow2.add(new Label("#Diseased"));
 		SizePanelRow2.add(NdiseaseJTextField);
-		//
-		// Size MLE Checkbox
-		sizeMleCheckBox = new JCheckBox("Size MLE");
-		sizeMleCheckBox.setSelected(false);
-		sizeMleCheckBox.addItemListener(new SizeMLEListener());
-		SizePanelRow2.add(sizeMleCheckBox);
+
 		//
 		JButton sizeTrial = new JButton("Size a Trial");
 		sizeTrial.addActionListener(new sizeTrialListener());

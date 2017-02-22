@@ -39,7 +39,7 @@ public class MRMC extends JApplet {
 	 */
 	private static final long serialVersionUID = 1L;
 	private static JFrame mrmcFrame;
-	public static final String versionname ="iMRMC Version 3p1";
+	public static final String versionname ="iMRMC Version 3p2";
 	public static boolean commandStart = false;
 	static GUInterface gui;
 	GUImenubar menuBar;
