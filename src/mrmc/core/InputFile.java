@@ -1035,7 +1035,7 @@ public class InputFile {
 			if(observerData[i][0] == null) break;
 
 			//if ( observerData[i][0].equals("-1")){																 // Load truth lines
-			if ( observerData[i][0].equals("truth")){																 // Load truth lines
+			if ( observerData[i][0].equals("truth")||observerData[i][0].equals("-1")){																 // Load truth lines
 				if ( normalIDs.containsKey(observerData[i][1]) || diseaseIDs.containsKey(observerData[i][1]) ){  // Check Duplicate case truth define 
 					dataCheckResults = "ERROR: Duplicate case found"                 + " \n";
 					dataCheckResults = dataCheckResults + "      row = " + (NrowsInHeader+i+2)+ " \n";
@@ -1065,7 +1065,7 @@ public class InputFile {
 			if(observerData[i][0] == null) break;
 
 			//if ( !observerData[i][0].equals("-1")){
-			if ( !observerData[i][0].equals("truth")){
+			if ( !(observerData[i][0].equals("truth")||observerData[i][0].equals("-1"))){
 				if ( !normalIDs.containsKey(observerData[i][1]) && !diseaseIDs.containsKey(observerData[i][1]) ){
 					dataCheckResults = "ERROR: No truth for case"                     + " \n";
 					dataCheckResults = dataCheckResults + "      row = " + (NrowsInHeader+i+2) + " \n";
@@ -1228,7 +1228,7 @@ public class InputFile {
 			String modalityID = observerData[i][2];
 			double score = Double.valueOf(observerData[i][3]).doubleValue();
 			//if (readerID.equals("-1")) {
-			if (readerID.equals("truth")) {
+			if (readerID.equals("truth")||readerID.equals("-1")) {
 				truthVals.put(caseID, Integer.valueOf(observerData[i][3]).intValue());
 			} else {
 				if (keyedData.get(readerID).get(caseID).containsKey(modalityID)	){
