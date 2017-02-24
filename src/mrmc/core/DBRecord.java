@@ -72,8 +72,12 @@ public class DBRecord {
 	public double varAMLE=0.0;
 	public double varBMLE=0.0;
 	public double[] readerTotalVarMLE;
+	public double[][] readerTotalCovMLE;
 	public double[] readerVarAMLE;
 	public double[] readerVarBMLE;
+	public double[][] readerCovAMLE;
+	public double[][] readerCovBMLE;
+	
 	public GUInterface GUI;
 	public DBRecord DBRecordStat, DBRecordSize;
 	public InputFile InputFile1;
@@ -151,6 +155,7 @@ public class DBRecord {
 	 * 
 	 */
 	public double[] readerTotalVar, readerVarA, readerVarB;
+	public double[][] readerTotalCov, readerCovA, readerCovB;
 	/**
 	 * Indicator whether {mrmc.gui.InputFileCard#FlagMLE} is set
 	 */
@@ -965,11 +970,17 @@ public class DBRecord {
 		varAMLE=0.0;
 		varBMLE=0.0;
 		double readerTotalVarnoMLE[]= new double[(int) Nreader];
+		double readerTotalCovnoMLE[][] = new double[(int) Nreader][(int) Nreader];
 		readerTotalVarMLE = new double[(int) Nreader];
+		readerTotalCovMLE = new double[(int) Nreader][(int) Nreader];
 		double readerVarAnoMLE[]= new double[(int) Nreader];
 		double readerVarBnoMLE[]= new double[(int) Nreader];
+		double readerCovAnoMLE[][]= new double[(int) Nreader][(int) Nreader];
+		double readerCovBnoMLE[][]= new double[(int) Nreader][(int) Nreader];
 		readerVarAMLE= new double[(int) Nreader];
 		readerVarBMLE= new double[(int) Nreader];
+		readerCovAMLE= new double[(int) Nreader][(int) Nreader];
+		readerCovBMLE= new double[(int) Nreader][(int) Nreader];
 		readerTotalVar = new double[(int) Nreader];
 		readerVarA = new double[(int) Nreader];
 		readerVarB = new double[(int) Nreader];
@@ -1008,6 +1019,11 @@ public class DBRecord {
 		double[][] readerBDG = new double [4][4]; 
 		double[][] readerBDGbias = new double [4][4]; 
 		double[][] readerBDGcoeff = new double [4][4];
+		// calculate readers var
+		double[][] readerBDGCov = new double [4][4]; 
+		double[][] readerBDGbiasCov = new double [4][4]; 
+		double[][] readerBDGcoeffCov = new double [4][4];
+		
 
 		for (int ir = 0; ir<Nreader;ir++ ){
 			for (int i = 0; i < 4; i++) {
@@ -1052,6 +1068,39 @@ public class DBRecord {
 				readerTotalVarnoMLE[ir] =  new BigDecimal(readerTotalVarnoMLE[ir]).setScale(8, RoundingMode.HALF_UP).doubleValue();
 			if (!Double.isNaN(readerTotalVarMLE[ir]))
 				readerTotalVarMLE[ir] =  new BigDecimal(readerTotalVarMLE[ir]).setScale(8, RoundingMode.HALF_UP).doubleValue();
+			// calculate covariance
+			for (int irc = 0; irc<Nreader;irc++ ){
+				for (int i = 0; i < 4; i++) {
+					readerBDGCov[0][i] = covMRMCstat.readerMomentsAACov[ir][irc][i + 1];
+					readerBDGCov[1][i] = covMRMCstat.readerMomentsBBCov[ir][irc][i + 1];
+					readerBDGCov[2][i] = covMRMCstat.readerMomentsABCov[ir][irc][i + 1];
+					readerBDGbiasCov[0][i] = covMRMCstat.readerMomentsBiasedAACov[ir][irc][i + 1];
+					readerBDGbiasCov[1][i] = covMRMCstat.readerMomentsBiasedBBCov[ir][irc][i + 1];
+					readerBDGbiasCov[2][i] = covMRMCstat.readerMomentsBiasedABCov[ir][irc][i + 1];
+					
+					readerBDGcoeffCov[0][i] = covMRMCstat.readerCoefficientsAACov[ir][irc][i + 1];
+					readerBDGcoeffCov[1][i] = covMRMCstat.readerCoefficientsBBCov[ir][irc][i + 1];
+					readerBDGcoeffCov[2][i] = covMRMCstat.readerCoefficientsABCov[ir][irc][i + 1];
+					
+					readerBDGcoeffCov[3][i] = 1.0;
+					
+					readerCovAnoMLE[ir][irc] +=  readerBDGcoeffCov[0][i] * readerBDGCov[0][i];
+					readerCovBnoMLE[ir][irc] +=  readerBDGcoeffCov[1][i] * readerBDGCov[1][i];
+					readerTotalCovnoMLE[ir][irc] += readerBDGcoeffCov[2][i] * readerBDGCov[2][i];
+					readerCovAMLE[ir][irc] +=  readerBDGcoeffCov[0][i] * readerBDGbiasCov[0][i];
+					readerCovBMLE[ir][irc] +=  readerBDGcoeffCov[1][i] * readerBDGbiasCov[1][i];
+					readerTotalCovMLE[ir][irc] += readerBDGcoeffCov[2][i] * readerBDGbiasCov[2][i];
+					/*
+					readerBDGCov[3][i] =     (readerBDGCov[0][i] * readerBDGcoeffCov[0][i])
+							  +     (readerBDGCov[1][i] * readerBDGcoeffCov[1][i])
+							  - 2.0*(readerBDGCov[2][i] * readerBDGcoeffCov[2][i]);
+					readerBDGbiasCov[3][i] = (readerBDGbiasCov[0][i] * readerBDGcoeffCov[0][i])
+							  +     (readerBDGbiasCov[1][i] * readerBDGcoeffCov[1][i])
+							  - 2.0*(readerBDGbiasCov[2][i] * readerBDGcoeffCov[2][i]);
+					readerTotalCovnoMLE[ir][irc] += readerBDGcoeffCov[3][i] * readerBDGCov[3][i];
+					readerTotalCovMLE[ir][irc]  += readerBDGcoeffCov[3][i] * readerBDGbiasCov[3][i];*/
+				}
+			}
 		}
 		if (flagMLE==0){
 			totalVar= totalVarnoMLE;
@@ -1060,6 +1109,9 @@ public class DBRecord {
 			readerTotalVar = readerTotalVarnoMLE;
 			readerVarA = readerVarAnoMLE;
 			readerVarB = readerVarBnoMLE;
+			readerCovA = readerCovAnoMLE;
+			readerCovB = readerCovBnoMLE;
+			readerTotalCov = readerTotalCovnoMLE;
 		}else{
 			totalVar=totalVarMLE;
 			varA = varAMLE;
@@ -1067,6 +1119,10 @@ public class DBRecord {
 			readerTotalVar = readerTotalVarMLE;
 			readerVarA = readerVarAMLE;
 			readerVarB = readerVarBMLE;
+			readerCovA = readerCovAMLE;
+			readerCovB = readerCovBMLE;
+			readerTotalCov = readerTotalCovMLE;
+			
 		}
 		SE = Math.sqrt(totalVar);
 		if(totalVar < 0) {

@@ -12,6 +12,7 @@ import com.itextpdf.text.pdf.PdfPTable;*/
 
 
 
+
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Paragraph;
@@ -569,8 +570,8 @@ public class exportToFile {
 				}
 				str = str + Rdisease;
 				str = str+ SEPA + "  " +
-						((Double.isNaN(SummaryDBRecord.AUCs[k][0])||SummaryDBRecord.AUCs[k][0]<0) ? "       NaN" : fiveDecE.format(SummaryDBRecord.AUCs[k][0])) + SEPA + "  " + 
-							(Double.isNaN(SummaryDBRecord.readerVarA[k]) ? "       NaN" : fiveDecE.format(Math.sqrt(SummaryDBRecord.readerVarA[k])));
+						((Double.isNaN(SummaryDBRecord.AUCs[k][0])||SummaryDBRecord.AUCs[k][0]<0) ? "        NA" : fiveDecE.format(SummaryDBRecord.AUCs[k][0])) + SEPA + "  " + 
+							(Double.isNaN(SummaryDBRecord.readerVarA[k]) ? "        NA" : fiveDecE.format(Math.sqrt(SummaryDBRecord.readerVarA[k])));
 				//str = str+ SEPA + "  " +
 				//		fiveDecE.format(SummaryDBRecord.AUCs[k][0]) + SEPA + "  " +  
 				//			fiveDecE.format(SummaryDBRecord.readerVarA[k]);	
@@ -609,7 +610,7 @@ public class exportToFile {
 				}
 				str = str + Rdisease;
 				str = str+ SEPA + "  " +
-							((Double.isNaN(SummaryDBRecord.AUCs[k][1])||SummaryDBRecord.AUCs[k][1]<0) ? "       NaN" : fiveDecE.format(SummaryDBRecord.AUCs[k][1])) + SEPA + "  " +  //fiveDecE.format(SummaryDBRecord.AUCs[k][1]) + SEPA + "  " +
+							((Double.isNaN(SummaryDBRecord.AUCs[k][1])||SummaryDBRecord.AUCs[k][1]<0) ? "        NA" : fiveDecE.format(SummaryDBRecord.AUCs[k][1])) + SEPA + "  " +  //fiveDecE.format(SummaryDBRecord.AUCs[k][1]) + SEPA + "  " +
 							(Double.isNaN(SummaryDBRecord.readerVarB[k]) ? "       NaN" : fiveDecE.format(Math.sqrt(SummaryDBRecord.readerVarB[k])));//fiveDecE.format(SummaryDBRecord.readerVarB[k]);	
 				k=k+1;
 			}
@@ -650,13 +651,13 @@ public class exportToFile {
 					AUC_dif = Double.NaN;
 				str = str + SEPA;
 				if(AUC_dif<0)
-						str = str +  " " + (Double.isNaN(AUC_dif) ? "      NaN" : fiveDecE.format(AUC_dif)) + SEPA + "  " + //fiveDecE.format(AUC_dif) + SEPA + "  " +
+						str = str +  " " + (Double.isNaN(AUC_dif) ? "       NA" : fiveDecE.format(AUC_dif)) + SEPA + "  " + //fiveDecE.format(AUC_dif) + SEPA + "  " +
 								(Double.isNaN(SummaryDBRecord.readerTotalVar[k]) ? "       NaN" : fiveDecE.format(Math.sqrt(SummaryDBRecord.readerTotalVar[k])));//fiveDecE.format(SummaryDBRecord.readerTotalVar[k]);	
 					else if (AUC_dif>0)
-						str = str + "  " + (Double.isNaN(AUC_dif) ? "      NaN" : fiveDecE.format(AUC_dif)) + SEPA + "  " + // + fiveDecE.format(AUC_dif) + SEPA + "  " +
+						str = str + "  " + (Double.isNaN(AUC_dif) ? "       NA" : fiveDecE.format(AUC_dif)) + SEPA + "  " + // + fiveDecE.format(AUC_dif) + SEPA + "  " +
 								(Double.isNaN(SummaryDBRecord.readerTotalVar[k]) ? "       NaN" : fiveDecE.format(Math.sqrt(SummaryDBRecord.readerTotalVar[k])));//fiveDecE.format(SummaryDBRecord.readerTotalVar[k]);	
 					else
-						str = str + "   " + (Double.isNaN(AUC_dif) ? "      NaN" : fiveDecE.format(AUC_dif)) + SEPA + "  " + // + fiveDecE.format(AUC_dif) + SEPA + "  " +
+						str = str + "   " + (Double.isNaN(AUC_dif) ? "       NA" : fiveDecE.format(AUC_dif)) + SEPA + "  " + // + fiveDecE.format(AUC_dif) + SEPA + "  " +
 								(Double.isNaN(SummaryDBRecord.readerTotalVar[k]) ? "       NaN" : fiveDecE.format(Math.sqrt(SummaryDBRecord.readerTotalVar[k])));//fiveDecE.format(SummaryDBRecord.readerTotalVar[k]);	
 				k=k+1;
 			}
@@ -1164,20 +1165,25 @@ public class exportToFile {
 			str = str + StatDBRecord.modalityB + SEPA;
 			if (StatDBRecord.selectedMod == 0){
 				str = str + eightDecE.format(StatDBRecord.AUCs[i][0]) + SEPA;
-				str = str + eightDecE.format(Math.sqrt(StatDBRecord.readerVarA[i])) + SEPA;
+				//str = str + eightDecE.format(Math.sqrt(StatDBRecord.readerVarA[i])) + SEPA;
+				str = str + (Double.isNaN(StatDBRecord.readerVarA[i])? "NA": eightDecE.format(StatDBRecord.readerVarA[i])) + SEPA;
 				str = str +"NA,NA,NA,NA" + SEPA;
 			}else if (StatDBRecord.selectedMod == 1){
 				str = str +"NA,NA" + SEPA;
 				str = str + eightDecE.format(StatDBRecord.AUCs[i][1]) + SEPA;
-				str = str + eightDecE.format(Math.sqrt(StatDBRecord.readerVarB[i])) + SEPA;
+				//str = str + eightDecE.format(Math.sqrt(StatDBRecord.readerVarB[i])) + SEPA;
+				str = str + (Double.isNaN(StatDBRecord.readerVarB[i])? "NA": eightDecE.format(StatDBRecord.readerVarB[i])) + SEPA;
 				str = str +"NA,NA" + SEPA;
 			} else {
 				str = str + eightDecE.format(StatDBRecord.AUCs[i][0]) + SEPA;
-				str = str + eightDecE.format(Math.sqrt(StatDBRecord.readerVarA[i])) + SEPA;
+				//str = str + eightDecE.format(Math.sqrt(StatDBRecord.readerVarA[i])) + SEPA;
+				str = str + (Double.isNaN(StatDBRecord.readerVarA[i])? "NA": eightDecE.format(StatDBRecord.readerVarA[i])) + SEPA;
 				str = str + eightDecE.format(StatDBRecord.AUCs[i][1]) + SEPA;
-				str = str + eightDecE.format(Math.sqrt(StatDBRecord.readerVarB[i])) + SEPA;
+				//str = str + eightDecE.format(Math.sqrt(StatDBRecord.readerVarB[i])) + SEPA;
+				str = str + (Double.isNaN(StatDBRecord.readerVarB[i])? "NA": eightDecE.format(StatDBRecord.readerVarB[i])) + SEPA;
 				str = str + eightDecE.format(StatDBRecord.AUCs[i][0]-StatDBRecord.AUCs[i][1]) + SEPA;
-				str = str + eightDecE.format(Math.sqrt(StatDBRecord.readerTotalVar[i])) + SEPA;
+				//str = str + eightDecE.format(Math.sqrt(StatDBRecord.readerTotalVar[i])) + SEPA;
+				str = str + (Double.isNaN(StatDBRecord.readerTotalVar[i])? "NA": eightDecE.format(StatDBRecord.readerTotalVar[i])) + SEPA;
 			}
 			i++;
 			str = str +"NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA" + "\r\n";
@@ -1186,7 +1192,41 @@ public class exportToFile {
 			
 		return str;
 	}
+	// export readers covariance
+	public static String exportReadersCov(String readerCovReport, DBRecord StatDBRecord, InputFile InputFile1) {
+		// TODO Auto-generated method stub
+		String str = readerCovReport;
+		if(StatDBRecord.selectedMod == 0){
+			str = str + StatDBRecord.modalityA + " VS " + StatDBRecord.modalityA + "\r\n" + ",";
+		}
+		else if(StatDBRecord.selectedMod == 1){
+			str = str + StatDBRecord.modalityB + " VS " + StatDBRecord.modalityB + "\r\n" + ",";
+		}
+		else{
+			str = str + StatDBRecord.modalityA + " VS " + StatDBRecord.modalityB + "\r\n" + ",";
+		}
+		for(String desc_temp : InputFile1.readerIDs.keySet() ) {
+			str = str + desc_temp + SEPA;
 
+		}
+		str = str + "\r\n";
+		int colReader=0;
+		for(String desc_temp : InputFile1.readerIDs.keySet() ) {
+			str = str + desc_temp + SEPA;
+			for(int i=0; i<StatDBRecord.Nreader;i++){
+				if (StatDBRecord.selectedMod == 0){
+					str = str + (Double.isNaN(StatDBRecord.readerCovA[colReader][i])? "NA":  eightDecE.format(StatDBRecord.readerCovA[colReader][i])) + SEPA;
+				}else if (StatDBRecord.selectedMod == 1){
+					str = str + (Double.isNaN(StatDBRecord.readerCovB[colReader][i])? "NA":  eightDecE.format(StatDBRecord.readerCovB[colReader][i])) + SEPA;
+				}else {
+					str = str + (Double.isNaN(StatDBRecord.readerTotalCov[colReader][i])? "NA":  eightDecE.format(StatDBRecord.readerTotalCov[colReader][i])) + SEPA;
+				}
+			}
+			str = str + "\r\n";
+			colReader++;
+		}
+		return str;
+	}
 	// export ROC curve information 
 	public static String exportROC(XYSeriesCollection seriesCollection,String report) {
 		String str = report;
@@ -1224,6 +1264,7 @@ public class exportToFile {
         } 			
 		return str;
 	}
+
 
 
 	

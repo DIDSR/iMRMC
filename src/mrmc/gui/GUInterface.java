@@ -58,6 +58,7 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;*/
 
+
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Paragraph;
@@ -798,6 +799,8 @@ public class GUInterface {
 				String AllStatMLEPath = outputDir+ "//statAnalysisMLE.csv";
 				// create file save all readers analysis result
 				String AllAUCsPath = outputDir+ "//AUCperReader.csv";
+				// create file save all readers covariance 
+				String AllReaderCovPath = outputDir+ "//readerCovariance.csv";
 				// create file save ROC result
 				String AllROCPath = outputDir+ "//ROCcurves.csv";
 				// create file save BDG table
@@ -822,6 +825,7 @@ public class GUInterface {
 	            String AllStatMLEreport = statHead+"\r\n";
 	            String AllAUCsreport = "inputFile,date,iMRMCversion,readerID,N0,N1,modalityA,modalityB,AUCA,varAUCA,AUCB,varAUCB,AUCAminusAUCB,varAUCAminusAUCB,"
 	    				+"pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis"+"\r\n";
+	            String readerCovReport = "inputFile,data,iMRMCversion" +"\r\n" + InputFile1.fileName + "," + fileTime + ',' + MRMC.versionname + "\r\n";
 	            String AllROCreport = "";
 				if  (GUInterface.selectedInput == GUInterface.DescInputModeImrmc){
 					System.out.println("MRMC Save All Stat button clicked");
@@ -859,6 +863,7 @@ public class GUInterface {
 						DBRecordStatAll.DBRecordStatFill(InputFile1, DBRecordStatAll);
 						AllStatreport = exportToFile.exportStat(AllStatreport, DBRecordStatAll, fileTime);
 						AllAUCsreport = exportToFile.exportReaders(AllAUCsreport, DBRecordStatAll,InputFile1, fileTime);
+						readerCovReport =  exportToFile.exportReadersCov(readerCovReport, DBRecordStatAll,InputFile1);
 						savetable();
 						// calculate and save MLE result
 						DBRecordStatAll.flagMLE = 1;
@@ -977,12 +982,16 @@ public class GUInterface {
 					if  (GUInterface.selectedInput == GUInterface.DescInputModeImrmc){
 						FileWriter fwAllAUCs = new FileWriter(AllAUCsPath);
 						FileWriter fwAllROC = new FileWriter(AllROCPath);
+						FileWriter fwAllCov = new FileWriter(AllReaderCovPath);
 						BufferedWriter bwAllAUCs = new BufferedWriter(fwAllAUCs);
 						BufferedWriter bwAllROC = new BufferedWriter(fwAllROC);	
+						BufferedWriter bwAllCov = new BufferedWriter(fwAllCov);	
 						bwAllAUCs.write(AllAUCsreport);
 						bwAllAUCs.close();
 						bwAllROC.write(AllROCreport);
 						bwAllROC.close();
+						bwAllCov.write(readerCovReport);
+						bwAllCov.close();
 						if (!MRMC.commandStart){
 							JOptionPane.showMessageDialog(
 											thisGUI.MRMCobject.getFrame(),"All modalities combinations analysis table, result, AUCs and ROC have been succeed export to \n " + outputDir, 
