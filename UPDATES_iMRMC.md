@@ -3,6 +3,20 @@
 <h4>Version Under Development</h4>
 ...
 
+<h4>iMRMC3p2</h4>
+*2/24/17*
+
+In command version, user can set output files saving directory.
+
+Estimate reader covariance. Results are exported by "Analysis All Modalities" buttons.
+
+Add MLE option for Sizing prediction.
+
+Reorganize GUI.
+
+For truth rows in input file, reader ID can be either "-1" or "truth".
+
+
 <h4>iMRMC3p1</h4>
 *1/12/17*
 
