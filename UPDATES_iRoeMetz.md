@@ -2,6 +2,15 @@
 
 <h4>Version Under Development</h4>
 
+<h4>iRoeMetz2.1</h4>
+*2/24/2017*
+
+Numerically calculate single-reader AUC and variance. 
+
+Export more numerical analysis statistical results (degree of freedom, confidence interval, p-value).
+
+Reorganize GUI interface.
+
 
 <h4>iRoeMetz2.0</h4>
 *7/26/2016*
