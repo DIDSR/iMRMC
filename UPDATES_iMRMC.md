@@ -6,13 +6,13 @@
 <h4>iMRMC3p2</h4>
 *2/24/17*
 
-In command version, user can set output files saving directory.
+In command-line execution, the user can specify the directory for the output files.
 
-Estimate reader covariance. Results are exported by "Analysis All Modalities" buttons.
+Estimate covariances for each reader-modality pair. Results are exported by "Analysis All Modalities" buttons. This covariance matrix can be used for the Obuchowski Rockette method (Obuchowski1995_Commun-Stat-Simulat_v24p285).
 
 Add MLE option for Sizing prediction.
 
-Reorganize GUI.
+Reorganize GUI to make it more compact.
 
 For truth rows in input file, reader ID can be either "-1" or "truth".
 
