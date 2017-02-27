@@ -3,6 +3,43 @@
 <h4>Version Under Development</h4>
 ...
 
+<h4>iMRMC3p2</h4>
+*2/24/17*
+
+In command-line execution, the user can specify the directory for the output files.
+
+Estimate covariances for each reader-modality pair. Results are exported by "Analysis All Modalities" buttons. This covariance matrix can be used for the Obuchowski Rockette method (Obuchowski1995_Commun-Stat-Simulat_v24p285).
+
+Add MLE option for Sizing prediction.
+
+Reorganize GUI to make it more compact.
+
+For truth rows in input file, reader ID can be either "-1" or "truth".
+
+
+<h4>iMRMC3p1</h4>
+*1/12/17*
+
+Variance estimates for individual readers can now be found by the "Show Reader AUCs" button.
+
+A pdf version of the statistical analysis is available by the " Save Stat Analysis". The button also exports summary .omrmc and .csv files.
+
+
+<h4>iMRMC3p0</h4>
+*7/14/16*
+
+Add split-plot and unpaired study design options for sizing analysis.
+
+Add “Explore Experiment Size” button to predict multiple size studies of variance and power.
+
+Update output files:
+  * Add “Save Stat” button to save statistical analysis results into one line and export to disk for easier reading by other software.
+  * Add “Save Size” button to export sizing analysis results to disk.
+  * Add “Save All Stat” button to export analysis results from all modalities and all combinations of modalities. This includes variance components, individual reader AUCs and all the ROC curves. Most data are saved as .csv files for easier reading by other software.
+
+Add option to run iMRMC in command line mode. Software will do analysis and export the same results as the "Save All Stat" button.
+
+
 <h4>iMRMC2p8</h4>
 *12/1/15*
 
