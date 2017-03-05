@@ -2461,8 +2461,13 @@ public class RMGUInterface {
 							reportGUI = exportToFile.exportTable2(reportGUI, DB1);
 						}
 						//reportValidation = "NumAUCA,NumAUCB,NumAUCAminusAUCB,NumvarAUCA,NumvarAUCB,NumVarAUCAminusAUCB" + "\r\n";
-						reportValidation =  "AnalysisStat,AUCA,AUCB,AUCAminusAUCB,varA,varB,varAUCAminusAUCB,pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis" + "\r\n";
-						reportValidation = exportToFile.exportNumValidation(reportValidation,DB1);
+					
+						//original function temp command out
+						//reportValidation =  "AnalysisStat,AUCA,AUCB,AUCAminusAUCB,varA,varB,varAUCAminusAUCB,pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis" + "\r\n";
+						//reportValidation = exportToFile.exportNumValidation(reportValidation,DB1);
+						
+						//export for split plot
+						reportValidation= "Name,Nreader,Ncase,Sp,varAminusB,Vr,Vc";
 						
 					}
 					FileWriter fwVal = new FileWriter(fVal.getAbsoluteFile());

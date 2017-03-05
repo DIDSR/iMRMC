@@ -509,6 +509,9 @@ public class CalcGenRoeMetz {
 		
 		// Set the coefficients
 		DBRecordNumerical.DBRecordRoeMetzNumericalFill(SizePanelRoeMetz);
+		// calculcate Vr, Vc, this works only for paried data
+		calcualteVrVc();
+		DBRecord track =DBRecordNumerical;
 		if (SizePanelRoeMetz.pairedReadersFlag == 0) {
 			for(int i= 0; i<(DBRecordNumerical.Nreader/2);i++){
 				DBRecordNumerical.N0perReader[i][1] = 0;
@@ -526,6 +529,23 @@ public class CalcGenRoeMetz {
 			}
 			
 		} 
+		
+	}
+
+	private static void calcualteVrVc() {
+		// calculcate Vr, Vc, this works only for paired data coeffA=coeffB=coeffAB
+		double[] m = new double[8];
+		double[] c = new double[8];
+		double Vr, Vc; 
+		for(int i=0; i<8; i++) {
+			m[i] =	DBRecordNumerical.BDG[0][i] + DBRecordNumerical.BDG[1][i]-2.0*DBRecordNumerical.BDG[2][i];
+			c[i] = DBRecordNumerical.BDGcoeff[0][i]*DBRecordNumerical.Nreader;
+		}
+		Vr = c[0]*(m[0]-m[4])+c[1]*(m[1]-m[5])+c[2]*(m[2]-m[6])+c[3]*(m[3]-m[7]);
+		Vc = c[0]*m[4]+c[1]*m[5]+c[2]*m[6]-(1-c[3])*m[7];
+		DBRecordNumerical.Vr =Vr;
+		DBRecordNumerical.Vc =Vc;
+		DBRecordNumerical.testVarDiff = Vr/DBRecordNumerical.Nreader +Vc;
 	}
 
 }

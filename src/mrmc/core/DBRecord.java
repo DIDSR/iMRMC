@@ -78,6 +78,9 @@ public class DBRecord {
 	public double[][] readerCovAMLE;
 	public double[][] readerCovBMLE;
 	
+	// reader and case variance for split plot simulation
+	public double Vr,Vc,testVarDiff;
+	
 	public GUInterface GUI;
 	public DBRecord DBRecordStat, DBRecordSize;
 	public InputFile InputFile1;
