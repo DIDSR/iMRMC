@@ -93,93 +93,74 @@ public class CalcGenRoeMetz {
 					.println("Format is: CofVGenRoeMetz [u0,u1] [R00,C00,RC00,R10,C10,RC10,R01,C01,RC01,R11,C11,RC11,R0,C0,RC0,R1,C1,RC1] [n0,n1,nr]");
 		}
 	}
-
 	/**
 	 * Numerically integrates a one dimensional gaussian pdf times two normal
-	 * cdfs
+	 * cdfs follow Gallas2014_J-Med-Img_v1p031006 function 12
 	 * 
 	 * @param u Contains experiment means
 	 * @param scale Contains one 1-D gaussian pdf and two 2-D normal cdfs
 	 * @param numSamples Number of samples for numerical integration
 	 * @return Integrated product moment
 	 */
-	public static double prodMoment1(double[] u, double[] scale, int numSamples) {
-		//NormalDistribution gauss = new NormalDistribution();
+	private static double prodMomentSingleModality(double[] u, double sigmaSqOmega,
+		double sigmaSqOmegaMoment, double sigmaSqOneMod, double sigmaSqOneModMoment, int numSamples) {
 		NormalDist gaussNew = new NormalDist();
-		double scale1 = scale[0];
-		double scale20 = scale[1];
-		double scale21 = scale[2];
-
-		double lx = 10 * Math.sqrt(scale1);
+		// calculate temp Numerator
+		double tempNum = Math.sqrt(sigmaSqOmega + sigmaSqOneMod - sigmaSqOmegaMoment - sigmaSqOneModMoment);
+		// calculate temp Denominator
+		double tempDen = Math.sqrt(sigmaSqOmegaMoment + sigmaSqOneModMoment);
+		
+		// calculate x
+		double lx = 10.0;
 		double dx = lx / (double) numSamples;
 		double[] x = new double[numSamples];
+		double Integral = 0.0;
 		for (int i = 0; i < numSamples; i++) {
 			x[i] = ((double) i * dx) - (0.5 * lx);
 		}
 
-		double f[] = new double[numSamples];
-		for (int i = 0; i < numSamples; i++) {
-			f[i] = Math.exp((-(x[i] * x[i])) / 2.0 / scale1);
-		}
+		double[] phi_x = new double[numSamples];
+		double[] cdfOneMod = new double[numSamples];
 
 		for (int i = 0; i < numSamples; i++) {
-			f[i] = f[i] / Math.sqrt(Math.PI * 2.0 * scale1);
+			// calculate phi for normal gaussian distribution
+			phi_x[i] = Math.exp(-(x[i] * x[i]) / 2.0 )
+					/ Math.sqrt(Math.PI * 2.0);
+			// if Denominator is 0, set cdf to 1
+			if (tempDen!=0){
+				cdfOneMod[i] = gaussNew.cdf((u[0] + x[i]*tempNum)/tempDen);
+			}else{
+				cdfOneMod[i] = 1;
+			}		
+			// do integral
+			Integral = Integral + dx*phi_x[i]*cdfOneMod[i]*cdfOneMod[i];	
 		}
-
-		double[] phi = new double[numSamples];
-		for (int i = 0; i < numSamples; i++) {
-			//old
-			/*phi[i] = gauss.cumulativeProbability((u[0] + x[i])
-					/ Math.sqrt(scale20))
-					* gauss.cumulativeProbability((u[1] + x[i])
-							/ Math.sqrt(scale21));*/
-			//new
-			phi[i] = gaussNew.cdf((u[0] + x[i])
-					/ Math.sqrt(scale20))
-					* gaussNew.cdf((u[1] + x[i])
-							/ Math.sqrt(scale21));
-			//check
-			/*double oldcdf = gauss.cumulativeProbability((u[0] + x[i])
-					/ Math.sqrt(scale20))
-					* gauss.cumulativeProbability((u[1] + x[i])
-							/ Math.sqrt(scale21));
-			double newcdf = gaussNew.cdf((u[0] + x[i])
-					/ Math.sqrt(scale20))
-					* gaussNew.cdf((u[1] + x[i])
-							/ Math.sqrt(scale21));
-			System.out.println("old = "+ oldcdf);	
-			System.out.println("new = " + newcdf);	
-			int a = 1;*/
-		}
-
-		double[] toTotal = new double[numSamples];
-		for (int i = 0; i < numSamples; i++) {
-			toTotal[i] = dx * f[i] * phi[i];
-		}
-		return Matrix.total(toTotal);
+		return Integral;
 	}
-
 	/**
 	 * Numerically integrates a two dimensional gaussian pdf times a gaussian
-	 * cdf
+	 * cdf follow Gallas2014_J-Med-Img_v1p031006 function 15
 	 * 
 	 * @param u Contains experiment means.
 	 * @param scale Contains 2-D gaussian pdf and cdf
 	 * @param numSamples Number of samples for numerical integration
 	 * @return Integrated product moment
 	 */
-	public static double prodMoment(double[] u, double[] scale, int numSamples) {
-		//NormalDistribution gauss = new NormalDistribution();
+	private static double prodMomentTwoModalities(double[] u, double sigmaSqOmega,
+			double sigmaSqOmegaMoment, double sigmaSqA, double sigmaSqB, int numSamples) {
 		NormalDist gaussNew = new NormalDist();
-		double scaleFixed = scale[0];
-		double scaleIndependentA = scale[1] + scale[3];
-		double scaleIndependentB = scale[2] + scale[4];
-
+		// calculate temp Numerator
+		double tempNumA = Math.sqrt(sigmaSqOmega - sigmaSqOmegaMoment); 
+		double tempNumB = Math.sqrt(sigmaSqOmega - sigmaSqOmegaMoment); 
+		// calculate temp Denominator
+		double tempDenA = Math.sqrt(sigmaSqA + sigmaSqOmegaMoment); 
+		double tempDenB = Math.sqrt(sigmaSqB + sigmaSqOmegaMoment);
+		
+		// calculate x
 		double lx = 10.0;
 		double dx = lx / (double) numSamples;
 		double[] x = new double[numSamples];
 		double Integral = 0.0;
-		double IntegralNew = 0.0;
 		for (int i = 0; i < numSamples; i++) {
 			x[i] = ((double) i * dx) - (0.5 * lx);
 		}
@@ -189,53 +170,26 @@ public class CalcGenRoeMetz {
 		double[] cdf_B = new double[numSamples];
 
 		for (int i = 0; i < numSamples; i++) {
+			// calculate phi for normal gaussian distribution
 			phi_x[i] = Math.exp(-(x[i] * x[i]) / 2.0 )
 					/ Math.sqrt(Math.PI * 2.0);
-			// old
-			/*cdf_A[i] = gauss.cumulativeProbability(
-					(u[0] + x[i]*Math.sqrt(scaleFixed))
-					/ Math.sqrt(scaleIndependentA));
-			cdf_B[i] = gauss.cumulativeProbability(
-					(u[1] + x[i]*Math.sqrt(scaleFixed))
-					/ Math.sqrt(scaleIndependentB));
-			Integral = Integral + dx*phi_x[i]*cdf_A[i]*cdf_B[i];*/
-			//new
-			cdf_A[i] = gaussNew.cdf(
-					(u[0] + x[i]*Math.sqrt(scaleFixed))
-					/ Math.sqrt(scaleIndependentA));
-			cdf_B[i] = gaussNew.cdf(
-					(u[1] + x[i]*Math.sqrt(scaleFixed))
-					/ Math.sqrt(scaleIndependentB));;
-			Integral = Integral + dx*phi_x[i]*cdf_A[i]*cdf_B[i];
-			//check
-/*			double oldA = gauss.cumulativeProbability(
-					(u[0] + x[i]*Math.sqrt(scaleFixed))
-					/ Math.sqrt(scaleIndependentA));
-			double oldB = gauss.cumulativeProbability(
-					(u[1] + x[i]*Math.sqrt(scaleFixed))
-					/ Math.sqrt(scaleIndependentB));
-			double newA = gaussNew.cdf(
-					(u[0] + x[i]*Math.sqrt(scaleFixed))
-					/ Math.sqrt(scaleIndependentA));
-			double newB = gaussNew.cdf(
-					(u[1] + x[i]*Math.sqrt(scaleFixed))
-					/ Math.sqrt(scaleIndependentB));
-			IntegralNew = IntegralNew + dx*phi_x[i]*newA*newB;
-			System.out.println("oldA = "+ oldA);	
-			System.out.println("oldB = " + oldB);	
-			System.out.println("oldint = "+ Integral);	
-			System.out.println("newA = " + newA);	
-			System.out.println("newB = "+ newB);	
-			System.out.println("newint = " + IntegralNew);	
-			int a = 1;*/
-			
-			
-			
+			// if Denominator is 0, set cdf to 1
+			if (tempDenA != 0){
+				cdf_A[i] = gaussNew.cdf((u[0] + x[i]*tempNumA)/tempDenA);
+			}else{
+				cdf_A[i] = 1;
+			}
+			// if Denominator is 0, set cdf to 1
+			if (tempDenB != 0){
+				cdf_B[i] = gaussNew.cdf((u[1] + x[i]*tempNumB)/tempDenB);;
+			}else{
+				cdf_B[i] = 1;
+			}
+			// do integral
+			Integral = Integral + dx*phi_x[i]*cdf_A[i]*cdf_B[i];		
 		}
-
 		return Integral;
 	}
-
 	/**
 	 * Calculates AUC components of variance for given experiment parameters via
 	 * numerical integration
@@ -276,210 +230,107 @@ public class CalcGenRoeMetz {
 		double v_R1 = var_t[15];
 		double v_C1 = var_t[16];
 		double v_RC1 = var_t[17];
-
-		// AUC
-		double scale1 = v_R0 + v_C0 + v_RC0 + v_R1 + v_C1 + v_RC1;
-		double scale20 = v_AR0 + v_AC0 + v_ARC0 + v_AR1 + v_AC1 + v_ARC1;
-		double scale21 = v_BR0 + v_BC0 + v_BRC0 + v_BR1 + v_BC1 + v_BRC1;
-
+		
+		// define sigmaSqOmega, simgaSqModality, and simgaSqMoment follow Gallas2014_J-Med-Img_v1p031006 
+		double sigmaSqOmega = v_R0 + v_C0 + v_RC0 + v_R1 + v_C1 + v_RC1;
+		double sigmaSqA =  v_AR0 + v_AC0 + v_ARC0 + v_AR1 + v_AC1 + v_ARC1;
+		double sigmaSqB = v_BR0 + v_BC0 + v_BRC0 + v_BR1 + v_BC1 + v_BRC1;
+		double sigmaSqAMoment = 0;
+		double sigmaSqBMoment = 0;
+		double sigmaSqOmegaMoment = 0;
+		
+		
 		DBRecordNumerical.AUCsReaderAvg = new double[2];
 		DBRecordNumerical.AUCs = new double[(int) DBRecordNumerical.Nreader][2];
-		//old
-		/*DBRecordNumerical.AUCsReaderAvg[0] = 
-			gauss.cumulativeProbability(u[0] / Math.sqrt(scale1 + scale20));
-		DBRecordNumerical.AUCsReaderAvg[1] = 
-			gauss.cumulativeProbability(u[1] / Math.sqrt(scale1 + scale21));*/
-		//new
+
 		DBRecordNumerical.AUCsReaderAvg[0] = 
-				gaussNew.cdf(u[0] / Math.sqrt(scale1 + scale20));
+				gaussNew.cdf(u[0] / Math.sqrt(sigmaSqOmega + sigmaSqA));
 		DBRecordNumerical.AUCsReaderAvg[1] = 
-				gaussNew.cdf(u[1] / Math.sqrt(scale1 + scale21));
-		//check
-		/*double AUC1old = gauss.cumulativeProbability(u[0] / Math.sqrt(scale1 + scale20));
-		double AUC2old = gauss.cumulativeProbability(u[1] / Math.sqrt(scale1 + scale21));
-		double AUC1new = gaussNew.cdf(u[0] / Math.sqrt(scale1 + scale20));
-		double AUC2new = gaussNew.cdf(u[1] / Math.sqrt(scale1 + scale21));
-			System.out.println("AUC1old = "+ AUC1old);	
-			System.out.println("AUC2old = " + AUC2old);	
-			System.out.println("AUC1new = "+ AUC1new);	
-			System.out.println("AUC2new = " + AUC2new);	
-			int a = 1;*/
-		
-		
+				gaussNew.cdf(u[1] / Math.sqrt(sigmaSqOmega + sigmaSqB));
+
 		for(int r=0; r<DBRecordNumerical.Nreader; r++) {
 			DBRecordNumerical.AUCs[r][0] = DBRecordNumerical.AUCsReaderAvg[0];
 			DBRecordNumerical.AUCs[r][1] = DBRecordNumerical.AUCsReaderAvg[1];
 		}
-
+		
 		// M1
-		double[] scaleM1 = { scale1, scale20, scale21 };
 		DBRecordNumerical.BDG[0][0] = DBRecordNumerical.AUCsReaderAvg[0];
 		DBRecordNumerical.BDG[1][0] = DBRecordNumerical.AUCsReaderAvg[1];
-		DBRecordNumerical.BDG[2][0] = prodMoment1(u, scaleM1, numSamples);
+		DBRecordNumerical.BDG[2][0] = 
+			prodMomentTwoModalities(new double[] { u[0], u[1] }, sigmaSqOmega, sigmaSqOmegaMoment, sigmaSqA, sigmaSqB, numSamples);
 
 		// M2
-		double scale30 = v_C0 + v_RC0 + v_AC0 + v_ARC0;
-		double scale31 = v_C0 + v_RC0 + v_BC0 + v_BRC0;
-		scale20 = v_AR1 + v_AC1 + v_ARC1 + v_AR0;
-		scale21 = v_BR1 + v_BC1 + v_BRC1 + v_BR0;
-		scale1 = v_R1 + v_C1 + v_RC1 + v_R0;
+		sigmaSqAMoment = v_AC0 + v_ARC0;
+		sigmaSqBMoment = v_BC0 + v_BRC0;
+		sigmaSqOmegaMoment = v_C0 + v_RC0;
 
-		scaleM1[0] = scale1 + scale20;
-		scaleM1[1] = scale30;
-		scaleM1[2] = scale30;
 		DBRecordNumerical.BDG[0][1] = 
-			prodMoment1(new double[] { u[0], u[0] }, scaleM1, numSamples);
-
-		scaleM1[0] = scale1 + scale21;
-		scaleM1[1] = scale31;
-		scaleM1[2] = scale31;
+			prodMomentSingleModality(new double[] { u[0], u[0] }, sigmaSqOmega, sigmaSqOmegaMoment, sigmaSqA, sigmaSqAMoment, numSamples);
 		DBRecordNumerical.BDG[1][1] = 
-			prodMoment1(new double[] { u[1], u[1] }, scaleM1, numSamples);
-
-		double[] scaleM = { scale1, scale20, scale21, scale30, scale31 };
+			prodMomentSingleModality(new double[] { u[1], u[1] }, sigmaSqOmega, sigmaSqOmegaMoment, sigmaSqB, sigmaSqBMoment, numSamples);
 		DBRecordNumerical.BDG[2][1] = 
-			prodMoment(new double[] { u[0], u[1] }, scaleM, numSamples);
-
+			prodMomentTwoModalities(new double[] { u[0], u[1] }, sigmaSqOmega, sigmaSqOmegaMoment, sigmaSqA, sigmaSqB, numSamples);
+		
 		// M3
-		scale30 = v_C1 + v_RC1 + v_AC1 + v_ARC1;
-		scale31 = v_C1 + v_RC1 + v_BC1 + v_BRC1;
-		scale20 = v_AR1 + v_AR0 + v_AC0 + v_ARC0;
-		scale21 = v_BR1 + v_BR0 + v_BC0 + v_BRC0;
-		scale1 = v_R1 + v_R0 + v_C0 + v_RC0;
-
-		scaleM1[0] = scale1 + scale20;
-		scaleM1[1] = scale30;
-		scaleM1[2] = scale30;
+		sigmaSqAMoment = v_AC1 + v_ARC1;
+		sigmaSqBMoment = v_BC1 + v_BRC1;
+		sigmaSqOmegaMoment = v_C1 + v_RC1 ;
+		
 		DBRecordNumerical.BDG[0][2] = 
-			prodMoment1(new double[] { u[0], u[0] }, scaleM1, numSamples);
-
-		scaleM1[0] = scale1 + scale21;
-		scaleM1[1] = scale31;
-		scaleM1[2] = scale31;
+			prodMomentSingleModality(new double[] { u[0], u[0] }, sigmaSqOmega, sigmaSqOmegaMoment, sigmaSqA, sigmaSqAMoment, numSamples);
 		DBRecordNumerical.BDG[1][2] = 
-			prodMoment1(new double[] { u[1], u[1] }, scaleM1, numSamples);
-
-		scaleM[0] = scale1;
-		scaleM[1] = scale20;
-		scaleM[2] = scale21;
-		scaleM[3] = scale30;
-		scaleM[4] = scale31;
+			prodMomentSingleModality(new double[] { u[1], u[1] }, sigmaSqOmega, sigmaSqOmegaMoment, sigmaSqB, sigmaSqBMoment, numSamples);
 		DBRecordNumerical.BDG[2][2] = 
-			prodMoment(new double[] { u[0], u[1] }, scaleM, numSamples);
-
+			prodMomentTwoModalities(new double[] { u[0], u[1] }, sigmaSqOmega, sigmaSqOmegaMoment, sigmaSqA, sigmaSqB, numSamples);
+		
 		// M4
-		scale30 = v_C1 + v_RC1 + v_AC1 + v_ARC1 + v_C0 + v_RC0 + v_AC0 + v_ARC0;
-		scale31 = v_C1 + v_RC1 + v_BC1 + v_BRC1 + v_C0 + v_RC0 + v_BC0 + v_BRC0;
-		scale20 = v_AR1 + v_AR0;
-		scale21 = v_BR1 + v_BR0;
-		scale1 = v_R1 + v_R0;
+		sigmaSqAMoment = v_AC1 + v_ARC1 + v_AC0 + v_ARC0;
+		sigmaSqBMoment = v_BC1 + v_BRC1 + v_BC0 + v_BRC0;
+		sigmaSqOmegaMoment = v_C1 + v_RC1 + v_C0 + v_RC0;
 
-		scaleM1[0] = scale1 + scale20;
-		scaleM1[1] = scale30;
-		scaleM1[2] = scale30;
 		DBRecordNumerical.BDG[0][3] = 
-			prodMoment1(new double[] { u[0], u[0] }, scaleM1, numSamples);
-
-		scaleM1[0] = scale1 + scale21;
-		scaleM1[1] = scale31;
-		scaleM1[2] = scale31;
+			prodMomentSingleModality(new double[] { u[0], u[0] }, sigmaSqOmega, sigmaSqOmegaMoment, sigmaSqA, sigmaSqAMoment, numSamples);
 		DBRecordNumerical.BDG[1][3] = 
-			prodMoment1(new double[] { u[1], u[1] }, scaleM1, numSamples);
-
-		scaleM[0] = scale1;
-		scaleM[1] = scale20;
-		scaleM[2] = scale21;
-		scaleM[3] = scale30;
-		scaleM[4] = scale31;
+			prodMomentSingleModality(new double[] { u[1], u[1] }, sigmaSqOmega, sigmaSqOmegaMoment, sigmaSqB, sigmaSqBMoment, numSamples);
 		DBRecordNumerical.BDG[2][3] = 
-			prodMoment(new double[] { u[0], u[1] }, scaleM, numSamples);
-
+			prodMomentTwoModalities(new double[] { u[0], u[1] }, sigmaSqOmega, sigmaSqOmegaMoment, sigmaSqA, sigmaSqB, numSamples);
+		
 		// M5
-		scale30 = v_R0 + v_R1 + v_RC0 + v_RC1 + v_AR0 + v_AR1 + v_ARC0 + v_ARC1;
-		scale31 = v_R0 + v_R1 + v_RC0 + v_RC1 + v_BR0 + v_BR1 + v_BRC0 + v_BRC1;
-		scale20 = v_AC0 + v_AC1;
-		scale21 = v_BC0 + v_BC1;
-		scale1 = v_C1 + v_C0;
+		sigmaSqAMoment = v_AR0 + v_ARC0 + v_AR1 + v_ARC1;
+		sigmaSqBMoment = v_BR0 + v_BRC0 + v_BR1 + v_BRC1;
+		sigmaSqOmegaMoment = v_R0 + v_RC0 + v_R1 + v_RC1;
 
-		scaleM1[0] = scale1 + scale20;
-		scaleM1[1] = scale30;
-		scaleM1[2] = scale30;
 		DBRecordNumerical.BDG[0][4] = 
-			prodMoment1(new double[] { u[0], u[0] }, scaleM1, numSamples);
-
-		scaleM1[0] = scale1 + scale21;
-		scaleM1[1] = scale31;
-		scaleM1[2] = scale31;
+			prodMomentSingleModality(new double[] { u[0], u[0] }, sigmaSqOmega, sigmaSqOmegaMoment, sigmaSqA, sigmaSqAMoment, numSamples);
 		DBRecordNumerical.BDG[1][4] = 
-				prodMoment1(new double[] { u[1], u[1] }, scaleM1,
-				numSamples);
-
-		scaleM[0] = scale1;
-		scaleM[1] = scale20;
-		scaleM[2] = scale21;
-		scaleM[3] = scale30;
-		scaleM[4] = scale31;
+			prodMomentSingleModality(new double[] { u[1], u[1] }, sigmaSqOmega, sigmaSqOmegaMoment, sigmaSqB, sigmaSqBMoment, numSamples);
 		DBRecordNumerical.BDG[2][4] = 
-			prodMoment(new double[] { u[0], u[1] }, scaleM, numSamples);
-
-		// M6
-		scale30 = v_R0 + v_R1 + v_C0 + v_RC0 + v_RC1 + v_AR0 + v_AR1 + v_AC0 + v_ARC0
-				+ v_ARC1;
-		scale31 = v_R0 + v_R1 + v_C0 + v_RC0 + v_RC1 + v_BR0 + v_BR1 + v_BC0 + v_BRC0
-				+ v_BRC1;
-		scale20 = v_AC1;
-		scale21 = v_BC1;
-		scale1 = v_C1;
-
-		scaleM1[0] = scale1 + scale20;
-		scaleM1[1] = scale30;
-		scaleM1[2] = scale30;
+			prodMomentTwoModalities(new double[] { u[0], u[1] }, sigmaSqOmega, sigmaSqOmegaMoment, sigmaSqA, sigmaSqB, numSamples);
+		
+		// M6	
+		sigmaSqAMoment = v_AR0 + v_AC0  + v_ARC0 + v_AR1 + v_ARC1;
+		sigmaSqBMoment = v_BR0 + v_BC0  + v_BRC0 + v_BR1 + v_BRC1;
+		sigmaSqOmegaMoment = v_R0 + v_C0 + v_RC0 + v_R1 + v_RC1;
+		
 		DBRecordNumerical.BDG[0][5] = 
-			prodMoment1(new double[] { u[0], u[0] }, scaleM1, numSamples);
-
-		scaleM1[0] = scale1 + scale21;
-		scaleM1[1] = scale31;
-		scaleM1[2] = scale31;
+			prodMomentSingleModality(new double[] { u[0], u[0] }, sigmaSqOmega, sigmaSqOmegaMoment, sigmaSqA, sigmaSqAMoment, numSamples);
 		DBRecordNumerical.BDG[1][5] = 
-			prodMoment1(new double[] { u[1], u[1] }, scaleM1, numSamples);
-
-		scaleM[0] = scale1;
-		scaleM[1] = scale20;
-		scaleM[2] = scale21;
-		scaleM[3] = scale30;
-		scaleM[4] = scale31;
+			prodMomentSingleModality(new double[] { u[1], u[1] }, sigmaSqOmega, sigmaSqOmegaMoment, sigmaSqB, sigmaSqBMoment, numSamples);
 		DBRecordNumerical.BDG[2][5] = 
-			prodMoment(new double[] { u[0], u[1] }, scaleM, numSamples);
-
-		// M7
-		scale30 = v_R0 + v_R1 + v_C1 + v_RC0 + v_RC1 + v_AR0 + v_AR1 + v_AC1 + v_ARC0
-				+ v_ARC1;
-		scale31 = v_R0 + v_R1 + v_C1 + v_RC0 + v_RC1 + v_BR0 + v_BR1 + v_BC1 + v_BRC0
-				+ v_BRC1;
-		scale20 = v_AC0;
-		scale21 = v_BC0;
-		scale1 = v_C0;
-
-		scaleM1[0] = scale1 + scale20;
-		scaleM1[1] = scale30;
-		scaleM1[2] = scale30;
+			prodMomentTwoModalities(new double[] { u[0], u[1] }, sigmaSqOmega, sigmaSqOmegaMoment, sigmaSqA, sigmaSqB, numSamples);
+		
+		// M7	
+		sigmaSqAMoment = v_AR0 + v_ARC0 + v_AR1 + v_AC1 + v_ARC1;
+		sigmaSqBMoment = v_BR0 + v_BRC0 + v_BR1 + v_BC1 + v_BRC1;
+		sigmaSqOmegaMoment = v_R0 + v_RC0 + v_R1 + v_C1 + v_RC1;
+		
 		DBRecordNumerical.BDG[0][6] = 
-			prodMoment1(new double[] { u[0], u[0] }, scaleM1, numSamples);
-
-		scaleM1[0] = scale1 + scale21;
-		scaleM1[1] = scale31;
-		scaleM1[2] = scale31;
+			prodMomentSingleModality(new double[] { u[0], u[0] }, sigmaSqOmega, sigmaSqOmegaMoment, sigmaSqA, sigmaSqAMoment, numSamples);
 		DBRecordNumerical.BDG[1][6] = 
-			prodMoment1(new double[] { u[1], u[1] }, scaleM1, numSamples);
-
-		scaleM[0] = scale1;
-		scaleM[1] = scale20;
-		scaleM[2] = scale21;
-		scaleM[3] = scale30;
-		scaleM[4] = scale31;
+			prodMomentSingleModality(new double[] { u[1], u[1] }, sigmaSqOmega, sigmaSqOmegaMoment, sigmaSqB, sigmaSqBMoment, numSamples);
 		DBRecordNumerical.BDG[2][6] = 
-			prodMoment(new double[] { u[0], u[1] }, scaleM, numSamples);
-
+			prodMomentTwoModalities(new double[] { u[0], u[1] }, sigmaSqOmega, sigmaSqOmegaMoment, sigmaSqA, sigmaSqB, numSamples);
+		
 		// M8
 		DBRecordNumerical.BDG[0][7] = 
 				DBRecordNumerical.AUCsReaderAvg[0]*DBRecordNumerical.AUCsReaderAvg[0];
@@ -487,26 +338,7 @@ public class CalcGenRoeMetz {
 				DBRecordNumerical.AUCsReaderAvg[1]*DBRecordNumerical.AUCsReaderAvg[1];
 		DBRecordNumerical.BDG[2][7] = 
 				DBRecordNumerical.AUCsReaderAvg[0]*DBRecordNumerical.AUCsReaderAvg[1];
-		/*
-		if (SizePanelRoeMetz.pairedReadersFlag == 0) {
-			DBRecordNumerical.BDG[2][0]=0;
-			DBRecordNumerical.BDG[2][1]=0;
-			DBRecordNumerical.BDG[2][2]=0;
-			DBRecordNumerical.BDG[2][3]=0;
-		}
-		if (SizePanelRoeMetz.pairedNormalsFlag == 0) {
-			DBRecordNumerical.BDG[2][0]=0;
-			DBRecordNumerical.BDG[2][2]=0;
-			DBRecordNumerical.BDG[2][4]=0;
-			DBRecordNumerical.BDG[2][6]=0;
-		}
-		if (SizePanelRoeMetz.pairedDiseasedFlag == 0) {
-			DBRecordNumerical.BDG[2][0]=0;
-			DBRecordNumerical.BDG[2][1]=0;
-			DBRecordNumerical.BDG[2][4]=0;
-			DBRecordNumerical.BDG[2][5]=0;
-		}*/
-		
+
 		// Set the coefficients
 		DBRecordNumerical.DBRecordRoeMetzNumericalFill(SizePanelRoeMetz);
 		if (SizePanelRoeMetz.pairedReadersFlag == 0) {
@@ -523,9 +355,8 @@ public class CalcGenRoeMetz {
 				DBRecordNumerical.N0perReader[i][2] = 0;
 				DBRecordNumerical.N1perReader[i][2] = 0;
 				DBRecordNumerical.AUCs[i][0] = Double.NaN;
-			}
-			
-		} 
+			}		
+		}
 	}
 
 }

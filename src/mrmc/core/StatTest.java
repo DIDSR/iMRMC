@@ -829,7 +829,7 @@ return DF_BDG;
 			DF_Hillis = 2;
 		}
 		if( Double.isInfinite(DF_Hillis) ) {
-		    if (!RoeMetz.doValidation){
+		    if (!RoeMetz.doValidation&&!MRMC.commandStart){
 			JFrame frame = new JFrame();
 			JOptionPane.showMessageDialog(frame,
 					"DF_Hillis was calculated to be infinite." + 

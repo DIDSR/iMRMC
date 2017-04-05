@@ -95,8 +95,8 @@ public class RoeMetz extends JApplet {
 	 * @param height Height of the application frame in pixels
 	 */
 	public static void run(JApplet applet, int width, int height) {
-		versionName = "iRoeMetz 2.0";
-		iRMFrame = new JFrame("iRoeMetz 2.0");
+		versionName = "iRoeMetz 2.2beta";
+		iRMFrame = new JFrame("iRoeMetz 2.2beta");
 		iRMFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		iRMFrame.getContentPane().add(applet);
 		iRMFrame.pack();
