@@ -64,6 +64,7 @@ doIMRMC <- function(dFrame.imrmc, iMRMCjar = "iMRMC.jar", cleanUp = TRUE){
   iMRMCfolderName <- "imrmcDir"
   iMRMCfileName <- "input.imrmc"
 
+  
   # Clean up files before calling iMRMC
   unlink(iMRMCfolderName, recursive = TRUE)
   # Write data frame to iMRMC input file
@@ -73,7 +74,7 @@ doIMRMC <- function(dFrame.imrmc, iMRMCjar = "iMRMC.jar", cleanUp = TRUE){
               append = TRUE, sep = ", ")
 
   # Run the iMRMC program
-  system(paste("java -jar ", iMRMCjar, iMRMCfileName, iMRMCfolderName), show.output.on.console = FALSE)
+  system(paste("java -jar ", iMRMCjar, iMRMCfileName, iMRMCfolderName), show.output.on.console = TRUE)
   # Retrieve the iMRMC results
   perReader <- read.csv(file.path(iMRMCfolderName, "AUCperReader.csv"))
   Ustat <- read.csv(file.path(iMRMCfolderName, "statAnalysis.csv"))
@@ -118,19 +119,19 @@ doIMRMC <- function(dFrame.imrmc, iMRMCjar = "iMRMC.jar", cleanUp = TRUE){
 
 }
 
-# simMRMC <- NULL
-# simRoeMetz <- NULL
-# simRoeMetz.defaultConfig <- NULL
-# dFrame.imrmc <- NULL
-# source("simMRMC.R")
-#
-# set.seed(0)
-#
-# # Get the default simulation configuration
-# simRoeMetz.config <- simRoeMetz.defaultConfig()
-# # Simulate an MRMC ROC study
-# dFrame.imrmc <- simRoeMetz(simRoeMetz.config)
-# # Analyze the MRMC ROC study
-# iMRMCjar <- "iMRMC-v3p2draft.jar"
-# iMRMCoutput <- doIMRMC(dFrame.imrmc, iMRMCjar = iMRMCjar, cleanUp = FALSE)
+simMRMC <- NULL
+simRoeMetz <- NULL
+simRoeMetz.defaultConfig <- NULL
+dFrame.imrmc <- NULL
+source("simMRMC.R")
+
+set.seed(0)
+
+# Get the default simulation configuration
+simRoeMetz.config <- simRoeMetz.defaultConfig()
+# Simulate an MRMC ROC study
+dFrame.imrmc <- simRoeMetz(simRoeMetz.config)
+# Analyze the MRMC ROC study
+iMRMCjar <- "iMRMC-v3p2.jar"
+iMRMCoutput <- doIMRMC(dFrame.imrmc, iMRMCjar = iMRMCjar, cleanUp = FALSE)
 
