@@ -1054,7 +1054,7 @@ public class RMGUInterface {
 			DBRecord.copy(squareDBRecordStat, sumSquareDBRecordStat);
 			saveTrialResult(DBRecordStat,0);
 			// validate sizing feature
-			sizeValidation(DBRecordStat,0);
+			//sizeValidation(DBRecordStat,0);
 			// write to disk
 			if (simSaveDirectory != null && !simSaveDirectory.equals("")) {
 				writeInputFile(sumDBRecordStat, filenameTime, NexpStart);
@@ -1094,7 +1094,7 @@ public class RMGUInterface {
 						saveTrialResult(DBRecordStat,i);
 						//sizeValidation(DBRecordStat,i);
 						// validate sizing feature
-						sizeValidation(DBRecordStat,i);
+						//sizeValidation(DBRecordStat,i);
 						continue;
 					}
 					// pad current simulation result to trialResult. 
@@ -1107,7 +1107,7 @@ public class RMGUInterface {
 					DBRecord.square(squareDBRecordStat);
 					DBRecord.add(squareDBRecordStat, sumSquareDBRecordStat);
 					// validate sizing feature
-					sizeValidation(DBRecordStat,i);
+					//sizeValidation(DBRecordStat,i);
 					// write to disk
 					if (simSaveDirectory != null && !simSaveDirectory.equals("")) {
 						writeInputFile(DBRecordStat, filenameTime, i);
@@ -1179,7 +1179,7 @@ public class RMGUInterface {
 	 * function to do the sizing validation
 	 * 
 	 */
-	private void sizeValidation(DBRecord dBRecordStat, long Trial) {
+/*	private void sizeValidation(DBRecord dBRecordStat, long Trial) {
 		// TODO Auto-generated method stub
 
 		int Ngroup,Preader, Pnormal,Pdisease;
@@ -1200,7 +1200,7 @@ public class RMGUInterface {
 			}
 		}
 		
-	}
+	}*/
 	/**
 	 * Handler for "Perform Simulation Experiments" button. Sets up
 	 * multi-threaded, multi-core spread of experiment tasks if possible.
@@ -1324,7 +1324,7 @@ public class RMGUInterface {
 										analysisExportListener analysisExportListener1 = new analysisExportListener(avgDBRecordStat,"Simulation",StatPanel1);
 										analysisExportListener1.exportResult();
 										exportTrialResult(null);
-										exportSizeValResult(null);
+										//exportSizeValResult(null);
 										System.exit(0);
 									}
 								}
@@ -2442,7 +2442,7 @@ public class RMGUInterface {
 							reportGUI = exportToFile.exportTable1(reportGUI, DB1);
 							reportGUI = exportToFile.exportTable2(reportGUI, DB1);
 						    exportTrialResult(outputPackage);
-						    exportSizeValResult(outputPackage);
+						   // exportSizeValResult(outputPackage);
 						}
 						reportValidation = "MCstat,AUCA,AUCB,AUCAminusAUCB,varA,varB,varAUCAminusAUCB,pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis" + "\r\n";
 						reportValidation = exportToFile.exportMCmeanValidation(reportValidation,DB1);
@@ -2498,7 +2498,9 @@ public class RMGUInterface {
 		try {
 			File f;	
 			if (RoeMetz.doValidation){
-				File outputDir = new File (validateFunction.inputFile.getParent()+"//"+"output");				
+				File outputDir = new File (validateFunction.inputFile.getParent()+"//"+"output");
+				if(!outputDir.exists() && !outputDir.isDirectory()) 
+					outputDir.mkdir();
 				String FileName=validateFunction.inputFile.getName();
 				FileName= FileName.substring(0,FileName.lastIndexOf("."));
 				String exportFileName = FileName +"simulationTrials" +".csv";
@@ -2538,7 +2540,7 @@ public class RMGUInterface {
 	}
 
 	// export sizing validation results
-	private void exportSizeValResult(File GUIoutputDir) {
+/*	private void exportSizeValResult(File GUIoutputDir) {
 		// TODO Auto-generated method stub
 		try {
 			File f;	
@@ -2579,7 +2581,7 @@ public class RMGUInterface {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+	}*/
 	
 	
 }
