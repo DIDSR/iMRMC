@@ -21,10 +21,12 @@
 #'              the modalityID for a truth observation is "truth"
 #'              the score for a truth observation must be either 0 (signal-absent) or 1 (signal-present)
 #'
-# @param iMRMCjar [char] this string identifies the location of the iMRMC.jar file
+#' @param iMRMCjarFullPath [char] this string identifies the location of the iMRMC.jar file
 #'            this jar file can be downloaded from https://github.com/DIDSR/iMRMC/releases
-#'            this R program works with version iMRMC-v3p2.jar and later
+#'            this R program supports version iMRMC-v3p2.jar
 #' @param cleanUp [logi] this logical determines whether or not the iMRMC analysis results
+#' @param show.output.on.console [logi] this logical determines whether or iMRMC console output
+#'               is written to the console
 #'
 #' @return iMRMCoutput [list] the objects of this list are described in detail in the iMRMC documentation
 #'            which can be found at http://didsr.github.io/iMRMC/000_iMRMC/userManualHTML/index.htm
@@ -59,25 +61,33 @@
 #'
 #' @export
 #'
-# @examples
-doIMRMC <- function(dFrame.imrmc, cleanUp = TRUE){
+#' @examples
+#'
+doIMRMC <- function(dFrame.imrmc, iMRMCjarFullPath = NULL, cleanUp = TRUE, show.output.on.console = FALSE){
 
   iMRMCfolderName <- "imrmcDir"
   iMRMCfileName <- "input.imrmc"
-  iMRMCjar <- "iMRMC-v3p2.jar"
 
-  pkgPath = path.package("iMRMCpg", quiet = FALSE)
-  javaFullPath = paste(pkgPath, "/java/",iMRMCjar,sep ="")
-  #javaFullPath = ("../inst/java/iMRMC-v3p2.jar")
+  if (is.null(iMRMCjarFullPath)) {
+    iMRMCjar <- "iMRMC-v3p2.jar"
+    pkgPath = path.package("iMRMCpg", quiet = FALSE)
+    iMRMCjarFullPath = paste(pkgPath, "/java/", iMRMCjar, sep = "")
+  }
+
   # Clean up files before calling iMRMC
   unlink(iMRMCfolderName, recursive = TRUE)
+
   # Write data frame to iMRMC input file
   writeLines("BEGIN DATA:", con = iMRMCfileName)
   write.table(dFrame.imrmc, iMRMCfileName,
               quote = FALSE, row.names = FALSE, col.names = FALSE,
               append = TRUE, sep = ", ")
 
-  system(paste("java -jar ", javaFullPath, iMRMCfileName, iMRMCfolderName), show.output.on.console = TRUE)
+  # Run iMRMC
+  system(
+    paste("java -jar ", iMRMCjarFullPath, iMRMCfileName, iMRMCfolderName),
+    show.output.on.console = show.output.on.console)
+
   # Retrieve the iMRMC results
   perReader <- read.csv(file.path(iMRMCfolderName, "AUCperReader.csv"))
   Ustat <- read.csv(file.path(iMRMCfolderName, "statAnalysis.csv"))
@@ -122,14 +132,3 @@ doIMRMC <- function(dFrame.imrmc, cleanUp = TRUE){
 
 }
 
-#.First.lib <- function(libname, pkgname) {
-#  .jpackage(pkgname,lib.loc=libname)
-#  .jengine(TRUE)
-#}
-# Get the default simulation configuration
-#simRoeMetz.config <- simRoeMetz.defaultConfig()
-# Simulate an MRMC ROC study
-#dFrame.imrmc <- simRoeMetz(simRoeMetz.config)
-# Analyze the MRMC ROC study
-#iMRMCjar <- "iMRMC-v3p2.jar"
-#iMRMCoutput <- doIMRMC(dFrame.imrmc, cleanUp = FALSE)
