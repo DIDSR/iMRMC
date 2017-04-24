@@ -1002,7 +1002,7 @@ DR_EXPLAIN.searchEngine = (function() {
         if (request.readyState != 4) return;
         if (request.status != 200 && request.status != 0)  return;
 
-        var arrFileStrings  = (request.responseText).split(/\s*;\s*/);
+        var arrFileStrings  = (request.responseText).split(/\s*\r\n\s*/);
         var stToSearch      = StringPairArray[iStringToSearch][0];
 
         var isFirstIteration = true;
@@ -1138,7 +1138,7 @@ DR_EXPLAIN.searchEngine = (function() {
             if (request.readyState == 4)
                 if(request.status == 200 || request.status == 0)
                 {
-                    var arPrefixes = (request.responseText).split(/\s*;\s*/);
+                    var arPrefixes = (request.responseText).split(/\s*\r\n\s*/);
                     var j = 0;
                     for (var i = 0; i + 2 < arPrefixes.length; i+=3)
                     {
@@ -1895,7 +1895,7 @@ DR_EXPLAIN.urlEncoder = (function(){
         doBindOpenNextPageWithEncodedStringToLinks: function() {
             var that = this;
             this.dom.$pageContent.on( "click", "a.local_link, a.b-breadCrumbs__link, a.b-controlButtons__link, a.b-tree__itemLink", function(e) {
-                that.openNextPage( $( this ).prop( "href" ), $( this ).attr("href"), $( this ).prop( "target" ) == "_new" );
+                that.openNextPage( $( this ).prop( "href" ), $( this ).attr("href"), $( this ).prop( "target" ) == "_blank" );
                 e.preventDefault();
                 return false;
             });
@@ -1903,7 +1903,7 @@ DR_EXPLAIN.urlEncoder = (function(){
         doBindOpenNextPageWithEncodedStringToLinksInClonedNode: function() {
             var that = this;
             $(".cloned_node").on("click", "a", function(e) {
-                that.openNextPage( $( this ).prop( "href" ), $( this ).attr("href"), $( this ).prop( "target" ) == "_new" );
+                that.openNextPage( $( this ).prop( "href" ), $( this ).attr("href"), $( this ).prop( "target" ) == "_blank" );
                 e.preventDefault();
                 return false;
             });
@@ -1912,7 +1912,7 @@ DR_EXPLAIN.urlEncoder = (function(){
         doBindOpenNextPageWithEncodedStringToLinksInKeywordContextMenu: function() {
             var that = this;
             this.dom.$keywordContextMenu.on( "click", "a.b-tree__itemLink", function(e) {
-                that.openNextPage( $( this ).prop( "href" ), $( this ).attr("href"), $( this ).prop( "target" ) == "_new" );
+                that.openNextPage( $( this ).prop( "href" ), $( this ).attr("href"), $( this ).prop( "target" ) == "_blank" );
                 e.preventDefault();
                 return false;
             });
@@ -1940,7 +1940,7 @@ DR_EXPLAIN.urlEncoder = (function(){
                 anch = nextpage.substr(anchPos);
             }
             targetUrl += "?" + stateParams + anch;
-            window.open(targetUrl, atNewPage ? "_new" : "_self");
+            window.open(targetUrl, atNewPage ? "_blank" : "_self");
         },
 
 

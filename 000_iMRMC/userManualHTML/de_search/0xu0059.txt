@@ -1,4 +1,10 @@
-Y; 22,18;
-YORK; 22;
-YOU; 16,11,9;
-YOUR; 12;
+Y
+ 33,9,8
+YES
+ 12
+YORK
+ 33
+YOU
+ 19
+YOUSUN
+ 3

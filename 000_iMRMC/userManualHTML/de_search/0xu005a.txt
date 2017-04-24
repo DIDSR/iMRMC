@@ -1,6 +1,10 @@
-Z; 8,19;
-Z-TEST; 8;
-ZIP; 12;
-ZOOM; 18;
-ZOOMS; 18;
-ZULEY; 22;
+Z
+ 30
+Z-TEST
+ 30
+ZOOM
+ 9
+ZOOMS
+ 9
+ZULEY
+ 33

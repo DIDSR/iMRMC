@@ -15,15 +15,18 @@ margin-bottom:0px;
 font-weight:normal;
 }
 
-div.description_on_page div.p
-{font-family:"Arial";
-font-size: 11pt;color:#000000;
-font-style:normal;
-text-decoration:none;
-font-weight:normal;
-}
-div.description_on_page div.p a
-{font-family:"Arial";
+div.description_on_page div.p,
+ div.description_on_page div.p a,
+ .m-pageContent__side__header div.p,
+ .m-pageContent__side__header div.p a,
+ .m-pageContent__side__footer div.p,
+ .m-pageContent__side__footer div.p a,
+ .m-pageContent__side__right div.p,
+ .m-pageContent__side__right div.p a,
+ .m-pageContent__side__left div.p,
+ .m-pageContent__side__left div.p a
+{
+font-family:"Arial";
 font-size: 11pt;color:#000000;
 font-style:normal;
 text-decoration:none;
@@ -70,58 +73,125 @@ font-weight:normal;
 img.de_780D01ADE8
 {
 margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px;}
-span.de_111311456D
+span.de_164CA85FB9
 {
-	font-family: "Arial";
-	font-size: 10pt;
-	color:#000000;
-	font-style:italic;
-}
-span.de_3BF6EC7C48
-{
-	font-family: "Times-Roman";
-	font-size: 10pt;
-	color:#000000;
-}
-span.de_4B289574C8
-{
-	font-size: 72pt;
-}
-span.de_648A514FF0
-{
-	font-family: "Arial";
-	font-size: 8pt;
-	color:#000000;
-	font-style:italic;
-}
-span.de_80BEB310C8
-{
-	font-family: "Symbol";
-	font-size: 10pt;
-	color:#000000;
-}
-span.de_86A8A5B366
-{
-	font-size: 24pt;
-}
-span.de_937E0348B4
-{
-	font-family: "Courier New";
-	font-size: 10pt;
-	color:#000000;
-}
-span.de_A6784F7BA8
-{
-	font-family: "Arial";
-	font-size: 10pt;
+	font-family: "ArialMT";
+	font-size: 11pt;
 	color:#0000ff;
 	text-decoration:underline;
 }
-span.de_CC7DAF531E
+span.de_2B94C39861
+{
+	color:#0000ff;
+	text-decoration:underline;
+}
+span.de_45E825280E
 {
 	font-family: "Arial";
-	font-size: 10pt;
+	font-size: 11pt;
+	color:#ff0000;
+}
+span.de_496AA02164
+{
+	font-size: 12pt;
 	color:#000000;
+}
+span.de_4A06449470
+{
+	font-family: "Courier New";
+	font-size: 11pt;
+	color:#000000;
+}
+span.de_4AF4BF9DD6
+{
+	font-family: "Arial";
+	font-size: 11pt;
+	color:#000000;
+}
+span.de_4D39B619E2
+{
+	font-family: "Arial-BoldMT";
+	font-size: 11pt;
+	color:#000000;
+}
+span.de_51752156DC
+{
+	color:#000000;
+}
+span.de_56F4564E24
+{
+	font-family: "Arial";
+	font-size: 12pt;
+	color:#000000;
+}
+span.de_83B383EF37
+{
+	font-family: "ArialMT";
+	font-size: 11pt;
+	color:#000000;
+}
+span.de_8C403700ED
+{
+	font-family: "Arial";
+	font-size: 11pt;
+}
+span.de_9D7720D3AA
+{
+	font-family: "Arial";
+	font-size: 11pt;
+	color:#0000ff;
+	font-style:italic;
+	text-decoration:underline;
+}
+span.de_B76E1B1FC1
+{
+	font-family: "Arial-BoldMT";
+	font-size: 11pt;
+	color:#0000ff;
+	text-decoration:underline;
+}
+span.de_D305498EDE
+{
+	font-family: "Symbol";
+	font-size: 11pt;
+	color:#000000;
+}
+span.de_DABA477879
+{
+	font-family: "Arial";
+	font-size: 13pt;
+	color:#000000;
+}
+span.de_DEDEE01C60
+{
+	font-family: "Times-Roman";
+	font-size: 11pt;
+	color:#000000;
+}
+span.de_E0D79DE1AC
+{
+	font-family: "Arial";
+	font-size: 11pt;
+	color:#000000;
+	font-style:italic;
+}
+span.de_EC32ECCDA9
+{
+	font-family: "Arial-BoldMT";
+	font-size: 13pt;
+	color:#000000;
+}
+span.de_FCCE8C7AD2
+{
+	font-size: 72pt;
+	color:#000000;
+}
+span.de_FE04B87F3C
+{
+	font-family: "Arial";
+	font-size: 11pt;
+	color:#0000ff;
+	text-decoration:underline;
 }
 .list-element {
 	list-style-type: none;
@@ -173,6 +243,96 @@ span.de_CC7DAF531E
 	counter-increment: list-counter-2;
 }
 .list-counter-2 > div > div[class='list-marker-chm'] {
+	display: inline-block;
+	text-align: left;
+	zoom: 1;
+	padding: 0;
+	margin: 0;
+	*display: inline;
+}
+.list-counter-3 > div > * {
+	text-indent: 0px;}
+.list-counter-3 > div > div[class='list-marker']:before {
+	display: inline-block;
+	text-align: left;
+	padding: 0;
+	margin: 0;
+	content: '' counter(list-counter-3, disc) '\00a0';
+	counter-increment: list-counter-3;
+}
+.list-counter-3 > div > div[class='list-marker-chm'] {
+	display: inline-block;
+	text-align: left;
+	zoom: 1;
+	padding: 0;
+	margin: 0;
+	*display: inline;
+}
+.list-counter-4 > div > * {
+	text-indent: 0px;}
+.list-counter-4 > div > div[class='list-marker']:before {
+	display: inline-block;
+	text-align: left;
+	padding: 0;
+	margin: 0;
+	content: '' counter(list-counter-4, disc) '\00a0';
+	counter-increment: list-counter-4;
+}
+.list-counter-4 > div > div[class='list-marker-chm'] {
+	display: inline-block;
+	text-align: left;
+	zoom: 1;
+	padding: 0;
+	margin: 0;
+	*display: inline;
+}
+.list-counter-5 > div > * {
+	text-indent: 0px;}
+.list-counter-5 > div > div[class='list-marker']:before {
+	display: inline-block;
+	text-align: left;
+	padding: 0;
+	margin: 0;
+	content: '' counter(list-counter-5, disc) '\00a0';
+	counter-increment: list-counter-5;
+}
+.list-counter-5 > div > div[class='list-marker-chm'] {
+	display: inline-block;
+	text-align: left;
+	zoom: 1;
+	padding: 0;
+	margin: 0;
+	*display: inline;
+}
+.list-counter-6 > div > * {
+	text-indent: 0px;}
+.list-counter-6 > div > div[class='list-marker']:before {
+	display: inline-block;
+	text-align: left;
+	padding: 0;
+	margin: 0;
+	content: '' counter(list-counter-6, disc) '\00a0';
+	counter-increment: list-counter-6;
+}
+.list-counter-6 > div > div[class='list-marker-chm'] {
+	display: inline-block;
+	text-align: left;
+	zoom: 1;
+	padding: 0;
+	margin: 0;
+	*display: inline;
+}
+.list-counter-7 > div > * {
+	text-indent: 0px;}
+.list-counter-7 > div > div[class='list-marker']:before {
+	display: inline-block;
+	text-align: left;
+	padding: 0;
+	margin: 0;
+	content: '' counter(list-counter-7, disc) '\00a0';
+	counter-increment: list-counter-7;
+}
+.list-counter-7 > div > div[class='list-marker-chm'] {
 	display: inline-block;
 	text-align: left;
 	zoom: 1;

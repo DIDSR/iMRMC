@@ -308,6 +308,14 @@ html {
 
 
 /*@import url( 'work-zone.css' );*/
+.m-pageContent__side__header
+{
+    background: #548ced;
+}
+.m-pageContent__side__footer
+{
+    background: #4372ca;
+}
 .b-workZone {
     width: 100%;
     background: #4372ca url( '../i/blocks/work-zone/header-bg.png') 0 0px repeat-x;
