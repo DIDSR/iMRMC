@@ -12,3 +12,6 @@ simRoeMetz.config [list] Refer to the simRoeMetz input variable
 \description{
 simRoeMetz.defaultConfig creates a default configuration file for the simRoeMetz program
 }
+\examples{
+simRoeMetz.config <- simRoeMetz.defaultConfig()
+}

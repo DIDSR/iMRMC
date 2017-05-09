@@ -47,3 +47,8 @@ linear model
       t=truth (levels: neg and Pos)
     the remaining terms are the random effects: all independent normal random variables
 }
+\examples{
+simRoeMetz.config <- simRoeMetz.defaultConfig()
+simRoeMetz.imrmc <- simRoeMetz(simRoeMetz.config)
+
+}

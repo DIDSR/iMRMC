@@ -111,7 +111,10 @@ simMRMC <- function(simMRMC.config) {
 #'
 #' @export
 #'
-# @examples
+#' @examples
+#' simRoeMetz.config <- simRoeMetz.defaultConfig()
+#' simRoeMetz.imrmc <- simRoeMetz(simRoeMetz.config)
+#'
 simRoeMetz <- function(simRoeMetz.config) {
 
   # Unpack modality labels
@@ -248,7 +251,8 @@ simRoeMetz <- function(simRoeMetz.config) {
 #' @return simRoeMetz.config [list] Refer to the simRoeMetz input variable
 #' @export
 #'
-# @examples
+#' @examples
+#' simRoeMetz.config <- simRoeMetz.defaultConfig()
 simRoeMetz.defaultConfig <- function() {
 
   # Roe Metz Simulation parameters
@@ -322,7 +326,9 @@ simRoeMetz.defaultConfig <- function() {
 #' @return dFrame.imrmc [data.frame] Please refer to the description of the simRoeMetz return variable
 #' @export
 #'
-# @examples
+#' @examples
+#' simRoeMetz.imrmc <- simRoeMetz.example()
+#'
 simRoeMetz.example <- function() {
 
   simRoeMetz.config <- simRoeMetz.defaultConfig()
@@ -345,6 +351,3 @@ simRoeMetz.example <- function() {
   return(dFrame.imrmc)
 
 }
-
-# set.seed(0)
-# simRoeMetz.imrmc <- simRoeMetz.example()
