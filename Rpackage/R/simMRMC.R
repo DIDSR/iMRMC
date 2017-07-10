@@ -69,6 +69,53 @@ simMRMC <- function(simMRMC.config) {
 
 }
 
+#' Title
+#'
+#' @param dfMRMC
+#'
+#' @return scores
+#' @export
+#'
+convertDFtoScoreMatrix <- function(dfMRMC) {
+  caseIDs <- levels(dfMRMC$caseID)
+  readerIDs <- levels(dfMRMC$readerID)
+  nCases <- nlevels(dfMRMC$caseID)
+  nReaders <- nlevels(dfMRMC$readerID)
+
+  scores <- array(-1, c(nCases, nReaders), dimnames = list(caseIDs, readerIDs))
+
+  index <- dfMRMC[ , c("caseID","readerID")]
+  index <- data.matrix(index)
+
+  scores[index] <- dfMRMC$score
+  return(scores)
+
+}
+
+#' Title
+#'
+#' @param dfMRMC
+#'
+#' @return design
+#' @export
+#'
+convertDFtoDesignMatrix <- function(dfMRMC) {
+  caseIDs <- levels(dfMRMC$caseID)
+  readerIDs <- levels(dfMRMC$readerID)
+  nCases <- nlevels(dfMRMC$caseID)
+  nReaders <- nlevels(dfMRMC$readerID)
+
+  design <- array(0, c(nCases, nReaders), dimnames = list(caseIDs, readerIDs))
+
+  index <- dfMRMC[ , c("caseID","readerID")]
+  index <- data.matrix(index)
+
+  design[index] <- 1
+
+  return(design)
+
+}
+
 #' simRoeMetz Simulate an MRMC data set for an ROC experiment comparing two modalities
 #'   references: Roe1997_Acad-Radiol_v4p298, Roe1997_Acad-Radiol_v4p587
 #'   references: Gallas2014_J-Med-Img_v1p031006
@@ -127,15 +174,21 @@ simRoeMetz <- function(simRoeMetz.config) {
   nC.pos <- simRoeMetz.config$nC.pos
 
   # Assign readerIDs
-  readerIDs <- factor(paste("reader", 1:nR, sep = ""))
+  readerIDs <- paste("reader", 1:nR, sep = "")
+  readerIDs <- factor(readerIDs, readerIDs, ordered = TRUE)
 
   # Assign caseIDs
-  negCaseIDs <- factor(paste("negCase", 1:nC.neg, sep = ""))
-  posCaseIDs <- factor(paste("posCase", 1:nC.pos, sep = ""))
+  caseIDs.neg <- paste("negCase", 1:nC.neg, sep = "")
+  caseIDs.neg <- factor(caseIDs.neg, caseIDs.neg, ordered = TRUE)
+  caseIDs.pos <- paste("posCase", 1:nC.pos, sep = "")
+  caseIDs.pos <- factor(caseIDs.pos, caseIDs.pos, ordered = TRUE)
+  caseIDs <- c(as.character(caseIDs.neg), as.character(caseIDs.pos))
+  caseIDs <- factor(caseIDs, caseIDs, ordered = TRUE)
+
   # Create data frame of truth
   dFrame.truth <- data.frame(
     readerID = rep("-1", nC.neg + nC.pos),
-    caseID = c(as.character(negCaseIDs), as.character(posCaseIDs)),
+    caseID = c(as.character(caseIDs.neg), as.character(caseIDs.pos)),
     modalityID = rep("truth", nC.neg + nC.pos),
     score = c(rep(0, nC.neg), rep(1, nC.pos))
   )
@@ -146,7 +199,7 @@ simRoeMetz <- function(simRoeMetz.config) {
     nC = nC.neg,
     modalityID = "empty",
     readerIDs = readerIDs,
-    caseIDs = negCaseIDs,
+    caseIDs = caseIDs.neg,
     mu = simRoeMetz.config$mu.neg,
     var_c = simRoeMetz.config$var_c.neg,
     var_r = simRoeMetz.config$var_r.neg,
@@ -160,7 +213,7 @@ simRoeMetz <- function(simRoeMetz.config) {
     nC = nC.pos,
     modalityID = "empty",
     readerIDs = readerIDs,
-    caseIDs = posCaseIDs,
+    caseIDs = caseIDs.pos,
     mu = simRoeMetz.config$mu.pos,
     var_r = simRoeMetz.config$var_r.pos,
     var_c = simRoeMetz.config$var_c.pos,
@@ -174,7 +227,7 @@ simRoeMetz <- function(simRoeMetz.config) {
     nC = nC.neg,
     modalityID = modalityID.A,
     readerIDs = readerIDs,
-    caseIDs = negCaseIDs,
+    caseIDs = caseIDs.neg,
     mu = simRoeMetz.config$mu.Aneg,
     var_r = simRoeMetz.config$var_r.Aneg,
     var_c = simRoeMetz.config$var_c.Aneg,
@@ -188,7 +241,7 @@ simRoeMetz <- function(simRoeMetz.config) {
     nC = nC.pos,
     modalityID = modalityID.A,
     readerIDs = readerIDs,
-    caseIDs = posCaseIDs,
+    caseIDs = caseIDs.pos,
     mu = simRoeMetz.config$mu.Apos,
     var_r = simRoeMetz.config$var_r.Apos,
     var_c = simRoeMetz.config$var_c.Apos,
@@ -202,7 +255,7 @@ simRoeMetz <- function(simRoeMetz.config) {
     nC = nC.neg,
     modalityID = modalityID.B,
     readerIDs = readerIDs,
-    caseIDs = negCaseIDs,
+    caseIDs = caseIDs.neg,
     mu = simRoeMetz.config$mu.Bneg,
     var_r = simRoeMetz.config$var_r.Bneg,
     var_c = simRoeMetz.config$var_c.Bneg,
@@ -216,7 +269,7 @@ simRoeMetz <- function(simRoeMetz.config) {
     nC = nC.pos,
     modalityID = modalityID.B,
     readerIDs = readerIDs,
-    caseIDs = posCaseIDs,
+    caseIDs = caseIDs.pos,
     mu = simRoeMetz.config$mu.Bpos,
     var_r = simRoeMetz.config$var_r.Bpos,
     var_c = simRoeMetz.config$var_c.Bpos,
@@ -243,6 +296,10 @@ simRoeMetz <- function(simRoeMetz.config) {
     dFrame.modApos,
     dFrame.modBpos
   )
+
+  dFrame.imrmc$caseID <- factor(dFrame.imrmc$caseID, as.character(caseIDs), ordered = TRUE)
+
+  return(dFrame.imrmc)
 
 }
 
