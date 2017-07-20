@@ -3,6 +3,7 @@
 export(convertDFtoDesignMatrix)
 export(convertDFtoScoreMatrix)
 export(doIMRMC)
+export(init.lecuyerRNG)
 export(simMRMC)
 export(simRoeMetz)
 export(simRoeMetz.defaultConfig)

@@ -1,3 +1,39 @@
+library(parallel)
+
+#' @title Initialize the l'Ecuyer random number generator
+#'
+#' @description See the documentation for the parallel package
+#'
+#' @param seed This determines the position in each stream
+#' @param stream This determines the stream
+#'
+#' @return Nothing
+#'
+#' @export
+#'
+# @examples
+init.lecuyerRNG <- function(seed, stream){
+
+  # Set the random number generator
+  RNGkind("L'Ecuyer-CMRG")
+
+  # Set the seed
+  seed <- 1
+  set.seed(seed)
+
+  # Set the streamID
+  # Skip to the stream corresponding to the taskID
+  # Each taskID will have its own stream for parallel implementation
+  # IMPORTANT: .Random.seed must be reassigned in the global environment "<<-" not "<-"
+  streamID <- 2
+  i <- 1
+  while (i < streamID) {
+    .Random.seed <<- nextRNGStream(.Random.seed)
+    i <- i + 1
+  }
+
+}
+
 #' simMRMC Simulate an MRMC data set (Roe1997_Acad-Radiol_v4p298, Roe1997_Acad-Radiol_v4p587)
 #'   linear model with independent random effects that are normally distributed
 #'   L.rc = mu + readerEffect.r + caseEffect.c + readerXcaseEffect.rc
@@ -77,6 +113,9 @@ simMRMC <- function(simMRMC.config) {
 #' @export
 #'
 convertDFtoScoreMatrix <- function(dfMRMC) {
+
+  dfMRMC <- droplevels(dfMRMC)
+
   caseIDs <- levels(dfMRMC$caseID)
   readerIDs <- levels(dfMRMC$readerID)
   nCases <- nlevels(dfMRMC$caseID)
@@ -100,6 +139,9 @@ convertDFtoScoreMatrix <- function(dfMRMC) {
 #' @export
 #'
 convertDFtoDesignMatrix <- function(dfMRMC) {
+
+  dfMRMC <- droplevels(dfMRMC)
+
   caseIDs <- levels(dfMRMC$caseID)
   readerIDs <- levels(dfMRMC$readerID)
   nCases <- nlevels(dfMRMC$caseID)
