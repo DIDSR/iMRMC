@@ -70,7 +70,3 @@ program which writes the results to the local files system, it reads the analysi
 the local file system, packs the analysis results into a list object, deletes the data and analysis results
 from the local file system, and returns the list object.
 }
-\examples{
-
-
-}

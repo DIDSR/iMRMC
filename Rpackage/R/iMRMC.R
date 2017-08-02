@@ -61,7 +61,7 @@
 #'
 #' @export
 #'
-#' @examples
+# @examples
 #'
 #'
 doIMRMC <- function(dFrame.imrmc, iMRMCjarFullPath = NULL, cleanUp = TRUE, show.output.on.console = FALSE){

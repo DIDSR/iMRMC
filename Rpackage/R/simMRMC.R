@@ -1,4 +1,5 @@
 library(parallel)
+library(LaplacesDemon)
 
 #' @title Initialize the l'Ecuyer random number generator
 #'
@@ -9,25 +10,25 @@ library(parallel)
 #'
 #' @return Nothing
 #'
+#' @import parallel
+#'
 #' @export
 #'
 # @examples
-init.lecuyerRNG <- function(seed, stream){
+init.lecuyerRNG <- function(seed = 1, stream = 2){
 
   # Set the random number generator
   RNGkind("L'Ecuyer-CMRG")
 
   # Set the seed
-  seed <- 1
   set.seed(seed)
 
   # Set the streamID
   # Skip to the stream corresponding to the taskID
   # Each taskID will have its own stream for parallel implementation
   # IMPORTANT: .Random.seed must be reassigned in the global environment "<<-" not "<-"
-  streamID <- 2
   i <- 1
-  while (i < streamID) {
+  while (i < stream) {
     .Random.seed <<- nextRNGStream(.Random.seed)
     i <- i + 1
   }
@@ -105,9 +106,11 @@ simMRMC <- function(simMRMC.config) {
 
 }
 
-#' Title
+#' Convert an MRMC data frame to a score matrix, dropping readers or cases with no observations
 #'
-#' @param dfMRMC
+#' @description Convert an MRMC data frame to a score matrix, dropping readers or cases with no observations
+#'
+#' @param dfMRMC An MRMC data frame
 #'
 #' @return scores
 #' @export
@@ -131,9 +134,11 @@ convertDFtoScoreMatrix <- function(dfMRMC) {
 
 }
 
-#' Title
+#' Convert an MRMC data frame to a design matrix, dropping readers or cases with no observations
 #'
-#' @param dfMRMC
+#' @description Convert an MRMC data frame to a design matrix, dropping readers or cases with no observations
+#'
+#' @param dfMRMC An MRMC data frame
 #'
 #' @return design
 #' @export
@@ -171,49 +176,65 @@ convertDFtoDesignMatrix <- function(dfMRMC) {
 #'       t=truth (levels: neg and Pos)
 #'     the remaining terms are the random effects: all independent normal random variables
 #'
-#' @param simRoeMetz.config  [list] of simulation parameters:
+#' @param config  [list] of simulation parameters:
 #'          modalityID.A     [chr] label modality A
 #'          nR               [num] number of readers
 #'          nC.neg            [num] number of signal-absent cases
 #'          nC.pos            [num] number of signal-present cases
 #'
-#'          There are also model parameters for six random effects:
-#'            signal-absent (neg, global mean)
-#'            signal-present (pos, global mean)
-#'            modality A signal-absent (Aneg, modality effect)
-#'            modality B signal-absent (Bneg, modality effect)
-#'            modality A signal-present (Apos, modality effect)
-#'            modality B signal-present (Bpos, modality effect)
+#'          The model parameters include for six fixed effects:
+#'            mu.neg = signal-absent (neg, global mean)
+#'            mu.pos = signal-present (pos, global mean)
+#'            mu.Aneg = modality A signal-absent (Aneg, modality effect)
+#'            mu.Bneg = modality B signal-absent (Bneg, modality effect)
+#'            mu.Apos = modality A signal-present (Apos, modality effect)
+#'            mu.Bpos = modality B signal-present (Bpos, modality effect)
 #'
-#'          Each random effect carries its own model parameters
-#'          Here are the parameters for the signal-absent cases (not modality specific part)
-#'            mu.neg            [num] mean
+#'          The model parameters also include 18 random effects.
+#'          Six that are independent of modality
 #'            var_r.neg         [num] variance of random reader effect
 #'            var_c.neg         [num] variance of random case effect
 #'            var_rc.neg        [num] variance of randome reader by case effect
+#'            var_r.pos         [num] variance of random reader effect
+#'            var_c.pos         [num] variance of random case effect
+#'            var_rc.pos        [num] variance of randome reader by case effect
+#'          Six that are specific to modality A
+#'            var_r.Aneg         [num] variance of random reader effect
+#'            var_c.Aneg         [num] variance of random case effect
+#'            var_rc.Aneg        [num] variance of randome reader by case effect
+#'            var_r.Apos         [num] variance of random reader effect
+#'            var_c.Apos         [num] variance of random case effect
+#'            var_rc.Apos        [num] variance of randome reader by case effect
+#'          Six that are specific to modality B
+#'            var_r.Bneg         [num] variance of random reader effect
+#'            var_c.Bneg         [num] variance of random case effect
+#'            var_rc.Bneg        [num] variance of randome reader by case effect
+#'            var_r.Bpos         [num] variance of random reader effect
+#'            var_c.Bpos         [num] variance of random case effect
+#'            var_rc.Bpos        [num] variance of randome reader by case effect
 #'
 #' @return  dFrame.imrmc   [data.frame] with (nC.neg + nC.pos)*nR rows including
 #'            readerID       [Factor] w/ nR levels "reader1", "reader2", ...
 #'            caseID         [Factor] w/ nC levels "case1", "case2", ...
-#'            modalityID     [Factor] w/ 1 level simRoeMetz.config$modalityID
+#'            modalityID     [Factor] w/ 1 level config$modalityID
 #'            score          [num] reader score
 #'
 #' @export
 #'
 #' @examples
-#' simRoeMetz.config <- simRoeMetz.defaultConfig()
-#' simRoeMetz.imrmc <- simRoeMetz(simRoeMetz.config)
+#' config <- sim.gRoeMetz.config()
+#' simRoeMetz.imrmc <- sim.gRoeMetz(config)
 #'
-simRoeMetz <- function(simRoeMetz.config) {
+sim.gRoeMetz <- function(config) {
 
   # Unpack modality labels
-  modalityID.A <- simRoeMetz.config$modalityID.A
-  modalityID.B <- simRoeMetz.config$modalityID.B
+  modalityID.A <- config$modalityID.A
+  modalityID.B <- config$modalityID.B
 
   # Unpack experiment size
-  nR <- simRoeMetz.config$nR
-  nC.neg <- simRoeMetz.config$nC.neg
-  nC.pos <- simRoeMetz.config$nC.pos
+  nR <- config$nR
+  nC.neg <- config$nC.neg
+  nC.pos <- config$nC.pos
 
   # Assign readerIDs
   readerIDs <- paste("reader", 1:nR, sep = "")
@@ -242,10 +263,10 @@ simRoeMetz <- function(simRoeMetz.config) {
     modalityID = "empty",
     readerIDs = readerIDs,
     caseIDs = caseIDs.neg,
-    mu = simRoeMetz.config$mu.neg,
-    var_c = simRoeMetz.config$var_c.neg,
-    var_r = simRoeMetz.config$var_r.neg,
-    var_rc = simRoeMetz.config$var_rc.neg
+    mu = config$mu.neg,
+    var_c = config$var_c.neg,
+    var_r = config$var_r.neg,
+    var_rc = config$var_rc.neg
   )
   dFrame.neg <- simMRMC(neg.config)
 
@@ -256,10 +277,10 @@ simRoeMetz <- function(simRoeMetz.config) {
     modalityID = "empty",
     readerIDs = readerIDs,
     caseIDs = caseIDs.pos,
-    mu = simRoeMetz.config$mu.pos,
-    var_r = simRoeMetz.config$var_r.pos,
-    var_c = simRoeMetz.config$var_c.pos,
-    var_rc = simRoeMetz.config$var_rc.pos
+    mu = config$mu.pos,
+    var_r = config$var_r.pos,
+    var_c = config$var_c.pos,
+    var_rc = config$var_rc.pos
   )
   dFrame.pos <- simMRMC(pos.config)
 
@@ -270,10 +291,10 @@ simRoeMetz <- function(simRoeMetz.config) {
     modalityID = modalityID.A,
     readerIDs = readerIDs,
     caseIDs = caseIDs.neg,
-    mu = simRoeMetz.config$mu.Aneg,
-    var_r = simRoeMetz.config$var_r.Aneg,
-    var_c = simRoeMetz.config$var_c.Aneg,
-    var_rc = simRoeMetz.config$var_rc.Aneg
+    mu = config$mu.Aneg,
+    var_r = config$var_r.Aneg,
+    var_c = config$var_c.Aneg,
+    var_rc = config$var_rc.Aneg
   )
   dFrame.modAneg <- simMRMC(modAneg.config)
 
@@ -284,10 +305,10 @@ simRoeMetz <- function(simRoeMetz.config) {
     modalityID = modalityID.A,
     readerIDs = readerIDs,
     caseIDs = caseIDs.pos,
-    mu = simRoeMetz.config$mu.Apos,
-    var_r = simRoeMetz.config$var_r.Apos,
-    var_c = simRoeMetz.config$var_c.Apos,
-    var_rc = simRoeMetz.config$var_rc.Apos
+    mu = config$mu.Apos,
+    var_r = config$var_r.Apos,
+    var_c = config$var_c.Apos,
+    var_rc = config$var_rc.Apos
   )
   dFrame.modApos <- simMRMC(modApos.config)
 
@@ -298,10 +319,10 @@ simRoeMetz <- function(simRoeMetz.config) {
     modalityID = modalityID.B,
     readerIDs = readerIDs,
     caseIDs = caseIDs.neg,
-    mu = simRoeMetz.config$mu.Bneg,
-    var_r = simRoeMetz.config$var_r.Bneg,
-    var_c = simRoeMetz.config$var_c.Bneg,
-    var_rc = simRoeMetz.config$var_rc.Bneg
+    mu = config$mu.Bneg,
+    var_r = config$var_r.Bneg,
+    var_c = config$var_c.Bneg,
+    var_rc = config$var_rc.Bneg
   )
   dFrame.modBneg <- simMRMC(modBneg.config)
 
@@ -312,19 +333,12 @@ simRoeMetz <- function(simRoeMetz.config) {
     modalityID = modalityID.B,
     readerIDs = readerIDs,
     caseIDs = caseIDs.pos,
-    mu = simRoeMetz.config$mu.Bpos,
-    var_r = simRoeMetz.config$var_r.Bpos,
-    var_c = simRoeMetz.config$var_c.Bpos,
-    var_rc = simRoeMetz.config$var_rc.Bpos
+    mu = config$mu.Bpos,
+    var_r = config$var_r.Bpos,
+    var_c = config$var_c.Bpos,
+    var_rc = config$var_rc.Bpos
   )
   dFrame.modBpos <- simMRMC(modBpos.config)
-
-  # cat("modality independent mean, neg = ", mean(dFrame.neg$score), "\n")
-  # cat("modality independent mean, pos = ", mean(dFrame.pos$score), "\n")
-  # cat("modality A mean shift, neg = ", mean(dFrame.modAneg$score), "\n")
-  # cat("modality A mean shift, pos = ", mean(dFrame.modApos$score), "\n")
-  # cat("modality B mean shift, neg = ", mean(dFrame.modBneg$score), "\n")
-  # cat("modality B mean shift, pos = ", mean(dFrame.modBpos$score), "\n")
 
   dFrame.modAneg$score <- dFrame.neg$score + dFrame.modAneg$score
   dFrame.modApos$score <- dFrame.pos$score + dFrame.modApos$score
@@ -345,33 +359,59 @@ simRoeMetz <- function(simRoeMetz.config) {
 
 }
 
-#' simRoeMetz.defaultConfig creates a default configuration file for the simRoeMetz program
+#' sim.gRoeMetz.config creates a configuration file for the sim.gRoeMetz program
 #'
-#' @return simRoeMetz.config [list] Refer to the simRoeMetz input variable
+#' @description
+#' This function creates a configuration file for the generalized Roe & Metz
+#' simulation model as described in Gallas2014_J-Med-Img_v1p031006.
+#' The default model returned when there are no arguments given to the function is
+#' the HH model from Roe1887_Acad-Radiol_v4p298. Following that paper,
+#' The user can also specify three parameters related to experiment size (nR, nC.neg, nC.pos)
+#' and five parameters parameters specifying a linear model that do not
+#' depend on modality or truth (mu.neg, mu.pos, var_r, var_c, var_rc).
+#'
+#' @details If no arguements, this function returns a default simulation configuration for sim.gRoeMetz
+#'
+#' @param nR Number of readers (default = 10)
+#' @param nC.neg Number of signal-absent cases (default = 100)
+#' @param nC.pos Number of signal-present cases (default = 100)
+#' @param mu.neg Mean fixed effect of signal-absent distribution (default = 0.0) \cr
+#'               Modality specific parameters are set to zero: mu.Aneg = mu.Bneg = 0
+#' @param mu.pos Mean fixed effect of signal-present distribution (default = 1.0) \cr
+#'               Modality specific parameters are set to zero: mu.Apos = mu.Bpos = 0
+#' @param var_r Variance of reader random effect (default = 0.03) \cr
+#'              var_r.neg = var_r.pos = var_r.Aneg = var_r.Apos = var_r.Bneg = var_r.Bpos = var_r \cr
+#' @param var_c Variance of case random effect (default = 0.30) \cr
+#'              var_c.neg = var_c.pos = var_c.Aneg = var_c.Apos = var_c.Bneg = var_c.Bpos = var_c \cr
+#' @param var_rc Variance of reader.by.case random effect (default = 0.20) \cr
+#'              var_rc.neg = var_rc.pos = var_rc.Aneg = var_rc.Apos = var_rc.Bneg = var_rc.Bpos = var_rc \cr
+#'
+#' @return config [list] Refer to the simRoeMetz input variable
+#'
 #' @export
 #'
 #' @examples
-#' simRoeMetz.config <- simRoeMetz.defaultConfig()
-simRoeMetz.defaultConfig <- function() {
-
-  # Roe Metz Simulation parameters
-  # Global means
-  mu.neg = 0.0
-  mu.pos = 1.0
-  # Variance components
-  var_r =  0.03
-  var_c =  0.30
+#' config <- sim.gRoeMetz.config()
+sim.gRoeMetz.config <- function(
+  nR = 10,
+  nC.neg = 100,
+  nC.pos = 100,
+  mu.neg = 0.0,
+  mu.pos = 1.0,
+  var_r =  0.03,
+  var_c =  0.30,
   var_rc = 0.20
+) {
 
-  simRoeMetz.config <- list(
+  config <- list(
     # Modality labels
     modalityID.A = "modalityA",
     modalityID.B = "modalityB",
 
     # Experiment size
-    nR = 10,
-    nC.neg = 100,
-    nC.pos = 100,
+    nR = nR,
+    nC.neg = nC.neg,
+    nC.pos = nC.pos,
 
     # Model parameters invariant to modality
     # Signal-absent global mean
@@ -416,7 +456,7 @@ simRoeMetz.defaultConfig <- function() {
     var_rc.Bpos = var_rc
   )
 
-  return(simRoeMetz.config)
+  return(config)
 
 }
 
@@ -430,10 +470,10 @@ simRoeMetz.defaultConfig <- function() {
 #'
 simRoeMetz.example <- function() {
 
-  simRoeMetz.config <- simRoeMetz.defaultConfig()
+  config <- sim.gRoeMetz.config()
 
   # Simulate data
-  dFrame.imrmc <- simRoeMetz(simRoeMetz.config)
+  dFrame.imrmc <- sim.gRoeMetz(config)
 
   tempA <- dFrame.imrmc[dFrame.imrmc$modalityID == "modalityA", ]
   tempApos <- tempA[grep("pos", tempA$caseID), ]

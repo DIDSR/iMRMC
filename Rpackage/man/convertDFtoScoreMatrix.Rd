@@ -2,16 +2,16 @@
 % Please edit documentation in R/simMRMC.R
 \name{convertDFtoScoreMatrix}
 \alias{convertDFtoScoreMatrix}
-\title{Title}
+\title{Convert an MRMC data frame to a score matrix, dropping readers or cases with no observations}
 \usage{
 convertDFtoScoreMatrix(dfMRMC)
 }
 \arguments{
-\item{dfMRMC}{}
+\item{dfMRMC}{An MRMC data frame}
 }
 \value{
 scores
 }
 \description{
-Title
+Convert an MRMC data frame to a score matrix, dropping readers or cases with no observations
 }

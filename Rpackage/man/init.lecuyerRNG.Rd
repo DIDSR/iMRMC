@@ -4,7 +4,7 @@
 \alias{init.lecuyerRNG}
 \title{Initialize the l'Ecuyer random number generator}
 \usage{
-init.lecuyerRNG(seed, stream)
+init.lecuyerRNG(seed = 1, stream = 2)
 }
 \arguments{
 \item{seed}{This determines the position in each stream}
