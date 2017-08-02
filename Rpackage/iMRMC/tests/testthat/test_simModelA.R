@@ -55,7 +55,7 @@ cat("mean of empirical reader-averaged performance \n",
     mean(empiricalP.bdg1), mean(empiricalP.bdg2), "\n")
 cat("variance of empirical reader-averaged performance \n",
     var(empiricalP.bdg1), var(empiricalP.bdg2), "\n")
-cat("numerical reader-averaged performance \n", meanModelA(simModelAconfig), "\n")
+cat("numerical reader-averaged performance \n", meanModelA(simModelAconfig, showPlots = TRUE), "\n")
 
 test_that(
   "sim.ModelA doesn't change", {
