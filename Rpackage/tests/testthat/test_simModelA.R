@@ -1,3 +1,4 @@
+library(testthat)
 library(parallel)
 library(iMRMCpg)
 library(LaplacesDemon)
@@ -39,20 +40,29 @@ for (i in 1:nMC) {
 
   df.MRMC <- simMRMC(simModelAconfig)
   df.MRMC$prob <- invlogit(df.MRMC$score)
+  df.MRMC$success <- rbern(rep(1, nrow(df.MRMC)), df.MRMC$prob)
+  empiricalP.bdg1[i] <- mean(df.MRMC$success)
 
-  df.MRMC$success1 <- rbern(rep(1, nrow(df.MRMC)), df.MRMC$prob)
-  empiricalP.bdg1[i] <- mean(df.MRMC$success1)
-
-  df.MRMC$success2 <- sapply(df.MRMC$prob, function(x) rbern(1,x))
-  empiricalP.bdg2[i] <- mean(df.MRMC$success2)
+  df.MRMC.modelA <- sim.ModelA(simModelAconfig)
+  empiricalP.bdg2[i] <- mean(df.MRMC.modelA$success)
 
 }
 
+print("")
+cat("first empirical reader-averaged performance \n",
+    empiricalP.bdg1[1], empiricalP.bdg2[1], "\n")
 cat("mean of empirical reader-averaged performance \n",
     mean(empiricalP.bdg1), mean(empiricalP.bdg2), "\n")
 cat("variance of empirical reader-averaged performance \n",
     var(empiricalP.bdg1), var(empiricalP.bdg2), "\n")
 cat("numerical reader-averaged performance \n", meanModelA(simModelAconfig), "\n")
+
+test_that(
+  "sim.ModelA doesn't change", {
+    expect_equal(empiricalP.bdg1[1], 0.147, tolerance = 1e-3)
+    expect_equal(empiricalP.bdg2[1], 0.179, tolerance = 1e-3)
+  }
+)
 
 test_that(
   "meanModelA doesn't change", {
