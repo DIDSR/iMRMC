@@ -1,3 +1,3 @@
 library(testthat)
 
-testthat::test_check("mrmcAgreement")
+testthat::test_check("iMRMC")

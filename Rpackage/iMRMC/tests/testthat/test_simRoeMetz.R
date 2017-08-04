@@ -1,6 +1,6 @@
 library(testthat)
 library(parallel)
-library(iMRMCpg)
+library(iMRMC)
 
 context("simRoeMetz")
 

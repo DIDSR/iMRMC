@@ -1,9 +1,9 @@
 library(testthat)
 library(parallel)
-library(iMRMCpg)
+library(iMRMC)
 library(LaplacesDemon)
 
-init.lecuyerRNG()
+init.lecuyerRNG(seed = 1, stream = 2)
 
 # Size of Monte Carlo Experiment
 nMC <- 100
