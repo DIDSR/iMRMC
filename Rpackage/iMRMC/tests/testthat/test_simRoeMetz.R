@@ -11,6 +11,7 @@ config.gRoeMetz <- sim.gRoeMetz.config()
 
 # Simulate data
 df.MRMC <- sim.gRoeMetz(config.gRoeMetz)
+result <- doIMRMC(df.MRMC)
 
 # Split the data into four pieces, not including truth
 df.MRMC.Apos <- droplevels(df.MRMC[grepl("pos", df.MRMC$caseID) & grepl("A", df.MRMC$modalityID), ])

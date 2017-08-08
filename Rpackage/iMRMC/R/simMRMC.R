@@ -1,6 +1,3 @@
-library(parallel)
-library(LaplacesDemon)
-
 #' @title Initialize the l'Ecuyer random number generator
 #'
 #' @description See the documentation for the parallel package
@@ -141,14 +138,16 @@ simMRMC <- function(simMRMC.config) {
 #'                             equals invlogit(L$score)
 #'            L$success      [0 or 1] the success outcome for each observation
 #'
+#' @import LaplacesDemon
+#'
 #' @export
 #'
 # @examples
 sim.ModelA <- function(config) {
 
   df.MRMC <- simMRMC(config)
-  df.MRMC$prob <- invlogit(df.MRMC$score)
-  df.MRMC$success <- rbern(rep(1, nrow(df.MRMC)), df.MRMC$prob)
+  df.MRMC$prob <- LaplacesDemon::invlogit(df.MRMC$score)
+  df.MRMC$success <- LaplacesDemon::rbern(rep(1, nrow(df.MRMC)), df.MRMC$prob)
 
   return(df.MRMC)
 }

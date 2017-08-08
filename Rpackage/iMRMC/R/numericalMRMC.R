@@ -1,5 +1,3 @@
-library(LaplacesDemon)
-
 #' Numerically calculate the mean of model A. GLMM with
 #'   fixed mean
 #'   reader and case cross-correlated effects
@@ -19,7 +17,7 @@ library(LaplacesDemon)
 #'
 #' @return Mean of model A by numerical integration
 #'
-# @import LaPlacesDemon
+#' @import LaPlacesDemon
 #'
 #' @export
 #'
