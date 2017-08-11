@@ -663,7 +663,7 @@ public class InputFileCard {
 	class exportreaderresult implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
     		String head =  "inputFile,date,iMRMCversion,NR,N0,N1,modalityA,modalityB,AUCA,varAUCA,AUCB,varAUCB,AUCAminusAUCB,varAUCAminusAUCB,"
-    				+"pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis";
+    				+"pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHillis,pValueHillis,botCIHillis,topCIHillis,rejectHillis";
 			String report = head +"\r\n";
             DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
 			Date currDate = new Date();

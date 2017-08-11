@@ -90,32 +90,39 @@ public class exportToFile {
 		}
 		str = str + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
 				+ analysisMethod + SEPA + "comp_A" + SEPA;
-		for(int i = 0; i<8; i++)
+		for(int i = 0; i<7; i++)
 			str = str + fiveDecE.format(BDGdata1[0][i]) + SEPA;
+		str = str + fiveDecE.format(BDGdata1[0][7]);
 		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
 				+ analysisMethod + SEPA + "coeff_A" + SEPA;
-		for(int i = 0; i<8; i++)
+		for(int i = 0; i<7; i++)
 			str = str + fiveDecE.format(BDGdata1[1][i]) + SEPA;
+		str = str + fiveDecE.format(BDGdata1[1][7]);
 		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
 				+ analysisMethod + SEPA + "comp_B" + SEPA;
-		for(int i = 0; i<8; i++)
+		for(int i = 0; i<7; i++)
 			str = str + fiveDecE.format(BDGdata1[2][i]) + SEPA;
+		str = str + fiveDecE.format(BDGdata1[2][7]);
 		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
 				+ analysisMethod + SEPA + "coeff_B" + SEPA;
-		for(int i = 0; i<8; i++)
+		for(int i = 0; i<7; i++)
 			str = str + fiveDecE.format(BDGdata1[3][i]) + SEPA;
+		str = str + fiveDecE.format(BDGdata1[3][7]);
 		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
 				+ analysisMethod + SEPA + "comp_product" + SEPA;
-		for(int i = 0; i<8; i++)
+		for(int i = 0; i<7; i++)
 			str = str + fiveDecE.format(BDGdata1[4][i]) + SEPA;
+		str = str + fiveDecE.format(BDGdata1[4][7]);
 		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
 				+ analysisMethod + SEPA + "coeff_product" + SEPA;
-		for(int i = 0; i<8; i++)
+		for(int i = 0; i<7; i++)
 			str = str + fiveDecE.format(BDGdata1[5][i]) + SEPA;
+		str = str + fiveDecE.format(BDGdata1[5][7]);
 		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
 				+ analysisMethod + SEPA + "total" + SEPA;
-		for(int i = 0; i<8; i++)
+		for(int i = 0; i<7; i++)
 			str = str + fiveDecE.format(BDGdata1[6][i]) + SEPA;
+		str = str + fiveDecE.format(BDGdata1[6][7]);
 		str = str + "\r\n";
 		return str;
 	}
@@ -133,32 +140,39 @@ public class exportToFile {
 		}
 		str = str + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
 				+ analysisMethod + SEPA + "comp_A" + SEPA;
-		for (int i = 0; i < 7; i++)
+		for (int i = 0; i < 6; i++)
 			str = str + fiveDecE.format(BCKdata1[0][i]) + SEPA;
+		str = str + fiveDecE.format(BCKdata1[0][6]);
 		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
 				+ analysisMethod + SEPA + "coeff_A" + SEPA;
-		for (int i = 0; i < 7; i++)
+		for (int i = 0; i < 6; i++)
 			str = str + fiveDecE.format(BCKdata1[1][i]) + SEPA;
+		str = str + fiveDecE.format(BCKdata1[1][6]);
 		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
 				+ analysisMethod + SEPA + "comp_B" + SEPA;
-		for (int i = 0; i < 7; i++)
+		for (int i = 0; i < 6; i++)
 			str = str + fiveDecE.format(BCKdata1[2][i]) + SEPA;
+		str = str + fiveDecE.format(BCKdata1[2][6]);
 		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
 				+ analysisMethod + SEPA + "coeff_B" + SEPA;
-		for (int i = 0; i < 7; i++)
+		for (int i = 0; i < 6; i++)
 			str = str + fiveDecE.format(BCKdata1[3][i]) + SEPA;
+		str = str + fiveDecE.format(BCKdata1[3][6]);
 		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
 				+ analysisMethod + SEPA + "comp_product" + SEPA;
-		for (int i = 0; i < 7; i++)
+		for (int i = 0; i < 6; i++)
 			str = str + fiveDecE.format(BCKdata1[4][i]) + SEPA;
+		str = str + fiveDecE.format(BCKdata1[4][6]);
 		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
 				+ analysisMethod + SEPA + "coeff_product" + SEPA;
-		for (int i = 0; i < 7; i++)
+		for (int i = 0; i < 6; i++)
 			str = str + fiveDecE.format(BCKdata1[5][i]) + SEPA;
+		str = str + fiveDecE.format(BCKdata1[5][6]);
 		str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
 				+ analysisMethod + SEPA + "total" + SEPA;
-		for (int i = 0; i < 7; i++)
+		for (int i = 0; i < 6; i++)
 			str = str + fiveDecE.format(BCKdata1[6][i]) + SEPA;
+		str = str + fiveDecE.format(BCKdata1[6][6]);
 		str = str +"\r\n"; 
 		return str;
 	}
@@ -177,16 +191,19 @@ public class exportToFile {
 		if (DBRecordTable.flagFullyCrossed){
 			str = str + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
 					+ analysisMethod + SEPA + "components" + SEPA;
-			for (int i = 0; i < 6; i++)
+			for (int i = 0; i < 5; i++)
 				str = str + fiveDecE.format(DBMdata1[0][i]) + SEPA;
+			str = str + fiveDecE.format(DBMdata1[0][5]);
 			str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
 					+ analysisMethod + SEPA + "coeff" + SEPA;
-			for (int i = 0; i < 6; i++)
+			for (int i = 0; i < 5; i++)
 				str = str + fiveDecE.format(DBMdata1[1][i]) + SEPA;
+			str = str + fiveDecE.format(DBMdata1[1][5]);
 			str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
 					+ analysisMethod + SEPA + "total" + SEPA;
-			for (int i = 0; i < 6; i++)
+			for (int i = 0; i < 5; i++)
 				str = str + fiveDecE.format(DBMdata1[2][i]) + SEPA;
+			str = str + fiveDecE.format(DBMdata1[2][5]);
 			str = str +"\r\n"; 
 		}else{
 			str = str + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
@@ -213,16 +230,19 @@ public class exportToFile {
 		if (DBRecordTable.flagFullyCrossed){
 			str = str + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
 					+ analysisMethod + SEPA + "components" + SEPA;
-			for (int i = 0; i < 6; i++)
+			for (int i = 0; i < 5; i++)
 				str = str + fiveDecE.format(ORdata1[0][i]) + SEPA;
+			str = str + fiveDecE.format(ORdata1[0][5]);
 			str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
 					+ analysisMethod + SEPA + "coeff" + SEPA;
-			for (int i = 0; i < 6; i++)
+			for (int i = 0; i < 5; i++)
 				str = str + fiveDecE.format(ORdata1[1][i]) + SEPA;
+			str = str + fiveDecE.format(ORdata1[1][5]);
 			str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
 					+ analysisMethod + SEPA + "total" + SEPA;
-			for (int i = 0; i < 6; i++)
+			for (int i = 0; i < 5; i++)
 				str = str + fiveDecE.format(ORdata1[2][i]) + SEPA;
+			str = str + fiveDecE.format(ORdata1[2][5]);
 			str = str +"\r\n"; 
 		}else{
 			str = str + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
@@ -249,16 +269,19 @@ public class exportToFile {
 		if (DBRecordTable.flagFullyCrossed){
 			str = str + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
 					+ analysisMethod + SEPA + "components" + SEPA;
-			for (int i = 0; i < 6; i++)
+			for (int i = 0; i < 5; i++)
 				str = str + fiveDecE.format(MSdata1[0][i]) + SEPA;
+			str = str + fiveDecE.format(MSdata1[0][5]);
 			str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
 					+ analysisMethod + SEPA + "coeff" + SEPA;
-			for (int i = 0; i < 6; i++)
+			for (int i = 0; i < 5; i++)
 				str = str + fiveDecE.format(MSdata1[1][i]) + SEPA;
+			str = str + fiveDecE.format(MSdata1[1][5]);
 			str = str + "\r\n" + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
 					+ analysisMethod + SEPA + "total" + SEPA;
-			for (int i = 0; i < 6; i++)
+			for (int i = 0; i < 5; i++)
 				str = str + fiveDecE.format(MSdata1[2][i]) + SEPA;
+			str = str + fiveDecE.format(MSdata1[2][5]);
 			str = str +"\r\n"; 
 		}else{
 			str = str + DBRecordTable.modalityA + SEPA + DBRecordTable.modalityB + SEPA
@@ -271,7 +294,7 @@ public class exportToFile {
 		return str;
 	}
 	
-	//export BDG and BCK tables
+	//export BDG and BCK tables to analysis result file.
 	public static String exportTable1(String oldReport, DBRecord DBRecordTable) {
 		String str = oldReport;
 		double[][] BDGdata1 = DBRecord.getBDGTab(DBRecordTable.selectedMod,
@@ -986,7 +1009,7 @@ public class exportToFile {
 		double botCIBDG = VldDBRecord.testStat.ciBotBDG;
 		double topCIBDG = VldDBRecord.testStat.ciTopBDG;
 		double rejectBDG    = VldDBRecord.testStat.rejectBDG;
-		double dfHills = VldDBRecord.testStat.DF_Hillis;
+		double dfHillis = VldDBRecord.testStat.DF_Hillis;
 		double pValueHillis = VldDBRecord.testStat.pValHillis;
 		double botCIHillis = VldDBRecord.testStat.ciBotHillis;
 		double topCIHillis = VldDBRecord.testStat.ciTopHillis;
@@ -997,7 +1020,7 @@ public class exportToFile {
 		if (Double.isNaN(rejectHillis)){
 			str =  str + "NaN,NaN,NaN,NaN,NaN" + "\r\n";
 		}else{
-			str = str + fourDecE.format(dfHills) + SEPA + fourDecE.format(pValueHillis) + SEPA + fourDecE.format(botCIHillis) + SEPA + fourDecE.format(topCIHillis) + SEPA + fourDecE.format(rejectHillis)+"\r\n";	
+			str = str + fourDecE.format(dfHillis) + SEPA + fourDecE.format(pValueHillis) + SEPA + fourDecE.format(botCIHillis) + SEPA + fourDecE.format(topCIHillis) + SEPA + fourDecE.format(rejectHillis)+"\r\n";	
 		}
 		return str;
 	}
@@ -1028,7 +1051,7 @@ public class exportToFile {
 		double botCIBDG = VldDBRecord.testStat.ciBotBDG;
 		double topCIBDG = VldDBRecord.testStat.ciTopBDG;
 		double rejectBDG    = VldDBRecord.testStat.rejectBDG;
-		double dfHills = VldDBRecord.testStat.DF_Hillis;
+		double dfHillis = VldDBRecord.testStat.DF_Hillis;
 		double pValueHillis = VldDBRecord.testStat.pValHillis;
 		double botCIHillis = VldDBRecord.testStat.ciBotHillis;
 		double topCIHillis = VldDBRecord.testStat.ciTopHillis;
@@ -1039,7 +1062,7 @@ public class exportToFile {
 		if (Double.isNaN(rejectHillis)){
 			str =  str + "NaN,NaN,NaN,NaN,NaN" + "\r\n";
 		}else{
-			str = str + fourDecE.format(dfHills) + SEPA + fourDecE.format(pValueHillis) + SEPA + fourDecE.format(botCIHillis) + SEPA + fourDecE.format(topCIHillis) + SEPA + fourDecE.format(rejectHillis)+"\r\n";	
+			str = str + fourDecE.format(dfHillis) + SEPA + fourDecE.format(pValueHillis) + SEPA + fourDecE.format(botCIHillis) + SEPA + fourDecE.format(topCIHillis) + SEPA + fourDecE.format(rejectHillis)+"\r\n";	
 		}
 		return str;
 	}
@@ -1061,7 +1084,7 @@ public class exportToFile {
 		double mcVarbotCIBDG = VarDBRecord.testStat.ciBotBDG;
 		double mcVartopCIBDG = VarDBRecord.testStat.ciTopBDG;
 		double mcVarrejectBDG    = VarDBRecord.testStat.rejectBDG;
-		double mcVardfHills = VarDBRecord.testStat.DF_Hillis;
+		double mcVardfHillis = VarDBRecord.testStat.DF_Hillis;
 		double mcVarpValueHillis = VarDBRecord.testStat.pValHillis;
 		double mcVarbotCIHillis = VarDBRecord.testStat.ciBotHillis;
 		double mcVartopCIHillis = VarDBRecord.testStat.ciTopHillis;
@@ -1072,7 +1095,7 @@ public class exportToFile {
 		if (Double.isNaN(mcVarrejectHillis)){
 			str =  str + "NaN,NaN,NaN,NaN,NaN" + "\r\n";
 		}else{
-			str = str + fourDecE.format(mcVardfHills) + SEPA + fourDecE.format(mcVarpValueHillis) + SEPA + fourDecE.format(mcVarbotCIHillis) + SEPA + fourDecE.format(mcVartopCIHillis) + SEPA + fourDecE.format(mcVarrejectHillis)+"\r\n";	
+			str = str + fourDecE.format(mcVardfHillis) + SEPA + fourDecE.format(mcVarpValueHillis) + SEPA + fourDecE.format(mcVarbotCIHillis) + SEPA + fourDecE.format(mcVartopCIHillis) + SEPA + fourDecE.format(mcVarrejectHillis)+"\r\n";	
 		}
 		return str;
 	}
