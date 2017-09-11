@@ -82,21 +82,3 @@ test_that(
     expect_equal(result.iMRMC$varDecomp$BCK[1,11], 5.95167e-02, tolerance = 1e-9)
   }
 )
-
-df.Truth <- df.MRMC[df.MRMC$readerID == -1, ]
-df.Orig <- apply(df.MRMC, 1, function(x, df.Truth) {
-
-  truth <- df.Truth$score[df.Truth$readerID == "-1" & df.Truth$caseID == x[2]]
-  x[5] <- truth
-  names(x)[5] <- "truth"
-
-  return(x)
-
-}, df.Truth)
-browser()
-
-df.Orig <- data.frame(t(df.Orig))
-df.Orig$truth <- factor(df.Orig$truth)
-df.Orig$score <- as.numeric(as.character(df.Orig$score))
-
-createIMRMCdf(df.Orig, c("readerID", "caseID", "modalityID", "score"), "1")

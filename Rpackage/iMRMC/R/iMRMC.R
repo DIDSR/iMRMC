@@ -141,7 +141,7 @@ doIMRMC <- function(dFrame.imrmc, iMRMCjarFullPath = NULL, cleanUp = TRUE, show.
 #'        list(readerID = "***", caseID = "***", modalityID = "***", score = "***", truth="***")
 #' @param truePositiveFactor The true positive label, such as "cancer" or "1"
 #'
-#' @return
+#' @return output
 #'
 #' @export
 #'
@@ -187,13 +187,6 @@ createIMRMCdf <- function(dFrame, dataColumnNames, truePositiveFactor){
 
 }
 
-
-#' @param dFrame This data frame includes columns for readerID, caseID, modalityID, score, and truth.
-#'        These columns are not expected to be named as such and other columns may exist.
-#' @param dataColumnNames This list identifies the column names of the data frame to be used for the analysis.
-#'        list(readerID = "***", caseID = "***", modalityID = "***", score = "***", truth="***")
-#' @param truePositiveFactor The true positive label, such as "cancer" or "1"
-
 #' Title
 #'
 #' @param df.MRMC This data frame includes columns for readerID, caseID, modalityID, score.
@@ -204,7 +197,7 @@ createIMRMCdf <- function(dFrame, dataColumnNames, truePositiveFactor){
 #'            modalityID can be anything ("truth" is a good choice),
 #'            and score should be 0 for signal-absent normal case, 1 for signal-present disease case.
 #'
-#' @return
+#' @return output
 #'
 #' @export
 #'

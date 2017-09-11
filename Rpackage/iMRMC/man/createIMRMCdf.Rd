@@ -16,7 +16,7 @@ list(readerID = "***", caseID = "***", modalityID = "***", score = "***", truth=
 \item{truePositiveFactor}{The true positive label, such as "cancer" or "1"}
 }
 \value{
-
+output
 }
 \description{
 Title
