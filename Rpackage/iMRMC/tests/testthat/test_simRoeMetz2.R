@@ -12,28 +12,18 @@ config.gRoeMetz <- sim.gRoeMetz.config()
 # Simulate data
 df.MRMC <- sim.gRoeMetz(config.gRoeMetz)
 
-result.iMRMC <- doIMRMC(df.MRMC)
+df.Orig <- undoIMRMCdf(df.MRMC)
 
-# Split the data into four pieces, not including truth
-df.MRMC.Apos <- droplevels(df.MRMC[grepl("pos", df.MRMC$caseID) & grepl("A", df.MRMC$modalityID), ])
-df.MRMC.Aneg <- droplevels(df.MRMC[grepl("neg", df.MRMC$caseID) & grepl("A", df.MRMC$modalityID), ])
-df.MRMC.Bpos <- droplevels(df.MRMC[grepl("pos", df.MRMC$caseID) & grepl("B", df.MRMC$modalityID), ])
-df.MRMC.Bneg <- droplevels(df.MRMC[grepl("neg", df.MRMC$caseID) & grepl("B", df.MRMC$modalityID), ])
-
-print("")
-cat("modality A mean shift, neg = ", mean(df.MRMC.Aneg$score), "\n")
-cat("modality A mean shift, pos = ", mean(df.MRMC.Apos$score), "\n")
-cat("modality B mean shift, neg = ", mean(df.MRMC.Bneg$score), "\n")
-cat("modality B mean shift, pos = ", mean(df.MRMC.Bpos$score), "\n")
-
-test_that(
-  "sim.gRoeMetz does not change", {
-    expect_equal(mean(df.MRMC.Aneg$score), -0.1642567, tolerance = 1e-6)
-    expect_equal(mean(df.MRMC.Apos$score),  1.012758, tolerance = 1e-6)
-    expect_equal(mean(df.MRMC.Bneg$score), -0.07882189, tolerance = 1e-6)
-    expect_equal(mean(df.MRMC.Bpos$score),  1.122282, tolerance = 1e-6)
-  }
+keyColumns <- list(
+  readerID = "readerID",
+  caseID = "caseID",
+  modalityID = "modalityID",
+  score = "score",
+  truth = "truth"
 )
+dfIMRMC <- createIMRMCdf(df.Orig, keyColumns, "1")
+
+result.iMRMC <- doIMRMC(dfIMRMC)
 
 test_that(
   "doIMRMC does not change", {
@@ -82,21 +72,3 @@ test_that(
     expect_equal(result.iMRMC$varDecomp$BCK[1,11], 5.95167e-02, tolerance = 1e-9)
   }
 )
-
-df.Truth <- df.MRMC[df.MRMC$readerID == -1, ]
-df.Orig <- apply(df.MRMC, 1, function(x, df.Truth) {
-
-  truth <- df.Truth$score[df.Truth$readerID == "-1" & df.Truth$caseID == x[2]]
-  x[5] <- truth
-  names(x)[5] <- "truth"
-
-  return(x)
-
-}, df.Truth)
-browser()
-
-df.Orig <- data.frame(t(df.Orig))
-df.Orig$truth <- factor(df.Orig$truth)
-df.Orig$score <- as.numeric(as.character(df.Orig$score))
-
-createIMRMCdf(df.Orig, c("readerID", "caseID", "modalityID", "score"), "1")

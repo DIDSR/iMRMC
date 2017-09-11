@@ -17,7 +17,7 @@
 #'
 #' @return Mean of model A by numerical integration
 #'
-#' @import LaPlacesDemon
+#' @import LaplacesDemon
 #'
 #' @export
 #'
