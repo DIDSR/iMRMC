@@ -417,7 +417,7 @@ public class GUInterface {
 			if( DBRecordStat.totalVar > 0.0) {
 				DBRecordStat.InputFile1 = InputFile1;
 	    		String head =  "inputFile,date,iMRMCversion,NR,N0,N1,modalityA,modalityB,UstatOrMLE,AUCA,varAUCA,AUCB,varAUCB,AUCAminusAUCB,varAUCAminusAUCB,"
-	    				+"pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis";
+	    				+"pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHillis,pValueHillis,botCIHillis,topCIHillis,rejectHillis";
 				String reportData = head +"\r\n";
 				String reportSummary = "";
 				String reportResult1 = "";
@@ -696,7 +696,7 @@ public class GUInterface {
 			if( DBRecordStat.totalVar > 0.0) {
 				DBRecordStat.InputFile1 = InputFile1;
 	    		String head =  "inputFile,date,iMRMCversion,NR,N0,N1,modalityA,modalityB,UstatOrMLE,AUCA,varAUCA,AUCB,varAUCB,AUCAminusAUCB,varAUCAminusAUCB,"
-	    				+"pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis";
+	    				+"pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHillis,pValueHillis,botCIHillis,topCIHillis,rejectHillis";
 				String report = head +"\r\n";
 	            DateFormat dateForm = new SimpleDateFormat("yyyyMMddHHmm");
 				Date currDate = new Date();
@@ -815,7 +815,7 @@ public class GUInterface {
 				String MStable = outputDir+ "//MStable.csv";
 	            // initial 3 string to save All stat, AUCs and ROC result
 	    		String statHead =  "inputFile,date,iMRMCversion,NR,N0,N1,modalityA,modalityB,UstatOrMLE,AUCA,varAUCA,AUCB,varAUCB,AUCAminusAUCB,varAUCAminusAUCB,"
-	    				+"pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis";
+	    				+"pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHillis,pValueHillis,botCIHillis,topCIHillis,rejectHillis";
 	    		BDGout =  "modalityA,modalityB,UstatOrMLE,compOrCoeff,M1,M2,M3,M4,M5,M6,M7,M8" +"\r\n";
 	    		BCKout =  "modalityA,modalityB,UstatOrMLE,Moments,N,D,ND,R,NR,DR,RND" +"\r\n";
 	    		DBMout =  "modalityA,modalityB,UstatOrMLE,Components,R,C,RC,TR,TC,TRC" +"\r\n";
@@ -824,7 +824,7 @@ public class GUInterface {
 	            String AllStatreport = statHead+"\r\n";
 	            String AllStatMLEreport = statHead+"\r\n";
 	            String AllAUCsreport = "inputFile,date,iMRMCversion,readerID,N0,N1,modalityA,modalityB,AUCA,varAUCA,AUCB,varAUCB,AUCAminusAUCB,varAUCAminusAUCB,"
-	    				+"pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis"+"\r\n";
+	    				+"pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHillis,pValueHillis,botCIHillis,topCIHillis,rejectHillis"+"\r\n";
 	            String readerCovReport = "inputFile,data,iMRMCversion" +"\r\n" + InputFile1.fileName + "," + fileTime + ',' + MRMC.versionname + "\r\n";
 	            String AllROCreport = "";
 				if  (GUInterface.selectedInput == GUInterface.DescInputModeImrmc){

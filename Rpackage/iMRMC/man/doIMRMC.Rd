@@ -8,24 +8,29 @@ Gallas2006_Acad-Radiol_v13p353 (single-modality),
 Gallas2008_Neural-Networks_v21p387 (multiple modalities, arbitrary study designs),
 Gallas2009_Commun-Stat-A-Theor_v38p2586 (framework paper).}
 \usage{
-doIMRMC(dFrame.imrmc, cleanUp = TRUE)
+doIMRMC(dFrame.imrmc, iMRMCjarFullPath = NULL, cleanUp = TRUE,
+  show.output.on.console = FALSE)
 }
 \arguments{
 \item{dFrame.imrmc}{[data.frame] the variables contained in this data frame are
-           readerID       [Factor] w/ nR levels "reader1", "reader2", ...
-           caseID         [Factor] w/ nC levels "case1", "case2", ...
-           modalityID     [Factor] w/ 1 level simRoeMetz.config$modalityID
-           score          [num] reader score
-           each row of this data frame corresponds to an observation
-           for every caseID, there must be a row corresponding to the truth observation
-             the readerID for a truth observation is "truth"
-             the modalityID for a truth observation is "truth"
-             the score for a truth observation must be either 0 (signal-absent) or 1 (signal-present)
+readerID       [Factor] w/ nR levels "reader1", "reader2", ...
+caseID         [Factor] w/ nC levels "case1", "case2", ...
+modalityID     [Factor] w/ 1 level simRoeMetz.config$modalityID
+score          [num] reader score
+each row of this data frame corresponds to an observation
+for every caseID, there must be a row corresponding to the truth observation
+  the readerID for a truth observation is "truth"
+  the modalityID for a truth observation is "truth"
+  the score for a truth observation must be either 0 (signal-absent) or 1 (signal-present)}
 
-           this jar file can be downloaded from https://github.com/DIDSR/iMRMC/releases
-           this R program works with version iMRMC-v3p2.jar and later}
+\item{iMRMCjarFullPath}{[char] this string identifies the location of the iMRMC.jar file
+this jar file can be downloaded from https://github.com/DIDSR/iMRMC/releases
+this R program supports version iMRMC-v3p2.jar}
 
 \item{cleanUp}{[logi] this logical determines whether or not the iMRMC analysis results}
+
+\item{show.output.on.console}{[logi] this logical determines whether or iMRMC console output
+is written to the console}
 }
 \value{
 iMRMCoutput [list] the objects of this list are described in detail in the iMRMC documentation

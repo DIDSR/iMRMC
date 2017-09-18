@@ -21,10 +21,12 @@
 #'              the modalityID for a truth observation is "truth"
 #'              the score for a truth observation must be either 0 (signal-absent) or 1 (signal-present)
 #'
-# @param iMRMCjar [char] this string identifies the location of the iMRMC.jar file
+#' @param iMRMCjarFullPath [char] this string identifies the location of the iMRMC.jar file
 #'            this jar file can be downloaded from https://github.com/DIDSR/iMRMC/releases
-#'            this R program works with version iMRMC-v3p2.jar and later
+#'            this R program supports version iMRMC-v3p2.jar
 #' @param cleanUp [logi] this logical determines whether or not the iMRMC analysis results
+#' @param show.output.on.console [logi] this logical determines whether or iMRMC console output
+#'               is written to the console
 #'
 #' @return iMRMCoutput [list] the objects of this list are described in detail in the iMRMC documentation
 #'            which can be found at http://didsr.github.io/iMRMC/000_iMRMC/userManualHTML/index.htm
@@ -60,24 +62,33 @@
 #' @export
 #'
 # @examples
-doIMRMC <- function(dFrame.imrmc, cleanUp = TRUE){
+#'
+#'
+doIMRMC <- function(dFrame.imrmc, iMRMCjarFullPath = NULL, cleanUp = TRUE, show.output.on.console = FALSE){
 
   iMRMCfolderName <- "imrmcDir"
   iMRMCfileName <- "input.imrmc"
-  iMRMCjar <- "iMRMC-v3p2.jar"
 
-  pkgPath = path.package("iMRMCpg", quiet = FALSE)
-  javaFullPath = paste(pkgPath, "/java/",iMRMCjar,sep ="")
-  #javaFullPath = ("../inst/java/iMRMC-v3p2.jar")
+  if (is.null(iMRMCjarFullPath)) {
+    iMRMCjar <- "iMRMC-v3p2.jar"
+    pkgPath = path.package("iMRMC", quiet = FALSE)
+    iMRMCjarFullPath = paste(pkgPath, "/java/", iMRMCjar, sep = "")
+  }
+
   # Clean up files before calling iMRMC
   unlink(iMRMCfolderName, recursive = TRUE)
+
   # Write data frame to iMRMC input file
   writeLines("BEGIN DATA:", con = iMRMCfileName)
   write.table(dFrame.imrmc, iMRMCfileName,
               quote = FALSE, row.names = FALSE, col.names = FALSE,
               append = TRUE, sep = ", ")
 
-  system(paste("java -jar ", javaFullPath, iMRMCfileName, iMRMCfolderName), show.output.on.console = TRUE)
+  # Run iMRMC
+  system(
+    paste("java -jar ", iMRMCjarFullPath, iMRMCfileName, iMRMCfolderName),
+    show.output.on.console = show.output.on.console)
+
   # Retrieve the iMRMC results
   perReader <- read.csv(file.path(iMRMCfolderName, "AUCperReader.csv"))
   Ustat <- read.csv(file.path(iMRMCfolderName, "statAnalysis.csv"))
@@ -122,14 +133,92 @@ doIMRMC <- function(dFrame.imrmc, cleanUp = TRUE){
 
 }
 
-#.First.lib <- function(libname, pkgname) {
-#  .jpackage(pkgname,lib.loc=libname)
-#  .jengine(TRUE)
-#}
-# Get the default simulation configuration
-#simRoeMetz.config <- simRoeMetz.defaultConfig()
-# Simulate an MRMC ROC study
-#dFrame.imrmc <- simRoeMetz(simRoeMetz.config)
-# Analyze the MRMC ROC study
-#iMRMCjar <- "iMRMC-v3p2.jar"
-#iMRMCoutput <- doIMRMC(dFrame.imrmc, cleanUp = FALSE)
+#' Title
+#'
+#' @param dFrame This data frame includes columns for readerID, caseID, modalityID, score, and truth.
+#'        These columns are not expected to be named as such and other columns may exist.
+#' @param dataColumnNames This list identifies the column names of the data frame to be used for the analysis.
+#'        list(readerID = "***", caseID = "***", modalityID = "***", score = "***", truth="***")
+#' @param truePositiveFactor The true positive label, such as "cancer" or "1"
+#'
+#' @return output
+#'
+#' @export
+#'
+# @examples
+createIMRMCdf <- function(dFrame, dataColumnNames, truePositiveFactor){
+
+  readerID <- dataColumnNames$readerID
+  caseID <- dataColumnNames$caseID
+  modalityID <- dataColumnNames$modalityID
+  score <- dataColumnNames$score
+  truth <- dataColumnNames$truth
+
+  data0 <- dFrame[dFrame[ , truth] != truePositiveFactor, ]
+  data0 <- data.frame(
+    readerID   = data0[ , readerID],
+    caseID     = data0[ , caseID],
+    modalityID = data0[ , modalityID],
+    score      = data0[ , score]
+  )
+  data1 <- dFrame[dFrame[ , truth] == truePositiveFactor, ]
+  data1 <- data.frame(
+    readerID   = data1[ , readerID],
+    caseID     = data1[ , caseID],
+    modalityID = data1[ , modalityID],
+    score      = data1[ , score]
+  )
+  truth0 <- data.frame(
+    readerID = "truth",
+    caseID = droplevels(unique(data0$caseID)),
+    modalityID = "truth",
+    score = 0
+  )
+  truth1 <- data.frame(
+    readerID = "truth",
+    caseID = droplevels(unique(data1$caseID)),
+    modalityID = "truth",
+    score = 1
+  )
+  IMRMCdf <- droplevels(rbind(truth0, truth1, data0, data1))
+  IMRMCdf <- IMRMCdf[!is.na(IMRMCdf$score), ]
+
+  return(IMRMCdf)
+
+}
+
+#' Title
+#'
+#' @param df.MRMC This data frame includes columns for readerID, caseID, modalityID, score.
+#'        Each row is a reader x case x modality observation from the study
+#'        In addition to observations from the study,
+#'            this data frame requires rows specifying the truth for each caseID.
+#'        For truth specifications, the readerID needs to equal "truth" or "-1",
+#'            modalityID can be anything ("truth" is a good choice),
+#'            and score should be 0 for signal-absent normal case, 1 for signal-present disease case.
+#'
+#' @return output
+#'
+#' @export
+#'
+# @examples
+undoIMRMCdf <- function(df.MRMC) {
+  df.Truth <- df.MRMC[df.MRMC$readerID == -1, ]
+  df.Orig <- df.MRMC[df.MRMC$readerID != -1, ]
+  df.Orig <- apply(df.Orig, 1, function(x, df.Truth) {
+
+    truth <- df.Truth$score[df.Truth$readerID == "-1" & df.Truth$caseID == x[2]]
+    x[5] <- truth
+    names(x)[5] <- "truth"
+
+    return(x)
+
+  }, df.Truth)
+
+  df.Orig <- data.frame(t(df.Orig))
+  df.Orig$truth <- factor(df.Orig$truth)
+  df.Orig$score <- as.numeric(as.character(df.Orig$score))
+
+  return(df.Orig)
+
+}

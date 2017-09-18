@@ -104,8 +104,8 @@ public class MRMC extends JApplet {
 		}
 		int width = 900, height = 620;
 		run(new MRMC(), width, height);
-		cmonnandStartFunction cmonnandStartFunction1 = new cmonnandStartFunction();
-		cmonnandStartFunction1.cmonnandStartFunction(gui, inputFileFullName,outputFolderFullName);
+		commandStartFunction commandStartFunction = new commandStartFunction();
+		commandStartFunction.commandStartFunction(gui, inputFileFullName,outputFolderFullName);
 	}
 
 	/**

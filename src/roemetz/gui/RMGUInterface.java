@@ -1168,11 +1168,11 @@ public class RMGUInterface {
 		double pValueBDG = dBRecordStat.testStat.pValBDG;
 		double botCIBDG = dBRecordStat.testStat.ciBotBDG;
 		double topCIBDG = dBRecordStat.testStat.ciTopBDG;
-		double dfHills = dBRecordStat.testStat.DF_Hillis;
+		double dfHillis = dBRecordStat.testStat.DF_Hillis;
 		double pValueHillis = dBRecordStat.testStat.pValHillis;
 		double botCIHillis = dBRecordStat.testStat.ciBotHillis;
 		double topCIHillis = dBRecordStat.testStat.ciTopHillis;
-		double[] tempTrial = {trialID+1, AUC_A,AUC_B,AUC_AminusAUC_B ,varA,varB,totalVar,pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis};
+		double[] tempTrial = {trialID+1, AUC_A,AUC_B,AUC_AminusAUC_B ,varA,varB,totalVar,pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHillis,pValueHillis,botCIHillis,topCIHillis,rejectHillis};
 		trialResultArray[(int) trialID] = tempTrial;
 	}
 	/**
@@ -2444,7 +2444,7 @@ public class RMGUInterface {
 						    exportTrialResult(outputPackage);
 						   // exportSizeValResult(outputPackage);
 						}
-						reportValidation = "MCstat,AUCA,AUCB,AUCAminusAUCB,varA,varB,varAUCAminusAUCB,pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis" + "\r\n";
+						reportValidation = "MCstat,AUCA,AUCB,AUCAminusAUCB,varA,varB,varAUCAminusAUCB,pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHillis,pValueHillis,botCIHillis,topCIHillis,rejectHillis" + "\r\n";
 						reportValidation = exportToFile.exportMCmeanValidation(reportValidation,DB1);
 						reportValidation = exportToFile.exportMCvarianceValidation(reportValidation,varDBRecordStat);
 						
@@ -2461,7 +2461,7 @@ public class RMGUInterface {
 							reportGUI = exportToFile.exportTable2(reportGUI, DB1);
 						}
 						//reportValidation = "NumAUCA,NumAUCB,NumAUCAminusAUCB,NumvarAUCA,NumvarAUCB,NumVarAUCAminusAUCB" + "\r\n";
-						reportValidation =  "AnalysisStat,AUCA,AUCB,AUCAminusAUCB,varA,varB,varAUCAminusAUCB,pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHills,pValueHillis,botCIHillis,topCIHillis,rejectHillis" + "\r\n";
+						reportValidation =  "AnalysisStat,AUCA,AUCB,AUCAminusAUCB,varA,varB,varAUCAminusAUCB,pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHillis,pValueHillis,botCIHillis,topCIHillis,rejectHillis" + "\r\n";
 						reportValidation = exportToFile.exportNumValidation(reportValidation,DB1);
 						
 					}
@@ -2515,7 +2515,7 @@ public class RMGUInterface {
 			fw = new FileWriter(f.getAbsoluteFile());
 			BufferedWriter bw = new BufferedWriter(fw);
 			String [] trialResultTitle = new String[] {"TrialID","AUCA","AUCB","AUCAminusB","varAUCA","varAUCB","varAUCAandB","pValueNormal","botCInormal","topCInormal",
-					"rejectNormal","dfBDG","pValueBDG","botCIBDG","topCIBDG","rejectBDG","dfHills","pValueHillis","botCIHillis","topCIHillis","rejectHillis"};
+					"rejectNormal","dfBDG","pValueBDG","botCIBDG","topCIBDG","rejectBDG","dfHillis","pValueHillis","botCIHillis","topCIHillis","rejectHillis"};
 			for (int i=0;i<trialResultTitle.length;i++){
 				bw.write(trialResultTitle[i]+",");
 			}

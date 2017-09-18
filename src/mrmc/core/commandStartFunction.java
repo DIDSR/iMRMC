@@ -13,10 +13,10 @@ import roemetz.gui.RMGUInterface.DoNumericalIntegrationBtnListener;
 import roemetz.gui.RMGUInterface.DoSimBtnListener;
 import roemetz.gui.RMGUInterface.analysisExportListener;
 
-public class cmonnandStartFunction {
+public class commandStartFunction {
 	private GUInterface GUI;
 	private InputFile InputFile1;
-	public void cmonnandStartFunction(GUInterface gui, String inputFileFullName, String outputFolderFullName) {
+	public void commandStartFunction(GUInterface gui, String inputFileFullName, String outputFolderFullName) {
 		// TODO Auto-generated method stub
 		String inputAndOutput = "";
 		if (inputFileFullName.length()==0){
