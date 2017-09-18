@@ -622,7 +622,7 @@ public class InputFile {
 				observerData = new String[NlinesFileContent - (filePosition + 1)][4];
 				parseObserverData();
 				boolean VerboseTrue=true;
-				boolean DisplayWarning=true;
+				boolean DisplayWarning=!MRMC.commandStart;
 				verifySizesAndGetIDs(VerboseTrue, DisplayWarning);		
 				// fills keyedData and truthVals structures with proper values
 				processScoresAndTruth(VerboseTrue);

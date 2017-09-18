@@ -45,14 +45,14 @@ public class commandStartFunction {
 		InputFile1.fileName = f.getName();
 		InputFile1.filePath = f.getParent();
 	    InputFile1.filePathAndName = f.getPath();
-		
+	    MRMC.commandStart = true;
 		try {
 			InputFile1.ReadInputFile(GUI);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		MRMC.commandStart = true;
+		
 		GUI.allAnalysisOutput = outputFolderFullName;
 		GUInterface.SaveAllStatListener ExportAllListener1 = GUI. new SaveAllStatListener();
 		ExportAllListener1.exportResult();
