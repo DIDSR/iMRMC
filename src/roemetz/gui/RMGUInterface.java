@@ -1052,7 +1052,7 @@ public class RMGUInterface {
 			DBRecord.copy(DBRecordStat, squareDBRecordStat);			
 			DBRecord.square(squareDBRecordStat);
 			DBRecord.copy(squareDBRecordStat, sumSquareDBRecordStat);
-			saveTrialResult(DBRecordStat,0);
+			//saveTrialResult(DBRecordStat,0);
 			// validate sizing feature
 			//sizeValidation(DBRecordStat,0);
 			// write to disk
@@ -1091,14 +1091,15 @@ public class RMGUInterface {
 					if(DBRecordStat.totalVar < 0) {
 						flagTotalVarIsNegative++;
 						// pad current simulation result to trialResult even totalvar < 0. 
-						saveTrialResult(DBRecordStat,i);
+						
+						//saveTrialResult(DBRecordStat,i);
 						//sizeValidation(DBRecordStat,i);
 						// validate sizing feature
 						//sizeValidation(DBRecordStat,i);
 						continue;
 					}
 					// pad current simulation result to trialResult. 
-					saveTrialResult(DBRecordStat,i);
+					//saveTrialResult(DBRecordStat,i);
 
 					// Accumulate DBRecord
 					DBRecord.add(DBRecordStat, sumDBRecordStat);
@@ -1151,7 +1152,7 @@ public class RMGUInterface {
 	 * function to save each trial result to trialResultArray
 	 * 
 	 */
-	private void saveTrialResult( DBRecord dBRecordStat, long trialID) {
+	/*private void saveTrialResult( DBRecord dBRecordStat, long trialID) {
 		double AUC_A       = dBRecordStat.AUCsReaderAvg[0];
 		double AUC_B       = dBRecordStat.AUCsReaderAvg[1];
 		double AUC_AminusAUC_B = AUC_A-AUC_B;
@@ -1174,7 +1175,7 @@ public class RMGUInterface {
 		double topCIHillis = dBRecordStat.testStat.ciTopHillis;
 		double[] tempTrial = {trialID+1, AUC_A,AUC_B,AUC_AminusAUC_B ,varA,varB,totalVar,pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHillis,pValueHillis,botCIHillis,topCIHillis,rejectHillis};
 		trialResultArray[(int) trialID] = tempTrial;
-	}
+	}*/
 	/**
 	 * function to do the sizing validation
 	 * 
@@ -1323,7 +1324,7 @@ public class RMGUInterface {
 									if(RoeMetz.doValidation){
 										analysisExportListener analysisExportListener1 = new analysisExportListener(avgDBRecordStat,"Simulation",StatPanel1);
 										analysisExportListener1.exportResult();
-										exportTrialResult(null);
+										//exportTrialResult(null);
 										//exportSizeValResult(null);
 										System.exit(0);
 									}
@@ -1443,7 +1444,7 @@ public class RMGUInterface {
 			simulationExport.addActionListener(new analysisExportListener(avgDBRecordStat,"Simulation",StatPanel1));			
 			simOutput.add(simulationExport, BorderLayout.PAGE_END);
 			simOutput.pack();
-			for (int i =0 ; i<8; i++){
+			/*for (int i =0 ; i<8; i++){
 				double[][] oneSetting = SizingResultArray[i];
 				for(int j =0; j<7;j++){
 					SizingResultMean[i][j]=oneSetting[0][j];
@@ -1463,7 +1464,7 @@ public class RMGUInterface {
 				SizingResultMean[i][13] = NanCount[2];
 			}
 			// Processing sizing results
-			double[][] tracking = SizingResultMean;
+			double[][] tracking = SizingResultMean;*/
 			if(!RoeMetz.doValidation)
 			simOutput.setVisible(true);
 //			writeSummaryFile(simSaveDirectory, "Summary of Simulation Results",
@@ -2441,7 +2442,7 @@ public class RMGUInterface {
 							reportGUI = exportToFile.exportMCvariance(reportGUI, varDBRecordStat);
 							reportGUI = exportToFile.exportTable1(reportGUI, DB1);
 							reportGUI = exportToFile.exportTable2(reportGUI, DB1);
-						    exportTrialResult(outputPackage);
+						  //  exportTrialResult(outputPackage);
 						   // exportSizeValResult(outputPackage);
 						}
 						reportValidation = "MCstat,AUCA,AUCB,AUCAminusAUCB,varA,varB,varAUCAminusAUCB,pValueNormal,botCInormal,topCInormal,rejectNormal,dfBDG,pValueBDG,botCIBDG,topCIBDG,rejectBDG,dfHillis,pValueHillis,botCIHillis,topCIHillis,rejectHillis" + "\r\n";
@@ -2493,7 +2494,7 @@ public class RMGUInterface {
  		}
 	
 	}
-	private void exportTrialResult(File GUIoutputDir) {
+	/*private void exportTrialResult(File GUIoutputDir) {
 		// TODO Auto-generated method stub
 		try {
 			File f;	
@@ -2537,7 +2538,7 @@ public class RMGUInterface {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+	}*/
 
 	// export sizing validation results
 /*	private void exportSizeValResult(File GUIoutputDir) {
