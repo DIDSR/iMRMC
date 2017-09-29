@@ -878,16 +878,20 @@ public class DBRecord {
 		DBRecord DBRecordTemp = new DBRecord();
 
 		// We just need the coefficients
-		covMRMCsize = new CovMRMC(SizePanelRoeMetz, DBRecordTemp);
+		//covMRMCsize = new CovMRMC(SizePanelRoeMetz, DBRecordTemp);
+		
+		//temp use genBDGSplitUnpairedCoeff calculate coeff, only work on clean data
+		BDGcoeff = genBDGSplitUnpairedCoeff(Nreader, Nnormal, Ndisease, SizePanelRoeMetz.numSplitPlots, SizePanelRoeMetz.pairedReadersFlag, SizePanelRoeMetz.pairedNormalsFlag, SizePanelRoeMetz.pairedDiseasedFlag);
+		
 		
 		totalVar = 0.0;
 		varA = 0.0;
 		varB = 0.0;
 		for(int i=0; i<8; i++) {
-			BDGcoeff[0][i] = covMRMCsize.coefficientsAA[i+1];
-			BDGcoeff[1][i] = covMRMCsize.coefficientsBB[i+1];
-			BDGcoeff[2][i] = covMRMCsize.coefficientsAB[i+1];
-			BDGcoeff[3][i] = 1.0;
+			//BDGcoeff[0][i] = covMRMCsize.coefficientsAA[i+1];
+			//BDGcoeff[1][i] = covMRMCsize.coefficientsBB[i+1];
+			//BDGcoeff[2][i] = covMRMCsize.coefficientsAB[i+1];
+			//BDGcoeff[3][i] = 1.0;
 			BDG[3][i] = 
 					+    BDGcoeff[0][i]*BDG[0][i]
 					+    BDGcoeff[1][i]*BDG[1][i]
@@ -906,6 +910,7 @@ public class DBRecord {
 		}
 		SE = Math.sqrt(totalVar);
 		// calculate readers var
+		/*
 		double[][] readerBDG = new double [4][4]; 
 		double[][] readerBDGcoeff = new double [4][4];
 		N0perReader = new int[(int)Nreader][3];
@@ -941,6 +946,7 @@ public class DBRecord {
 				readerTotalVar[ir] += readerBDGcoeff[3][i] * readerBDG[3][i];
 			}
 		}
+		
 		if(selectedMod == 0) {
 			flagFullyCrossed = covMRMCsize.fullyCrossedA;
 		}
@@ -952,7 +958,12 @@ public class DBRecord {
 					covMRMCsize.fullyCrossedB && 
 					covMRMCsize.fullyCrossedAB;
 		}
-
+		*/
+		if(SizePanelRoeMetz.numSplitPlots==1 && SizePanelRoeMetz.pairedReadersFlag==1&& SizePanelRoeMetz.pairedNormalsFlag==1&& SizePanelRoeMetz.pairedDiseasedFlag==1){
+			flagFullyCrossed=true;
+		}else{
+			flagFullyCrossed=false;
+		}
 		Decompositions();
 		testStat = new StatTest(this);
 		
@@ -1130,7 +1141,18 @@ public class DBRecord {
 		SE = Math.sqrt(totalVar);
 		if(totalVar < 0) {
 			flagTotalVarIsNegative = 1;
+			// edit for weijie
+			totalVar=totalVarMLE;
+			varA = varAMLE;
+			varB = varBMLE;
+			readerTotalVar = readerTotalVarMLE;
+			readerVarA = readerVarAMLE;
+			readerVarB = readerVarBMLE;
+			readerCovA = readerCovAMLE;
+			readerCovB = readerCovBMLE;
+			readerTotalCov = readerTotalCovMLE;
 		}
+		
 		/*
 		 * added for saving the results 
 		 */

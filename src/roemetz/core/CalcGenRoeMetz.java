@@ -511,6 +511,7 @@ public class CalcGenRoeMetz {
 		DBRecordNumerical.DBRecordRoeMetzNumericalFill(SizePanelRoeMetz);
 		// calculcate Vr, Vc, this works only for paried data
 		calcualteVrVc();
+		calculatePowerBDG();
 		DBRecord track =DBRecordNumerical;
 		if (SizePanelRoeMetz.pairedReadersFlag == 0) {
 			for(int i= 0; i<(DBRecordNumerical.Nreader/2);i++){
@@ -546,6 +547,15 @@ public class CalcGenRoeMetz {
 		DBRecordNumerical.Vr =Vr;
 		DBRecordNumerical.Vc =Vc;
 		DBRecordNumerical.testVarDiff = Vr/DBRecordNumerical.Nreader +Vc;
+	}
+	
+	private static void calculatePowerBDG() {
+		// calculcate BDG power , this works only for paired data coeffA=coeffB=coeffAB
+		//DBRecordNumerical.testStat.powerBDG
+		double AUCdif = DBRecordNumerical.AUCsReaderAvg[0] - DBRecordNumerical.AUCsReaderAvg[1];
+		double totalVar = DBRecordNumerical.totalVar;
+		DBRecordNumerical.testStat.powerBDG = NormalDist.cdf(0, 1, AUCdif/Math.sqrt(totalVar)-1.96) + NormalDist.cdf(0, 1, -AUCdif/Math.sqrt(totalVar)-1.96);
+		
 	}
 
 }

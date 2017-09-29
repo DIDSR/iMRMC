@@ -13,6 +13,8 @@ import com.itextpdf.text.pdf.PdfPTable;*/
 
 
 
+
+
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Paragraph;
@@ -1043,6 +1045,36 @@ public class exportToFile {
 		}
 		return str;
 	}
+	
+	
+	public static String exportNumSPsim(String oldReport, DBRecord DBNum, String fileName, int Sp) {
+		String str = oldReport;
+		double AUC_A = DBNum.AUCsReaderAvg[0];
+		double AUC_B = DBNum.AUCsReaderAvg[1];
+		double Nreader = DBNum.Nreader;
+		double N0case = DBNum.Nnormal;
+		double N1case = DBNum.Ndisease;
+		double totalVar = DBNum.totalVar;
+		double Vr = DBNum.Vr;
+		double Vc = DBNum.Vc;
+		double PowerBDG = DBNum.testStat.powerBDG;
+		String RM = fileName.substring(0,2);
+		str = str + RM + SEPA + AUC_A + SEPA + AUC_B + SEPA + Nreader + SEPA+ N0case + SEPA + N1case + SEPA + Sp  + SEPA+  fourDecE.format(totalVar) + SEPA + fourDecE.format(Vr)  + SEPA + fourDecE.format(Vc) + SEPA +fourDecE.format(PowerBDG) + "\r\n";
+		return str;
+	}
+
+	public static String exportNumSPsim2(String oldReport, DBRecord DBNum) {
+		// TODO Auto-generated method stub
+		String str = oldReport;
+		double[][] BDG = DBNum.BDG;
+		String[] modList = {"ModA","ModB","ModAB"};
+		for (int i = 0 ;i<3;i++){
+			str = str + modList[i]+ SEPA + BDG[i][0] + SEPA + BDG[i][1] + SEPA  + BDG[i][2] + SEPA  + BDG[i][3] + SEPA  + BDG[i][4] + SEPA  + BDG[i][5] + SEPA  + BDG[i][6] + SEPA  + BDG[i][7] + "\r\n";
+		}
+			
+		return str;
+	}
+
 	
 	public static String exportMCvarianceValidation(String oldReport, DBRecord VarDBRecord) {
 		String str = oldReport;

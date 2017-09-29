@@ -29,11 +29,13 @@ public static File inputFile = null;
 				RMGUInterface.analysisExportListener analysisExportListener2 =
 						RMGUInterface1. new analysisExportListener(DoNumericalIntegrationBtnListener1.DBRecordNumerical,"Numerical",RMGUInterface1.StatPanelNumerical);
 				analysisExportListener2.exportResult();
-				
+				System.exit(0);
 				// simulation
-				RMGUInterface.DoSimBtnListener DoSimBtnListener1 =  RMGUInterface1.new DoSimBtnListener();
-				DoSimBtnListener1.doSimulationAnalysis();
-			/*	while(!RMGUInterface1.processDone){
+			/*	RMGUInterface.DoSimBtnListener DoSimBtnListener1 =  RMGUInterface1.new DoSimBtnListener();
+				DoSimBtnListener1.doSimulationAnalysis();*/
+				
+				
+			/*while(!RMGUInterface1.processDone){
 					try {
 						Thread.sleep(1000);
 					} catch (InterruptedException e) {
