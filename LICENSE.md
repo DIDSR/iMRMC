@@ -1,11 +1,11 @@
-CC0 1.0 Universal (CC0 1.0)
-Public Domain Dedication
+CC0 1.0 Universal (CC0 1.0)  
+Public Domain Dedication  
 https://creativecommons.org/publicdomain/zero/1.0/
 
-This is a human-readable summary of the Legal Code (read the full legal code here):
+This is a human-readable summary of the Legal Code (read the full legal code here):  
 https://creativecommons.org/publicdomain/zero/1.0/legalcode.
 
-No Copyright
+No Copyright  
 This license is acceptable for Free Cultural Works.
 
     The person who associated a work with this deed has dedicated the work to the public domain by waiving all of his or her rights to the work worldwide under copyright law, including all related and neighboring rights, to the extent allowed by law.
