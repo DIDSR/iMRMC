@@ -498,7 +498,7 @@ public class InputFile {
 			design[r][i] = readerID;
 			for (String caseID : keyedData.get(readerID).keySet()) {
 				if (r==0){
-					caserelation[i][0]=Integer.toString(i);
+					caserelation[i][0]=Integer.toString(i+1);
 					caserelation[i][1]=caseID;
 				}
 				i++;
@@ -622,7 +622,7 @@ public class InputFile {
 				observerData = new String[NlinesFileContent - (filePosition + 1)][4];
 				parseObserverData();
 				boolean VerboseTrue=true;
-				boolean DisplayWarning=true;
+				boolean DisplayWarning=!MRMC.commandStart;
 				verifySizesAndGetIDs(VerboseTrue, DisplayWarning);		
 				// fills keyedData and truthVals structures with proper values
 				processScoresAndTruth(VerboseTrue);
