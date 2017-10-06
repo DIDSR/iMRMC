@@ -70,7 +70,7 @@ doIMRMC <- function(dFrame.imrmc, iMRMCjarFullPath = NULL, cleanUp = TRUE, show.
   iMRMCfileName <- "input.imrmc"
 
   if (is.null(iMRMCjarFullPath)) {
-    iMRMCjar <- "iMRMC-v3p2.jar"
+    iMRMCjar <- "iMRMC-v3p3.jar"
     pkgPath = path.package("iMRMC", quiet = FALSE)
     iMRMCjarFullPath = paste(pkgPath, "/java/", iMRMCjar, sep = "")
   }

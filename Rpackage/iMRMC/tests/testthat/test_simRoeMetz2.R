@@ -6,7 +6,7 @@ context("sim.gRoeMetz and doIMRMC")
 
 init.lecuyerRNG()
 
-# Create an MRMC data frame
+# Create an MRMC configuration file
 config.gRoeMetz <- sim.gRoeMetz.config()
 
 # Simulate data
@@ -43,9 +43,9 @@ test_that(
     expect_equal(result.iMRMC$Ustat$botCIBDG[2], 0.71340391, tolerance = 1e-8)
     expect_equal(result.iMRMC$Ustat$botCIBDG[3], -0.06255824, tolerance = 1e-8)
 
-    expect_equal(result.iMRMC$Ustat$dfHills[1], 18.27544, tolerance = 1e-5)
-    expect_equal(result.iMRMC$Ustat$dfHills[2], 18.24291, tolerance = 1e-5)
-    expect_equal(result.iMRMC$Ustat$dfHills[3], 54.31726, tolerance = 1e-5)
+    expect_equal(result.iMRMC$Ustat$dfHillis[1], 18.27544, tolerance = 1e-5)
+    expect_equal(result.iMRMC$Ustat$dfHillis[2], 18.24291, tolerance = 1e-5)
+    expect_equal(result.iMRMC$Ustat$dfHillis[3], 54.31726, tolerance = 1e-5)
     expect_equal(result.iMRMC$Ustat$pValueHillis[1], 8.225544e-07, tolerance = 1e-12)
     expect_equal(result.iMRMC$Ustat$pValueHillis[2], 5.196685e-07, tolerance = 1e-12)
     expect_equal(result.iMRMC$Ustat$pValueHillis[3], 8.439013e-01, tolerance = 1e-07)
@@ -71,4 +71,5 @@ test_that(
     expect_equal(result.iMRMC$varDecomp$BCK[1,10], 2.33584e-02, tolerance = 1e-9)
     expect_equal(result.iMRMC$varDecomp$BCK[1,11], 5.95167e-02, tolerance = 1e-9)
   }
+
 )
