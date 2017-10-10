@@ -3,6 +3,14 @@
 <h4>Version Under Development</h4>
 ...
 
+<h4>iMRMC3p3</h4>
+*10/6/17*
+
+Fix bugs for output files (comma, Index&ID relationship).
+
+In command line execution, quiet the warnings about too few observations. 
+
+
 <h4>iMRMC3p2</h4>
 *2/24/17*
 
