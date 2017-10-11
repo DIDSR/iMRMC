@@ -2,7 +2,7 @@ library(testthat)
 library(parallel)
 library(iMRMC)
 
-context("sim.gRoeMetz and doIMRMC")
+context("simRoeMetz2")
 
 init.lecuyerRNG()
 
@@ -23,7 +23,7 @@ keyColumns <- list(
 )
 dfIMRMC <- createIMRMCdf(df.Orig, keyColumns, "1")
 
-result.iMRMC <- doIMRMC(dfIMRMC)
+result.iMRMC <- doIMRMC(data = dfIMRMC)
 
 test_that(
   "doIMRMC does not change", {
@@ -63,13 +63,13 @@ test_that(
     expect_equal(result.iMRMC$ROC$`modalityA: Diagonal Average`$tpf[2], 0.0141, tolerance = 1e-4)
     expect_equal(result.iMRMC$ROC$`modalityA: Diagonal Average`$fpf[4], 0.002, tolerance = 1e-4)
 
-    expect_equal(result.iMRMC$varDecomp$BCK[1,5], 0.021898200, tolerance = 1e-9)
-    expect_equal(result.iMRMC$varDecomp$BCK[1,6], 0.024511600, tolerance = 1e-9)
-    expect_equal(result.iMRMC$varDecomp$BCK[1,7], 6.23156e-03, tolerance = 1e-9)
-    expect_equal(result.iMRMC$varDecomp$BCK[1,8], 0.010478300, tolerance = 1e-9)
-    expect_equal(result.iMRMC$varDecomp$BCK[1,9], 2.17010e-02, tolerance = 1e-9)
-    expect_equal(result.iMRMC$varDecomp$BCK[1,10], 2.33584e-02, tolerance = 1e-9)
-    expect_equal(result.iMRMC$varDecomp$BCK[1,11], 5.95167e-02, tolerance = 1e-9)
+    expect_equal(result.iMRMC$varDecomp$BCK$Ustat$comp$modalityA.modalityB["modalityA", "N"], 0.021898200, tolerance = 1e-9)
+    expect_equal(result.iMRMC$varDecomp$BCK$Ustat$comp$modalityA.modalityB["modalityA", "D"], 0.024511600, tolerance = 1e-9)
+    expect_equal(result.iMRMC$varDecomp$BCK$Ustat$comp$modalityA.modalityB["modalityA", "ND"], 6.23156e-03, tolerance = 1e-9)
+    expect_equal(result.iMRMC$varDecomp$BCK$Ustat$comp$modalityA.modalityB["modalityA", "R"], 0.010478300, tolerance = 1e-9)
+    expect_equal(result.iMRMC$varDecomp$BCK$Ustat$comp$modalityA.modalityB["modalityA", "NR"], 2.17010e-02, tolerance = 1e-9)
+    expect_equal(result.iMRMC$varDecomp$BCK$Ustat$comp$modalityA.modalityB["modalityA", "DR"], 2.33584e-02, tolerance = 1e-9)
+    expect_equal(result.iMRMC$varDecomp$BCK$Ustat$comp$modalityA.modalityB["modalityA", "RND"], 5.95167e-02, tolerance = 1e-9)
   }
 
 )

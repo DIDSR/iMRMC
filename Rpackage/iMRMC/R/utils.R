@@ -1,4 +1,101 @@
-#' roc2binary
+## createIMRMCdf ####
+#' Convert a data frame with all needed factors to doIMRMC formatted data frame
+#'
+#' @param dFrame This data frame includes columns for readerID, caseID, modalityID, score, and truth.
+#'        These columns are not expected to be named as such and other columns may exist.
+#' @param keyColumns This list identifies the column names of the data frame to be used for the analysis.
+#'        list(readerID = "***", caseID = "***", modalityID = "***", score = "***", truth="***")
+#' @param truePositiveFactor The true positive label, such as "cancer" or "1"
+#'
+#' @return output a doIMRMC formatted data frame: rows for truth and rows for data
+#'
+#' @export
+#'
+# @examples
+createIMRMCdf <- function(
+  dFrame,
+  keyColumns = list(readerID = "readerID", caseID = "caseID", modalityID = "modalityID", score = "score", truth = "truth"),
+  truePositiveFactor = "cancer"
+){
+
+  readerID <- keyColumns$readerID
+  caseID <- keyColumns$caseID
+  modalityID <- keyColumns$modalityID
+  score <- keyColumns$score
+  truth <- keyColumns$truth
+
+  data0 <- dFrame[dFrame[ , truth] != truePositiveFactor, ]
+  data0 <- data.frame(
+    readerID   = data0[ , readerID],
+    caseID     = data0[ , caseID],
+    modalityID = data0[ , modalityID],
+    score      = data0[ , score]
+  )
+  data1 <- dFrame[dFrame[ , truth] == truePositiveFactor, ]
+  data1 <- data.frame(
+    readerID   = data1[ , readerID],
+    caseID     = data1[ , caseID],
+    modalityID = data1[ , modalityID],
+    score      = data1[ , score]
+  )
+  truth0 <- data.frame(
+    readerID = "truth",
+    caseID = droplevels(unique(data0$caseID)),
+    modalityID = "truth",
+    score = 0
+  )
+  truth1 <- data.frame(
+    readerID = "truth",
+    caseID = droplevels(unique(data1$caseID)),
+    modalityID = "truth",
+    score = 1
+  )
+  IMRMCdf <- droplevels(rbind(truth0, truth1, data0, data1))
+  IMRMCdf <- IMRMCdf[!is.na(IMRMCdf$score), ]
+
+  return(IMRMCdf)
+
+}
+
+## undoIMRMCdf ####
+#' Convert a doIMRMC formatted data frame to a standard data frame with all factors
+#'
+#' @param df.MRMC This data frame includes columns for readerID, caseID, modalityID, score.
+#'        Each row is a reader x case x modality observation from the study
+#'        In addition to observations from the study,
+#'            this data frame requires rows specifying the truth for each caseID.
+#'        For truth specifications, the readerID needs to equal "truth" or "-1",
+#'            modalityID can be anything ("truth" is a good choice),
+#'            and score should be 0 for signal-absent normal case, 1 for signal-present disease case.
+#'
+#' @return output a data frame with columns readerID, caseID, modalityID, score, truth
+#'
+#' @export
+#'
+# @examples
+undoIMRMCdf <- function(df.MRMC) {
+  df.Truth <- df.MRMC[df.MRMC$readerID == -1, ]
+  df.Orig <- df.MRMC[df.MRMC$readerID != -1, ]
+  df.Orig <- apply(df.Orig, 1, function(x, df.Truth) {
+
+    truth <- df.Truth$score[df.Truth$readerID == "-1" & df.Truth$caseID == x[2]]
+    x[5] <- truth
+    names(x)[5] <- "truth"
+
+    return(x)
+
+  }, df.Truth)
+
+  df.Orig <- data.frame(t(df.Orig))
+  df.Orig$truth <- factor(df.Orig$truth)
+  df.Orig$score <- as.numeric(as.character(df.Orig$score))
+
+  return(df.Orig)
+
+}
+
+## roc2binary ####
+#' Convert ROC data formatted for doIMRMC to TPF and FPF data formatted for doIMRMC
 #'
 #' @param df.auc data frame of roc scores formatted for doIMRMC
 #' @param threshold The threshold for determining binary decisions
@@ -42,11 +139,13 @@ roc2binary <- function(df.auc, threshold) {
 
 }
 
-#' successDFtoROCdf
+## successDFtoROCdf ####
+#' Convert an MRMC data frame of successes to one formatted for doIMRMC
 #'
 #' @param df Each row contains a success observation for one reader evaluating one case
 #'
 #' @return data frame ready for doIMRMC
+#'
 #' @export
 #'
 # @examples

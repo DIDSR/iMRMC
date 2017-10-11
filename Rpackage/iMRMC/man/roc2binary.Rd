@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{roc2binary}
 \alias{roc2binary}
-\title{roc2binary}
+\title{Convert ROC data formatted for doIMRMC to TPF and FPF data formatted for doIMRMC}
 \usage{
 roc2binary(df.auc, threshold)
 }
@@ -15,5 +15,5 @@ roc2binary(df.auc, threshold)
 a list of two data frames (df.tpf and df.fpf) both formatted for doIMRMC
 }
 \description{
-roc2binary
+Convert ROC data formatted for doIMRMC to TPF and FPF data formatted for doIMRMC
 }

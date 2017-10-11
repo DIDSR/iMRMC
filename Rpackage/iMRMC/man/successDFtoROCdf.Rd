@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{successDFtoROCdf}
 \alias{successDFtoROCdf}
-\title{successDFtoROCdf}
+\title{Convert an MRMC data frame of successes to one formatted for doIMRMC}
 \usage{
 successDFtoROCdf(df)
 }
@@ -13,5 +13,5 @@ successDFtoROCdf(df)
 data frame ready for doIMRMC
 }
 \description{
-successDFtoROCdf
+Convert an MRMC data frame of successes to one formatted for doIMRMC
 }

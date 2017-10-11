@@ -2,17 +2,13 @@
 % Please edit documentation in R/iMRMC.R
 \name{doIMRMC}
 \alias{doIMRMC}
-\title{doIMRMC takes ROC data as a data frame and runs a multi-reader multi-case analysis
-based on U-statistics as described in the following papers
-Gallas2006_Acad-Radiol_v13p353 (single-modality),
-Gallas2008_Neural-Networks_v21p387 (multiple modalities, arbitrary study designs),
-Gallas2009_Commun-Stat-A-Theor_v38p2586 (framework paper).}
+\title{MRMC analysis of the area under the ROC curve}
 \usage{
-doIMRMC(dFrame.imrmc, iMRMCjarFullPath = NULL, cleanUp = TRUE,
-  show.output.on.console = FALSE)
+doIMRMC(data = NULL, fileName = NULL, iMRMCjarFullPath = NULL,
+  cleanUp = TRUE, show.output.on.console = FALSE)
 }
 \arguments{
-\item{dFrame.imrmc}{[data.frame] the variables contained in this data frame are
+\item{data}{[data.frame] the variables contained in this data frame are
 readerID       [Factor] w/ nR levels "reader1", "reader2", ...
 caseID         [Factor] w/ nC levels "case1", "case2", ...
 modalityID     [Factor] w/ 1 level simRoeMetz.config$modalityID
@@ -22,6 +18,10 @@ for every caseID, there must be a row corresponding to the truth observation
   the readerID for a truth observation is "truth"
   the modalityID for a truth observation is "truth"
   the score for a truth observation must be either 0 (signal-absent) or 1 (signal-present)}
+
+\item{fileName}{[char] this string identifies the location of an iMRMC input file.
+The input file is identical to data except there is a free text section to start,
+then a line with "BEGIN DATA:", then the data frame info.}
 
 \item{iMRMCjarFullPath}{[char] this string identifies the location of the iMRMC.jar file
 this jar file can be downloaded from https://github.com/DIDSR/iMRMC/releases
@@ -64,7 +64,15 @@ iMRMCoutput [list] the objects of this list are described in detail in the iMRMC
              The different decompositions are BCK, BDG, DBM, MS, OR.
 }
 \description{
-In detail, this procedure writes the ROC data frame to the local file system formatted
+doIMRMC takes ROC data as a data frame and runs a multi-reader multi-case analysis
+based on U-statistics as described in the following papers
+Gallas2006_Acad-Radiol_v13p353 (single-modality),
+Gallas2008_Neural-Networks_v21p387 (multiple modalities, arbitrary study designs),
+Gallas2009_Commun-Stat-A-Theor_v38p2586 (framework paper).
+}
+\details{
+In detail, this procedure reads the name of an input file from the local file system,
+or takes a data frame and writes it to the local file system formatted
 for the iMRMC program (found at https://github.com/DIDSR/iMRMC/releases), it executes the iMRMC
 program which writes the results to the local files system, it reads the analysis results from
 the local file system, packs the analysis results into a list object, deletes the data and analysis results
