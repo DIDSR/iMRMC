@@ -2,7 +2,7 @@ library(testthat)
 library(parallel)
 library(iMRMC)
 
-context("sim.gRoeMetz and doIMRMC")
+context("simRoeMetz")
 
 init.lecuyerRNG()
 
@@ -53,9 +53,9 @@ test_that(
     expect_equal(result.iMRMC$Ustat$botCIBDG[2], 0.71340391, tolerance = 1e-8)
     expect_equal(result.iMRMC$Ustat$botCIBDG[3], -0.06255824, tolerance = 1e-8)
 
-    expect_equal(result.iMRMC$Ustat$dfHills[1], 18.27544, tolerance = 1e-5)
-    expect_equal(result.iMRMC$Ustat$dfHills[2], 18.24291, tolerance = 1e-5)
-    expect_equal(result.iMRMC$Ustat$dfHills[3], 54.31726, tolerance = 1e-5)
+    expect_equal(result.iMRMC$Ustat$dfHillis[1], 18.27544, tolerance = 1e-5)
+    expect_equal(result.iMRMC$Ustat$dfHillis[2], 18.24291, tolerance = 1e-5)
+    expect_equal(result.iMRMC$Ustat$dfHillis[3], 54.31726, tolerance = 1e-5)
     expect_equal(result.iMRMC$Ustat$pValueHillis[1], 8.225544e-07, tolerance = 1e-12)
     expect_equal(result.iMRMC$Ustat$pValueHillis[2], 5.196685e-07, tolerance = 1e-12)
     expect_equal(result.iMRMC$Ustat$pValueHillis[3], 8.439013e-01, tolerance = 1e-07)
@@ -73,12 +73,12 @@ test_that(
     expect_equal(result.iMRMC$ROC$`modalityA: Diagonal Average`$tpf[2], 0.0141, tolerance = 1e-4)
     expect_equal(result.iMRMC$ROC$`modalityA: Diagonal Average`$fpf[4], 0.002, tolerance = 1e-4)
 
-    expect_equal(result.iMRMC$varDecomp$BCK[1,5], 0.021898200, tolerance = 1e-9)
-    expect_equal(result.iMRMC$varDecomp$BCK[1,6], 0.024511600, tolerance = 1e-9)
-    expect_equal(result.iMRMC$varDecomp$BCK[1,7], 6.23156e-03, tolerance = 1e-9)
-    expect_equal(result.iMRMC$varDecomp$BCK[1,8], 0.010478300, tolerance = 1e-9)
-    expect_equal(result.iMRMC$varDecomp$BCK[1,9], 2.17010e-02, tolerance = 1e-9)
-    expect_equal(result.iMRMC$varDecomp$BCK[1,10], 2.33584e-02, tolerance = 1e-9)
-    expect_equal(result.iMRMC$varDecomp$BCK[1,11], 5.95167e-02, tolerance = 1e-9)
+    expect_equal(result.iMRMC$varDecomp$BCK$Ustat$comp$modalityA.modalityB["modalityA", "N"], 0.021898200, tolerance = 1e-9)
+    expect_equal(result.iMRMC$varDecomp$BCK$Ustat$comp$modalityA.modalityB["modalityA", "D"], 0.024511600, tolerance = 1e-9)
+    expect_equal(result.iMRMC$varDecomp$BCK$Ustat$comp$modalityA.modalityB["modalityA", "ND"], 6.23156e-03, tolerance = 1e-9)
+    expect_equal(result.iMRMC$varDecomp$BCK$Ustat$comp$modalityA.modalityB["modalityA", "R"], 0.010478300, tolerance = 1e-9)
+    expect_equal(result.iMRMC$varDecomp$BCK$Ustat$comp$modalityA.modalityB["modalityA", "NR"], 2.17010e-02, tolerance = 1e-9)
+    expect_equal(result.iMRMC$varDecomp$BCK$Ustat$comp$modalityA.modalityB["modalityA", "DR"], 2.33584e-02, tolerance = 1e-9)
+    expect_equal(result.iMRMC$varDecomp$BCK$Ustat$comp$modalityA.modalityB["modalityA", "RND"], 5.95167e-02, tolerance = 1e-9)
   }
 )

@@ -1,16 +1,20 @@
-#' doIMRMC takes ROC data as a data frame and runs a multi-reader multi-case analysis
+#' MRMC analysis of the area under the ROC curve
+#'
+#' @description doIMRMC takes ROC data as a data frame and runs a multi-reader multi-case analysis
 #' based on U-statistics as described in the following papers
 #' Gallas2006_Acad-Radiol_v13p353 (single-modality),
 #' Gallas2008_Neural-Networks_v21p387 (multiple modalities, arbitrary study designs),
 #' Gallas2009_Commun-Stat-A-Theor_v38p2586 (framework paper).
 #'
-#' In detail, this procedure writes the ROC data frame to the local file system formatted
+#' @details
+#' In detail, this procedure reads the name of an input file from the local file system,
+#' or takes a data frame and writes it to the local file system formatted
 #' for the iMRMC program (found at https://github.com/DIDSR/iMRMC/releases), it executes the iMRMC
 #' program which writes the results to the local files system, it reads the analysis results from
 #' the local file system, packs the analysis results into a list object, deletes the data and analysis results
 #' from the local file system, and returns the list object.
 #'
-#' @param dFrame.imrmc [data.frame] the variables contained in this data frame are
+#' @param data [data.frame] the variables contained in this data frame are
 #'            readerID       [Factor] w/ nR levels "reader1", "reader2", ...
 #'            caseID         [Factor] w/ nC levels "case1", "case2", ...
 #'            modalityID     [Factor] w/ 1 level simRoeMetz.config$modalityID
@@ -20,6 +24,10 @@
 #'              the readerID for a truth observation is "truth"
 #'              the modalityID for a truth observation is "truth"
 #'              the score for a truth observation must be either 0 (signal-absent) or 1 (signal-present)
+#'
+#' @param fileName [char] this string identifies the location of an iMRMC input file.
+#'   The input file is identical to data except there is a free text section to start,
+#'   then a line with "BEGIN DATA:", then the data frame info.
 #'
 #' @param iMRMCjarFullPath [char] this string identifies the location of the iMRMC.jar file
 #'            this jar file can be downloaded from https://github.com/DIDSR/iMRMC/releases
@@ -64,42 +72,63 @@
 # @examples
 #'
 #'
-doIMRMC <- function(dFrame.imrmc, iMRMCjarFullPath = NULL, cleanUp = TRUE, show.output.on.console = FALSE){
+doIMRMC <- function(
+  data = NULL,
+  fileName = NULL,
+  iMRMCjarFullPath = NULL,
+  cleanUp = TRUE,
+  show.output.on.console = FALSE){
 
-  iMRMCfolderName <- "imrmcDir"
-  iMRMCfileName <- "input.imrmc"
+  folderName <- "imrmcDir"
+
+  if (is.null(data)) {
+    if (is.null(fileName)) {
+      stop("ERROR: You have not provided an input data frame or an input file.")
+    } else {
+      flagWriteFile <- FALSE
+    }
+  } else {
+
+    flagWriteFile <- TRUE
+    fileName <- "input.imrmc"
+
+    # Write data frame to iMRMC input file
+    writeLines("BEGIN DATA:", con = fileName)
+    write.table(data, fileName,
+                quote = FALSE, row.names = FALSE, col.names = FALSE,
+                append = TRUE, sep = ", ")
+
+  }
 
   if (is.null(iMRMCjarFullPath)) {
     iMRMCjar <- "iMRMC-v3p3.jar"
     pkgPath = path.package("iMRMC", quiet = FALSE)
-    iMRMCjarFullPath = paste(pkgPath, "/java/", iMRMCjar, sep = "")
+    iMRMCjarFullPath <- file.path(pkgPath, "java", iMRMCjar)
+
+    # This check is necessary for testthat tests that run in some virtual environment that is not like reality
+    if (!file.exists(iMRMCjarFullPath)) {
+      iMRMCjarFullPath = paste(pkgPath, "/inst/java/", iMRMCjar, sep = "")
+    }
+    #    iMRMCjarFullPath = paste(pkgPath, "/java/", iMRMCjar, sep = "")
   }
-
-  # Clean up files before calling iMRMC
-  unlink(iMRMCfolderName, recursive = TRUE)
-
-  # Write data frame to iMRMC input file
-  writeLines("BEGIN DATA:", con = iMRMCfileName)
-  write.table(dFrame.imrmc, iMRMCfileName,
-              quote = FALSE, row.names = FALSE, col.names = FALSE,
-              append = TRUE, sep = ", ")
 
   # Run iMRMC
   system(
-    paste("java -jar ", iMRMCjarFullPath, iMRMCfileName, iMRMCfolderName),
+    paste("java -jar", iMRMCjarFullPath, fileName, folderName), ignore.stdout = TRUE,
     show.output.on.console = show.output.on.console)
 
   # Retrieve the iMRMC results
-  perReader <- read.csv(file.path(iMRMCfolderName, "AUCperReader.csv"))
-  Ustat <- read.csv(file.path(iMRMCfolderName, "statAnalysis.csv"))
-  MLEstat <- read.csv(file.path(iMRMCfolderName, "statAnalysisMLE.csv"))
-  ROCraw <- read.csv(file.path(iMRMCfolderName, "ROCcurves.csv"),
+  perReader <- read.csv(file.path(folderName, "AUCperReader.csv"))
+  Ustat <- read.csv(file.path(folderName, "statAnalysis.csv"))
+  MLEstat <- read.csv(file.path(folderName, "statAnalysisMLE.csv"))
+  ROCraw <- read.csv(file.path(folderName, "ROCcurves.csv"),
                      header = FALSE, row.names = NULL, skip = 1)
-  BCK <- read.csv(file.path(iMRMCfolderName, "BCKtable.csv"), row.names = NULL)
-  BDG <- read.csv(file.path(iMRMCfolderName, "BDGtable.csv"), row.names = NULL)
-  DBM <- read.csv(file.path(iMRMCfolderName, "DBMtable.csv"), row.names = NULL)
-  MS <- read.csv(file.path(iMRMCfolderName, "MStable.csv"), row.names = NULL)
-  OR <- read.csv(file.path(iMRMCfolderName, "ORtable.csv"), row.names = NULL)
+
+  BCK <- readVarDecomp(file.path(folderName, "BCKtable.csv"))
+  BDG <- readVarDecomp(file.path(folderName, "BDGtable.csv"))
+  DBM <- readVarDecomp(file.path(folderName, "DBMtable.csv"))
+  MS <- readVarDecomp(file.path(folderName, "MStable.csv"))
+  OR <- readVarDecomp(file.path(folderName, "ORtable.csv"))
 
   ROC <- by(ROCraw, ROCraw[, 1], function(x) {
     list(desc = x[1,1], n = x[1,2],
@@ -111,8 +140,9 @@ doIMRMC <- function(dFrame.imrmc, iMRMCjarFullPath = NULL, cleanUp = TRUE, show.
 
   # Delete the content written to disk
   if (cleanUp == TRUE) {
-    unlink(iMRMCfolderName, recursive = TRUE)
-    unlink(iMRMCfileName)
+    unlink(folderName, recursive = TRUE)
+
+    if (flagWriteFile) unlink(fileName)
   }
 
   varDecomp <- list(
@@ -133,92 +163,52 @@ doIMRMC <- function(dFrame.imrmc, iMRMCjarFullPath = NULL, cleanUp = TRUE, show.
 
 }
 
-#' Title
-#'
-#' @param dFrame This data frame includes columns for readerID, caseID, modalityID, score, and truth.
-#'        These columns are not expected to be named as such and other columns may exist.
-#' @param dataColumnNames This list identifies the column names of the data frame to be used for the analysis.
-#'        list(readerID = "***", caseID = "***", modalityID = "***", score = "***", truth="***")
-#' @param truePositiveFactor The true positive label, such as "cancer" or "1"
-#'
-#' @return output
-#'
-#' @export
-#'
-# @examples
-createIMRMCdf <- function(dFrame, dataColumnNames, truePositiveFactor){
+getComponents <- function(df.varDecomp) {
 
-  readerID <- dataColumnNames$readerID
-  caseID <- dataColumnNames$caseID
-  modalityID <- dataColumnNames$modalityID
-  score <- dataColumnNames$score
-  truth <- dataColumnNames$truth
+  nc <- ncol(df.varDecomp)
+  result <- df.varDecomp[c(1, 3, 5), 5:nc]
+  descA <- as.character(df.varDecomp$modalityA[1])
+  descB <- as.character(df.varDecomp$modalityB[1])
+  rownames(result) <- c(descA, descB, paste(descA, "minus", descB, sep = ""))
 
-  data0 <- dFrame[dFrame[ , truth] != truePositiveFactor, ]
-  data0 <- data.frame(
-    readerID   = data0[ , readerID],
-    caseID     = data0[ , caseID],
-    modalityID = data0[ , modalityID],
-    score      = data0[ , score]
-  )
-  data1 <- dFrame[dFrame[ , truth] == truePositiveFactor, ]
-  data1 <- data.frame(
-    readerID   = data1[ , readerID],
-    caseID     = data1[ , caseID],
-    modalityID = data1[ , modalityID],
-    score      = data1[ , score]
-  )
-  truth0 <- data.frame(
-    readerID = "truth",
-    caseID = droplevels(unique(data0$caseID)),
-    modalityID = "truth",
-    score = 0
-  )
-  truth1 <- data.frame(
-    readerID = "truth",
-    caseID = droplevels(unique(data1$caseID)),
-    modalityID = "truth",
-    score = 1
-  )
-  IMRMCdf <- droplevels(rbind(truth0, truth1, data0, data1))
-  IMRMCdf <- IMRMCdf[!is.na(IMRMCdf$score), ]
-
-  return(IMRMCdf)
+  return(result)
 
 }
 
-#' Title
-#'
-#' @param df.MRMC This data frame includes columns for readerID, caseID, modalityID, score.
-#'        Each row is a reader x case x modality observation from the study
-#'        In addition to observations from the study,
-#'            this data frame requires rows specifying the truth for each caseID.
-#'        For truth specifications, the readerID needs to equal "truth" or "-1",
-#'            modalityID can be anything ("truth" is a good choice),
-#'            and score should be 0 for signal-absent normal case, 1 for signal-present disease case.
-#'
-#' @return output
-#'
-#' @export
-#'
-# @examples
-undoIMRMCdf <- function(df.MRMC) {
-  df.Truth <- df.MRMC[df.MRMC$readerID == -1, ]
-  df.Orig <- df.MRMC[df.MRMC$readerID != -1, ]
-  df.Orig <- apply(df.Orig, 1, function(x, df.Truth) {
+getCoefficients <- function(df.varDecomp) {
 
-    truth <- df.Truth$score[df.Truth$readerID == "-1" & df.Truth$caseID == x[2]]
-    x[5] <- truth
-    names(x)[5] <- "truth"
+  nc <- ncol(df.varDecomp)
+  result <- df.varDecomp[c(2, 4, 6), 5:nc]
+  descA <- as.character(df.varDecomp$modalityA[1])
+  descB <- as.character(df.varDecomp$modalityB[1])
+  rownames(result) <- c(descA, descB, paste(descA, "minus", descB, sep = ""))
 
-    return(x)
-
-  }, df.Truth)
-
-  df.Orig <- data.frame(t(df.Orig))
-  df.Orig$truth <- factor(df.Orig$truth)
-  df.Orig$score <- as.numeric(as.character(df.Orig$score))
-
-  return(df.Orig)
+  return(result)
 
 }
+
+readVarDecomp <- function(fileName) {
+
+  df.csv <- read.csv(fileName, row.names = NULL)
+
+  df.csv <- split(df.csv, df.csv$UstatOrMLE)
+  df.csv$Ustat <- split(df.csv$Ustat, list(df.csv$Ustat$modalityA, df.csv$Ustat$modalityB))
+  df.csv$Ustat <- df.csv$Ustat[sapply(df.csv$Ustat, nrow) > 0]
+  df.csv$MLE <- split(df.csv$MLE, list(df.csv$MLE$modalityA, df.csv$MLE$modalityB))
+  df.csv$MLE <- df.csv$MLE[sapply(df.csv$MLE, nrow) > 0]
+
+  MLE.comp <- lapply(df.csv$MLE, getComponents)
+  Ustat.comp <- lapply(df.csv$Ustat, getComponents)
+
+  MLE.coeff <- lapply(df.csv$MLE, getCoefficients)
+  Ustat.coeff <- lapply(df.csv$Ustat, getCoefficients)
+
+  result <- list(
+    MLE = list(comp = MLE.comp, coeff = MLE.coeff),
+    Ustat = list(comp = Ustat.comp, coeff = Ustat.coeff)
+  )
+
+  return(result)
+
+}
+
