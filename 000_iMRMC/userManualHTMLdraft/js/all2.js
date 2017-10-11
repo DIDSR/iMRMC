@@ -597,7 +597,7 @@ DR_EXPLAIN.wordSplitter = (function() {
         var rangeElements = ranges.split(/[-,]/);
         if (rangeElements.length % 2 != 0)
         {
-            alert("Error #398, please report it to support@drexplain.com");
+            alert("Error #398, please report it to help@drexplain.com");
             return;
         }
         for (var i = 0; i < rangeElements.length; i += 2)
@@ -974,7 +974,7 @@ DR_EXPLAIN.searchEngine = (function() {
                             SearchResults = new Array();
                             SearchResults[0] = new Array();
                             SearchResults[0][0] = "Error!";
-                            SearchResults[0][1] = "mailto:support@drexplain.com";
+                            SearchResults[0][1] = "mailto:help@drexplain.com";
                             getSearchResultOutput();
                             return;
                         }
@@ -3179,7 +3179,7 @@ DR_EXPLAIN.navTree_Menu = (function(){
     urlEncoder: null,
     dom: null,
     navTreeView: null,
-
+    navArr: null,
     nodeVisibleStatusArr: [],
 
 
@@ -3191,8 +3191,8 @@ DR_EXPLAIN.navTree_Menu = (function(){
         this.doSetDataManager();
         this.doSetNodeVisibleStatusArrByUrlEncoder();
 
-        var navArr = this.populateTable( this.dataManager.getRootNodesArray(), true);
-        var navTreeItemsCollection = this.getNavCollection( navArr, null );
+        this.navArr = this.populateTable( this.dataManager.getRootNodesArray(), true);
+        var navTreeItemsCollection = this.getNavCollection( this.navArr, null );
         this.navTreeView = navTreeView = new NavTree__View({ collection: navTreeItemsCollection, $navTree: this.$navTree });
 
         var flatCollection = new NavTree__ItemsNodes_Collection( this.navTreeView.models );
@@ -3203,8 +3203,128 @@ DR_EXPLAIN.navTree_Menu = (function(){
         );
     },
 
+    renderNode: function(containerElement, node, model, depth)
+    {
+        var li = containerElement.appendChild(document.createElement("li"));
+        li.className = "b-tree_item";
+        var div = li.appendChild(document.createElement("div"));
+        div.className = "b-tree__itemContent";
+        if (node.isSelected)
+            div.className += " m-tree__itemContent__selected";
+        div.title = node.title;
+
+        var emptySpacerCount = depth;
+        if (node.childs != null)
+            --emptySpacerCount;
+        for (var i = 0; i < emptySpacerCount; ++i)
+            div.appendChild(document.createElement("span")).className = "b-tree__spacer";
+              
+        if (node.childs != null)
+        {
+            var bVisible = model.get("isVisible");
+            //Create expander
+            var spacer = div.appendChild(document.createElement("span"));
+            spacer.className = "b-tree__spacer";
+            var expanderSpan = spacer.appendChild(document.createElement("span"));
+            expanderSpan.className = bVisible ? "b-tree__i_expander_doClose" : "b-tree__i_expander_doOpen";
+            
+            var expanderImg = expanderSpan.appendChild(document.createElement("span"));
+            expanderImg.className = bVisible ? "expander_img b-tree__i_expander_doClose_inner" : "expander_img b-tree__i_expander_doOpen_inner";
+            
+            //Add folder icon
+            spacer = div.appendChild(document.createElement("span"));
+            spacer.className = "b-tree__spacer";
+            var folderSpan = spacer.appendChild(document.createElement("span"));
+            folderSpan.className = bVisible ? "b-tree__i_folder_opened" : "b-tree__i_folder_closed";
+            var folderSpanInner = folderSpan.appendChild(document.createElement("span"));
+            folderSpanInner.className = bVisible ? "b-tree__i_folder_opened_inner" : "b-tree__i_folder_closed_inner";
+            
+            //Create ul for inner elements
+            var ul = li.appendChild(document.createElement("ul"));
+            ul.className = "b-tree__items";
+            for (var i = 0; i < node.childs.length; ++i)
+                this.renderNode(ul, node.childs[i], model.attributes.childs.models[i], depth + 1);
+            node.toggleClasses = function() {
+                $(expanderSpan).toggleClass( "b-tree__i_expander_doClose b-tree__i_expander_doOpen" );
+                $(expanderImg).toggleClass( "b-tree__i_expander_doClose_inner b-tree__i_expander_doOpen_inner" );
+
+                $(folderSpan).toggleClass( "b-tree__i_folder_opened b-tree__i_folder_closed" );
+                $(folderSpanInner).toggleClass( "b-tree__i_folder_opened_inner b-tree__i_folder_closed_inner" );
+            };
+            node.showExpander = function(e) {
+                $(ul).show();
+                node.toggleClasses();
+                model.set({ "isVisible": 1 });
+                $(expanderSpan).unbind("click");
+                $(expanderSpan).click(function(e) {
+                    node.hideExpander();
+                });
+            };
+            node.hideExpander = function(e) {
+                $(ul).hide();
+                node.toggleClasses();
+                model.set({ "isVisible": 0 });
+                $(expanderSpan).unbind("click");
+                $(expanderSpan).click(function(e) {
+                    node.showExpander();
+                });
+            };
+
+            $(expanderSpan).click(function(e) {
+                node.showExpander();
+            });
+            if (!bVisible)
+            {
+                ul.style.display = "none";
+                model.set({ "isVisible": 0 });
+            }
+        }
+        else
+        {
+            //Add article icon
+            var spacer = div.appendChild(document.createElement("span"));
+            spacer.className = "b-tree__spacer";
+            var articleSpan = spacer.appendChild(document.createElement("span"));
+            articleSpan.className = "b-tree__i_article";
+            var articleInnerSpan = articleSpan.appendChild(document.createElement("span"));
+            articleInnerSpan.className = "b-tree__i_article_inner";
+        }        
+        var itemTextSpan = div.appendChild(document.createElement("span"));
+        
+        if (node.isSelected)
+        {
+            itemTextSpan.className = "b-tree__itemText m-tree__itemText__selected";
+            itemTextSpan.appendChild(document.createTextNode(node.title));
+        }
+        else
+        {
+            itemTextSpan.className = "b-tree__itemText";
+            var link = itemTextSpan.appendChild(document.createElement("a"));
+            link.className = "b-tree__itemLink";
+            link.href = node.link;
+            link.appendChild(document.createTextNode(node.title));
+        }
+    },
+
     show: function() {
-        this.navTreeView.render();
+        var $navTree = this.navTreeView.$navTree.find( ".b-tree" );
+        $navTree.empty();
+        var table = document.createElement("table");
+        table.className = "b-tree__layout";
+        table.cellSpacing = 0;
+        var tr = document.createElement("tr");
+        var td = document.createElement("td");
+        td.className = "b-tree__layoutSide";
+        
+        var ul = document.createElement("ul");
+        ul.className = "b-tree__items";
+        for (var i = 0; i < this.navArr.length; ++i)
+            this.renderNode(ul, this.navArr[i], this.navTreeView.collection.models[i], 1);
+
+        td.appendChild(ul);
+        tr.appendChild(td);
+        table.appendChild(tr);
+        $navTree[0].appendChild(table);
     },
 
     doSetDom: function() {
@@ -3323,7 +3443,8 @@ DR_EXPLAIN.navTree_Menu = (function(){
 
     onNodeVisibleChange: function( model, newValue ) {
         this.nodeVisibleStatusArr[ model.get( "nodeIndex" ) ] = newValue;
-        $( document ).trigger( "nodeVisibleChanged" );
+        if (!DR_EXPLAIN.disableTriggers)
+          $( document ).trigger( "nodeVisibleChanged" );
 
     },
 
@@ -3608,6 +3729,7 @@ function initTabs() {
 }
 
 function onDocumentReady(app) {
+    DR_EXPLAIN.disableTriggers = true;
     app.dataManager.init();
 
     if (app.dataManager.fitHeightToWindow()) {
@@ -3668,6 +3790,8 @@ function onDocumentReady(app) {
             $(this).prop("src", $(this).prop("real_src"));
         });
     }
+    
+    DR_EXPLAIN.disableTriggers = false;
 
     app.searchManager.doBindEvents();
     app.searchManager.doSearchIfQueryStringNotEmpty();
