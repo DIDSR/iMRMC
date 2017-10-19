@@ -103,62 +103,14 @@ simMRMC <- function(simMRMC.config) {
 
 }
 
-#' sim.ModelA: Simulate binary data according to model A in Yuvika Paliwal's dissertation
-#'
-#' @description This function first simulates an MRMC data set according to a
-#' linear model: y_rc = mu + R.r + C.c + RC.rc,
-#' where mu is a fixed and R_r, C_c, RC_rc are random effects
-#' (Gaussian with mean zero and variances var_r, var_c, var_rc).
-#' The data from the linear model is transformed by the inverse logit.
-#' The result is understood to be the probabilities of a Bernoulli random
-#' variable. Finally, Bernoulli random variables are generated
-#' for each probability.
-#'
-#' @param config [list] of simulation parameters:
-#'          modalityID [chr] label modalityID
-#'          readerIDs  [factor vector] the ID of each reader
-#'          caseIDs    [factor vector] the ID of each case
-#'          mu         [num] mean
-#'          var_r      [num] variance of random reader effect
-#'          var_c      [num] variance of random case effect
-#'          var_rc     [num] variance of random reader by case effect
-#'
-#'
-#' @return [data.frame] with nC*nR rows of 6 variables
-#'            L$modalityID   [factor] determined by input modalityID
-#'            L$readerID     [factor] determined by input readerIDs
-#'            L$caseID       [factor] determined by input caseIDs
-#'            L$score        [num]  R.r + C.c + RC.rc
-#'                             r = 1,2,...,nR
-#'                             c = 1,2,...,nC
-#'                             R.r ~ N(0,var_r)
-#'                             C.c ~ N(0,var_c)
-#'                             RC.rc ~ N(0,var_rc)
-#'            L$prob         [num] the probability of success for each observation
-#'                             equals invlogit(L$score)
-#'            L$success      [0 or 1] the success outcome for each observation
-#'
-#' @import LaplacesDemon
-#'
-#' @export
-#'
-# @examples
-sim.ModelA <- function(config) {
-
-  df.MRMC <- simMRMC(config)
-  df.MRMC$prob <- LaplacesDemon::invlogit(df.MRMC$score)
-  df.MRMC$success <- LaplacesDemon::rbern(rep(1, nrow(df.MRMC)), df.MRMC$prob)
-
-  return(df.MRMC)
-}
-
-#' Convert an MRMC data frame to a score matrix, dropping readers or cases with no observations
+#' Convert an MRMC data frame to a score matrix
 #'
 #' @description Convert an MRMC data frame to a score matrix, dropping readers or cases with no observations
 #'
 #' @param dfMRMC An MRMC data frame
 #'
-#' @return scores
+#' @return A matrix [nCases, nReaders] of the scores each reader reported for each case
+#'
 #' @export
 #'
 convertDFtoScoreMatrix <- function(dfMRMC) {
@@ -180,13 +132,14 @@ convertDFtoScoreMatrix <- function(dfMRMC) {
 
 }
 
-#' Convert an MRMC data frame to a design matrix, dropping readers or cases with no observations
+#' Convert an MRMC data frame to a design matrix
 #'
 #' @description Convert an MRMC data frame to a design matrix, dropping readers or cases with no observations
 #'
 #' @param dfMRMC An MRMC data frame
 #'
-#' @return design
+#' @return A matrix [nCases, nReaders] indicating which scores were reported for each reader and case
+#'
 #' @export
 #'
 convertDFtoDesignMatrix <- function(dfMRMC) {
