@@ -32,33 +32,57 @@ init.lecuyerRNG <- function(seed = 1, stream = 2){
 
 }
 
-#' simMRMC Simulate an MRMC data set (Roe1997_Acad-Radiol_v4p298, Roe1997_Acad-Radiol_v4p587)
-#'   linear model with independent random effects that are normally distributed
-#'   L.rc = mu + readerEffect.r + caseEffect.c + readerXcaseEffect.rc
+#' Simulate an MRMC data set
+#'
+#' @description
+#' This program simulates observations from one set of readers scoring one set of cases.
+#' It produces one modality and one truth state
+#' of ROC data following Roe1997_Acad-Radiol_v4p298 and Roe1997_Acad-Radiol_v4p587.
+#' In order to produce an entire ROC data set, please use sim.gRoeMetz.
+#'
+#' @details
+#' The simulation is a linear model with one fixed effect and three
+#' normally distributed independent random effects corresponding to readers,
+#' cases, and an interaction between the two.
+#'
+#' L.rc = mu + readerEffect.r + caseEffect.c + readerXcaseEffect.rc
 #'
 #' @param simMRMC.config [list] of simulation parameters:
-#'          modalityID [chr] label modalityID
-#'          readerIDs  [factor] the ID of each reader
-#'          caseIDs    [factor] the ID of each case
-#'          mu         [num] mean
-#'          var_r      [num] variance of random reader effect
-#'          var_c      [num] variance of random case effect
-#'          var_rc     [num] variance of random reader by case effect
+#' \itemize{
+#'   \item modalityID [chr] label modalityID
+#'   \item readerIDs  [factor] the ID of each reader
+#'   \item caseIDs    [factor] the ID of each case
+#'   \item mu         [num] mean
+#'   \item var_r      [num] variance of random reader effect
+#'   \item var_c      [num] variance of random case effect
+#'   \item var_rc     [num] variance of random reader by case effect
+#' }
 #'
 #' @return  L [data.frame] with nC*nR rows of 4 variables
-#'            L$modalityID   [factor] determined by input modalityID
-#'            L$readerID     [factor] determined by input readerIDs
-#'            L$caseID       [factor] determined by input caseIDs
-#'            L$score        [num]  R.r + C.c + RC.rc
-#'                             r = 1,2,...,nR
-#'                             c = 1,2,...,nC
-#'                             R.r ~ N(0,var_r)
-#'                             C.c ~ N(0,var_c)
-#'                             RC.rc ~ N(0,var_rc)
+#' \itemize{
+#'   \item L$modalityID   [factor] determined by input modalityID
+#'   \item L$readerID     [factor] determined by input readerIDs
+#'   \item L$caseID       [factor] determined by input caseIDs
+#'   \item L$score        [num]  R.r + C.c + RC.rc
+#'   \itemize{
+#'     \item r = 1,2,...,nR
+#'     \item c = 1,2,...,nC
+#'     \item R.r ~ N(0,var_r)
+#'     \item C.c ~ N(0,var_c)
+#'     \item RC.rc ~ N(0,var_rc)
+#'   }
+#' }
 #'
 #' @export
 #'
-# @examples
+#' @examples
+#' # Create a sample configuration object
+#' config <- sim.gRoeMetz.config()
+#' # Simulate an MRMC ROC data set
+#' dFrame.imrmc <- sim.gRoeMetz(config)
+#' # Analyze the MRMC ROC data
+#' result <- doIMRMC(dFrame.imrmc)
+
 simMRMC <- function(simMRMC.config) {
 
   modalityID <- simMRMC.config$modalityID
@@ -162,67 +186,102 @@ convertDFtoDesignMatrix <- function(dfMRMC) {
 
 }
 
-#' simRoeMetz Simulate an MRMC data set for an ROC experiment comparing two modalities
-#'   references: Roe1997_Acad-Radiol_v4p298, Roe1997_Acad-Radiol_v4p587
-#'   references: Gallas2014_J-Med-Img_v1p031006
+#' Simulate an MRMC data set of an ROC experiment comparing two modalities
 #'
-#'   linear model
-#'   L.mrct = mu.t + mu.mt + reader.rt + case.ct + readerXcase.rct
-#'                  + modalityXreader.mrt + modalityXcase.mct + modalityXreaderXcase.mrct
-#'     mu.t treats is the global fixed
-#'     mu.mt treats the modality-specific fixed effects
-#'       m=modality (levels: A and b)
-#'       t=truth (levels: neg and Pos)
-#'     the remaining terms are the random effects: all independent normal random variables
+#' @description
+#' This procedure simulates an MRMC data set of an ROC experiment comparing two modalities.
+#' It is based on Gallas2014_J-Med-Img_v1p031006, which generalizes of the model in
+#' Roe1997_Acad-Radiol_v4p298 and Roe1997_Acad-Radiol_v4p587. Specifically, it allows
+#' the variance components to depend on the truth and the modality. For the simpler
+#' Roe and Metz model, you can enter the smaller set of parameters into
+#' sim.gRoeMetz.config and get back the larger set of parameters and then
+#' used with this function.
+#'
+#' @details
+#' The simulation is a linear model with six fixed effects related to
+#' modality and truth and 18 normally distributed independent random effects
+#' for readers, cases, and the interaction between the two. Here is the linear model:
+#'
+#' L.mrct = mu.t + mu.mt \cr
+#'        + reader.rt + case.ct + readerXcase.rct \cr
+#'        + modalityXreader.mrt + modalityXcase.mct + modalityXreaderXcase.mrct \cr
+#' \itemize{
+#'   \item m=modality (levels: A and b)
+#'   \item t=truth (levels: neg and Pos)
+#'   \item mu.t is the global mean for t=neg and t=pos cases
+#'   \item mu.mt is the modality speicific fixed effects for t=neg and t=pos cases
+#'   \item the remaining terms are the random effects: all independent normal random variables
+#' }
 #'
 #' @param config  [list] of simulation parameters:
-#'          modalityID.A     [chr] label modality A
-#'          nR               [num] number of readers
-#'          nC.neg            [num] number of signal-absent cases
-#'          nC.pos            [num] number of signal-present cases
+#' \itemize{
+#'   \item Experiment labels and size
+#'   \itemize{
+#'     \item modalityID.A: [chr] label modality A
+#'     \item modalityID.B: [chr] label modality B
+#'     \item nR: [num] number of readers
+#'     \item nC.neg: [num] number of signal-absent cases
+#'     \item nC.pos: [num] number of signal-present cases
+#'   }
+#'   \item There are six fixed effects:
+#'   \itemize{
+#'     \item mu.neg: [num] signal-absent (neg, global mean)
+#'     \item mu.pos: [num] signal-present (pos, global mean)
+#'     \item mu.Aneg: [num] modality A signal-absent (Aneg, modality effect)
+#'     \item mu.Bneg: [num] modality B signal-absent (Bneg, modality effect)
+#'     \item mu.Apos: [num] modality A signal-present (Apos, modality effect)
+#'     \item mu.Bpos: [num] modality B signal-present (Bpos, modality effect)
+#'   }
+#'   \item There are six random effects that are independent of modality
+#'   \itemize{
+#'     \item var_r.neg: [num] variance of random reader effect
+#'     \item var_c.neg: [num] variance of random case effect
+#'     \item var_rc.neg: [num] variance of random reader by case effect
+#'     \item var_r.pos: [num] variance of random reader effect
+#'     \item var_c.pos: [num] variance of random case effect
+#'     \item var_rc.pos: [num] variance of randome reader by case effect
+#'   }
+#'   \item There are six random effects that are specific to modality A
+#'     \itemize{
+#'       \item var_r.Aneg: [num] variance of random reader effect
+#'       \item var_c.Aneg: [num] variance of random case effect
+#'       \item var_rc.Aneg: [num] variance of random reader by case effect
+#'       \item var_r.Apos: [num] variance of random reader effect
+#'       \item var_c.Apos: [num] variance of random case effect
+#'       \item var_rc.Apos: [num] variance of randome reader by case effect
+#'   }
+#'   \item There are six random effects that are specific to modality B
+#'     \itemize{
+#'       \item var_r.Bneg: [num] variance of random reader effect
+#'       \item var_c.Bneg: [num] variance of random case effect
+#'       \item var_rc.Bneg: [num] variance of random reader by case effect
+#'       \item var_r.Bpos: [num] variance of random reader effect
+#'       \item var_c.Bpos: [num] variance of random case effect
+#'       \item var_rc.Bpos: [num] variance of randome reader by case effect
+#'   }
+#' }
 #'
-#'          The model parameters include for six fixed effects:
-#'            mu.neg = signal-absent (neg, global mean)
-#'            mu.pos = signal-present (pos, global mean)
-#'            mu.Aneg = modality A signal-absent (Aneg, modality effect)
-#'            mu.Bneg = modality B signal-absent (Bneg, modality effect)
-#'            mu.Apos = modality A signal-present (Apos, modality effect)
-#'            mu.Bpos = modality B signal-present (Bpos, modality effect)
+#' @return  dFrame.imrmc   [data.frame] with (nC.neg + nC.pos)*(nR+1) rows including
+#' \itemize{
+#'   \item readerID: [Factor] w/ nR levels "reader1", "reader2", ...
+#'   \item caseID: [Factor] w/ nC levels "case1", "case2", ...
+#'   \item modalityID: [Factor] w/ 1 level config$modalityID
+#'   \item score: [num] reader score
+#' }
 #'
-#'          The model parameters also include 18 random effects.
-#'          Six that are independent of modality
-#'            var_r.neg         [num] variance of random reader effect
-#'            var_c.neg         [num] variance of random case effect
-#'            var_rc.neg        [num] variance of randome reader by case effect
-#'            var_r.pos         [num] variance of random reader effect
-#'            var_c.pos         [num] variance of random case effect
-#'            var_rc.pos        [num] variance of randome reader by case effect
-#'          Six that are specific to modality A
-#'            var_r.Aneg         [num] variance of random reader effect
-#'            var_c.Aneg         [num] variance of random case effect
-#'            var_rc.Aneg        [num] variance of randome reader by case effect
-#'            var_r.Apos         [num] variance of random reader effect
-#'            var_c.Apos         [num] variance of random case effect
-#'            var_rc.Apos        [num] variance of randome reader by case effect
-#'          Six that are specific to modality B
-#'            var_r.Bneg         [num] variance of random reader effect
-#'            var_c.Bneg         [num] variance of random case effect
-#'            var_rc.Bneg        [num] variance of randome reader by case effect
-#'            var_r.Bpos         [num] variance of random reader effect
-#'            var_c.Bpos         [num] variance of random case effect
-#'            var_rc.Bpos        [num] variance of randome reader by case effect
-#'
-#' @return  dFrame.imrmc   [data.frame] with (nC.neg + nC.pos)*nR rows including
-#'            readerID       [Factor] w/ nR levels "reader1", "reader2", ...
-#'            caseID         [Factor] w/ nC levels "case1", "case2", ...
-#'            modalityID     [Factor] w/ 1 level config$modalityID
-#'            score          [num] reader score
+#' Note that the first nC.neg + nC.pos rows specify the truth labels for each case.
+#' For these rows, the readerID must be "truth" or "-1"
+#' and the score must be 0 for negative cases and 1 for postive cases.
 #'
 #' @export
 #'
 #' @examples
+#' # Create a sample configuration object
 #' config <- sim.gRoeMetz.config()
-#' simRoeMetz.imrmc <- sim.gRoeMetz(config)
+#' # Simulate an MRMC ROC data set
+#' dFrame.imrmc <- sim.gRoeMetz(config)
+#' # Analyze the MRMC ROC data
+#' result <- doIMRMC(dFrame.imrmc)
 #'
 sim.gRoeMetz <- function(config) {
 
@@ -358,18 +417,19 @@ sim.gRoeMetz <- function(config) {
 
 }
 
-#' sim.gRoeMetz.config creates a configuration file for the sim.gRoeMetz program
+#' Create a configuration object for the sim.gRoeMetz program
 #'
 #' @description
-#' This function creates a configuration file for the generalized Roe & Metz
-#' simulation model as described in Gallas2014_J-Med-Img_v1p031006.
+#' This function creates a configuration object for the Roe & Metz
+#' simulation model to be used as input for the sim.gRoeMetz program.
 #' The default model returned when there are no arguments given to the function is
-#' the HH model from Roe1887_Acad-Radiol_v4p298. Following that paper,
-#' The user can also specify three parameters related to experiment size (nR, nC.neg, nC.pos)
-#' and five parameters parameters specifying a linear model that do not
+#' the HH model from Roe1987_Acad-Radiol_v4p298. Following that paper,
+#' The user can specify three parameters related to experiment size (nR, nC.neg, nC.pos)
+#' and five parameters parameters specifying a linear model that does not
 #' depend on modality or truth (mu.neg, mu.pos, var_r, var_c, var_rc).
 #'
-#' @details If no arguements, this function returns a default simulation configuration for sim.gRoeMetz
+#' @details If no arguements, this function returns a default simulation
+#' configuration for sim.gRoeMetz
 #'
 #' @param nR Number of readers (default = 10)
 #' @param nC.neg Number of signal-absent cases (default = 100)
@@ -385,12 +445,17 @@ sim.gRoeMetz <- function(config) {
 #' @param var_rc Variance of reader.by.case random effect (default = 0.20) \cr
 #'              var_rc.neg = var_rc.pos = var_rc.Aneg = var_rc.Apos = var_rc.Bneg = var_rc.Bpos = var_rc \cr
 #'
-#' @return config [list] Refer to the simRoeMetz input variable
+#' @return config [list] Refer to the sim.gRoeMetz input variable
 #'
 #' @export
 #'
 #' @examples
+#' # Create a sample configuration object
 #' config <- sim.gRoeMetz.config()
+#' # Simulate an MRMC ROC data set
+#' dFrame.imrmc <- sim.gRoeMetz(config)
+#' # Analyze the MRMC ROC data
+#' result <- doIMRMC(dFrame.imrmc)
 sim.gRoeMetz.config <- function(
   nR = 10,
   nC.neg = 100,
@@ -459,13 +524,16 @@ sim.gRoeMetz.config <- function(
 
 }
 
-#' simRoeMetz.example simulates an MRMC ROC experiment
+#' Simulates a sample MRMC ROC experiment
 #'
 #' @return dFrame.imrmc [data.frame] Please refer to the description of the simRoeMetz return variable
 #' @export
 #'
 #' @examples
-#' simRoeMetz.imrmc <- simRoeMetz.example()
+#' # Simulate a sample MRMC ROC data set
+#' dFrame.imrmc <- simRoeMetz.example()
+#' # Analyze the MRMC ROC data
+#' result <- doIMRMC(dFrame.imrmc)
 #'
 simRoeMetz.example <- function() {
 

@@ -2,36 +2,56 @@
 % Please edit documentation in R/simMRMC.R
 \name{simMRMC}
 \alias{simMRMC}
-\title{simMRMC Simulate an MRMC data set (Roe1997_Acad-Radiol_v4p298, Roe1997_Acad-Radiol_v4p587)
-  linear model with independent random effects that are normally distributed
-  L.rc = mu + readerEffect.r + caseEffect.c + readerXcaseEffect.rc}
+\title{Simulate an MRMC data set}
 \usage{
 simMRMC(simMRMC.config)
 }
 \arguments{
 \item{simMRMC.config}{[list] of simulation parameters:
-modalityID [chr] label modalityID
-readerIDs  [factor] the ID of each reader
-caseIDs    [factor] the ID of each case
-mu         [num] mean
-var_r      [num] variance of random reader effect
-var_c      [num] variance of random case effect
-var_rc     [num] variance of random reader by case effect}
+\itemize{
+  \item modalityID [chr] label modalityID
+  \item readerIDs  [factor] the ID of each reader
+  \item caseIDs    [factor] the ID of each case
+  \item mu         [num] mean
+  \item var_r      [num] variance of random reader effect
+  \item var_c      [num] variance of random case effect
+  \item var_rc     [num] variance of random reader by case effect
+}}
 }
 \value{
 L [data.frame] with nC*nR rows of 4 variables
-           L$modalityID   [factor] determined by input modalityID
-           L$readerID     [factor] determined by input readerIDs
-           L$caseID       [factor] determined by input caseIDs
-           L$score        [num]  R.r + C.c + RC.rc
-                            r = 1,2,...,nR
-                            c = 1,2,...,nC
-                            R.r ~ N(0,var_r)
-                            C.c ~ N(0,var_c)
-                            RC.rc ~ N(0,var_rc)
+\itemize{
+  \item L$modalityID   [factor] determined by input modalityID
+  \item L$readerID     [factor] determined by input readerIDs
+  \item L$caseID       [factor] determined by input caseIDs
+  \item L$score        [num]  R.r + C.c + RC.rc
+  \itemize{
+    \item r = 1,2,...,nR
+    \item c = 1,2,...,nC
+    \item R.r ~ N(0,var_r)
+    \item C.c ~ N(0,var_c)
+    \item RC.rc ~ N(0,var_rc)
+  }
+}
 }
 \description{
-simMRMC Simulate an MRMC data set (Roe1997_Acad-Radiol_v4p298, Roe1997_Acad-Radiol_v4p587)
-  linear model with independent random effects that are normally distributed
-  L.rc = mu + readerEffect.r + caseEffect.c + readerXcaseEffect.rc
+This program simulates observations from one set of readers scoring one set of cases.
+It produces one modality and one truth state
+of ROC data following Roe1997_Acad-Radiol_v4p298 and Roe1997_Acad-Radiol_v4p587.
+In order to produce an entire ROC data set, please use sim.gRoeMetz.
+}
+\details{
+The simulation is a linear model with one fixed effect and three
+normally distributed independent random effects corresponding to readers,
+cases, and an interaction between the two.
+
+L.rc = mu + readerEffect.r + caseEffect.c + readerXcaseEffect.rc
+}
+\examples{
+# Create a sample configuration object
+config <- sim.gRoeMetz.config()
+# Simulate an MRMC ROC data set
+dFrame.imrmc <- sim.gRoeMetz(config)
+# Analyze the MRMC ROC data
+result <- doIMRMC(dFrame.imrmc)
 }

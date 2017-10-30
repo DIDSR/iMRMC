@@ -2,7 +2,7 @@
 % Please edit documentation in R/simMRMC.R
 \name{simRoeMetz.example}
 \alias{simRoeMetz.example}
-\title{simRoeMetz.example simulates an MRMC ROC experiment}
+\title{Simulates a sample MRMC ROC experiment}
 \usage{
 simRoeMetz.example()
 }
@@ -10,9 +10,12 @@ simRoeMetz.example()
 dFrame.imrmc [data.frame] Please refer to the description of the simRoeMetz return variable
 }
 \description{
-simRoeMetz.example simulates an MRMC ROC experiment
+Simulates a sample MRMC ROC experiment
 }
 \examples{
-simRoeMetz.imrmc <- simRoeMetz.example()
+# Simulate a sample MRMC ROC data set
+dFrame.imrmc <- simRoeMetz.example()
+# Analyze the MRMC ROC data
+result <- doIMRMC(dFrame.imrmc)
 
 }

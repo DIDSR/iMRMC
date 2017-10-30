@@ -2,7 +2,7 @@
 % Please edit documentation in R/simMRMC.R
 \name{convertDFtoDesignMatrix}
 \alias{convertDFtoDesignMatrix}
-\title{Convert an MRMC data frame to a design matrix, dropping readers or cases with no observations}
+\title{Convert an MRMC data frame to a design matrix}
 \usage{
 convertDFtoDesignMatrix(dfMRMC)
 }
