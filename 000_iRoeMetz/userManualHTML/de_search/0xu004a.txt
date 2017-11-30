@@ -1,0 +1,12 @@
+JAR
+ 8,5
+JAVA
+ 3,14,8,5,2
+JAVA’S
+ 14
+JOURNAL
+ 15
+JRE
+ 3
+JSP
+ 3
