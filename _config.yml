@@ -1,8 +1,0 @@
-title: iMRMC
-description: iMRMC
-google_analytics: UA-45577372-3
-show_downloads: true
-theme: jekyll-theme-slate
-
-gems:
-  - jekyll-mentions
