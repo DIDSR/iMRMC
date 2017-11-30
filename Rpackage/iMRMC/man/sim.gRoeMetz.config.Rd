@@ -2,7 +2,7 @@
 % Please edit documentation in R/simMRMC.R
 \name{sim.gRoeMetz.config}
 \alias{sim.gRoeMetz.config}
-\title{sim.gRoeMetz.config creates a configuration file for the sim.gRoeMetz program}
+\title{Create a configuration object for the sim.gRoeMetz program}
 \usage{
 sim.gRoeMetz.config(nR = 10, nC.neg = 100, nC.pos = 100, mu.neg = 0,
   mu.pos = 1, var_r = 0.03, var_c = 0.3, var_rc = 0.2)
@@ -30,20 +30,26 @@ var_c.neg = var_c.pos = var_c.Aneg = var_c.Apos = var_c.Bneg = var_c.Bpos = var_
 var_rc.neg = var_rc.pos = var_rc.Aneg = var_rc.Apos = var_rc.Bneg = var_rc.Bpos = var_rc \cr}
 }
 \value{
-config [list] Refer to the simRoeMetz input variable
+config [list] Refer to the sim.gRoeMetz input variable
 }
 \description{
-This function creates a configuration file for the generalized Roe & Metz
-simulation model as described in Gallas2014_J-Med-Img_v1p031006.
+This function creates a configuration object for the Roe & Metz
+simulation model to be used as input for the sim.gRoeMetz program.
 The default model returned when there are no arguments given to the function is
-the HH model from Roe1887_Acad-Radiol_v4p298. Following that paper,
-The user can also specify three parameters related to experiment size (nR, nC.neg, nC.pos)
-and five parameters parameters specifying a linear model that do not
+the HH model from Roe1987_Acad-Radiol_v4p298. Following that paper,
+The user can specify three parameters related to experiment size (nR, nC.neg, nC.pos)
+and five parameters parameters specifying a linear model that does not
 depend on modality or truth (mu.neg, mu.pos, var_r, var_c, var_rc).
 }
 \details{
-If no arguements, this function returns a default simulation configuration for sim.gRoeMetz
+If no arguements, this function returns a default simulation
+configuration for sim.gRoeMetz
 }
 \examples{
+# Create a sample configuration object
 config <- sim.gRoeMetz.config()
+# Simulate an MRMC ROC data set
+dFrame.imrmc <- sim.gRoeMetz(config)
+# Analyze the MRMC ROC data
+result <- doIMRMC(dFrame.imrmc)
 }

@@ -69,7 +69,13 @@
 #'
 #' @export
 #'
-# @examples
+#' @examples
+#' # Create a sample configuration file
+#' config <- sim.gRoeMetz.config()
+#' # Simulate an MRMC ROC data set
+#' dFrame.imrmc <- sim.gRoeMetz(config)
+#' # Analyze the MRMC ROC data
+#' result <- doIMRMC(dFrame.imrmc)
 #'
 #'
 doIMRMC <- function(
@@ -169,7 +175,7 @@ getComponents <- function(df.varDecomp) {
   result <- df.varDecomp[c(1, 3, 5), 5:nc]
   descA <- as.character(df.varDecomp$modalityA[1])
   descB <- as.character(df.varDecomp$modalityB[1])
-  rownames(result) <- c(descA, descB, paste(descA, "minus", descB, sep = ""))
+  rownames(result) <- c(descA, descB, paste(descA, descB, sep = "."))
 
   return(result)
 
@@ -181,7 +187,7 @@ getCoefficients <- function(df.varDecomp) {
   result <- df.varDecomp[c(2, 4, 6), 5:nc]
   descA <- as.character(df.varDecomp$modalityA[1])
   descB <- as.character(df.varDecomp$modalityB[1])
-  rownames(result) <- c(descA, descB, paste(descA, "minus", descB, sep = ""))
+  rownames(result) <- c(descA, descB, paste(descA, descB, sep = "."))
 
   return(result)
 

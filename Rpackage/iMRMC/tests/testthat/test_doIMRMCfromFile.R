@@ -3,12 +3,15 @@ library(iMRMC)
 
 context("doIMRMC given filename")
 
+print(getwd())
+
 #fileName <- file.path("data-raw", "inputAUC.imrmc")
 fileName <- "inputAUC.imrmc"
 if (!file.exists(fileName)) {
   fileName <- file.path("tests", "testthat", fileName)
 }
 result.auc <- doIMRMC(fileName = fileName)
+print(fileName)
 
 test_that(
   "doIMRMC does not change", {
