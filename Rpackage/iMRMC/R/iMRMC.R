@@ -33,8 +33,16 @@
 #'            this jar file can be downloaded from https://github.com/DIDSR/iMRMC/releases
 #'            this R program supports version iMRMC-v3p2.jar
 #' @param cleanUp [logi] this logical determines whether or not the iMRMC analysis results
-#' @param show.output.on.console [logi] this logical determines whether or iMRMC console output
-#'               is written to the console
+#' @param stdout where output to ‘stdout’ or ‘stderr’ should be sent.
+#'            Possible values are "", to the R console (the default),
+#'            NULL or FALSE (discard output),
+#'            TRUE (capture the output in a character vector)
+#'            or a character string naming a file.
+#' @param stderr where output to ‘stdout’ or ‘stderr’ should be sent.
+#'            Possible values are "", to the R console (the default),
+#'            NULL or FALSE (discard output),
+#'            TRUE (capture the output in a character vector)
+#'            or a character string naming a file.
 #'
 #' @return iMRMCoutput [list] the objects of this list are described in detail in the iMRMC documentation
 #'            which can be found at http://didsr.github.io/iMRMC/000_iMRMC/userManualHTML/index.htm
@@ -101,7 +109,7 @@ doIMRMC <- function(
 
     # Write data frame to iMRMC input file
     writeLines("BEGIN DATA:", con = fileName)
-    write.table(data, fileName,
+    utils::write.table(data, fileName,
                 quote = FALSE, row.names = FALSE, col.names = FALSE,
                 append = TRUE, sep = ", ")
 
@@ -124,10 +132,10 @@ doIMRMC <- function(
                            stdout = stdout, stderr = stderr)
 
   # Retrieve the iMRMC results
-  perReader <- read.csv(file.path(folderName, "AUCperReader.csv"))
-  Ustat <- read.csv(file.path(folderName, "statAnalysis.csv"))
-  MLEstat <- read.csv(file.path(folderName, "statAnalysisMLE.csv"))
-  ROCraw <- read.csv(file.path(folderName, "ROCcurves.csv"),
+  perReader <- utils::read.csv(file.path(folderName, "AUCperReader.csv"))
+  Ustat <- utils::read.csv(file.path(folderName, "statAnalysis.csv"))
+  MLEstat <- utils::read.csv(file.path(folderName, "statAnalysisMLE.csv"))
+  ROCraw <- utils::read.csv(file.path(folderName, "ROCcurves.csv"),
                      header = FALSE, row.names = NULL, skip = 1)
 
   BCK <- readVarDecomp(file.path(folderName, "BCKtable.csv"))
@@ -195,7 +203,7 @@ getCoefficients <- function(df.varDecomp) {
 
 readVarDecomp <- function(fileName) {
 
-  df.csv <- read.csv(fileName, row.names = NULL)
+  df.csv <- utils::read.csv(fileName, row.names = NULL)
 
   df.csv <- split(df.csv, df.csv$UstatOrMLE)
   df.csv$Ustat <- split(df.csv$Ustat, list(df.csv$Ustat$modalityA, df.csv$Ustat$modalityB))

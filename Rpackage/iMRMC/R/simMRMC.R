@@ -100,13 +100,13 @@ simMRMC <- function(simMRMC.config) {
   L_mu <- rep(mu, nC * nR)
 
   # Simulate case effects
-  L_cases <- rnorm(nC, mean = 0, sd = sqrt(var_c))
+  L_cases <- stats::rnorm(nC, mean = 0, sd = sqrt(var_c))
   # Replicate random case effects for each reader
   L_cases <- rep(L_cases, nR)
   caseID <- rep(caseIDs, nR)
 
   # Simulate reader effects
-  L_readers <- rnorm(nR, mean = 0, sd = sqrt(var_r))
+  L_readers <- stats::rnorm(nR, mean = 0, sd = sqrt(var_r))
   # Replicate random reader effects for each case
   # rep(nC, nR) indicates that each of the nR elements of readers
   #   is to be replicated nC times.
@@ -114,7 +114,7 @@ simMRMC <- function(simMRMC.config) {
   readerID <- rep(readerIDs, rep(nC, nR))
 
   # Simulate reader by case interaction
-  L_reader.case <- rnorm(nC*nR, mean = 0, sd = sqrt(var_rc))
+  L_reader.case <- stats::rnorm(nC*nR, mean = 0, sd = sqrt(var_rc))
   modalityID <- rep(modalityID, nC*nR)
 
   # Put it all together
@@ -549,10 +549,10 @@ simRoeMetz.example <- function() {
   tempBpos <- tempB[grep("pos", tempA$caseID), ]
   tempBneg <- tempB[grep("neg", tempA$caseID), ]
 
-  cat("modality A pos: mean, var = ", mean(tempApos$score), ",", var(tempApos$score), "\n")
-  cat("modality B pos: mean, var = ", mean(tempBpos$score), ",", var(tempBpos$score), "\n")
-  cat("modality A neg: mean, var = ", mean(tempAneg$score), ",", var(tempAneg$score), "\n")
-  cat("modality B neg: mean, var = ", mean(tempBneg$score), ",", var(tempBneg$score), "\n")
+  cat("modality A pos: mean, var = ", mean(tempApos$score), ",", stats::var(tempApos$score), "\n")
+  cat("modality B pos: mean, var = ", mean(tempBpos$score), ",", stats::var(tempBpos$score), "\n")
+  cat("modality A neg: mean, var = ", mean(tempAneg$score), ",", stats::var(tempAneg$score), "\n")
+  cat("modality B neg: mean, var = ", mean(tempBneg$score), ",", stats::var(tempBneg$score), "\n")
 
   return(dFrame.imrmc)
 
