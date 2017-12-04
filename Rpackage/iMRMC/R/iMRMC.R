@@ -83,7 +83,8 @@ doIMRMC <- function(
   fileName = NULL,
   iMRMCjarFullPath = NULL,
   cleanUp = TRUE,
-  show.output.on.console = FALSE){
+  stdout = FALSE,
+  stderr = FALSE){
 
   folderName <- "imrmcDir"
 
@@ -119,9 +120,8 @@ doIMRMC <- function(
   }
 
   # Run iMRMC
-  system(
-    paste("java -jar", iMRMCjarFullPath, fileName, folderName), ignore.stdout = TRUE,
-    show.output.on.console = show.output.on.console)
+  system2("java", args = c("-jar", iMRMCjarFullPath, fileName, folderName),
+                           stdout = stdout, stderr = stderr)
 
   # Retrieve the iMRMC results
   perReader <- read.csv(file.path(folderName, "AUCperReader.csv"))
