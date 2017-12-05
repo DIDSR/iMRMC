@@ -4,7 +4,7 @@ Visit the <a href="https://github.com/DIDSR/iMRMC/releases" rel="nofollow">relea
 
 The documentation for both packages can be found <a href="http://didsr.github.io/iMRMC/" rel="nofollow">here.</a>
 
-Here is a summary of updates to [iMRMC](UPDATES_iMRMC.md) and a summary of updates to [iRoeMetz](UPDATES_iRoeMetz.md).
+Here is a summary of updates to [iMRMC](https://github.com/DIDSR/iMRMC/blob/master/UPDATES_iMRMC.md) and a summary of updates to [iRoeMetz](https://github.com/DIDSR/iMRMC/blob/master/UPDATES_iRoeMetz.md).
 
 Please check out a statement of the licenses related to our software [here](LICENSE.md).
 
