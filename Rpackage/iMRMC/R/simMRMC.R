@@ -209,7 +209,7 @@ convertDFtoDesignMatrix <- function(dfMRMC) {
 #'   \item m=modality (levels: A and b)
 #'   \item t=truth (levels: neg and Pos)
 #'   \item mu.t is the global mean for t=neg and t=pos cases
-#'   \item mu.mt is the modality speicific fixed effects for t=neg and t=pos cases
+#'   \item mu.mt is the modality specific fixed effects for t=neg and t=pos cases
 #'   \item the remaining terms are the random effects: all independent normal random variables
 #' }
 #'
@@ -239,7 +239,7 @@ convertDFtoDesignMatrix <- function(dfMRMC) {
 #'     \item var_rc.neg: [num] variance of random reader by case effect
 #'     \item var_r.pos: [num] variance of random reader effect
 #'     \item var_c.pos: [num] variance of random case effect
-#'     \item var_rc.pos: [num] variance of randome reader by case effect
+#'     \item var_rc.pos: [num] variance of random reader by case effect
 #'   }
 #'   \item There are six random effects that are specific to modality A
 #'     \itemize{
@@ -423,12 +423,12 @@ sim.gRoeMetz <- function(config) {
 #' This function creates a configuration object for the Roe & Metz
 #' simulation model to be used as input for the sim.gRoeMetz program.
 #' The default model returned when there are no arguments given to the function is
-#' the HH model from Roe1987_Acad-Radiol_v4p298. Following that paper,
+#' the "HH" model from Roe1987_Acad-Radiol_v4p298. Following that paper,
 #' The user can specify three parameters related to experiment size (nR, nC.neg, nC.pos)
 #' and five parameters parameters specifying a linear model that does not
 #' depend on modality or truth (mu.neg, mu.pos, var_r, var_c, var_rc).
 #'
-#' @details If no arguements, this function returns a default simulation
+#' @details If no arguments, this function returns a default simulation
 #' configuration for sim.gRoeMetz
 #'
 #' @param nR Number of readers (default = 10)
