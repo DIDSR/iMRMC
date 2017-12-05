@@ -1,6 +1,8 @@
-<h3>iMRMC Home</h3>
+<h3>README for iMRMC and iRoeMetz</h3>
 
 Visit the <a href="https://github.com/DIDSR/iMRMC/releases" rel="nofollow">release Page</a> to download the programs.
+
+The documentation for both packages can be found <a href="http://didsr.github.io/iMRMC/" rel="nofollow">here.</a>
 
 Here is a summary of updates to [iMRMC](UPDATES_iMRMC.md) and a summary of updates to [iRoeMetz](UPDATES_iRoeMetz.md).
 
@@ -8,7 +10,10 @@ Please check out a statement of the licenses related to our software [here](LICE
 
 <h5>iMRMC</h5>
 
-Desc: The primary objective of the iMRMC application is to assist investigators with analyzing and sizing multi-reader multi-case (MRMC) reader studies that compare the difference in the area under Receiver Operating Characteristic curves (AUCs) from two modalities. The core elements of this application include the ability to perform MRMC variance analysis and the ability to size an MRMC trial. A database containing components of variance from past MRMC studies is under development. The iMRMC application is a stand-alone, precompiled, license-free Java applications and the source code. It can be used in GUI mode or on the command line.
+Desc: The primary objective of the iMRMC application is to assist investigators with analyzing and sizing multi-reader multi-case (MRMC) reader studies that compare the difference in the area under Receiver Operating Characteristic curves (AUCs) from two modalities. The core elements of this application include the ability to perform MRMC variance analysis and the ability to size an MRMC trial.
+
+ * The core iMRMC application is a stand-alone, precompiled, license-free Java applications and the source code. It can be used in GUI mode or on the command line.
+ * There is also an R package that utilizes the core Java application. Examples for using the programs can be found in the R help files.
 
 <h5>iRoeMetz</h5>
 
