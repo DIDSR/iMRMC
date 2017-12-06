@@ -19,9 +19,12 @@ Possibly mis-spelled words in DESCRIPTION:
 
       * I hope the "mis-spelled" words can remain in DESCRIPTION. "Multi" is a well-known combining form used in the formation of compound words. "ROC" is a well-known abbreviation for Receiver Operating Characteristic that is used in the description of other CRAN packages.
       
-* installed size is 8.6Mb ... sub-directories of 1Mb or more: java 8.5Mb
+* checking installed package size ... NOTE
+  installed size is  5.0Mb
+  sub-directories of 1Mb or more:
+    java   4.9Mb
     
-     * The core statistical analysis is executed by a validated java application (same author). We decided to implement the R package by calling the java application rather than porting all the source code (and creating mistakes). The main work flow has three steps: 1) write an input data file to the R session's temporary directory, 2) launch the .jar application that reads the input file and writes the results to an output directory (also in the R session's temporary directory), 3) read in the results from the output directory into an R object. Including the java application causes the size of the R package to be bigger and slower than one might expect.
+     * The core statistical analysis is executed by a validated java application (same author as this R package). We decided to implement the R package by calling the java application rather than porting all the source code (and creating mistakes). The main work flow has three steps: 1) write an input data file to the R session's temporary directory, 2) launch the .jar application that reads the input file and writes the results to an output directory (also in the R session's temporary directory), 3) read in the results from the output directory into an R object. Including the java application causes the size of the R package to be bigger and slower than one might otherwise expect.
 
 ## Downstream dependencies
 This is a new submission and there are no packages known to depend on the current submission.
