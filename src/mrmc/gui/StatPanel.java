@@ -1,6 +1,3 @@
-/**
- * 
- */
 package mrmc.gui;
 
 import java.awt.BorderLayout;
