@@ -3,6 +3,19 @@
 <h4>Version Under Development</h4>
 ...
 
+<h4>iMRMC4.0.0</h4>
+*12/11/17*
+
+iMRMC.jar: 
+ *Set the locale to be US so that csv output files are not corrupted by the European convention of using a comma to distinguish decimal values. 
+ *Fix show reader AUCs button error. The AUCB results were mistakenly duplicated in the position corresponding to AUCAminusAUCB. 
+
+iMRMC.R:
+ *Allow users to input a file name of a data set as an alternative to a data frame.
+ *It reads and writes intermediate files to the R session temporary directory.
+ *Additional edits to satisfy CRAN submission requirements and feedback.  
+
+
 <h4>iMRMC3p3</h4>
 *10/6/17*
 
