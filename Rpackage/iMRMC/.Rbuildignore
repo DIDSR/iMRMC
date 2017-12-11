@@ -1,3 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^data-raw$
+^input\.imrmc$
+^cran-comments\.md$
+^imrmcDir$
+^README\.md$

@@ -100,13 +100,13 @@ simMRMC <- function(simMRMC.config) {
   L_mu <- rep(mu, nC * nR)
 
   # Simulate case effects
-  L_cases <- rnorm(nC, mean = 0, sd = sqrt(var_c))
+  L_cases <- stats::rnorm(nC, mean = 0, sd = sqrt(var_c))
   # Replicate random case effects for each reader
   L_cases <- rep(L_cases, nR)
   caseID <- rep(caseIDs, nR)
 
   # Simulate reader effects
-  L_readers <- rnorm(nR, mean = 0, sd = sqrt(var_r))
+  L_readers <- stats::rnorm(nR, mean = 0, sd = sqrt(var_r))
   # Replicate random reader effects for each case
   # rep(nC, nR) indicates that each of the nR elements of readers
   #   is to be replicated nC times.
@@ -114,7 +114,7 @@ simMRMC <- function(simMRMC.config) {
   readerID <- rep(readerIDs, rep(nC, nR))
 
   # Simulate reader by case interaction
-  L_reader.case <- rnorm(nC*nR, mean = 0, sd = sqrt(var_rc))
+  L_reader.case <- stats::rnorm(nC*nR, mean = 0, sd = sqrt(var_rc))
   modalityID <- rep(modalityID, nC*nR)
 
   # Put it all together
@@ -209,7 +209,7 @@ convertDFtoDesignMatrix <- function(dfMRMC) {
 #'   \item m=modality (levels: A and b)
 #'   \item t=truth (levels: neg and Pos)
 #'   \item mu.t is the global mean for t=neg and t=pos cases
-#'   \item mu.mt is the modality speicific fixed effects for t=neg and t=pos cases
+#'   \item mu.mt is the modality specific fixed effects for t=neg and t=pos cases
 #'   \item the remaining terms are the random effects: all independent normal random variables
 #' }
 #'
@@ -239,7 +239,7 @@ convertDFtoDesignMatrix <- function(dfMRMC) {
 #'     \item var_rc.neg: [num] variance of random reader by case effect
 #'     \item var_r.pos: [num] variance of random reader effect
 #'     \item var_c.pos: [num] variance of random case effect
-#'     \item var_rc.pos: [num] variance of randome reader by case effect
+#'     \item var_rc.pos: [num] variance of random reader by case effect
 #'   }
 #'   \item There are six random effects that are specific to modality A
 #'     \itemize{
@@ -423,12 +423,12 @@ sim.gRoeMetz <- function(config) {
 #' This function creates a configuration object for the Roe & Metz
 #' simulation model to be used as input for the sim.gRoeMetz program.
 #' The default model returned when there are no arguments given to the function is
-#' the HH model from Roe1987_Acad-Radiol_v4p298. Following that paper,
+#' the "HH" model from Roe1987_Acad-Radiol_v4p298. Following that paper,
 #' The user can specify three parameters related to experiment size (nR, nC.neg, nC.pos)
 #' and five parameters parameters specifying a linear model that does not
 #' depend on modality or truth (mu.neg, mu.pos, var_r, var_c, var_rc).
 #'
-#' @details If no arguements, this function returns a default simulation
+#' @details If no arguments, this function returns a default simulation
 #' configuration for sim.gRoeMetz
 #'
 #' @param nR Number of readers (default = 10)
@@ -549,10 +549,10 @@ simRoeMetz.example <- function() {
   tempBpos <- tempB[grep("pos", tempA$caseID), ]
   tempBneg <- tempB[grep("neg", tempA$caseID), ]
 
-  cat("modality A pos: mean, var = ", mean(tempApos$score), ",", var(tempApos$score), "\n")
-  cat("modality B pos: mean, var = ", mean(tempBpos$score), ",", var(tempBpos$score), "\n")
-  cat("modality A neg: mean, var = ", mean(tempAneg$score), ",", var(tempAneg$score), "\n")
-  cat("modality B neg: mean, var = ", mean(tempBneg$score), ",", var(tempBneg$score), "\n")
+  cat("modality A pos: mean, var = ", mean(tempApos$score), ",", stats::var(tempApos$score), "\n")
+  cat("modality B pos: mean, var = ", mean(tempBpos$score), ",", stats::var(tempBpos$score), "\n")
+  cat("modality A neg: mean, var = ", mean(tempAneg$score), ",", stats::var(tempAneg$score), "\n")
+  cat("modality B neg: mean, var = ", mean(tempBneg$score), ",", stats::var(tempBneg$score), "\n")
 
   return(dFrame.imrmc)
 

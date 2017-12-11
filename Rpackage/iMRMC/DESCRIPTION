@@ -1,12 +1,15 @@
 Package: iMRMC
 Type: Package
-Title: Multi-Reader, Multi-Case Analysis Methods
-Version: 1.1
-Author: Brandon Gallas, Qi Gong
-Maintainer: Brandon Gallas <Brandon.Gallas@fda.hhs.gov>, Qi Gong <qi.gong@fda.hhs.gov>
+Title: Multi-Reader, Multi-Case Analysis Methods (ROC, Agreement, and Other Metrics)
+Version: 1.1.0
+Author: Brandon Gallas
+Maintainer: Brandon Gallas <Brandon.Gallas@fda.hhs.gov>
 Description:
-  Do MRMC analyses of ROC data and more.
-  Package development is at https://github.com/DIDSR/iMRMC/tree/master/Rpackage .
+  Do Multi-Reader, Multi-Case analyses of data from imaging studies where clinicians (readers)
+  evaluate patient images (cases). The initial package analyzes the reader-average
+  area under the ROC curve. Additional functions analyze other endpoints: binary performance
+  and score differences.
+  Package development and documentation is at <https://github.com/DIDSR/iMRMC/tree/master>.
 License: CC0
 Encoding: UTF-8
 LazyData: true

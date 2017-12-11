@@ -26,7 +26,7 @@
 #' }
 #'
 #' Both functions yield unbiased variance estimates.
-#' Our limited similations find that \code{uStat11.conditionalD} is statistically more efficient than
+#' Our limited simulations find that \code{uStat11.conditionalD} is statistically more efficient than
 #' \code{uStat11.jointD} (its variance estimate is more precise), but it can be slower.
 #'
 #' Please refer to the tests/testthat folder of the package for examples using these functions.
