@@ -7,13 +7,13 @@
 *12/11/17*
 
 iMRMC.jar: 
- *Set the locale to be US so that csv output files are not corrupted by the European convention of using a comma to distinguish decimal values. 
- *Fix show reader AUCs button error. The AUCB results were mistakenly duplicated in the position corresponding to AUCAminusAUCB. 
+  * Set the locale to be US so that csv output files are not corrupted by the European convention of using a comma to distinguish decimal values. 
+  * Fix show reader AUCs button error. The AUCB results were mistakenly duplicated in the position corresponding to AUCAminusAUCB. 
 
 iMRMC.R:
- *Allow users to input a file name of a data set as an alternative to a data frame.
- *It reads and writes intermediate files to the R session temporary directory.
- *Additional edits to satisfy CRAN submission requirements and feedback.  
+  * Allow users to input a file name of a data set as an alternative to a data frame.
+  * It reads and writes intermediate files to the R session temporary directory.
+  * Additional edits to satisfy CRAN submission requirements and feedback.  
 
 
 <h4>iMRMC3p3</h4>
