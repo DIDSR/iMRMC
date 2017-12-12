@@ -110,27 +110,23 @@ load(fileName)
 test_that(
   "uStat11.jointD, difference kernel, doesn't change", {
     expect_equal(saveResult$jointD.diff, result.jointD.diff)
-    expect_identical(saveResult$jointD.diff, result.jointD.diff)
   }
 )
 
 test_that(
   "uStat11.conditionalD, difference kernel, doesn't change", {
     expect_equal(saveResult$conditionalD.diff, result.conditionalD.diff)
-    expect_identical(saveResult$conditionalD.diff, result.conditionalD.diff)
   }
 )
 
 test_that(
   "uStat11.jointD, identity kernel, doesn't change", {
     expect_equal(saveResult$jointD.identity, result.jointD.identity)
-    expect_identical(saveResult$jointD.identity, result.jointD.identity)
   }
 )
 
 test_that(
   "uStat11.conditionalD, identity kernel, doesn't change", {
     expect_equal(saveResult$conditionalD.identity, result.conditionalD.identity)
-    expect_identical(saveResult$conditionalD.identity, result.conditionalD.identity)
   }
 )

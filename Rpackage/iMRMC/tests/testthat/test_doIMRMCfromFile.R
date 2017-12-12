@@ -22,6 +22,5 @@ load(fileName)
 test_that(
   "doIMRMC given fileName does not change", {
     expect_equal(saveResult, result)
-    expect_identical(saveResult, result)
   }
 )
