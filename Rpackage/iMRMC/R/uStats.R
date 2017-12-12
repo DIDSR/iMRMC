@@ -2,32 +2,35 @@
 #' @title Analysis of U-statistics degree 1,1
 #'
 #' @description
-#' This function calculates the mean and variance of the indicated U-statistic kernel,
-#' which is a function of the scores.
+#' These two functions calculate the mean and variance of a user-specified U-statistic kernel,
+#' which is a function of cross-correlated scores.
 #'
 #' The motivation for this analysis is data collected in imaging studies
 #' where multiple readers read multiple cases in different modes or modalities.
-#' The goal is to evaluate the variance
+#' The goal is to evaluate the variance of a reader- and case-averaged endpoint,
 #' accounting for cross-correlated data arising from two random effects:
 #' the random reader skill and the random case difficulty.
 #' This analysis is sometimes referred to as an MRMC analysis.
 #' Of course, the random effects can be from sources other than readers and cases.
 #'
 #' @details
+#'
 #' \code{uStat11.conditionalD} is identical to \code{uStat11.jointD} when the study is fully-crossed:
-#' when every reader readers all the cases in both modalities.
-#' For arbitrary study designs the two functions differ according to how the second order moments
-#' are estimated.
+#' when every reader readers all the cases in both modalities. For arbitrary study designs
+#' the two functions differ according to how the components of variance are estimated.
 #' \itemize{
-#'   \item\code{uStat11.conditionalD} follows Gallas2007_J-Opt-Soc-Am-A_v24pB70 and sequentially
-#' estimates the averages over the random effects with nested conditional means.
-#'   \item\code{uStat11.jointD} is analogous to the method in Gallas2008_Neural-Networks_v21p387 and defines
-#' a joint distribution over all the observations giving equal weight to each one.
+#'   \item\code{uStat11.conditionalD} follows Gallas2007_J-Opt-Soc-Am-A_v24pB70
+#'   <doi:10.1364/JOSAA.24.000B70> and estimates the components of variance
+#'   (which isolate combinations of different random effects) with nested conditional means.
+#'   \item\code{uStat11.jointD} is analogous to the method in Gallas2008_Neural-Networks_v21p387
+#'   <doi:10.1016/j.neunet.2007.12.013> and estimates the components of variance
+#'   (which isolate combinations of different random effects) with a joint distribution over all
+#'   the observations giving equal weight to each one.
 #' }
 #'
 #' Both functions yield unbiased variance estimates.
-#' Our limited simulations find that \code{uStat11.conditionalD} is statistically more efficient than
-#' \code{uStat11.jointD} (its variance estimate is more precise), but it can be slower.
+#' Our simulations find that \code{uStat11.conditionalD} is statistically more efficient than
+#' \code{uStat11.jointD} (its variance estimate is more precise), but it is slower.
 #'
 #' Please refer to the tests/testthat folder of the package for examples using these functions.
 #'
@@ -80,12 +83,10 @@
 #'   \item\code{mean:} See description above.
 #'   \item\code{var:} The variance of the mean.
 #'   \item\code{var.1obs:} The variance of one reader-case-modality observation.
-#'   \item\code{meanPerR.A} The reader-specific means for modality A (or AB).
-#'   \item\code{meanPerR.B} The reader-specific means for modality B (or CD).
+#'   \item\code{meanPerR} The reader-specific means.
 #'   \item\code{nR} The number of readers in the study.
 #'   \item\code{nC} The number of cases in the study.
-#'   \item\code{nCperR.A} The number of cases evaluated by each reader for modality A (or AB).
-#'   \item\code{ncperR.B} The number of cases evaluated by each reader for modality B (or CD).
+#'   \item\code{nCperR} The number of cases evaluated by each reader for each modality.
 #'   \item\code{moments} The second order moments of the problem.
 #'   \item\code{coeff} The coefficients corresponding to the second-order moments such that
 #'     the scalar product between the moments and coefficients yields the variance.
@@ -102,27 +103,31 @@
 #' @export
 #'
 #' @examples
-#' # Create an MRMC data frame (Gallas2014_J-Med-Img_v1p031006)
+#' # Create an MRMC data frame
+#' # Refer to Gallas2014_J-Med-Img_v1p031006
 #' simRoeMetz.config <- sim.gRoeMetz.config()
 #'
 #' # Simulate data
 #' df.MRMC <- sim.gRoeMetz(simRoeMetz.config)
 #'
-#' # Split the data
-#' df.MRMC.pos <- droplevels(df.MRMC[grepl("pos", df.MRMC$caseID), ])
+#' # Reformat data
+#' df <- undoIMRMCdf(df.MRMC)
 #'
-#' # Calculate the reader- and case-averaged difference in scores from modalityA and modality B
-#' # (kernelFlag = 2 specifies the U-statistics kernel to be the difference in scores)
-#' result <- uStat11.jointD(
-#' df.MRMC.pos,
-#' kernelFlag = 2,
-#' keyColumns = c("readerID", "caseID", "modalityID", "score"),
-#' modalitiesToCompare = c("modalityA", "modalityB", "modalityB", "modalityA"))
+#' # Grab part of the data
+#' df <- droplevels(df[grepl("pos", df$caseID), ])
 #'
-#' print("X=meanScoreA-meanScoreB, Y=meanScoreB-meanScoreA, X-Y")
-#' print(result$mean)
-#' print("var(X), var(Y), var(X-Y)")
-#' print(result$var)
+#' #### uStat11.jointD.identity ####
+#' # Calculate the reader- and case-averaged difference in scores from testA and testB
+#' # (kernelFlag = 1 specifies the U-statistics kernel to be the identity)
+#' result.jointD.identity <- uStat11.jointD(
+#'   df,
+#'   kernelFlag = 1,
+#'   keyColumns = c("readerID", "caseID", "modalityID", "score"),
+#'   modalitiesToCompare = c("testA", "testB"))
+#'
+#' cat("\n")
+#' cat("uStat11.jointD.identity \n")
+#' print(result.jointD.identity[1:2])
 
 uStat11.jointD <- function(
   df.input,
@@ -140,6 +145,9 @@ uStat11.jointD <- function(
     design.A = CbyR.identity$design.A
     kernel.B = CbyR.identity$kernel.B
     design.B = CbyR.identity$design.B
+
+    desc <- c("A", "B", "AminusB")
+
   } else if (
     kernelFlag == 2) {
 
@@ -151,6 +159,9 @@ uStat11.jointD <- function(
     design.A = CbyR.diff$design.AB
     kernel.B = CbyR.diff$kernel.CD
     design.B = CbyR.diff$design.CD
+
+    desc <- c("AminusB", "CminusD", "AminusB.minus.CminusD")
+
   }
 
   nC <- nrow(design.A)
@@ -162,8 +173,8 @@ uStat11.jointD <- function(
   sumiD.A <- colSums(design.A)
   sumiD.B <- colSums(design.B)
 
-  meanPerR.A <- sumiS.A / sumiD.A
-  meanPerR.B <- sumiS.B / sumiD.B
+  meanPerR <- data.frame(sumiS.A / sumiD.A, sumiS.B / sumiD.B)
+  names(meanPerR) <- c(desc[1], desc[2])
 
   # Declare the constituent parts of the variance decomposition
   # Please refer to Gallas2009_Commun-Stat-A-Theor_v38p2586
@@ -276,22 +287,27 @@ uStat11.jointD <- function(
   coeff <- data.frame(coeff)
   names(coeff) <- names(numer.biased)
 
+  mean <- c(mean.A, mean.B, mean.A - mean.B)
+  names(mean) <- desc
+  var <- c(var.A, var.B, var.AminusB)
+  names(var) <- desc
+  var.1obs <- moments$c1r1 - moments$c0r0
+  names(var.1obs) <- desc
+  nCperR <- data.frame(sumiD.A, sumiD.B)
+  names(nCperR) <- desc[1:2]
+
   #### Pack Results ####
   result <- list(
-    mean = c(mean.A, mean.B, mean.A - mean.B),
-    var = c(var.A, var.B, var.AminusB),
-    var.1obs = moments$c1r1 - moments$c0r0,
-    meanPerR.A = meanPerR.A,
-    meanPerR.B = meanPerR.B,
+    mean = mean,
+    var = var,
+    var.1obs = var.1obs,
+    meanPerR = meanPerR,
     nR = nR,
     nC = nC,
-    nCperR.A = sumiD.A,
-    nCperR.B = sumiD.B,
+    nCperR = nCperR,
     moments = moments,
     coeff = coeff,
-    desc = c(
-      modalitiesToCompare,
-      paste(modalitiesToCompare[1],"minus", modalitiesToCompare[2], sep = ".")),
+    desc = desc,
     kernel.A = kernel.A,
     design.A = design.A,
     kernel.B = kernel.B,
@@ -325,6 +341,9 @@ uStat11.conditionalD <- function(
     design.A = CbyR.identity$design.A
     kernel.B = CbyR.identity$kernel.B
     design.B = CbyR.identity$design.B
+
+    desc <- c("A", "B", "AminusB")
+
   } else if (
     kernelFlag == 2) {
 
@@ -336,6 +355,9 @@ uStat11.conditionalD <- function(
     design.A = CbyR.diff$design.AB
     kernel.B = CbyR.diff$kernel.CD
     design.B = CbyR.diff$design.CD
+
+    desc <- c("AminusB", "CminusD", "AminusB.minus.CminusD")
+
   }
 
   nC <- nrow(design.A)
@@ -347,8 +369,8 @@ uStat11.conditionalD <- function(
   sumiD.A <- colSums(design.A)
   sumiD.B <- colSums(design.B)
 
-  meanPerR.A <- sumiS.A / sumiD.A
-  meanPerR.B <- sumiS.B / sumiD.B
+  meanPerR <- data.frame(sumiS.A / sumiD.A, sumiS.B / sumiD.B)
+  names(meanPerR) <- c(desc[1], desc[2])
 
   # Reader weights for the reader-averged point estimate
   # Weigh each reader equally
@@ -363,8 +385,8 @@ uStat11.conditionalD <- function(
   w.B <- sumiD.B/sum(sumiD.B)
 
   # Estimate the reader averaged percent correct
-  mean.A <- sum(meanPerR.A * w.A, na.rm = TRUE)
-  mean.B <- sum(meanPerR.B * w.B, na.rm = TRUE)
+  mean.A <- sum(meanPerR[1] * w.A, na.rm = TRUE)
+  mean.B <- sum(meanPerR[2] * w.B, na.rm = TRUE)
 
   #### M.c1r1 ####
   # w.c1r1.AA <- diag(sumiDD.AA)
@@ -553,16 +575,23 @@ uStat11.conditionalD <- function(
     c1r1 = c(c.c1r1.AA, c.c1r1.BB, c.c1r1.AB)
   )
 
+  mean <- c(mean.A, mean.B, mean.A - mean.B)
+  names(mean) <- desc
+  var <- c(var.A, var.B, var.AminusB)
+  names(var) <- desc
+  var.1obs <- moments$c1r1 - moments$c0r0
+  names(var.1obs) <- desc
+  nCperR <- data.frame(sumiD.A, sumiD.B)
+  names(nCperR) <- desc[1:2]
+
   result <- list(
-    mean = c(mean.A, mean.B, mean.A - mean.B),
-    var = c(var.A, var.B, var.AminusB),
-    var.1obs = moments$c1r1 - moments$c0r0,
-    meanPerR.A = meanPerR.A,
-    meanPerR.B = meanPerR.B,
+    mean = mean,
+    var = var,
+    var.1obs = var.1obs,
+    meanPerR = meanPerR,
     nR = nR,
     nC = nC,
-    nCperR.A = sumiD.A,
-    nCperR.B = sumiD.B,
+    nCperR = nCperR,
     moments = moments,
     coeff = coeff,
     desc = c(

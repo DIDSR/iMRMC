@@ -58,7 +58,10 @@ createIMRMCdf <- function(
 }
 
 ## undoIMRMCdf ####
-#' Convert a doIMRMC formatted data frame to a standard data frame with all factors
+#' Convert a doIMRMC formatted data frame to a standard data frame
+#' with all factors.
+#'
+#' @details Delete rows specifying truth and put the truth information on every row.
 #'
 #' @param df.MRMC This data frame includes columns for readerID, caseID, modalityID, score.
 #'        Each row is a reader x case x modality observation from the study
@@ -74,23 +77,23 @@ createIMRMCdf <- function(
 #'
 # @examples
 undoIMRMCdf <- function(df.MRMC) {
-  df.Truth <- df.MRMC[df.MRMC$readerID == -1, ]
-  df.Orig <- df.MRMC[df.MRMC$readerID != -1, ]
-  df.Orig <- apply(df.Orig, 1, function(x, df.Truth) {
 
-    truth <- df.Truth$score[df.Truth$readerID == "-1" & df.Truth$caseID == x[2]]
-    x[5] <- truth
-    names(x)[5] <- "truth"
+  # Separate the data frame into rows corresponding to truth
+  # and rows corresping to observations
+  df.Truth <- df.MRMC[df.MRMC$readerID == "-1", ]
+  if (nrow(df.Truth) > 0) {
+    df.Obs <- df.MRMC[df.MRMC$readerID != "-1", ]
+  } else {
+    df.Truth <- df.MRMC[df.MRMC$readerID == "truth"]
+    df.Obs <- df.MRMC[df.MRMC$readerID != "truth", ]
+  }
 
-    return(x)
+  df.Truth <- df.Truth[, c("caseID", "score")]
+  names(df.Truth) <- c("caseID", "truth")
 
-  }, df.Truth)
+  df <- merge(df.Obs, df.Truth, by = "caseID")
 
-  df.Orig <- data.frame(t(df.Orig))
-  df.Orig$truth <- factor(df.Orig$truth)
-  df.Orig$score <- as.numeric(as.character(df.Orig$score))
-
-  return(df.Orig)
+  return(df)
 
 }
 

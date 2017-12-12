@@ -5,13 +5,23 @@ Version: 1.1.0
 Author: Brandon Gallas
 Maintainer: Brandon Gallas <Brandon.Gallas@fda.hhs.gov>
 Description:
-  Do Multi-Reader, Multi-Case analyses of data from imaging studies where clinicians (readers)
-  evaluate patient images (cases). The initial package analyzes the reader-average
-  area under the ROC curve. Additional functions analyze other endpoints: binary performance
-  and score differences.
+  Do Multi-Reader, Multi-Case (MRMC) analyses of data from imaging studies where clinicians (readers)
+  evaluate patient images (cases). What does this mean? ... Many imaging studies are designed
+  so that every reader reads every case in all modalities, a fully-crossed study. In this case, the
+  data is cross-correlated, and we consider the readers and cases to be cross-correlated random effects.
+  An MRMC analysis accounts for the variability and correlations from the readers and cases when
+  estimating variances, confidence intervals, and p-values. The functions in this package can treat
+  arbitrary study designs and studies with missing data, not just fully-crossed study designs.
+  The initial package analyzes the reader-average
+  area under the ROC curve with U-statistics according to Gallas, Bandos, Samuelson,
+  and Wagner 2009 <doi:10.1080/03610920802610084>.
+  Additional functions analyze other endpoints with U-statistics (binary performance
+  and score differences) following the work by Gallas, Pennello, and Myers 2007
+  <doi:10.1364/JOSAA.24.000B70>.
   Package development and documentation is at <https://github.com/DIDSR/iMRMC/tree/master>.
 License: CC0
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
+Import: parallel
 Suggests: testthat

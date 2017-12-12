@@ -431,9 +431,9 @@ sim.gRoeMetz <- function(config) {
 #' @details If no arguments, this function returns a default simulation
 #' configuration for sim.gRoeMetz
 #'
-#' @param nR Number of readers (default = 10)
-#' @param nC.neg Number of signal-absent cases (default = 100)
-#' @param nC.pos Number of signal-present cases (default = 100)
+#' @param nR Number of readers (default = 5)
+#' @param nC.neg Number of signal-absent cases (default = 25)
+#' @param nC.pos Number of signal-present cases (default = 25)
 #' @param mu.neg Mean fixed effect of signal-absent distribution (default = 0.0) \cr
 #'               Modality specific parameters are set to zero: mu.Aneg = mu.Bneg = 0
 #' @param mu.pos Mean fixed effect of signal-present distribution (default = 1.0) \cr
@@ -457,9 +457,9 @@ sim.gRoeMetz <- function(config) {
 #' # Analyze the MRMC ROC data
 #' result <- doIMRMC(dFrame.imrmc)
 sim.gRoeMetz.config <- function(
-  nR = 10,
-  nC.neg = 100,
-  nC.pos = 100,
+  nR = 5,
+  nC.neg = 40,
+  nC.pos = 40,
   mu.neg = 0.0,
   mu.pos = 1.0,
   var_r =  0.03,
@@ -469,8 +469,8 @@ sim.gRoeMetz.config <- function(
 
   config <- list(
     # Modality labels
-    modalityID.A = "modalityA",
-    modalityID.B = "modalityB",
+    modalityID.A = "testA",
+    modalityID.B = "testB",
 
     # Experiment size
     nR = nR,
@@ -542,17 +542,17 @@ simRoeMetz.example <- function() {
   # Simulate data
   dFrame.imrmc <- sim.gRoeMetz(config)
 
-  tempA <- dFrame.imrmc[dFrame.imrmc$modalityID == "modalityA", ]
+  tempA <- dFrame.imrmc[dFrame.imrmc$modalityID == "testA", ]
   tempApos <- tempA[grep("pos", tempA$caseID), ]
   tempAneg <- tempA[grep("neg", tempA$caseID), ]
-  tempB <- dFrame.imrmc[dFrame.imrmc$modalityID == "modalityB", ]
+  tempB <- dFrame.imrmc[dFrame.imrmc$modalityID == "testB", ]
   tempBpos <- tempB[grep("pos", tempA$caseID), ]
   tempBneg <- tempB[grep("neg", tempA$caseID), ]
 
-  cat("modality A pos: mean, var = ", mean(tempApos$score), ",", stats::var(tempApos$score), "\n")
-  cat("modality B pos: mean, var = ", mean(tempBpos$score), ",", stats::var(tempBpos$score), "\n")
-  cat("modality A neg: mean, var = ", mean(tempAneg$score), ",", stats::var(tempAneg$score), "\n")
-  cat("modality B neg: mean, var = ", mean(tempBneg$score), ",", stats::var(tempBneg$score), "\n")
+  cat("test A pos: mean, var = ", mean(tempApos$score), ",", stats::var(tempApos$score), "\n")
+  cat("test B pos: mean, var = ", mean(tempBpos$score), ",", stats::var(tempBpos$score), "\n")
+  cat("test A neg: mean, var = ", mean(tempAneg$score), ",", stats::var(tempAneg$score), "\n")
+  cat("test B neg: mean, var = ", mean(tempBneg$score), ",", stats::var(tempBneg$score), "\n")
 
   return(dFrame.imrmc)
 
