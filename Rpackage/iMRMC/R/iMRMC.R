@@ -132,7 +132,7 @@ doIMRMC <- function(
   }
 
   if (is.null(iMRMCjarFullPath)) {
-    iMRMCjar <- "iMRMC-v3p3.jar"
+    iMRMCjar <- "iMRMC-v4.0.0.jar"
     pkgPath = path.package("iMRMC", quiet = FALSE)
     iMRMCjarFullPath <- file.path(pkgPath, "java", iMRMCjar)
 
