@@ -1,0 +1,1 @@
+The source for the java application that is at the core of the R package can be found at https://github.com/DIDSR/iMRMC.
