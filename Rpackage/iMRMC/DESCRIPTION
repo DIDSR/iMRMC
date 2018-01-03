@@ -1,7 +1,7 @@
 Package: iMRMC
 Type: Package
 Title: Multi-Reader, Multi-Case Analysis Methods (ROC, Agreement, and Other Metrics)
-Version: 1.1.0
+Version: 1.1.1
 Author: Brandon Gallas
 Maintainer: Brandon Gallas <Brandon.Gallas@fda.hhs.gov>
 Description:
@@ -12,8 +12,8 @@ Description:
   An MRMC analysis accounts for the variability and correlations from the readers and cases when
   estimating variances, confidence intervals, and p-values. The functions in this package can treat
   arbitrary study designs and studies with missing data, not just fully-crossed study designs.
-  The initial package analyzes the reader-average
-  area under the ROC curve with U-statistics according to Gallas, Bandos, Samuelson,
+  The initial package analyzes the reader-average area under the receiver operating characteristic (ROC)
+  curve with U-statistics according to Gallas, Bandos, Samuelson,
   and Wagner 2009 <doi:10.1080/03610920802610084>.
   Additional functions analyze other endpoints with U-statistics (binary performance
   and score differences) following the work by Gallas, Pennello, and Myers 2007

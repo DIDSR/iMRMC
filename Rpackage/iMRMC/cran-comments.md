@@ -1,5 +1,5 @@
 ## Test environments
-* devtools::build_win() on 12/4/2017
+* devtools::build_win() on 12/12/2017
 * Fedora 24, kernel 4.10.17, R 3.5.0.73808 (11/30/2017)
 
 ## Submission 2
@@ -14,6 +14,15 @@ CRAN feedback from submission 1 and responses.
    
 #### R1. References included with doi formatted as above.
 
+The additional references caused new "mis-spelled" words:
+
+ *  Bandos (17:67), this is a name
+ *  Gallas (17:59, 20:48), this is a name
+ *  MRMC (9:32, 13:6), this is an abbreviation. It's definition is given: Multi-Reader, Multi-Case
+ *  Multi (3:8, 3:22, 9:6, 9:20), this is a common combining form
+ *  Pennello (20:56), this is a name
+ *  ROC (3:51, 17:18), this is an abbreviation. It's definition is given: receiver operating characteristic
+ *  modalities (11:48), this word is correctly spelled
 
 #### 2. Please reduce the exucation time of your examples to less than 5 sec per Rd-file. We get on our Linux machine:
 

@@ -101,8 +101,8 @@ doIMRMC <- function(
   fileName = NULL,
   workDir = NULL,
   iMRMCjarFullPath = NULL,
-  stdout = FALSE,
-  stderr = FALSE,
+  stdout = NULL,
+  stderr = NULL,
   stripDatesForTests = FALSE){
 
   if (is.null(workDir)) {
