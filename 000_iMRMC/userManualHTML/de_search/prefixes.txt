@@ -1,6 +1,6 @@
 0xu0030
  0
- 0247
+ 0A
 0xu0031
  1
  1995
@@ -77,7 +77,7 @@
  P
  PURE
 0xu0051
- QI
+ Q
  QUALITY
 0xu0052
  R
@@ -99,7 +99,7 @@
  WRITTEN
 0xu0058
  X
- XIN
+ XVI
 0xu0059
  Y
  YOUSUN

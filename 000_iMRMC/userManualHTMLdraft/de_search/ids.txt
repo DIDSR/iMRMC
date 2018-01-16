@@ -98,8 +98,11 @@
  7.1 Ref... Advanced License is required!
  7_1_references.htm
 34
- 7.2 Abbr... Advanced License is required!
- 7_2_abbrevations.htm
+ 7.2 Related Papers... Advanced License is required!
+ 7_2_related_papers_and_presentations.htm
 35
- 7.3 App... Advanced License is required!
- 7_3_appendix_a.htm
+ 7.3 Abbr... Advanced License is required!
+ 7_3_abbrevations.htm
+36
+ 7.4 App... Advanced License is required!
+ 7_4_appendix_a.htm
