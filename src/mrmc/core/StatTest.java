@@ -804,10 +804,12 @@ return DF_BDG;
 		}
 
 		if (DF_Hillis < 2) {
-			JFrame frame = new JFrame();
-			JOptionPane.showMessageDialog(frame,
-					"DF_Hillis was calculated to be " + DF_Hillis + "\nIt is being set to 2", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			if (!RoeMetz.doValidation&&!MRMC.commandStart){
+				JFrame frame = new JFrame();
+				JOptionPane.showMessageDialog(frame,
+						"DF_Hillis was calculated to be " + DF_Hillis + "\nIt is being set to 2", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
 			DF_Hillis = 2;
 		}
 		if( Double.isInfinite(DF_Hillis) ) {
