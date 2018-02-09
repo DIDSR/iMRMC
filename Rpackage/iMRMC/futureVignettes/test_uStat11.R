@@ -1,7 +1,4 @@
-library(testthat)
 library(iMRMC)
-
-context("uStat11Diff")
 
 init.lecuyerRNG()
 
@@ -12,7 +9,7 @@ simRoeMetz.config$nC.neg <- 20
 simRoeMetz.config$nC.pos <- 20
 
 startTime <- proc.time()[1]
-nMC <- 10
+nMC <- 100
 
 df.simMean <- data.frame()
 for (i in 1:nMC) {
@@ -28,7 +25,7 @@ for (i in 1:nMC) {
     df.MRMC.pos,
     kernelFlag = 2,
     keyColumns = c("readerID", "caseID", "modalityID", "score"),
-    modalitiesToCompare = c("modalityA", "modalityB", "modalityB", "modalityA"))
+    modalitiesToCompare = c("testA", "testB", "testB", "testA"))
 
   df.simMean <- rbind(
     df.simMean,
@@ -45,19 +42,11 @@ for (i in 1:nMC) {
 }
 
 print("")
-print("intraRdiff: mean and variance from first observation")
-print(df.simMean[1, ])
-
-test_that(
-  "uStat11, difference kernel, doesn't change", {
-    expect_equal(df.simMean$mean.AB[1], -0.224748287)
-    expect_equal(df.simMean$var.AB[1], 0.05762784)
-  }
-)
-
-print("")
 print(paste("intraRdiff: mcMean over", nMC, "obs"))
 print(colMeans(df.simMean))
 print("")
 print(paste("intraRdiff: mcVar over", nMC, "obs"))
 print(diag(cov(df.simMean)))
+stopTime <- proc.time()[1]
+cat("\n")
+cat("Simulation duration:", stopTime - startTime)

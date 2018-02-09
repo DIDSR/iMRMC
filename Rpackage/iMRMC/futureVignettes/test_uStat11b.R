@@ -1,7 +1,4 @@
-library(testthat)
 library(iMRMC)
-
-context("uStat Differences")
 
 init.lecuyerRNG()
 
@@ -22,40 +19,26 @@ for (i in 1:nMC) {
 
   # Simulate data
   df.MRMC <- sim.gRoeMetz(simRoeMetz.config)
-
-  # Split the data
-  df.MRMC.pos <- droplevels(df.MRMC[grepl("pos", df.MRMC$caseID), ])
-  df.MRMC.neg <- droplevels(df.MRMC[grepl("neg", df.MRMC$caseID), ])
-
-  # Create the score and design matrices (nCases by nReaders)
-  df.MRMC.Apos <- droplevels(df.MRMC.pos[grepl("modalityA", df.MRMC.pos$modalityID), ])
-  scores.Apos <- t(convertDFtoScoreMatrix(df.MRMC.Apos))
-  design.Apos <- t(convertDFtoDesignMatrix(df.MRMC.Apos))
-  df.MRMC.Bpos <- droplevels(df.MRMC.pos[grepl("modalityB", df.MRMC.pos$modalityID), ])
-  scores.Bpos <- t(convertDFtoScoreMatrix(df.MRMC.Bpos))
-  design.Bpos <- t(convertDFtoDesignMatrix(df.MRMC.Bpos))
+  df.MRMC <- undoIMRMCdf(df.MRMC)
+  df.MRMC <- split(df.MRMC, list(df.MRMC$modalityID, df.MRMC$truth))
 
   # For each monte carlo trial, the observations are the scores
   # from two readers reading the same case and their difference.
   # This simulation attempts to find the variance of these scores and their difference.
   # This is a little different from other work where each monte carlo trial yields
   # a reader and case averaged quantity.
-  Ar1c1 <- df.MRMC.pos[
-    df.MRMC.pos$readerID == "reader1" &
-      df.MRMC.pos$caseID == "posCase1" &
-      df.MRMC.pos$modalityID == "modalityA", "score"]
-  Ar2c1 <- df.MRMC.pos[
-    df.MRMC.pos$readerID == "reader2" &
-      df.MRMC.pos$caseID == "posCase1" &
-      df.MRMC.pos$modalityID == "modalityA", "score"]
-  Br1c1 <- df.MRMC.pos[
-    df.MRMC.pos$readerID == "reader1" &
-      df.MRMC.pos$caseID == "posCase1" &
-      df.MRMC.pos$modalityID == "modalityB", "score"]
-  Br2c1 <- df.MRMC.pos[
-    df.MRMC.pos$readerID == "reader2" &
-      df.MRMC.pos$caseID == "posCase1" &
-      df.MRMC.pos$modalityID == "modalityB", "score"]
+  Ar1c1 <- df.MRMC$testA.1[
+    df.MRMC$testA.1$readerID == "reader1" &
+      df.MRMC$testA.1$caseID == "posCase1", "score"]
+  Ar2c1 <- df.MRMC$testA.1[
+    df.MRMC$testA.1$readerID == "reader2" &
+      df.MRMC$testA.1$caseID == "posCase1", "score"]
+  Br1c1 <- df.MRMC$testB.1[
+    df.MRMC$testB.1$readerID == "reader1" &
+      df.MRMC$testB.1$caseID == "posCase1", "score"]
+  Br2c1 <- df.MRMC$testB.1[
+    df.MRMC$testB.1$readerID == "reader2" &
+      df.MRMC$testB.1$caseID == "posCase1", "score"]
 
   df.sim1obs <- rbind(
     df.sim1obs,
@@ -79,10 +62,10 @@ for (i in 1:nMC) {
   )
 
   result11diff <- uStat11.jointD(
-    df.MRMC.pos,
+    rbind(df.MRMC$testA.1, df.MRMC$testB.1),
     kernelFlag = 2,
     keyColumns = c("readerID", "caseID", "modalityID", "score"),
-    modalitiesToCompare = c("modalityA", "modalityB", "modalityA", "modalityB"))
+    modalitiesToCompare = c("testA", "testB", "testA", "testB"))
 
   df.uStat11.diff <- rbind(
     df.uStat11.diff,
@@ -104,10 +87,10 @@ for (i in 1:nMC) {
   # )
 
   result11.identity <- uStat11.jointD(
-    df.MRMC.pos,
+    rbind(df.MRMC$testA.1, df.MRMC$testB.1),
     kernelFlag = 1,
     keyColumns = c("readerID", "caseID", "modalityID", "score"),
-    modalitiesToCompare = c("modalityA", "modalityB"))
+    modalitiesToCompare = c("testA", "testB"))
 
   moments <- result11.identity$moments
 
@@ -148,123 +131,7 @@ for (i in 1:nMC) {
     )
   )
 
-  # # resultLA.wmbr <- LA.wmbr(
-  # #   df.MRMC.pos,
-  # #   keyColumns = c("readerID", "caseID", "modalityID", "score"),
-  # #   modalitiesToCompare = c("modalityA")
-  # # )
-  #
-  # resultLA.bmwr <- LA.bmwr(
-  #   df.MRMC.pos,
-  #   keyColumns = c("readerID", "caseID", "modalityID", "score"),
-  #   modalitiesToCompare = c("modalityA", "modalityB")
-  # )
-  #
-  # resultLA.wmbr <- LA.bmbr(
-  #   df.MRMC.pos,
-  #   keyColumns = c("readerID", "caseID", "modalityID", "score"),
-  #   modalitiesToCompare = c("modalityA", "modalityA")
-  # )
-  #
-  # resultLA.bmbr <- LA.bmbr(
-  #   df.MRMC.pos,
-  #   keyColumns = c("readerID", "caseID", "modalityID", "score"),
-  #   modalitiesToCompare = c("modalityA", "modalityB")
-  # )
-
-  # test_that(
-  #   "LA.bmwr can be estimateed with uStat11.diff or uStat11.identity ", {
-  #     expect_equal(result11diff$var.1obs[1], var.Ar1cminusBr1c, tolerance = 0.000001)
-  #     expect_equal(resultLA.bmwr$var.ArcminusBrc, var.Ar1cminusBr1c, tolerance = 0.000001)
-  #   }
-  # )
-  #
-  # test_that(
-  #   "LA.wmbr is based on uStat11.identity ", {
-  #     expect_equal(resultLA.wmbr$var.Ar1cminusBr2c, var.Ar1cminusAr2c, tolerance = 0.000001)
-  #   }
-  # )
-  #
-  # test_that(
-  #   "LA.bmbr.asym is based on uStat11.identity", {
-  #     expect_equal(resultLA.bmbr$var.Ar1cminusBr2c, var.Ar1cminusBr2c, tolerance = 0.000001)
-  #   }
-  # )
-  #
-  # test_that(
-  #   "LA.bmbr.symm can be estimated with uStat21.diff or df.uStat11.identity", {
-  #     expect_equal(result21$var.1obs[1], var.Ar1cminusBr2c.symmetric, tolerance = 0.000001)
-  #   }
-  # )
-
 }
-
-print("")
-print("single observations from first MC trial")
-print(df.sim1obs[1, 1:4])
-
-print("")
-print("within-reader between-modality observations from first MC trial")
-print(df.sim1obs[1, 5:6])
-
-print("")
-print("between-reader within-modality observations from first MC trial")
-print(df.sim1obs[1, 7:8])
-
-print("")
-print("between-reader between-modality observations from first MC trial")
-print(df.sim1obs[1, 9:11])
-
-print("")
-print("within-reader between-modality variance estimate from first MC trial")
-print(paste("df.uStat11.diff", names(df.uStat11.diff), df.uStat11.diff[1, ]))
-print(paste("df.uStat11.identity", names(df.uStat11.identity)[3], df.uStat11.identity[1, 3]))
-
-print("")
-print("between-reader within-modality variance estimate from first MC trial")
-print(df.uStat11.identity[1, 4:5])
-
-print("")
-print("between-reader between-modality variance estimate from first MC trial (asymmetric)")
-print(paste("df.uStat11.identity", names(df.uStat11.identity)[6], df.uStat11.identity[1, 6]))
-
-print("")
-print("between-reader between-modality variance estimate from first MC trial (symmetric)")
-print(paste("df.uStat11.identity", names(df.uStat11.identity)[7], df.uStat11.identity[1, 7]))
-print(paste("df.uStat21", names(df.uStat21), df.uStat21[1, ]))
-
-test_that(
-  "simulation doesn't change", {
-    expect_equal(df.sim1obs$Ar1c1[1], 3.062313, tolerance = 0.000001)
-    expect_equal(df.sim1obs$Ar2c1[1], 1.802682, tolerance = 0.000001)
-    expect_equal(df.sim1obs$Br1c1[1], 2.392086, tolerance = 0.000001)
-    expect_equal(df.sim1obs$Br2c1[1], 2.900861, tolerance = 0.000001)
-  }
-)
-
-test_that(
-  "uStat11.identity doesn't change ", {
-    expect_equal(df.uStat11.identity$var.Arc[1], 1.039491, tolerance = 0.000001)
-    expect_equal(df.uStat11.identity$var.Brc[1], 0.9842087, tolerance = 0.000001)
-    expect_equal(df.uStat11.identity$var.Ar1cminusBr1c[1], 1.417741, tolerance = 0.000001)
-    expect_equal(df.uStat11.identity$var.Ar1cminusAr2c[1], 0.877553, tolerance = 0.000001)
-    expect_equal(df.uStat11.identity$var.Br1cminusBr2c[1], 0.941224, tolerance = 0.000001)
-    expect_equal(df.uStat11.identity$var.Ar1cminusBr2c[1], 1.853234, tolerance = 0.000001)
-    expect_equal(df.uStat11.identity$var.Ar1cminusBr2c.symmetric[1], 1.180793, tolerance = 0.000001)
-  }
-)
-
-test_that(
-  "uStat11 doesn't change ", {
-    expect_equal(df.uStat11.diff$var.Ar1cminusBr1c[1], 1.417741, tolerance = 0.000001)
-  }
-)
-
-# test_that(
-#   "uStat21, kernel=100 doesn't change ", {
-#     expect_equal(df.uStat21$var.Ar1cminusBr2c.symmetric[1], 1.180793, tolerance = 0.000001)
-#   }
-# )
 
 df.sim1obs.mcMean <- colMeans(df.sim1obs)
 names(df.sim1obs.mcMean) <- paste(names(df.sim1obs.mcMean), ".", "mcMean", sep = "")
