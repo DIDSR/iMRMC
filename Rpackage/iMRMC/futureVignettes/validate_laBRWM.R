@@ -9,11 +9,11 @@ simRoeMetz.config$nC.neg <- 20
 simRoeMetz.config$nC.pos <- 20
 
 startTime <- proc.time()[1]
-nMC <- 1000
+nMC <- 100
 
 #### Loop over MC trials ####
 df.sim1obs <- data.frame()
-df.laWRBM <- data.frame()
+df.laBRWM <- data.frame()
 for (i in 1:nMC) {
 
   # Simulate data
@@ -64,17 +64,49 @@ for (i in 1:nMC) {
     )
   )
 
-  # Estimate the WRBM limits of agreement
-  result.laWRBM <- laWRBM(
+  # Estimate the BRWM limits of agreement
+  result11.identity <- uStat11.jointD(
     rbind(df.MRMC$testA.1, df.MRMC$testB.1),
+    kernelFlag = 1,
     keyColumns = c("readerID", "caseID", "modalityID", "score"),
-    modalitiesToCompare = c("testA", "testB", "testA", "testB"))
+    modalitiesToCompare = c("testA", "testB"))
 
-  # Aggregate the results of all the MC trials into one data frame.
-  df.laWRBM <- rbind(
-    df.laWRBM,
+  moments <- result11.identity$moments
+
+  var.Arc = moments$c1r1[1] - moments$c0r0[1]
+  var.Brc = moments$c1r1[2] - moments$c0r0[2]
+  cov.Ar1cBr1c <- moments$c1r1[3] - moments$c0r0[3]
+
+  cov.Ar1cAr2c <- moments$c1r0[1] - moments$c0r0[1]
+  cov.Br1cBr2c <- moments$c1r0[2] - moments$c0r0[2]
+  cov.Ar1cBr2c <- moments$c1r0[3] - moments$c0r0[3]
+
+  var.Ar1cminusBr1c <- var.Arc + var.Brc - 2 * cov.Ar1cBr1c
+
+  var.Ar1cminusAr2c <- var.Arc + var.Arc - 2 * cov.Ar1cAr2c
+  var.Br1cminusBr2c <- var.Brc + var.Brc - 2 * cov.Br1cBr2c
+
+  var.Ar1cminusBr2c <- var.Arc + var.Brc - 2 * cov.Ar1cBr2c
+
+  var.Ar1cminusBr2c.symmetric <-
+    0.5 * moments$c1r1[1] + 0.5 * moments$c1r0[1] -   moments$c0r0[1] +
+    0.5 * moments$c1r1[2] + 0.5 * moments$c1r0[2] -   moments$c0r0[2] +
+    -moments$c1r1[3] +      -moments$c1r0[3] + 2*moments$c0r0[3]
+
+  df.laBRWM <- rbind(
+      df.laBRWM,
     data.frame(
-      var.Ar1cminusBr1c = result.laWRBM$var[1]
+      var.Arc = var.Arc,
+      var.Brc = var.Brc,
+
+      var.Ar1cminusBr1c = var.Ar1cminusBr1c,
+
+      var.Ar1cminusAr2c = var.Ar1cminusAr2c,
+      var.Br1cminusBr2c = var.Br1cminusBr2c,
+
+      var.Ar1cminusBr2c = var.Ar1cminusBr2c,
+
+      var.Ar1cminusBr2c.symmetric = var.Ar1cminusBr2c.symmetric
     )
   )
 
@@ -88,10 +120,10 @@ df.sim1obs.mcVar <- diag(cov(df.sim1obs))
 names(df.sim1obs.mcVar) <- paste(names(df.sim1obs.mcVar), ".", "mcVar", sep = "")
 
 # Estimate the variance of the limits of aggreement from an MRMC data set
-df.laWRBM.mcMean <- colMeans(df.laWRBM)
-names(df.laWRBM.mcMean) <- paste(names(df.laWRBM.mcMean), ".", "mcMean", sep = "")
-df.laWRBM.mcVar <- diag(cov(df.laWRBM))
-names(df.laWRBM.mcVar) <- paste(names(df.laWRBM.mcVar), ".", "mcVar", sep = "")
+df.laBRWM.mcMean <- colMeans(df.laBRWM)
+names(df.laBRWM.mcMean) <- paste(names(df.laBRWM.mcMean), ".", "mcMean", sep = "")
+df.laBRWM.mcVar <- diag(cov(df.laBRWM))
+names(df.laBRWM.mcVar) <- paste(names(df.laBRWM.mcVar), ".", "mcVar", sep = "")
 
 #### Print Results ####
 # Print the number of MC trials and the experimental size of each MC trial
@@ -107,14 +139,16 @@ print("")
 print("MCmean of single observations")
 print(df.sim1obs.mcMean[1:4])
 
-print("")
-print("MCmean of within-reader between-modality differences")
-print(df.sim1obs.mcMean[5:6])
+
 
 print("")
-print("MCvar of within-reader and between-modality differences")
-print("df.sim1obs.mcVar[5:6]")
-print(df.sim1obs.mcVar[5:6])
-print("df.laWRBM.mcMean[1]")
-print(df.laWRBM.mcMean[1])
+print("MCmean of between-reader within-modality differences")
+print(df.sim1obs.mcMean[7:8])
+
+print("")
+print("MCvar of between-reader within-modality differences")
+print("df.sim1obs.mcVar[7:8]")
+print(df.sim1obs.mcVar[7:8])
+print("df.laBRWM.mcVar[4:5]")
+print(df.laBRWM.mcMean[4:5])
 
