@@ -91,7 +91,7 @@ undoIMRMCdf <- function(df.MRMC) {
   df.Truth <- df.Truth[, c("caseID", "score")]
   names(df.Truth) <- c("caseID", "truth")
 
-  df <- merge(df.Obs, df.Truth, by = "caseID")
+  df <- droplevels(merge(df.Obs, df.Truth, by = "caseID"))
 
   return(df)
 

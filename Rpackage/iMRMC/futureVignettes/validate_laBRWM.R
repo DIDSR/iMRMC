@@ -64,49 +64,33 @@ for (i in 1:nMC) {
     )
   )
 
-  # Estimate the BRWM limits of agreement
-  result11.identity <- uStat11.jointD(
-    rbind(df.MRMC$testA.1, df.MRMC$testB.1),
-    kernelFlag = 1,
-    keyColumns = c("readerID", "caseID", "modalityID", "score"),
-    modalitiesToCompare = c("testA", "testB"))
+  df <- rbind(df.MRMC$testA.1, df.MRMC$testB.1)
+  keyColumns <- c("readerID", "caseID", "modalityID", "score")
+  modalitiesToCompare <- c("testA", "testB")
 
-  moments <- result11.identity$moments
+  # Estimate the BRWM limits of agreement
+  result <- uStat11.conditionalD(
+    df,
+    kernelFlag = 1,
+    keyColumns = keyColumns,
+    modalitiesToCompare = modalitiesToCompare)
+
+  moments <- result$moments
 
   var.Arc = moments$c1r1[1] - moments$c0r0[1]
   var.Brc = moments$c1r1[2] - moments$c0r0[2]
-  cov.Ar1cBr1c <- moments$c1r1[3] - moments$c0r0[3]
 
   cov.Ar1cAr2c <- moments$c1r0[1] - moments$c0r0[1]
   cov.Br1cBr2c <- moments$c1r0[2] - moments$c0r0[2]
-  cov.Ar1cBr2c <- moments$c1r0[3] - moments$c0r0[3]
-
-  var.Ar1cminusBr1c <- var.Arc + var.Brc - 2 * cov.Ar1cBr1c
 
   var.Ar1cminusAr2c <- var.Arc + var.Arc - 2 * cov.Ar1cAr2c
   var.Br1cminusBr2c <- var.Brc + var.Brc - 2 * cov.Br1cBr2c
 
-  var.Ar1cminusBr2c <- var.Arc + var.Brc - 2 * cov.Ar1cBr2c
-
-  var.Ar1cminusBr2c.symmetric <-
-    0.5 * moments$c1r1[1] + 0.5 * moments$c1r0[1] -   moments$c0r0[1] +
-    0.5 * moments$c1r1[2] + 0.5 * moments$c1r0[2] -   moments$c0r0[2] +
-    -moments$c1r1[3] +      -moments$c1r0[3] + 2*moments$c0r0[3]
-
   df.laBRWM <- rbind(
       df.laBRWM,
     data.frame(
-      var.Arc = var.Arc,
-      var.Brc = var.Brc,
-
-      var.Ar1cminusBr1c = var.Ar1cminusBr1c,
-
       var.Ar1cminusAr2c = var.Ar1cminusAr2c,
-      var.Br1cminusBr2c = var.Br1cminusBr2c,
-
-      var.Ar1cminusBr2c = var.Ar1cminusBr2c,
-
-      var.Ar1cminusBr2c.symmetric = var.Ar1cminusBr2c.symmetric
+      var.Br1cminusBr2c = var.Br1cminusBr2c
     )
   )
 
@@ -149,6 +133,6 @@ print("")
 print("MCvar of between-reader within-modality differences")
 print("df.sim1obs.mcVar[7:8]")
 print(df.sim1obs.mcVar[7:8])
-print("df.laBRWM.mcVar[4:5]")
-print(df.laBRWM.mcMean[4:5])
+print("df.laBRWM.mcVar")
+print(df.laBRWM.mcMean)
 

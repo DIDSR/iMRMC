@@ -5,7 +5,6 @@ context("doIMRMC")
 
 # This flag should always be false except when the tests are first created.
 flagSave <- FALSE
-
 tic <- proc.time()
 
 init.lecuyerRNG()
@@ -41,7 +40,7 @@ cat("\n  Elapsed time: ", toc[1:3] - tic[1:3], "\n")
 # Save the result to a file for future comparisons
 fileName <- "test_doIMRMC.Rdata"
 if (flagSave) {
-  save(saveResult, file = file.path("tests", "testthat", "test_doIMRMC.Rdata"))
+  save(saveResult, file = file.path("tests", "testthat", fileName))
 }
 
 # Recover the expected results

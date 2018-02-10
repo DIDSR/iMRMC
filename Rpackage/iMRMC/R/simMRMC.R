@@ -137,9 +137,14 @@ simMRMC <- function(simMRMC.config) {
 #'
 #' @export
 #'
-convertDFtoScoreMatrix <- function(dfMRMC) {
+convertDFtoScoreMatrix <- function(dfMRMC, dropFlag = TRUE) {
 
-  dfMRMC <- droplevels(dfMRMC)
+  # Dropping levels will remove readers or cases that have no observations
+  # Dropping them by default will speed up analyses
+  # Leaving the levels is useful if you want to see the entire score or design matrix
+  if (dropFlag) {
+    dfMRMC <- droplevels(dfMRMC)
+  }
 
   caseIDs <- levels(dfMRMC$caseID)
   readerIDs <- levels(dfMRMC$readerID)
@@ -166,9 +171,14 @@ convertDFtoScoreMatrix <- function(dfMRMC) {
 #'
 #' @export
 #'
-convertDFtoDesignMatrix <- function(dfMRMC) {
+convertDFtoDesignMatrix <- function(dfMRMC, dropFlag = TRUE) {
 
-  dfMRMC <- droplevels(dfMRMC)
+  # Dropping levels will remove readers or cases that have no observations
+  # Dropping them by default will speed up analyses
+  # Leaving the levels is useful if you want to see the entire score or design matrix
+  if (dropFlag) {
+    dfMRMC <- droplevels(dfMRMC)
+  }
 
   caseIDs <- levels(dfMRMC$caseID)
   readerIDs <- levels(dfMRMC$readerID)

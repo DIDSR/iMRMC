@@ -292,6 +292,7 @@ uStat11.jointD <- function(
   var <- c(var.A, var.B, var.AminusB)
   names(var) <- desc
   var.1obs <- moments$c1r1 - moments$c0r0
+  var.1obs[3] <- var.1obs[1] + var.1obs[2] - 2 * var.1obs[3]
   names(var.1obs) <- desc
   nCperR <- data.frame(sumiD.A, sumiD.B)
   names(nCperR) <- desc[1:2]
@@ -580,6 +581,7 @@ uStat11.conditionalD <- function(
   var <- c(var.A, var.B, var.AminusB)
   names(var) <- desc
   var.1obs <- moments$c1r1 - moments$c0r0
+  var.1obs[3] <- var.1obs[1] + var.1obs[2] - 2 * var.1obs[3]
   names(var.1obs) <- desc
   nCperR <- data.frame(sumiD.A, sumiD.B)
   names(nCperR) <- desc[1:2]
