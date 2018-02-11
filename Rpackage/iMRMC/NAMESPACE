@@ -2,7 +2,6 @@
 
 export(convertDFtoDesignMatrix)
 export(convertDFtoScoreMatrix)
-export(convertFileToDF)
 export(createIMRMCdf)
 export(doIMRMC)
 export(init.lecuyerRNG)

@@ -9,7 +9,7 @@ simRoeMetz.config$nC.neg <- 20
 simRoeMetz.config$nC.pos <- 20
 
 startTime <- proc.time()[1]
-nMC <- 100
+nMC <- 10
 
 #### Loop over MC trials ####
 df.sim1obs <- data.frame()
@@ -64,49 +64,23 @@ for (i in 1:nMC) {
     )
   )
 
-  df <- rbind(df.MRMC$testA.1, df.MRMC$testB.1)
-  keyColumns <- c("readerID", "caseID", "modalityID", "score")
-  modalitiesToCompare <- c("testA", "testB")
+  result.laBRWM <- laBRWM(df.MRMC$testA.1, "testA")
 
-  # Estimate the BRWM limits of agreement
-  result <- uStat11.conditionalD(
-    df,
-    kernelFlag = 1,
-    keyColumns = keyColumns,
-    modalitiesToCompare = modalitiesToCompare)
-
-  moments <- result$moments
-
-  var.Arc = moments$c1r1[1] - moments$c0r0[1]
-  var.Brc = moments$c1r1[2] - moments$c0r0[2]
-
-  cov.Ar1cAr2c <- moments$c1r0[1] - moments$c0r0[1]
-  cov.Br1cBr2c <- moments$c1r0[2] - moments$c0r0[2]
-
-  var.Ar1cminusAr2c <- var.Arc + var.Arc - 2 * cov.Ar1cAr2c
-  var.Br1cminusBr2c <- var.Brc + var.Brc - 2 * cov.Br1cBr2c
-
-  df.laBRWM <- rbind(
-      df.laBRWM,
-    data.frame(
-      var.Ar1cminusAr2c = var.Ar1cminusAr2c,
-      var.Br1cminusBr2c = var.Br1cminusBr2c
-    )
-  )
+  df.laBRWM <- rbind(df.laBRWM, result.laBRWM)
 
 }
 
 #### Summarize MC simulation ####
 # Take the mean and the variance of the observations, including WRBM differences
-df.sim1obs.mcMean <- colMeans(df.sim1obs)
+df.sim1obs.mcMean <- data.frame(t(colMeans(df.sim1obs)))
 names(df.sim1obs.mcMean) <- paste(names(df.sim1obs.mcMean), ".", "mcMean", sep = "")
-df.sim1obs.mcVar <- diag(cov(df.sim1obs))
+df.sim1obs.mcVar <- data.frame(t(diag(cov(df.sim1obs))))
 names(df.sim1obs.mcVar) <- paste(names(df.sim1obs.mcVar), ".", "mcVar", sep = "")
 
 # Estimate the variance of the limits of aggreement from an MRMC data set
-df.laBRWM.mcMean <- colMeans(df.laBRWM)
+df.laBRWM.mcMean <- data.frame(t(colMeans(df.laBRWM)))
 names(df.laBRWM.mcMean) <- paste(names(df.laBRWM.mcMean), ".", "mcMean", sep = "")
-df.laBRWM.mcVar <- diag(cov(df.laBRWM))
+df.laBRWM.mcVar <- data.frame(t(diag(cov(df.laBRWM))))
 names(df.laBRWM.mcVar) <- paste(names(df.laBRWM.mcVar), ".", "mcVar", sep = "")
 
 #### Print Results ####
@@ -123,16 +97,14 @@ print("")
 print("MCmean of single observations")
 print(df.sim1obs.mcMean[1:4])
 
-
-
 print("")
 print("MCmean of between-reader within-modality differences")
-print(df.sim1obs.mcMean[7:8])
+print(df.sim1obs.mcMean[7])
 
 print("")
 print("MCvar of between-reader within-modality differences")
-print("df.sim1obs.mcVar[7:8]")
-print(df.sim1obs.mcVar[7:8])
-print("df.laBRWM.mcVar")
-print(df.laBRWM.mcMean)
+print("df.sim1obs.mcVar[7]")
+print(df.sim1obs.mcVar[7])
+print("df.laBRWM.mcVar$var.mcMean")
+print(df.laBRWM.mcMean$var.mcMean)
 

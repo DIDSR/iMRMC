@@ -133,6 +133,10 @@ simMRMC <- function(simMRMC.config) {
 #'
 #' @param dfMRMC An MRMC data frame
 #'
+#' @param dropFlag [logical] The default setting (FALSE) removes readers and cases
+#'   that have no observations. Dropping them by default will speed up analyses.
+#'   Leaving the levels is useful if you want to see the entire score or design matrix.
+#'
 #' @return A matrix [nCases, nReaders] of the scores each reader reported for each case
 #'
 #' @export
@@ -166,6 +170,10 @@ convertDFtoScoreMatrix <- function(dfMRMC, dropFlag = TRUE) {
 #' @description Convert an MRMC data frame to a design matrix, dropping readers or cases with no observations
 #'
 #' @param dfMRMC An MRMC data frame
+#'
+#' @param dropFlag [logical] The default setting (FALSE) removes readers and cases
+#'   that have no observations. Dropping them by default will speed up analyses.
+#'   Leaving the levels is useful if you want to see the entire score or design matrix.
 #'
 #' @return A matrix [nCases, nReaders] indicating which scores were reported for each reader and case
 #'

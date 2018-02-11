@@ -1,17 +1,35 @@
 #---- laWRBM ----
 #' @title MRMC analysis of within-reader between-modality limits of agreement
 #'
-#' @details The core analysis is done by ustat11 with the difference kernel (2).
-#'   This calculation can also be accomplished by ustat11 with the identity kernel (1),
+#' @description  The core analysis is done by ustat11 with the difference kernel (kernelFlag = 2).
+#'   This calculation can also be accomplished by ustat11 with the identity kernel (kernelFlag = 1),
 #'   and the code to do that is provided after the return statement so it never gets exectuted.
+#'
+#' @param df
+#' Data frame of observations, one per row. Columns identify random effects, fixed effects,
+#' and the observation. Namely,
+#' \itemize{
+#'   \item \code{readerID:} The factor corresponding to the different readers in the study.
+#'     The readerID is treated as a random effect.
+#'   \item \code{caseID:} The factor corresponding to the different cases in the study.
+#'     The caseID is treated as a random effect.
+#'   \item \code{modalityID:} The factor corresponding to the different modalities in the study.
+#'     The modalityID is treated as a fixed effect.
+#'   \item \code{score:} The score given by the reader to the case for the modality indicated.
+#' }
+#'
+#' @param modalitiesToCompare
+#' The factors identifying the modalities to compare.
+#'
+#' @param keyColumns
+#' Identify the factors corresponding to the readerID, caseID, modalityID, and score
+#' (or alternative random and fixed effects).
 #'
 #' @export
 #'
-#' @rdname limitsOfAgreement
 laWRBM <- function(
-  df.input,
-  keyColumns = c("readerID", "caseID", "modalityID", "score"),
-  modalitiesToCompare
+  df, modalitiesToCompare,
+  keyColumns = c("readerID", "caseID", "modalityID", "score")
 ) {
 
   if (length(modalitiesToCompare) != 2) {
@@ -25,7 +43,7 @@ laWRBM <- function(
   # The limits can also be determined from uStat11 when the kernel flag is 1,
   # but it is a little bit more complicated. Refer to validate laWRBM.R for info.
   result1 <- uStat11.conditionalD(
-    df.input, keyColumns = keyColumns,
+    df, keyColumns = keyColumns,
     modalitiesToCompare = mToCompare, kernelFlag = 2
   )
 
@@ -42,7 +60,7 @@ laWRBM <- function(
   #### Alternate method with identical result ####
   #### Uses uStat11 and the identity kernel
   result <- uStat11.jointD(
-    df.input, keyColumns = keyColumns,
+    df, keyColumns = keyColumns,
     modalitiesToCompare = modalitiesToCompare, kernelFlag = 1)
 
   moments <- result$moments
@@ -64,30 +82,63 @@ laWRBM <- function(
 }
 
 #---- laBRWM ----
-#' @title MRMC analysis of within-reader between-modality limits of agreement
+#' @title MRMC analysis of between-reader within-modality limits of agreement
 #'
-#' @details The core analysis is done by ustat11 with the difference kernel (2).
-#'   This calculation can also be accomplished by ustat11 with the identity kernel (1),
-#'   and the code to do that is provided after the return statement so it never gets exectuted.
+#' @description The core analysis is done by ustat11 with the identity kernel (kernelFlag = 1).
+#'
+#' @param df
+#' Data frame of observations, one per row. Columns identify random effects, fixed effects,
+#' and the observation. Namely,
+#' \itemize{
+#'   \item \code{readerID:} The factor corresponding to the different readers in the study.
+#'     The readerID is treated as a random effect.
+#'   \item \code{caseID:} The factor corresponding to the different cases in the study.
+#'     The caseID is treated as a random effect.
+#'   \item \code{modalityID:} The factor corresponding to the different modalities in the study.
+#'     The modalityID is treated as a fixed effect.
+#'   \item \code{score:} The score given by the reader to the case for the modality indicated.
+#' }
+#'
+#' @param modality
+#' The factor identifying the modality to analyze.
+#'
+#' @param keyColumns
+#' Identify the factors corresponding to the readerID, caseID, modalityID, and score
+#' (or alternative random and fixed effects).
 #'
 #' @export
 #'
-#' @rdname limitsOfAgreement
 laBRWM <- function(
-  df.input,
-  keyColumns = c("readerID", "caseID", "modalityID", "score"),
-  modalitiesToCompare = c("modalityA", "modalityB")
+  df, modality,
+  keyColumns = c("readerID", "caseID", "modalityID", "score")
 ) {
 
+  if (length(modality) != 1) {
+    print(paste("length(modality) =", length(modality)))
+    stop("ERROR: modality should have 1 element.")
+  }
+
+  modalitiesToCompare <- c(modality, modality)
+
+  # Estimate the BRWM limits of agreement
   # The limits of agreement are determined by the MRMC moments of uStat11
   # when the kernel flag is 1.
-  result <- uStat11.conditionalD(
-    df.input, keyColumns = keyColumns,
-    modalitiesToCompare = modalitiesToCompare, kernelFlag = 1
-  )
-  result2 <- result
-  result2$var <- result2$var.1obs
-  result2 <- result2[c("mean", "var", "nR", "nC")]
+  result1 <- uStat11.conditionalD(
+    df, modalitiesToCompare = modalitiesToCompare,
+    kernelFlag = 1, keyColumns = keyColumns)
+
+  mean <- result1$mean[1]
+
+  moments <- result1$moments
+
+  var.Arc = moments$c1r1[1] - moments$c0r0[1]
+  cov.Ar1cAr2c <- moments$c1r0[1] - moments$c0r0[1]
+  var.Ar1cminusAr2c <- var.Arc + var.Arc - 2 * cov.Ar1cAr2c
+
+  bot <- mean - 2 * sqrt(var.Ar1cminusAr2c)
+  top <- mean + 2 * sqrt(var.Ar1cminusAr2c)
+
+  result2 <- data.frame(bot = bot, top = top, mean = mean, var = var.Ar1cminusAr2c)
 
   return(result2)
 
