@@ -11,30 +11,39 @@
 laWRBM <- function(
   df.input,
   keyColumns = c("readerID", "caseID", "modalityID", "score"),
-  modalitiesToCompare = c("modalityA", "modalityB")
+  modalitiesToCompare
 ) {
+
+  if (length(modalitiesToCompare) != 2) {
+    print(paste("length(modalitiesToCompare) =", length(modalitiesToCompare)))
+    stop("ERROR: modalitiesToCompare should have 2 elements.")
+  }
+  mToCompare <- c(modalitiesToCompare, modalitiesToCompare)
 
   # The limits of agreement are determined by the MRMC moments of uStat11
   # when the kernel flag is 2.
   # The limits can also be determined from uStat11 when the kernel flag is 1,
   # but it is a little bit more complicated. Refer to validate laWRBM.R for info.
-  result <- uStat11.conditionalD(
+  result1 <- uStat11.conditionalD(
     df.input, keyColumns = keyColumns,
-    modalitiesToCompare = modalitiesToCompare, kernelFlag = 2
+    modalitiesToCompare = mToCompare, kernelFlag = 2
   )
-  result2 <- result
-  result2$var <- result2$var.1obs
-  result2 <- result2[c("mean", "var", "nR", "nC")]
+
+  mean <- result1$mean[1]
+  var <- result1$var.1obs[1]
+
+  bot <- mean - 2 * sqrt(var)
+  top <- mean + 2 * sqrt(var)
+
+  result2 <- data.frame(bot = bot, top = top, mean = mean, var = var)
 
   return(result2)
 
   #### Alternate method with identical result ####
   #### Uses uStat11 and the identity kernel
   result <- uStat11.jointD(
-    rbind(df.MRMC$testA.1, df.MRMC$testB.1),
-    kernelFlag = 1,
-    keyColumns = c("readerID", "caseID", "modalityID", "score"),
-    modalitiesToCompare = c("testA", "testB"))
+    df.input, keyColumns = keyColumns,
+    modalitiesToCompare = modalitiesToCompare, kernelFlag = 1)
 
   moments <- result$moments
 
@@ -44,7 +53,7 @@ laWRBM <- function(
 
   var.Ar1cminusBr1c <- var.Arc + var.Brc - 2 * cov.Ar1cBr1c
 
-  print(result2)
+  print(result2$var)
   print(var.Ar1cminusBr1c)
 
   print("You should not reach this point because of a previous return statement.")

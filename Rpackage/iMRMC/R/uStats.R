@@ -130,12 +130,16 @@
 #' print(result.jointD.identity[1:2])
 
 uStat11.jointD <- function(
-  df.input,
-  keyColumns = c("readerID", "caseID", "modalityID", "score"),
-  modalitiesToCompare = c("modalityA", "modalityB"),
-  kernelFlag = 1) {
+  df.input, modalitiesToCompare, kernelFlag = 1,
+  keyColumns = c("readerID", "caseID", "modalityID", "score")
+  ) {
 
   if (kernelFlag == 1) {
+
+    if (length(modalitiesToCompare) != 2) {
+      print(paste("length(modalitiesToCompare) =", length(modalitiesToCompare)))
+      stop("ERROR: modalitiesToCompare should have 2 elements.")
+    }
 
     CbyR.identity <- uStat11.identity(
       df.input,
@@ -150,6 +154,11 @@ uStat11.jointD <- function(
 
   } else if (
     kernelFlag == 2) {
+
+    if (length(modalitiesToCompare) != 4) {
+      print(paste("length(modalitiesToCompare) =", length(modalitiesToCompare)))
+      stop("ERROR: modalities to compare should have 4 elements.")
+    }
 
     CbyR.diff <- uStat11.diff(
       df.input,
@@ -326,13 +335,16 @@ uStat11.jointD <- function(
 #'
 #' @rdname uStat11.jointD
 uStat11.conditionalD <- function(
-  df.input,
-  keyColumns = c("readerID", "caseID", "modalityID", "score"),
-  modalitiesToCompare = c("modalityA", "modalityB"),
-  kernelFlag = 1
+  df.input, modalitiesToCompare, kernelFlag = 1,
+  keyColumns = c("readerID", "caseID", "modalityID", "score")
 ) {
 
   if (kernelFlag == 1) {
+
+    if (length(modalitiesToCompare) != 2) {
+      print(paste("length(modalitiesToCompare) =", length(modalitiesToCompare)))
+      stop("ERROR: modalitiesToCompare should have 2 elements.")
+    }
 
     CbyR.identity <- uStat11.identity(
       df.input,
@@ -347,6 +359,11 @@ uStat11.conditionalD <- function(
 
   } else if (
     kernelFlag == 2) {
+
+    if (length(modalitiesToCompare) != 4) {
+      print(paste("length(modalitiesToCompare) =", length(modalitiesToCompare)))
+      stop("ERROR: modalities to compare should have 4 elements.")
+    }
 
     CbyR.diff <- uStat11.diff(
       df.input,
@@ -622,9 +639,8 @@ uStat11.conditionalD <- function(
 # @export
 #'
 uStat11.identity <- function(
-  df.input,
-  keyColumns = c("readerID", "caseID", "modalityID", "score"),
-  modalitiesToCompare = c("modalityA", "modalityB")
+  df.input, modalitiesToCompare,
+  keyColumns = c("readerID", "caseID", "modalityID", "score")
 ) {
 
   # Structure the data frame: one row for each observation
@@ -681,9 +697,8 @@ uStat11.identity <- function(
 #' @param modalitiesToCompare The factors identifying the modalities to compare
 #'
 uStat11.diff <- function(
-  df.input,
-  keyColumns = c("readerID", "caseID", "modalityID", "score"),
-  modalitiesToCompare = c("modalityA", "modalityB", "modalityA", "modalityB")
+  df.input, modalitiesToCompare,
+  keyColumns = c("readerID", "caseID", "modalityID", "score")
 ) {
 
   # Structure the data frame: one row for each observation
