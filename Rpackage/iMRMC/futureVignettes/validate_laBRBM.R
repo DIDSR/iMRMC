@@ -9,11 +9,11 @@ simRoeMetz.config$nC.neg <- 20
 simRoeMetz.config$nC.pos <- 20
 
 startTime <- proc.time()[1]
-nMC <- 1000
+nMC <- 100
 
 #### Loop over MC trials ####
 df.sim1obs <- data.frame()
-df.laWRBM <- data.frame()
+df.laBRBM <- data.frame()
 for (i in 1:nMC) {
 
   # Simulate data
@@ -65,33 +65,27 @@ for (i in 1:nMC) {
   )
 
   # Estimate the WRBM limits of agreement
-  result.laWRBM <- laWRBM(
+  result.laBRBM <- laBRBM(
     rbind(df.MRMC$testA.1, df.MRMC$testB.1),
-    keyColumns = c("readerID", "caseID", "modalityID", "score"),
-    modalitiesToCompare = c("testA", "testB", "testA", "testB"))
+    modalitiesToCompare = c("testA", "testB"))
 
   # Aggregate the results of all the MC trials into one data frame.
-  df.laWRBM <- rbind(
-    df.laWRBM,
-    data.frame(
-      var.Ar1cminusBr1c = result.laWRBM$var[1]
-    )
-  )
+  df.laBRBM <- rbind(df.laBRBM, result.laBRBM)
 
 }
 
 #### Summarize MC simulation ####
 # Take the mean and the variance of the observations, including WRBM differences
-df.sim1obs.mcMean <- colMeans(df.sim1obs)
+df.sim1obs.mcMean <- data.frame(t(colMeans(df.sim1obs)))
 names(df.sim1obs.mcMean) <- paste(names(df.sim1obs.mcMean), ".", "mcMean", sep = "")
-df.sim1obs.mcVar <- diag(cov(df.sim1obs))
+df.sim1obs.mcVar <- data.frame(t(diag(cov(df.sim1obs))))
 names(df.sim1obs.mcVar) <- paste(names(df.sim1obs.mcVar), ".", "mcVar", sep = "")
 
 # Estimate the variance of the limits of aggreement from an MRMC data set
-df.laWRBM.mcMean <- colMeans(df.laWRBM)
-names(df.laWRBM.mcMean) <- paste(names(df.laWRBM.mcMean), ".", "mcMean", sep = "")
-df.laWRBM.mcVar <- diag(cov(df.laWRBM))
-names(df.laWRBM.mcVar) <- paste(names(df.laWRBM.mcVar), ".", "mcVar", sep = "")
+df.laBRBM.mcMean <- data.frame(t(colMeans(df.laBRBM, na.rm = TRUE)))
+names(df.laBRBM.mcMean) <- paste(names(df.laBRBM.mcMean), ".", "mcMean", sep = "")
+df.laBRBM.mcVar <- data.frame(t(diag(cov(df.laBRBM, use = "complete"))))
+names(df.laBRBM.mcVar) <- paste(names(df.laBRBM.mcVar), ".", "mcVar", sep = "")
 
 #### Print Results ####
 # Print the number of MC trials and the experimental size of each MC trial
@@ -108,13 +102,15 @@ print("MCmean of single observations")
 print(df.sim1obs.mcMean[1:4])
 
 print("")
-print("MCmean of within-reader between-modality differences")
-print(df.sim1obs.mcMean[5:6])
+print("MCmean of between-reader between-modality differences")
+print(df.sim1obs.mcMean[9:10])
 
 print("")
-print("MCvar of within-reader and between-modality differences")
-print("df.sim1obs.mcVar[5:6]")
-print(df.sim1obs.mcVar[5:6])
-print("df.laWRBM.mcMean[1]")
-print(df.laWRBM.mcMean[1])
+print("MCvar of between-reader and between-modality differences")
+print("df.sim1obs.mcVar[9:10]")
+print(df.sim1obs.mcVar[9:10])
+print("df.laBRBM.mcMean[1]")
+print(df.laBRBM.mcMean)
 
+hist(df.sim1obs$Ar1c1minusBr2c1)
+print(sort(df.sim1obs$Ar1c1minusBr2c1)[c(0.025, .975)*nMC])

@@ -9,7 +9,7 @@ simRoeMetz.config$nC.neg <- 20
 simRoeMetz.config$nC.pos <- 20
 
 startTime <- proc.time()[1]
-nMC <- 10
+nMC <- 100
 
 #### Loop over MC trials ####
 df.sim1obs <- data.frame()
@@ -64,8 +64,10 @@ for (i in 1:nMC) {
     )
   )
 
+  # Estimate the BRWM limits of agreement
   result.laBRWM <- laBRWM(df.MRMC$testA.1, "testA")
 
+  # Aggregate the results of all the MC trials into one data frame.
   df.laBRWM <- rbind(df.laBRWM, result.laBRWM)
 
 }
@@ -106,5 +108,8 @@ print("MCvar of between-reader within-modality differences")
 print("df.sim1obs.mcVar[7]")
 print(df.sim1obs.mcVar[7])
 print("df.laBRWM.mcVar$var.mcMean")
-print(df.laBRWM.mcMean$var.mcMean)
+print(df.laBRWM.mcMean)
+
+hist(df.sim1obs$Ar1c1minusAr2c1)
+print(sort(df.sim1obs$Ar1c1minusAr2c1)[c(0.025, .975)*nMC])
 

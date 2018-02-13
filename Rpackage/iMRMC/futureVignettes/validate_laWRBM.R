@@ -9,7 +9,7 @@ simRoeMetz.config$nC.neg <- 20
 simRoeMetz.config$nC.pos <- 20
 
 startTime <- proc.time()[1]
-nMC <- 10
+nMC <- 100
 
 #### Loop over MC trials ####
 df.sim1obs <- data.frame()
@@ -109,5 +109,8 @@ print("MCvar of within-reader and between-modality differences")
 print("df.sim1obs.mcVar[5:6]")
 print(df.sim1obs.mcVar[5:6])
 print("df.laWRBM.mcMean$var.mcMean")
-print(df.laWRBM.mcMean$var.mcMean)
+print(df.laWRBM.mcMean)
+
+hist(df.sim1obs$Ar1c1minusBr1c1)
+print(sort(df.sim1obs$Ar1c1minusBr1c1)[c(0.025, .975)*nMC])
 
