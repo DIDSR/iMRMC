@@ -92,10 +92,6 @@ print("")
 desc <- data.frame(nMC = nMC, nR = simRoeMetz.config$nR, nC = simRoeMetz.config$nC.pos)
 print(paste("nMC = ", nMC))
 
-# Print the time to complete this MC simulation
-endTime <- proc.time()[1]
-print(paste("Time to complete", nMC, "observations = ", endTime - startTime))
-
 print("")
 print("MCmean of single observations")
 print(df.sim1obs.mcMean[1:4])
@@ -110,7 +106,14 @@ print("df.sim1obs.mcVar[5:6]")
 print(df.sim1obs.mcVar[5:6])
 print("df.laWRBM.mcMean$var.mcMean")
 print(df.laWRBM.mcMean)
+print("df.laWRBM.mcMean$var.mcVar")
+print(df.laWRBM.mcVar)
 
 hist(df.sim1obs$Ar1c1minusBr1c1)
+print("MC confidence interval")
 print(sort(df.sim1obs$Ar1c1minusBr1c1)[c(0.025, .975)*nMC])
+
+# Print the time to complete this MC simulation
+endTime <- proc.time()[1]
+print(paste("Time to complete", nMC, "observations = ", endTime - startTime))
 

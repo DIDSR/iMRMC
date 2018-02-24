@@ -48,12 +48,13 @@ laWRBM <- function(
   )
 
   mean <- result1$mean[1]
-  var <- result1$var.1obs[1]
+  var <- result1$var[1]
+  var.1obs <- result1$var.1obs[1]
 
-  bot <- mean - 2 * sqrt(var)
-  top <- mean + 2 * sqrt(var)
+  bot <- mean - 2 * sqrt(var.1obs)
+  top <- mean + 2 * sqrt(var.1obs)
 
-  result2 <- data.frame(bot = bot, top = top, mean = mean, var = var)
+  result2 <- data.frame(mean = mean, var = var, var.1obs = var.1obs, la.BOT = bot, la.TOP = top )
 
   return(result2)
 
