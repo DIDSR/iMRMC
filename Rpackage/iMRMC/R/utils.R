@@ -97,6 +97,41 @@ undoIMRMCdf <- function(df.MRMC) {
 
 }
 
+## createGroups ####
+#' Assign a group label to items in a vector
+#'
+#' @param items A vector of items
+#' @param nG The number of groups
+#'
+#' @return A data frame containing the items and their group labels
+#' @export
+#'
+#' @examples
+#' x <- paste("item", 1:10, sep = "")
+#' df <- createGroups(x, 3)
+#' print(df)
+#'
+createGroups <- function(items, nG) {
+
+  n <- length(items)
+
+  # Determine the number of items in each group
+  nPerG.base <- floor(n/nG)
+  remainder <- n - nPerG.base*nG
+  nPerG <- rep(nPerG.base, nG)
+  nPerG[1:remainder] <- nPerG[1:remainder] + 1
+
+  # Create labels for each reader
+  desc <- NULL
+  for (i in 1:nG)
+    desc <- c(desc, rep(paste("group", i, sep = ""), nPerG[i]))
+
+  readerGroups <- data.frame(items = items, desc = desc)
+
+  return(readerGroups)
+
+}
+
 ## roc2binary ####
 #' Convert ROC data formatted for doIMRMC to TPF and FPF data formatted for doIMRMC
 #'

@@ -339,6 +339,7 @@ uStat11.conditionalD <- function(
   keyColumns = c("readerID", "caseID", "modalityID", "score")
 ) {
 
+  # Initialize kernel and design matrices ####
   if (kernelFlag == 1) {
 
     if (length(modalitiesToCompare) != 2) {
@@ -378,14 +379,23 @@ uStat11.conditionalD <- function(
 
   }
 
+  # Determine the number of cases per reader
+  sumiD.A <- colSums(design.A)
+  sumiD.B <- colSums(design.B)
+
+  if (!all(sumiD.A*sumiD.B > 2)) {
+    # browser()
+    # break()
+    desc <- "All readers must have more than 2 observations in both modalities begin evaluated.\n"
+    stop(desc)
+  }
+
   nC <- nrow(design.A)
   nR <- ncol(design.A)
 
   # Estimate the percent correct for each reader and modality
   sumiS.A <- colSums(kernel.A)
   sumiS.B <- colSums(kernel.B)
-  sumiD.A <- colSums(design.A)
-  sumiD.B <- colSums(design.B)
 
   meanPerR <- data.frame(sumiS.A / sumiD.A, sumiS.B / sumiD.B)
   names(meanPerR) <- c(desc[1], desc[2])
@@ -718,7 +728,7 @@ uStat11.diff <- function(
   readers <- levels(df$readerID)
   nReaders <- nlevels(df$readerID)
 
-  # Determine readers involved in the comparisons
+  # Determine cases involved in the comparisons
   cases <- levels(df$caseID)
   nCases <- nlevels(df$caseID)
 
@@ -753,6 +763,11 @@ uStat11.diff <- function(
   design.AB <- design.A * design.B
   kernel.CD <- scores.C - scores.D
   design.CD <- design.C * design.D
+
+  # design.AB <- design.A * design.B
+  # kernel.AB <- (scores.A - scores.B) * design.AB
+  # design.CD <- design.C * design.D
+  # kernel.CD <- (scores.C - scores.D) * design.CD
 
   return(list(
     kernel.AB = kernel.AB,

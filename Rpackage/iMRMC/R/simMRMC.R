@@ -141,7 +141,20 @@ simMRMC <- function(simMRMC.config) {
 #'
 #' @export
 #'
-convertDFtoScoreMatrix <- function(dfMRMC, dropFlag = TRUE) {
+convertDFtoScoreMatrix <- function(dfMRMC, modality = NULL, dropFlag = TRUE) {
+
+  # If modality is specified, subset the data on modalityID == modality
+  if (!is.null(modality)) {
+    dfMRMC <- subset(dfMRMC, modalityID == modality)
+    dfMRMC$modality <- factor(dfMRMC$modalityID)
+  }
+
+  # Check that there is data from one modality only.
+  if (nlevels(dfMRMC$modalityID) != 1) {
+    desc <- paste("This function only treats data sets with one modality.\n",
+                  "nlevels(dfMRMC$modalityID) =", nlevels(dfMRMC$modalityID), "\n")
+    stop(desc)
+  }
 
   # Dropping levels will remove readers or cases that have no observations
   # Dropping them by default will speed up analyses
@@ -179,7 +192,20 @@ convertDFtoScoreMatrix <- function(dfMRMC, dropFlag = TRUE) {
 #'
 #' @export
 #'
-convertDFtoDesignMatrix <- function(dfMRMC, dropFlag = TRUE) {
+convertDFtoDesignMatrix <- function(dfMRMC, modality = NULL, dropFlag = TRUE) {
+
+  # If modality is specified, subset the data on modalityID == modality
+  if (!is.null(modality)) {
+    dfMRMC <- subset(dfMRMC, modalityID == modality)
+    dfMRMC$modalityID <- factor(dfMRMC$modalityID)
+  }
+
+  # Check that there is data from one modality only.
+  if (nlevels(dfMRMC$modalityID) != 1) {
+    desc <- paste("This function only treats data sets with one modality.\n",
+                  "nlevels(dfMRMC$modalityID) =", nlevels(dfMRMC$modalityID), "\n")
+    stop(desc)
+  }
 
   # Dropping levels will remove readers or cases that have no observations
   # Dropping them by default will speed up analyses

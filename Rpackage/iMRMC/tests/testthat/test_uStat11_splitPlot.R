@@ -6,7 +6,7 @@ context("uStat11")
 init.lecuyerRNG()
 
 # This flag should always be false except when the tests are first created.
-flagSave <- FALSE
+flagSave <- TRUE
 if (flagSave) {
   saveResult <- list()
 }
@@ -35,31 +35,12 @@ nC <- nlevels(df$caseID)
 # Create a split-plot data set ####
 nG <- 3
 
-createGroups <- function(items, nG) {
-
-  n <- length(items)
-
-  # Determine the number of items in each group
-  nPerG.base <- floor(n/nG)
-  remainder <- n - nPerG.base*nG
-  nPerG <- rep(nPerG.base, nG)
-  nPerG[1:remainder] <- nPerG[1:remainder] + 1
-
-  # Create labels for each reader
-  desc <- NULL
-  for (i in 1:nG)
-    desc <- c(desc, rep(paste("group", i, sep = ""), nPerG[i]))
-
-  readerGroups <- data.frame(items = items, desc = desc)
-
-  return(readerGroups)
-
-}
-
+# Determine reader groups
 readerGroups <- createGroups(readers, nG)
 names(readerGroups) <- c("readerID", "readerGroup")
 df <- merge(df, readerGroups)
 
+# Determine case groups
 caseGroups <- createGroups(cases, nG)
 names(caseGroups) <- c("caseID", "caseGroup")
 df <- merge(df, caseGroups)
@@ -67,10 +48,18 @@ df <- merge(df, caseGroups)
 # Create split-plot data
 df <- df[df$caseGroup == df$readerGroup, ]
 
-d <- convertDFtoDesignMatrix(df, dropFlag = FALSE)
-image(d)
+# Remove one reader's data
+df <- df[!(df$readerID == "reader5" & df$modalityID == "testA"), ]
 
-if (FALSE) {
+# Remove one case's data
+df <- df[!(df$caseID == "posCase5" & df$modalityID == "testB"), ]
+
+# Visualize the design matrix of each modality
+dA <- convertDFtoDesignMatrix(df, modality = "testA", dropFlag = FALSE)
+dB <- convertDFtoDesignMatrix(df, modality = "testB", dropFlag = FALSE)
+
+image(dA)
+image(dB)
 
 #### uStat11.jointD.identity ####
 # Calculate the reader- and case-averaged difference in scores from testA and testB
@@ -81,7 +70,9 @@ result.jointD.identity <- uStat11.jointD(
   keyColumns = c("readerID", "caseID", "modalityID", "score"),
   modalitiesToCompare = c("testA", "testB"))
 
-cat("\n")
+if (TRUE) {
+
+  cat("\n")
 cat("uStat11.jointD.identity \n")
 print(result.jointD.identity[1:2])
 
@@ -143,7 +134,7 @@ if (flagSave) {
 #### TESTS ####
 
 # Save the result to a file for future comparisons
-fileName <- "test_uStat11.Rdata"
+fileName <- "test_uStat11_splitPlot.Rdata"
 if (flagSave) {
   save(saveResult, file = file.path("tests", "testthat", fileName))
 }
