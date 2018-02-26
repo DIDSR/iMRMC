@@ -6,7 +6,7 @@ context("uStat11")
 init.lecuyerRNG()
 
 # This flag should always be false except when the tests are first created.
-flagSave <- TRUE
+flagSave <- FALSE
 if (flagSave) {
   saveResult <- list()
 }
@@ -70,9 +70,7 @@ result.jointD.identity <- uStat11.jointD(
   keyColumns = c("readerID", "caseID", "modalityID", "score"),
   modalitiesToCompare = c("testA", "testB"))
 
-if (TRUE) {
-
-  cat("\n")
+cat("\n")
 cat("uStat11.jointD.identity \n")
 print(result.jointD.identity[1:2])
 
@@ -169,5 +167,3 @@ test_that(
     expect_equal(saveResult$conditionalD.identity, result.conditionalD.identity)
   }
 )
-
-}

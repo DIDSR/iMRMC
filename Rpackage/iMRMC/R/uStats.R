@@ -383,13 +383,6 @@ uStat11.conditionalD <- function(
   sumiD.A <- colSums(design.A)
   sumiD.B <- colSums(design.B)
 
-  if (!all(sumiD.A*sumiD.B > 2)) {
-    # browser()
-    # break()
-    desc <- "All readers must have more than 2 observations in both modalities begin evaluated.\n"
-    stop(desc)
-  }
-
   nC <- nrow(design.A)
   nR <- ncol(design.A)
 
@@ -689,10 +682,10 @@ uStat11.identity <- function(
   design.B[index] <- 1
 
   return(list(
-    kernel.A = scores.A,
     design.A = design.A,
-    kernel.B = scores.B,
-    design.B = design.B
+    design.B = design.B,
+    kernel.A = scores.A * design.A,
+    kernel.B = scores.B * design.B
   ))
 }
 
@@ -759,15 +752,10 @@ uStat11.diff <- function(
   design.D[index] <- 1
 
   # Declare and initialize the kernel results
-  kernel.AB <- scores.A - scores.B
   design.AB <- design.A * design.B
-  kernel.CD <- scores.C - scores.D
   design.CD <- design.C * design.D
-
-  # design.AB <- design.A * design.B
-  # kernel.AB <- (scores.A - scores.B) * design.AB
-  # design.CD <- design.C * design.D
-  # kernel.CD <- (scores.C - scores.D) * design.CD
+  kernel.AB <- (scores.A - scores.B) * design.AB
+  kernel.CD <- (scores.C - scores.D) * design.CD
 
   return(list(
     kernel.AB = kernel.AB,
