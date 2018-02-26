@@ -146,7 +146,7 @@ convertDFtoScoreMatrix <- function(dfMRMC, modality = NULL, dropFlag = TRUE) {
   # If modality is specified, subset the data on modalityID == modality
   if (!is.null(modality)) {
     dfMRMC <- subset(dfMRMC, modalityID == modality)
-    dfMRMC$modality <- factor(dfMRMC$modalityID)
+    dfMRMC$modalityID <- factor(dfMRMC$modalityID)
   }
 
   # Check that there is data from one modality only.
