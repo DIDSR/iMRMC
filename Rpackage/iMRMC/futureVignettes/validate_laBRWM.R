@@ -65,7 +65,8 @@ for (i in 1:nMC) {
   )
 
   # Estimate the BRWM limits of agreement
-  result.laBRWM <- laBRWM(df.MRMC$testA.1, "testA")
+  result.laBRWM <- laBRBM(df.MRMC$testA.1,
+                          modalitiesToCompare = c("testA", "testA"))
 
   # Aggregate the results of all the MC trials into one data frame.
   df.laBRWM <- rbind(df.laBRWM, result.laBRWM)
@@ -91,10 +92,6 @@ print("")
 desc <- data.frame(nMC = nMC, nR = simRoeMetz.config$nR, nC = simRoeMetz.config$nC.pos)
 print(paste("nMC = ", nMC))
 
-# Print the time to complete this MC simulation
-endTime <- proc.time()[1]
-print(paste("Time to complete", nMC, "observations = ", endTime - startTime))
-
 print("")
 print("MCmean of single observations")
 print(df.sim1obs.mcMean[1:4])
@@ -107,9 +104,20 @@ print("")
 print("MCvar of between-reader within-modality differences")
 print("df.sim1obs.mcVar[7]")
 print(df.sim1obs.mcVar[7])
-print("df.laBRWM.mcVar$var.mcMean")
+print("df.laBRWM.mcMean")
 print(df.laBRWM.mcMean)
+print("df.laBRWM.mcVar")
+print(df.laBRWM.mcVar)
 
 hist(df.sim1obs$Ar1c1minusAr2c1)
-print(sort(df.sim1obs$Ar1c1minusAr2c1)[c(0.025, .975)*nMC])
+print(data.frame(
+  MC.ci95meanDiff.bot  = sort(df.laBRWM$meanDiff)[0.025*nMC],
+  MC.ci95meanDiff.top  = sort(df.laBRWM$meanDiff)[0.975*nMC],
+  MC.la.bot = sort(df.sim1obs$Ar1c1minusAr2c1)[0.025*nMC],
+  MC.la.top = sort(df.sim1obs$Ar1c1minusAr2c1)[0.975*nMC]
+))
+
+# Print the time to complete this MC simulation
+endTime <- proc.time()[1]
+print(paste("Time to complete", nMC, "observations = ", endTime - startTime))
 

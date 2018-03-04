@@ -1,3 +1,4 @@
+# Initialize the l'Ecuyer random number generator ####
 #' @title Initialize the l'Ecuyer random number generator
 #'
 #' @description See the documentation for the parallel package
@@ -32,7 +33,8 @@ init.lecuyerRNG <- function(seed = 1, stream = 2){
 
 }
 
-#' Simulate an MRMC data set
+# Simulate an MRMC data set ####
+#' Simulate an MRMC data set ####
 #'
 #' @description
 #' This program simulates observations from one set of readers scoring one set of cases.
@@ -127,109 +129,7 @@ simMRMC <- function(simMRMC.config) {
 
 }
 
-#' Convert an MRMC data frame to a score matrix
-#'
-#' @description Convert an MRMC data frame to a score matrix, dropping readers or cases with no observations
-#'
-#' @param dfMRMC An MRMC data frame
-#'
-#' @param dropFlag [logical] The default setting (FALSE) removes readers and cases
-#'   that have no observations. Dropping them by default will speed up analyses.
-#'   Leaving the levels is useful if you want to see the entire score or design matrix.
-#'
-#' @return A matrix [nCases, nReaders] of the scores each reader reported for each case
-#'
-#' @export
-#'
-convertDFtoScoreMatrix <- function(dfMRMC, modality = NULL, dropFlag = TRUE) {
-
-  # If modality is specified, subset the data on modalityID == modality
-  if (!is.null(modality)) {
-    dfMRMC <- subset(dfMRMC, modalityID == modality)
-    dfMRMC$modalityID <- factor(dfMRMC$modalityID)
-  }
-
-  # Check that there is data from one modality only.
-  if (nlevels(dfMRMC$modalityID) != 1) {
-    desc <- paste("This function only treats data sets with one modality.\n",
-                  "nlevels(dfMRMC$modalityID) =", nlevels(dfMRMC$modalityID), "\n")
-    stop(desc)
-  }
-
-  # Dropping levels will remove readers or cases that have no observations
-  # Dropping them by default will speed up analyses
-  # Leaving the levels is useful if you want to see the entire score or design matrix
-  if (dropFlag) {
-    dfMRMC <- droplevels(dfMRMC)
-  }
-
-  caseIDs <- levels(dfMRMC$caseID)
-  readerIDs <- levels(dfMRMC$readerID)
-  nCases <- nlevels(dfMRMC$caseID)
-  nReaders <- nlevels(dfMRMC$readerID)
-
-  scores <- array(-1, c(nCases, nReaders), dimnames = list(caseIDs, readerIDs))
-
-  index <- dfMRMC[ , c("caseID","readerID")]
-  index <- data.matrix(index)
-
-  scores[index] <- dfMRMC$score
-  return(scores)
-
-}
-
-#' Convert an MRMC data frame to a design matrix
-#'
-#' @description Convert an MRMC data frame to a design matrix, dropping readers or cases with no observations
-#'
-#' @param dfMRMC An MRMC data frame
-#'
-#' @param dropFlag [logical] The default setting (FALSE) removes readers and cases
-#'   that have no observations. Dropping them by default will speed up analyses.
-#'   Leaving the levels is useful if you want to see the entire score or design matrix.
-#'
-#' @return A matrix [nCases, nReaders] indicating which scores were reported for each reader and case
-#'
-#' @export
-#'
-convertDFtoDesignMatrix <- function(dfMRMC, modality = NULL, dropFlag = TRUE) {
-
-  # If modality is specified, subset the data on modalityID == modality
-  if (!is.null(modality)) {
-    dfMRMC <- subset(dfMRMC, modalityID == modality)
-    dfMRMC$modalityID <- factor(dfMRMC$modalityID)
-  }
-
-  # Check that there is data from one modality only.
-  if (nlevels(dfMRMC$modalityID) != 1) {
-    desc <- paste("This function only treats data sets with one modality.\n",
-                  "nlevels(dfMRMC$modalityID) =", nlevels(dfMRMC$modalityID), "\n")
-    stop(desc)
-  }
-
-  # Dropping levels will remove readers or cases that have no observations
-  # Dropping them by default will speed up analyses
-  # Leaving the levels is useful if you want to see the entire score or design matrix
-  if (dropFlag) {
-    dfMRMC <- droplevels(dfMRMC)
-  }
-
-  caseIDs <- levels(dfMRMC$caseID)
-  readerIDs <- levels(dfMRMC$readerID)
-  nCases <- nlevels(dfMRMC$caseID)
-  nReaders <- nlevels(dfMRMC$readerID)
-
-  design <- array(0, c(nCases, nReaders), dimnames = list(caseIDs, readerIDs))
-
-  index <- dfMRMC[ , c("caseID","readerID")]
-  index <- data.matrix(index)
-
-  design[index] <- 1
-
-  return(design)
-
-}
-
+# Simulate an MRMC data set of an ROC experiment comparing two modalities ####
 #' Simulate an MRMC data set of an ROC experiment comparing two modalities
 #'
 #' @description
@@ -461,6 +361,7 @@ sim.gRoeMetz <- function(config) {
 
 }
 
+# Create a configuration object for the sim.gRoeMetz program ####
 #' Create a configuration object for the sim.gRoeMetz program
 #'
 #' @description
@@ -568,6 +469,7 @@ sim.gRoeMetz.config <- function(
 
 }
 
+# Simulates a sample MRMC ROC experiment ####
 #' Simulates a sample MRMC ROC experiment
 #'
 #' @return dFrame.imrmc [data.frame] Please refer to the description of the simRoeMetz return variable

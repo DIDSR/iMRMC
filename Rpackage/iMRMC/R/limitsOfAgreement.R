@@ -25,6 +25,8 @@
 #' Identify the factors corresponding to the readerID, caseID, modalityID, and score
 #' (or alternative random and fixed effects).
 #'
+#' @importFrom stats qnorm
+#'
 #' @export
 #'
 laWRBM <- function(
@@ -47,14 +49,20 @@ laWRBM <- function(
     modalitiesToCompare = mToCompare, kernelFlag = 2
   )
 
-  mean <- result1$mean[1]
-  var <- result1$var[1]
+  meanDiff <- result1$mean[1]
+  varDiff <- result1$var[1]
   var.1obs <- result1$var.1obs[1]
 
-  bot <- mean - 2 * sqrt(var.1obs)
-  top <- mean + 2 * sqrt(var.1obs)
+  la.bot <- meanDiff - 2 * sqrt(var.1obs)
+  la.top <- meanDiff + 2 * sqrt(var.1obs)
 
-  result2 <- data.frame(mean = mean, var = var, var.1obs = var.1obs, la.BOT = bot, la.TOP = top )
+  ci95meanDiff.bot <- meanDiff + qnorm(.025) * sqrt(varDiff)
+  ci95meanDiff.top <- meanDiff + qnorm(.975) * sqrt(varDiff)
+
+  result2 <- data.frame(
+    meanDiff = meanDiff, varDiff = varDiff, var.1obs = var.1obs,
+    ci95meanDiff.bot = ci95meanDiff.bot, ci95meanDiff.top = ci95meanDiff.top,
+    la.bot = la.bot, la.top = la.top )
 
   return(result2)
 
@@ -77,69 +85,6 @@ laWRBM <- function(
 
   print("You should not reach this point because of a previous return statement.")
   browser()
-
-  return(result2)
-
-}
-
-#---- laBRWM ----
-#' @title MRMC analysis of between-reader within-modality limits of agreement
-#'
-#' @description The core analysis is done by ustat11 with the identity kernel (kernelFlag = 1).
-#'
-#' @param df
-#' Data frame of observations, one per row. Columns identify random effects, fixed effects,
-#' and the observation. Namely,
-#' \itemize{
-#'   \item \code{readerID:} The factor corresponding to the different readers in the study.
-#'     The readerID is treated as a random effect.
-#'   \item \code{caseID:} The factor corresponding to the different cases in the study.
-#'     The caseID is treated as a random effect.
-#'   \item \code{modalityID:} The factor corresponding to the different modalities in the study.
-#'     The modalityID is treated as a fixed effect.
-#'   \item \code{score:} The score given by the reader to the case for the modality indicated.
-#' }
-#'
-#' @param modality
-#' The factor identifying the modality to analyze.
-#'
-#' @param keyColumns
-#' Identify the factors corresponding to the readerID, caseID, modalityID, and score
-#' (or alternative random and fixed effects).
-#'
-#' @export
-#'
-laBRWM <- function(
-  df, modality,
-  keyColumns = c("readerID", "caseID", "modalityID", "score")
-) {
-
-  if (length(modality) != 1) {
-    print(paste("length(modality) =", length(modality)))
-    stop("ERROR: modality should have 1 element.")
-  }
-
-  modalitiesToCompare <- c(modality, modality)
-
-  # Estimate the BRWM limits of agreement
-  # The limits of agreement are determined by the MRMC moments of uStat11
-  # when the kernel flag is 1.
-  result1 <- uStat11.conditionalD(
-    df, modalitiesToCompare = modalitiesToCompare,
-    kernelFlag = 1, keyColumns = keyColumns)
-
-  mean <- result1$mean[1] - result1$mean[2]
-
-  moments <- result1$moments
-
-  var.Arc = result1$var.1obs[1]
-  cov.Ar1cAr2c <- moments$c1r0[1] - moments$c0r0[1]
-  var.Ar1cminusAr2c <- var.Arc + var.Arc - 2 * cov.Ar1cAr2c
-
-  bot <- mean - 2 * sqrt(var.Ar1cminusAr2c)
-  top <- mean + 2 * sqrt(var.Ar1cminusAr2c)
-
-  result2 <- data.frame(bot = bot, top = top, mean = mean, var = var.Ar1cminusAr2c)
 
   return(result2)
 
@@ -170,6 +115,8 @@ laBRWM <- function(
 #' Identify the factors corresponding to the readerID, caseID, modalityID, and score
 #' (or alternative random and fixed effects).
 #'
+#' @importFrom stats qnorm
+#'
 #' @export
 #'
 laBRBM <- function(
@@ -189,20 +136,27 @@ laBRBM <- function(
     df, modalitiesToCompare = modalitiesToCompare,
     kernelFlag = 1, keyColumns = keyColumns)
 
-  mean <- result1$mean[1] - result1$mean[2]
+  meanDiff <- result1$mean[3]
+  varDiff <- result1$var[3]
 
   moments <- result1$moments
 
-  var.Arc = result1$var.1obs
-  var.Brc = result1$var.1obs
+  var.Arc = result1$var.1obs[1]
+  var.Brc = result1$var.1obs[2]
   cov.Ar1cBr2C <- moments$c1r0[3] - moments$c0r0[3]
 
   var.Ar1cminusBr2c <- var.Arc + var.Brc - 2 * cov.Ar1cBr2C
 
-  bot <- mean - 2 * sqrt(var.Ar1cminusBr2c)
-  top <- mean + 2 * sqrt(var.Ar1cminusBr2c)
+  la.bot <- meanDiff - 2 * sqrt(var.Ar1cminusBr2c)
+  la.top <- meanDiff + 2 * sqrt(var.Ar1cminusBr2c)
 
-  result2 <- data.frame(bot = bot, top = top, mean = mean, var = var.Ar1cminusBr2c)
+  ci95meanDiff.bot <- meanDiff + qnorm(.025) * sqrt(varDiff)
+  ci95meanDiff.top <- meanDiff + qnorm(.975) * sqrt(varDiff)
+
+  result2 <- data.frame(
+    meanDiff = meanDiff, varDiff = varDiff, var.1obs = var.Ar1cminusBr2c,
+    ci95meanDiff.bot = ci95meanDiff.bot, ci95meanDiff.top = ci95meanDiff.bot,
+    la.bot = la.bot, la.top = la.top )
 
   return(result2)
 

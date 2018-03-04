@@ -109,8 +109,16 @@ print("")
 print("MCvar of between-reader and between-modality differences")
 print("df.sim1obs.mcVar[9:10]")
 print(df.sim1obs.mcVar[9:10])
-print("df.laBRBM.mcMean[1]")
+print("df.laBRBM.mcMean")
 print(df.laBRBM.mcMean)
+print("df.laBRBM.mcVar")
+print(df.laBRBM.mcVar)
 
 hist(df.sim1obs$Ar1c1minusBr2c1)
-print(sort(df.sim1obs$Ar1c1minusBr2c1)[c(0.025, .975)*nMC])
+print(data.frame(
+  MC.ci95meanDiff.bot  = sort(df.laBRBM$meanDiff)[0.025*nMC],
+  MC.ci95meanDiff.top  = sort(df.laBRBM$meanDiff)[0.975*nMC],
+  MC.la.bot = sort(df.sim1obs$Ar1c1minusBr2c1)[0.025*nMC],
+  MC.la.top = sort(df.sim1obs$Ar1c1minusBr2c1)[0.975*nMC]
+))
+
