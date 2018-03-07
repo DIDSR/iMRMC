@@ -358,7 +358,7 @@ public class GUInterface {
 		//saveStat.addActionListener(new SaveGUIStatListener());	
 		//panelSummary.add(saveStat);
 		
-		JButton saveAll = new JButton("Analysis All Modalities");
+		JButton saveAll = new JButton("Analyze All Modalities");
 		saveAll.addActionListener(new SaveAllStatListener());
 		
 		panelSummary.add(saveAll);

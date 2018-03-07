@@ -66,10 +66,21 @@ public class GUImenubar {
 	 */
 	class menuRefListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
-			System.out.println("Menu Ref clicked");
-			JFrame frame = lst.getFrame();
-			JOptionPane.showMessageDialog(frame, Ref, "Reference",
-					JOptionPane.INFORMATION_MESSAGE);
+			System.out.println("Ref clicked");
+			// Create Desktop object
+			Desktop d=Desktop.getDesktop();
+
+			// Browse a URL, say google.com
+			try {
+				d.browse(new URI("http://didsr.github.io/iMRMC/000_iMRMC/userManualHTML/7_1_references.htm?ms=AA%3D%3D&st=MA%3D%3D&sct=MA%3D%3D&mw=MjQw"));
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (URISyntaxException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
 		}
 	}
 
@@ -78,14 +89,14 @@ public class GUImenubar {
 	 */
 	class menuAboutListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
-			System.out.println("Menu Website clicked");
+			System.out.println("Website clicked");
 
 			// Create Desktop object
 			Desktop d=Desktop.getDesktop();
 
 			// Browse a URL, say google.com
 			try {
-				d.browse(new URI("http://imrmc.googlecode.com/"));
+				d.browse(new URI("https://github.com/DIDSR/iMRMC"));
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -102,14 +113,14 @@ public class GUImenubar {
 	 */
 	class menuIssueListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
-			System.out.println("Menu Report Issue clicked");
+			System.out.println("Report Issue clicked");
 
 			// Create Desktop object
 			Desktop d=Desktop.getDesktop();
 
 			// Browse a URL, say google.com
 			try {
-				d.browse(new URI("https://code.google.com/p/imrmc/issues/list"));
+				d.browse(new URI("https://github.com/DIDSR/iMRMC/issues"));
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -125,14 +136,14 @@ public class GUImenubar {
 	 * Handler for "Download User Manual" menu button
 	 */
 	class menuManualListener implements ActionListener {
-		JFrame frame2 = new JFrame("diaglog manual");
+		JFrame frame2 = new JFrame("Download Manual");
 
 		public void actionPerformed(ActionEvent event) {
-			System.out.println("Manual about clicked");
+			System.out.println("Download Manual about clicked");
 			// Create Desktop object
 			Desktop d=Desktop.getDesktop();
 			try {
-				d.browse(new URI("http://imrmc.googlecode.com/svn/standalone_application/iMRMCuserguide-current.pdf"));
+				d.browse(new URI("https://github.com/DIDSR/iMRMC/raw/gh-pages/000_iMRMC/userManualPDF/iMRMCuserManual.pdf"));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
