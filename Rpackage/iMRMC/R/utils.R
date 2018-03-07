@@ -58,7 +58,10 @@ createIMRMCdf <- function(
 }
 
 ## undoIMRMCdf ####
-#' Convert a doIMRMC formatted data frame to a standard data frame with all factors
+#' Convert a doIMRMC formatted data frame to a standard data frame
+#' with all factors.
+#'
+#' @details Delete rows specifying truth and put the truth information on every row.
 #'
 #' @param df.MRMC This data frame includes columns for readerID, caseID, modalityID, score.
 #'        Each row is a reader x case x modality observation from the study
@@ -74,24 +77,193 @@ createIMRMCdf <- function(
 #'
 # @examples
 undoIMRMCdf <- function(df.MRMC) {
-  df.Truth <- df.MRMC[df.MRMC$readerID == -1, ]
-  df.Orig <- df.MRMC[df.MRMC$readerID != -1, ]
-  df.Orig <- apply(df.Orig, 1, function(x, df.Truth) {
 
-    truth <- df.Truth$score[df.Truth$readerID == "-1" & df.Truth$caseID == x[2]]
-    x[5] <- truth
-    names(x)[5] <- "truth"
+  # Separate the data frame into rows corresponding to truth
+  # and rows corresping to observations
+  df.Truth <- df.MRMC[df.MRMC$readerID == "-1", ]
+  if (nrow(df.Truth) > 0) {
+    df.Obs <- df.MRMC[df.MRMC$readerID != "-1", ]
+  } else {
+    df.Truth <- df.MRMC[df.MRMC$readerID == "truth"]
+    df.Obs <- df.MRMC[df.MRMC$readerID != "truth", ]
+  }
 
-    return(x)
+  df.Truth <- df.Truth[, c("caseID", "score")]
+  names(df.Truth) <- c("caseID", "truth")
 
-  }, df.Truth)
+  df <- droplevels(merge(df.Obs, df.Truth, by = "caseID"))
 
-  df.Orig <- data.frame(t(df.Orig))
-  df.Orig$truth <- factor(df.Orig$truth)
-  df.Orig$score <- as.numeric(as.character(df.Orig$score))
+  return(df)
 
-  return(df.Orig)
+}
 
+# Convert an MRMC data frame to a score matrix ####
+#' Convert an MRMC data frame to a score matrix
+#'
+#' @description Convert an MRMC data frame to a score matrix, dropping readers or cases with no observations
+#'
+#' @param dfMRMC An MRMC data frame
+#'
+#' @param modality The score matrix depends on the modality.
+#'   If more than one modality exists in the data frame,
+#'   you must specify which modality to subset.
+#'
+#' @param dropFlag [logical] The default setting (FALSE) removes readers and cases
+#'   that have no observations. Dropping them by default will speed up analyses.
+#'   Leaving the levels is useful if you want to see the entire score or design matrix.
+#'
+#' @return A matrix [nCases, nReaders] of the scores each reader reported for each case
+#'
+#' @importFrom stats qnorm
+#'
+#' @export
+#'
+convertDFtoScoreMatrix <- function(dfMRMC, modality = NULL, dropFlag = TRUE) {
+
+  # If modality is specified, subset the data on modalityID == modality
+  if (!is.null(modality)) {
+    dfMRMC <- dfMRMC[dfMRMC$modalityID == modality, ]
+    dfMRMC$modalityID <- factor(dfMRMC$modalityID)
+  }
+
+  # Check that there is data from one modality only.
+  if (nlevels(dfMRMC$modalityID) != 1) {
+    desc <- paste("This function only treats data sets with one modality.\n",
+                  "nlevels(dfMRMC$modalityID) =", nlevels(dfMRMC$modalityID), "\n")
+    stop(desc)
+  }
+
+  # Dropping levels will remove readers or cases that have no observations
+  # Dropping them by default will speed up analyses
+  # Leaving the levels is useful if you want to see the entire score or design matrix
+  if (dropFlag) {
+    dfMRMC <- droplevels(dfMRMC)
+  }
+
+  caseIDs <- levels(dfMRMC$caseID)
+  readerIDs <- levels(dfMRMC$readerID)
+  nCases <- nlevels(dfMRMC$caseID)
+  nReaders <- nlevels(dfMRMC$readerID)
+
+  scores <- array(-1, c(nCases, nReaders), dimnames = list(caseIDs, readerIDs))
+
+  index <- dfMRMC[ , c("caseID","readerID")]
+  index <- data.matrix(index)
+
+  scores[index] <- dfMRMC$score
+  return(scores)
+
+}
+
+# Convert an MRMC data frame to a design matrix ####
+#' Convert an MRMC data frame to a design matrix
+#'
+#' @description Convert an MRMC data frame to a design matrix, dropping readers or cases with no observations
+#'
+#' @param dfMRMC An MRMC data frame
+#'
+#' @param modality The score matrix depends on the modality.
+#'   If more than one modality exists in the data frame,
+#'   you must specify which modality to subset.
+#'
+#' @param dropFlag [logical] The default setting (FALSE) removes readers and cases
+#'   that have no observations. Dropping them by default will speed up analyses.
+#'   Leaving the levels is useful if you want to see the entire score or design matrix.
+#'
+#' @return A matrix [nCases, nReaders] indicating which scores were reported for each reader and case
+#'
+#' @export
+#'
+convertDFtoDesignMatrix <- function(dfMRMC, modality = NULL, dropFlag = TRUE) {
+
+  # If modality is specified, subset the data on modalityID == modality
+  if (!is.null(modality)) {
+    dfMRMC <- dfMRMC[dfMRMC$modalityID == modality, ]
+    dfMRMC$modalityID <- factor(dfMRMC$modalityID)
+  }
+
+  # Check that there is data from one modality only.
+  if (nlevels(dfMRMC$modalityID) != 1) {
+    desc <- paste("This function only treats data sets with one modality.\n",
+                  "nlevels(dfMRMC$modalityID) =", nlevels(dfMRMC$modalityID), "\n")
+    stop(desc)
+  }
+
+  # Dropping levels will remove readers or cases that have no observations
+  # Dropping them by default will speed up analyses
+  # Leaving the levels is useful if you want to see the entire score or design matrix
+  if (dropFlag) {
+    dfMRMC <- droplevels(dfMRMC)
+  }
+
+  caseIDs <- levels(dfMRMC$caseID)
+  readerIDs <- levels(dfMRMC$readerID)
+  nCases <- nlevels(dfMRMC$caseID)
+  nReaders <- nlevels(dfMRMC$readerID)
+
+  design <- array(0, c(nCases, nReaders), dimnames = list(caseIDs, readerIDs))
+
+  index <- dfMRMC[ , c("caseID","readerID")]
+  index <- data.matrix(index)
+
+  design[index] <- 1
+
+  return(design)
+
+}
+
+## createGroups ####
+#' Assign a group label to items in a vector
+#'
+#' @param items A vector of items
+#' @param nG The number of groups
+#'
+#' @return A data frame containing the items and their group labels
+#' @export
+#'
+#' @examples
+#' x <- paste("item", 1:10, sep = "")
+#' df <- createGroups(x, 3)
+#' print(df)
+#'
+createGroups <- function(items, nG) {
+
+  n <- length(items)
+
+  # Determine the number of items in each group
+  nPerG.base <- floor(n/nG)
+  remainder <- n - nPerG.base*nG
+  nPerG <- rep(nPerG.base, nG)
+  nPerG[1:remainder] <- nPerG[1:remainder] + 1
+
+  # Create labels for each reader
+  desc <- NULL
+  for (i in 1:nG)
+    desc <- c(desc, rep(paste("group", i, sep = ""), nPerG[i]))
+
+  readerGroups <- data.frame(items = items, desc = desc)
+
+  return(readerGroups)
+
+}
+
+## renameCol ####
+#' Rename a data frame column name or a list object name
+#'
+#' @param df A data frame
+#'
+#' @param oldColName Old column name
+#'
+#' @param newColName New column name
+#'
+#' @return the data frame with the updated column name
+#'
+#' @export
+#'
+# @examples
+renameCol <- function(df, oldColName, newColName) {
+  names(df)[names(df) == oldColName] <- newColName
+  return(df)
 }
 
 ## roc2binary ####

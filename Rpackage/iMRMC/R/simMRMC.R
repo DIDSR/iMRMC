@@ -1,3 +1,4 @@
+# Initialize the l'Ecuyer random number generator ####
 #' @title Initialize the l'Ecuyer random number generator
 #'
 #' @description See the documentation for the parallel package
@@ -32,7 +33,8 @@ init.lecuyerRNG <- function(seed = 1, stream = 2){
 
 }
 
-#' Simulate an MRMC data set
+# Simulate an MRMC data set ####
+#' Simulate an MRMC data set ####
 #'
 #' @description
 #' This program simulates observations from one set of readers scoring one set of cases.
@@ -127,65 +129,7 @@ simMRMC <- function(simMRMC.config) {
 
 }
 
-#' Convert an MRMC data frame to a score matrix
-#'
-#' @description Convert an MRMC data frame to a score matrix, dropping readers or cases with no observations
-#'
-#' @param dfMRMC An MRMC data frame
-#'
-#' @return A matrix [nCases, nReaders] of the scores each reader reported for each case
-#'
-#' @export
-#'
-convertDFtoScoreMatrix <- function(dfMRMC) {
-
-  dfMRMC <- droplevels(dfMRMC)
-
-  caseIDs <- levels(dfMRMC$caseID)
-  readerIDs <- levels(dfMRMC$readerID)
-  nCases <- nlevels(dfMRMC$caseID)
-  nReaders <- nlevels(dfMRMC$readerID)
-
-  scores <- array(-1, c(nCases, nReaders), dimnames = list(caseIDs, readerIDs))
-
-  index <- dfMRMC[ , c("caseID","readerID")]
-  index <- data.matrix(index)
-
-  scores[index] <- dfMRMC$score
-  return(scores)
-
-}
-
-#' Convert an MRMC data frame to a design matrix
-#'
-#' @description Convert an MRMC data frame to a design matrix, dropping readers or cases with no observations
-#'
-#' @param dfMRMC An MRMC data frame
-#'
-#' @return A matrix [nCases, nReaders] indicating which scores were reported for each reader and case
-#'
-#' @export
-#'
-convertDFtoDesignMatrix <- function(dfMRMC) {
-
-  dfMRMC <- droplevels(dfMRMC)
-
-  caseIDs <- levels(dfMRMC$caseID)
-  readerIDs <- levels(dfMRMC$readerID)
-  nCases <- nlevels(dfMRMC$caseID)
-  nReaders <- nlevels(dfMRMC$readerID)
-
-  design <- array(0, c(nCases, nReaders), dimnames = list(caseIDs, readerIDs))
-
-  index <- dfMRMC[ , c("caseID","readerID")]
-  index <- data.matrix(index)
-
-  design[index] <- 1
-
-  return(design)
-
-}
-
+# Simulate an MRMC data set of an ROC experiment comparing two modalities ####
 #' Simulate an MRMC data set of an ROC experiment comparing two modalities
 #'
 #' @description
@@ -417,6 +361,7 @@ sim.gRoeMetz <- function(config) {
 
 }
 
+# Create a configuration object for the sim.gRoeMetz program ####
 #' Create a configuration object for the sim.gRoeMetz program
 #'
 #' @description
@@ -431,9 +376,9 @@ sim.gRoeMetz <- function(config) {
 #' @details If no arguments, this function returns a default simulation
 #' configuration for sim.gRoeMetz
 #'
-#' @param nR Number of readers (default = 10)
-#' @param nC.neg Number of signal-absent cases (default = 100)
-#' @param nC.pos Number of signal-present cases (default = 100)
+#' @param nR Number of readers (default = 5)
+#' @param nC.neg Number of signal-absent cases (default = 25)
+#' @param nC.pos Number of signal-present cases (default = 25)
 #' @param mu.neg Mean fixed effect of signal-absent distribution (default = 0.0) \cr
 #'               Modality specific parameters are set to zero: mu.Aneg = mu.Bneg = 0
 #' @param mu.pos Mean fixed effect of signal-present distribution (default = 1.0) \cr
@@ -457,9 +402,9 @@ sim.gRoeMetz <- function(config) {
 #' # Analyze the MRMC ROC data
 #' result <- doIMRMC(dFrame.imrmc)
 sim.gRoeMetz.config <- function(
-  nR = 10,
-  nC.neg = 100,
-  nC.pos = 100,
+  nR = 5,
+  nC.neg = 40,
+  nC.pos = 40,
   mu.neg = 0.0,
   mu.pos = 1.0,
   var_r =  0.03,
@@ -469,8 +414,8 @@ sim.gRoeMetz.config <- function(
 
   config <- list(
     # Modality labels
-    modalityID.A = "modalityA",
-    modalityID.B = "modalityB",
+    modalityID.A = "testA",
+    modalityID.B = "testB",
 
     # Experiment size
     nR = nR,
@@ -524,6 +469,7 @@ sim.gRoeMetz.config <- function(
 
 }
 
+# Simulates a sample MRMC ROC experiment ####
 #' Simulates a sample MRMC ROC experiment
 #'
 #' @return dFrame.imrmc [data.frame] Please refer to the description of the simRoeMetz return variable
@@ -542,17 +488,17 @@ simRoeMetz.example <- function() {
   # Simulate data
   dFrame.imrmc <- sim.gRoeMetz(config)
 
-  tempA <- dFrame.imrmc[dFrame.imrmc$modalityID == "modalityA", ]
+  tempA <- dFrame.imrmc[dFrame.imrmc$modalityID == "testA", ]
   tempApos <- tempA[grep("pos", tempA$caseID), ]
   tempAneg <- tempA[grep("neg", tempA$caseID), ]
-  tempB <- dFrame.imrmc[dFrame.imrmc$modalityID == "modalityB", ]
+  tempB <- dFrame.imrmc[dFrame.imrmc$modalityID == "testB", ]
   tempBpos <- tempB[grep("pos", tempA$caseID), ]
   tempBneg <- tempB[grep("neg", tempA$caseID), ]
 
-  cat("modality A pos: mean, var = ", mean(tempApos$score), ",", stats::var(tempApos$score), "\n")
-  cat("modality B pos: mean, var = ", mean(tempBpos$score), ",", stats::var(tempBpos$score), "\n")
-  cat("modality A neg: mean, var = ", mean(tempAneg$score), ",", stats::var(tempAneg$score), "\n")
-  cat("modality B neg: mean, var = ", mean(tempBneg$score), ",", stats::var(tempBneg$score), "\n")
+  cat("test A pos: mean, var = ", mean(tempApos$score), ",", stats::var(tempApos$score), "\n")
+  cat("test B pos: mean, var = ", mean(tempBpos$score), ",", stats::var(tempBpos$score), "\n")
+  cat("test A neg: mean, var = ", mean(tempAneg$score), ",", stats::var(tempAneg$score), "\n")
+  cat("test B neg: mean, var = ", mean(tempBneg$score), ",", stats::var(tempBneg$score), "\n")
 
   return(dFrame.imrmc)
 

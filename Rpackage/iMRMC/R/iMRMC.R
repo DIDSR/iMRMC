@@ -1,3 +1,4 @@
+#### doIMRMC function ####
 #' MRMC analysis of the area under the ROC curve
 #'
 #' @description doIMRMC takes ROC data as a data frame and runs a multi-reader multi-case analysis
@@ -49,6 +50,10 @@
 #'            TRUE (capture the output in a character vector)
 #'            or a character string naming a file.
 #'
+#' @param stripDatesForTests Since results include a date and time stamp, these need to be
+#'            stripped out when doing the package tests. This parameter flags whether or not
+#'            the dates should be stripped out.
+#'
 #' @return iMRMCoutput [list] the objects of this list are described in detail in the iMRMC documentation
 #'            which can be found at <http://didsr.github.io/iMRMC/000_iMRMC/userManualHTML/index.htm>
 #'
@@ -96,8 +101,9 @@ doIMRMC <- function(
   fileName = NULL,
   workDir = NULL,
   iMRMCjarFullPath = NULL,
-  stdout = FALSE,
-  stderr = FALSE){
+  stdout = NULL,
+  stderr = NULL,
+  stripDatesForTests = FALSE){
 
   if (is.null(workDir)) {
     workDir <- tempdir()
@@ -126,7 +132,7 @@ doIMRMC <- function(
   }
 
   if (is.null(iMRMCjarFullPath)) {
-    iMRMCjar <- "iMRMC-v3p3.jar"
+    iMRMCjar <- "iMRMC-v4.0.0.jar"
     pkgPath = path.package("iMRMC", quiet = FALSE)
     iMRMCjarFullPath <- file.path(pkgPath, "java", iMRMCjar)
 
@@ -164,6 +170,18 @@ doIMRMC <- function(
       )
 
   })
+
+  # If doing tests, strip out the data that could change (dates etc)
+  if (stripDatesForTests) {
+
+    descDrop <- c("inputFile", "date", "iMRMCversion")
+
+    perReader <- perReader[ , !(names(perReader)) %in% descDrop]
+    Ustat <- Ustat[ , !(names(Ustat)) %in% descDrop]
+    MLEstat <- MLEstat[ , !(names(MLEstat)) %in% descDrop]
+    ROC <- 0
+
+  }
 
   # Delete the content written to disk
   if (workDir == tempdir()) {
