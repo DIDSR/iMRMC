@@ -65,44 +65,47 @@
  4.2 Out... Advanced License is required!
  4_2_output_file.htm
 23
- 4.2.1 Statistical An... Advanced License is required!
- 4_2_1_statistical_analysis_result__omrmc_.htm
+ 4.2.1 Save Stat... Advanced License is required!
+ 4_2_1_save_stat_analysis_button.htm
 24
- 4.2.2 Sizing A... Advanced License is required!
- 4_2_2_sizing_analysis_results.htm
+ 4.2.2 Save Size... Advanced License is required!
+ 4_2_2_save_size_analysis_button.htm
 25
+ 4.2.3 Analyze ... Advanced License is required!
+ 4_2_3_analyze_all_modalities_.htm
+26
  5. Me... Advanced License is required!
  5__methods.htm
-26
+27
  5.1 Introduction to... Advanced License is required!
  5_1_introduction_to_roc_reader_studies.htm
-27
+28
  5.2 Varianc... Advanced License is required!
  5_2_variance_estimation.htm
-28
+29
  5.3 Component... Advanced License is required!
  5_3_components_of_variance.htm
-29
+30
  5.4 Hypothesis Testing a... Advanced License is required!
  5_4_hypothesis_testing_and_confidence_intervals_.htm
-30
+31
  5.5 Sizing a... Advanced License is required!
  5_5_sizing_a_future_study.htm
-31
+32
  6. Da... Advanced License is required!
  6__database.htm
-32
+33
  7. References and... Advanced License is required!
  7__references_and_other_information.htm
-33
+34
  7.1 Ref... Advanced License is required!
  7_1_references.htm
-34
+35
  7.2 Related Papers... Advanced License is required!
  7_2_related_papers_and_presentations.htm
-35
+36
  7.3 Abbr... Advanced License is required!
  7_3_abbrevations.htm
-36
+37
  7.4 App... Advanced License is required!
  7_4_appendix_a.htm
