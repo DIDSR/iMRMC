@@ -276,7 +276,7 @@ public class SizePanel {
 		SizeJLabelSqrtVar.setText("S.E=");
 //		SizeJLabelTStat.setText(",  Test Stat=");
 		
-		SizeJLabelPowerNormal.setText("Large Sample Approx(Normal),  Power=");
+		SizeJLabelPowerNormal.setText("Large Sample Approx(Normal):  Power=");
 //		SizeJLabelCINormal.setText("Conf. Int.=");
 
 		SizeJLabelDFBDG.setText("          BDG:  df=");
@@ -323,7 +323,7 @@ public class SizePanel {
 		//		+ threeDecE.format(testSize.tStatCalc);
 		//SizeJLabelTStat.setText(output);
 
-		output = "Large Sample Approx(Normal) ,  Power= "
+		output = "Large Sample Approx(Normal):  Power= "
 				+ twoDec.format(testSize.powerNormal);
 		SizeJLabelPowerNormal.setText(output);
 		output = ",  Conf. Int.=("

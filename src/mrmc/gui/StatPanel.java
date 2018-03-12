@@ -230,9 +230,9 @@ public class StatPanel {
 		StatJLabelAUC.setText("AUC = ");
 		DBRecordStat.totalVar = -1.0;
 
-		StatJLabelDFNormal.setText("Large Sample Approx(Normal)");
-		StatJLabelDFBDG.setText   ("         T-stat df(BDG) =      ");
-		StatJLabelDFHillis.setText("T-stat df(Hillis 2008) = ");
+		StatJLabelDFNormal.setText("Large Sample Approx(Normal):");
+		StatJLabelDFBDG.setText   ("         T-test df(BDG) =     :");
+		StatJLabelDFHillis.setText("T-test df(Hillis 2008) = ");
 
 		StatJLabelPValNormal.setText("p-Value = ");
 		StatJLabelPValBDG.setText   ("p-Value = ");
@@ -274,26 +274,31 @@ public class StatPanel {
 		}
 
 		String output, output2;
-		
-		StatJLabelH0.setText("H0: AUC = 0.50,   two-sided alternative,   95% significance,   " + 
-				DBRecordStat.getSizes());
-//		StatJLabelAUC.setText(DBRecordStat.getAUCsReaderAvgString(DBRecordStat.selectedMod) +
-	//			",   S.E(total) = " + threeDecE.format(Math.sqrt(DBRecordStat.totalVar)));
-		StatJLabelAUC.setText(DBRecordStat.getAUCsReaderAvgString(DBRecordStat.selectedMod) +
-				",   S.E(total) = " + threeDecE.format(DBRecordStat.SE));
-
-		if(DBRecordStat.selectedMod == 3) {
-			
+		switch (DBRecordStat.selectedMod){
+		case 0:
+			StatJLabelH0.setText("H0: AUC = 0.50,   two-sided alternative,   95% significance,   " + 
+					DBRecordStat.getSizes());
+			StatJLabelAUC.setText(DBRecordStat.getAUCsReaderAvgString(DBRecordStat.selectedMod) +
+					",   S.E(total) = " + threeDecE.format(DBRecordStat.SE) + 
+					",   test statistic = " + threeDecE.format((DBRecordStat.AUCsReaderAvg[0]-0.5)/DBRecordStat.SE));
+			break;
+		case 1:
+			StatJLabelH0.setText("H0: AUC = 0.50,   two-sided alternative,   95% significance,   " + 
+					DBRecordStat.getSizes());
+			StatJLabelAUC.setText(DBRecordStat.getAUCsReaderAvgString(DBRecordStat.selectedMod) +
+					",   S.E(total) = " + threeDecE.format(DBRecordStat.SE) + 
+					",   test statistic = " + threeDecE.format((DBRecordStat.AUCsReaderAvg[1]-0.5)/DBRecordStat.SE));
+			break;
+		case 3:			
 			StatJLabelH0.setText("H0: AUC_A - AUC_B = 0.00,   two-sided alternative,   95% significance,   " + 
 					DBRecordStat.getSizes());
-			//StatJLabelAUC.setText(DBRecordStat.getAUCsReaderAvgString(DBRecordStat.selectedMod) +
-			//		",   S.E(total) = " + threeDecE.format(Math.sqrt(DBRecordStat.totalVar)));
 			StatJLabelAUC.setText(DBRecordStat.getAUCsReaderAvgString(DBRecordStat.selectedMod) +
-					",   S.E(total) = " + threeDecE.format(DBRecordStat.SE));
+					",   S.E(total) = " + threeDecE.format(DBRecordStat.SE) +
+					",   test statistic = " + threeDecE.format((DBRecordStat.AUCsReaderAvg[0] - DBRecordStat.AUCsReaderAvg[1])/DBRecordStat.SE));
 		}
 
 		
-		StatJLabelDFNormal.setText("Large Sample Approx(Normal)");
+		StatJLabelDFNormal.setText("Large Sample Approx(Normal):");
 		output = fourDec.format(DBRecordStat.testStat.pValNormal);
 		StatJLabelPValNormal.setText("  p-Value = " + output);
 		output = fourDec.format(DBRecordStat.testStat.ciBotNormal);
@@ -308,7 +313,7 @@ public class StatPanel {
 		
 
 		output = twoDec.format(DBRecordStat.testStat.DF_BDG);
-		StatJLabelDFBDG.setText("  df(BDG) = " + output + "     ");
+		StatJLabelDFBDG.setText("  T-test df(BDG) = " + output + ":     ");
 		output = fourDec.format(DBRecordStat.testStat.pValBDG);
 		StatJLabelPValBDG.setText("  p-Value = " + output);
 		output = fourDec.format(DBRecordStat.testStat.ciBotBDG);
@@ -324,7 +329,7 @@ public class StatPanel {
 
 		if (DBRecordStat.flagFullyCrossed) {
 			output = twoDec.format(DBRecordStat.testStat.DF_Hillis);
-			StatJLabelDFHillis.setText("df(Hillis 2008) = " + output + "     ");
+			StatJLabelDFHillis.setText("T-test df(Hillis 2008) = " + output +": ");
 			output = fourDec.format(DBRecordStat.testStat.pValHillis);
 			StatJLabelPValHillis.setText("p-Value = " + output);
 			output = fourDec.format(DBRecordStat.testStat.ciBotHillis);

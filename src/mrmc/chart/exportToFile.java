@@ -807,11 +807,11 @@ public class exportToFile {
 				", Confidence Interval = [" + twoDec.format(SummaryDBRecord.testStat.ciBotBDG) +" , " + twoDec.format(SummaryDBRecord.testStat.ciTopBDG) +"]. ";
 		
 		if (SummaryDBRecord.selectedMod == 0){
-			str = str + "This result is based on the t-statistic equal to AUC of Modality A divided by its standard error, ";
+			str = str + "This result is based on the t-statistic = " + twoDec.format((SummaryDBRecord.AUCsReaderAvg[0]-0.5)/SummaryDBRecord.SE) + ", ";
 		}else if (SummaryDBRecord.selectedMod == 1){
-			str = str + "This result is based on the t-statistic equal to AUC of Modality B divided by its standard error, ";
+			str = str + "This result is based on the t-statistic = " + twoDec.format((SummaryDBRecord.AUCsReaderAvg[1]-0.5)/SummaryDBRecord.SE) + ", ";
 		}else{
-			str = str + "This result is based on the t-statistic equal to the difference in AUCs divided by the standard error, ";
+			str = str + "This result is based on the t-statistic = " + twoDec.format((SummaryDBRecord.AUCsReaderAvg[0] - SummaryDBRecord.AUCsReaderAvg[1])/SummaryDBRecord.SE) + ", ";
 		}	
 		if (SummaryDBRecord.flagMLE == 0){
 			str = str + "each estimated by U-statistics as above. ";
