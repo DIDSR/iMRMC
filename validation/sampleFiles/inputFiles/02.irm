@@ -1,0 +1,32 @@
+AR0: .03
+AC0: .1
+ARC0: .6
+AR1: .03
+AC1: .1
+ARC1: .6
+BR0: .03
+BC0: .1
+BRC0: .6
+BR1: .03
+BC1: .1
+BRC1: .6
+R0: .03
+C0: .1
+RC0: .2
+R1: .03
+C1: .1
+RC1: .2
+uA: 1.5
+uB: 1.5
+n0: 48
+n1: 48
+nr: 6
+Study Design
+# of Split-Plot Groups: 1
+Paired Readers: Yes
+Paired Normal: Yes
+Paired Disease: Yes
+Number of Experiments: 10000
+Seed for RNG: 1
+Random Stream: 2
+MLE analysis: NO
