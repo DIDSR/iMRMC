@@ -1,7 +1,7 @@
 <h5>Run iRoeMetz validation in parallel in linux </h5>
 
 1. Create a new folder “allinput” for all configure input files (e.g. /raidb/qigong/imrmc/allinput). 
-Sample input files are available in https://github.com/DIDSR/iMRMC/tree/master/validation/sampleFiles/inputFiles. 
+Sample input .irm files are available in https://github.com/DIDSR/iMRMC/tree/master/validation/sampleFiles/inputFiles. 
 
 2. Save iReoMetz.jar file in any directory 
 
