@@ -5,9 +5,7 @@
 2. Save iReoMetz.jar file in any directory 
 
 3. Create .txt file in the same directory as iReoMetz.jar to run the input files in parallel. In this file each line is for one configure input file. The format should be:
-
 export DISPLAY=":0.0"; java -jar iRoeMetz-v2p1.jar + “input file directory and name”. 
-
 A sample file "runInParallel.txt" file is available in https://github.com/DIDSR/iMRMC/tree/master/validation/sampleFiles. 
 
 4. Open terminal and login but don’t get into any node.
