@@ -231,8 +231,8 @@ public class StatPanel {
 		DBRecordStat.totalVar = -1.0;
 
 		StatJLabelDFNormal.setText("Large Sample Approx(Normal):");
-		StatJLabelDFBDG.setText   ("         T-test df(BDG) =     :");
-		StatJLabelDFHillis.setText("T-test df(Hillis 2008) = ");
+		StatJLabelDFBDG.setText   ("         T-test with df(BDG) =     :");
+		StatJLabelDFHillis.setText("T-test with df(Hillis 2008) = ");
 
 		StatJLabelPValNormal.setText("p-Value = ");
 		StatJLabelPValBDG.setText   ("p-Value = ");
@@ -298,9 +298,9 @@ public class StatPanel {
 		}
 
 		
-		StatJLabelDFNormal.setText("Large Sample Approx(Normal):");
+		StatJLabelDFNormal.setText("        Large Sample Approx(Normal):");
 		output = fourDec.format(DBRecordStat.testStat.pValNormal);
-		StatJLabelPValNormal.setText("  p-Value = " + output);
+		StatJLabelPValNormal.setText("p-Value = " + output);
 		output = fourDec.format(DBRecordStat.testStat.ciBotNormal);
 		output2 = fourDec.format(DBRecordStat.testStat.ciTopNormal);
 		StatJLabelCINormal.setText("Conf. Int. = (" + output + ", " + output2 + ")");
@@ -313,9 +313,9 @@ public class StatPanel {
 		
 
 		output = twoDec.format(DBRecordStat.testStat.DF_BDG);
-		StatJLabelDFBDG.setText("  T-test df(BDG) = " + output + ":     ");
+		StatJLabelDFBDG.setText("        T-test with df(BDG) = " + output + ": ");
 		output = fourDec.format(DBRecordStat.testStat.pValBDG);
-		StatJLabelPValBDG.setText("  p-Value = " + output);
+		StatJLabelPValBDG.setText("p-Value = " + output);
 		output = fourDec.format(DBRecordStat.testStat.ciBotBDG);
 		output2 = fourDec.format(DBRecordStat.testStat.ciTopBDG);
 		StatJLabelCIBDG.setText("Conf. Int. = (" + output + ", " + output2 + ")");
@@ -329,7 +329,7 @@ public class StatPanel {
 
 		if (DBRecordStat.flagFullyCrossed) {
 			output = twoDec.format(DBRecordStat.testStat.DF_Hillis);
-			StatJLabelDFHillis.setText("T-test df(Hillis 2008) = " + output +": ");
+			StatJLabelDFHillis.setText("T-test with df(Hillis 2008) = " + output +": ");
 			output = fourDec.format(DBRecordStat.testStat.pValHillis);
 			StatJLabelPValHillis.setText("p-Value = " + output);
 			output = fourDec.format(DBRecordStat.testStat.ciBotHillis);

@@ -279,12 +279,12 @@ public class SizePanel {
 		SizeJLabelPowerNormal.setText("Large Sample Approx(Normal):  Power=");
 //		SizeJLabelCINormal.setText("Conf. Int.=");
 
-		SizeJLabelDFBDG.setText("          BDG:  df=");
+		SizeJLabelDFBDG.setText("  T-test with BDG(df) = :");
 		SizeJLabelLambdaBDG.setText(",  Lambda=");
 		SizeJLabelPowerBDG.setText(",  Power=");
 //		SizeJLabelCIBDG.setText("Conf. Int.=");
 
-		SizeJLabelDFHillis.setText("df=");
+		SizeJLabelDFHillis.setText("T-test with Hillis(df) = :");
 		SizeJLabelLambdaHillis.setText("Lambda=");
 		SizeJLabelPowerHillis.setText("Power=");
 //		SizeJLabelCIHillis.setText("Conf. Int.=");
@@ -333,8 +333,8 @@ public class SizePanel {
 				+ ")";
 //		SizeJLabelCINormal.setText(output);
 
-		output = "          BDG:  df= "
-				+ twoDec.format(testSize.DF_BDG);
+		output = "   T-test with BDG(df)= "
+				+ twoDec.format(testSize.DF_BDG) + ":";
 		SizeJLabelDFBDG.setText(output);
 		output = ",  Lambda= "
 				+ twoDec.format(testSize.lambdaBDG);
@@ -357,8 +357,8 @@ public class SizePanel {
 				&& this.pairedNormalsFlag == 1
 				&& this.pairedDiseasedFlag ==1) {
 			
-			output = "df= "
-					+ twoDec.format(testSize.DF_Hillis);
+			output = "T-test with BDG(df) = "
+					+ twoDec.format(testSize.DF_Hillis) + ":";
 			SizeJLabelDFHillis.setText(output);
 			output = "Lambda= "
 					+ twoDec.format(testSize.lambdaHillis);
