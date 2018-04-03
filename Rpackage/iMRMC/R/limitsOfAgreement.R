@@ -50,17 +50,17 @@ laWRBM <- function(
   )
 
   meanDiff <- result1$mean[1]
-  varDiff <- result1$var[1]
+  var.MeanDiff <- result1$var[1]
   var.1obs <- result1$var.1obs[1]
 
   la.bot <- meanDiff - 2 * sqrt(var.1obs)
   la.top <- meanDiff + 2 * sqrt(var.1obs)
 
-  ci95meanDiff.bot <- meanDiff + qnorm(.025) * sqrt(varDiff)
-  ci95meanDiff.top <- meanDiff + qnorm(.975) * sqrt(varDiff)
+  ci95meanDiff.bot <- meanDiff + qnorm(.025) * sqrt(var.MeanDiff)
+  ci95meanDiff.top <- meanDiff + qnorm(.975) * sqrt(var.MeanDiff)
 
   result2 <- data.frame(
-    meanDiff = meanDiff, varDiff = varDiff, var.1obs = var.1obs,
+    meanDiff = meanDiff, var.MeanDiff = var.MeanDiff, var.1obs = var.1obs,
     ci95meanDiff.bot = ci95meanDiff.bot, ci95meanDiff.top = ci95meanDiff.top,
     la.bot = la.bot, la.top = la.top )
 
@@ -137,7 +137,7 @@ laBRBM <- function(
     kernelFlag = 1, keyColumns = keyColumns)
 
   meanDiff <- result1$mean[3]
-  varDiff <- result1$var[3]
+  var.MeanDiff <- result1$var[3]
 
   moments <- result1$moments
 
@@ -150,11 +150,11 @@ laBRBM <- function(
   la.bot <- meanDiff - 2 * sqrt(var.Ar1cminusBr2c)
   la.top <- meanDiff + 2 * sqrt(var.Ar1cminusBr2c)
 
-  ci95meanDiff.bot <- meanDiff + qnorm(.025) * sqrt(varDiff)
-  ci95meanDiff.top <- meanDiff + qnorm(.975) * sqrt(varDiff)
+  ci95meanDiff.bot <- meanDiff + qnorm(.025) * sqrt(var.MeanDiff)
+  ci95meanDiff.top <- meanDiff + qnorm(.975) * sqrt(var.MeanDiff)
 
   result2 <- data.frame(
-    meanDiff = meanDiff, varDiff = varDiff, var.1obs = var.Ar1cminusBr2c,
+    meanDiff = meanDiff, var.MeanDiff = var.MeanDiff, var.1obs = var.Ar1cminusBr2c,
     ci95meanDiff.bot = ci95meanDiff.bot, ci95meanDiff.top = ci95meanDiff.bot,
     la.bot = la.bot, la.top = la.top )
 
