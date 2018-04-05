@@ -112,8 +112,19 @@ undoIMRMCdf <- function(df.MRMC) {
 #'
 #' @export
 #'
-# @examples
-getScore <- function(df, iR, iC, modality) {
+#' @examples
+#' # Simulate an MRMC data frame ####
+#' simRoeMetz.config <- sim.gRoeMetz.config()
+#' dFrameMRMC <- sim.gRoeMetz(simRoeMetz.config)
+#' desc <- dFrameMRMC[
+#'   as.numeric(dFrameMRMC$readerID) == 2 &
+#'     as.numeric(dFrameMRMC$caseID) == 4 &
+#'     dFrameMRMC$modalityID == "testA",
+#' ]
+#' print(desc$score)
+#' print(getMRMCscore(dFrameMRMC, 2, 4, "testA"))
+
+getMRMCscore <- function(df, iR, iC, modality) {
   score <- df[as.numeric(df$readerID) == iR &
                 as.numeric(df$caseID) == iC &
                 df$modalityID == modality, "score"]
@@ -241,9 +252,14 @@ convertDFtoDesignMatrix <- function(dfMRMC, modality = NULL, dropFlag = TRUE) {
 ## Extract between-reader between-modality pairs of scores ####
 #' Extract between-reader between-modality pairs of scores
 #'
-#' @param dfMRMC This data frame includes columns for readerID, caseID, modalityID, score.
+#' @param data0 This data frame includes columns for readerID, caseID, modalityID, score.
 #'
 #' @param modalities The modalities (testA, testB) for the scores to be paired
+#'
+#' @param keyColumns This list identifies the column names
+#' of the data frame to be used for the analysis.
+#'        list(readerID = "***", caseID = "***",
+#'             modalityID = "***", score = "***", truth="***")
 #'
 #' @return A data frame of all paired observations.
 #'   Each observation comes from a pair of readers evaluating a case in two modalities.
@@ -318,9 +334,14 @@ extractPairedComparisonsBRBM <- function(
 ## Extract within-reader between-modality pairs of scores ####
 #' Extract within-reader between-modality pairs of scores
 #'
-#' @param dfMRMC This data frame includes columns for readerID, caseID, modalityID, score.
+#' @param data0 This data frame includes columns for readerID, caseID, modalityID, score.
 #'
 #' @param modalities The modalities (testA, testB) for the scores to be paired
+#'
+#' @param keyColumns This list identifies the column names
+#' of the data frame to be used for the analysis.
+#'        list(readerID = "***", caseID = "***",
+#'             modalityID = "***", score = "***", truth="***")
 #'
 #' @return A data frame of all paired observations.
 #'   Each observation comes from a one reader evaluating a case in two modalities
