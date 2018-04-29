@@ -563,3 +563,33 @@ successDFtoROCdf <- function(df) {
   return(df.AUC)
 }
 
+## createDFdocumentation ####
+#' Extract data frame structure for documentation
+#'
+#' @param df Data frame for which documentation is desired
+#'
+#' @return Character vector formatted for Roxygen documentation
+#'
+#' @export
+#'
+#' @examples
+#' viperData365 <- viper::viperData365
+#' createDFdocumentation(masterDFdigital)
+createDFdocumentation <- function(df) {
+
+  desc1 <- capture.output(str(df))
+  nVar <- length(desc1) - 1
+
+  desc2 <- c(
+    paste("#\' \\code{", deparse(substitute(df)), "} is a", desc1[1], "\\cr \n"),
+    "#\'   \\itemize{ \\cr \n",
+    paste("#\'     \\item \\code{", desc1[2:nVar], "} \\cr \n"),
+    "#\'   }"
+  )
+
+  cat(desc2)
+
+  return(desc2)
+
+}
+
