@@ -1,0 +1,37 @@
+---
+title: 'iMRMC estimation of sensitivity and specificity '
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+library(pander)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The software can estimate sensitivity and specificity. However, the key is to format the data as the input file. The first 3 columns are the same as the input for AUC analysis of ROC data. The last column now represents the zero-one (negative-positive) binary decision.  
+
+##Transform iMRMC input file for Sensitivity or Specificity Analysis
+###1.	Do not need to edit truth data
+
+###2.	Edit score data
+```{r EditScore, echo=FALSE}
+EditScoreDataDf = data.frame(AnalysisPurposes = c('Sensitivity','Sensitivity','Sensitivity','Specificity','Specificity','Specificity'),
+                           CaseTruth = c('Disease case','Disease case','Non-Disease case','Disease case','Non-Disease case','Non-Disease case'),
+                           ReaderDecision = c('Disease (score>threshold)','Non-disease (score<threshold)','Does not matter','Does not matter','Disease (score>threshold)','Non-disease (score<threshold)'),
+                           BinaryDecision = c(1,0,0.5,0.5,1,0))
+
+pander(EditScoreDataDf, type = 'grid')
+
+```
+
+###3. Example
+Calculate pathologists’ sensitivity for dataset A
+
+  For disease cases, if reader’s score is larger than or equal to the threshold (≥3), set the last column for that reader and case to 1 (e.g. since reader2 gave score 4 to case3, set the last column of this row to 1)
+
+  For disease cases, if reader’s score is lower than threshold (<3), set the last column for that reader and case to 0 (e.g. since reader11 gave score 1 to case3, set the last column of this row to 0)
+
+  Set all scores (last column) for non-diseases cases to 0.5 (e.g. since case1 is non-disease case, set last column for case1 from all readers to 0.5).
+
