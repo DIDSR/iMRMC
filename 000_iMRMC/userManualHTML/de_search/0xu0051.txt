@@ -1,5 +1,5 @@
 Q
- 35
+ 35,34,2
 QI
  3
 QUALIFIER
