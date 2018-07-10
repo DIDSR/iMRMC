@@ -22,7 +22,7 @@ public class MRMC extends JApplet {
 	 */
 	private static final long serialVersionUID = 1L;
 	private static JFrame mrmcFrame;
-	public static final String versionname ="iMRMC Version 4.0.0";
+	public static final String versionname ="iMRMC Version 4.0.1b";
 	public static boolean commandStart = false;
 	static GUInterface gui;
 	GUImenubar menuBar;

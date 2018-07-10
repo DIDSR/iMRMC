@@ -1,0 +1,12 @@
+export DISPLAY=":0.0"; java -jar iRoeMetz-v2p1.jar /raidb/qigong/imrmc/allinput/01.irm
+export DISPLAY=":0.0"; java -jar iRoeMetz-v2p1.jar /raidb/qigong/imrmc/allinput/02.irm
+export DISPLAY=":0.0"; java -jar iRoeMetz-v2p1.jar /raidb/qigong/imrmc/allinput/03.irm
+export DISPLAY=":0.0"; java -jar iRoeMetz-v2p1.jar /raidb/qigong/imrmc/allinput/04.irm
+export DISPLAY=":0.0"; java -jar iRoeMetz-v2p1.jar /raidb/qigong/imrmc/allinput/05.irm
+export DISPLAY=":0.0"; java -jar iRoeMetz-v2p1.jar /raidb/qigong/imrmc/allinput/06.irm
+export DISPLAY=":0.0"; java -jar iRoeMetz-v2p1.jar /raidb/qigong/imrmc/allinput/07.irm
+export DISPLAY=":0.0"; java -jar iRoeMetz-v2p1.jar /raidb/qigong/imrmc/allinput/08.irm
+export DISPLAY=":0.0"; java -jar iRoeMetz-v2p1.jar /raidb/qigong/imrmc/allinput/09.irm
+export DISPLAY=":0.0"; java -jar iRoeMetz-v2p1.jar /raidb/qigong/imrmc/allinput/10.irm
+export DISPLAY=":0.0"; java -jar iRoeMetz-v2p1.jar /raidb/qigong/imrmc/allinput/11.irm
+export DISPLAY=":0.0"; java -jar iRoeMetz-v2p1.jar /raidb/qigong/imrmc/allinput/12.irm

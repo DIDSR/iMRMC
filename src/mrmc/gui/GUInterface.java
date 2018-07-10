@@ -813,7 +813,7 @@ public class GUInterface {
 					System.out.println("MRMC Save All Stat button clicked");
 					// Create a list for all combination of modality
 					int numMod = InputFile1.getModalityIDs().size();
-					int modCombination  = calFactorial(numMod)/calFactorial(numMod-2)/calFactorial(2)+3;      // find how many combination in total
+					int modCombination  = calFactorial(numMod)/calFactorial(numMod-2)/calFactorial(2)+numMod;      // find how many combination in total
 					String[][] modCombinationList = new String[modCombination] [2];
 					String[] rocMod = new String[numMod];
 					int count = 0;
