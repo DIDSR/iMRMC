@@ -34,7 +34,7 @@
 #'
 #' Please refer to the tests/testthat folder of the package for examples using these functions.
 #'
-#' @name uStat11.jointD
+#' @name uStat11
 #'
 #' @param df.input
 #' Data frame of observations, one per row. Columns identify random effects, fixed effects,
@@ -333,7 +333,7 @@ uStat11.jointD <- function(
 #'
 #' @export
 #'
-#' @rdname uStat11.jointD
+#' @rdname uStat11
 uStat11.conditionalD <- function(
   df.input, modalitiesToCompare, kernelFlag = 1,
   keyColumns = c("readerID", "caseID", "modalityID", "score")

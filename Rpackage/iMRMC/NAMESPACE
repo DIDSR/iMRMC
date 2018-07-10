@@ -2,9 +2,13 @@
 
 export(convertDFtoDesignMatrix)
 export(convertDFtoScoreMatrix)
+export(createDFdocumentation)
 export(createGroups)
 export(createIMRMCdf)
 export(doIMRMC)
+export(extractPairedComparisonsBRBM)
+export(extractPairedComparisonsWRBM)
+export(getMRMCscore)
 export(init.lecuyerRNG)
 export(laBRBM)
 export(laWRBM)
