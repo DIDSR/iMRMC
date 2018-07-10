@@ -640,7 +640,12 @@ public class InputFile {
 			dataloc = tempstr.indexOf("BEGIN SUMMARY");
 			}catch (Exception e) {
 				toReturn = "ERROR: Can't find BEGIN SUMMARY";
-				throw new IOException(toReturn, e);
+				if (!MRMC.commandStart){
+					throw new IOException(toReturn, e);
+				}else{
+					System.out.println(toReturn);
+					System.exit(0);
+				}
 			}
 		}
 		beginSummaryPosition = summaryPosition;	
@@ -658,7 +663,12 @@ public class InputFile {
 			dataloc = tempstr.indexOf("END SUMMARY");
 			}catch (Exception e) {
 				toReturn = "ERROR: Can't find END SUMMARY";
-				throw new IOException(toReturn, e);
+				if (!MRMC.commandStart){
+					throw new IOException(toReturn, e);
+				}else{
+					System.out.println(toReturn);
+					System.exit(0);
+				}
 			}
 		}
 		endSummaryPosition = summaryPosition;	
@@ -674,7 +684,12 @@ public class InputFile {
 		DBRecordStat.NreaderDB= Integer.valueOf(tempstr.substring(tempstr.lastIndexOf("=")+1).trim());
 		}catch(NumberFormatException e) {
 			toReturn = "Found NReaderSize =: Text following is not an integer \n"+tempstr;
-			throw new IOException(toReturn);
+			if (!MRMC.commandStart){
+				throw new IOException(toReturn);
+			}else{
+				System.out.println(toReturn);
+				System.exit(0);
+			}
 		}
 		tempstr = fileContent.get(beginSummaryPosition+2).toUpperCase();//load Nnormal
 		try {
@@ -682,7 +697,12 @@ public class InputFile {
 		DBRecordStat.NnormalDB= Integer.valueOf(tempstr.substring(tempstr.lastIndexOf("=")+1).trim());
 		}catch(NumberFormatException e) {
 			toReturn = "Found NReaderSize =: Text following is not an integer \n"+tempstr;
-			throw new IOException(toReturn);
+			if (!MRMC.commandStart){
+				throw new IOException(toReturn);
+			}else{
+				System.out.println(toReturn);
+				System.exit(0);
+			}
 		}
 		tempstr = fileContent.get(beginSummaryPosition+3).toUpperCase();//load NDisease
 		try {
@@ -690,7 +710,12 @@ public class InputFile {
 		DBRecordStat.NdiseaseDB= Integer.valueOf(tempstr.substring(tempstr.lastIndexOf("=")+1).trim());
 		}catch(NumberFormatException e) {
 			toReturn = "Found NReaderSize =: Text following is not an integer \n"+tempstr;
-			throw new IOException(toReturn);
+			if (!MRMC.commandStart){
+				throw new IOException(toReturn);
+			}else{
+				System.out.println(toReturn);
+				System.exit(0);
+			}
 		}
 		 
 		tempstr = fileContent.get(beginSummaryPosition+5).toUpperCase();//load Modality A
@@ -698,14 +723,24 @@ public class InputFile {
 		DBRecordStat.modalityA= tempstr.substring(tempstr.lastIndexOf("=")+1).trim();
 		}catch(NumberFormatException e) {
 			toReturn = "Fail to load Modality A information \n"+tempstr;
-			throw new IOException(toReturn);
+			if (!MRMC.commandStart){
+				throw new IOException(toReturn);
+			}else{
+				System.out.println(toReturn);
+				System.exit(0);
+			}
 		}
 		tempstr = fileContent.get(beginSummaryPosition+6).toUpperCase();//load Modality B
 		try {
 			DBRecordStat.modalityB= tempstr.substring(tempstr.lastIndexOf("=")+1).trim();
 		}catch(NumberFormatException e) {
 			toReturn = "Fail to load Modality B information \n"+tempstr;
-			throw new IOException(toReturn);
+			if (!MRMC.commandStart){
+				throw new IOException(toReturn);
+			}else{
+				System.out.println(toReturn);
+				System.exit(0);
+			}
 		}
 	   DBRecordStat.AUCs = new double [(int) DBRecordStat.Nreader][3];
 	   DBRecordStat.N0perReader = new int [(int) DBRecordStat.Nreader][3];
@@ -722,7 +757,12 @@ public class InputFile {
 					DBRecordStat.AUCsReaderAvg[0]= Double.valueOf(tempstr.substring(tempstr.lastIndexOf("=")+1).trim());
 					}catch(NumberFormatException e) {
 						toReturn = "Found AUC_A =: Text following is not an number \n"+tempstr;
-						throw new IOException(toReturn);
+						if (!MRMC.commandStart){
+							throw new IOException(toReturn);
+						}else{
+							System.out.println(toReturn);
+							System.exit(0);
+						}
 					}
 			}
 			loc = tempstr.indexOf("AUC_B =");
@@ -731,7 +771,12 @@ public class InputFile {
 					DBRecordStat.AUCsReaderAvg[1]= Double.valueOf(tempstr.substring(tempstr.lastIndexOf("=")+1).trim());
 					}catch(NumberFormatException e) {
 						toReturn = "Found AUC_B =: Text following is not an number \n"+tempstr;
-						throw new IOException(toReturn);
+						if (!MRMC.commandStart){
+							throw new IOException(toReturn);
+						}else{
+							System.out.println(toReturn);
+							System.exit(0);
+						}
 					}
 			}
 			/*
@@ -773,7 +818,12 @@ public class InputFile {
 						toReturn = "ERROR: Invalid input of AUCs";
 						toReturn = toReturn + "      row = " +   (i+k+1) + " \n";
 						toReturn = toReturn + fileContent.get(i+k) + " \n";
-						throw new IOException(toReturn, e);
+						if (!MRMC.commandStart){
+							throw new IOException(toReturn, e);
+						}else{
+							System.out.println(toReturn);
+							System.exit(0);
+						}
 					}
 				}
 			}
@@ -792,7 +842,12 @@ public class InputFile {
 						toReturn = "ERROR: Invalid input of AUCs";
 						toReturn = toReturn + "      row = " +   (i+k+1) + " \n";
 						toReturn = toReturn + fileContent.get(i+k) + " \n";
-						throw new IOException(toReturn, e);
+						if (!MRMC.commandStart){
+							throw new IOException(toReturn, e);
+						}else{
+							System.out.println(toReturn);
+							System.exit(0);
+						}
 					}
 				}
 			}
@@ -811,7 +866,12 @@ public class InputFile {
 						toReturn = "ERROR: Invalid input of AUCs";
 						toReturn = toReturn + "      row = " +   (i+k+1) + " \n";
 						toReturn = toReturn + fileContent.get(i+k) + " \n";
-						throw new IOException(toReturn, e);
+						if (!MRMC.commandStart){
+							throw new IOException(toReturn, e);
+						}else{
+							System.out.println(toReturn);
+							System.exit(0);
+						}
 					}
 				}
 			}
@@ -827,8 +887,12 @@ public class InputFile {
 						toReturn = "ERROR: Invalid input of MODALITY1(AUC_A)";
 						toReturn = toReturn + "      row = " +   (i+1) + " \n";
 						toReturn = toReturn + fileContent.get(i) + " \n";
-
-						throw new IOException(toReturn, e);
+						if (!MRMC.commandStart){
+							throw new IOException(toReturn, e);
+						}else{
+							System.out.println(toReturn);
+							System.exit(0);
+						}
 					}
 				}
 			}
@@ -843,8 +907,12 @@ public class InputFile {
 						toReturn = "ERROR: Invalid input of MODALITY2(AUC_B)";
 						toReturn = toReturn + "      row = " +   (i+1) + " \n";
 						toReturn = toReturn + fileContent.get(i) + " \n";
-	
-						throw new IOException(toReturn, e);
+						if (!MRMC.commandStart){
+							throw new IOException(toReturn, e);
+						}else{
+							System.out.println(toReturn);
+							System.exit(0);
+						}
 					}
 				}
 			}
@@ -859,8 +927,12 @@ public class InputFile {
 						toReturn = "ERROR: Invalid input of COMP PRODUCT";
 						toReturn = toReturn + "      row = " +   (i+1) + " \n";
 						toReturn = toReturn + fileContent.get(i) + " \n";
-
-						throw new IOException(toReturn, e);
+						if (!MRMC.commandStart){
+							throw new IOException(toReturn, e);
+						}else{
+							System.out.println(toReturn);
+							System.exit(0);
+						}
 					}
 				}
 			}
@@ -909,7 +981,12 @@ public class InputFile {
 					Nnormal = Integer.valueOf(tempstr.substring(3).trim());
 				} catch(NumberFormatException e) {
 					toReturn = "Found N0: Text following is not an integer \n"+tempstr;
-					throw new IOException(toReturn);
+					if (!MRMC.commandStart){
+						throw new IOException(toReturn);
+					}else{
+						System.out.println(toReturn);
+						System.exit(0);
+					}
 				}
 			}
 			loc = tempstr.indexOf("N1:");
@@ -920,7 +997,12 @@ public class InputFile {
 					Ndisease = Integer.valueOf(tempstr.substring(3).trim());
 				} catch(NumberFormatException e) {
 					toReturn = "Found N1: Text following is not an integer \n"+tempstr;
-					throw new IOException(toReturn);
+					if (!MRMC.commandStart){
+						throw new IOException(toReturn);
+					}else{
+						System.out.println(toReturn);
+						System.exit(0);
+					}
 				}
 			}
 			loc = tempstr.indexOf("NR:");
@@ -931,7 +1013,12 @@ public class InputFile {
 					Nreader = Integer.valueOf(tempstr.substring(3).trim());
 				} catch(NumberFormatException e) {
 					toReturn = "Found NR: Text following is not an integer \n"+tempstr;
-					throw new IOException(toReturn);
+					if (!MRMC.commandStart){
+						throw new IOException(toReturn);
+					}else{
+						System.out.println(toReturn);
+						System.exit(0);
+					}
 				}
 			}
 			loc = tempstr.indexOf("NM:");
@@ -942,7 +1029,12 @@ public class InputFile {
 					Nmodality = Integer.valueOf(tempstr.substring(3).trim());
 				} catch(NumberFormatException e) {
 					toReturn = "Found NM: Text following is not an integer \n"+tempstr;
-					throw new IOException(toReturn);
+					if (!MRMC.commandStart){
+						throw new IOException(toReturn);
+					}else{
+						System.out.println(toReturn);
+						System.exit(0);
+					}
 				}
 			}
             try{
@@ -951,7 +1043,12 @@ public class InputFile {
                dataloc = tempstr.indexOf("BEGIN DATA:");
 			}catch (Exception e) {
 				toReturn = "ERROR: Can't find BEGIN DATA";
-				throw new IOException(toReturn, e);
+				if (!MRMC.commandStart){
+					throw new IOException(toReturn, e);
+				}else{
+					System.out.println(toReturn);
+					System.exit(0);
+				}
 			}
 			
 		}
@@ -981,8 +1078,13 @@ public class InputFile {
 				String toReturn = "ERROR: Invalid input";
 				toReturn = toReturn + "      row = " +    (NrowsInHeader+i+2) + " \n";
 				toReturn = toReturn + fileContent.get(filePosition+1+i) + " \n";
-
-				throw new IOException(toReturn, e);
+				
+				if (!MRMC.commandStart){
+					throw new IOException(toReturn, e);
+				}else{
+					System.out.println(toReturn);
+					System.exit(0);
+				}
 			}
 		}
 	}
@@ -1026,7 +1128,12 @@ public class InputFile {
 					dataCheckResults = dataCheckResults + "      caseID = " + observerData[i][1]     + " \n";
 					dataCheckResults = dataCheckResults + "      modalityID = " + observerData[i][2] + " \n";
 					
-					throw new IOException(dataCheckResults);
+					if (!MRMC.commandStart){
+						throw new IOException(dataCheckResults);
+					}else{
+						System.out.println(dataCheckResults);
+						System.exit(0);
+					}
 
 				}
 				// New normal ID?
@@ -1055,8 +1162,12 @@ public class InputFile {
 					dataCheckResults = dataCheckResults + "      caseID = " + observerData[i][1]     + " \n";
 					dataCheckResults = dataCheckResults + "      modalityID = " + observerData[i][2] + " \n";
 					
-					throw new IOException(dataCheckResults);
-
+					if (!MRMC.commandStart){
+						throw new IOException(dataCheckResults);
+					}else{
+						System.out.println(dataCheckResults);
+						System.exit(0);
+					}
 				}
 				// New reader ID?
 				if ( !readerIDs.containsKey(observerData[i][0])  ) {
@@ -1145,18 +1256,21 @@ public class InputFile {
 		for (String m : modalityIDs.keySet()){
 			for(String r : readerIDs.keySet()){
 				Integer[] countnum = casecount.get(m).get(r);
-				if (countnum==null||Math.min(countnum[0],countnum[1])<2){
+				if (countnum!=null&&Math.min(countnum[0],countnum[1])<2){
 					misscasemessage = misscasemessage + "Reader: "+r+" reads less than 2 normal or less than 2 disease cases in "+"Modality: "+m+"\n";
 					messagecount++;
 				}
 			}
 		}
-		if (messagecount>0&&DisplayWarning){
+		if (messagecount>0){
 			misscasemessage = misscasemessage + "ROC analysis is not possible and not executed for these reader-modality combinations.";
-		    JFrame frame = new JFrame();
-			JOptionPane.showMessageDialog(
-					frame,misscasemessage, 
-					"Not fully data loaded", JOptionPane.INFORMATION_MESSAGE);
+			if (DisplayWarning){				
+			    JFrame frame = new JFrame();
+				JOptionPane.showMessageDialog(
+						frame,misscasemessage, 
+						"Not fully data loaded", JOptionPane.INFORMATION_MESSAGE);
+			}
+			System.out.println(misscasemessage);
 		}
 	}
 	
@@ -1221,7 +1335,12 @@ public class InputFile {
 					toReturn = toReturn + "      caseID = " + observerData[i][1]     + " \n";
 					toReturn = toReturn + "      modalityID = " + observerData[i][2] + " \n";
 
-					throw new IOException(toReturn);
+					if (!MRMC.commandStart){
+						throw new IOException(toReturn);
+					}else{
+						System.out.println(toReturn);
+						System.exit(0);
+					}
 
 				}
 				else {
