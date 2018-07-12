@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Scanner;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import mrmc.gui.GUInterface;
 import roemetz.core.RoeMetz;
@@ -37,7 +38,7 @@ public class commandStartFunction {
 			GUInterface.selectedInput = GUInterface.DescInputModeOmrmc;
 		}else{
 			System.out.println("please input a valid input file");
-			return;
+			System.exit(0);
 		}
 		GUI = gui;
 		InputFile1 = GUI.InputFile1;
@@ -56,5 +57,25 @@ public class commandStartFunction {
 		GUI.allAnalysisOutput = outputFolderFullName;
 		GUInterface.SaveAllStatListener ExportAllListener1 = GUI. new SaveAllStatListener();
 		ExportAllListener1.exportResult();
+	}
+	public static void displayConsoleError(JFrame frame, String errorStr){
+		if(!MRMC.commandStart){
+			JOptionPane.showMessageDialog(frame,
+					errorStr, "Error",
+					JOptionPane.ERROR_MESSAGE);			
+		}else{
+			System.out.println("Error: "+ errorStr);
+			System.exit(0);
+		}
+
+	}
+	public static void displayConsoleWarning(JFrame frame, String warningStr){
+		if(!MRMC.commandStart){
+			JOptionPane.showMessageDialog(frame,
+					warningStr, "Warning",
+					JOptionPane.ERROR_MESSAGE);
+		}else{
+			System.out.println("Warning: "+ warningStr);
+		}
 	}
 }
