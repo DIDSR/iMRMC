@@ -60,9 +60,10 @@ public class commandStartFunction {
 	}
 	public static void displayConsoleError(JFrame frame, String errorStr){
 		if(!MRMC.commandStart){
+			System.out.println("Error: "+ errorStr);
 			JOptionPane.showMessageDialog(frame,
 					errorStr, "Error",
-					JOptionPane.ERROR_MESSAGE);			
+					JOptionPane.ERROR_MESSAGE);
 		}else{
 			System.out.println("Error: "+ errorStr);
 			System.exit(0);
@@ -71,6 +72,7 @@ public class commandStartFunction {
 	}
 	public static void displayConsoleWarning(JFrame frame, String warningStr){
 		if(!MRMC.commandStart){
+			System.out.println("Warning: "+ warningStr);
 			JOptionPane.showMessageDialog(frame,
 					warningStr, "Warning",
 					JOptionPane.ERROR_MESSAGE);
