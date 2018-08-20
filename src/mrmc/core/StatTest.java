@@ -208,11 +208,10 @@ public class StatTest {
 		if (DF_Hillis < 2) {
 			if (!exploreExpSize.doFullSize){
 				JFrame frame = new JFrame();
-				JOptionPane.showMessageDialog(frame,
-						"DF_Hillis was calculated to be " + DF_Hillis +
+				String warningStr = "DF_Hillis was calculated to be " + DF_Hillis +
 						"\nDF_Hillis less than 2 cannot be handled" +
-						"\nTherefore, it is being set to 2", "Warning",
-						JOptionPane.ERROR_MESSAGE);
+						"\nTherefore, it is being set to 2";
+				commandStartFunction.displayConsoleWarning(frame,warningStr);
 			}
 			DF_Hillis = 2;
 		}
@@ -381,12 +380,11 @@ public double calcDF_BDGbckIndep(DBRecord curRecord) {
 	if (DF_BDG < DF_min) {
 		if(verbose&&!MRMC.commandStart) {
 			JFrame frame = new JFrame();
-			JOptionPane.showMessageDialog(frame,
-					"DF_BDG is below a minimum." +
+			String warningStr = "DF_BDG is below a minimum." +
 					"\nDF_BDG was calculated to be " + DF_BDG + "\nIt is being set to DF_min = " + DF_min +
 					"\nThis follows Gaylor1969_Technometrics_v4p691" +
-					"\nand indicates that your data is very limited", "Warning",
-					JOptionPane.ERROR_MESSAGE);
+					"\nand indicates that your data is very limited";
+			commandStartFunction.displayConsoleWarning(frame,warningStr);
 		}
 		DF_BDG = DF_min;
 	}
@@ -395,12 +393,11 @@ public double calcDF_BDGbckIndep(DBRecord curRecord) {
 	if (DF_BDG < 2) {
 		if(verbose&&!MRMC.commandStart) {
  			JFrame frame = new JFrame();
- 			JOptionPane.showMessageDialog(frame,
- 					"DF_BDG is below a minimum." +
+			String warningStr = "DF_BDG is below a minimum." +
 					"\nDF_BDG was calculated to be " + DF_BDG +
 					"\nDF_BDG less than 2 cannot be handled" +
-					"\nTherefore, it is being set to 2", "Warning",
-					JOptionPane.ERROR_MESSAGE);
+					"\nTherefore, it is being set to 2";
+			commandStartFunction.displayConsoleWarning(frame,warningStr);
 		}
 		DF_BDG = 2;
 	}
@@ -540,12 +537,11 @@ DF_BDG = Math.pow(totalVar, 2) / DF_denom;
 if (DF_BDG < DF_min) {
 	if(verbose&&!MRMC.commandStart) {
 		JFrame frame = new JFrame();
-		JOptionPane.showMessageDialog(frame,
-				"DF_BDG is below a minimum." +
+		String warningStr = "DF_BDG is below a minimum." +
 				"\nDF_BDG was calculated to be " + DF_BDG + "\nIt is being set to DF_min = " + DF_min +
 				"\nThis follows Gaylor1969_Technometrics_v4p691" +
-				"\nand indicates that your data is very limited", "Warning",
-				JOptionPane.ERROR_MESSAGE);
+				"\nand indicates that your data is very limited";
+		commandStartFunction.displayConsoleWarning(frame,warningStr);
 	}
 	DF_BDG = DF_min;
 }
@@ -554,12 +550,11 @@ if (DF_BDG < DF_min) {
 if (DF_BDG < 2) {
 	if(verbose&&!MRMC.commandStart) {
 			JFrame frame = new JFrame();
-			JOptionPane.showMessageDialog(frame,
-				"DF_BDG is below a minimum." +
-				"\nDF_BDG was calculated to be " + DF_BDG +
-				"\nDF_BDG less than 2 cannot be handled" +
-				"\nTherefore, it is being set to 2", "Warning",
-				JOptionPane.ERROR_MESSAGE);
+			String warningStr = "DF_BDG is below a minimum." +
+					"\nDF_BDG was calculated to be " + DF_BDG +
+					"\nDF_BDG less than 2 cannot be handled" +
+					"\nTherefore, it is being set to 2";
+			commandStartFunction.displayConsoleWarning(frame,warningStr);
 	}
 	DF_BDG = 2;
 }
@@ -691,12 +686,11 @@ DF_BDG = Math.pow(totalVar, 2) / DF_denom;
 if (DF_BDG < DF_min) {
 	if(verbose&&!RoeMetz.doValidation&&!exploreExpSize.doFullSize&&!MRMC.commandStart) {
 		JFrame frame = new JFrame();
-		JOptionPane.showMessageDialog(frame,
-				"DF_BDG is below a minimum." +
+		String warningStr = "DF_BDG is below a minimum." +
 				"\nDF_BDG was calculated to be " + DF_BDG + "\nIt is being set to DF_min = " + DF_min +
 				"\nThis follows Gaylor1969_Technometrics_v4p691" +
-				"\nand indicates that your data is very limited", "Warning",
-				JOptionPane.ERROR_MESSAGE);
+				"\nand indicates that your data is very limited";
+		commandStartFunction.displayConsoleWarning(frame,warningStr);
 	}
 	DF_BDG = DF_min;
 }
@@ -705,12 +699,11 @@ if (DF_BDG < DF_min) {
 if (DF_BDG < 2) {
 	if((verbose&&!RoeMetz.doValidation&&!exploreExpSize.doFullSize&&!MRMC.commandStart)) {
 			JFrame frame = new JFrame();
-			JOptionPane.showMessageDialog(frame,
-				"DF_BDG is below a minimum." +
-				"\nDF_BDG was calculated to be " + DF_BDG +
-				"\nDF_BDG less than 2 cannot be handled" +
-				"\nTherefore, it is being set to 2", "Warning",
-				JOptionPane.ERROR_MESSAGE);
+			String warningStr = "DF_BDG is below a minimum." +
+					"\nDF_BDG was calculated to be " + DF_BDG +
+					"\nDF_BDG less than 2 cannot be handled" +
+					"\nTherefore, it is being set to 2";
+			commandStartFunction.displayConsoleWarning(frame,warningStr);
 	}
 	DF_BDG = 2;
 }
@@ -806,22 +799,20 @@ return DF_BDG;
 		if (DF_Hillis < 2) {
 			if (!RoeMetz.doValidation&&!MRMC.commandStart){
 				JFrame frame = new JFrame();
-				JOptionPane.showMessageDialog(frame,
-						"DF_Hillis was calculated to be " + DF_Hillis + "\nIt is being set to 2", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				String warningStr = "DF_Hillis was calculated to be " + DF_Hillis + "\nIt is being set to 2";
+				commandStartFunction.displayConsoleWarning(frame,warningStr);
 			}
 			DF_Hillis = 2;
 		}
 		if( Double.isInfinite(DF_Hillis) ) {
 		    if (!RoeMetz.doValidation&&!MRMC.commandStart){
 			JFrame frame = new JFrame();
-			JOptionPane.showMessageDialog(frame,
-					"DF_Hillis was calculated to be infinite." + 
+			String warningStr = "DF_Hillis was calculated to be infinite." + 
 					"\nIt is likely due to ms_tr = 0.0 (difference in modalities analysis)" +
 					"\n    or ms_r = 0.0 (single modality analysis)." + 
 					"\nDF_Hillis is being set to 50." +
-					"\nPlease check your data.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+					"\nPlease check your data.";
+			commandStartFunction.displayConsoleWarning(frame,warningStr);
 		    }
 			DF_Hillis = 50.0;			
 		}

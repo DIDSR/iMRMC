@@ -519,10 +519,9 @@ public class DBRecord {
 			//flagFullyCrossed = covMRMCstat.fullyCrossedA;
 			if(AUCsReaderAvg[0] < 0) {
 				JFrame frame = new JFrame();
-				JOptionPane.showMessageDialog(frame,
-						"There are no observations for modality A." + 
-						"\nPlease check your data.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				String errorStr = "There are no observations for modality A." + 
+						"\nPlease check your data.";
+				commandStartFunction.displayConsoleError(frame,errorStr);
 				return;
 			}
 		}
@@ -533,10 +532,9 @@ public class DBRecord {
 			//flagFullyCrossed = covMRMCstat.fullyCrossedB;
 			if(AUCsReaderAvg[1] < 0) {
 				JFrame frame = new JFrame();
-				JOptionPane.showMessageDialog(frame,
-						"There are no observations for modality B." + 
-						"\nPlease check your data.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				String errorStr = "There are no observations for modality B." + 
+						"\nPlease check your data.";
+				commandStartFunction.displayConsoleError(frame,errorStr);
 				return;
 			}
 		}
@@ -570,18 +568,21 @@ public class DBRecord {
 					//covMRMCstat.fullyCrossedAB;
 			if(AUCsReaderAvg[0] < 0) {
 				JFrame frame = new JFrame();
-				JOptionPane.showMessageDialog(frame,
+				String errorStr = "There are no observations for modality A." + 
+						"\nPlease check your data.";
+				commandStartFunction.displayConsoleError(frame,errorStr);
+
+/*				JOptionPane.showMessageDialog(frame,
 						"There are no observations for modality A." + 
 						"\nPlease check your data.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+						JOptionPane.ERROR_MESSAGE);*/
 				return;
 			}
 			if(AUCsReaderAvg[1] < 0) {
 				JFrame frame = new JFrame();
-				JOptionPane.showMessageDialog(frame,
-						"There are no observations for modality B." + 
-						"\nPlease check your data.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				String errorStr = "There are no observations for modality B." + 
+						"\nPlease check your data.";
+				commandStartFunction.displayConsoleError(frame,errorStr);
 				return;
 			}
 		}
