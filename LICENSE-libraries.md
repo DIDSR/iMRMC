@@ -1,4 +1,4 @@
-Except as outlined below, our software is governed by the [MIT license](../master/LICENSE).
+Except as outlined below, our software is governed by the [CC0 1.0 Universal license](../master/LICENSE.md).
 
 The software includes several libraries with their own licenses that must be followed.
 
