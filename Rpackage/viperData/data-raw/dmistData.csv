@@ -1,0 +1,21 @@
+"","nObs.FFDM","nObs.SFM","nObs.total","caseDist.desc","caseDist.caseDist.df.BIRADS5","caseDist.caseDist.df.BIRADS4","caseDist.caseDist.df.BIRADS0","caseDist.caseDist.df.BIRADS3","caseDist.caseDist.df.BIRADS2","caseDist.caseDist.df.BIRADS1","caseDist.denseBreasts.n1.FFDM.and.SFM","caseDist.denseBreasts.n1.SFM.notFFDM","caseDist.denseBreasts.n1.FFDM.notSFM","caseDist.denseBreasts.n1.notFFDM.notSFM","caseDist.denseBreasts.n1.total","caseDist.denseBreasts.n0","caseDist.denseBreasts.total","performance.desc","performance.FFDM.AUC","performance.FFDM.AUCse","performance.FFDM.CIbot","performance.FFDM.CItop","performance.FFDM.TPF","performance.FFDM.TPFse","performance.FFDM.TNF","performance.FFDM.TNFse","performance.SFM.AUC","performance.SFM.AUCse","performance.SFM.CIbot","performance.SFM.CItop","performance.SFM.TPF","performance.SFM.TPFse","performance.SFM.TNF","performance.SFM.TNFse","performance.FFDMminusSFM.AUC","performance.FFDMminusSFM.AUCse","performance.FFDMminusSFM.CIbot","performance.FFDMminusSFM.CItop","performance.FFDMminusSFM.p","performance.FFDMminusSFM.TPF","performance.FFDMminusSFM.TPFse","performance.FFDMminusSFM.TPFCIbot","performance.FFDMminusSFM.TPFCItop","performance.FFDMminusSFM.TPFp","performance.FFDMminusSFM.TNF","performance.FFDMminusSFM.TNFse","performance.FFDMminusSFM.TNFCIbot","performance.FFDMminusSFM.TNFCItop","performance.FFDMminusSFM.TNFp"
+"FFDM.n1",42570,42745,85315,"DMIST BIRADS case distribution. From Table 2 of Pisano2005_NEJM_v353p1773-Suppl.pdf",7,8,171,0,45,103,54,19,40,52,165,19732,19897,"AUC is from Figure 1 and the text of Pisano2005_NEJM_v353p1773.pdf
+ SE of AUC is taken to be 1/4 of the confidence interval specified. AUC determined using seven-point malignancy scale.
+ TPF,FPF are from Table 2 of Pisano2005_NEJM_v353p1773-Suppl.pdf.
+ TPF,FPF are determined using BIRADS.
+ Cancer determined at 455 days for AUC, TPF, and FPF.",0.78,0.015,0.75,0.81,0.567,0.039,0.906,0.002,0.68,0.015,0.65,0.71,0.436,0.039,0.902,0.002,0.11,0.035,0.04,0.18,0.003,0.131,0.047,0.034,0.222,0.008,0.004,0.00275,-0.001,0.01,0.08
+"SFM.n1",42570,42745,85315,"DMIST BIRADS case distribution. From Table 2 of Pisano2005_NEJM_v353p1773-Suppl.pdf",7,6,161,0,42,119,54,19,40,52,165,19732,19897,"AUC is from Figure 1 and the text of Pisano2005_NEJM_v353p1773.pdf
+ SE of AUC is taken to be 1/4 of the confidence interval specified. AUC determined using seven-point malignancy scale.
+ TPF,FPF are from Table 2 of Pisano2005_NEJM_v353p1773-Suppl.pdf.
+ TPF,FPF are determined using BIRADS.
+ Cancer determined at 455 days for AUC, TPF, and FPF.",0.78,0.015,0.75,0.81,0.567,0.039,0.906,0.002,0.68,0.015,0.65,0.71,0.436,0.039,0.902,0.002,0.11,0.035,0.04,0.18,0.003,0.131,0.047,0.034,0.222,0.008,0.004,0.00275,-0.001,0.01,0.08
+"FFDM.total",42570,42745,85315,"DMIST BIRADS case distribution. From Table 2 of Pisano2005_NEJM_v353p1773-Suppl.pdf",9,23,3623,68,8564,30283,54,19,40,52,165,19732,19897,"AUC is from Figure 1 and the text of Pisano2005_NEJM_v353p1773.pdf
+ SE of AUC is taken to be 1/4 of the confidence interval specified. AUC determined using seven-point malignancy scale.
+ TPF,FPF are from Table 2 of Pisano2005_NEJM_v353p1773-Suppl.pdf.
+ TPF,FPF are determined using BIRADS.
+ Cancer determined at 455 days for AUC, TPF, and FPF.",0.78,0.015,0.75,0.81,0.567,0.039,0.906,0.002,0.68,0.015,0.65,0.71,0.436,0.039,0.902,0.002,0.11,0.035,0.04,0.18,0.003,0.131,0.047,0.034,0.222,0.008,0.004,0.00275,-0.001,0.01,0.08
+"SFM.total",42570,42745,85315,"DMIST BIRADS case distribution. From Table 2 of Pisano2005_NEJM_v353p1773-Suppl.pdf",8,23,3648,53,8113,30900,54,19,40,52,165,19732,19897,"AUC is from Figure 1 and the text of Pisano2005_NEJM_v353p1773.pdf
+ SE of AUC is taken to be 1/4 of the confidence interval specified. AUC determined using seven-point malignancy scale.
+ TPF,FPF are from Table 2 of Pisano2005_NEJM_v353p1773-Suppl.pdf.
+ TPF,FPF are determined using BIRADS.
+ Cancer determined at 455 days for AUC, TPF, and FPF.",0.78,0.015,0.75,0.81,0.567,0.039,0.906,0.002,0.68,0.015,0.65,0.71,0.436,0.039,0.902,0.002,0.11,0.035,0.04,0.18,0.003,0.131,0.047,0.034,0.222,0.008,0.004,0.00275,-0.001,0.01,0.08
