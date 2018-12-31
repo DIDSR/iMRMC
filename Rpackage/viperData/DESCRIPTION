@@ -1,11 +1,12 @@
 Package: viperData
 Type: Package
-Title: An R Markdown Version of Gallas2018_J-Med-Img_accepted and the Data.
+Title: An R Markdown Version of Gallas2018_J-Med-Img_accepted and the Data
 Version: 1.0.0
 Author: Brandon D. Gallas, Weijie Chen, Elodia Cole, Robert Ochs, Nicholas A. Petrick,
   Etta D. Pisano, Berkman Sahiner, Frank W. Samuelson, and Kyle J. Myers
 Maintainer: Dr. Brandon D. Gallas <brandon.gallas@fda.hhs.gov>
 Description: This package contains the markdown version of Gallas2018_J-Med-Imag_accepted and the Data.
+    TITLE: Impact of prevalence and case distribution in lab-based diagnostic imaging studies
     ABSTRACT: We investigated effects of prevalence and case distribution on radiologist diagnostic
   performance as measured by area under the receiver operating characteristic curve (AUC) and
   sensitivity-specificity in lab-based reader studies evaluating imaging devices.
@@ -22,8 +23,9 @@ Description: This package contains the markdown version of Gallas2018_J-Med-Imag
   whereas sensitivity increased and specificity decreased as prevalence increased. We found that AUC
   is robust to changes in prevalence, while radiologists were more aggressive with recall decisions
   as prevalence increased.
-    **Keywords** Image Evaluation, Study Design, MRMC analysis, AUC, Sensitivity, Specificity
+    **Keywords** Image Evaluation, Study Design, MRMC analysis, AUC, Sensitivity, Specificity.
 License: CC0
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
+Depends: R (>= 2.10)
