@@ -1,6 +1,33 @@
 # This file creates pdf and html versions of the R help.
 
-# system("R CMD Rdconv --help")
+# The R help files are created when a package is compiled.
+# They are found in the "man" directory and have an .Rd extension.
+
+# To convert the .Rd files to .html, we use the function
+# tools::Rd2HTML(inFile, out = outFile)
+
+# To convert the .Rd files to .pdf, we use the function
+# system("R CMD Rd2pdf --help")
+
+# Rd2pdf did not work because it was missing latex style files.
+# It was necessary to download and install latex style files.
+#
+# Download from https://www.ctan.org/tex-archive/systems/win32/miktex/tm/packages:
+# These two files are prerequisites for establishing a "Package Repository":
+# "C:\Users\BDG\Downloads\MiKTexPackages\miktex-zzdb1-2.9.tar.lzma"
+# "C:\Users\BDG\Downloads\MiKTexPackages\miktex-zzdb2-2.9.tar.lzma"
+# These three files were the latex style files.
+# "C:\Users\BDG\Downloads\MiKTexPackages\mptopdf.tar.lzma"
+# "C:\Users\BDG\Downloads\MiKTexPackages\url.tar.lzma"
+# "C:\Users\BDG\Downloads\MiKTexPackages\inconsolata.tar.lzma"
+#
+# In MiKTex Package Manager (should be in the Start menu under your MiKTex folder)
+# click Repository -> Change Package Repository ->
+# “Packages shall be installed from a directory.”
+# then Next -> select the location of the MikTexPackagesfolder -> Finish
+#
+# Then the packages can be installed manually with the package manager
+# or interactively when prompted by R CMD Rd2pdf
 
 packageDir <- file.path("C:", "Users", "BDG", "Documents", "000_github",
                         "DIDSR.iMRMC.trunk", "Rpackage", "viperData")
@@ -11,18 +38,9 @@ root <- file.path(manDir, "dmistData")
 convertRd <- function(root){
 
   file.Rd <- paste(root, ".Rd", sep = "")
-  file.pdf <- paste(root, ".pdf", sep = "")
   file.html <- paste(root, ".html", sep = "")
 
   tools::Rd2HTML(file.Rd, out = file.html)
-
-  command.package <- paste("R CMD Rd2pdf ",
-                           paste(root, ".Rd ", sep = ""),
-                           "--no-preview ",
-                           "--output=", file.pdf, " ",
-                           "--force",
-                           sep = "")
-  system(command.package)
 
 }
 
@@ -35,7 +53,7 @@ convertRd(root)
 root <- file.path(manDir, "viperSummary")
 convertRd(root)
 
-#### Rdconv ####
+#### Rdconv help####
 # > system("R CMD Rdconv --help")
 # Usage: R CMD Rdconv [options] FILE
 #
@@ -65,8 +83,17 @@ convertRd(root)
 
 
 
+#### Make pdf documentation ####
+command.package <- paste("R CMD Rd2pdf ",
+                         manDir, " ",
+                         "--no-preview ",
+                         "--output=", file.path(manDir, "000viperDataDocumentation.pdf "),
+                         "--force ",
+                         "--title=NAME is brandon",
+                         sep = "")
+system(command.package)
 
-#### Rd2pdf ####
+#### Rd2pdf help ####
 # > system("R CMD Rd2pdf --help")
 # Usage: R CMD Rd2pdf [options] files
 #
@@ -111,19 +138,3 @@ convertRd(root)
 # The PDF previewer is set by the environment variable R_PDFVIEWER.
 #
 # Report bugs at <https://bugs.R-project.org>.
-
-#### TEST ####
-# command.Rdconv <- 'R CMD Rdconv -t html -o "" '
-#
-# system(paste(command.Rdconv, file.path(packageDir, "man", "dmistData.Rd")))
-#
-#
-# command.package <- paste("R CMD Rd2pdf", file.path("C:", "Users", "BDG", "Documents", "000_svn", "viper", "Rpackage", "viperData", "man"))
-# system(command.package)
-#
-# command.dmistData <- paste("R CMD Rd2pdf", file.path("C:", "Users", "BDG", "Documents", "000_svn", "viper", "Rpackage", "viperData", "man", "dmistData.Rd"))
-# system(command.dmistData)
-#
-#
-# command2 <- paste("R CMD Rd2html", file.path("C:", "Users", "BDG", "Documents", "000_svn", "viper", "Rpackage", "viperData", "man", "dmistData.Rd"))
-#
