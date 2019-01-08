@@ -77,7 +77,19 @@ NULL
 #'
 #' @name viperSummary
 #'
-#' @description The VIPER summary files contain summary statistics of the VIPER observations
+#' @description The VIPER summary files contain summary statistics of the VIPER observations.
+#' The iMRMC R package is used to estimate the area under the ROC curve (AUC),
+#' the true positive fraction (sensitivity), and the true negative fraction (specificity).
+#' The iMRMC package also estimates variances, standard errors, and confidence intervals
+#' that account for the variability from readers and cases. You can refer to the R function
+#' \code{doViperSummary.R} in this package for the code that produces the summary files.
+#' 
+#' The iMRMC R package can be found at
+#' \itemize{
+#'   \item{\url{https://github.com/DIDSR/iMRMC/releases},}
+#'   \item{\url{https://github.com/DIDSR/iMRMC/tree/master/Rpackage}, and}
+#'   \item{\url{https://cran.r-project.org/web/packages/iMRMC/index.html}.}
+#' }
 #'
 #' @details Each element of the list pertains to one of the VIPER sub-studies:
 #'   \itemize{
@@ -88,7 +100,7 @@ NULL
 #'     \item \code{challengeHighP} [list] Challenge population, per reader prevalence ~ 50\%
 #'   }
 #'
-#' Each substudy list element is a list object of length 4.
+#' Each substudy list element is a list object of length 3.
 #'   \itemize{
 #'     \item \code{desc} [string] Sub-study label. This is the same as the sub-study list element name.
 #'     \item \code{studyDesign} [list] This list object contains several ways
@@ -106,10 +118,12 @@ NULL
 #'          Each of these data frames includes the total number of cases evaluated by all readers by case type.
 #'          One row of birads0ffdm, birads0sfm, birads12ffdm, birads12sfm, cancer, noncancer.
 #'      }
-#'     \item \code{iMRMC} [list] This list object contains the MRMC analysis results for auc, tpf, and tnf.
+#'     \item \code{iMRMC} [list] This list object contains the MRMC analysis results for
+#'      auc, tpf, and tnf.
 #'      There are four groups of results: perReader, Ustat, MLEstat, ROC, and varDecomp
 #'      The analysis results are produced by a command line version of iMRMC called by R:
-#'      \url{https://github.com/DIDSR/iMRMC/releases}, \url{https://github.com/DIDSR/iMRMC/tree/master/Rpackage},
+#'      \url{https://github.com/DIDSR/iMRMC/releases},
+#'      \url{https://github.com/DIDSR/iMRMC/tree/master/Rpackage},
 #'      \url{https://cran.r-project.org/web/packages/iMRMC/index.html}
 #'   }
 #'
@@ -144,8 +158,8 @@ NULL
 #'   "100+" was modified to 100,  "<50" was modified to 50, "200-250" was modified to 225,
 #'   "don't know" was modified to "NA", and "very few" was modified to "NA".
 #'
-#' @details A data frame with 10 variables: \cr
-#'    \itemize{ \cr
+#' @details A data frame with 10 variables:
+#'    \itemize{
 #'      \item \code{readerID} \cr
 #'      \item \code{certifiedABR} \cr
 #'      \item \code{breastImagingFellowship} \cr
@@ -155,7 +169,7 @@ NULL
 #'      \item \code{howManySFMlast2years} \cr
 #'      \item \code{howManyFFDMlast2years} \cr
 #'      \item \code{howManyYearsPostResidencyExperienceInterpretingSFM} \cr
-#'      \item \code{howManyYearsPostResidencyExperienceInterpretingFFDM} \cr
+#'      \item \code{howManyYearsPostResidencyExperienceInterpretingFFDM}
 #'    }
 #'
 "viperReaderQualifications"
@@ -163,9 +177,11 @@ NULL
 ## DMIST data ####
 #' DMIST data
 #'
-#' @description This data was manually translated from Pisano2005_NEJM_v353p1773 and its supplement.
+#' @description DMIST performance data manually transcribed from
+#' Pisano2005_NEJM_v353p1773 and its supplement.
 #'
 #' @details
+#' The performance data is organized in a list with the following elements.
 #'    \itemize{
 #'      \item \code{nObs.FFDM} [num] The number of FFDM observations (from Supplemental Table 2)
 #'      \item \code{nObs.SFM} [num] The number of SFM observations (from Supplemental Table 2)
