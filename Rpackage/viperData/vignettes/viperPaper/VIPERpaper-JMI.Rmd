@@ -2,12 +2,6 @@
 output:
   word_document:
     reference_docx: "templateForRmd.docx"
-  pdf_document:
-    toc: yes
-    toc_depth: 2
-  html_document:
-    toc: yes
-    toc_depth: '2'
 csl: 'radiology.csl'
 bibliography: 'viperBibtex.bib'
 ---
