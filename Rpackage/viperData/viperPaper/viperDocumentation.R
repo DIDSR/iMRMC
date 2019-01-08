@@ -89,7 +89,7 @@ command.package <- paste("R CMD Rd2pdf ",
                          "--no-preview ",
                          "--output=", file.path(manDir, "000viperDataDocumentation.pdf "),
                          "--force ",
-                         "--title=NAME is brandon",
+                         "--title=viperData",
                          sep = "")
 system(command.package)
 
