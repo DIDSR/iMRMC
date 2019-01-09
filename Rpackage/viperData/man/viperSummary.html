@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: viperSummaries</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for viperSummary {viperData}"><tr><td>viperSummary {viperData}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>viperSummaries</h2>
+
+<h3>Description</h3>
+
+<p>The VIPER summary files contain summary statistics of the VIPER observations.
+The iMRMC R package is used to estimate the area under the ROC curve (AUC),
+the true positive fraction (sensitivity), and the true negative fraction (specificity).
+The iMRMC package also estimates variances, standard errors, and confidence intervals
+that account for the variability from readers and cases. You can refer to the R function
+<code>doViperSummary.R</code> in this package for the code that produces the summary files.
+</p>
+<p>The iMRMC R package can be found at
+</p>
+
+<ul>
+<li><p><a href="https://github.com/DIDSR/iMRMC/releases">https://github.com/DIDSR/iMRMC/releases</a>,
+</p>
+</li>
+<li><p><a href="https://github.com/DIDSR/iMRMC/tree/master/Rpackage">https://github.com/DIDSR/iMRMC/tree/master/Rpackage</a>, and
+</p>
+</li>
+<li><p><a href="https://cran.r-project.org/web/packages/iMRMC/index.html">https://cran.r-project.org/web/packages/iMRMC/index.html</a>.
+</p>
+</li></ul>
+
+
+
+<h3>Usage</h3>
+
+<pre>
+viperSummary365
+
+viperSummary455
+</pre>
+
+
+<h3>Format</h3>
+
+<p>An object of class <code>list</code> of length 5.</p>
+
+
+<h3>Details</h3>
+
+<p>Each element of the list pertains to one of the VIPER sub-studies:
+</p>
+
+<ul>
+<li> <p><code>screeningLowP</code> [list] Screening population, per reader prevalence ~ 10%
+</p>
+</li>
+<li> <p><code>screeningMedP</code> [list] Screening population, per reader prevalence ~ 30%
+</p>
+</li>
+<li> <p><code>screeningHighP</code> [list] Screening population, per reader prevalence ~ 50%
+</p>
+</li>
+<li> <p><code>challengeMedP</code> [list] Challenge population, per reader prevalence ~ 30%
+</p>
+</li>
+<li> <p><code>challengeHighP</code> [list] Challenge population, per reader prevalence ~ 50%
+</p>
+</li></ul>
+
+<p>Each substudy list element is a list object of length 3.
+</p>
+
+<ul>
+<li> <p><code>desc</code> [string] Sub-study label. This is the same as the sub-study list element name.
+</p>
+</li>
+<li> <p><code>studyDesign</code> [list] This list object contains several ways
+to summarize the distribution of cases in the study accoring to case type.
+</p>
+
+<ul>
+<li> <p><code>nObs</code> [num] The number of observations in the sub-study.
+</p>
+</li>
+<li> <p><code>readers</code> [char] The reader IDs in the sub-study.
+</p>
+</li>
+<li> <p><code>nR</code> [num] The number of readers in the sub-study.
+</p>
+</li>
+<li> <p><code>nC</code> [data frame] The number of cases in the sub-study by case type.
+One row of birads0ffdm, birads0sfm, birads12ffdm, birads12sfm, cancer, noncancer.
+</p>
+</li>
+<li> <p><code>perReader</code> [list] This list contains two data frames: FFDM and SFM.
+Each of these data frames includes the number of cases evaluated by each reader by case type.
+20 readers == 20 Rows of birads0ffdm, birads0sfm, birads12ffdm, birads12sfm, cancer, noncancer.
+</p>
+</li>
+<li> <p><code>perReader.summary</code> [list] This list contains two data frames: FFDM and SFM.
+Each of these data frames includes the total number of cases evaluated by all readers by case type.
+One row of birads0ffdm, birads0sfm, birads12ffdm, birads12sfm, cancer, noncancer.
+</p>
+</li></ul>
+
+</li>
+<li> <p><code>iMRMC</code> [list] This list object contains the MRMC analysis results for
+auc, tpf, and tnf.
+There are four groups of results: perReader, Ustat, MLEstat, ROC, and varDecomp
+The analysis results are produced by a command line version of iMRMC called by R:
+<a href="https://github.com/DIDSR/iMRMC/releases">https://github.com/DIDSR/iMRMC/releases</a>,
+<a href="https://github.com/DIDSR/iMRMC/tree/master/Rpackage">https://github.com/DIDSR/iMRMC/tree/master/Rpackage</a>,
+<a href="https://cran.r-project.org/web/packages/iMRMC/index.html">https://cran.r-project.org/web/packages/iMRMC/index.html</a>
+</p>
+</li></ul>
+
+<p><strong>viperSummary365</strong>: This summary is based on <code><a href="viperObservations.html">viperObs365</a></code> the dataset
+based on cancer at 365 days.
+</p>
+<p><strong>viperSummary455</strong>: This summary is based on <code><a href="viperObservations.html">viperObs455</a></code> the dataset
+based on cancer at 455 days.
+</p>
+
+<hr /><div style="text-align: center;">[Package <em>viperData</em> version 1.0.0 <a href="00Index.html">Index</a>]</div>
+</body></html>

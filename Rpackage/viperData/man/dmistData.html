@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: DMIST data</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for dmistData {viperData}"><tr><td>dmistData {viperData}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>DMIST data</h2>
+
+<h3>Description</h3>
+
+<p>DMIST performance data manually transcribed from
+Pisano2005_NEJM_v353p1773 and its supplement.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+dmistData
+</pre>
+
+
+<h3>Format</h3>
+
+<p>An object of class <code>list</code> of length 6.</p>
+
+
+<h3>Details</h3>
+
+<p>The performance data is organized in a list with the following elements.
+</p>
+
+<ul>
+<li> <p><code>nObs.FFDM</code> [num] The number of FFDM observations (from Supplemental Table 2)
+</p>
+</li>
+<li> <p><code>nObs.SFM</code> [num] The number of SFM observations (from Supplemental Table 2)
+</p>
+</li>
+<li> <p><code>nObs.total</code> [num] the total number of observations (from Supplemental Table 2)
+</p>
+</li>
+<li> <p><code>caseDist</code> [list] This list contains two items (from Supplemental Table 2)
+</p>
+
+<ul>
+<li> <p><code>desc</code> [char] A description of the data.
+</p>
+</li>
+<li> <p><code>caseDist.df</code> [data frame] The distribution of BIRADS scores from DMIST. <br />
+Row 1 is the distribution of FFDM BIRADS scores among DMIST cancers. <br />
+Row 2 is the distribution of SFM BIRADS scores among DMIST cancers. <br />
+Row 3 is the distribution of FFDM BIRADS scores among all DMIST cases. <br />
+Row 4 is the distribution of SFM BIRADS scores among all DMIST cases.
+</p>
+</li></ul>
+
+</li>
+<li> <p><code>caseDist.denseBreasts</code> [data frame] Caption to Figure 1 and row &quot;T stage&quot; of Table 2.
+One row of cancer=n1 detected by FFDM and SFM, cancer=n1 detected by SFM but not FFDM,
+cancer=n1 detected by FFDM but not SFM, cancer=n1 not detected by SFM or FFDM, non-cancer=n2, and total.
+</p>
+</li>
+<li> <p><code>performance</code> [list]
+</p>
+
+<ul>
+<li> <p><code>desc</code> [char] A description of the data taken from Figure 1 and the text of
+Pisano2005_NEJM_v353p1773.pdf. SE of AUC is taken to be 1/4 of the confidence
+interval specified. AUC determined using seven-point malignancy scale.
+TPF,FPF are from Table 2 of Pisano2005_NEJM_v353p1773-Suppl.pdf.
+TPF,FPF are determined using BIRADS. Cancer determined at 455 days for AUC, TPF, and FPF.
+</p>
+</li>
+<li> <p><code>FFDM</code> [list] A list of the diagnostic performance statistics:
+<code>AUC, AUCse, CIbot, CItop, TPF, TPFse, TNF, TNFse</code>
+</p>
+</li>
+<li> <p><code>SFM</code> [list] A list of the diagnostic performance statistics:
+<code>AUC, AUCse, CIbot, CItop, TPF, TPFse, TNF, TNFse</code>
+</p>
+</li>
+<li> <p><code>FFDMminusSFM</code> [list] A list of the diagnostic performance statistics:
+<code>AUC, AUCse, CIbot, CItop, p, TPF, TPFse, TPFCIbot, TPFCItop, TPFp,
+           TNF, TNFse, TNFCIbot, TNFCItop, TNFp</code>
+</p>
+</li></ul>
+
+</li></ul>
+
+
+<hr /><div style="text-align: center;">[Package <em>viperData</em> version 1.0.0 <a href="00Index.html">Index</a>]</div>
+</body></html>

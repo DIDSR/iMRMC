@@ -29,29 +29,25 @@
 # Then the packages can be installed manually with the package manager
 # or interactively when prompted by R CMD Rd2pdf
 
-packageDir <- file.path("C:", "Users", "BDG", "Documents", "000_github",
-                        "DIDSR.iMRMC.trunk", "Rpackage", "viperData")
+# Make html documentation ####
+
+# Get the directories
+packageDir <- getwd()
 manDir <- file.path(packageDir, "man")
 
-root <- file.path(manDir, "dmistData")
+# # Get the .Rd files and create .html files
+# files.Rd <- list.files(manDir, pattern = ".Rd", full.names = TRUE)
+# files.html <- gsub(".Rd", ".html", files.Rd, fixed = TRUE)
+#
+# # Convert the .Rd files to .html files
+# for (i in 1:length(files.Rd)) {
+#   tools::Rd2HTML(files.Rd[i], out = files.html[i])
+# }
 
-convertRd <- function(root){
-
-  file.Rd <- paste(root, ".Rd", sep = "")
-  file.html <- paste(root, ".html", sep = "")
-
-  tools::Rd2HTML(file.Rd, out = file.html)
-
-}
-
-root <- file.path(manDir, "dmistData")
-convertRd(root)
-root <- file.path(manDir, "viperObservations")
-convertRd(root)
-root <- file.path(manDir, "viperReaderQualifications")
-convertRd(root)
-root <- file.path(manDir, "viperSummary")
-convertRd(root)
+htmlDir <- file.path(find.package("viperData"), "html")
+filesToCopy <- list.files(htmlDir, full.names = TRUE)
+file.copy(from = filesToCopy, to = manDir,
+          overwrite = TRUE, recursive = FALSE, copy.mode = TRUE)
 
 #### Rdconv help####
 # > system("R CMD Rdconv --help")
@@ -80,8 +76,6 @@ convertRd(root)
 # extension from FILE and adding a suitable extension.
 #
 # Report bugs at <https://bugs.R-project.org>.
-
-
 
 #### Make pdf documentation ####
 command.package <- paste("R CMD Rd2pdf ",
