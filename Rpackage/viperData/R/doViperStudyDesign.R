@@ -1,5 +1,5 @@
 #' doViperStudyDesign
-#' 
+#'
 #' @description Extract basic study design info
 #'
 #' @param rawData One of the VIPER sub-study data frames.
@@ -23,17 +23,17 @@
 #' @export
 #'
 #' @examples
-#' df <- split(viper::viperData455, viper::viperData455$desc)
-#' df.studyDesign <- doStudyDesign(df$screeningLowP)
+#' df <- split(viperData::viperObs455, viperData::viperObs455$desc)
+#' df.studyDesign <- doViperStudyDesign(df$screeningLowP)
 doViperStudyDesign <- function(rawData) {
-  
+
   nObs <- nrow(rawData)
   rawData <- droplevels(rawData)
-  
+
   # Identify the readers
   readers <- levels(rawData$readerID)
   nR <- nlevels(rawData$readerID)
-  
+
   # Identify the number of cases for each type
   nC <- data.frame(
     birads0ffdm = length(unique(rawData$caseID[rawData$Ctype == "birads0ffdm"])),
@@ -43,54 +43,54 @@ doViperStudyDesign <- function(rawData) {
     cancer = length(unique(rawData$caseID[rawData$Ctype == "cancer"])),
     nonCancer = length(unique(rawData$caseID[rawData$Ctype != "cancer"]))
   )
-  
+
   # For every case type, reader, and modality, count the number of observations
   desc <- (by(
     rawData,
     list(rawData$readerID, rawData$Ctype, rawData$modality), nrow))
-  
+
   FFDM <- data.frame(desc[,,1])
   SFM <- data.frame(desc[,,2])
-  
+
   FFDM$nonCancer <- rowSums(FFDM[, names(FFDM) != "cancer"])
   SFM$nonCancer <- rowSums(SFM[, names(SFM) != "cancer"])
-  
+
   FFDM$prevalence <- FFDM$cancer / (FFDM$cancer + FFDM$nonCancer)
   SFM$prevalence <- SFM$cancer / (SFM$cancer + SFM$nonCancer)
-  
+
   perReader <- list(FFDM = FFDM, SFM = SFM)
-  
+
   FFDM <- data.frame(t(sapply(perReader$FFDM, sum)))
   SFM <- data.frame(t(sapply(perReader$SFM, sum)))
-  
+
   FFDM <- rbind(FFDM, data.frame(t(sapply(perReader$FFDM, mean))))
   SFM <- rbind(SFM, data.frame(t(sapply(perReader$SFM, mean))))
-  
+
   FFDM <- rbind(FFDM, data.frame(t(sapply(perReader$FFDM, stats::median))))
   SFM <- rbind(SFM, data.frame(t(sapply(perReader$SFM, stats::median))))
-  
+
   FFDM <- rbind(FFDM, data.frame(t(sapply(perReader$FFDM, min))))
   SFM <- rbind(SFM, data.frame(t(sapply(perReader$SFM, min))))
-  
+
   FFDM <- rbind(FFDM, data.frame(t(sapply(perReader$FFDM, max))))
   SFM <- rbind(SFM, data.frame(t(sapply(perReader$SFM, max))))
-  
+
   rownames(FFDM) <- c("total", "mean", "median", "min", "max")
   rownames(SFM) <- c("total", "mean", "median", "min", "max")
-  
+
   perReader.summary <- list(FFDM = FFDM, SFM = SFM)
-  
+
   studyDesign <- list(
     nObs = nObs,
     readers = readers,
     nR = nR,
     nC = nC,
-    
+
     perReader = perReader,
     perReader.summary = perReader.summary
   )
-  
+
   return(studyDesign)
-  
+
 }
 

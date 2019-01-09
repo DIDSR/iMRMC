@@ -30,6 +30,6 @@ A list object that contains several ways
 Extract basic study design info
 }
 \examples{
-df <- split(viper::viperData455, viper::viperData455$desc)
-df.studyDesign <- doStudyDesign(df$screeningLowP)
+df <- split(viperData::viperObs455, viperData::viperObs455$desc)
+df.studyDesign <- doViperStudyDesign(df$screeningLowP)
 }

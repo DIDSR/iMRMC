@@ -4,10 +4,10 @@
 \alias{doViperSummary}
 \title{doViperSummary}
 \usage{
-doViperSummary(viperData0)
+doViperSummary(viperObs0)
 }
 \arguments{
-\item{viperData0}{A VIPER raw-data file: \code{\link{viperObs365}}, \code{\link{viperObs455}}}
+\item{viperObs0}{A VIPER raw-data file: \code{\link{viperObs365}}, \code{\link{viperObs455}}}
 }
 \value{
 A VIPER summary file: \code{\link{viperSummary365}} or \code{\link{viperSummary455}}
@@ -17,5 +17,6 @@ This function estimates the VIPER performance results.
 Before archiving this on GitHub, the function was called analyzeData.
 }
 \examples{
+library("iMRMC")
 viperSummary <- viperData::doViperSummary(viperData::viperObs455)
 }

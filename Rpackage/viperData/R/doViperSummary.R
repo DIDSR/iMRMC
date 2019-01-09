@@ -3,31 +3,32 @@
 #' @description This function estimates the VIPER performance results.
 #' Before archiving this on GitHub, the function was called analyzeData.
 #'
-#' @param viperData0 A VIPER raw-data file: \code{\link{viperObs365}}, \code{\link{viperObs455}}
+#' @param viperObs0 A VIPER raw-data file: \code{\link{viperObs365}}, \code{\link{viperObs455}}
 #'
 #' @return A VIPER summary file: \code{\link{viperSummary365}} or \code{\link{viperSummary455}}
 #' @export
 #'
 #' @examples
+#' library("iMRMC")
 #' viperSummary <- viperData::doViperSummary(viperData::viperObs455)
-doViperSummary <- function(viperData0) {
+doViperSummary <- function(viperObs0) {
 
   # Split the data by "desc": screeningLowP, screeningMedP, screeningHighP, challengeMedP, challengeHighP
-  viperData <- split(viperData0, viperData0$desc)
-  desc <- names(viperData)
+  viperObs <- split(viperObs0, viperObs0$desc)
+  desc <- names(viperObs)
 
   viperSummary <- list()
-  for (i in 1:length(viperData)) {
+  for (i in 1:length(viperObs)) {
 
     # Not all readers read all cases
-    viperData.i <- droplevels(viperData[[i]])
+    viperObs.i <- droplevels(viperObs[[i]])
 
     # Let user know progress
     print("")
     print(desc[i])
 
     # Extract basic study design info
-    studyDesign <- doViperStudyDesign(viperData.i)
+    studyDesign <- doViperStudyDesign(viperObs.i)
 
     # Analyze AUC
     print("AUC")
@@ -38,14 +39,14 @@ doViperSummary <- function(viperData0) {
       score = "score",
       truth = "Ctype"
     )
-    dfIMRMC <- iMRMC::createIMRMCdf(viperData.i, keyColumns, "cancer")
+    dfIMRMC <- iMRMC::createIMRMCdf(viperObs.i, keyColumns, "cancer")
     iMRMC.AUC <- iMRMC::doIMRMC(dfIMRMC)
 
     # Analyze TPF
     print("TPF")
-    viperData.i$TP = 0.5
-    viperData.i$TP[viperData.i$Ctype == "cancer" & viperData.i$recall == 1] = 1.0
-    viperData.i$TP[viperData.i$Ctype == "cancer" & viperData.i$recall == 2] = 0.0
+    viperObs.i$TP = 0.5
+    viperObs.i$TP[viperObs.i$Ctype == "cancer" & viperObs.i$recall == 1] = 1.0
+    viperObs.i$TP[viperObs.i$Ctype == "cancer" & viperObs.i$recall == 2] = 0.0
     keyColumns <- list(
       readerID = "readerID",
       caseID = "caseID",
@@ -53,14 +54,14 @@ doViperSummary <- function(viperData0) {
       score = "TP",
       truth = "Ctype"
     )
-    dfIMRMC <- iMRMC::createIMRMCdf(viperData.i, keyColumns, "cancer")
+    dfIMRMC <- iMRMC::createIMRMCdf(viperObs.i, keyColumns, "cancer")
     iMRMC.TPF <- iMRMC::doIMRMC(dfIMRMC)
 
     # Analyze TNF
     print("TNF")
-    viperData.i$TN = 0.5
-    viperData.i$TN[viperData.i$Ctype != "cancer" & viperData.i$recall == 1] = 1.0
-    viperData.i$TN[viperData.i$Ctype != "cancer" & viperData.i$recall == 2] = 0.0
+    viperObs.i$TN = 0.5
+    viperObs.i$TN[viperObs.i$Ctype != "cancer" & viperObs.i$recall == 1] = 1.0
+    viperObs.i$TN[viperObs.i$Ctype != "cancer" & viperObs.i$recall == 2] = 0.0
     keyColumns <- list(
       readerID = "readerID",
       caseID = "caseID",
@@ -68,7 +69,7 @@ doViperSummary <- function(viperData0) {
       score = "TN",
       truth = "Ctype"
     )
-    dfIMRMC <- iMRMC::createIMRMCdf(viperData.i, keyColumns, "cancer")
+    dfIMRMC <- iMRMC::createIMRMCdf(viperObs.i, keyColumns, "cancer")
     iMRMC.TNF <- iMRMC::doIMRMC(dfIMRMC)
 
     # Consolidate MRMC analysis output into a list
@@ -81,7 +82,7 @@ doViperSummary <- function(viperData0) {
     )
 
   }
-  names(viperSummary) <- names(viperData)
+  names(viperSummary) <- names(viperObs)
 
   return(viperSummary)
 

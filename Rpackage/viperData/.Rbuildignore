@@ -1,3 +1,4 @@
+^vignettes$
 ^data-raw$
 ^viperPaper$
 ^.*\.Rproj$
