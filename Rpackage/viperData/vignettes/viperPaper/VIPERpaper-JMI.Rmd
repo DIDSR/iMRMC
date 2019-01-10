@@ -1,9 +1,10 @@
 ---
+bibliography: viperBibtex.bib
+csl: radiology.csl
 output:
+  pdf_document: default
   word_document:
-    reference_docx: "templateForRmd.docx"
-csl: 'radiology.csl'
-bibliography: 'viperBibtex.bib'
+    reference_docx: templateForRmd.docx
 ---
 
 ```{r setup, echo=FALSE, warning = FALSE}
@@ -86,6 +87,7 @@ This work is an original investigation article.
  c. FDA/CDRH/OIR/Division of Radiological Health, 10903 New Hampshire Ave, WO66-4312, Silver Spring, MD, 20993-0002.
 
 #####
+\newpage
 
 ## Abstract
 
@@ -100,6 +102,7 @@ This work is an original investigation article.
 **Keywords** Image Evaluation, Study Design, MRMC analysis, AUC, Sensitivity, Specificity
 
 #####
+\newpage
 
 ## 1. Introduction
 
@@ -119,7 +122,7 @@ VIPER was conducted at the Medical University of South Carolina (IRB 13890) from
 
 ### 2.1 Subjects=Cases
 
-```{r Fig1: Participant flow diagram, fig.width = 6, fig.cap=captions$fig1, results=figResults}
+```{r Fig1.ParticipantFlowDiagram, fig.width = 6, fig.cap=captions$fig1, results=figResults}
 
 captions$fig1 <- paste(
   "Figure 1: Participant flow diagram.",
@@ -129,11 +132,9 @@ captions$fig1 <- paste(
   "The last row differs from the one above it due to availability from ACRIN."
 )
 
-knitr::include_graphics(file.path("fig1participantFlow.tif"))
+knitr::include_graphics(file.path("fig1participantFlow.png"))
 
 ```
-
-\newpage
 
 Eligibility for inclusion in VIPER required that the BIRADS breast density classification documented in DMIST be 3 or 4 by SFM [@BIRADS2003_4thEd]. These are women with heterogeneously and extremely dense breasts, categories "c" and "d" in the current lexicon [@BIRADS2013_5thEd]. The participant flow diagram is given in Figure 1. The age range of the women in VIPER was 33 to 86 (mean: 54).
 
@@ -265,28 +266,21 @@ colnames(table2) <- c("VIPER Reader Study", "BIRADS 1&2", "BIRADS 0", "ratio")
 **Distribution of non-cancer cases**: The VIPER reader studies investigated two kinds of non-cancer study populations: a 'screening' population and a 'challenge' population. The non-cancer cases in the screening populations were heavily weighted with BIRADS 1,2 cases, while the non-cancer cases in the challenge populations included only BIRADS 0 cases. BIRADS 0 cases were challenging because, while some were the result of bad image quality, most were thought to be suspicious enough for cancer to request additional evaluations. Table 2 shows the per-reader distributions of BIRADS patient management scores for women without cancer. The ratio in DMIST (`r table2.DMIST["DMIST.SFM", "ratio"]`) was moderately larger than the ratios in VIPER screening reader studies (`r table2.VIPER["screeningHighP", "ratio"]` to `r table2.VIPER["screeningLowP", "ratio"]`).
 
 #####
+\newpage
 
-```{r}
-
-cat(titles$table1)
-knitr::kable(table1, row.names = FALSE)
-cat("\n")
-cat(captions$table1)
-
-```
+`r titles$table1`
+`r knitr::kable(table1, row.names = FALSE)`
+`r captions$table1`
 
 #####
+\newpage
 
-```{r}
-
-cat(titles$table2)
-knitr::kable(table2, row.names = FALSE)
-cat("\n")
-cat(captions$table2)
-
-```
+`r titles$table2`
+`r knitr::kable(table2, row.names = FALSE)`
+`r captions$table2`
 
 #####
+\newpage
 
 ```{r Table X: Distribution of cases, results="hide"}
 
@@ -440,9 +434,7 @@ The DMIST sensitivities and specificities presented in Fig. 2.D are based on dic
 
 On an absolute scale, the SFM AUCs in the VIPER screening studies (~0.73) are higher than the SFM AUC from DMIST (0.68), whereas the FFDM AUCs in the VIPER screening studies (~0.71) are lower than the FFDM AUC from DMIST (0.78). The uncertainties measured for AUCs in VIPER on these individual modalities are similar to those reported for DMIST, although the study designs, sample sizes, and variance estimation methods for the two studies are very different. The performance improvement with FFDM reported in DMIST for women with dense breasts is not replicated in any of the VIPER reader studies.
 
-#####
-
-```{r Fig2: ROC per sub-study, fig.width=7, fig.height=8, fig.cap=captions$fig2, warning=FALSE, results=figResults}
+```{r Fig2.ROCperStudy, fig.width=7, fig.height=8, fig.cap=captions$fig2, warning=FALSE, results=figResults}
 
 captions$fig2 <- paste(
     "Figure 2: Plots of reader-averaged ROC curves and reader-averaged operating points",
@@ -594,22 +586,22 @@ if (epsFlag) {
 ```
 
 #####
+\newpage
 
-```{r Fig2D: DMIST ROC curves, fig.cap=captions$fig2D, results=figResults}
+```{r Fig2D.DMIST-ROCcurves, fig.cap=captions$fig2D, results=figResults}
 
 knitr::include_graphics("fig2DfromFig1C-Pisano2005_NEJM_v353p1773.png")
 
 ```
 
 #####
+\newpage
 
 Fig. 3 compares performance as a function of prevalence for each combination of modality (FFDM and SFM) and study population (screening and challenge). In each plot, prevalence does not appear to be impacting the ROC curves. The DMIST operating point for women with dense breasts is also provided on these plots for reference.
 
 The reader-specific operating points in Fig. 3 are widely dispersed. Specificity ranges from below 0.1 to 0.8 and sensitivity ranges from 0.4 to 1.0. This data demonstrates reader variability in skill and threshold on the clinical decision to “recall” and “do not recall” in the VIPER lab-based study conditions. When we average the operating points over the readers, they trend up and to the right as prevalence is increased in each sub-plot of Fig. 3. The trend is moderate and needs to be explored in a statistical model aggregating the results across all the VIPER reader studies. The trend is consistent with the expected behavior of a decision-maker that is maximizing a risk-benefit relationship between the true and false positives, and the true and false negatives (18). When we compare the reader-averaged VIPER operating points to those from DMIST (where prevalence was much lower, 0.8%), it is clear that the VIPER operating points are above and to the right; readers are more aggressive calling cases positive in VIPER.
 
-#####
-
-```{r Fig3: ROC per modality and type with reader specific operating points, fig.height=9.5, fig.width=8.5, fig.cap=captions$fig3, results=figResults}
+```{r Fig3.ROCperModalityType, fig.height=9.5, fig.width=8.5, fig.cap=captions$fig3, results=figResults}
 
 captions$fig3 <- paste(
   "Figure 3: Plots of reader-averaged ROC curves, reader-averaged (1-Spec., Sens.)",
@@ -731,6 +723,7 @@ if (epsFlag) {
 ```
 
 #####
+\newpage
 
 ```{r Table3: MRMC analyses Of Performance Differences, results=figResults, comment=NA}
 
@@ -906,13 +899,16 @@ table3.tnf <- rbind(table3.tnf, table3.tnfDmist)
 table3.tnf <- cbind(row.names(table3.tnf), table3.tnf)
 colnames(table3.tnf)[1] <- "Reader Study (Specificity)"
 
-cat(titles$table3)
-cat(captions$table3)
-cat("Note: Table 3 is actually 3 concatenated tables: one for AUC, Sensitivity, and Specificity.")
-
 ```
 
+`r titles$table3`
+
+`r captions$table3`
+
+Note: Table 3 is actually 3 concatenated tables: one for AUC, Sensitivity, and Specificity."
+
 #####
+\newpage
 
 ```{r Table3.AUC placement}
 
@@ -921,6 +917,7 @@ knitr::kable(table3.auc, row.names = FALSE)
 ```
 
 #####
+\newpage
 
 ```{r Table3.TPF placement}
 
@@ -929,6 +926,7 @@ knitr::kable(table3.tpf, row.names = FALSE)
 ```
 
 #####
+\newpage
 
 ```{r}
 
@@ -937,6 +935,7 @@ knitr::kable(table3.tnf, row.names = FALSE)
 ```
 
 #####
+\newpage
 
 ## 4. Discussion
 
@@ -988,6 +987,7 @@ All other authors have completed the ICMJE uniform disclosure form at www.icmje.
 Informed consent was obtained from all radiologist participants. The Medical University of South Carolina institutional review board approved the study (IRB 13890).
 
 #####
+\newpage
 
 # Biographies
 
@@ -1010,6 +1010,7 @@ Informed consent was obtained from all radiologist participants. The Medical Uni
 ** Kyle J. Myers ** received a Ph.D. in Optical Sciences from the University of Arizona in 1985.  She is the Director of the Division of Imaging, Diagnostics, and Software Reliability, FDA/CDRH. She and Dr. Harrison H. Barrett coauthored Foundations of Image Science (2004), winner of the First Biennial J.W. Goodman Book Writing Award from OSA and SPIE.  Dr. Myers is a Fellow of AIMBE, OSA, SPIE, and a member of the National Academy of Engineering.
 
 #####
+\newpage
 
 # Table Captions
 
@@ -1039,6 +1040,7 @@ cat(captions$table3)
 ```
 
 #####
+\newpage
 
 # Figure Captions
 
@@ -1068,5 +1070,6 @@ cat("\n")
 ```
 
 #####
+\newpage
 
 # References

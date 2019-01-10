@@ -1,0 +1,645 @@
+---
+title: "VIPER Supplementary Materials"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+  word_document:
+    reference_docx: "../viperPaper/templateForRmd.docx"
+csl: '../viperPaper/radiology.csl'
+bibliography: "../viperPaper/viperBibtex.bib"
+---
+
+```{r setup, include = FALSE, warning = FALSE}
+
+knitr::opts_chunk$set(
+  echo = FALSE,
+  collapse = TRUE,
+  comment = "#>"
+)
+
+library(iMRMC)
+library(knitr)
+library(gridExtra)
+library(plotrix)
+
+# This flag determines whether images are printed to eps file (TRUE)
+# or displayed in the manuscript (FALSE)
+epsFlag <- TRUE
+epsFlag <- FALSE
+
+viperObs <- viperData::viperObs455
+viperObs$readerID <- viperObs$readerID.relative
+viperDesign <- split(viperObs, list( viperObs$desc, viperObs$modalityID))
+
+nC0 <- nlevels(viperObs$caseID)
+nR0 <- nlevels(viperObs$readerID)
+
+cTypeDist <- as.data.frame(as.list(by(viperObs, viperObs$Ctype, function(x) {
+  return(length(unique(x$caseID)))
+})))
+names(cTypeDist) <- c("BIRADS0.FFDM", "BIRADS0.SFM", "BIRADS12.FFDM", "BIRADS12.SFM", "cancer")
+
+
+temp <- cumsum(as.numeric(cTypeDist[1,]))
+cTypeDist <- rbind(cTypeDist, c(1, temp[1:4]))
+cTypeDist <- rbind(cTypeDist, temp)
+cTypeDist <- rbind(cTypeDist, 0.5*cTypeDist[2, ] + 0.5*cTypeDist[3, ])
+
+print(cTypeDist)
+
+```
+
+This document was created using R markdown. The source document and data are available in the "viperData" R package [@Gallas2018_J-Med-Img_acceptedSuppl]. There are three sections:
+
+ * Study Designs
+ * Sizing
+ * Histograms of reader scores and ROC curves.
+
+## Study Designs
+
+In Fig. S1A through Fig. S1E we graphically show the reader and case sampling of the five VIPER reader studies. Each (row, column) pixel corresponds to a reader/radiologist (row) and a case/patient (column). The readers may be different from study to study. The cases are organized by type: BIRADS 0 by full-field digital mammography (FFDM), BIRADS 0 by screen-film mammography (SFM), BIRADS 1-2 by FFDM, BIRADS 1-2 by SFM, and cancer. If the pixel is white, the corresponding reader evaluated the corresponding case. If the pixel is gray, the corresponding reader did not read the corresponding case. These "missing" observations were either by design or were accidentally skipped by readers during data collection. On average readers missed less than one case per modality and sub-study; there was a total of 138 missing observations out of 20,520 planned.
+
+For example, in the cancer block of Fig. S1B we see the prototypical split-plot design with two missing cases. Readers 1-5 read the first 30 cases, readers 6-10 read the next 31 cases, readers 11-15 read the next 29 cases, and readers 16-20 read the last 25 cases. In the "BIRADS 0 by FFDM" block of Fig. S1B, every reader read 4 cases. During the study, these four cases were split into two case sets so that each reading session had two cases. For readers 1-5, these cases appear sequentially in Fig. S1B. For the other readers, the cases appear separated into two locations.
+
+We could reorder each block to show the prototypical split-plot design, but the order would be different for each reader study. Instead, we wanted to keep the same order for all the study designs, even if that meant some blocks didn't appear as the prototypical split-plot design. Using the same order for all the study designs shows how the studies fit together. For example, most readers that participated in the screeningLowP reader study also participated in the screeningMedP and challengeMedP studies. If you trace any line down through these study designs, you will find that no reader group read the same case more than once.
+
+Lastly, we can distinguish the screening studies (Figs. S1A-S1C) from the challenge studies (Figs. S1D-S1E) by the sparse inclusion of BIRADS 0 cases and heavy inclusion of BIRADS 1-2 cases. We can also see changes in prevalence as the number of non-cancer cases decreases from Fig. S1A to Fig. S1C and from Fig. S1D to Fig. S1E.
+
+```{r StudyDesignSetup}
+
+showStudyDesignDrop <- function(df, main) {
+
+  D <- convertDFtoDesignMatrix(df, modality = "FFDM", dropFlag = FALSE)
+
+  par(mar = c(3.1, 3.1, 3.1, 2.1))
+  par(mgp = c(2, 1, 0))
+  image(1:nC0, 1:nR0, D,
+        xlim = c(0.5, cTypeDist[3,5] + 0.5), ylim = c(0.5,nR0 + 0.5),
+        main = main,
+        col = gray(c(0.5, 1.0)),
+        xlab = "Cases", ylab = "Readers")
+
+  lines(c(0.5, 0.5), c(0.5,20.5))
+  lines(c(1,nC0), c(20.5, 20.5))
+  lines(c(cTypeDist[3,1],cTypeDist[3,1]), c(0,20 + 6))
+  lines(c(cTypeDist[3,2],cTypeDist[3,2]), c(0,20 + 6))
+  lines(c(cTypeDist[3,3],cTypeDist[3,3]), c(0,20 + 6))
+  lines(c(cTypeDist[3,4],cTypeDist[3,4]), c(0,20 + 6))
+
+  lines(c(1, nC0), c(5.5, 5.5))
+  lines(c(1, nC0), c(10.5, 10.5))
+  lines(c(1, nC0), c(15.5, 15.5))
+
+  axis(1, line = 0)
+  axis(3, at = cTypeDist[4,], labels = names(cTypeDist), tick = FALSE, line = -1)
+
+  par(mar = c(5.1, 3.1, 4.1, 2.1))
+  par(mgp = c(3, 1, 0)) 
+
+}
+
+```
+
+```{r FigureS1.StudyDesigns, fig.height=8.5, fig.cap="Figure S1: Graphical depiction of VIPER reader study designs."}
+
+# Load the VIPER data
+viperObs <- viperData::viperObs455
+
+# Update readerID to sort by group
+viperObs$readerID <- viperObs$readerID.relative
+
+# Update caseID to sort by Ctype and group
+viperObs["18212", "caseGroup"] <- "cgrp1"
+viperObs$caseID <- factor(paste(viperObs$Ctype, viperObs$caseGroup, viperObs$caseID))
+
+# Split data into a list by reader study and modality
+viperDesign <- split(viperObs, list( viperObs$desc, viperObs$modalityID))
+
+# Create eps
+if (epsFlag) {
+  
+  fileName <- file.path("suppFig1studyDesigns.eps")
+  if (file.exists(fileName)) file.remove(fileName)
+  setEPS()
+  postscript(fileName)
+  
+}
+
+par(mfrow = c(5,1))
+
+df <- viperDesign[[1]]
+temp <- showStudyDesignDrop(df, main = paste("Fig. S1A.", df$desc[1], "Study Design (Gray=No Data)"))
+
+df <- viperDesign[[2]]
+temp <- showStudyDesignDrop(df, main = paste("Fig. S1B.", df$desc[1], "Study Design (Gray=No Data)"))
+
+df <- viperDesign[[3]]
+temp <- showStudyDesignDrop(df, main = paste("Fig. S1C.", df$desc[1], "Study Design (Gray=No Data)"))
+
+df <- viperDesign[[4]]
+temp <- showStudyDesignDrop(df, main = paste("Fig. S1D.", df$desc[1], "Study Design (Gray=No Data)"))
+
+df <- viperDesign[[5]]
+temp <- showStudyDesignDrop(df, main = paste("Fig. S1E.", df$desc[1], "Study Design (Gray=No Data)"))
+
+par(mfrow = c(1,1))
+
+# Create eps
+if (epsFlag) {
+  desc <- dev.off()
+}
+
+cat('\r\n\r\n')
+
+```
+
+\pagebreak
+
+## Sizing
+
+In what follows, we sketch out the steps we took to size the VIPER reader studies. We targeted a standard error of 0.03, believing that would allow ample precision for testing an effect size of 0.11, the difference between the area under the receiver operating characteristic curves (AUCs, ROCs) from FFDM and SFM observed in DMIST [@Pisano2005_NEJM_v353p1773]. The power for a significance level of 0.01 (0.05 split evenly among 5 reader studies) is 0.86 under a normal approximation.
+
+The process to size VIPER started with DMIST reader study data:
+
+ * Hendrick2008_Radiology_v247p38 [@Hendrick2008_Radiology_v247p38]: 'Accuracy of soft-copy digital mammography versus that of screen-film mammography according to digital manufacturer: ACRIN DMIST retrospective multireader study.'
+     * There were four machines studied, labeled below as hendrick2008.GE, hendrick2008.Fuji, hendrick2008.Fischer, and hendrick2008.Hologic. The Hologic data is not inclucded since only a few cancer cases were available.
+ * An unpublished study evaluating the effect of breast density on diagnostic accuracy of FFDM and SFM.
+    * There were four density levels studied, corresponding to the four BIRADS density levels, labeled as breastDensity.A, breastDensity.B, breastDensity.C, breastDensity.D. The study included 320 women (109 cancers) stratified by original SFM breast density determination, 8 readers reading FFDM, and 8 readers reading SFM.
+ * An unpublished study evaluating performance in a reader study at 50% prevalence. The scope of the study has been described as including 30 readers assigned to read a total of 300 cases by FFDM and SFM.
+    * There was one data set, labeled below as prevalence50.
+ * Nishikawa2009_Radiology_v251p41, 'Comparison of Soft-Copy and Hard-Copy Reading for Full-Field Digital Mammography.' This data was not used here since it did not compare FFDM to SFM.
+
+Tables S1 and S2 show the U-statistics-based performance results as calculated by version 4.0 of the iMRMC application developed at the FDA [@Gallas2017_iMRMC_v4p0].
+
+```{r}
+
+dmistRSsummary <- viperData::dmistRSsummary[c(
+  "hendrick2008.GE", "hendrick2008.Fuji", "hendrick2008.Fischer",
+  "breastDensity.A", "breastDensity.B", "breastDensity.C", "breastDensity.D",
+  "prevalence50"
+)]
+
+```
+
+```{r}
+
+dmistRSperformance <- lapply(
+  dmistRSsummary,
+  function(x) {
+    x$Ustat$seAUCA <- sqrt(x$Ustat$varAUCA)
+    x$Ustat$seAUCB <- sqrt(x$Ustat$varAUCA)
+    x$Ustat$seAUCAminusAUCB <- sqrt(x$Ustat$varAUCAminusAUCB)
+    return(x$Ustat[3, c("NR", "N0", "N1", "AUCA", "seAUCA", "AUCB", "seAUCB", "AUCAminusAUCB", "seAUCAminusAUCB")])
+})
+dmistRSperformance <- do.call("rbind", dmistRSperformance)
+
+rownames(dmistRSperformance) <- names(dmistRSsummary)
+
+```
+
+**Table S1: Performance Results for DMIST Reader Studies**
+```{r TableS1}
+
+table1 <- round(
+  dmistRSperformance[, c(
+    "NR", "N0", "N1", "AUCA", "seAUCA", "AUCB", "seAUCB"
+  )], digits = 3)
+
+colnames(table1) <- c(
+  "NR", "N0", "N1",
+  "AUC.FFDM", "SE(AUC.FFDM)", "AUC.SFM", "SE(AUC.SFM)"
+)
+
+kable(table1)
+
+```
+
+Table S1 footnote: NR is the number of readers, N0 is the number of non-cancers, N1 is the number of cancers, AUC.FFDM and AUC.SFM are the AUCs for FFDM and SFM evaluations, and SE is the standard error.
+
+**Table S2: Performance Differences for DMIST Reader Studies**
+```{r TableS2}
+
+table2 <- round(
+  dmistRSperformance[, c(
+    "NR", "N0", "N1", "AUCAminusAUCB", "seAUCAminusAUCB"
+  )], digits = 3)
+
+colnames(table2) <- c(
+  "NR", "N0", "N1",
+  "AUC.FFDM minus AUC.SFM", "SE(AUC.FFDM minus AUC.SFM)"
+)
+
+kable(table2)
+
+```
+
+Table S2 footnote: NR is the number of readers, N0 is the number of non-cancers, N1 is the number of cancers, AUC.FFDM and AUC.SFM are the AUCs for FFDM and SFM evaluations, and SE is the standard error.
+
+The total variance of AUCs or differences in AUCs from a fully-crossed study can be expressed as [@Gallas2006_Acad-Radiol_v13p353; @Gallas2009_Commun-Stat-A-Theor_v38p2586]
+
+**Equation 1**
+$$
+V=\frac{var_0^{2}}{N_{0}}+\frac{var_{1}^{2}}{N_{1}}+\frac{var_{01}^{2}}{N_{0}N_{1}}+\frac{var_{R}^{2}}{N_{R}}+\frac{var_{0R}^{2}}{N_{0}N_{R}}+\frac{var_{1R}^{2}}{N_{1}N_{R}}+\frac{var_{01R}^{2}}{N_{0}N_{1}N_{R}},
+$$
+
+where $N_0$, $N_1$, $N_R$ are the number of normal (non-cancer) cases, diseased (cancer) cases, and readers, $var_{0}^{2}$, $var_{1}^{2}$, and $var_{R}^{2}$ are the variances due to the normal cases (non-cancers), the diseased cases (cancers), and the readers. The other variance components correspond to variances arising from interactions between the main variance components.
+
+When the study is not fully crossed, the weights for each variance component are different and calculable [@Gallas2008_Neural-Networks_v21p387]. In particular, we can calculate the weights for a split-plot study design. For example, consider a split-plot study with $N_G$ groups that have the same number of readers and cases ($N_0$, $N_1$, and $N_R$ are all divisible by $N_G$). Assuming a study with readers and cases paired across the modalities, the variance of the difference in AUCs is given by
+
+**Equation 2**
+$$
+V=\frac{var_{0}^{2}}{N_{0}}+\frac{var_{1}^{2}}{N_{1}}+\frac{N_Gvar_{01}^{2}}{N_{0}N_{1}}+\frac{var_{R}^{2}}{N_{R}}+\frac{N_Gvar_{0R}^{2}}{N_{0}N_{R}}+\frac{N_Gvar_{1R}^{2}}{N_{1}N_{R}}+\frac{N_G^2var_{01R}^{2}}{N_{0}N_{1}N_{R}}.
+$$
+
+```{r, eval=FALSE}
+
+# This can be visualized with a design matrix that looks like the image below.
+
+NG = 4
+N0 = 400
+N1 = 100
+NR = 20
+
+endR <- (1:NG) * (NR/NG)
+startR <- endR - (NR/NG) + 1
+end0 <- (1:NG) * (N0/NG)
+start0 <- end0 - (N0/NG) + 1
+end1 <- (1:NG) * (N1/NG)
+start1 <- end1 - (N1/NG) + 1
+
+design <- matrix(0, nrow = NR, ncol = N1 + N0)
+for (iGroup in 1:NG) {
+  design[startR[iGroup]:endR[iGroup], start0[iGroup]:end0[iGroup]] <- 128
+  design[startR[iGroup]:endR[iGroup], start1[iGroup]:end1[iGroup] + N0] <- 128
+}
+
+par(mar = c(3.1, 3.1, 6.1, 2.1))
+image(1:(N0 + N1), 1:NR, t(apply(design, 2, rev)),
+      main = "Hypothetical Split-Plot Study",
+      col = gray(c(0.5, 1.0)),
+      ylab = "Readers", xlab = "Cases")
+
+lines(c(0.5, 0.5, (N0 + N1) + 0.5, (N0 + N1) + 0.5, 0.5),
+      c(0.5, NR + 0.5, NR + 0.5, 0.5, 0.5))
+lines(c(N0 - 0.5, N0 - 0.5), c(0.5, NR + 0.5))
+
+axis(3, at = c(N0/2, N0 + N1/2), c("non-cancers", "cancers"))
+
+par(mar = c(5.1, 3.1, 4.1, 2.1))
+
+```
+
+
+In addition to performance results, the DMIST reader studies provide estimates of the MRMC variance components for the AUC differences. We can use these to size a study to compare FFDM to SFM for women with dense breasts.
+
+**Table S3: Variance Components of AUC Differences for DMIST Reader Studies**
+```{r TableS3}
+
+dmistRScomponents <- lapply(
+  dmistRSsummary,
+  function(x) {
+    bck <- x$varDecomp$BCK$Ustat$comp$FFDMsoft.SFM
+    return(bck[1, ] + bck[2, ] - 2*bck[3, ])
+})
+dmistRScomponents <- do.call("rbind", dmistRScomponents)
+
+sizingComponents <- c(0.01, 0.03, 0.005, 0.001, 0.055, 0.09, 0.065)
+
+sizingComponents2 <- colMeans(dmistRScomponents)
+sizingComponents2[4] <- mean(dmistRScomponents$R[dmistRScomponents$R > 0])
+
+dmistRScomponents <- rbind(dmistRScomponents, sizingComponents)
+rownames(dmistRScomponents) <- c(
+  "machA", "machB", "machC", "mach4",
+  "densityA", "densityB", "densityC",
+  "prevalence50", "sizingModel"
+)
+colnames(dmistRScomponents) <- c(
+  "$var_0$", "$var_1$", "$var_{01}$", "$var_R$", "$var_{0R}$", "$var_{1R}$", "$var_{01R}$"
+)
+
+kable(dmistRScomponents, digits = 4)
+
+```
+
+The last row of Table S3 shows the variance components in the model that we used to size VIPER. We generally took round numbers that were between the mean of the variance components observed or higher. This can be seen in Figure S2 where the circles show the variance components from the DMIST reader studies. The "x" symbols connected by lines show the variance components in the model that we used to size VIPER.
+
+```{r FigureS2.Variance.Components, fig.cap="Figure S2: Variance components from DMIST reader studies (circles) and for the model to size the VIPER studies (x's connected by lines)."}
+
+# Create eps
+if (epsFlag) {
+  
+  fileName <- file.path("suppFig2varianceComponents.eps")
+  if (file.exists(fileName)) file.remove(fileName)
+  setEPS()
+  postscript(fileName)
+  
+}
+
+descBCK <- c(expression(
+  italic(var[0]),
+  italic(var[1]),
+  italic(var["01"]),
+  italic(var[R]),
+  italic(var["0R"]),
+  italic(var["1R"]),
+  italic(var["01R"])
+))
+
+plot(as.numeric(dmistRScomponents[1, ]), main = "Variance Components of AUC Differences",
+     xlab = "Variance Component", ylab = "Variance", xaxt = "n",
+     ylim = c(min(dmistRScomponents), max(dmistRScomponents)))
+axis(1, at = 1:ncol(dmistRScomponents), labels = descBCK)
+for (i in 2:9) {
+  points(as.numeric(dmistRScomponents[i, ]))
+}
+
+lines(c(0,10), c(0,0))
+points(sizingComponents, pch = 4)
+lines(sizingComponents, pch = 4)
+
+# Create eps
+if (epsFlag) {
+  desc <- dev.off()
+}
+
+```
+
+#####
+
+The original plan for VIPER included a large fully-crossed study ($N_0$=400, $N_1$=100, $N_R$=20). Given the model parameters discussed above and Eq. 1, we get the following estimates of uncertainty:
+
+```{r}
+
+N0 = 400
+N1 = 100
+NR = 20
+sizingCoefficients <- c(1/N0, 1/N1, 1/N0/N1, 1/NR, 1/N0/NR, 1/N1/NR, 1/N0/N1/NR)
+totalVar = sum(sizingCoefficients * sizingComponents)
+cat("Total variance:", totalVar, "\n")
+cat("Standard error:", sqrt(totalVar), "\n")
+cat("Half width of 95% CI:", 2*sqrt(totalVar), "\n")
+
+```
+
+Before VIPER data collection started, a paper about split-plot study designs was published [@Obuchowski2012_Acad-Radiol_v19p1508], and we decided to design split-plot studies for VIPER. Given the model parameters discussed above and Eq. 2, we get the following estimates of uncertainty for a split-plot study with four groups ($N_G$=4):
+
+```{r, eval=FALSE}
+
+NG = 4
+N0 = 400/NG
+N1 = 100/NG
+NR = 20/NG
+sizingCoefficients <- c(1/N0, 1/N1, 1/N0/N1, 1/NR, 1/N0/NR, 1/N1/NR, 1/N0/N1/NR)
+totalVar = sum(sizingCoefficients * sizingComponents)/NG
+cat("Total variance:", totalVar, "\n")
+cat("Standard error:", sqrt(totalVar), "\n")
+cat("Half width of 95% CI:", 2*sqrt(totalVar), "\n")
+
+```
+
+```{r}
+
+NG = 4
+N0 = 400
+N1 = 100
+NR = 20
+sizingCoefficients <- c(1/N0, 1/N1, NG/N0/N1, 1/NR, NG/N0/NR, NG/N1/NR, NG*NG/N0/N1/NR)
+totalVar = sum(sizingCoefficients * sizingComponents)
+cat("Total variance:", totalVar, "\n")
+cat("Standard error:", sqrt(totalVar), "\n")
+cat("Half width of 95% CI:", 2*sqrt(totalVar), "\n")
+
+```
+
+The split-plot design was going to save about 75% of the reading time (75% of our costs) and with a moderate impact on precision. With this savings, we wanted to explore more study conditions (prevalence levels and types of non-cancers). We decided to design a split-plot study at ~10% prevalence per reader in which each reader would read $N_1$=20 cancers and $N_0$=160 non cancers. Given the model parameters discussed above and Eq. 2, we get the following estimates of uncertainty for a split-plot study with four groups ($N_G$=4):
+
+```{r}
+
+NG = 4
+N0 = 640/NG
+N1 = 80/NG
+NR = 20/NG
+sizingCoefficients <- c(1/N0, 1/N1, 1/N0/N1, 1/NR, 1/N0/NR, 1/N1/NR, 1/N0/N1/NR)
+totalVar = sum(sizingCoefficients * sizingComponents)/NG
+cat("Total variance:", totalVar, "\n")
+cat("Standard error:", sqrt(totalVar), "\n")
+cat("Half width of 95% CI:", 2*sqrt(totalVar), "\n")
+
+```
+
+This study design was acceptable except that it required 50% more non-cancer cases than we had originally considered. This increase could not be accommodated by the available cases. After some consideration, we decided that we would split the non-cancer cases into four *overlapping* groups instead of four *independent* groups (See blocks "BIRADS12.FFDM" and "BIRADS12.SFM" in Fig. S1A). Such a study would only require 320 cases instead of 640, and the impact on the uncertainty is negligible. The standard error of the difference in AUCs is insensitive to the number of non-cancers because there are so many non-cancers. The standard error is driven by the number of readers and cancers.
+
+Given our initial budget and the precision achievable by a study at approximately 11% prevalence, we determined that we could conduct five reader studies in total. After splitting our significance level by five (Bonferroni Correction), the power to detect a difference between FFDM and SFM was 0.86. This was acceptable.
+
+## Reader Scores and ROC Curves {.tabset}
+
+In the following pages we give histograms of the reader scores and the corresponding ROC curves and operating points. They are organized by reader study (screeningLowP, screeningMedP, screeningHighP, challengeMedP, and challengeHighP). Then for each reader study, we show the figures for each reader. In the histograms (one for FFDM and one for SFM), the scores from cancer and non-cancer cases are combined, and we indicate the number of cases (nCases) and the number bins used by each reader (nBinsUsed). The ROC curves are the empirical ROC curves obtained by considering all possible thresholds from 0 to 202. To these curves we add the operating points based on the readers' binary recall decision. The operating points fall on the ROC curves as a result of the two step scoring method summarized in the main paper.
+
+```{r ReaderScoresAndROCcurves, fig.height=8.5, fig.width=8}
+
+viperObs <- viperData::viperObs455
+viperObsSplit <- split(viperObs, list(viperObs$modalityID, viperObs$desc))
+
+viperSummary <- viperData::viperSummary455
+
+df.FFDM <- viperObsSplit[[1]]
+df.SFM <-  viperObsSplit[[2]]
+summary.i <- viperSummary[[1]]
+
+showScores <- function(df.FFDM, df.SFM, summary.i) {
+
+df.FFDM$readerID <- droplevels(df.FFDM$readerID)
+df.SFM$readerID <- droplevels(df.SFM$readerID)
+
+df.FFDM <- split(df.FFDM, df.FFDM$readerID.relative)
+df.SFM <- split(df.SFM, df.SFM$readerID.relative)
+
+iR <- 1
+for (iR in 1:20) {
+  
+  par(mfrow = c(3,2))
+
+  df.FFDM.r <- df.FFDM[[iR]]
+  df.SFM.r <- df.SFM[[iR]]
+  
+  readerID <- df.SFM.r$readerID[1]
+  
+  par(mar = c(4.1, 4.1, 4.1, 2.1))
+  
+  par(pty = "m")
+  
+  main <- paste(df.FFDM.r$readerID[1], "\n",
+                df.FFDM.r$desc[1],
+                ", ",
+                df.FFDM.r$modalityID[1], sep = "")
+  scores <- subset(df.FFDM.r, Ctype == "cancer")$score
+  hist(scores, breaks = (0:203) - 0.5, main = main,
+       xlab = paste("scores given to cancer cases,\n nBinsUsed =", length(unique(scores))),
+       ylab = paste("Frequency, nCases =", length(scores)))
+
+  main <- paste(df.SFM.r$readerID[1], "\n",
+                df.SFM.r$desc[1],
+                ", ",
+                df.SFM.r$modalityID[1], sep = "")
+  scores <- subset(df.SFM.r, Ctype == "cancer")$score
+  hist(scores, breaks = (1:203) - 0.5, main = main,
+       xlab = paste("scores given to cancer cases,\n nBinsUsed =", length(unique(scores))),
+       ylab = paste("Frequency, nCases =", length(scores)))
+
+  main <- paste(df.FFDM.r$readerID[1], "\n",
+                df.FFDM.r$desc[1],
+                ", ",
+                df.FFDM.r$modalityID[1], sep = "")
+  scores <- subset(df.FFDM.r, Ctype != "cancer")$score
+  hist(scores, breaks = (0:203) - 0.5, main = main,
+       xlab = paste("scores given to non-cancer cases,\n nBinsUsed =", length(unique(scores))),
+       ylab = paste("Frequency, nCases =", length(scores)))
+
+  main <- paste(df.SFM.r$readerID[1], "\n",
+                df.SFM.r$desc[1],
+                ", ",
+                df.SFM.r$modalityID[1], sep = "")
+  scores <- subset(df.SFM.r, Ctype != "cancer")$score
+  hist(df.SFM.r$score, breaks = (1:203) - 0.5, main = main,
+       xlab = paste("scores given to non-cancer cases,\n nBinsUsed =", length(unique(scores))),
+       ylab = paste("Frequency, nCases =", length(scores)))
+
+  par(pty = "s")
+  
+  ROC <- summary.i$iMRMC$auc$ROC[[iR + 3]]
+  tpf <- summary.i$iMRMC$tpf$ROC[[iR + 3]]
+  fpf <- summary.i$iMRMC$tnf$ROC[[iR + 3]]
+  
+  df <- summary.i$iMRMC$auc$perReader
+  df <- df[df$readerID == readerID & df$modalityA == "FFDM" & df$modalityB == "SFM", ]
+  N0 <- df$N0
+  N1 <- df$N1
+  
+  main <- paste(df.SFM.r$readerID[1], ", ", df.SFM.r$desc[1],
+                "\n", N0, " non-cancer, ", N1, " cancer", sep = "")
+  plot(ROC$fpf, ROC$tpf, type = "l",
+       xlab = "1-specificity", ylab = "sensitivity", main = main)
+  points(fpf$fpf[2], tpf$tpf[2], pch = 1)
+  
+  ROC <- summary.i$iMRMC$auc$ROC[[iR + 7 + 20]]
+  tpf <- summary.i$iMRMC$tpf$ROC[[iR + 7 + 20]]
+  fpf <- summary.i$iMRMC$tnf$ROC[[iR + 7 + 20]]
+
+  lines(ROC$fpf, ROC$tpf, lty = 2)
+  points(fpf$fpf[2], tpf$tpf[2], pch = 2)
+  par(pty = "m")
+  
+  legend(0.5, 0.25, c("FFDM", "SFM"), pch = c(1,2), lty = c(1,2))
+
+  df <- summary.i$iMRMC$auc$perReader
+  df <- df[df$readerID == readerID & df$modalityA == "FFDM" & df$modalityB == "SFM", ]
+  df$seAUCA <- sqrt(df$varAUCA)
+  df$seAUCB <- sqrt(df$varAUCB)
+  df$seAUCAminusAUCB <- sqrt(df$varAUCAminusAUCB)
+
+  plot.new()
+
+  df.auc <- data.frame(round(matrix(
+    unlist(df[, c("AUCA", "AUCB", "AUCAminusAUCB", "seAUCA", "seAUCB", "seAUCAminusAUCB")]),
+    nrow = 3, ncol = 2
+  ), digits = 3))
+  names(df.auc) <- c("AUC", "se")
+  row.names(df.auc) <- c("FFDM", "SFM", "FFDM-SFM")
+  addtable2plot(.3, 0.3, df.auc, bg = "gray", display.colnames = TRUE, display.rownames = TRUE,
+                cex = 1, xjust = 1)
+
+  df.tpf <- data.frame(round(matrix(
+    unlist(df[, c("AUCA", "AUCB", "AUCAminusAUCB", "seAUCA", "seAUCB", "seAUCAminusAUCB")]),
+    nrow = 3, ncol = 2
+  ), digits = 3))
+  names(df.tpf) <- c("Sens.", "se")
+  row.names(df.tpf) <- c("FFDM", "SFM", "FFDM-SFM")
+  addtable2plot(.9, 0.6, df.tpf, bg = "gray", display.colnames = TRUE, display.rownames = TRUE,
+                cex = 1, xjust = 1)
+
+  df.tnf <- data.frame(round(matrix(
+    unlist(df[, c("AUCA", "AUCB", "AUCAminusAUCB", "seAUCA", "seAUCB", "seAUCAminusAUCB")]),
+    nrow = 3, ncol = 2
+  ), digits = 3))
+  names(df.tnf) <- c("Spec.", "se")
+  row.names(df.tnf) <- c("FFDM", "SFM", "FFDM-SFM")
+  addtable2plot(.9, 0.0, df.tnf, bg = "gray", display.colnames = TRUE, display.rownames = TRUE,
+                cex = 1, xjust = 1)
+  
+  cat('\r\n\r\n')
+  par(mfrow = c(1,1))
+  par(mar = c(5.1, 4.1, 4.1, 2.1))
+  
+}
+
+}
+
+```
+
+\pagebreak
+
+### `r viperSummary[[1]]$desc`
+
+```{r, fig.height=7.5, fig.width=7}
+
+df.FFDM <- viperObsSplit[[1]]
+df.SFM <-  viperObsSplit[[2]]
+summary.i <- viperSummary[[1]]
+
+temp <- showScores(df.FFDM, df.SFM, summary.i)
+    
+```
+
+### `r viperSummary[[2]]$desc`
+
+```{r, fig.height=7.5, fig.width=7}
+
+df.FFDM <- viperObsSplit[[3]]
+df.SFM <-  viperObsSplit[[4]]
+summary.i <- viperSummary[[2]]
+
+temp <- showScores(df.FFDM, df.SFM, summary.i)
+    
+```
+
+### `r viperSummary[[3]]$desc`
+
+```{r, fig.height=7.5, fig.width=7}
+
+df.FFDM <- viperObsSplit[[5]]
+df.SFM <-  viperObsSplit[[6]]
+summary.i <- viperSummary[[3]]
+
+temp <- showScores(df.FFDM, df.SFM, summary.i)
+    
+```
+
+### `r viperSummary[[4]]$desc`
+
+```{r, fig.height=7.5, fig.width=7}
+
+df.FFDM <- viperObsSplit[[7]]
+df.SFM <-  viperObsSplit[[8]]
+summary.i <- viperSummary[[4]]
+
+temp <- showScores(df.FFDM, df.SFM, summary.i)
+    
+```
+
+### `r viperSummary[[5]]$desc`
+
+```{r, fig.height=7.5, fig.width=7}
+
+df.FFDM <- viperObsSplit[[9]]
+df.SFM <-  viperObsSplit[[10]]
+summary.i <- viperSummary[[5]]
+
+temp <- showScores(df.FFDM, df.SFM, summary.i)
+    
+```
+
+\pagebreak
+
+## References
