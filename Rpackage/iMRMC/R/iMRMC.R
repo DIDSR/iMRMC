@@ -164,7 +164,7 @@ doIMRMC <- function(
   OR <- readVarDecomp(file.path(workDir, "imrmcDir", "ORtable.csv"))
 
   ROC <- by(ROCraw, ROCraw[, 1], function(x) {
-    list(desc = x[1,1], n = x[1,2],
+    list(desc = as.character(x[1,1]), n = as.numeric(x[1,2]),
          fpf = as.numeric(x[x[,3] == "FPF", 4:(3 + x[1,2])]),
          tpf = as.numeric(x[x[,3] == "TPF", 4:(3 + x[1,2])])
       )

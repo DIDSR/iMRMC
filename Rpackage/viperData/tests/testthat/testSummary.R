@@ -6,28 +6,9 @@ context("viperSummary data")
 
 print(Sys.getlocale(category = "LC_ALL"))
 
-# Analyze the VIPER data
+# Re-Analyze the VIPER data
 viperObs <- viperData::viperObs455
-# viperObs <- viperObs[viperObs$desc == "screeningLowP", ]
-# keyColumns <- list(
-#   readerID = "readerID",
-#   caseID = "caseID",
-#   modalityID = "modalityID",
-#   score = "score",
-#   truth = "Ctype"
-# )
-# dfIMRMC <- createIMRMCdf(viperObs, keyColumns, "cancer")
-# temp <- doIMRMC(dfIMRMC, stdout = "", stderr = "")
-
-
-
-
-
-viperObs$desc <- droplevels(viperObs$desc)
 viperSummary <- viperData::doViperSummary(viperObs)
-# viperSummary <- viperData::viperSummary455
-# viperSummary455 <- viperSummary
-# devtools::use_data(viperSummary455, overwrite = TRUE)
 
 # Below we will compare the analysis above with the archived data
 viperSummaryOrig <- viperData::viperSummary455
@@ -54,19 +35,11 @@ for (i in 1:length(viperSummary)) {
   print("Test that doIMRMC output doesn't change")
   # Remove columns that should not be compared
   aucOrig <- viperSummaryOrig[[i]]$iMRMC$auc
-  print(aucOrig$perReader$iMRMCversion[1])
-  print(names(aucOrig$ROC))
-  # aucOrig$ROC <- aucOrig$ROC[sort.list(names(aucOrig$ROC))]
-  print(names(aucOrig$ROC))
   aucOrig$perReader <- subset(aucOrig$perReader, select = -c(date, iMRMCversion))
   aucOrig$Ustat <- subset(aucOrig$Ustat, select = -c(date, iMRMCversion))
   aucOrig$MLEstat <- subset(aucOrig$MLEstat, select = -c(date, iMRMCversion))
   # Remove columns that should not be compared
   auc <- viperSummary[[i]]$iMRMC$auc
-  print(auc$perReader$iMRMCversion[1])
-  print(names(auc$ROC))
-  # auc$ROC <- auc$ROC[sort.list(names(auc$ROC))]
-  print(names(auc$ROC))
   auc$perReader <- subset(auc$perReader, select = -c(date, iMRMCversion))
   auc$Ustat <- subset(auc$Ustat, select = -c(date, iMRMCversion))
   auc$MLEstat <- subset(auc$MLEstat, select = -c(date, iMRMCversion))
