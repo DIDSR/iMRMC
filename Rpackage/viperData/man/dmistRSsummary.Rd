@@ -11,9 +11,9 @@ dmistRSsummary
 \description{
 Performance summaries from the following DMIST reader studies:
 \itemize{
-  \item Hendrick2008_Radiology_v247p38, ‘Accuracy of soft-copy digital mammography
+  \item Hendrick2008_Radiology_v247p38, 'Accuracy of soft-copy digital mammography
   versus that of screen-film mammography according to digital manufacturer:
-  ACRIN DMIST retrospective multireader study.’ There were four machines studied,
+  ACRIN DMIST retrospective multireader study.' There were four machines studied,
   labeled below as hendrick2008.GE, hendrick2008.Fuji, hendrick2008.Fischer,
   hendrick2008.Hologic. The summary based on the aggregate of all this data is
   hendrick2008.

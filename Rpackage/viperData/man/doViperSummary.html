@@ -17,14 +17,14 @@ Before archiving this on GitHub, the function was called analyzeData.
 <h3>Usage</h3>
 
 <pre>
-doViperSummary(viperData0)
+doViperSummary(viperObs0)
 </pre>
 
 
 <h3>Arguments</h3>
 
 <table summary="R argblock">
-<tr valign="top"><td><code>viperData0</code></td>
+<tr valign="top"><td><code>viperObs0</code></td>
 <td>
 <p>A VIPER raw-data file: <code><a href="viperObservations.html">viperObs365</a></code>, <code><a href="viperObservations.html">viperObs455</a></code></p>
 </td></tr>
@@ -40,6 +40,7 @@ doViperSummary(viperData0)
 <h3>Examples</h3>
 
 <pre>
+library("iMRMC")
 viperSummary &lt;- viperData::doViperSummary(viperData::viperObs455)
 </pre>
 
