@@ -564,20 +564,9 @@ successDFtoROCdf <- function(df) {
 }
 
 ## createDFdocumentation ####
-#' Extract data frame structure for documentation
-#'
-#' @param df Data frame for which documentation is desired
-#'
-#' @return Character vector formatted for Roxygen documentation
-#'
-#' @export
-#'
-#' @examples
-#' viperData365 <- viper::viperData365
-#' createDFdocumentation(masterDFdigital)
 createDFdocumentation <- function(df) {
 
-  desc1 <- capture.output(str(df))
+  desc1 <- utils::capture.output(utils::str(df))
   nVar <- length(desc1) - 1
 
   desc2 <- c(

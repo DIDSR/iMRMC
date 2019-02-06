@@ -2,7 +2,6 @@
 
 export(convertDFtoDesignMatrix)
 export(convertDFtoScoreMatrix)
-export(createDFdocumentation)
 export(createGroups)
 export(createIMRMCdf)
 export(doIMRMC)

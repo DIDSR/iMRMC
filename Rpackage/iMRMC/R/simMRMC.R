@@ -503,3 +503,70 @@ simRoeMetz.example <- function() {
   return(dFrame.imrmc)
 
 }
+
+## roeMetzConfigs ####
+#' @title roeMetzConfigs
+#' 
+#' @name roeMetzConfigs
+#' 
+#' @description This is a data frame containing the configuration parameters 
+#' used in Roe1997_Acad-Radiol_v4p298. Each row corresponds to one of the twelve configurations
+#' appearing in Table 1 of that paper in a format that can be the input to \code{sim.gRoeMetz}.
+#' 
+#' @details The columns of this data frame are as follows
+#' \itemize{
+#'   \item Experiment labels and size
+#'   \itemize{
+#'     \item modalityID.A: [chr] label modality A
+#'     \item modalityID.B: [chr] label modality B
+#'     \item nR: [num] number of readers
+#'     \item nC.neg: [num] number of signal-absent cases
+#'     \item nC.pos: [num] number of signal-present cases
+#'   }
+#'   \item There are six fixed effects:
+#'   \itemize{
+#'     \item mu.neg: [num] signal-absent (neg, global mean)
+#'     \item mu.pos: [num] signal-present (pos, global mean)
+#'     \item mu.Aneg: [num] modality A signal-absent (Aneg, modality effect)
+#'     \item mu.Bneg: [num] modality B signal-absent (Bneg, modality effect)
+#'     \item mu.Apos: [num] modality A signal-present (Apos, modality effect)
+#'     \item mu.Bpos: [num] modality B signal-present (Bpos, modality effect)
+#'   }
+#'   \item There are six random effects that are independent of modality
+#'   \itemize{
+#'     \item var_r.neg: [num] variance of random reader effect
+#'     \item var_c.neg: [num] variance of random case effect
+#'     \item var_rc.neg: [num] variance of random reader by case effect
+#'     \item var_r.pos: [num] variance of random reader effect
+#'     \item var_c.pos: [num] variance of random case effect
+#'     \item var_rc.pos: [num] variance of random reader by case effect
+#'   }
+#'   \item There are six random effects that are specific to modality A
+#'     \itemize{
+#'       \item var_r.Aneg: [num] variance of random reader effect
+#'       \item var_c.Aneg: [num] variance of random case effect
+#'       \item var_rc.Aneg: [num] variance of random reader by case effect
+#'       \item var_r.Apos: [num] variance of random reader effect
+#'       \item var_c.Apos: [num] variance of random case effect
+#'       \item var_rc.Apos: [num] variance of randome reader by case effect
+#'   }
+#'   \item There are six random effects that are specific to modality B
+#'     \itemize{
+#'       \item var_r.Bneg: [num] variance of random reader effect
+#'       \item var_c.Bneg: [num] variance of random case effect
+#'       \item var_rc.Bneg: [num] variance of random reader by case effect
+#'       \item var_r.Bpos: [num] variance of random reader effect
+#'       \item var_c.Bpos: [num] variance of random case effect
+#'       \item var_rc.Bpos: [num] variance of randome reader by case effect
+#'   }
+#' }
+#' 
+#' @examples 
+#' # Extract one configuration
+#' config <- roeMetzConfigs[1, ]
+#' # Create an MRMC ROC data set
+#' df.iMRMC <- sim.gRoeMetz(config)
+#' # Analyze the MRMC ROC data set
+#' result <- doIMRMC(df.iMRMC)
+NULL
+
