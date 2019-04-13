@@ -1,0 +1,61 @@
+
+############ function takes: ###############
+# result of iMRMC (output) [list]          #
+# effect size (effect) [scalar]            #
+# significance level (alpha) [scalar]      #
+# flag for MLE/U stat (MLE) [logical]      #
+# signifier for modality (mod) [character] #
+#               of form c("A", "B", "AB")  #
+############################################
+
+#### returns list of:
+## df, std error, lambda & power
+
+
+Power = function(output, effect, alpha, MLE, mod){
+  
+  #match modality, stop if incorrectly inputted
+  modality = c("A", "B", "AB")
+  stopifnot(is.element(mod, modality))
+  mod.num = match(mod, modality)
+  
+  #choose parameters based on MLE/Ustat and modality
+  if(MLE){
+    if(mod.num == 3){
+      df = output$MLEstat$dfBDG[mod.num]
+      SE = sqrt(output$MLEstat$varAUCAminusAUCB[3])
+    }
+    else{
+    df = output$MLEstat$dfBDG[mod.num]
+    SE = sqrt(output$MLEstat$varAUCA[mod.num])}
+  }
+  
+  else{
+    if(mod.num == 3){
+      df = output$Ustat$dfBDG[mod.num]
+      SE = sqrt(output$Ustat$varAUCAminusAUCB[3])
+    }
+    else{
+    df = output$Ustat$dfBDG[mod.num]
+    SE = sqrt(output$Ustat$varAUCA[mod.num])}
+  }
+  
+  #power calculation
+  F.vals = numeric(170)
+  ints = seq(0:170) - 1
+  
+  t.stat = effect/SE
+  lambda = t.stat^2
+  cutoff = qf((1-alpha), 1, floor(df))
+  d1 = 1
+  d2 = df - 1
+  
+  scale = ((lambda/2)^(ints) * exp(-lambda/2)) / factorial(ints)
+  
+  q = cutoff*d1/(cutoff*d1+d2)
+  betas = pbeta(q, d1/2 + ints, d2/2)
+  
+  F.val = scale * betas
+  power = 1 - sum(F.val)
+  #print(paste("Power calculated to be: ", round(power, 4)))
+  return(list(df = df, Std.Err = SE, Lambda = lambda, Power = power))}
