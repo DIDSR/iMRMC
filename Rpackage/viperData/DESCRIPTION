@@ -5,7 +5,8 @@ Version: 1.0.0
 Author: Brandon D. Gallas, Weijie Chen, Elodia Cole, Robert Ochs, Nicholas A. Petrick,
   Etta D. Pisano, Berkman Sahiner, Frank W. Samuelson, and Kyle J. Myers
 Maintainer: Dr. Brandon D. Gallas <brandon.gallas@fda.hhs.gov>
-Description: This package contains the markdown version of Gallas2018_J-Med-Imag_accepted and the Data.
+Description: This package contains a markdown version of Gallas2018_J-Med-Imag_v6p015501
+  and supplementary materials, including the data.
     TITLE: Impact of prevalence and case distribution in lab-based diagnostic imaging studies
     ABSTRACT: We investigated effects of prevalence and case distribution on radiologist diagnostic
   performance as measured by area under the receiver operating characteristic curve (AUC) and
