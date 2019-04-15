@@ -4,7 +4,6 @@
 ...
 
 <h4>iMRMC_1.2.0</h4>
-
 *04/15/19*
 
 Use new version iMRMC-v4.0.3.jar to do the analysis.
