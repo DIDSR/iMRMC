@@ -1,5 +1,0 @@
-^vignettes$
-^data-raw$
-^viperPaper$
-^.*\.Rproj$
-^\.Rproj\.user$
