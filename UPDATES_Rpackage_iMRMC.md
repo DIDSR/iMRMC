@@ -3,6 +3,19 @@
 <h4>Version Under Development</h4>
 ...
 
+<h4>iMRMC_1.2.0</h4>
+Use new version iMRMC-v4.0.3.jar to do the analysis.
+In simMRMC.R, add option to drop levels from the design matrix in convertDFtoDesignMatrix.
+Add limitsOfAgreement.R to analyze limits of agreement for: 
+ * within-reader, between-modality
+ * between-reader, within-modality
+ * between-reader, between-modality
+Create new test for split plot data.
+Pre-check input file before do analysis.
+Rename and re-organize validation functions.
+Rename some data frame columns name. 
+
+
 <h4>iMRMC_1.1.1.1000</h4>
 Under development
 
