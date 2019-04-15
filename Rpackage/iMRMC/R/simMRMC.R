@@ -15,9 +15,13 @@
 # @examples
 init.lecuyerRNG <- function(seed = 1, stream = 2){
 
+  # Set RNGversion
+  suppressMessages(RNGversion("3.5.0"))
+  
   # Set the random number generator
   RNGkind("L'Ecuyer-CMRG")
-
+  
+  
   # Set the seed
   set.seed(seed)
 

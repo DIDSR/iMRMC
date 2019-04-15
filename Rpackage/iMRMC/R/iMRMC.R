@@ -106,7 +106,7 @@ doIMRMC <- function(
   stripDatesForTests = FALSE){
 
   if (is.null(workDir)) {
-    workDir <- tempdir()
+    workDir <- normalizePath(tempdir())
   }
 
   if (is.null(data)) {
@@ -132,14 +132,14 @@ doIMRMC <- function(
   }
 
   if (is.null(iMRMCjarFullPath)) {
-    iMRMCjar <- "iMRMC-v4.0.0.jar"
+    iMRMCjar <- "iMRMC-v4.0.3.jar"
     pkgPath = path.package("iMRMC", quiet = FALSE)
     iMRMCjarFullPath <- file.path(pkgPath, "java", iMRMCjar)
 
     # This check is necessary for testthat tests that run in some
     # virtual environment that is not like reality
     if (!file.exists(iMRMCjarFullPath)) {
-      iMRMCjarFullPath = paste(pkgPath, "/inst/java/", iMRMCjar, sep = "")
+      iMRMCjarFullPath = file.path(pkgPath, "inst","java", iMRMCjar)
     }
   }
 
@@ -184,7 +184,7 @@ doIMRMC <- function(
   }
 
   # Delete the content written to disk
-  if (workDir == tempdir()) {
+  if (workDir == normalizePath(tempdir())){
     unlink(file.path(workDir, "imrmcDir"), recursive = TRUE)
 
     if (flagWriteFile) {
