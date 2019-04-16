@@ -6,21 +6,36 @@
 <h4>iMRMC_1.2.0</h4>
 *04/15/19*
 
-Use new version iMRMC-v4.0.3.jar to do the analysis.
+Update the core jave package to iMRMC-v4.0.3.jar.
 
-In simMRMC.R, add option to drop levels from the design matrix in convertDFtoDesignMatrix.
+Update simMRMC.R
+ * Move convertDFtoScoreMatrix and convertDFtoDesignMatrix to utils.R.
 
-Add limitsOfAgreement.R to analyze limits of agreement for: 
- * within-reader, between-modality
- * between-reader, within-modality
- * between-reader, between-modality
-Create new test for split plot data.
+Update uStats.R
+ * In uStat11.conditionalD and uStat11.jointD, var.1obs[3] is fixed to be the variance of the difference;
+ * Remove default specifications of modalitiesToCompare;
+ * Add check that modalitiesToCompare contains the right number of modalities;
+ * In uStat11.conditionalD, check that all readers must have more than 2 observations in both modalities;
+ * In uStats.identity and uStats.diff: return the kernel matrix equal to the product of the kernel and design matrices.
 
-Pre-check input file before do analysis.
+Update utils.R
+ * In undoIMRMCdf, drop levels before returning data frame;
+ * Add function createGroups, extractPairedComparisonsBRBM, extractPairedComparisonsWRBM, getMRMCscore;
+ * Move convertDFtoScoreMatrix and convertDFtoDesignMatrix from simMRMC.R
+      * Add dropFlag to drop levels from the design matrix;
+      * Add modality parameter to determine which modality creates the matrices;
+      * Check that only one modality creates the matrices.
 
-Rename and re-organize validation functions.
+Add limitsOfAgreement.R, which includes the following analysis functions:
+ * laWRBM: within-reader, between-modality;
+ * laBRWM: between-reader, within-modality;
+ * laBRBM: between-reader, between-modality.
+ 
+Create new test uStat11 in testthat for split plot data.
 
-Rename some data frame columns name. 
+Minor documentation fixes.
+
+
 
 
 <h4>iMRMC_1.1.1.1000</h4>
