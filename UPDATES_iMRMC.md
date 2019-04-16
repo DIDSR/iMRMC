@@ -6,13 +6,13 @@
 <h4>iMRMC4.0.3</h4>
 *04/15/17*
 
-When running iMRMC by command line, do not show any error window. Instead, show the all warnings and errors as script. For error, the software will quit.
+When running iMRMC by command line, do not pop-up any warning or error windows. Instead, display all the warnings and errors in command line. For error, the software will quit.
 
-Debug "analysis all modalities" feature to analyze input with more than 2 modalities.
+Debug "analysis all modalities" to be able to analyze input with more than 2 modalities.
 
-Update iMRMC reference in GUI.
+Update iMRMC GUI reference list.
 
-Minor updates in GUI display and output file organization.
+Minor reorganize GUI buttons and layout of output file.
 
 
 <h4>iMRMC4.0.0</h4>
