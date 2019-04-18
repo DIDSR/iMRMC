@@ -6,7 +6,7 @@
 <h4>iMRMC_1.2.0</h4>
 *04/15/19*
 
-Update the core jave package to iMRMC-v4.0.3.jar.
+Update the core java package to iMRMC-v4.0.3.jar.
 
 Update simMRMC.R
  * Move convertDFtoScoreMatrix and convertDFtoDesignMatrix to utils.R.
