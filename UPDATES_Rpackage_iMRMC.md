@@ -31,21 +31,6 @@ Add limitsOfAgreement.R, which includes the following analysis functions:
  * laBRWM: between-reader, within-modality;
  * laBRBM: between-reader, between-modality.
  
-Create new test uStat11 in testthat for split plot data.
-
-Minor documentation fixes.
-
-
-
-
-<h4>iMRMC_1.1.1.1000</h4>
-Under development
-
-New utilities under development in the repository, but not yet in the R package on CRAN.
- * laBRBM and laWRBM are wrappers for producing the Bland-Altman limits of agreement using uStat11.conditional.
- * Assign group labels to items in a vector in order to create split-plot groups (createGroups).
- * extractPairedComparisonsBRBM and extractPairedComparisonsWRMB that enable (scatter) plots for agreement analysis
- * renameCol renames a data frame column
  
 <h4>iMRMC_1.1.0</h4>
 *12/12/17*
