@@ -112,17 +112,17 @@ undoIMRMCdf <- function(df.MRMC) {
 #'
 #' @export
 #'
-#' @examples
-#' # Simulate an MRMC data frame ####
-#' simRoeMetz.config <- sim.gRoeMetz.config()
-#' dFrameMRMC <- sim.gRoeMetz(simRoeMetz.config)
-#' desc <- dFrameMRMC[
-#'   as.numeric(dFrameMRMC$readerID) == 2 &
-#'     as.numeric(dFrameMRMC$caseID) == 4 &
-#'     dFrameMRMC$modalityID == "testA",
-#' ]
-#' print(desc$score)
-#' print(getMRMCscore(dFrameMRMC, 2, 4, "testA"))
+# @examples
+# # Simulate an MRMC data frame ####
+# simRoeMetz.config <- sim.gRoeMetz.config()
+# dFrameMRMC <- sim.gRoeMetz(simRoeMetz.config)
+# desc <- dFrameMRMC[
+#   as.numeric(dFrameMRMC$readerID) == 2 &
+#     as.numeric(dFrameMRMC$caseID) == 4 &
+#     dFrameMRMC$modalityID == "testA",
+# ]
+# print(desc$score)
+# print(getMRMCscore(dFrameMRMC, 2, 4, "testA"))
 
 getMRMCscore <- function(df, iR, iC, modality) {
   score <- df[as.numeric(df$readerID) == iR &

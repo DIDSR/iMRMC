@@ -14,6 +14,15 @@
 #' program which writes the results to the local files system, it reads the analysis results from
 #' the local file system, packs the analysis results into a list object, deletes the data and analysis results
 #' from the local file system, and returns the list object.
+#' 
+#' The examples took too long for CRAN to accept. So here is an example:
+#' # Create a sample configuration file
+#' config <- sim.gRoeMetz.config()
+#' # Simulate an MRMC ROC data set
+#' dFrame.imrmc <- sim.gRoeMetz(config)
+#' # Analyze the MRMC ROC data
+#' result <- doIMRMC(dFrame.imrmc)
+
 #'
 #' @param data This data.frame contains the following variables:
 #'            readerID       [Factor] w/ nR levels "reader1", "reader2", ...
@@ -85,17 +94,18 @@
 #'              The different decompositions are BCK, BDG, DBM, MS, OR.
 #'
 #'
+#'
 #' @export
 #'
-#' @examples
-#' # Create a sample configuration file
-#' config <- sim.gRoeMetz.config()
-#' # Simulate an MRMC ROC data set
-#' dFrame.imrmc <- sim.gRoeMetz(config)
-#' # Analyze the MRMC ROC data
-#' result <- doIMRMC(dFrame.imrmc)
-#'
-#'
+# @examples
+# # Create a sample configuration file
+# config <- sim.gRoeMetz.config()
+# # Simulate an MRMC ROC data set
+# dFrame.imrmc <- sim.gRoeMetz(config)
+# # Analyze the MRMC ROC data
+# result <- doIMRMC(dFrame.imrmc)
+#
+#
 doIMRMC <- function(
   data = NULL,
   fileName = NULL,

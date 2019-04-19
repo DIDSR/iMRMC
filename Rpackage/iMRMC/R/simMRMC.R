@@ -479,12 +479,12 @@ sim.gRoeMetz.config <- function(
 #' @return dFrame.imrmc [data.frame] Please refer to the description of the simRoeMetz return variable
 #' @export
 #'
-#' @examples
-#' # Simulate a sample MRMC ROC data set
-#' dFrame.imrmc <- simRoeMetz.example()
-#' # Analyze the MRMC ROC data
-#' result <- doIMRMC(dFrame.imrmc)
-#'
+# @examples
+# # Simulate a sample MRMC ROC data set
+# dFrame.imrmc <- simRoeMetz.example()
+# # Analyze the MRMC ROC data
+# result <- doIMRMC(dFrame.imrmc)
+#
 simRoeMetz.example <- function() {
 
   config <- sim.gRoeMetz.config()
