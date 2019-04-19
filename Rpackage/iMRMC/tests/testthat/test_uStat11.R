@@ -109,13 +109,13 @@ load(fileName)
 
 test_that(
   "uStat11.jointD, difference kernel, doesn't change", {
-    expect_equal(saveResult$jointD.diff, result.jointD.diff)
+    expect_equal(saveResult$jointD.diff, result.jointD.diff,tolerance=1e-5)
   }
 )
 
 test_that(
   "uStat11.conditionalD, difference kernel, doesn't change", {
-    expect_equal(saveResult$conditionalD.diff, result.conditionalD.diff)
+    expect_equal(saveResult$conditionalD.diff, result.conditionalD.diff,tolerance=1e-5)
   }
 )
 

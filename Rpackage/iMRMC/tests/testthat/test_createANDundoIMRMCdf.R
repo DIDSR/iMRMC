@@ -37,6 +37,6 @@ load(fileName)
 
 test_that(
   "createIMRMCdf and undoIMRMCdf work as expected", {
-    expect_equal(saveResult, result)
+    expect_equal(saveResult, result,tolerance=1e-5)
   }
 )
