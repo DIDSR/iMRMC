@@ -81,13 +81,13 @@ init.lecuyerRNG <- function(seed = 1, stream = 2){
 #'
 #' @export
 #'
-#' @examples
-#' # Create a sample configuration object
-#' config <- sim.gRoeMetz.config()
-#' # Simulate an MRMC ROC data set
-#' dFrame.imrmc <- sim.gRoeMetz(config)
-#' # Analyze the MRMC ROC data
-#' result <- doIMRMC(dFrame.imrmc)
+# @examples
+# # Create a sample configuration object
+# config <- sim.gRoeMetz.config()
+# # Simulate an MRMC ROC data set
+# dFrame.imrmc <- sim.gRoeMetz(config)
+# # Analyze the MRMC ROC data
+# result <- doIMRMC(dFrame.imrmc)
 
 simMRMC <- function(simMRMC.config) {
 
@@ -223,14 +223,14 @@ simMRMC <- function(simMRMC.config) {
 #'
 #' @export
 #'
-#' @examples
-#' # Create a sample configuration object
-#' config <- sim.gRoeMetz.config()
-#' # Simulate an MRMC ROC data set
-#' dFrame.imrmc <- sim.gRoeMetz(config)
-#' # Analyze the MRMC ROC data
-#' result <- doIMRMC(dFrame.imrmc)
-#'
+# @examples
+# # Create a sample configuration object
+# config <- sim.gRoeMetz.config()
+# # Simulate an MRMC ROC data set
+# dFrame.imrmc <- sim.gRoeMetz(config)
+# # Analyze the MRMC ROC data
+# result <- doIMRMC(dFrame.imrmc)
+#
 sim.gRoeMetz <- function(config) {
 
   # Unpack modality labels
@@ -398,13 +398,13 @@ sim.gRoeMetz <- function(config) {
 #'
 #' @export
 #'
-#' @examples
-#' # Create a sample configuration object
-#' config <- sim.gRoeMetz.config()
-#' # Simulate an MRMC ROC data set
-#' dFrame.imrmc <- sim.gRoeMetz(config)
-#' # Analyze the MRMC ROC data
-#' result <- doIMRMC(dFrame.imrmc)
+# @examples
+# # Create a sample configuration object
+# config <- sim.gRoeMetz.config()
+# # Simulate an MRMC ROC data set
+# dFrame.imrmc <- sim.gRoeMetz(config)
+# # Analyze the MRMC ROC data
+# result <- doIMRMC(dFrame.imrmc)
 sim.gRoeMetz.config <- function(
   nR = 5,
   nC.neg = 40,
@@ -565,12 +565,12 @@ simRoeMetz.example <- function() {
 #'   }
 #' }
 #' 
-#' @examples 
-#' # Extract one configuration
-#' config <- roeMetzConfigs[1, ]
-#' # Create an MRMC ROC data set
-#' df.iMRMC <- sim.gRoeMetz(config)
-#' # Analyze the MRMC ROC data set
-#' result <- doIMRMC(df.iMRMC)
+# @examples 
+# # Extract one configuration
+# config <- roeMetzConfigs[1, ]
+# # Create an MRMC ROC data set
+# df.iMRMC <- sim.gRoeMetz(config)
+# # Analyze the MRMC ROC data set
+# result <- doIMRMC(df.iMRMC)
 NULL
 
