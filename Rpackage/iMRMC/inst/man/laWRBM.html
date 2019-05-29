@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: MRMC analysis of within-reader between-modality limits of...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for laWRBM {iMRMC}"><tr><td>laWRBM {iMRMC}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>MRMC analysis of within-reader between-modality limits of agreement</h2>
+
+<h3>Description</h3>
+
+<p>The core analysis is done by ustat11 with the difference kernel (kernelFlag = 2).
+This calculation can also be accomplished by ustat11 with the identity kernel (kernelFlag = 1),
+and the code to do that is provided after the return statement so it never gets exectuted.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+laWRBM(df, modalitiesToCompare, keyColumns = c("readerID", "caseID",
+  "modalityID", "score"))
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>df</code></td>
+<td>
+<p>Data frame of observations, one per row. Columns identify random effects, fixed effects,
+and the observation. Namely,
+</p>
+
+<ul>
+<li> <p><code>readerID:</code> The factor corresponding to the different readers in the study.
+The readerID is treated as a random effect.
+</p>
+</li>
+<li> <p><code>caseID:</code> The factor corresponding to the different cases in the study.
+The caseID is treated as a random effect.
+</p>
+</li>
+<li> <p><code>modalityID:</code> The factor corresponding to the different modalities in the study.
+The modalityID is treated as a fixed effect.
+</p>
+</li>
+<li> <p><code>score:</code> The score given by the reader to the case for the modality indicated.
+</p>
+</li></ul>
+</td></tr>
+<tr valign="top"><td><code>modalitiesToCompare</code></td>
+<td>
+<p>The factors identifying the modalities to compare.</p>
+</td></tr>
+<tr valign="top"><td><code>keyColumns</code></td>
+<td>
+<p>Identify the factors corresponding to the readerID, caseID, modalityID, and score
+(or alternative random and fixed effects).</p>
+</td></tr>
+</table>
+
+<hr /><div style="text-align: center;">[Package <em>iMRMC</em> version 1.2.0 ]</div>
+</body></html>

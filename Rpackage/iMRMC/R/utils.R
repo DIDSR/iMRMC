@@ -1,16 +1,20 @@
 ## convertDF ####
-#' Title
+#' Convert a data frame from matrix format to list format
 #'
-#' @param inDF
-#' @param inDFtype
-#' @param outDFtype
-#' @param readers
-#' @param nameTruth
+#' @param inDF A dataframe with reading study result in \code{inDFtype} format
+#' @param inDFtype A string indicating the format type of the input data frame
+#' @param outDFtype A string indicating the format type of the output data frame. 
+#' @param readers A list of strings presenting the readerIDs
+#' @param nameTruth NULL
 #'
-#' @return
+#' @return A dataframe with reading study result in \code{outDFtype} format
 #' @export
-#'
-#' @examples
+#' @details \strong{matrixWithTruth} indicating the format type that each row contains all the information for a case, 
+#' including the reader study result for several readers, ground truth and other information as seperate columns; 
+#' 
+#' \strong{listWithTruth} indicating the format type that includes columns 
+#' for readerID, caseID,  score, ground truth, and other information if there is any.
+# @examples
 convertDF <- function(inDF, inDFtype, outDFtype, readers, nameTruth){
   
   if (inDFtype == "matrixWithTruth" & outDFtype == "listWithTruth"){
