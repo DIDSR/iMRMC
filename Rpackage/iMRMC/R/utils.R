@@ -1,3 +1,45 @@
+## convertDF ####
+#' Title
+#'
+#' @param inDF
+#' @param inDFtype
+#' @param outDFtype
+#' @param readers
+#' @param nameTruth
+#'
+#' @return
+#' @export
+#'
+#' @examples
+convertDF <- function(inDF, inDFtype, outDFtype, readers, nameTruth){
+  
+  if (inDFtype == "matrixWithTruth" & outDFtype == "listWithTruth"){
+    
+    # Split the data frame by columns, with and without the readers
+    dfReaders <- inDF[ , (colnames(inDF) %in% readers)]
+    dfNoReaders <- inDF[ , !(colnames(inDF) %in% readers)]
+    
+    # Replicate the data without readers while adding the data for each reader
+    outDF <- data.frame()
+    for (iReader in readers) {
+      
+      # Start with the data frame with no readers
+      tempDF <- dfNoReaders
+      # Add a column "readerID" and assign it the reader name
+      tempDF$readerID <- iReader
+      # Add a column "score" and assign it the scores of the current reader
+      tempDF$score <- dfReaders[ , iReader]
+      # Aggregate the reader data into the output data frame
+      outDF <- rbind(outDF, tempDF)
+      
+    }
+    
+    return(outDF)
+    
+  }
+  
+}
+
 ## createIMRMCdf ####
 #' Convert a data frame with all needed factors to doIMRMC formatted data frame
 #'
