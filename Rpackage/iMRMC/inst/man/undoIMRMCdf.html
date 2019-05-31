@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Convert a doIMRMC formatted data frame to a standard data...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for undoIMRMCdf {iMRMC}"><tr><td>undoIMRMCdf {iMRMC}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Convert a doIMRMC formatted data frame to a standard data frame
+with all factors.</h2>
+
+<h3>Description</h3>
+
+<p>Convert a doIMRMC formatted data frame to a standard data frame
+with all factors.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+undoIMRMCdf(df.MRMC)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>df.MRMC</code></td>
+<td>
+<p>This data frame includes columns for readerID, caseID, modalityID, score.
+Each row is a reader x case x modality observation from the study
+In addition to observations from the study,
+this data frame requires rows specifying the truth for each caseID.
+For truth specifications, the readerID needs to equal &quot;truth&quot; or &quot;-1&quot;,
+modalityID can be anything (&quot;truth&quot; is a good choice),
+and score should be 0 for signal-absent normal case, 1 for signal-present disease case.</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>Delete rows specifying truth and put the truth information on every row.
+</p>
+
+
+<h3>Value</h3>
+
+<p>output a data frame with columns readerID, caseID, modalityID, score, truth
+</p>
+
+<hr /><div style="text-align: center;">[Package <em>iMRMC</em> version 1.2.0 ]</div>
+</body></html>

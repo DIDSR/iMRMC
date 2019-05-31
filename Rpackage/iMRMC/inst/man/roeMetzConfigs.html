@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: roeMetzConfigs</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for roeMetzConfigs {iMRMC}"><tr><td>roeMetzConfigs {iMRMC}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>roeMetzConfigs</h2>
+
+<h3>Description</h3>
+
+<p>This is a data frame containing the configuration parameters 
+used in Roe1997_Acad-Radiol_v4p298. Each row corresponds to one of the twelve configurations
+appearing in Table 1 of that paper in a format that can be the input to <code>sim.gRoeMetz</code>.
+</p>
+
+
+<h3>Details</h3>
+
+<p>The columns of this data frame are as follows
+</p>
+
+<ul>
+<li><p> Experiment labels and size
+</p>
+
+<ul>
+<li><p> modalityID.A: [chr] label modality A
+</p>
+</li>
+<li><p> modalityID.B: [chr] label modality B
+</p>
+</li>
+<li><p> nR: [num] number of readers
+</p>
+</li>
+<li><p> nC.neg: [num] number of signal-absent cases
+</p>
+</li>
+<li><p> nC.pos: [num] number of signal-present cases
+</p>
+</li></ul>
+
+</li>
+<li><p> There are six fixed effects:
+</p>
+
+<ul>
+<li><p> mu.neg: [num] signal-absent (neg, global mean)
+</p>
+</li>
+<li><p> mu.pos: [num] signal-present (pos, global mean)
+</p>
+</li>
+<li><p> mu.Aneg: [num] modality A signal-absent (Aneg, modality effect)
+</p>
+</li>
+<li><p> mu.Bneg: [num] modality B signal-absent (Bneg, modality effect)
+</p>
+</li>
+<li><p> mu.Apos: [num] modality A signal-present (Apos, modality effect)
+</p>
+</li>
+<li><p> mu.Bpos: [num] modality B signal-present (Bpos, modality effect)
+</p>
+</li></ul>
+
+</li>
+<li><p> There are six random effects that are independent of modality
+</p>
+
+<ul>
+<li><p> var_r.neg: [num] variance of random reader effect
+</p>
+</li>
+<li><p> var_c.neg: [num] variance of random case effect
+</p>
+</li>
+<li><p> var_rc.neg: [num] variance of random reader by case effect
+</p>
+</li>
+<li><p> var_r.pos: [num] variance of random reader effect
+</p>
+</li>
+<li><p> var_c.pos: [num] variance of random case effect
+</p>
+</li>
+<li><p> var_rc.pos: [num] variance of random reader by case effect
+</p>
+</li></ul>
+
+</li>
+<li><p> There are six random effects that are specific to modality A
+</p>
+
+<ul>
+<li><p> var_r.Aneg: [num] variance of random reader effect
+</p>
+</li>
+<li><p> var_c.Aneg: [num] variance of random case effect
+</p>
+</li>
+<li><p> var_rc.Aneg: [num] variance of random reader by case effect
+</p>
+</li>
+<li><p> var_r.Apos: [num] variance of random reader effect
+</p>
+</li>
+<li><p> var_c.Apos: [num] variance of random case effect
+</p>
+</li>
+<li><p> var_rc.Apos: [num] variance of randome reader by case effect
+</p>
+</li></ul>
+
+</li>
+<li><p> There are six random effects that are specific to modality B
+</p>
+
+<ul>
+<li><p> var_r.Bneg: [num] variance of random reader effect
+</p>
+</li>
+<li><p> var_c.Bneg: [num] variance of random case effect
+</p>
+</li>
+<li><p> var_rc.Bneg: [num] variance of random reader by case effect
+</p>
+</li>
+<li><p> var_r.Bpos: [num] variance of random reader effect
+</p>
+</li>
+<li><p> var_c.Bpos: [num] variance of random case effect
+</p>
+</li>
+<li><p> var_rc.Bpos: [num] variance of randome reader by case effect
+</p>
+</li></ul>
+
+</li></ul>
+
+
+<hr /><div style="text-align: center;">[Package <em>iMRMC</em> version 1.2.0 ]</div>
+</body></html>
