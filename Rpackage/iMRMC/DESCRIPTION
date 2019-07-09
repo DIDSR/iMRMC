@@ -1,7 +1,7 @@
 Package: iMRMC
 Type: Package
 Title: Multi-Reader, Multi-Case Analysis Methods (ROC, Agreement, and Other Metrics)
-Version: 1.2.0
+Version: 1.2.1
 Author: Brandon Gallas
 Maintainer: Brandon Gallas <Brandon.Gallas@fda.hhs.gov>
 Description:

@@ -4,7 +4,7 @@
 #' @param inDF An MRMC dataframe with reading study results in \code{inDFtype} format
 #' @param inDFtype A string indicating the format type of the input MRMC data frame
 #' @param outDFtype A string indicating the format type of the output MRMC data frame. 
-#' @param readers A character array holding the readerIDs
+#' @param readers A character array holding the column names (readerIDs) corresponding to the data from different readers
 #' @param nameTruthColumn The column name holding the truth labels
 #'
 #' @return An MRMC dataframe with reading study results in \code{outDFtype} format
