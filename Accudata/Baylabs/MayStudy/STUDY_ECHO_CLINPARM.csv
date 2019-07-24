@@ -1,0 +1,821 @@
+RECORD_ID,STUDY_NURSEID,clinParm,cardio1,cardio2,cardio3,cardio4,cardio5
+2001,1,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+2001,1,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+2001,1,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+2001,1,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2001,1,PE,Absent,Absent,Present,Absent,Present
+2001,1,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2001,1,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+2001,1,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2001,1,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+2001,1,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+2002,1,LV,Abnormal (Enlarged),Normal or Borderline,Image quality inadequate for visual assessment,Abnormal (Enlarged),Abnormal (Enlarged)
+2002,1,GLVF,Reduced (EF <= 50%),Normal (or Borderline),Reduced (EF <= 50%),Reduced (EF <= 50%),Normal (or Borderline)
+2002,1,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged)
+2002,1,RVF,Normal or Borderline,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced,Normal or Borderline
+2002,1,PE,Present,Absent,Present,Present,Present
+2002,1,IVCS,Image quality inadequate for visual assessment,Normal,Dilated,Normal,Image quality inadequate for visual assessment
+2002,1,LAS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Enlarged,Enlarged,Enlarged
+2002,1,AV,Appears structurally abnormal,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment
+2002,1,MV,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2002,1,TV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Appears structurally normal,Appears structurally normal,Image quality inadequate for visual assessment
+2003,1,LV,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment
+2003,1,GLVF,Reduced (EF <= 50%),Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced (EF <= 50%)
+2003,1,RVS,Normal or Borderline,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Image quality inadequate for visual assessment
+2003,1,RVF,Normal or Borderline,Reduced,Normal or Borderline,Normal or Borderline,Reduced
+2003,1,PE,Present,Absent,Absent,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2003,1,IVCS,Dilated,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2003,1,LAS,Normal,Normal,Enlarged,Enlarged,Enlarged
+2003,1,AV,Appears structurally normal,"Suspected device (e.g., prosthetic valve) preclude",Appears structurally normal,Appears structurally abnormal,Image quality inadequate for visual assessment
+2003,1,MV,Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2003,1,TV,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal
+2004,1,LV,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment
+2004,1,GLVF,Reduced (EF <= 50%),Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced (EF <= 50%)
+2004,1,RVS,Normal or Borderline,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Image quality inadequate for visual assessment
+2004,1,RVF,Normal or Borderline,Reduced,Normal or Borderline,Normal or Borderline,Reduced
+2004,1,PE,Present,Absent,Absent,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2004,1,IVCS,Dilated,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2004,1,LAS,Normal,Normal,Enlarged,Enlarged,Enlarged
+2004,1,AV,Appears structurally normal,"Suspected device (e.g., prosthetic valve) preclude",Appears structurally normal,Appears structurally abnormal,Image quality inadequate for visual assessment
+2004,1,MV,Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2004,1,TV,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal
+2005,1,LV,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment
+2005,1,GLVF,Reduced (EF <= 50%),Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced (EF <= 50%)
+2005,1,RVS,Normal or Borderline,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Image quality inadequate for visual assessment
+2005,1,RVF,Normal or Borderline,Reduced,Normal or Borderline,Normal or Borderline,Reduced
+2005,1,PE,Present,Absent,Absent,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2005,1,IVCS,Dilated,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2005,1,LAS,Normal,Normal,Enlarged,Enlarged,Enlarged
+2005,1,AV,Appears structurally normal,"Suspected device (e.g., prosthetic valve) preclude",Appears structurally normal,Appears structurally abnormal,Image quality inadequate for visual assessment
+2005,1,MV,Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2005,1,TV,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal
+2006,1,LV,Abnormal (Enlarged),Normal or Borderline,Image quality inadequate for visual assessment,Abnormal (Enlarged),Abnormal (Enlarged)
+2006,1,GLVF,Reduced (EF <= 50%),Normal (or Borderline),Reduced (EF <= 50%),Reduced (EF <= 50%),Normal (or Borderline)
+2006,1,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged)
+2006,1,RVF,Normal or Borderline,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced,Normal or Borderline
+2006,1,PE,Present,Absent,Present,Present,Present
+2006,1,IVCS,Image quality inadequate for visual assessment,Normal,Dilated,Normal,Image quality inadequate for visual assessment
+2006,1,LAS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Enlarged,Enlarged,Enlarged
+2006,1,AV,Appears structurally abnormal,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment
+2006,1,MV,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2006,1,TV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Appears structurally normal,Appears structurally normal,Image quality inadequate for visual assessment
+2007,1,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+2007,1,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+2007,1,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+2007,1,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2007,1,PE,Absent,Absent,Present,Absent,Present
+2007,1,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2007,1,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+2007,1,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2007,1,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+2007,1,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+2008,1,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+2008,1,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+2008,1,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+2008,1,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2008,1,PE,Absent,Absent,Present,Absent,Present
+2008,1,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2008,1,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+2008,1,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2008,1,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+2008,1,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+2009,1,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+2009,1,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+2009,1,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+2009,1,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2009,1,PE,Absent,Absent,Present,Absent,Present
+2009,1,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2009,1,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+2009,1,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2009,1,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+2009,1,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+2010,2,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+2010,2,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+2010,2,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+2010,2,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2010,2,PE,Absent,Absent,Present,Absent,Present
+2010,2,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2010,2,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+2010,2,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2010,2,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+2010,2,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+2011,2,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+2011,2,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+2011,2,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+2011,2,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2011,2,PE,Absent,Absent,Present,Absent,Present
+2011,2,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2011,2,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+2011,2,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2011,2,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+2011,2,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+2012,2,LV,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment
+2012,2,GLVF,Reduced (EF <= 50%),Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced (EF <= 50%)
+2012,2,RVS,Normal or Borderline,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Image quality inadequate for visual assessment
+2012,2,RVF,Normal or Borderline,Reduced,Normal or Borderline,Normal or Borderline,Reduced
+2012,2,PE,Present,Absent,Absent,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2012,2,IVCS,Dilated,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2012,2,LAS,Normal,Normal,Enlarged,Enlarged,Enlarged
+2012,2,AV,Appears structurally normal,"Suspected device (e.g., prosthetic valve) preclude",Appears structurally normal,Appears structurally abnormal,Image quality inadequate for visual assessment
+2012,2,MV,Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2012,2,TV,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal
+2013,2,LV,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment
+2013,2,GLVF,Reduced (EF <= 50%),Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced (EF <= 50%)
+2013,2,RVS,Normal or Borderline,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Image quality inadequate for visual assessment
+2013,2,RVF,Normal or Borderline,Reduced,Normal or Borderline,Normal or Borderline,Reduced
+2013,2,PE,Present,Absent,Absent,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2013,2,IVCS,Dilated,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2013,2,LAS,Normal,Normal,Enlarged,Enlarged,Enlarged
+2013,2,AV,Appears structurally normal,"Suspected device (e.g., prosthetic valve) preclude",Appears structurally normal,Appears structurally abnormal,Image quality inadequate for visual assessment
+2013,2,MV,Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2013,2,TV,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal
+2014,2,LV,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment
+2014,2,GLVF,Reduced (EF <= 50%),Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced (EF <= 50%)
+2014,2,RVS,Normal or Borderline,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Image quality inadequate for visual assessment
+2014,2,RVF,Normal or Borderline,Reduced,Normal or Borderline,Normal or Borderline,Reduced
+2014,2,PE,Present,Absent,Absent,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2014,2,IVCS,Dilated,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2014,2,LAS,Normal,Normal,Enlarged,Enlarged,Enlarged
+2014,2,AV,Appears structurally normal,"Suspected device (e.g., prosthetic valve) preclude",Appears structurally normal,Appears structurally abnormal,Image quality inadequate for visual assessment
+2014,2,MV,Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2014,2,TV,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal
+2015,2,LV,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment
+2015,2,GLVF,Reduced (EF <= 50%),Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced (EF <= 50%)
+2015,2,RVS,Normal or Borderline,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Image quality inadequate for visual assessment
+2015,2,RVF,Normal or Borderline,Reduced,Normal or Borderline,Normal or Borderline,Reduced
+2015,2,PE,Present,Absent,Absent,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2015,2,IVCS,Dilated,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2015,2,LAS,Normal,Normal,Enlarged,Enlarged,Enlarged
+2015,2,AV,Appears structurally normal,"Suspected device (e.g., prosthetic valve) preclude",Appears structurally normal,Appears structurally abnormal,Image quality inadequate for visual assessment
+2015,2,MV,Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2015,2,TV,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal
+2016,2,LV,Abnormal (Enlarged),Normal or Borderline,Image quality inadequate for visual assessment,Abnormal (Enlarged),Abnormal (Enlarged)
+2016,2,GLVF,Reduced (EF <= 50%),Normal (or Borderline),Reduced (EF <= 50%),Reduced (EF <= 50%),Normal (or Borderline)
+2016,2,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged)
+2016,2,RVF,Normal or Borderline,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced,Normal or Borderline
+2016,2,PE,Present,Absent,Present,Present,Present
+2016,2,IVCS,Image quality inadequate for visual assessment,Normal,Dilated,Normal,Image quality inadequate for visual assessment
+2016,2,LAS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Enlarged,Enlarged,Enlarged
+2016,2,AV,Appears structurally abnormal,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment
+2016,2,MV,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2016,2,TV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Appears structurally normal,Appears structurally normal,Image quality inadequate for visual assessment
+2017,2,LV,Abnormal (Enlarged),Normal or Borderline,Image quality inadequate for visual assessment,Abnormal (Enlarged),Abnormal (Enlarged)
+2017,2,GLVF,Reduced (EF <= 50%),Normal (or Borderline),Reduced (EF <= 50%),Reduced (EF <= 50%),Normal (or Borderline)
+2017,2,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged)
+2017,2,RVF,Normal or Borderline,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced,Normal or Borderline
+2017,2,PE,Present,Absent,Present,Present,Present
+2017,2,IVCS,Image quality inadequate for visual assessment,Normal,Dilated,Normal,Image quality inadequate for visual assessment
+2017,2,LAS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Enlarged,Enlarged,Enlarged
+2017,2,AV,Appears structurally abnormal,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment
+2017,2,MV,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2017,2,TV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Appears structurally normal,Appears structurally normal,Image quality inadequate for visual assessment
+2018,2,LV,Abnormal (Enlarged),Normal or Borderline,Image quality inadequate for visual assessment,Abnormal (Enlarged),Abnormal (Enlarged)
+2018,2,GLVF,Reduced (EF <= 50%),Normal (or Borderline),Reduced (EF <= 50%),Reduced (EF <= 50%),Normal (or Borderline)
+2018,2,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged)
+2018,2,RVF,Normal or Borderline,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced,Normal or Borderline
+2018,2,PE,Present,Absent,Present,Present,Present
+2018,2,IVCS,Image quality inadequate for visual assessment,Normal,Dilated,Normal,Image quality inadequate for visual assessment
+2018,2,LAS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Enlarged,Enlarged,Enlarged
+2018,2,AV,Appears structurally abnormal,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment
+2018,2,MV,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2018,2,TV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Appears structurally normal,Appears structurally normal,Image quality inadequate for visual assessment
+2020,3,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+2020,3,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+2020,3,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+2020,3,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2020,3,PE,Absent,Absent,Present,Absent,Present
+2020,3,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2020,3,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+2020,3,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2020,3,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+2020,3,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+2021,3,LV,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment
+2021,3,GLVF,Reduced (EF <= 50%),Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced (EF <= 50%)
+2021,3,RVS,Normal or Borderline,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Image quality inadequate for visual assessment
+2021,3,RVF,Normal or Borderline,Reduced,Normal or Borderline,Normal or Borderline,Reduced
+2021,3,PE,Present,Absent,Absent,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2021,3,IVCS,Dilated,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2021,3,LAS,Normal,Normal,Enlarged,Enlarged,Enlarged
+2021,3,AV,Appears structurally normal,"Suspected device (e.g., prosthetic valve) preclude",Appears structurally normal,Appears structurally abnormal,Image quality inadequate for visual assessment
+2021,3,MV,Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2021,3,TV,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal
+2022,3,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+2022,3,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+2022,3,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+2022,3,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2022,3,PE,Absent,Absent,Present,Absent,Present
+2022,3,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2022,3,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+2022,3,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2022,3,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+2022,3,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+2023,3,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+2023,3,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+2023,3,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+2023,3,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2023,3,PE,Absent,Absent,Present,Absent,Present
+2023,3,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2023,3,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+2023,3,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2023,3,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+2023,3,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+2024,3,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+2024,3,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+2024,3,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+2024,3,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2024,3,PE,Absent,Absent,Present,Absent,Present
+2024,3,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2024,3,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+2024,3,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2024,3,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+2024,3,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+2025,3,LV,Abnormal (Enlarged),Normal or Borderline,Image quality inadequate for visual assessment,Abnormal (Enlarged),Abnormal (Enlarged)
+2025,3,GLVF,Reduced (EF <= 50%),Normal (or Borderline),Reduced (EF <= 50%),Reduced (EF <= 50%),Normal (or Borderline)
+2025,3,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged)
+2025,3,RVF,Normal or Borderline,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced,Normal or Borderline
+2025,3,PE,Present,Absent,Present,Present,Present
+2025,3,IVCS,Image quality inadequate for visual assessment,Normal,Dilated,Normal,Image quality inadequate for visual assessment
+2025,3,LAS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Enlarged,Enlarged,Enlarged
+2025,3,AV,Appears structurally abnormal,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment
+2025,3,MV,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2025,3,TV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Appears structurally normal,Appears structurally normal,Image quality inadequate for visual assessment
+2027,3,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+2027,3,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+2027,3,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+2027,3,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2027,3,PE,Absent,Absent,Present,Absent,Present
+2027,3,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2027,3,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+2027,3,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2027,3,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+2027,3,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+2028,3,LV,Abnormal (Enlarged),Normal or Borderline,Image quality inadequate for visual assessment,Abnormal (Enlarged),Abnormal (Enlarged)
+2028,3,GLVF,Reduced (EF <= 50%),Normal (or Borderline),Reduced (EF <= 50%),Reduced (EF <= 50%),Normal (or Borderline)
+2028,3,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged)
+2028,3,RVF,Normal or Borderline,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced,Normal or Borderline
+2028,3,PE,Present,Absent,Present,Present,Present
+2028,3,IVCS,Image quality inadequate for visual assessment,Normal,Dilated,Normal,Image quality inadequate for visual assessment
+2028,3,LAS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Enlarged,Enlarged,Enlarged
+2028,3,AV,Appears structurally abnormal,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment
+2028,3,MV,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2028,3,TV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Appears structurally normal,Appears structurally normal,Image quality inadequate for visual assessment
+2029,3,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+2029,3,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+2029,3,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+2029,3,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2029,3,PE,Absent,Absent,Present,Absent,Present
+2029,3,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2029,3,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+2029,3,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2029,3,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+2029,3,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+2030,4,LV,Abnormal (Enlarged),Normal or Borderline,Image quality inadequate for visual assessment,Abnormal (Enlarged),Abnormal (Enlarged)
+2030,4,GLVF,Reduced (EF <= 50%),Normal (or Borderline),Reduced (EF <= 50%),Reduced (EF <= 50%),Normal (or Borderline)
+2030,4,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged)
+2030,4,RVF,Normal or Borderline,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced,Normal or Borderline
+2030,4,PE,Present,Absent,Present,Present,Present
+2030,4,IVCS,Image quality inadequate for visual assessment,Normal,Dilated,Normal,Image quality inadequate for visual assessment
+2030,4,LAS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Enlarged,Enlarged,Enlarged
+2030,4,AV,Appears structurally abnormal,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment
+2030,4,MV,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2030,4,TV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Appears structurally normal,Appears structurally normal,Image quality inadequate for visual assessment
+2031,4,LV,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment
+2031,4,GLVF,Reduced (EF <= 50%),Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced (EF <= 50%)
+2031,4,RVS,Normal or Borderline,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Image quality inadequate for visual assessment
+2031,4,RVF,Normal or Borderline,Reduced,Normal or Borderline,Normal or Borderline,Reduced
+2031,4,PE,Present,Absent,Absent,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2031,4,IVCS,Dilated,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2031,4,LAS,Normal,Normal,Enlarged,Enlarged,Enlarged
+2031,4,AV,Appears structurally normal,"Suspected device (e.g., prosthetic valve) preclude",Appears structurally normal,Appears structurally abnormal,Image quality inadequate for visual assessment
+2031,4,MV,Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2031,4,TV,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal
+2032,4,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+2032,4,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+2032,4,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+2032,4,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2032,4,PE,Absent,Absent,Present,Absent,Present
+2032,4,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2032,4,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+2032,4,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2032,4,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+2032,4,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+2033,4,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+2033,4,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+2033,4,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+2033,4,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2033,4,PE,Absent,Absent,Present,Absent,Present
+2033,4,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2033,4,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+2033,4,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2033,4,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+2033,4,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+2034,4,LV,Abnormal (Enlarged),Normal or Borderline,Image quality inadequate for visual assessment,Abnormal (Enlarged),Abnormal (Enlarged)
+2034,4,GLVF,Reduced (EF <= 50%),Normal (or Borderline),Reduced (EF <= 50%),Reduced (EF <= 50%),Normal (or Borderline)
+2034,4,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged)
+2034,4,RVF,Normal or Borderline,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced,Normal or Borderline
+2034,4,PE,Present,Absent,Present,Present,Present
+2034,4,IVCS,Image quality inadequate for visual assessment,Normal,Dilated,Normal,Image quality inadequate for visual assessment
+2034,4,LAS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Enlarged,Enlarged,Enlarged
+2034,4,AV,Appears structurally abnormal,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment
+2034,4,MV,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2034,4,TV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Appears structurally normal,Appears structurally normal,Image quality inadequate for visual assessment
+2035,4,LV,Abnormal (Enlarged),Normal or Borderline,Image quality inadequate for visual assessment,Abnormal (Enlarged),Abnormal (Enlarged)
+2035,4,GLVF,Reduced (EF <= 50%),Normal (or Borderline),Reduced (EF <= 50%),Reduced (EF <= 50%),Normal (or Borderline)
+2035,4,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged)
+2035,4,RVF,Normal or Borderline,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced,Normal or Borderline
+2035,4,PE,Present,Absent,Present,Present,Present
+2035,4,IVCS,Image quality inadequate for visual assessment,Normal,Dilated,Normal,Image quality inadequate for visual assessment
+2035,4,LAS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Enlarged,Enlarged,Enlarged
+2035,4,AV,Appears structurally abnormal,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment
+2035,4,MV,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2035,4,TV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Appears structurally normal,Appears structurally normal,Image quality inadequate for visual assessment
+2036,4,LV,Abnormal (Enlarged),Normal or Borderline,Image quality inadequate for visual assessment,Abnormal (Enlarged),Abnormal (Enlarged)
+2036,4,GLVF,Reduced (EF <= 50%),Normal (or Borderline),Reduced (EF <= 50%),Reduced (EF <= 50%),Normal (or Borderline)
+2036,4,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged)
+2036,4,RVF,Normal or Borderline,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced,Normal or Borderline
+2036,4,PE,Present,Absent,Present,Present,Present
+2036,4,IVCS,Image quality inadequate for visual assessment,Normal,Dilated,Normal,Image quality inadequate for visual assessment
+2036,4,LAS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Enlarged,Enlarged,Enlarged
+2036,4,AV,Appears structurally abnormal,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment
+2036,4,MV,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2036,4,TV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Appears structurally normal,Appears structurally normal,Image quality inadequate for visual assessment
+2037,4,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+2037,4,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+2037,4,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+2037,4,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2037,4,PE,Absent,Absent,Present,Absent,Present
+2037,4,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2037,4,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+2037,4,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2037,4,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+2037,4,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+2038,4,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+2038,4,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+2038,4,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+2038,4,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2038,4,PE,Absent,Absent,Present,Absent,Present
+2038,4,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2038,4,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+2038,4,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2038,4,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+2038,4,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+2039,3,LV,Abnormal (Enlarged),Normal or Borderline,Image quality inadequate for visual assessment,Abnormal (Enlarged),Abnormal (Enlarged)
+2039,3,GLVF,Reduced (EF <= 50%),Normal (or Borderline),Reduced (EF <= 50%),Reduced (EF <= 50%),Normal (or Borderline)
+2039,3,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged)
+2039,3,RVF,Normal or Borderline,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced,Normal or Borderline
+2039,3,PE,Present,Absent,Present,Present,Present
+2039,3,IVCS,Image quality inadequate for visual assessment,Normal,Dilated,Normal,Image quality inadequate for visual assessment
+2039,3,LAS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Enlarged,Enlarged,Enlarged
+2039,3,AV,Appears structurally abnormal,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment
+2039,3,MV,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2039,3,TV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Appears structurally normal,Appears structurally normal,Image quality inadequate for visual assessment
+2041,3,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+2041,3,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+2041,3,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+2041,3,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2041,3,PE,Absent,Absent,Present,Absent,Present
+2041,3,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2041,3,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+2041,3,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2041,3,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+2041,3,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+2040,3,LV,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment
+2040,3,GLVF,Reduced (EF <= 50%),Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced (EF <= 50%)
+2040,3,RVS,Normal or Borderline,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Image quality inadequate for visual assessment
+2040,3,RVF,Normal or Borderline,Reduced,Normal or Borderline,Normal or Borderline,Reduced
+2040,3,PE,Present,Absent,Absent,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2040,3,IVCS,Dilated,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2040,3,LAS,Normal,Normal,Enlarged,Enlarged,Enlarged
+2040,3,AV,Appears structurally normal,"Suspected device (e.g., prosthetic valve) preclude",Appears structurally normal,Appears structurally abnormal,Image quality inadequate for visual assessment
+2040,3,MV,Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2040,3,TV,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal
+2001_d,,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+2001_d,,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+2001_d,,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+2001_d,,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2001_d,,PE,Absent,Absent,Present,Absent,Present
+2001_d,,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2001_d,,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+2001_d,,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2001_d,,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+2001_d,,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+2002_d,,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+2002_d,,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+2002_d,,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+2002_d,,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2002_d,,PE,Absent,Absent,Present,Absent,Present
+2002_d,,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2002_d,,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+2002_d,,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2002_d,,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+2002_d,,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+2003_d,,LV,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment
+2003_d,,GLVF,Reduced (EF <= 50%),Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced (EF <= 50%)
+2003_d,,RVS,Normal or Borderline,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Image quality inadequate for visual assessment
+2003_d,,RVF,Normal or Borderline,Reduced,Normal or Borderline,Normal or Borderline,Reduced
+2003_d,,PE,Present,Absent,Absent,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2003_d,,IVCS,Dilated,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2003_d,,LAS,Normal,Normal,Enlarged,Enlarged,Enlarged
+2003_d,,AV,Appears structurally normal,"Suspected device (e.g., prosthetic valve) preclude",Appears structurally normal,Appears structurally abnormal,Image quality inadequate for visual assessment
+2003_d,,MV,Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2003_d,,TV,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal
+2004_d,,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+2004_d,,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+2004_d,,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+2004_d,,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2004_d,,PE,Absent,Absent,Present,Absent,Present
+2004_d,,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+2004_d,,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+2004_d,,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+2004_d,,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+2004_d,,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+1001,1,LV,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment
+1001,1,GLVF,Reduced (EF <= 50%),Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced (EF <= 50%)
+1001,1,RVS,Normal or Borderline,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Image quality inadequate for visual assessment
+1001,1,RVF,Normal or Borderline,Reduced,Normal or Borderline,Normal or Borderline,Reduced
+1001,1,PE,Present,Absent,Absent,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1001,1,IVCS,Dilated,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+1001,1,LAS,Normal,Normal,Enlarged,Enlarged,Enlarged
+1001,1,AV,Appears structurally normal,"Suspected device (e.g., prosthetic valve) preclude",Appears structurally normal,Appears structurally abnormal,Image quality inadequate for visual assessment
+1001,1,MV,Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+1001,1,TV,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal
+1002,1,LV,Abnormal (Enlarged),Normal or Borderline,Image quality inadequate for visual assessment,Abnormal (Enlarged),Abnormal (Enlarged)
+1002,1,GLVF,Reduced (EF <= 50%),Normal (or Borderline),Reduced (EF <= 50%),Reduced (EF <= 50%),Normal (or Borderline)
+1002,1,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged)
+1002,1,RVF,Normal or Borderline,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced,Normal or Borderline
+1002,1,PE,Present,Absent,Present,Present,Present
+1002,1,IVCS,Image quality inadequate for visual assessment,Normal,Dilated,Normal,Image quality inadequate for visual assessment
+1002,1,LAS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Enlarged,Enlarged,Enlarged
+1002,1,AV,Appears structurally abnormal,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment
+1002,1,MV,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1002,1,TV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Appears structurally normal,Appears structurally normal,Image quality inadequate for visual assessment
+1004,1,LV,Image quality inadequate for visual assessment,Abnormal (Enlarged),Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged)
+1004,1,GLVF,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Reduced (EF <= 50%),Reduced (EF <= 50%)
+1004,1,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged)
+1004,1,RVF,Reduced,Normal or Borderline,Normal or Borderline,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1004,1,PE,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Absent,Present,Present
+1004,1,IVCS,Normal,Normal,Dilated,Image quality inadequate for visual assessment,Normal
+1004,1,LAS,Image quality inadequate for visual assessment,Normal,Normal,Image quality inadequate for visual assessment,Enlarged
+1004,1,AV,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Appears structurally abnormal,Image quality inadequate for visual assessment,Appears structurally normal
+1004,1,MV,Appears structurally abnormal,Image quality inadequate for visual assessment,Appears structurally normal,Appears structurally abnormal,Appears structurally normal
+1004,1,TV,Appears structurally normal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar","Suspected device (e.g., prosthetic valve, intracar",Appears structurally abnormal
+1005,1,LV,Abnormal (Enlarged),Normal or Borderline,Image quality inadequate for visual assessment,Abnormal (Enlarged),Abnormal (Enlarged)
+1005,1,GLVF,Reduced (EF <= 50%),Normal (or Borderline),Reduced (EF <= 50%),Reduced (EF <= 50%),Normal (or Borderline)
+1005,1,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged)
+1005,1,RVF,Normal or Borderline,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced,Normal or Borderline
+1005,1,PE,Present,Absent,Present,Present,Present
+1005,1,IVCS,Image quality inadequate for visual assessment,Normal,Dilated,Normal,Image quality inadequate for visual assessment
+1005,1,LAS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Enlarged,Enlarged,Enlarged
+1005,1,AV,Appears structurally abnormal,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment
+1005,1,MV,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1005,1,TV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Appears structurally normal,Appears structurally normal,Image quality inadequate for visual assessment
+1006,1,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+1006,1,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+1006,1,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+1006,1,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1006,1,PE,Absent,Absent,Present,Absent,Present
+1006,1,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+1006,1,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+1006,1,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+1006,1,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+1006,1,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+1007,1,LV,Abnormal (Enlarged),Normal or Borderline,Image quality inadequate for visual assessment,Abnormal (Enlarged),Abnormal (Enlarged)
+1007,1,GLVF,Reduced (EF <= 50%),Normal (or Borderline),Reduced (EF <= 50%),Reduced (EF <= 50%),Normal (or Borderline)
+1007,1,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged)
+1007,1,RVF,Normal or Borderline,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced,Normal or Borderline
+1007,1,PE,Present,Absent,Present,Present,Present
+1007,1,IVCS,Image quality inadequate for visual assessment,Normal,Dilated,Normal,Image quality inadequate for visual assessment
+1007,1,LAS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Enlarged,Enlarged,Enlarged
+1007,1,AV,Appears structurally abnormal,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment
+1007,1,MV,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1007,1,TV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Appears structurally normal,Appears structurally normal,Image quality inadequate for visual assessment
+1008,1,LV,,,,,
+1008,1,GLVF,,,,,
+1008,1,RVS,,,,,
+1008,1,RVF,,,,,
+1008,1,PE,,,,,
+1008,1,IVCS,,,,,
+1008,1,LAS,,,,,
+1008,1,AV,,,,,
+1008,1,MV,,,,,
+1008,1,TV,,,,,
+1009,1,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+1009,1,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+1009,1,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+1009,1,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1009,1,PE,Absent,Absent,Present,Absent,Present
+1009,1,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+1009,1,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+1009,1,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+1009,1,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+1009,1,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+1010,1,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+1010,1,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+1010,1,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+1010,1,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1010,1,PE,Absent,Absent,Present,Absent,Present
+1010,1,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+1010,1,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+1010,1,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+1010,1,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+1010,1,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+1011,2,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+1011,2,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+1011,2,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+1011,2,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1011,2,PE,Absent,Absent,Present,Absent,Present
+1011,2,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+1011,2,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+1011,2,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+1011,2,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+1011,2,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+1012,2,LV,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment
+1012,2,GLVF,Reduced (EF <= 50%),Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced (EF <= 50%)
+1012,2,RVS,Normal or Borderline,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Image quality inadequate for visual assessment
+1012,2,RVF,Normal or Borderline,Reduced,Normal or Borderline,Normal or Borderline,Reduced
+1012,2,PE,Present,Absent,Absent,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1012,2,IVCS,Dilated,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+1012,2,LAS,Normal,Normal,Enlarged,Enlarged,Enlarged
+1012,2,AV,Appears structurally normal,"Suspected device (e.g., prosthetic valve) preclude",Appears structurally normal,Appears structurally abnormal,Image quality inadequate for visual assessment
+1012,2,MV,Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+1012,2,TV,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal
+1013,2,LV,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment
+1013,2,GLVF,Reduced (EF <= 50%),Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced (EF <= 50%)
+1013,2,RVS,Normal or Borderline,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Image quality inadequate for visual assessment
+1013,2,RVF,Normal or Borderline,Reduced,Normal or Borderline,Normal or Borderline,Reduced
+1013,2,PE,Present,Absent,Absent,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1013,2,IVCS,Dilated,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+1013,2,LAS,Normal,Normal,Enlarged,Enlarged,Enlarged
+1013,2,AV,Appears structurally normal,"Suspected device (e.g., prosthetic valve) preclude",Appears structurally normal,Appears structurally abnormal,Image quality inadequate for visual assessment
+1013,2,MV,Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+1013,2,TV,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal
+1014,2,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+1014,2,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+1014,2,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+1014,2,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1014,2,PE,Absent,Absent,Present,Absent,Present
+1014,2,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+1014,2,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+1014,2,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+1014,2,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+1014,2,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+1015,2,LV,Abnormal (Enlarged),Normal or Borderline,Image quality inadequate for visual assessment,Abnormal (Enlarged),Abnormal (Enlarged)
+1015,2,GLVF,Reduced (EF <= 50%),Normal (or Borderline),Reduced (EF <= 50%),Reduced (EF <= 50%),Normal (or Borderline)
+1015,2,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged)
+1015,2,RVF,Normal or Borderline,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced,Normal or Borderline
+1015,2,PE,Present,Absent,Present,Present,Present
+1015,2,IVCS,Image quality inadequate for visual assessment,Normal,Dilated,Normal,Image quality inadequate for visual assessment
+1015,2,LAS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Enlarged,Enlarged,Enlarged
+1015,2,AV,Appears structurally abnormal,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment
+1015,2,MV,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1015,2,TV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Appears structurally normal,Appears structurally normal,Image quality inadequate for visual assessment
+1016,2,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+1016,2,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+1016,2,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+1016,2,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1016,2,PE,Absent,Absent,Present,Absent,Present
+1016,2,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+1016,2,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+1016,2,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+1016,2,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+1016,2,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+1017,2,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+1017,2,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+1017,2,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+1017,2,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1017,2,PE,Absent,Absent,Present,Absent,Present
+1017,2,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+1017,2,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+1017,2,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+1017,2,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+1017,2,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+1018,2,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+1018,2,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+1018,2,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+1018,2,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1018,2,PE,Absent,Absent,Present,Absent,Present
+1018,2,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+1018,2,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+1018,2,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+1018,2,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+1018,2,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+1019,2,LV,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment
+1019,2,GLVF,Reduced (EF <= 50%),Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced (EF <= 50%)
+1019,2,RVS,Normal or Borderline,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Image quality inadequate for visual assessment
+1019,2,RVF,Normal or Borderline,Reduced,Normal or Borderline,Normal or Borderline,Reduced
+1019,2,PE,Present,Absent,Absent,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1019,2,IVCS,Dilated,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+1019,2,LAS,Normal,Normal,Enlarged,Enlarged,Enlarged
+1019,2,AV,Appears structurally normal,"Suspected device (e.g., prosthetic valve) preclude",Appears structurally normal,Appears structurally abnormal,Image quality inadequate for visual assessment
+1019,2,MV,Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+1019,2,TV,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal
+1020,3,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+1020,3,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+1020,3,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+1020,3,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1020,3,PE,Absent,Absent,Present,Absent,Present
+1020,3,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+1020,3,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+1020,3,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+1020,3,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+1020,3,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+1021,3,LV,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment
+1021,3,GLVF,Reduced (EF <= 50%),Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced (EF <= 50%)
+1021,3,RVS,Normal or Borderline,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Image quality inadequate for visual assessment
+1021,3,RVF,Normal or Borderline,Reduced,Normal or Borderline,Normal or Borderline,Reduced
+1021,3,PE,Present,Absent,Absent,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1021,3,IVCS,Dilated,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+1021,3,LAS,Normal,Normal,Enlarged,Enlarged,Enlarged
+1021,3,AV,Appears structurally normal,"Suspected device (e.g., prosthetic valve) preclude",Appears structurally normal,Appears structurally abnormal,Image quality inadequate for visual assessment
+1021,3,MV,Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+1021,3,TV,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal
+1022,3,LV,Abnormal (Enlarged),Normal or Borderline,Image quality inadequate for visual assessment,Abnormal (Enlarged),Abnormal (Enlarged)
+1022,3,GLVF,Reduced (EF <= 50%),Normal (or Borderline),Reduced (EF <= 50%),Reduced (EF <= 50%),Normal (or Borderline)
+1022,3,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged)
+1022,3,RVF,Normal or Borderline,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced,Normal or Borderline
+1022,3,PE,Present,Absent,Present,Present,Present
+1022,3,IVCS,Image quality inadequate for visual assessment,Normal,Dilated,Normal,Image quality inadequate for visual assessment
+1022,3,LAS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Enlarged,Enlarged,Enlarged
+1022,3,AV,Appears structurally abnormal,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment
+1022,3,MV,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1022,3,TV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Appears structurally normal,Appears structurally normal,Image quality inadequate for visual assessment
+1023,3,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+1023,3,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+1023,3,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+1023,3,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1023,3,PE,Absent,Absent,Present,Absent,Present
+1023,3,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+1023,3,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+1023,3,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+1023,3,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+1023,3,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+1024,3,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+1024,3,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+1024,3,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+1024,3,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1024,3,PE,Absent,Absent,Present,Absent,Present
+1024,3,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+1024,3,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+1024,3,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+1024,3,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+1024,3,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+1025,3,LV,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment
+1025,3,GLVF,Reduced (EF <= 50%),Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced (EF <= 50%)
+1025,3,RVS,Normal or Borderline,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Image quality inadequate for visual assessment
+1025,3,RVF,Normal or Borderline,Reduced,Normal or Borderline,Normal or Borderline,Reduced
+1025,3,PE,Present,Absent,Absent,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1025,3,IVCS,Dilated,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+1025,3,LAS,Normal,Normal,Enlarged,Enlarged,Enlarged
+1025,3,AV,Appears structurally normal,"Suspected device (e.g., prosthetic valve) preclude",Appears structurally normal,Appears structurally abnormal,Image quality inadequate for visual assessment
+1025,3,MV,Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+1025,3,TV,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal
+1026,3,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+1026,3,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+1026,3,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+1026,3,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1026,3,PE,Absent,Absent,Present,Absent,Present
+1026,3,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+1026,3,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+1026,3,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+1026,3,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+1026,3,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+1027,3,LV,Abnormal (Enlarged),Normal or Borderline,Image quality inadequate for visual assessment,Abnormal (Enlarged),Abnormal (Enlarged)
+1027,3,GLVF,Reduced (EF <= 50%),Normal (or Borderline),Reduced (EF <= 50%),Reduced (EF <= 50%),Normal (or Borderline)
+1027,3,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged)
+1027,3,RVF,Normal or Borderline,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced,Normal or Borderline
+1027,3,PE,Present,Absent,Present,Present,Present
+1027,3,IVCS,Image quality inadequate for visual assessment,Normal,Dilated,Normal,Image quality inadequate for visual assessment
+1027,3,LAS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Enlarged,Enlarged,Enlarged
+1027,3,AV,Appears structurally abnormal,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment
+1027,3,MV,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1027,3,TV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Appears structurally normal,Appears structurally normal,Image quality inadequate for visual assessment
+1028,3,LV,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment
+1028,3,GLVF,Reduced (EF <= 50%),Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced (EF <= 50%)
+1028,3,RVS,Normal or Borderline,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Image quality inadequate for visual assessment
+1028,3,RVF,Normal or Borderline,Reduced,Normal or Borderline,Normal or Borderline,Reduced
+1028,3,PE,Present,Absent,Absent,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1028,3,IVCS,Dilated,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+1028,3,LAS,Normal,Normal,Enlarged,Enlarged,Enlarged
+1028,3,AV,Appears structurally normal,"Suspected device (e.g., prosthetic valve) preclude",Appears structurally normal,Appears structurally abnormal,Image quality inadequate for visual assessment
+1028,3,MV,Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+1028,3,TV,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal
+1029,4,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+1029,4,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+1029,4,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+1029,4,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1029,4,PE,Absent,Absent,Present,Absent,Present
+1029,4,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+1029,4,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+1029,4,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+1029,4,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+1029,4,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+1030,4,LV,Abnormal (Enlarged),Normal or Borderline,Image quality inadequate for visual assessment,Abnormal (Enlarged),Abnormal (Enlarged)
+1030,4,GLVF,Reduced (EF <= 50%),Normal (or Borderline),Reduced (EF <= 50%),Reduced (EF <= 50%),Normal (or Borderline)
+1030,4,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged)
+1030,4,RVF,Normal or Borderline,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced,Normal or Borderline
+1030,4,PE,Present,Absent,Present,Present,Present
+1030,4,IVCS,Image quality inadequate for visual assessment,Normal,Dilated,Normal,Image quality inadequate for visual assessment
+1030,4,LAS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Enlarged,Enlarged,Enlarged
+1030,4,AV,Appears structurally abnormal,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment
+1030,4,MV,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1030,4,TV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Appears structurally normal,Appears structurally normal,Image quality inadequate for visual assessment
+1031,4,LV,Abnormal (Enlarged),Normal or Borderline,Image quality inadequate for visual assessment,Abnormal (Enlarged),Abnormal (Enlarged)
+1031,4,GLVF,Reduced (EF <= 50%),Normal (or Borderline),Reduced (EF <= 50%),Reduced (EF <= 50%),Normal (or Borderline)
+1031,4,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged)
+1031,4,RVF,Normal or Borderline,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced,Normal or Borderline
+1031,4,PE,Present,Absent,Present,Present,Present
+1031,4,IVCS,Image quality inadequate for visual assessment,Normal,Dilated,Normal,Image quality inadequate for visual assessment
+1031,4,LAS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Enlarged,Enlarged,Enlarged
+1031,4,AV,Appears structurally abnormal,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment
+1031,4,MV,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1031,4,TV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Appears structurally normal,Appears structurally normal,Image quality inadequate for visual assessment
+1032,4,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+1032,4,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+1032,4,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+1032,4,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1032,4,PE,Absent,Absent,Present,Absent,Present
+1032,4,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+1032,4,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+1032,4,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+1032,4,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+1032,4,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+1033,4,LV,Abnormal (Enlarged),Normal or Borderline,Image quality inadequate for visual assessment,Abnormal (Enlarged),Abnormal (Enlarged)
+1033,4,GLVF,Reduced (EF <= 50%),Normal (or Borderline),Reduced (EF <= 50%),Reduced (EF <= 50%),Normal (or Borderline)
+1033,4,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged)
+1033,4,RVF,Normal or Borderline,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced,Normal or Borderline
+1033,4,PE,Present,Absent,Present,Present,Present
+1033,4,IVCS,Image quality inadequate for visual assessment,Normal,Dilated,Normal,Image quality inadequate for visual assessment
+1033,4,LAS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Enlarged,Enlarged,Enlarged
+1033,4,AV,Appears structurally abnormal,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment
+1033,4,MV,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1033,4,TV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Appears structurally normal,Appears structurally normal,Image quality inadequate for visual assessment
+1034,4,LV,Abnormal (Enlarged),Normal or Borderline,Image quality inadequate for visual assessment,Abnormal (Enlarged),Abnormal (Enlarged)
+1034,4,GLVF,Reduced (EF <= 50%),Normal (or Borderline),Reduced (EF <= 50%),Reduced (EF <= 50%),Normal (or Borderline)
+1034,4,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged)
+1034,4,RVF,Normal or Borderline,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced,Normal or Borderline
+1034,4,PE,Present,Absent,Present,Present,Present
+1034,4,IVCS,Image quality inadequate for visual assessment,Normal,Dilated,Normal,Image quality inadequate for visual assessment
+1034,4,LAS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Enlarged,Enlarged,Enlarged
+1034,4,AV,Appears structurally abnormal,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment
+1034,4,MV,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1034,4,TV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Appears structurally normal,Appears structurally normal,Image quality inadequate for visual assessment
+1035,4,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+1035,4,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+1035,4,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+1035,4,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1035,4,PE,Absent,Absent,Present,Absent,Present
+1035,4,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+1035,4,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+1035,4,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+1035,4,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+1035,4,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+1036,4,LV,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment
+1036,4,GLVF,Reduced (EF <= 50%),Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced (EF <= 50%)
+1036,4,RVS,Normal or Borderline,Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged),Image quality inadequate for visual assessment
+1036,4,RVF,Normal or Borderline,Reduced,Normal or Borderline,Normal or Borderline,Reduced
+1036,4,PE,Present,Absent,Absent,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1036,4,IVCS,Dilated,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+1036,4,LAS,Normal,Normal,Enlarged,Enlarged,Enlarged
+1036,4,AV,Appears structurally normal,"Suspected device (e.g., prosthetic valve) preclude",Appears structurally normal,Appears structurally abnormal,Image quality inadequate for visual assessment
+1036,4,MV,Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+1036,4,TV,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Image quality inadequate for visual assessment,Appears structurally abnormal,Appears structurally normal
+1037,4,LV,Abnormal (Enlarged),Normal or Borderline,Image quality inadequate for visual assessment,Abnormal (Enlarged),Abnormal (Enlarged)
+1037,4,GLVF,Reduced (EF <= 50%),Normal (or Borderline),Reduced (EF <= 50%),Reduced (EF <= 50%),Normal (or Borderline)
+1037,4,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged)
+1037,4,RVF,Normal or Borderline,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced,Normal or Borderline
+1037,4,PE,Present,Absent,Present,Present,Present
+1037,4,IVCS,Image quality inadequate for visual assessment,Normal,Dilated,Normal,Image quality inadequate for visual assessment
+1037,4,LAS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Enlarged,Enlarged,Enlarged
+1037,4,AV,Appears structurally abnormal,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment
+1037,4,MV,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1037,4,TV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Appears structurally normal,Appears structurally normal,Image quality inadequate for visual assessment
+1001_d,,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+1001_d,,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+1001_d,,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+1001_d,,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1001_d,,PE,Absent,Absent,Present,Absent,Present
+1001_d,,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+1001_d,,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+1001_d,,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+1001_d,,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+1001_d,,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment
+1002_d,,LV,Abnormal (Enlarged),Normal or Borderline,Image quality inadequate for visual assessment,Abnormal (Enlarged),Abnormal (Enlarged)
+1002_d,,GLVF,Reduced (EF <= 50%),Normal (or Borderline),Reduced (EF <= 50%),Reduced (EF <= 50%),Normal (or Borderline)
+1002_d,,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged)
+1002_d,,RVF,Normal or Borderline,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Reduced,Normal or Borderline
+1002_d,,PE,Present,Absent,Present,Present,Present
+1002_d,,IVCS,Image quality inadequate for visual assessment,Normal,Dilated,Normal,Image quality inadequate for visual assessment
+1002_d,,LAS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Enlarged,Enlarged,Enlarged
+1002_d,,AV,Appears structurally abnormal,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment
+1002_d,,MV,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1002_d,,TV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Appears structurally normal,Appears structurally normal,Image quality inadequate for visual assessment
+1003_d,,LV,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+1003_d,,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal (or Borderline),Normal (or Borderline),Image quality inadequate for visual assessment
+1003_d,,RVS,Image quality inadequate for visual assessment,Normal or Borderline,Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline
+1003_d,,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1003_d,,PE,Absent,Absent,Present,Absent,Present
+1003_d,,IVCS,Normal,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Dilated
+1003_d,,LAS,Normal,Enlarged,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Normal
+1003_d,,AV,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Appears structurally normal
+1003_d,,MV,Appears structurally normal,Appears structurally abnormal,"Suspected device (e.g., prosthetic valve) preclude",Image quality inadequate for visual assessment,"Suspected device (e.g., prosthetic valve) preclude"
+1003_d,,TV,Appears structurally abnormal,Appears structurally normal,"Suspected device (e.g., prosthetic valve, intracar",Appears structurally normal,Image quality inadequate for visual assessment

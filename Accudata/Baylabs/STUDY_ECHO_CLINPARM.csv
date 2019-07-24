@@ -1,0 +1,721 @@
+RECORD_ID,STUDY_NURSEID,clinParm,cardio1,cardio2,cardio3,cardio4,cardio5
+2001,1,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2001,1,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2001,1,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2001,1,RVF,Reduced,Reduced,Reduced,Reduced,Reduced
+2001,1,PE,Absent,Absent,Absent,Absent,Absent
+2001,1,IVCS,Normal,Normal,Normal,Normal,Normal
+2001,1,LAS,Normal,Normal,Normal,Normal,Normal
+2001,1,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2001,1,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2001,1,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2002,1,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2002,1,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2002,1,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2002,1,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2002,1,PE,Absent,Absent,Absent,Absent,Absent
+2002,1,IVCS,Normal,Normal,Normal,Normal,Normal
+2002,1,LAS,Normal,Normal,Normal,Normal,Normal
+2002,1,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2002,1,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2002,1,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2003,1,LV,Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged)
+2003,1,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2003,1,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2003,1,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2003,1,PE,Absent,Absent,Absent,Absent,Absent
+2003,1,IVCS,Normal,Normal,Normal,Normal,Normal
+2003,1,LAS,Normal,Normal,Normal,Normal,Normal
+2003,1,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2003,1,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2003,1,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2004,1,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2004,1,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2004,1,RVS,Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged)
+2004,1,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2004,1,PE,Absent,Absent,Absent,Absent,Absent
+2004,1,IVCS,Normal,Normal,Normal,Normal,Normal
+2004,1,LAS,Normal,Normal,Normal,Normal,Normal
+2004,1,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2004,1,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2004,1,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2005,1,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2005,1,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2005,1,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2005,1,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2005,1,PE,Present,Present,Absent,Present,Present
+2005,1,IVCS,Normal,Normal,Normal,Normal,Normal
+2005,1,LAS,Normal,Normal,Normal,Normal,Normal
+2005,1,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2005,1,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2005,1,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2006,1,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2006,1,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2006,1,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2006,1,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2006,1,PE,Absent,Absent,Absent,Absent,Absent
+2006,1,IVCS,Normal,Normal,Normal,Normal,Normal
+2006,1,LAS,Normal,Normal,Normal,Normal,Normal
+2006,1,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2006,1,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2006,1,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2007,1,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2007,1,GLVF,Reduced (EF ≤ 50%),Reduced (EF ≤ 50%),Normal (or Borderline),Reduced (EF ≤ 50%),Normal (or Borderline)
+2007,1,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2007,1,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2007,1,PE,Absent,Absent,Absent,Absent,Absent
+2007,1,IVCS,Normal,Normal,Normal,Normal,Normal
+2007,1,LAS,Normal,Normal,Normal,Normal,Normal
+2007,1,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2007,1,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2007,1,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2008,1,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2008,1,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2008,1,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2008,1,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2008,1,PE,Absent,Absent,Absent,Absent,Absent
+2008,1,IVCS,Normal,Normal,Normal,Normal,Normal
+2008,1,LAS,Normal,Normal,Normal,Normal,Normal
+2008,1,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2008,1,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2008,1,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2009,1,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2009,1,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2009,1,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2009,1,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2009,1,PE,Absent,Absent,Absent,Absent,Absent
+2009,1,IVCS,Normal,Normal,Normal,Normal,Normal
+2009,1,LAS,Normal,Normal,Normal,Normal,Normal
+2009,1,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2009,1,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2009,1,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2010,2,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2010,2,GLVF,Reduced (EF ≤ 50%),Reduced (EF ≤ 50%),Reduced (EF ≤ 50%),Reduced (EF ≤ 50%),Reduced (EF ≤ 50%)
+2010,2,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2010,2,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2010,2,PE,Absent,Absent,Absent,Absent,Absent
+2010,2,IVCS,Normal,Normal,Normal,Normal,Normal
+2010,2,LAS,Normal,Normal,Normal,Normal,Normal
+2010,2,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2010,2,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2010,2,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2011,2,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2011,2,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2011,2,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2011,2,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2011,2,PE,Absent,Absent,Absent,Absent,Absent
+2011,2,IVCS,Normal,Normal,Normal,Normal,Normal
+2011,2,LAS,Normal,Normal,Normal,Normal,Normal
+2011,2,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2011,2,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2011,2,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2012,2,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2012,2,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2012,2,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2012,2,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2012,2,PE,Absent,Absent,Absent,Absent,Absent
+2012,2,IVCS,Normal,Normal,Normal,Normal,Normal
+2012,2,LAS,Normal,Normal,Normal,Normal,Normal
+2012,2,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2012,2,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2012,2,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2013,2,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2013,2,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2013,2,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2013,2,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2013,2,PE,Present,Present,Present,Present,Absent
+2013,2,IVCS,Normal,Normal,Normal,Normal,Normal
+2013,2,LAS,Normal,Normal,Normal,Normal,Normal
+2013,2,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2013,2,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2013,2,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2014,2,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2014,2,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2014,2,RVS,Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged)
+2014,2,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2014,2,PE,Absent,Absent,Absent,Absent,Absent
+2014,2,IVCS,Normal,Normal,Normal,Normal,Normal
+2014,2,LAS,Normal,Normal,Normal,Normal,Normal
+2014,2,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2014,2,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2014,2,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2015,2,LV,Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged)
+2015,2,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2015,2,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2015,2,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2015,2,PE,Absent,Absent,Absent,Absent,Absent
+2015,2,IVCS,Normal,Normal,Normal,Normal,Normal
+2015,2,LAS,Normal,Normal,Normal,Normal,Normal
+2015,2,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2015,2,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2015,2,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2016,2,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2016,2,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2016,2,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2016,2,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2016,2,PE,Absent,Absent,Absent,Absent,Absent
+2016,2,IVCS,Dilated,Dilated,Dilated,Dilated,Dilated
+2016,2,LAS,Normal,Normal,Normal,Normal,Normal
+2016,2,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2016,2,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2016,2,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2017,2,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2017,2,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2017,2,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2017,2,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2017,2,PE,Absent,Absent,Absent,Absent,Absent
+2017,2,IVCS,Normal,Normal,Normal,Normal,Normal
+2017,2,LAS,Normal,Normal,Normal,Normal,Normal
+2017,2,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2017,2,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2017,2,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2018,2,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2018,2,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2018,2,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2018,2,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2018,2,PE,Absent,Absent,Absent,Absent,Absent
+2018,2,IVCS,Normal,Normal,Normal,Normal,Normal
+2018,2,LAS,Normal,Normal,Normal,Normal,Normal
+2018,2,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2018,2,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2018,2,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2020,3,LV,Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged)
+2020,3,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2020,3,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2020,3,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2020,3,PE,Absent,Absent,Absent,Absent,Absent
+2020,3,IVCS,Normal,Normal,Normal,Normal,Normal
+2020,3,LAS,Normal,Normal,Normal,Normal,Normal
+2020,3,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2020,3,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2020,3,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2021,3,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2021,3,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2021,3,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2021,3,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2021,3,PE,Absent,Absent,Absent,Absent,Absent
+2021,3,IVCS,Normal,Normal,Normal,Normal,Normal
+2021,3,LAS,Normal,Normal,Normal,Normal,Normal
+2021,3,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2021,3,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2021,3,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2022,3,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2022,3,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2022,3,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2022,3,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2022,3,PE,Absent,Absent,Absent,Absent,Absent
+2022,3,IVCS,Normal,Normal,Normal,Normal,Normal
+2022,3,LAS,Normal,Normal,Normal,Normal,Normal
+2022,3,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2022,3,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2022,3,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2023,3,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2023,3,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2023,3,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2023,3,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2023,3,PE,Present,Present,Present,Present,Present
+2023,3,IVCS,Normal,Normal,Normal,Normal,Normal
+2023,3,LAS,Normal,Normal,Normal,Normal,Normal
+2023,3,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2023,3,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2023,3,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2024,3,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2024,3,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2024,3,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2024,3,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2024,3,PE,Absent,Absent,Absent,Absent,Absent
+2024,3,IVCS,Normal,Normal,Normal,Normal,Normal
+2024,3,LAS,Normal,Normal,Normal,Normal,Normal
+2024,3,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2024,3,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2024,3,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2025,3,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2025,3,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2025,3,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2025,3,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2025,3,PE,Absent,Absent,Absent,Absent,Absent
+2025,3,IVCS,Normal,Normal,Normal,Normal,Normal
+2025,3,LAS,Normal,Normal,Normal,Normal,Normal
+2025,3,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2025,3,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2025,3,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2027,3,LV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2027,3,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2027,3,RVS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2027,3,RVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2027,3,PE,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2027,3,IVCS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2027,3,LAS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2027,3,AV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2027,3,MV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2027,3,TV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+2028,3,LV,Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged)
+2028,3,GLVF,Reduced (EF ≤ 50%),Reduced (EF ≤ 50%),Reduced (EF ≤ 50%),Reduced (EF ≤ 50%),Reduced (EF ≤ 50%)
+2028,3,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2028,3,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2028,3,PE,Absent,Absent,Absent,Absent,Absent
+2028,3,IVCS,Normal,Normal,Normal,Normal,Normal
+2028,3,LAS,Normal,Normal,Normal,Normal,Normal
+2028,3,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2028,3,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2028,3,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2029,3,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2029,3,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2029,3,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2029,3,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2029,3,PE,Absent,Absent,Absent,Absent,Absent
+2029,3,IVCS,Normal,Normal,Normal,Normal,Normal
+2029,3,LAS,Normal,Normal,Normal,Normal,Normal
+2029,3,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2029,3,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2029,3,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2030,4,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2030,4,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2030,4,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2030,4,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2030,4,PE,Absent,Absent,Absent,Absent,Absent
+2030,4,IVCS,Normal,Normal,Normal,Normal,Normal
+2030,4,LAS,Normal,Normal,Normal,Normal,Normal
+2030,4,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2030,4,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2030,4,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2031,4,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2031,4,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2031,4,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2031,4,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2031,4,PE,Absent,Absent,Absent,Absent,Absent
+2031,4,IVCS,Normal,Normal,Normal,Normal,Normal
+2031,4,LAS,Normal,Normal,Normal,Normal,Normal
+2031,4,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2031,4,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2031,4,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2032,4,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2032,4,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2032,4,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2032,4,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2032,4,PE,Absent,Absent,Absent,Absent,Absent
+2032,4,IVCS,Normal,Normal,Normal,Normal,Normal
+2032,4,LAS,Normal,Normal,Normal,Normal,Normal
+2032,4,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2032,4,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2032,4,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2033,4,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2033,4,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2033,4,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2033,4,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2033,4,PE,Present,Present,Present,Present,Present
+2033,4,IVCS,Normal,Normal,Normal,Normal,Normal
+2033,4,LAS,Normal,Normal,Normal,Normal,Normal
+2033,4,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2033,4,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2033,4,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2034,4,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2034,4,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2034,4,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2034,4,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2034,4,PE,Absent,Absent,Absent,Absent,Absent
+2034,4,IVCS,Normal,Normal,Normal,Normal,Normal
+2034,4,LAS,Normal,Normal,Normal,Normal,Normal
+2034,4,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2034,4,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2034,4,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2035,4,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2035,4,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2035,4,RVS,Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged)
+2035,4,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2035,4,PE,Absent,Absent,Absent,Absent,Absent
+2035,4,IVCS,Normal,Normal,Normal,Normal,Normal
+2035,4,LAS,Normal,Normal,Normal,Normal,Normal
+2035,4,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2035,4,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2035,4,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2036,4,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2036,4,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2036,4,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2036,4,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2036,4,PE,Absent,Absent,Absent,Absent,Absent
+2036,4,IVCS,Normal,Normal,Normal,Normal,Normal
+2036,4,LAS,Normal,Normal,Normal,Normal,Normal
+2036,4,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2036,4,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2036,4,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2037,4,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2037,4,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2037,4,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2037,4,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2037,4,PE,Absent,Absent,Absent,Absent,Absent
+2037,4,IVCS,Normal,Normal,Normal,Normal,Normal
+2037,4,LAS,Normal,Normal,Normal,Normal,Normal
+2037,4,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2037,4,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2037,4,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2038,4,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2038,4,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+2038,4,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2038,4,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+2038,4,PE,Absent,Absent,Absent,Absent,Absent
+2038,4,IVCS,Normal,Normal,Normal,Normal,Normal
+2038,4,LAS,Normal,Normal,Normal,Normal,Normal
+2038,4,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2038,4,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+2038,4,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1001,1,LV,Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged)
+1001,1,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+1001,1,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1001,1,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1001,1,PE,Absent,Absent,Absent,Absent,Absent
+1001,1,IVCS,Normal,Normal,Normal,Normal,Normal
+1001,1,LAS,Normal,Normal,Normal,Normal,Normal
+1001,1,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1001,1,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1001,1,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1002,1,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1002,1,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+1002,1,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1002,1,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1002,1,PE,Absent,Absent,Absent,Absent,Absent
+1002,1,IVCS,Normal,Normal,Normal,Normal,Normal
+1002,1,LAS,Normal,Normal,Normal,Normal,Normal
+1002,1,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1002,1,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1002,1,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1004,1,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1004,1,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+1004,1,RVS,Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged)
+1004,1,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1004,1,PE,Absent,Absent,Absent,Absent,Absent
+1004,1,IVCS,Normal,Normal,Normal,Normal,Normal
+1004,1,LAS,Normal,Normal,Normal,Normal,Normal
+1004,1,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1004,1,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1004,1,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1005,1,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1005,1,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+1005,1,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1005,1,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1005,1,PE,Absent,Absent,Absent,Absent,Absent
+1005,1,IVCS,Normal,Normal,Normal,Normal,Normal
+1005,1,LAS,Normal,Normal,Normal,Normal,Normal
+1005,1,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1005,1,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1005,1,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1006,1,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1006,1,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+1006,1,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1006,1,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1006,1,PE,Absent,Absent,Absent,Absent,Absent
+1006,1,IVCS,Normal,Normal,Normal,Normal,Normal
+1006,1,LAS,Normal,Normal,Normal,Normal,Normal
+1006,1,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1006,1,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1006,1,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1007,1,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1007,1,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+1007,1,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1007,1,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1007,1,PE,Absent,Absent,Absent,Absent,Absent
+1007,1,IVCS,Normal,Normal,Normal,Normal,Normal
+1007,1,LAS,Normal,Normal,Normal,Normal,Normal
+1007,1,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1007,1,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1007,1,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1008,1,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1008,1,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+1008,1,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1008,1,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1008,1,PE,Present,Present,Present,Present,Present
+1008,1,IVCS,Normal,Normal,Normal,Normal,Normal
+1008,1,LAS,Normal,Normal,Normal,Normal,Normal
+1008,1,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1008,1,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1008,1,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1009,1,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1009,1,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+1009,1,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1009,1,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1009,1,PE,Absent,Absent,Absent,Absent,Absent
+1009,1,IVCS,Normal,Normal,Normal,Normal,Normal
+1009,1,LAS,Normal,Normal,Normal,Normal,Normal
+1009,1,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1009,1,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1009,1,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1010,1,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1010,1,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+1010,1,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1010,1,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1010,1,PE,Absent,Absent,Absent,Absent,Absent
+1010,1,IVCS,Normal,Normal,Normal,Normal,Normal
+1010,1,LAS,Normal,Normal,Normal,Normal,Normal
+1010,1,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1010,1,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1010,1,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1011,2,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1011,2,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+1011,2,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1011,2,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1011,2,PE,Absent,Absent,Absent,Absent,Absent
+1011,2,IVCS,Normal,Normal,Normal,Normal,Normal
+1011,2,LAS,Normal,Normal,Normal,Normal,Normal
+1011,2,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1011,2,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1011,2,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1012,2,LV,Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged)
+1012,2,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+1012,2,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1012,2,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1012,2,PE,Present,Present,Present,Present,Present
+1012,2,IVCS,Normal,Normal,Normal,Normal,Normal
+1012,2,LAS,Normal,Normal,Normal,Normal,Normal
+1012,2,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1012,2,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1012,2,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1013,2,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1013,2,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+1013,2,RVS,Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged)
+1013,2,RVF,Reduced,Reduced,Reduced,Reduced,Reduced
+1013,2,PE,Absent,Absent,Absent,Absent,Absent
+1013,2,IVCS,Normal,Normal,Normal,Normal,Normal
+1013,2,LAS,Normal,Normal,Normal,Normal,Normal
+1013,2,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1013,2,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1013,2,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1014,2,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1014,2,GLVF,Reduced (EF ≤ 50%),Reduced (EF ≤ 50%),Reduced (EF ≤ 50%),Reduced (EF ≤ 50%),Reduced (EF ≤ 50%)
+1014,2,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1014,2,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1014,2,PE,Absent,Absent,Absent,Absent,Absent
+1014,2,IVCS,Normal,Normal,Normal,Normal,Normal
+1014,2,LAS,Normal,Normal,Normal,Normal,Normal
+1014,2,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1014,2,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1014,2,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1015,2,LV,Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Normal or Borderline,Abnormal (Enlarged)
+1015,2,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+1015,2,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1015,2,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1015,2,PE,Absent,Absent,Absent,Absent,Absent
+1015,2,IVCS,Normal,Normal,Normal,Normal,Normal
+1015,2,LAS,Normal,Normal,Normal,Normal,Normal
+1015,2,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1015,2,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1015,2,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1016,2,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1016,2,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+1016,2,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1016,2,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1016,2,PE,Present,Present,Present,Present,Present
+1016,2,IVCS,Normal,Normal,Normal,Normal,Normal
+1016,2,LAS,Normal,Normal,Normal,Normal,Normal
+1016,2,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1016,2,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1016,2,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1017,2,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1017,2,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+1017,2,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1017,2,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1017,2,PE,Absent,Absent,Absent,Absent,Absent
+1017,2,IVCS,Normal,Normal,Normal,Normal,Normal
+1017,2,LAS,Normal,Normal,Normal,Normal,Normal
+1017,2,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1017,2,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1017,2,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1018,2,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1018,2,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+1018,2,RVS,Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged)
+1018,2,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1018,2,PE,Absent,Absent,Absent,Absent,Absent
+1018,2,IVCS,Normal,Normal,Normal,Normal,Normal
+1018,2,LAS,Normal,Normal,Normal,Normal,Normal
+1018,2,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1018,2,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1018,2,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1019,2,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1019,2,GLVF,Reduced (EF ≤ 50%),Reduced (EF ≤ 50%),Reduced (EF ≤ 50%),Reduced (EF ≤ 50%),Reduced (EF ≤ 50%)
+1019,2,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1019,2,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1019,2,PE,Absent,Absent,Absent,Absent,Absent
+1019,2,IVCS,Normal,Normal,Normal,Normal,Normal
+1019,2,LAS,Normal,Normal,Normal,Normal,Normal
+1019,2,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1019,2,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1019,2,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1020,3,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1020,3,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+1020,3,RVS,Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged)
+1020,3,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1020,3,PE,Absent,Absent,Absent,Absent,Absent
+1020,3,IVCS,Normal,Normal,Normal,Normal,Normal
+1020,3,LAS,Normal,Normal,Normal,Normal,Normal
+1020,3,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1020,3,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1020,3,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1021,3,LV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1021,3,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1021,3,RVS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1021,3,RVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1021,3,PE,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1021,3,IVCS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1021,3,LAS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1021,3,AV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1021,3,MV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1021,3,TV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1022,3,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1022,3,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+1022,3,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1022,3,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1022,3,PE,Absent,Absent,Absent,Absent,Absent
+1022,3,IVCS,Normal,Normal,Normal,Normal,Normal
+1022,3,LAS,Normal,Normal,Normal,Normal,Normal
+1022,3,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1022,3,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1022,3,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1023,3,LV,Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged)
+1023,3,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+1023,3,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1023,3,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1023,3,PE,Absent,Absent,Absent,Absent,Absent
+1023,3,IVCS,Normal,Normal,Normal,Normal,Normal
+1023,3,LAS,Normal,Normal,Normal,Normal,Normal
+1023,3,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1023,3,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1023,3,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1024,3,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1024,3,GLVF,Reduced (EF ≤ 50%),Reduced (EF ≤ 50%),Reduced (EF ≤ 50%),Reduced (EF ≤ 50%),Reduced (EF ≤ 50%)
+1024,3,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1024,3,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1024,3,PE,Absent,Absent,Absent,Absent,Absent
+1024,3,IVCS,Normal,Normal,Normal,Normal,Normal
+1024,3,LAS,Normal,Normal,Normal,Normal,Normal
+1024,3,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1024,3,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1024,3,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1025,3,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1025,3,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+1025,3,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1025,3,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1025,3,PE,Absent,Absent,Absent,Absent,Absent
+1025,3,IVCS,Normal,Normal,Normal,Normal,Normal
+1025,3,LAS,Normal,Normal,Normal,Normal,Normal
+1025,3,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1025,3,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1025,3,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1026,3,LV,Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged)
+1026,3,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+1026,3,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1026,3,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1026,3,PE,Absent,Absent,Absent,Absent,Absent
+1026,3,IVCS,Normal,Normal,Normal,Normal,Normal
+1026,3,LAS,Normal,Normal,Normal,Normal,Normal
+1026,3,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1026,3,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1026,3,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1027,3,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1027,3,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+1027,3,RVS,Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged)
+1027,3,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1027,3,PE,Absent,Absent,Absent,Absent,Absent
+1027,3,IVCS,Normal,Normal,Normal,Normal,Normal
+1027,3,LAS,Normal,Normal,Normal,Normal,Normal
+1027,3,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1027,3,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1027,3,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1028,3,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1028,3,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+1028,3,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1028,3,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1028,3,PE,Absent,Absent,Absent,Absent,Absent
+1028,3,IVCS,Normal,Normal,Normal,Normal,Normal
+1028,3,LAS,Normal,Normal,Normal,Normal,Normal
+1028,3,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1028,3,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1028,3,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1029,4,LV,Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged)
+1029,4,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+1029,4,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1029,4,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1029,4,PE,Absent,Absent,Absent,Absent,Absent
+1029,4,IVCS,Normal,Normal,Normal,Normal,Normal
+1029,4,LAS,Normal,Normal,Normal,Normal,Normal
+1029,4,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1029,4,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1029,4,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1030,4,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1030,4,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+1030,4,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1030,4,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1030,4,PE,Present,Absent,Present,Present,Present
+1030,4,IVCS,Normal,Normal,Normal,Normal,Normal
+1030,4,LAS,Normal,Normal,Normal,Normal,Normal
+1030,4,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1030,4,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1030,4,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1031,4,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1031,4,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+1031,4,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1031,4,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1031,4,PE,Absent,Absent,Absent,Absent,Absent
+1031,4,IVCS,Normal,Normal,Normal,Normal,Normal
+1031,4,LAS,Normal,Normal,Normal,Normal,Normal
+1031,4,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1031,4,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1031,4,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1032,4,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1032,4,GLVF,Reduced (EF ≤ 50%),Reduced (EF ≤ 50%),Reduced (EF ≤ 50%),Reduced (EF ≤ 50%),Reduced (EF ≤ 50%)
+1032,4,RVS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1032,4,RVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1032,4,PE,Absent,Absent,Absent,Absent,Absent
+1032,4,IVCS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1032,4,LAS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1032,4,AV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1032,4,MV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1032,4,TV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1033,4,LV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1033,4,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1033,4,RVS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Abnormal (Enlarged),Image quality inadequate for visual assessment
+1033,4,RVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1033,4,PE,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1033,4,IVCS,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1033,4,LAS,Image quality inadequate for visual assessment,Normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1033,4,AV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1033,4,MV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1033,4,TV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1034,4,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1034,4,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+1034,4,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1034,4,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1034,4,PE,Absent,Absent,Absent,Absent,Absent
+1034,4,IVCS,Normal,Normal,Normal,Normal,Normal
+1034,4,LAS,Normal,Normal,Normal,Normal,Normal
+1034,4,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1034,4,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1034,4,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1035,4,LV,Abnormal (Enlarged),Abnormal (Enlarged),Abnormal (Enlarged),Image quality inadequate for visual assessment,Abnormal (Enlarged)
+1035,4,GLVF,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1035,4,RVS,Normal or Borderline,Normal or Borderline,Image quality inadequate for visual assessment,Normal or Borderline,Normal or Borderline
+1035,4,RVF,Normal or Borderline,Image quality inadequate for visual assessment,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1035,4,PE,Image quality inadequate for visual assessment,Absent,Absent,Image quality inadequate for visual assessment,Absent
+1035,4,IVCS,Normal,Normal,Normal,Normal,Image quality inadequate for visual assessment
+1035,4,LAS,Image quality inadequate for visual assessment,Normal,Image quality inadequate for visual assessment,Normal,Normal
+1035,4,AV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1035,4,MV,Image quality inadequate for visual assessment,Appears structurally normal,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Appears structurally normal
+1035,4,TV,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1036,4,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1036,4,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+1036,4,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1036,4,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1036,4,PE,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment,Image quality inadequate for visual assessment
+1036,4,IVCS,Normal,Normal,Normal,Normal,Normal
+1036,4,LAS,Normal,Normal,Normal,Normal,Normal
+1036,4,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1036,4,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1036,4,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1037,4,LV,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1037,4,GLVF,Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline),Normal (or Borderline)
+1037,4,RVS,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1037,4,RVF,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline,Normal or Borderline
+1037,4,PE,Absent,Absent,Absent,Absent,Absent
+1037,4,IVCS,Normal,Normal,Normal,Normal,Normal
+1037,4,LAS,Normal,Normal,Normal,Normal,Normal
+1037,4,AV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1037,4,MV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal
+1037,4,TV,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal,Appears structurally normal

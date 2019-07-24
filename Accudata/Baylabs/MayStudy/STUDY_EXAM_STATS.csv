@@ -1,0 +1,11 @@
+Acquirer,Parameter,N scans read,n of adequate quality,Pct. Adequate Quality
+Nurse,AV ,240,221,0.920833333
+Nurse,GLVF ,240,237,0.9875
+Nurse,IVCS ,240,149,0.620833333
+Nurse,LAS ,240,233,0.970833333
+Nurse,LV ,240,238,0.991666667
+Nurse,MV ,240,234,0.975
+Nurse,PE ,240,238,0.991666667
+Nurse,RVF ,240,224,0.933333333
+Nurse,RVS ,240,225,0.9375
+Nurse,TV ,240,207,0.8625
