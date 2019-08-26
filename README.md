@@ -22,3 +22,5 @@ Desc: The iRoeMetz application can be used to simulate the reader scores for MRM
 <h5>R package iMRMC</h5>
 
 Desc: The R package iMRMC executes the iMRMC program which writes the results to the local files system, it reads the analysis results from the local file system, packs the analysis results into a list object, deletes the data and analysis results from the local file system, and returns the list object.
+
+[![Github All Releases](https://img.shields.io/github/downloads/DIDSR/iMRMC/total)]()
