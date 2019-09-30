@@ -4,7 +4,7 @@
 ...
 
 <h4>iMRMC4.0.3</h4>
-*04/15/17*
+*04/15/19*
 
 When running iMRMC by the command line, do not pop-up any warning or error windows. Instead, display all the warning and error messages in the command line. When errors occur, the software is forced to quit.
 
@@ -14,7 +14,7 @@ Fix the help button. The help button used to point to the wrong documentation.
 
 
 <h4>iMRMC4.0.0</h4>
-*12/11/17*
+*12/11/18*
 
 iMRMC.jar: 
   * Set the locale to be US so that csv output files are not corrupted by the European convention of using a comma to distinguish decimal values. 
