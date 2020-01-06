@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: MRMC analysis of the area under the ROC curve</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for doIMRMC {iMRMC}"><tr><td>doIMRMC {iMRMC}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>MRMC analysis of the area under the ROC curve</h2>
+
+<h3>Description</h3>
+
+<p>doIMRMC takes ROC data as a data frame and runs a multi-reader multi-case analysis
+based on U-statistics as described in the following papers
+Gallas2006_Acad-Radiol_v13p353 (single-modality),
+Gallas2008_Neural-Networks_v21p387 (multiple modalities, arbitrary study designs),
+Gallas2009_Commun-Stat-A-Theor_v38p2586 (framework paper).
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+doIMRMC(data = NULL, fileName = NULL, workDir = NULL,
+  iMRMCjarFullPath = NULL, stdout = NULL, stderr = NULL,
+  stripDatesForTests = FALSE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>data</code></td>
+<td>
+<p>This data.frame contains the following variables:
+readerID       [Factor] w/ nR levels &quot;reader1&quot;, &quot;reader2&quot;, ...
+caseID         [Factor] w/ nC levels &quot;case1&quot;, &quot;case2&quot;, ...
+modalityID     [Factor] w/ 1 level simRoeMetz.config$modalityID
+score          [num] reader score
+each row of this data frame corresponds to an observation
+for every caseID, there must be a row corresponding to the truth observation
+the readerID for a truth observation is &quot;truth&quot;
+the modalityID for a truth observation is &quot;truth&quot;
+the score for a truth observation must be either 0 (signal-absent) or 1 (signal-present)</p>
+</td></tr>
+<tr valign="top"><td><code>fileName</code></td>
+<td>
+<p>This character string identifies the location of an iMRMC input file.
+The input file is identical to data except there is a free text section to start,
+then a line with &quot;BEGIN DATA:&quot;, then the data frame info.</p>
+</td></tr>
+<tr valign="top"><td><code>workDir</code></td>
+<td>
+<p>This character string determines the directory where intermediate results
+are written. If this parameter is not set, the program writes the intermediate
+results to the directory specified by tempdir() and then deletes them.</p>
+</td></tr>
+<tr valign="top"><td><code>iMRMCjarFullPath</code></td>
+<td>
+<p>This character string identifies the location of the iMRMC.jar file
+this jar file can be downloaded from https://github.com/DIDSR/iMRMC/releases
+this R program supports version iMRMC-v3p2.jar</p>
+</td></tr>
+<tr valign="top"><td><code>stdout</code></td>
+<td>
+<p>where output to 'stdout' or 'stderr' should be sent.
+Possible values are &quot;&quot;, to the R console (the default),
+NULL or FALSE (discard output),
+TRUE (capture the output in character vector)
+or a character string naming a file.</p>
+</td></tr>
+<tr valign="top"><td><code>stderr</code></td>
+<td>
+<p>where output to 'stdout' or 'stderr' should be sent.
+Possible values are &quot;&quot;, to the R console (the default),
+NULL or FALSE (discard output),
+TRUE (capture the output in a character vector)
+or a character string naming a file.</p>
+</td></tr>
+<tr valign="top"><td><code>stripDatesForTests</code></td>
+<td>
+<p>Since results include a date and time stamp, these need to be
+stripped out when doing the package tests. This parameter flags whether or not
+the dates should be stripped out.</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>In detail, this procedure reads the name of an input file from the local file system,
+or takes a data frame and writes it to the local file system formatted
+for the iMRMC program (found at https://github.com/DIDSR/iMRMC/releases), it executes the iMRMC
+program which writes the results to the local files system, it reads the analysis results from
+the local file system, packs the analysis results into a list object, deletes the data and analysis results
+from the local file system, and returns the list object.
+</p>
+<p>The examples took too long for CRAN to accept. So here is an example:
+# Create a sample configuration file
+config &lt;- sim.gRoeMetz.config()
+# Simulate an MRMC ROC data set
+dFrame.imrmc &lt;- sim.gRoeMetz(config)
+# Analyze the MRMC ROC data
+result &lt;- doIMRMC(dFrame.imrmc)
+</p>
+
+
+<h3>Value</h3>
+
+<p>iMRMCoutput [list] the objects of this list are described in detail in the iMRMC documentation
+which can be found at &lt;http://didsr.github.io/iMRMC/000_iMRMC/userManualHTML/index.htm&gt;
+</p>
+<p>Here is a quick summary:
+perReader [data.frame] this data frame contains the performance results for each reader.
+Key variables of this data frame are AUCA, AUCB, AUCAminusAUCB and the corresponding
+variances, confidence intervals, degrees of freedom and p-values.
+Ustat [data.frame] this data frame contains the reader-average performance results.
+The analysis results are based on U-statistics and the papers listed above.
+Key variables of this data frame are AUCA, AUCB, AUCAminusAUCB and the corresponding
+variances, confidence intervals, degrees of freedom and p-values.
+MLEstat [data.frame] this data frame contains the reader-average performance results.
+The analysis results are based on V-statistics, which approximates the true distribution with
+the empirical distribution. The empirical distribution equals the nonparametric MLE
+estimate of the true distribution, which is also equivalent to the ideal bootstrap estimate.
+Please refer to the papers listed above.
+Key variables of this data frame are AUCA, AUCB, AUCAminusAUCB and the corresponding
+variances, confidence intervals, degrees of freedom and p-values.
+ROC [list] each object of this list is an object containing an ROC curve.
+There is an ROC curve for every combination of reader and modality.
+For every modality, there are also four average ROC curves. These are discussed in
+Chen2014_Br-J-Radiol_v87p20140016
+The diagonal average averages the reader-specific ROC curves along y = -x + b for b in (0,1)
+The horizontal average averages the reader specific ROC curves along y = b for b in (0,1)
+The vertical average averages the reader specific ROC curves along x = b for b in (0,1)
+The pooled average ignores readerID and pools all the scores together to create one ROC curve.
+varDecomp [list] the objects of this list are different decompositions of the total variance
+Please refer to Gallas2009_Commun-Stat-A-Theor_v38p2586 (framework paper).
+The different decompositions are BCK, BDG, DBM, MS, OR.
+</p>
+
+<hr /><div style="text-align: center;">[Package <em>iMRMC</em> version 1.2.0 ]</div>
+</body></html>
