@@ -5,7 +5,6 @@
 #' @param inDFtype A string indicating the format type of the input MRMC data frame
 #' @param outDFtype A string indicating the format type of the output MRMC data frame. 
 #' @param readers A character array holding the column names (readerIDs) corresponding to the data from different readers
-#' @param nameTruthColumn The column name holding the truth labels
 #'
 #' @return An MRMC dataframe with reading study results in \code{outDFtype} format
 #' @export
@@ -27,7 +26,7 @@
 #' 
 #'
 # @examples
-convertDF <- function(inDF, inDFtype, outDFtype, readers, nameTruth){
+convertDF <- function(inDF, inDFtype, outDFtype, readers){
   
   if (inDFtype == "matrixMode" & outDFtype == "listMode"){
     
