@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Analysis of U-statistics degree 1,1</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for uStat11 {iMRMC}"><tr><td>uStat11 {iMRMC}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Analysis of U-statistics degree 1,1</h2>
+
+<h3>Description</h3>
+
+<p>These two functions calculate the mean and variance of a user-specified U-statistic kernel,
+which is a function of cross-correlated scores.
+</p>
+<p>The motivation for this analysis is data collected in imaging studies
+where multiple readers read multiple cases in different modes or modalities.
+The goal is to evaluate the variance of a reader- and case-averaged endpoint,
+accounting for cross-correlated data arising from two random effects:
+the random reader skill and the random case difficulty.
+This analysis is sometimes referred to as an MRMC analysis.
+Of course, the random effects can be from sources other than readers and cases.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+uStat11.jointD(df.input, modalitiesToCompare, kernelFlag = 1,
+  keyColumns = c("readerID", "caseID", "modalityID", "score"))
+
+uStat11.conditionalD(df.input, modalitiesToCompare, kernelFlag = 1,
+  keyColumns = c("readerID", "caseID", "modalityID", "score"))
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>df.input</code></td>
+<td>
+<p>Data frame of observations, one per row. Columns identify random effects, fixed effects,
+and the observation. Namely,
+</p>
+
+<ul>
+<li> <p><code>readerID:</code> The factor corresponding to the different readers in the study.
+The readerID is treated as a random effect.
+</p>
+</li>
+<li> <p><code>caseID:</code> The factor corresponding to the different cases in the study.
+The caseID is treated as a random effect.
+</p>
+</li>
+<li> <p><code>modalityID:</code> The factor corresponding to the different modalities in the study.
+The modalityID is treated as a fixed effect.
+</p>
+</li>
+<li> <p><code>score:</code> The score given by the reader to the case for the modality indicated.
+</p>
+</li></ul>
+</td></tr>
+<tr valign="top"><td><code>modalitiesToCompare</code></td>
+<td>
+<p>The factors identifying the modalities to compare.</p>
+</td></tr>
+<tr valign="top"><td><code>kernelFlag</code></td>
+<td>
+<p>This determines the kernel function
+</p>
+
+<ul>
+<li><p><code>kernelFlag</code> = 1 == identity kernel: requires two modalities: A,B.
+</p>
+</li>
+<li><p><code>kernelFlag</code> = 2 == kernel of the difference in modalities: requires four modalities: A,B,C,D.
+</p>
+</li></ul>
+</td></tr>
+<tr valign="top"><td><code>keyColumns</code></td>
+<td>
+<p>Identify the factors corresponding to the readerID, caseID, modalityID, and score
+(or alternative random and fixed effects).</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p><code>uStat11.conditionalD</code> is identical to <code>uStat11.jointD</code> when the study is fully-crossed:
+when every reader readers all the cases in both modalities. For arbitrary study designs
+the two functions differ according to how the components of variance are estimated.
+</p>
+
+<ul>
+<li><p><code>uStat11.conditionalD</code> follows Gallas2007_J-Opt-Soc-Am-A_v24pB70
+&lt;doi:10.1364/JOSAA.24.000B70&gt; and estimates the components of variance
+(which isolate combinations of different random effects) with nested conditional means.
+</p>
+</li>
+<li><p><code>uStat11.jointD</code> is analogous to the method in Gallas2008_Neural-Networks_v21p387
+&lt;doi:10.1016/j.neunet.2007.12.013&gt; and estimates the components of variance
+(which isolate combinations of different random effects) with a joint distribution over all
+the observations giving equal weight to each one.
+</p>
+</li></ul>
+
+<p>Both functions yield unbiased variance estimates.
+Our simulations find that <code>uStat11.conditionalD</code> is statistically more efficient than
+<code>uStat11.jointD</code> (its variance estimate is more precise), but it is slower.
+</p>
+<p>Please refer to the tests/testthat folder of the package for examples using these functions.
+</p>
+
+
+<h3>Value</h3>
+
+<p>This function calculates the mean and variance of the indicated U-statistic kernel,
+which is a function of the scores. For the identity kernel, we simply return the mean
+and variance of the scores.
+</p>
+<p>The function returns a list of outputs. Many of these outputs have three elements.
+</p>
+
+<ul>
+<li><p> If <code>kernelFlag</code> = 1 == identity kernel, the first element corresponds to the mean score of
+modality A, the second corresponds to mean score of modality B,
+and the third corresponds to the mean of the difference in scores from modality A and B.
+</p>
+</li>
+<li><p>  If <code>kernelFlag</code> = 2 == difference kernel, the first element corresponds to the
+mean difference in scores from modalities A and B, the second element corresponds to
+the mean difference in scores from modalities C and D, and the third elements corresponds
+to the difference of the just-mentioned differences.
+</p>
+</li></ul>
+
+<p>There are 16 outputs:
+</p>
+
+<ul>
+<li><p><code>mean:</code> See description above.
+</p>
+</li>
+<li><p><code>var:</code> The variance of the mean.
+</p>
+</li>
+<li><p><code>var.1obs:</code> The variance of one reader-case-modality observation.
+</p>
+</li>
+<li><p><code>meanPerR</code> The reader-specific means.
+</p>
+</li>
+<li><p><code>nR</code> The number of readers in the study.
+</p>
+</li>
+<li><p><code>nC</code> The number of cases in the study.
+</p>
+</li>
+<li><p><code>nCperR</code> The number of cases evaluated by each reader for each modality.
+</p>
+</li>
+<li><p><code>moments</code> The second order moments of the problem.
+</p>
+</li>
+<li><p><code>coeff</code> The coefficients corresponding to the second-order moments such that
+the scalar product between the moments and coefficients yields the variance.
+</p>
+</li>
+<li><p><code>kernel.A</code> A matrix showing the kernel evaluated for each combination
+of each reader and case for modality A (or AB).
+</p>
+</li>
+<li><p><code>design.A</code> A matrix showing the what data exists for each combination
+of each reader and case for modality A (or AB).
+</p>
+</li>
+<li><p><code>kernel.B</code> A matrix showing the kernel evaluated for each combination
+of each reader and case for modality B (or CD).
+</p>
+</li>
+<li><p><code>design.B</code> A matrix showing the what data exists for each combination
+of each reader and case for modality B (or CD).
+</p>
+</li></ul>
+
+
+
+<h3>Examples</h3>
+
+<pre>
+# Create an MRMC data frame
+# Refer to Gallas2014_J-Med-Img_v1p031006
+simRoeMetz.config &lt;- sim.gRoeMetz.config()
+
+# Simulate data
+df.MRMC &lt;- sim.gRoeMetz(simRoeMetz.config)
+
+# Reformat data
+df &lt;- undoIMRMCdf(df.MRMC)
+
+# Grab part of the data
+df &lt;- droplevels(df[grepl("pos", df$caseID), ])
+
+#### uStat11.jointD.identity ####
+# Calculate the reader- and case-averaged difference in scores from testA and testB
+# (kernelFlag = 1 specifies the U-statistics kernel to be the identity)
+result.jointD.identity &lt;- uStat11.jointD(
+  df,
+  kernelFlag = 1,
+  keyColumns = c("readerID", "caseID", "modalityID", "score"),
+  modalitiesToCompare = c("testA", "testB"))
+
+cat("\n")
+cat("uStat11.jointD.identity \n")
+print(result.jointD.identity[1:2])
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>iMRMC</em> version 1.2.0 ]</div>
+</body></html>
