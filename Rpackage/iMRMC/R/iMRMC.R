@@ -152,8 +152,8 @@ doIMRMC <- function(
                            stdout = FALSE, stderr = TRUE)
   if (!identical(desc, character(0))){
     return(list(
-      error <- 1,
-      desc <- desc
+      error = 1,
+      desc = desc
     ))
   }
 
