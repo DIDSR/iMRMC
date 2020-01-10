@@ -47,23 +47,18 @@
 #'            this jar file can be downloaded from https://github.com/DIDSR/iMRMC/releases
 #'            this R program supports version iMRMC-v3p2.jar
 #'
-#' @param stdout where output to 'stdout' or 'stderr' should be sent.
-#'            Possible values are "", to the R console (the default),
-#'            NULL or FALSE (discard output),
-#'            TRUE (capture the output in character vector)
-#'            or a character string naming a file.
-#'
-#' @param stderr where output to 'stdout' or 'stderr' should be sent.
-#'            Possible values are "", to the R console (the default),
-#'            NULL or FALSE (discard output),
-#'            TRUE (capture the output in a character vector)
-#'            or a character string naming a file.
-#'
 #' @param stripDatesForTests Since results include a date and time stamp, these need to be
 #'            stripped out when doing the package tests. This parameter flags whether or not
 #'            the dates should be stripped out.
 #'
-#' @return iMRMCoutput [list] the objects of this list are described in detail in the iMRMC documentation
+#' @return [list] 
+#'         iMRMC running error:
+#'            error[int] 1 means there is an error during running iMRMC
+#'                       0 means the iMRMC succeed
+#'            desc [chr] description of errors
+#'            
+#'            
+#'         Or iMRMC outputs. The objects of this list are described in detail in the iMRMC documentation
 #'            which can be found at <http://didsr.github.io/iMRMC/000_iMRMC/userManualHTML/index.htm>
 #'
 #'            Here is a quick summary:
@@ -111,8 +106,6 @@ doIMRMC <- function(
   fileName = NULL,
   workDir = NULL,
   iMRMCjarFullPath = NULL,
-  stdout = NULL,
-  stderr = NULL,
   stripDatesForTests = FALSE){
 
   if (is.null(workDir)) {
@@ -140,10 +133,9 @@ doIMRMC <- function(
                 append = TRUE, sep = ", ")
 
   }
-
   if (is.null(iMRMCjarFullPath)) {
     iMRMCjar <- "iMRMC-v4.0.3.jar"
-    pkgPath = path.package("iMRMC", quiet = FALSE)
+    pkgPath <- path.package("iMRMC", quiet = FALSE)
     iMRMCjarFullPath <- file.path(pkgPath, "java", iMRMCjar)
 
     # This check is necessary for testthat tests that run in some
@@ -152,13 +144,18 @@ doIMRMC <- function(
       iMRMCjarFullPath = file.path(pkgPath, "inst","java", iMRMCjar)
     }
   }
-
   # Run iMRMC
-  system2("java", args = c("-jar",
+  desc <- system2("java", args = c("-jar",
                            iMRMCjarFullPath,
                            fileName,
                            file.path(workDir, "imrmcDir")),
-                           stdout = stdout, stderr = stderr)
+                           stdout = FALSE, stderr = TRUE)
+  if (!identical(desc, character(0))){
+    return(list(
+      error <- 1,
+      desc <- desc
+    ))
+  }
 
   # Retrieve the iMRMC results
   perReader <- utils::read.csv(file.path(workDir, "imrmcDir", "AUCperReader.csv"))
@@ -212,6 +209,7 @@ doIMRMC <- function(
   )
 
   iMRMCoutput <- list(
+    error = 0,
     perReader = perReader,
     Ustat = Ustat,
     MLEstat = MLEstat,
