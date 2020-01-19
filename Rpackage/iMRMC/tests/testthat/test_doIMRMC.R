@@ -22,12 +22,29 @@ workDir <- file.path("tests", "testthat")
 workDir <- NULL
 
 # Analyze the input file
-options(warn=-1)
-result <- doIMRMC(df.MRMC, workDir = workDir, stripDatesForTests = TRUE)
-options(warn=0)
-if (result$error == 1){
+result <- tryCatch(
+  doIMRMC(df.MRMC, workDir = workDir, stripDatesForTests = TRUE),
+  warning = function(w) {
+    print("location: test_doIMRMC.R, tryCatch, warning")
+    print(w)
+    result <- list(error = 1)
+    return(result)
+  },
+  error = function(w) {
+    print("location: test_doIMRMC.R, tryCatch, error")
+    print(w)
+    result <- list(error = 1)
+    print("location: test_doIMRMC.R, tryCatch, error")
+    return(result)
+  }
+) 
+
+# This test is to verify that the results do not change over time
+# If doIMRMC crashes because the CRAN test environment doesn't
+# have java or doesn't have the right version of java,
+# I don't want the test to fail. That error is expected.
+if (!names(result)[1] == "error") {
   
-}else{
   saveResult <- result
   cat("\n")
   print(result$Ustat[, 1:10])
@@ -57,5 +74,6 @@ if (result$error == 1){
       expect_equal(saveResult, result,tolerance=1e-5)
     }
   )
+  
 }
 

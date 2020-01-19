@@ -10,20 +10,13 @@
 #' @details
 #' In detail, this procedure reads the name of an input file from the local file system,
 #' or takes a data frame and writes it to the local file system formatted
-#' for the iMRMC program (found at https://github.com/DIDSR/iMRMC/releases), it executes the iMRMC
-#' program which writes the results to the local files system, it reads the analysis results from
+#' for the iMRMC program (found at https://github.com/DIDSR/iMRMC/releases), it executes a java app,
+#' the iMRMC engine which writes the results to the local files system, it reads the analysis results from
 #' the local file system, packs the analysis results into a list object, deletes the data and analysis results
 #' from the local file system, and returns the list object.
 #' 
-#' The examples took too long for CRAN to accept. So here is an example:
-#' # Create a sample configuration file
-#' config <- sim.gRoeMetz.config()
-#' # Simulate an MRMC ROC data set
-#' dFrame.imrmc <- sim.gRoeMetz(config)
-#' # Analyze the MRMC ROC data
-#' result <- doIMRMC(dFrame.imrmc)
-
-#'
+#' This software requires Java JDK 1.7 or higher.
+#' 
 #' @param data This data.frame contains the following variables:
 #'            readerID       [Factor] w/ nR levels "reader1", "reader2", ...
 #'            caseID         [Factor] w/ nC levels "case1", "case2", ...
@@ -52,13 +45,7 @@
 #'            the dates should be stripped out.
 #'
 #' @return [list] 
-#'         iMRMC running error:
-#'            error[int] 1 means there is an error during running iMRMC
-#'                       0 means the iMRMC succeed
-#'            desc [chr] description of errors
-#'            
-#'            
-#'         Or iMRMC outputs. The objects of this list are described in detail in the iMRMC documentation
+#'            iMRMC outputs. The objects of this list are described in detail in the iMRMC documentation
 #'            which can be found at <http://didsr.github.io/iMRMC/000_iMRMC/userManualHTML/index.htm>
 #'
 #'            Here is a quick summary:
@@ -144,18 +131,30 @@ doIMRMC <- function(
       iMRMCjarFullPath = file.path(pkgPath, "inst","java", iMRMCjar)
     }
   }
+  
   # Run iMRMC
-  desc <- system2("java", args = c("-jar",
-                           iMRMCjarFullPath,
-                           fileName,
-                           file.path(workDir, "imrmcDir")),
-                           stdout = FALSE, stderr = TRUE)
-  if (!identical(desc, character(0))){
-    return(list(
-      error = 1,
-      desc = desc
-    ))
-  }
+  desc <- tryCatch(
+    
+    system2(
+      "java",
+      args = c("-jar",
+               iMRMCjarFullPath,
+               fileName,
+               file.path(workDir, "imrmcDir")),
+      stdout = FALSE, stderr = TRUE),
+    
+    warning = function(w) {
+      cat("do_IMRMC WARNING\n")
+      warning(w)
+    },
+    error = function(e) {
+      cat("\ndoIMRMC ERROR\n")
+      cat("One possible reason is that you don't have java.\n")
+      cat("This software requires Java JDK 1.7 or higher.\n")
+      stop(e)
+    }
+
+  )
 
   # Retrieve the iMRMC results
   perReader <- utils::read.csv(file.path(workDir, "imrmcDir", "AUCperReader.csv"))
@@ -209,7 +208,6 @@ doIMRMC <- function(
   )
 
   iMRMCoutput <- list(
-    error = 0,
     perReader = perReader,
     Ustat = Ustat,
     MLEstat = MLEstat,

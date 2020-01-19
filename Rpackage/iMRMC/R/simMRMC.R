@@ -1,7 +1,8 @@
 # Initialize the l'Ecuyer random number generator ####
 #' @title Initialize the l'Ecuyer random number generator
 #'
-#' @description See the documentation for the parallel package
+#' @description See the documentation for the parallel package.
+#' If you require backwards compatibility, please run \code{RNGversion("3.5.0")}.
 #'
 #' @param seed This determines the position in each stream
 #' @param stream This determines the stream
@@ -15,12 +16,8 @@
 # @examples
 init.lecuyerRNG <- function(seed = 1, stream = 2){
 
-  # Set RNGversion
-  suppressMessages(RNGversion("3.5.0"))
-  
   # Set the random number generator
   RNGkind("L'Ecuyer-CMRG")
-  
   
   # Set the seed
   set.seed(seed)
