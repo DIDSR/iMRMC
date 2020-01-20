@@ -21,6 +21,7 @@ Description:
   Package development and documentation is at <https://github.com/DIDSR/iMRMC/tree/master>.
 License: CC0
 Encoding: UTF-8
+SystemRequirements:	Java JDK 1.7 or higher
 LazyData: true
 Depends: R (>= 2.10)
 RoxygenNote: 7.0.2
