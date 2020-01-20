@@ -11,22 +11,35 @@
 #' In detail, this procedure reads the name of an input file from the local file system,
 #' or takes a data frame and writes it to the local file system formatted
 #' for the iMRMC program (found at https://github.com/DIDSR/iMRMC/releases), it executes a java app,
-#' the iMRMC engine which writes the results to the local files system, it reads the analysis results from
+#' the iMRMC engine, which writes the results to the local files system, it reads the analysis results from
 #' the local file system, packs the analysis results into a list object, deletes the data and analysis results
 #' from the local file system, and returns the list object.
 #' 
 #' This software requires Java JDK 1.7 or higher.
 #' 
+#' The examples took too long for CRAN to accept. So here is an example: 
+#' \preformatted{
+#' # Create a sample configuration file
+#' config <- sim.gRoeMetz.config()
+#' # Simulate an MRMC ROC data set
+#' dFrame.imrmc <- sim.gRoeMetz(config)
+#' # Analyze the MRMC ROC data
+#' result <- doIMRMC(dFrame.imrmc)
+#' }
+#'
 #' @param data This data.frame contains the following variables:
-#'            readerID       [Factor] w/ nR levels "reader1", "reader2", ...
-#'            caseID         [Factor] w/ nC levels "case1", "case2", ...
-#'            modalityID     [Factor] w/ 1 level simRoeMetz.config$modalityID
-#'            score          [num] reader score
-#'            each row of this data frame corresponds to an observation
-#'            for every caseID, there must be a row corresponding to the truth observation
-#'              the readerID for a truth observation is "truth"
-#'              the modalityID for a truth observation is "truth"
-#'              the score for a truth observation must be either 0 (signal-absent) or 1 (signal-present)
+#' \itemize{
+#'   \item \code{readerID} [Factor] with levels like "reader1", "reader2", ...
+#'   \item \code{caseID} [Factor] with levels like "case1", "case2", ...
+#'   \item \code{modalityID} [Factor] with levels like "modality1", "modality2", ...
+#'   \item \code{score} [num] reader score
+#' }
+#'                      
+#' Each row of this data frame corresponds to an observation.
+#' For every caseID, there must be a row corresponding to the truth observation.
+#' The readerID for a truth observation is "truth".
+#' The modalityID for a truth observation is "truth".
+#' The score for a truth observation must be either 0 (signal-absent) or 1 (signal-present).
 #'
 #' @param fileName This character string identifies the location of an iMRMC input file.
 #'   The input file is identical to data except there is a free text section to start,
@@ -49,32 +62,40 @@
 #'            which can be found at <http://didsr.github.io/iMRMC/000_iMRMC/userManualHTML/index.htm>
 #'
 #'            Here is a quick summary:
-#'            perReader [data.frame] this data frame contains the performance results for each reader.
+#' \itemize{
+#'   \item {\code{perReader} 
+#'   [data.frame] this data frame contains the performance results for each reader.
 #'              Key variables of this data frame are AUCA, AUCB, AUCAminusAUCB and the corresponding
-#'              variances, confidence intervals, degrees of freedom and p-values.
-#'            Ustat [data.frame] this data frame contains the reader-average performance results.
+#'              variances, confidence intervals, degrees of freedom and p-values.}
+#'   \item {\code{Ustat}
+#'   [data.frame] this data frame contains the reader-average performance results.
 #'              The analysis results are based on U-statistics and the papers listed above.
 #'              Key variables of this data frame are AUCA, AUCB, AUCAminusAUCB and the corresponding
-#'              variances, confidence intervals, degrees of freedom and p-values.
-#'            MLEstat [data.frame] this data frame contains the reader-average performance results.
+#'              variances, confidence intervals, degrees of freedom and p-values.}
+#'   \item {\code{MLEstat}
+#'   [data.frame] this data frame contains the reader-average performance results.
 #'              The analysis results are based on V-statistics, which approximates the true distribution with
 #'              the empirical distribution. The empirical distribution equals the nonparametric MLE
 #'              estimate of the true distribution, which is also equivalent to the ideal bootstrap estimate.
 #'              Please refer to the papers listed above.
 #'              Key variables of this data frame are AUCA, AUCB, AUCAminusAUCB and the corresponding
 #'              variances, confidence intervals, degrees of freedom and p-values.
-#'            ROC [list] each object of this list is an object containing an ROC curve.
+#'   }
+#'   \item {\code{ROC}
+#'   [list] each object of this list is an object containing an ROC curve.
 #'              There is an ROC curve for every combination of reader and modality.
 #'              For every modality, there are also four average ROC curves. These are discussed in
-#'                Chen2014_Br-J-Radiol_v87p20140016
-#'                The diagonal average averages the reader-specific ROC curves along y = -x + b for b in (0,1)
-#'                The horizontal average averages the reader specific ROC curves along y = b for b in (0,1)
-#'                The vertical average averages the reader specific ROC curves along x = b for b in (0,1)
-#'                The pooled average ignores readerID and pools all the scores together to create one ROC curve.
-#'            varDecomp [list] the objects of this list are different decompositions of the total variance
+#'                Chen2014_Br-J-Radiol_v87p20140016.
+#'                The diagonal average averages the reader-specific ROC curves along y = -x + b for b in (0,1).
+#'                The horizontal average averages the reader specific ROC curves along y = b for b in (0,1).
+#'                The vertical average averages the reader specific ROC curves along x = b for b in (0,1).
+#'                The pooled average ignores readerID and pools all the scores together to create one ROC curve.}
+#'   \item {\code{varDecomp}
+#'   [list] the objects of this list are different decompositions of the total variance.
 #'              Please refer to Gallas2009_Commun-Stat-A-Theor_v38p2586 (framework paper).
 #'              The different decompositions are BCK, BDG, DBM, MS, OR.
-#'
+#'   }
+#' }
 #'
 #'
 #' @export

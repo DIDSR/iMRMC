@@ -35,7 +35,7 @@ init.lecuyerRNG <- function(seed = 1, stream = 2){
 }
 
 # Simulate an MRMC data set ####
-#' Simulate an MRMC data set ####
+#' Simulate an MRMC data set
 #'
 #' @description
 #' This program simulates observations from one set of readers scoring one set of cases.
