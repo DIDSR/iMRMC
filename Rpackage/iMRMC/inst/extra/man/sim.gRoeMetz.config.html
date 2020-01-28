@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Create a configuration object for the sim.gRoeMetz program</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for sim.gRoeMetz.config {iMRMC}"><tr><td>sim.gRoeMetz.config {iMRMC}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Create a configuration object for the sim.gRoeMetz program</h2>
+
+<h3>Description</h3>
+
+<p>This function creates a configuration object for the Roe &amp; Metz
+simulation model to be used as input for the sim.gRoeMetz program.
+The default model returned when there are no arguments given to the function is
+the &quot;HH&quot; model from Roe1987_Acad-Radiol_v4p298. Following that paper,
+The user can specify three parameters related to experiment size (nR, nC.neg, nC.pos)
+and five parameters parameters specifying a linear model that does not
+depend on modality or truth (mu.neg, mu.pos, var_r, var_c, var_rc).
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+sim.gRoeMetz.config(nR = 5, nC.neg = 40, nC.pos = 40, mu.neg = 0,
+  mu.pos = 1, var_r = 0.03, var_c = 0.3, var_rc = 0.2)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>nR</code></td>
+<td>
+<p>Number of readers (default = 5)</p>
+</td></tr>
+<tr valign="top"><td><code>nC.neg</code></td>
+<td>
+<p>Number of signal-absent cases (default = 25)</p>
+</td></tr>
+<tr valign="top"><td><code>nC.pos</code></td>
+<td>
+<p>Number of signal-present cases (default = 25)</p>
+</td></tr>
+<tr valign="top"><td><code>mu.neg</code></td>
+<td>
+<p>Mean fixed effect of signal-absent distribution (default = 0.0) <br />
+Modality specific parameters are set to zero: mu.Aneg = mu.Bneg = 0</p>
+</td></tr>
+<tr valign="top"><td><code>mu.pos</code></td>
+<td>
+<p>Mean fixed effect of signal-present distribution (default = 1.0) <br />
+Modality specific parameters are set to zero: mu.Apos = mu.Bpos = 0</p>
+</td></tr>
+<tr valign="top"><td><code>var_r</code></td>
+<td>
+<p>Variance of reader random effect (default = 0.03) <br />
+var_r.neg = var_r.pos = var_r.Aneg = var_r.Apos = var_r.Bneg = var_r.Bpos = var_r <br /></p>
+</td></tr>
+<tr valign="top"><td><code>var_c</code></td>
+<td>
+<p>Variance of case random effect (default = 0.30) <br />
+var_c.neg = var_c.pos = var_c.Aneg = var_c.Apos = var_c.Bneg = var_c.Bpos = var_c <br /></p>
+</td></tr>
+<tr valign="top"><td><code>var_rc</code></td>
+<td>
+<p>Variance of reader.by.case random effect (default = 0.20) <br />
+var_rc.neg = var_rc.pos = var_rc.Aneg = var_rc.Apos = var_rc.Bneg = var_rc.Bpos = var_rc <br /></p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>If no arguments, this function returns a default simulation
+configuration for sim.gRoeMetz
+</p>
+
+
+<h3>Value</h3>
+
+<p>config [list] Refer to the sim.gRoeMetz input variable
+</p>
+
+<hr /><div style="text-align: center;">[Package <em>iMRMC</em> version 1.2.0 ]</div>
+</body></html>

@@ -161,3 +161,84 @@ laBRBM <- function(
 return(result2)
 
 }
+
+#---- getWRBM ----
+#' @title Get within-reader, between-modality paired data from an MRMC data file
+#'
+#' @param mcsData A data frame with the following columns: readerID, caseID, modalityID, score
+#' @param modality.X The name of one modality
+#' @param modality.Y The name of one modality. This should be different from modality.X
+#'
+#' @return The result of merging the modality.X and modality.Y subsets of mcsData by readerID and caseID
+#' 
+#' @export
+#'
+# @examples
+getWRBM <- function(mcsData, modality.X, modality.Y) {
+  
+  # Make an "MRMClist" data frame for modality.X
+  df.x <- mcsData[mcsData$modalityID == modality.X,
+                  c("readerID", "caseID", "modalityID", "score")]
+  # Make an "MRMClist" data frame for modality.Y
+  df.y <- mcsData[mcsData$modalityID == modality.Y,
+                  c("readerID", "caseID", "modalityID", "score")]
+  # Merge the two data frames
+  df <- merge(df.x, df.y, by = c("readerID", "caseID"), suffixes = c(".X",".Y"))
+  
+  return(df)
+  
+}
+
+#---- getWRBM ----
+#' @title Get between-reader, between-modality paired data from an MRMC data file
+#'
+#' @param mcsData A data frame with the following columns: readerID, caseID, modalityID, score
+#' @param modality.X The name of one modality
+#' @param modality.Y The name of one modality. This should be different from modality.X
+#'
+#' @return The result of merging the modality.X and modality.Y subsets of mcsData by caseID
+#'  for every pair of readers
+#' 
+#' @export
+#'
+# @examples
+getBRBM <- function(mcsData, modality.X, modality.Y) {
+  
+  # This data frame will hold all the paired observations
+  df <- data.frame()
+  
+  # Split the data by readers
+  nReaders <- nlevels(mcsData$readerID)
+  mcsData <- split(mcsData, mcsData$readerID)
+  for (reader.x in 1:nReaders) {
+    for (reader.y in 1:nReaders) {
+      
+      # Skip the case when the first reader is the same as the second reader.
+      if (reader.x == reader.y) next()
+      
+      # Grab the data frame corresponding to the i'th and j'th readers
+      mcsData.x <- mcsData[[reader.x]]
+      mcsData.y <- mcsData[[reader.y]]
+      
+      # Skip the case when a reader has no data
+      if (nrow(mcsData.x) == 0) next()
+      if (nrow(mcsData.y) == 0) next()
+      
+      # Make an "MRMClist" data frame for modality.X
+      df.x <- mcsData.x[mcsData.x$modalityID == modality.X,
+                        c("readerID", "caseID", "modalityID", "score")]
+      # Make an "MRMClist" data frame for modality.Y
+      df.y <- mcsData.y[mcsData.y$modalityID == modality.Y,
+                        c("readerID", "caseID", "modalityID", "score")]
+      # Merge the two data frames
+      df.temp <- merge(df.x, df.y, by = c("caseID"), suffixes = c(".X",".Y"))
+      
+      df <- rbind(df, df.temp)
+      
+    }
+    
+  }
+  
+  return(df)
+  
+}
