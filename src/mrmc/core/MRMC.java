@@ -15,6 +15,7 @@ import java.util.Locale;
  * @author Xin He, Ph.D,
  * @author Brandon D. Gallas, Ph.D
  * @author Rohan Pathare
+ * @author Qi Gong
  */
 public class MRMC extends JApplet {	
 	/**

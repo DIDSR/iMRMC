@@ -62,6 +62,7 @@ import umontreal.iro.lecuyer.rng.WELL1024;
  * Change the numCores in class DoSimBtnListener to 1
  * 
  * @author Rohan Pathare
+ * @author Qi Gong
  */
 public class RMGUInterface {
 

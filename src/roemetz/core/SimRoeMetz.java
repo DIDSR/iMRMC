@@ -28,6 +28,7 @@ import mrmc.gui.SizePanel;
  * sim_roemetz.pro (Brandon D. Gallas, PhD)
  * 
  * @author Rohan Pathare
+ * @author Qi Gong
  */
 public class SimRoeMetz {
 	

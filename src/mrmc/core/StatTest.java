@@ -20,6 +20,7 @@ import umontreal.iro.lecuyer.probdist.NormalDist;
  * @author Xin He, Ph.D,
  * @author Brandon D. Gallas, Ph.D
  * @author Rohan Pathare
+ * @author Qi Gong
  */
 public class StatTest {
 	

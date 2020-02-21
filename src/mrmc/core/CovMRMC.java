@@ -23,6 +23,7 @@ import mrmc.gui.SizePanel;
  * @author Xin He, Ph.D,
  * @author Brandon D. Gallas, Ph.D
  * @author Rohan Pathare
+ * @author Qi Gong
  */
 public class CovMRMC {
 	

@@ -53,6 +53,7 @@ import org.jfree.ui.RefineryUtilities;
  * @author Xin He, Ph.D
  * @author Brandon D. Gallas, Ph.D
  * @author Rohan Pathare
+ * @author Qi Gong
  */
 public class InputFileCard {
 	private GUInterface GUI;

@@ -8,6 +8,7 @@ import java.text.DecimalFormat;
  * @author Xin He, Ph.D,
  * @author Brandon D. Gallas, Ph.D
  * @author Rohan Pathare
+ * @author Qi Gong
  */
 public class Matrix {
 

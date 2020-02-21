@@ -36,6 +36,7 @@ import mrmc.gui.InputFileCard.showAUCsButtonListener;
  * Controls and shows the statistical analysis
  * 
  * @author BDG
+ * @author Qi Gong
  *
  */
 public class StatPanel {
