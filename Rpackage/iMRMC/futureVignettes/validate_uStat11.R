@@ -9,7 +9,7 @@ simRoeMetz.config$nC.neg <- 20
 simRoeMetz.config$nC.pos <- 20
 
 startTime <- proc.time()[1]
-nMC <- 10000
+nMC <- 100
 
 df.simMean <- data.frame()
 for (i in 1:nMC) {
@@ -35,7 +35,8 @@ for (i in 1:nMC) {
       mean.ABminusCD = result$mean[3],
       var.AB = result$var[1],
       var.CD = result$var[2],
-      var.ABminusCD = result$var[3]
+      var.ABminusCD = result$var[3],
+      stringsAsFactors = TRUE
     )
   )
 

@@ -86,26 +86,30 @@ createIMRMCdf <- function(
     readerID   = data0[ , readerID],
     caseID     = data0[ , caseID],
     modalityID = data0[ , modalityID],
-    score      = data0[ , score]
+    score      = data0[ , score],
+    stringsAsFactors = TRUE
   )
   data1 <- dFrame[dFrame[ , truth] == truePositiveFactor, ]
   data1 <- data.frame(
     readerID   = data1[ , readerID],
     caseID     = data1[ , caseID],
     modalityID = data1[ , modalityID],
-    score      = data1[ , score]
+    score      = data1[ , score],
+    stringsAsFactors = TRUE
   )
   truth0 <- data.frame(
     readerID = "truth",
     caseID = droplevels(unique(data0$caseID)),
     modalityID = "truth",
-    score = 0
+    score = 0,
+    stringsAsFactors = TRUE
   )
   truth1 <- data.frame(
     readerID = "truth",
     caseID = droplevels(unique(data1$caseID)),
     modalityID = "truth",
-    score = 1
+    score = 1,
+    stringsAsFactors = TRUE
   )
   IMRMCdf <- droplevels(rbind(truth0, truth1, data0, data1))
   IMRMCdf <- IMRMCdf[!is.na(IMRMCdf$score), ]
@@ -344,7 +348,8 @@ extractPairedComparisonsBRBM <- function(
     readerID   = data0[ , readerID],
     caseID     = data0[ , caseID],
     modalityID = data0[ , modalityID],
-    score      = data0[ , score]
+    score      = data0[ , score],
+    stringsAsFactors = TRUE
   )
 
   # Verify that the key columns exist
@@ -384,7 +389,7 @@ extractPairedComparisonsBRBM <- function(
 
   }
 
-  return(data.frame(x = x, y = y))
+  return(data.frame(x = x, y = y, stringsAsFactors = TRUE))
 
 }
 
@@ -426,7 +431,8 @@ extractPairedComparisonsWRBM <- function(
     readerID   = data0[ , readerID],
     caseID     = data0[ , caseID],
     modalityID = data0[ , modalityID],
-    score      = data0[ , score]
+    score      = data0[ , score],
+    stringsAsFactors = TRUE
   )
 
   # Pool reader counts into a contingency table
@@ -464,7 +470,7 @@ extractPairedComparisonsWRBM <- function(
 
   }
 
-  return(data.frame(x = x, y = y))
+  return(data.frame(x = x, y = y, stringsAsFactors = TRUE))
 
 }
 
@@ -496,7 +502,7 @@ createGroups <- function(items, nG) {
   desc <- NULL
   for (i in 1:nG) desc <- c(desc, rep(paste("group", i, sep = ""), nPerG[i]))
 
-  readerGroups <- data.frame(items = items, desc = desc)
+  readerGroups <- data.frame(items = items, desc = desc, stringsAsFactors = TRUE)
 
   return(readerGroups)
 
@@ -583,7 +589,8 @@ successDFtoROCdf <- function(df) {
     readerID = df$readerID,
     caseID = df$caseID,
     modalityID = df$modalityID,
-    score = df$score
+    score = df$score,
+    stringsAsFactors = TRUE
   )
   # Create 5 fake signal-absent observations per reader
   nC0 <- 5
@@ -592,7 +599,8 @@ successDFtoROCdf <- function(df) {
       readerID = rep(levels(df$readerID), rep(nC0, nlevels(df$readerID))),
       caseID = rep(paste("fakeCase", 1:nC0, sep = ""), nC0),
       modalityID = rep("modalityA", nC0 * nlevels(df$readerID)),
-      score = rep(0.5, nC0 * nlevels(df$readerID))
+      score = rep(0.5, nC0 * nlevels(df$readerID)),
+      stringsAsFactors = TRUE
     ),
     df.AUC
   )
@@ -602,7 +610,8 @@ successDFtoROCdf <- function(df) {
       readerID = rep("-1", nlevels(df$caseID)),
       caseID = levels(df$caseID),
       modalityID = rep("truth", nlevels(df$caseID)),
-      score = rep(1, nlevels(df$caseID))
+      score = rep(1, nlevels(df$caseID)),
+      stringsAsFactors = TRUE
     ),
     df.AUC
   )
@@ -612,7 +621,8 @@ successDFtoROCdf <- function(df) {
       readerID = rep("-1", nC0),
       caseID = paste("fakeCase", 1:nC0, sep = ""),
       modalityID = rep("truth", nC0),
-      score = rep(0, nC0)
+      score = rep(0, nC0),
+      stringsAsFactors = TRUE
     ),
     df.AUC
   )

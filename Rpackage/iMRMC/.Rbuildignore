@@ -6,3 +6,4 @@
 ^imrmcDir$
 ^README\.md$
 ^futureVignettes$
+^cran-check\.md$
