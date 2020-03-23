@@ -23,6 +23,7 @@ import java.util.ArrayList;
  * @author Xin He, Ph.D,
  * @author Brandon D. Gallas, Ph.D
  * @author Rohan Pathare
+ * @author Qi Gong
  */
 public class SizePanel {
 	public static String viewresultnew; // added for saving the results

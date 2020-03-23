@@ -182,7 +182,7 @@ uStat11.jointD <- function(
   sumiD.A <- colSums(design.A)
   sumiD.B <- colSums(design.B)
 
-  meanPerR <- data.frame(sumiS.A / sumiD.A, sumiS.B / sumiD.B)
+  meanPerR <- data.frame(sumiS.A / sumiD.A, sumiS.B / sumiD.B, stringsAsFactors = TRUE)
   names(meanPerR) <- c(desc[1], desc[2])
 
   # Declare the constituent parts of the variance decomposition
@@ -192,7 +192,8 @@ uStat11.jointD <- function(
     c1r0 = c(0, 0, 0),
     c0r1 = c(0, 0, 0),
     c1r1 = c(0, 0, 0),
-    row.names = c("AB", "CD", "ABminusCD")
+    row.names = c("AB", "CD", "ABminusCD"),
+    stringsAsFactors = TRUE
   )
   denom.biased <- numer.biased
 
@@ -291,9 +292,9 @@ uStat11.jointD <- function(
   var.AminusB <- var.A + var.B - 2 * coeff[3, ] %*% moments[3, ]
 
   # Turn these matrices into data frames
-  moments <- data.frame(moments)
+  moments <- data.frame(moments, stringsAsFactors = TRUE)
   names(moments) <- names(numer.biased)
-  coeff <- data.frame(coeff)
+  coeff <- data.frame(coeff, stringsAsFactors = TRUE)
   names(coeff) <- names(numer.biased)
 
   mean <- c(mean.A, mean.B, mean.A - mean.B)
@@ -303,7 +304,7 @@ uStat11.jointD <- function(
   var.1obs <- moments$c1r1 - moments$c0r0
   var.1obs[3] <- var.1obs[1] + var.1obs[2] - 2 * var.1obs[3]
   names(var.1obs) <- desc
-  nCperR <- data.frame(sumiD.A, sumiD.B)
+  nCperR <- data.frame(sumiD.A, sumiD.B, stringsAsFactors = TRUE)
   names(nCperR) <- desc[1:2]
 
   #### Pack Results ####
@@ -390,7 +391,7 @@ uStat11.conditionalD <- function(
   sumiS.A <- colSums(kernel.A)
   sumiS.B <- colSums(kernel.B)
 
-  meanPerR <- data.frame(sumiS.A / sumiD.A, sumiS.B / sumiD.B)
+  meanPerR <- data.frame(sumiS.A / sumiD.A, sumiS.B / sumiD.B, stringsAsFactors = TRUE)
   names(meanPerR) <- c(desc[1], desc[2])
 
   # Reader weights for the reader-averged point estimate
@@ -586,14 +587,16 @@ uStat11.conditionalD <- function(
     c0r0 = c(m.c0r0.AA, m.c0r0.BB, m.c0r0.AB),
     c0r1 = c(m.c0r1.AA, m.c0r1.BB, m.c0r1.AB),
     c1r0 = c(m.c1r0.AA, m.c1r0.BB, m.c1r0.AB),
-    c1r1 = c(m.c1r1.AA, m.c1r1.BB, m.c1r1.AB)
+    c1r1 = c(m.c1r1.AA, m.c1r1.BB, m.c1r1.AB),
+    stringsAsFactors = TRUE
   )
 
   coeff <- data.frame(
     c0r0 = c(c.c0r0.AA, c.c0r0.BB, c.c0r0.AB),
     c0r1 = c(c.c0r1.AA, c.c0r1.BB, c.c0r1.AB),
     c1r0 = c(c.c1r0.AA, c.c1r0.BB, c.c1r0.AB),
-    c1r1 = c(c.c1r1.AA, c.c1r1.BB, c.c1r1.AB)
+    c1r1 = c(c.c1r1.AA, c.c1r1.BB, c.c1r1.AB),
+    stringsAsFactors = TRUE
   )
 
   mean <- c(mean.A, mean.B, mean.A - mean.B)
@@ -603,7 +606,7 @@ uStat11.conditionalD <- function(
   var.1obs <- moments$c1r1 - moments$c0r0
   var.1obs[3] <- var.1obs[1] + var.1obs[2] - 2 * var.1obs[3]
   names(var.1obs) <- desc
-  nCperR <- data.frame(sumiD.A, sumiD.B)
+  nCperR <- data.frame(sumiD.A, sumiD.B, stringsAsFactors = TRUE)
   names(nCperR) <- desc[1:2]
 
   result <- list(
@@ -650,7 +653,8 @@ uStat11.identity <- function(
   df <- data.frame(readerID = factor(df.input[[keyColumns[1]]]),
                    caseID = factor(df.input[[keyColumns[[2]]]]),
                    modalityID = factor(df.input[[keyColumns[[3]]]]),
-                   score = df.input[[keyColumns[[4]]]]
+                   score = df.input[[keyColumns[[4]]]],
+                   stringsAsFactors = TRUE
   )
 
   # Parse out data frames for each modality
@@ -708,7 +712,8 @@ uStat11.diff <- function(
   df <- data.frame(readerID = factor(df.input[[keyColumns[1]]]),
                    caseID = factor(df.input[[keyColumns[[2]]]]),
                    modalityID = factor(df.input[[keyColumns[[3]]]]),
-                   score = df.input[[keyColumns[[4]]]]
+                   score = df.input[[keyColumns[[4]]]],
+                   stringsAsFactors = TRUE
   )
 
   # Parse out data frames for each modality

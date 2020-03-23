@@ -7,7 +7,11 @@ import java.util.Scanner;
 import mrmc.chart.exportToFile;
 import roemetz.gui.RMGUInterface;
 import roemetz.gui.RMGUInterface.analysisExportListener;
-
+/**
+ * Class to do numerical calculation and simulation
+ * @author Brandon D. Gallas, Ph.D
+ * @author Qi Gong
+ */
 public class validateFunction {
 public static File inputFile = null;
 	public static void validateFunction(RMGUInterface RMGUInterface1, String inputFileFullName) {

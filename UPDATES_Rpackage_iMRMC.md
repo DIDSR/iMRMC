@@ -3,6 +3,25 @@
 <h4>Version Under Development</h4>
 ...
 
+<h4>iMRMC_1.2.1</h4>
+*01/20/20*
+
+Update iMRMC.R
+* This function calls a java app for the iMRMC engine using system2.
+This fails if a user does not have the correct version of java.
+system2 errors are not always managed as errors, some happen silently.
+Therefore we added tryCatch error control to help the user identify why the function fails.
+
+Update limitsOfAgreement.R
+* Add functions getWRBM and getBRBM. These functions get within-reader between-modality or between-reader between-modality paired data from an MRMC data file. Useful for plotting Bland-Altman-like difference plots.
+
+Update utils.R
+* Add convertDF to the package. This function converts list-mode data to matrix-mode data.
+* Add html documentation into inst/extra/man for easy reference on GitHub.
+
+Update simMRMC.R
+* Use the current version of the random number generator. Default was using version 3.5.0
+
 <h4>iMRMC_1.2.0</h4>
 *04/15/19*
 

@@ -89,7 +89,8 @@ for (i in 1:nMC) {
 
       Ar1c1minusBr2c1 = Ar1c1 - Br2c1,
       Ar2c1minusBr1c1 = Ar2c1 - Br1c1,
-      Ar1c1minusBr2c1.symmetric = 0.5 * (Ar1c1 - Br2c1 + Ar2c1 - Br1c1)
+      Ar1c1minusBr2c1.symmetric = 0.5 * (Ar1c1 - Br2c1 + Ar2c1 - Br1c1),
+      stringsAsFactors = TRUE
     )
   )
 
@@ -123,7 +124,8 @@ for (i in 1:nMC) {
   #
   #     Ar1c1minusBr2c1 = Ar1c1 - Br2c1,
   #     Ar2c1minusBr1c1 = Ar2c1 - Br1c1,
-  #     Ar1c1minusBr2c1.symmetric = 0.5 * (Ar1c1 - Br2c1 + Ar2c1 - Br1c1)
+  #     Ar1c1minusBr2c1.symmetric = 0.5 * (Ar1c1 - Br2c1 + Ar2c1 - Br1c1),
+  #     stringsAsFactors = TRUE
   #   )
   # )
 
@@ -136,7 +138,8 @@ for (i in 1:nMC) {
   df.uStat11.diff <- rbind(
     df.uStat11.diff,
     data.frame(
-      var.Ar1cminusBr1c = result11.diff$var.1obs[1]
+      var.Ar1cminusBr1c = result11.diff$var.1obs[1],
+      stringsAsFactors = TRUE
     )
   )
 
@@ -181,7 +184,8 @@ for (i in 1:nMC) {
 
       var.Ar1cminusBr2c = var.Ar1cminusBr2c,
 
-      var.Ar1cminusBr2c.symmetric = var.Ar1cminusBr2c.symmetric
+      var.Ar1cminusBr2c.symmetric = var.Ar1cminusBr2c.symmetric,
+      stringsAsFactors = TRUE
     )
   )
 

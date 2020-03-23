@@ -15,6 +15,7 @@ import java.util.Locale;
  * @author Xin He, Ph.D,
  * @author Brandon D. Gallas, Ph.D
  * @author Rohan Pathare
+ * @author Qi Gong
  */
 public class MRMC extends JApplet {	
 	/**
@@ -22,7 +23,7 @@ public class MRMC extends JApplet {
 	 */
 	private static final long serialVersionUID = 1L;
 	private static JFrame mrmcFrame;
-	public static final String versionname ="iMRMC Version 4.0.2";
+	public static final String versionname ="iMRMC Version 4.0.3";
 	public static boolean commandStart = false;
 	static GUInterface gui;
 	GUImenubar menuBar;

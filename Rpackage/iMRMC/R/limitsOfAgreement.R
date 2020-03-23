@@ -62,7 +62,7 @@ laWRBM <- function(
   result2 <- data.frame(
     meanDiff = meanDiff, var.MeanDiff = var.MeanDiff, var.1obs = var.1obs,
     ci95meanDiff.bot = ci95meanDiff.bot, ci95meanDiff.top = ci95meanDiff.top,
-    la.bot = la.bot, la.top = la.top )
+    la.bot = la.bot, la.top = la.top, stringsAsFactors = TRUE)
 
   return(result2)
 
@@ -156,7 +156,7 @@ laBRBM <- function(
   result2 <- data.frame(
     meanDiff = meanDiff, var.MeanDiff = var.MeanDiff, var.1obs = var.Ar1cminusBr2c,
     ci95meanDiff.bot = ci95meanDiff.bot, ci95meanDiff.top = ci95meanDiff.top,
-    la.bot = la.bot, la.top = la.top )
+    la.bot = la.bot, la.top = la.top, stringsAsFactors = TRUE )
 
 return(result2)
 

@@ -13,7 +13,10 @@ import roemetz.gui.RMGUInterface;
 import roemetz.gui.RMGUInterface.DoNumericalIntegrationBtnListener;
 import roemetz.gui.RMGUInterface.DoSimBtnListener;
 import roemetz.gui.RMGUInterface.analysisExportListener;
-
+/**
+ * Class to allow iMRMC software to be run in command line
+ * @author Qi Gong
+ */
 public class commandStartFunction {
 	private GUInterface GUI;
 	private InputFile InputFile1;
