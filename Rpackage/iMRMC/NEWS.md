@@ -1,3 +1,3 @@
-# iMRMC 1.1.0
+# iMRMC
 
- * Added functions uStat11.jointD and uStat11.conditionalD. These functions calculate the mean and variance of the indicated U-statistic kernel, which is a function of the input scores.
+Information on updates are managed here: https://github.com/DIDSR/iMRMC/blob/master/UPDATES_Rpackage_iMRMC.md
