@@ -27,6 +27,8 @@ cat("modality A mean shift, pos = ", mean(df.MRMC.Apos$score), "\n")
 cat("modality B mean shift, neg = ", mean(df.MRMC.Bneg$score), "\n")
 cat("modality B mean shift, pos = ", mean(df.MRMC.Bpos$score), "\n")
 
+str(result)
+
 #### TEST ####
 
 # Save the result to a file for future comparisons
