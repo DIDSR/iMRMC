@@ -134,6 +134,13 @@ uStat11.jointD <- function(
   keyColumns = c("readerID", "caseID", "modalityID", "score")
   ) {
 
+  if (class(modalitiesToCompare) != "character") {
+    stop(paste(
+      "class(modalitiesToCompare) =", class(modalitiesToCompare),
+      "... The class should be character.")
+    )
+  }
+  
   if (kernelFlag == 1) {
 
     if (length(modalitiesToCompare) != 2) {
@@ -340,6 +347,13 @@ uStat11.conditionalD <- function(
   keyColumns = c("readerID", "caseID", "modalityID", "score")
 ) {
 
+  if (class(modalitiesToCompare) != "character") {
+    stop(paste(
+      "class(modalitiesToCompare) =", class(modalitiesToCompare),
+      "... The class should be character.")
+    )
+  }
+  
   # Initialize kernel and design matrices ####
   if (kernelFlag == 1) {
 
