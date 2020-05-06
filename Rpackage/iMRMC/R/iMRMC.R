@@ -116,31 +116,55 @@ doIMRMC <- function(
   iMRMCjarFullPath = NULL,
   stripDatesForTests = FALSE){
 
-  if (is.null(workDir)) {
-    workDir <- normalizePath(tempdir())
+  # If workDir is not specified, it will be the R temp directory.
+  # If workDir is specified, create it.
+  if (is.null(workDir))
+    workDir <- normalizePath(tempdir(), winslash = "/")
+  else
+    dir.create(workDir, showWarnings = FALSE)
+  
+  # The inputFile will hold the data for the java program
+  inputFile <- file.path(workDir, "input.imrmc")
+  
+  # Check that data is provided
+  if (is.null(data) & is.null(fileName)) {
+    stop("You have not provided an input data frame or an input file.")
+  }
+  # Check that data is not provided twice.
+  if (!is.null(data) & !is.null(fileName)) {
+    stop("You cannot provide an input data frame AND an input file.")
+  }
+  
+  # If fileName is specified make sure it exists.
+  # Copy the fileName to the inputFile in the workDir.
+  if (!is.null(fileName)) {
+    if (!file.exists(fileName)) {
+      print(paste("fileName = ", fileName))
+      stop("The full-path fileName provided does not exist.")
+    } 
+    if (fileName == inputFile) {
+      print(paste("fileName = ", fileName))
+      stop("fileName equals the name of the temp inputFile. This is not allowed.")
+    } 
+    file.copy(fileName, inputFile)
   }
 
-  if (is.null(data)) {
-    if (is.null(fileName)) {
-      stop("ERROR: You have not provided an input data frame or an input file.")
-    } else {
-      flagWriteFile <- FALSE
-    }
-  } else {
-    if (!is.null(fileName)) {
-      stop("ERROR: You cannot provide and input data frame AND an input file.")
-    }
+  # Check the input data and write it to the inputFile in the workDir  
+  if (!is.null(data)) {
 
-    flagWriteFile <- TRUE
-    fileName <- file.path(workDir, "input.imrmc")
-
-    # Write data frame to iMRMC input file
-    writeLines("BEGIN DATA:", con = fileName)
-    utils::write.table(data, fileName,
+    # Check that the input data has key columns: readerID, caseID, modalityID, score
+    if (length(setdiff(c("readerID", "caseID", "modalityID", "score"), names(data)))) {
+      stop("The data frame does not include the key columns: readerID, caseID, modalityID, score.")
+    }
+    
+    # Write data frame to the inputFile
+    writeLines("BEGIN DATA:", con = inputFile)
+    utils::write.table(data[ , c("readerID", "caseID", "modalityID", "score")], inputFile,
                 quote = FALSE, row.names = FALSE, col.names = FALSE,
                 append = TRUE, sep = ", ")
 
   }
+  
   if (is.null(iMRMCjarFullPath)) {
     iMRMCjar <- "iMRMC-v4.0.3.jar"
     pkgPath <- path.package("iMRMC", quiet = FALSE)
@@ -155,30 +179,39 @@ doIMRMC <- function(
   
   # Run iMRMC
   desc <- tryCatch(
-    
+
     system2(
       "java",
-      args = c("-jar",
-               iMRMCjarFullPath,
-               fileName,
-               file.path(workDir, "imrmcDir")),
-      stdout = FALSE, stderr = TRUE),
-    
+      args = c(
+        "-jar",
+        iMRMCjarFullPath,
+        inputFile,
+        file.path(workDir, "imrmcDir")
+      ),
+      stdout = TRUE, stderr = TRUE
+    ),
+
     warning = function(w) {
       cat("do_IMRMC WARNING\n")
       warning(w)
     },
+    
     error = function(e) {
       cat("\ndoIMRMC ERROR\n")
       cat("One possible reason is that you don't have java.\n")
       cat("This software requires Java JDK 1.7 or higher.\n")
       stop(e)
     }
-
+    
   )
 
+  if (!file.exists(file.path(workDir, "imrmcDir", "AUCperReader.csv"))) {
+    cat(desc, sep = "\n")
+    stop()
+  }
+
   # Retrieve the iMRMC results
-  perReader <- utils::read.csv(file.path(workDir, "imrmcDir", "AUCperReader.csv"))
+  perReader <- utils::read.csv(file.path(workDir, "imrmcDir", "AUCperReader.csv")) 
   Ustat <- utils::read.csv(file.path(workDir, "imrmcDir", "statAnalysis.csv"))
   MLEstat <- utils::read.csv(file.path(workDir, "imrmcDir", "statAnalysisMLE.csv"))
   ROCraw <- utils::read.csv(file.path(workDir, "imrmcDir", "ROCcurves.csv"),
@@ -211,13 +244,9 @@ doIMRMC <- function(
   }
 
   # Delete the content written to disk
-  if (workDir == normalizePath(tempdir())){
+  if (workDir == normalizePath(tempdir(), winslash = "/")) {
     unlink(file.path(workDir, "imrmcDir"), recursive = TRUE)
-
-    if (flagWriteFile) {
-      unlink(fileName)
-    }
-
+    unlink(inputFile)
   }
 
   varDecomp <- list(
