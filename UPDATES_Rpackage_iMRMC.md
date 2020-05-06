@@ -3,6 +3,11 @@
 <h4>Version Under Development</h4>
 ...
 
+<h4>iMRMC_1.2.3</h4>
+*05/05/20*
+
+Improve error reporting to help end users identify incorrect format of iMRMC input data/file.
+
 <h4>iMRMC_1.2.2</h4>
 *03/24/20*
 
