@@ -6,3 +6,5 @@
 ^imrmcDir$
 ^README\.md$
 ^futureVignettes$
+^README-submission-process\.md$
+^cran-check\.md$

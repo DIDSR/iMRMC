@@ -125,7 +125,8 @@ simMRMC <- function(simMRMC.config) {
     readerID = readerID,
     caseID = caseID,
     modalityID = modalityID,
-    score = L_mu + L_cases + L_readers + L_reader.case
+    score = L_mu + L_cases + L_readers + L_reader.case,
+    stringsAsFactors = TRUE
   )
 
 }
@@ -256,7 +257,8 @@ sim.gRoeMetz <- function(config) {
     readerID = rep("-1", nC.neg + nC.pos),
     caseID = c(as.character(caseIDs.neg), as.character(caseIDs.pos)),
     modalityID = rep("truth", nC.neg + nC.pos),
-    score = c(rep(0, nC.neg), rep(1, nC.pos))
+    score = c(rep(0, nC.neg), rep(1, nC.pos)),
+    stringsAsFactors = TRUE
   )
 
   # Simulate the modality independent random effects, negative cases

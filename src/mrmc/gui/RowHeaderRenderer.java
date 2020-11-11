@@ -15,6 +15,7 @@ import javax.swing.table.JTableHeader;
  * @author Xin He, Ph.D,
  * @author Brandon D. Gallas, Ph.D
  * @author Rohan Pathare
+ * @author Qi Gong
  * 
  * @version 1.0 11/09/98
  */

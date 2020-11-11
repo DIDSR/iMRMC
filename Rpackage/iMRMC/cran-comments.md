@@ -1,3 +1,14 @@
+# Submission 20 Jan. 2020
+
+iMRMC was recently archived because CRAN checks identified problems when an OS does not include correct java version. We solved this:
+* Implemented error control on function that calls java.
+  The checks from R-devel now run without errors, warnings, or notes.
+
+## NOTE from check_win_devel()
+There is one note about mis-spelled words. All are either names, acronyms that are defined, or the word "modalities", which is in most dictionaries.
+
+# Submission 12 Dec. 2017
+
 ## Test environments
 * devtools::build_win() on 12/12/2017
 * Fedora 24, kernel 4.10.17, R 3.5.0.73808 (11/30/2017)

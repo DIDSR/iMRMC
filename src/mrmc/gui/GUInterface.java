@@ -85,6 +85,7 @@ Click the Variance Analysis Button ({@link InputFileCard.varAnalysisListener})
  * @author Xin He, Ph.D,
  * @author Brandon D. Gallas, Ph.D
  * @author Rohan Pathare
+ * @author Qi Gong
  */
 @SuppressWarnings("unused")
 public class GUInterface {

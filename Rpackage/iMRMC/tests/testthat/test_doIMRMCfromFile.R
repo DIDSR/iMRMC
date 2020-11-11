@@ -33,6 +33,7 @@ result <- tryCatch(
 if (!names(result)[1] == "error") {
  
   # Recover the expected results
+  # Run "test_doIMRMC.R" with flagSave<-TRUE if it is necessary to recreate the expected results
   fileName <- "test_doIMRMC.Rdata"
   if (!file.exists(fileName)) {
     fileName <- file.path("tests", "testthat", fileName)

@@ -60,7 +60,8 @@ for (i in 1:nMC) {
       Ar2c1minusBr1c1 = Ar2c1 - Br1c1,
 
       # BRBM symmetric
-      Ar1c1minusBr2c1.symmetric = 0.5 * (Ar1c1 - Br2c1 + Ar2c1 - Br1c1)
+      Ar1c1minusBr2c1.symmetric = 0.5 * (Ar1c1 - Br2c1 + Ar2c1 - Br1c1),
+      stringsAsFactors = TRUE
     )
   )
 
@@ -76,21 +77,21 @@ for (i in 1:nMC) {
 
 #### Summarize MC simulation ####
 # Take the mean and the variance of the observations, including WRBM differences
-df.sim1obs.mcMean <- data.frame(t(colMeans(df.sim1obs)))
+df.sim1obs.mcMean <- data.frame(t(colMeans(df.sim1obs)), stringsAsFactors = TRUE)
 names(df.sim1obs.mcMean) <- paste(names(df.sim1obs.mcMean), ".", "mcMean", sep = "")
-df.sim1obs.mcVar <- data.frame(t(diag(cov(df.sim1obs))))
+df.sim1obs.mcVar <- data.frame(t(diag(cov(df.sim1obs))), stringsAsFactors = TRUE)
 names(df.sim1obs.mcVar) <- paste(names(df.sim1obs.mcVar), ".", "mcVar", sep = "")
 
 # Estimate the variance of the limits of aggreement from an MRMC data set
-df.laBRBM.mcMean <- data.frame(t(colMeans(df.laBRBM, na.rm = TRUE)))
+df.laBRBM.mcMean <- data.frame(t(colMeans(df.laBRBM, na.rm = TRUE)), stringsAsFactors = TRUE)
 names(df.laBRBM.mcMean) <- paste(names(df.laBRBM.mcMean), ".", "mcMean", sep = "")
-df.laBRBM.mcVar <- data.frame(t(diag(cov(df.laBRBM, use = "complete"))))
+df.laBRBM.mcVar <- data.frame(t(diag(cov(df.laBRBM, use = "complete"))), stringsAsFactors = TRUE)
 names(df.laBRBM.mcVar) <- paste(names(df.laBRBM.mcVar), ".", "mcVar", sep = "")
 
 #### Print Results ####
 # Print the number of MC trials and the experimental size of each MC trial
 print("")
-desc <- data.frame(nMC = nMC, nR = simRoeMetz.config$nR, nC = simRoeMetz.config$nC.pos)
+desc <- data.frame(nMC = nMC, nR = simRoeMetz.config$nR, nC = simRoeMetz.config$nC.pos, stringsAsFactors = TRUE)
 print(paste("nMC = ", nMC))
 
 # Print the time to complete this MC simulation
@@ -119,6 +120,7 @@ print(data.frame(
   MC.ci95meanDiff.bot  = sort(df.laBRBM$meanDiff)[0.025*nMC],
   MC.ci95meanDiff.top  = sort(df.laBRBM$meanDiff)[0.975*nMC],
   MC.la.bot = sort(df.sim1obs$Ar1c1minusBr2c1)[0.025*nMC],
-  MC.la.top = sort(df.sim1obs$Ar1c1minusBr2c1)[0.975*nMC]
+  MC.la.top = sort(df.sim1obs$Ar1c1minusBr2c1)[0.975*nMC],
+  stringsAsFactors = TRUE
 ))
 

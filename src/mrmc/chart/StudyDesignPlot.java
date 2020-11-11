@@ -39,6 +39,7 @@ import org.jfree.ui.RefineryUtilities;
  * combination at a given modality
  * 
  * @author Rohan Pathare
+ * @author Qi Gong
  */
 public class StudyDesignPlot extends JFrame {
 

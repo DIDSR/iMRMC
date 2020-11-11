@@ -3,10 +3,22 @@
 <h4>Version Under Development</h4>
 ...
 
+<h4>iMRMC_1.2.3</h4>
+*05/05/20*
+
+Improve error reporting to help end users identify incorrect format of iMRMC input data/file.
+
+<h4>iMRMC_1.2.2</h4>
+*03/24/20*
+
+Update all calls to data.frame and read.table
+* CRAN identified new potential issues. data.frame() and read.table() will use a stringsAsFactors = FALSE default. This change is planned to become the new default for the upcoming R 4.0.0.
+
 <h4>iMRMC_1.2.1</h4>
 *01/20/20*
 
 Update iMRMC.R
+* CRAN identified new errors from this function
 * This function calls a java app for the iMRMC engine using system2.
 This fails if a user does not have the correct version of java.
 system2 errors are not always managed as errors, some happen silently.
