@@ -2,6 +2,8 @@
 #' @description
 #' These two functions calculate two types of Limits of Agreement using ANOVA: Within-Reader Between-Modality(WRBM)
 #' and Between-Reader Between-Modality(BRBM). The 95\% confidence interval of the mean difference is also provided.
+#' The ANOVA method are realized either by applying stats::aov or by matrix multiplication. See more details below 
+#' about the model structure.
 #' 
 #' @details 
 #' Suppose the score from reader j for case k under modality i is\eqn{X_{ijk}}, then the difference score from the 
@@ -61,7 +63,7 @@
 #' 
 #' The two function shows the same 95\% CI for the mean difference score, but difference Limits of Agreements.
 #' 
-#' @import reshape2
+#' @importFrom stats aov var
 #' 
 #' @export
 #'
@@ -118,7 +120,7 @@ laWRBM.anova <- function(df, modalitiesToCompare = c("testA","testB"),
     MSB <- MS[2]
     sigma2 <- MS[3]
   }else{
-    diff.mat <- acast(diff.df, readerID ~caseID, value.var = "score")
+    diff.mat <- t(convertDFtoScoreMatrix(droplevels(diff.df)))
     
     MSA <- var(rowMeans(diff.mat)) * nCase
     MSB <- var(colMeans(diff.mat)) * nReader
@@ -202,8 +204,8 @@ laBRBM.anova <- function(df, modalitiesToCompare = c("testA","testB"),
     # Generate 3-dimentional matrix, reader x case x modality
     rcm_mat <-array(0,dim=c(nR, nC, nM))
     
-    rcm_mat[,,1] <- acast(df.A, readerID ~caseID, value.var = "score")
-    rcm_mat[,,2] <- acast(df.B, readerID ~caseID, value.var = "score")
+    rcm_mat[,,1] <- t(convertDFtoScoreMatrix(droplevels(df.A)))
+    rcm_mat[,,2] <- t(convertDFtoScoreMatrix(droplevels(df.B)))
     
     MSR <- var(rowMeans(rcm_mat)) * nC * nM
     MSC <- var(rowMeans(colMeans(rcm_mat))) * nR * nM

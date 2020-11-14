@@ -79,6 +79,9 @@
 #'   \item modalityID: [Factor] w/ 1 level config$modalityID
 #'   \item score: [num] reader score
 #' }
+#' 
+#' @importFrom stats rbeta rgamma rnorm
+#' 
 #' @export
 #'
 # @examples
