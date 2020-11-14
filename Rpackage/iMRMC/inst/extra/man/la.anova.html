@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: MRMC Analysis of Limits of Agreement using ANOVA</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for la.anova"><tr><td>la.anova</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>MRMC Analysis of Limits of Agreement using ANOVA</h2>
+
+<h3>Description</h3>
+
+<p>These two functions calculate two types of Limits of Agreement using ANOVA: Within-Reader Between-Modality(WRBM)
+and Between-Reader Between-Modality(BRBM). The 95% confidence interval of the mean difference is also provided.
+The ANOVA method are realized either by applying stats::aov or by matrix multiplication. See more details below 
+about the model structure.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+laWRBM.anova(
+  df,
+  modalitiesToCompare = c("testA", "testB"),
+  keyColumns = c("readerID", "caseID", "modalityID", "score"),
+  if.aov = TRUE
+)
+
+laBRBM.anova(
+  df,
+  modalitiesToCompare = c("testA", "testB"),
+  keyColumns = c("readerID", "caseID", "modalityID", "score"),
+  if.aov = TRUE
+)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>df</code></td>
+<td>
+<p>Data frame of observations, one per row. Columns identify random effects, fixed effects,
+and the observation. Namely,
+</p>
+
+<dl>
+<dt>readerID</dt><dd><p>The factor corresponding to the different readers in the study.
+The readerID is treated as a random effect.</p>
+</dd>
+<dt>caseID</dt><dd><p>The factor corresponding to the different cases in the study.
+The caseID is treated as a random effect.</p>
+</dd>
+<dt>modalityID</dt><dd><p>The factor corresponding to the different modalities in the study.
+The modalityID is treated as a fixed effect.</p>
+</dd>
+<dt>score</dt><dd><p>The score given by the reader to the case for the modality indicated.</p>
+</dd>
+</dl>
+</td></tr>
+<tr valign="top"><td><code>modalitiesToCompare</code></td>
+<td>
+<p>The factors identifying the modalities to compare. It should be at length 2. Default 
+<code>modalitiesToCompare = c("testA","testB")</code></p>
+</td></tr>
+<tr valign="top"><td><code>keyColumns</code></td>
+<td>
+<p>Identify the factors corresponding to the readerID, caseID, modalityID, and score
+(or alternative random and fixed effects). Default <code>keyColumns = c("readerID", "caseID", 
+"modalityID", "score")</code></p>
+</td></tr>
+<tr valign="top"><td><code>if.aov</code></td>
+<td>
+<p>Boolean value to determine whether using aov function to do ANOVA. Default <code>if.aov = TRUE</code></p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>Suppose the score from reader j for case k under modality i is<i>X_{ijk}</i>, then the difference score from the 
+same reader for the same cases under two different modalities is <i>Y_{jk} = X_{1jk} - X_{2jk}</i>.
+</p>
+
+<ul>
+<li><p><code>laWRBM</code> use two-way random effect ANOVA to analyze the difference scores <i>Y_{jk}</i>. The model 
+is <i>Y_{jk}=&mu; + R_j + C_k + &epsilon;_{jk}</i>, where <i>R_j</i> and <i>C_k</i> are random effects for readers 
+and cases. The variance of mean and individual observation is expressed as the linear combination of the MS 
+given by ANOVA.
+</p>
+</li>
+<li><p><code>laBRBM</code> use three-way mixed effect ANOVA to analyze the scores <i>X_{ijk}</i>. The model is given by
+<i>X_{ijk}=&mu; + R_j + C_k + m_i + RC_{jk} + mR_{ij} + mC_{ik} + &epsilon;_{ijk}</i>, where <i>R_j</i> and 
+<i>C_k</i> are random effects for readers and cases and <i>m_i</i> is a fixed effect for modality. The variance 
+of mean and individual observation is expressed as the linear combination of the MS given by ANOVA.
+</p>
+</li></ul>
+
+
+
+<h3>Value</h3>
+
+<p>A dataframe with one row. Each column is as following:
+</p>
+
+<dl>
+<dt>meanDiff</dt><dd><p>The mean of difference score.</p>
+</dd>  
+<dt>var.MeanDiff</dt><dd><p>The variance of mean difference score</p>
+</dd>
+<dt>var.1obs</dt><dd><p>The variance of a single WRBM/BRBM difference score</p>
+</dd>
+<dt>ci95meanDiff.bot</dt><dd><p>Lower bound of 95% CI for the mean difference score. <code>meanDiff+
+  1.96*sqrt(var.MeanDiff)</code></p>
+</dd>
+<dt>ci95meanDiff.top</dt><dd><p>Upper bound of 95% CI for the mean difference score. <code>meanDiff-
+  1.96*sqrt(var.MeanDiff)</code></p>
+</dd>
+<dt>la.bot</dt><dd><p>Lower bound of WRBM/BRBM Limits of Agreement. <code>meanDiff+2*sqrt(var.1obs)</code></p>
+</dd>
+<dt>la.top</dt><dd><p>Upper bound of WRBM/BRBM Limits of Agreement. <code>meanDiff-2*sqrt(var.1obs)</code></p>
+</dd>
+</dl>
+
+<p>The two function shows the same 95% CI for the mean difference score, but difference Limits of Agreements.
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+library(iMRMC)
+# Create an MRMC data frame
+# Refer to Gallas2014_J-Med-Img_v1p031006
+simRoeMetz.config &lt;- sim.gRoeMetz.config()
+
+# Simulate data
+df.MRMC &lt;- sim.gRoeMetz(simRoeMetz.config)
+
+# Compute Limits of Agreement
+laWRBM_result &lt;- laWRBM.anova(df.MRMC)
+print(laWRBM_result)
+laBRBM_result &lt;- laBRBM.anova(df.MRMC)
+print(laBRBM_result)
+
+</pre>
+
+
+</body></html>
