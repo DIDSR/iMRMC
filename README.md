@@ -20,10 +20,10 @@ Here are some ways to cite our work:
 * Gallas, Brandon D. “One-Shot Estimate of MRMC Variance: AUC.” Acad Radiol 13, no. 3 (2006): 353–62. https://doi.org/10.1016/j.acra.2005.11.030.
 
 To cite the java code, please use this (with the appropriate version number):
-* Gallas, Brandon D. IMRMC-java vX.XX: Application for Analyzing and Sizing MRMC Reader Studies. Silver Spring, MD, 2017. https://github.com/DIDSR/iMRMC/releases.
+* Gallas, Brandon D., "IMRMC-java vX.XX: Application for Analyzing and Sizing MRMC Reader Studies." Silver Spring, MD, 2017. https://github.com/DIDSR/iMRMC/releases.
 
 To cite the R package, please use this (version number depends on whether you downloaded the code from GitHub or CRAN):
-* Gallas, Brandon D. IMRMC-R vX.XX: Application for Analyzing and Sizing MRMC Reader Studies. Silver Spring, MD, 2017. https://cran.r-project.org/web/packages/iMRMC/index.html.
+* Gallas, Brandon D., "IMRMC-R vX.XX: Application for Analyzing and Sizing MRMC Reader Studies." Silver Spring, MD, 2017. https://cran.r-project.org/web/packages/iMRMC/index.html.
 
 <h5>iRoeMetz</h5>
 
