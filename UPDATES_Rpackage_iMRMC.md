@@ -1,6 +1,10 @@
 <h2>Updates</h2>
 
 <h4>Version Under Development</h4>
+
+We are rewriting do_IMRMC to not call the java app but instead use all R code.
+* The ROC curves have minor differences that are due to rounding numbers in the original code.
+
 ...
 
 <h4>iMRMC_1.2.3</h4>
