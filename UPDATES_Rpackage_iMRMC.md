@@ -3,7 +3,7 @@
 <h4>Version Under Development</h4>
 
 We are rewriting do_IMRMC to not call the java app but instead use all R code.
-* The ROC curves have minor differences that are due to rounding numbers in the original code.
+* The ROC curves have minor differences that are due to rounding numbers in the original code, and the structures have inconsequential differences.
 
 ...
 
