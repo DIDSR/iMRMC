@@ -7,15 +7,15 @@ output: pdf_document
 ```{r setup, include=FALSE}
 library(knitr)
 library(iMRMC)
-source("../../R/sim.new.Hierarchical.R")
+source("../../R/sim.NormalIG.Hierarchical.R")
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-There are two functions in this package that can simulate Multi-reader Multi-case (MRMC) data. sim.new.Hierarchical is the function to simulate the MRMC agreement data with no binary truth state. The sim.gRoeMetz is the function to simulate MRMC ROC data.
+There are two functions in this package that can simulate Multi-reader Multi-case (MRMC) data. sim.NormalIG.Hierarchical is the function to simulate the MRMC agreement data with no binary truth state. The sim.gRoeMetz is the function to simulate MRMC ROC data.
 
 ## 1. Using the new hierachical model to simulate the MRMC agreement data
 
-The following is how to use the sim.new.Hierachcial.R to simulate MRMC data with no truth state, the MRMC agreement data
+The following is how to use the sim.NormalIG.Hierachcial.R to simulate MRMC data with no truth state, the MRMC agreement data
 
 ```{r}
 
@@ -23,11 +23,11 @@ The following is how to use the sim.new.Hierachcial.R to simulate MRMC data with
 nR = 5       #number of readers
 nC = 100     #number of cases
 
-config <- sim.new.Hierarchical.config(nR=nR, nC=nC, modalityID = c("testA","testB")) 
+config <- sim.NormalIG.Hierarchical.config(nR=nR, nC=nC, modalityID = c("testA","testB")) 
 
 # simulate MRMC study
 set.seed(1, kind = "L'Ecuyer-CMRG")
-dFrame.newH <- sim.new.Hierarchical(config)
+dFrame.newH <- sim.NormalIG.Hierarchical(config)
 
 # check the first and last few lines of the simulated dataframe
 head(dFrame.newH)

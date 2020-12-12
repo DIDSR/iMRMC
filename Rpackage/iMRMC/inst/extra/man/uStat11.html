@@ -25,11 +25,19 @@ Of course, the random effects can be from sources other than readers and cases.
 <h3>Usage</h3>
 
 <pre>
-uStat11.jointD(df.input, modalitiesToCompare, kernelFlag = 1,
-  keyColumns = c("readerID", "caseID", "modalityID", "score"))
+uStat11.jointD(
+  df.input,
+  modalitiesToCompare,
+  kernelFlag = 1,
+  keyColumns = c("readerID", "caseID", "modalityID", "score")
+)
 
-uStat11.conditionalD(df.input, modalitiesToCompare, kernelFlag = 1,
-  keyColumns = c("readerID", "caseID", "modalityID", "score"))
+uStat11.conditionalD(
+  df.input,
+  modalitiesToCompare,
+  kernelFlag = 1,
+  keyColumns = c("readerID", "caseID", "modalityID", "score")
+)
 </pre>
 
 
@@ -215,5 +223,5 @@ cat("uStat11.jointD.identity \n")
 print(result.jointD.identity[1:2])
 </pre>
 
-<hr /><div style="text-align: center;">[Package <em>iMRMC</em> version 1.2.0 ]</div>
+<hr /><div style="text-align: center;">[Package <em>iMRMC</em> version 1.2.3 ]</div>
 </body></html>

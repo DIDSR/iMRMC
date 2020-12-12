@@ -86,12 +86,12 @@
 #'
 # @examples
 # # Create a sample configuration object
-# config <- sim.new.Hierarchical.config()
+# config <- sim.NormalIG.Hierarchical.config()
 # # Simulate an MRMC ROC data set
-# dFrame <- sim.new.Hierarchical(config)
+# dFrame <- sim.NormalIG.Hierarchical(config)
 
 
-sim.new.Hierarchical = function(config,R = NULL,AR = NULL,BR = NULL,is.within=FALSE) {
+sim.NormalIG.Hierarchical = function(config,R = NULL,AR = NULL,BR = NULL,is.within=FALSE) {
   
   # Initialize ----
   nR = config$nR
@@ -182,14 +182,14 @@ sim.new.Hierarchical = function(config,R = NULL,AR = NULL,BR = NULL,is.within=FA
   return(df)
 }
 
-#' Create a configuration object for the sim.new.Hierarchical program
+#' Create a configuration object for the sim.NormalIG.Hierarchical program
 #'
 #'#' @description
 #' This function creates a configuration object for the Hierarchical
-#' simulation model to be used as input for the sim.new.Hierarchical program.
+#' simulation model to be used as input for the sim.NormalIG.Hierarchical program.
 #'
 #' @details If no arguments, this function returns a default simulation
-#' configuration for sim.new.Hierarchical
+#' configuration for sim.NormalIG.Hierarchical
 #'
 #' @param nR [num] Number of readers. Default \code{nR = 5}
 #' @param nC [num] Number of cases. Default \code{nC = 100}
@@ -211,11 +211,11 @@ sim.new.Hierarchical = function(config,R = NULL,AR = NULL,BR = NULL,is.within=FA
 #' @param tauC_scale [num] weight for the modality-case term. Default \code{tauC_scale = 1}
 #' @param tauRCE_scale [num] weight for the modality-reader-case-replicate interaction term. Default \code{tauRCE_scale = 1}
 #'
-#' @return config [list] Refer to the sim.new.Hierarchical input variable
+#' @return config [list] Refer to the sim.NormalIG.Hierarchical input variable
 #' @export
 #'
 
-sim.new.Hierarchical.config = function (nR = 5, nC = 100, modalityID = c("testA", "testA*"), C_dist = 'normal', 
+sim.NormalIG.Hierarchical.config = function (nR = 5, nC = 100, modalityID = c("testA", "testA*"), C_dist = 'normal', 
                                         mu = 0, tau_A = 0, tau_B = 0, alpha_R = 10, beta_R = 1,
                                         sigma_C = 1, a_C = 0.8, b_C = 3, sigma_tauC = 1,
                                         alpha_tauR = 10, beta_tauR = 1,

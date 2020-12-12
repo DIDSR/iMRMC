@@ -7,7 +7,7 @@ output: pdf_document
 library(knitr)
 library(iMRMC)
 source("../../R/la.anova.R")
-source('../../R/sim.new.Hierarchical.R')
+source('../../R/sim.NormalIG.Hierarchical.R')
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -70,9 +70,9 @@ Therefore, the estimation of variance of $Y_{jk}$,
 Following is an example of using function laWRBM.anova to compute the WRBM limits of agreement for the simulated MRMC data
 ```{r simulation & laWRBM.anova}
 # Simulate MRMC data
-config <- sim.new.Hierarchical.config(modalityID = c("testA","testB"))
+config <- sim.NormalIG.Hierarchical.config(modalityID = c("testA","testB"))
 set.seed(1)
-data.sim <- sim.new.Hierarchical(config)
+data.sim <- sim.NormalIG.Hierarchical(config)
 
 # Using ANOVA to calculate WRBM limits of agreement
 laWRBM.anova_result <- laWRBM.anova(data.sim)
