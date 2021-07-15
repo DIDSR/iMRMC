@@ -1,7 +1,7 @@
 Package: iMRMC
 Type: Package
 Title: Multi-Reader, Multi-Case Analysis Methods (ROC, Agreement, and Other Metrics)
-Version: 1.2.3
+Version: 1.2.4
 Author: Brandon Gallas
 Maintainer: Brandon Gallas <Brandon.Gallas@fda.hhs.gov>
 Description:
@@ -21,9 +21,9 @@ Description:
   Package development and documentation is at <https://github.com/DIDSR/iMRMC/tree/master>.
 License: CC0
 Encoding: UTF-8
-SystemRequirements:	Java JDK 1.7 or higher
+SystemRequirements: Java JDK 1.7 or higher
 LazyData: true
 Depends: R (>= 3.5.0)
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
 Imports: stats
 Suggests: testthat
