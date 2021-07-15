@@ -138,14 +138,14 @@ createIMRMCdf <- function(
 #'
 # @examples
 undoIMRMCdf <- function(df.MRMC) {
-
+  
   # Separate the data frame into rows corresponding to truth
   # and rows corresping to observations
   df.Truth <- df.MRMC[df.MRMC$readerID == "-1", ]
   if (nrow(df.Truth) > 0) {
     df.Obs <- df.MRMC[df.MRMC$readerID != "-1", ]
   } else {
-    df.Truth <- df.MRMC[df.MRMC$readerID == "truth"]
+    df.Truth <- df.MRMC[df.MRMC$readerID == "truth", ]
     df.Obs <- df.MRMC[df.MRMC$readerID != "truth", ]
   }
 
@@ -277,9 +277,11 @@ convertDFtoDesignMatrix <- function(dfMRMC, modality = NULL, dropFlag = TRUE) {
   # If modality is specified, subset the data on modalityID == modality
   if (!is.null(modality)) {
     dfMRMC <- dfMRMC[dfMRMC$modalityID == modality, ]
-    dfMRMC$modalityID <- factor(dfMRMC$modalityID)
   }
 
+  # Reduce the modality factor to what is actually contained
+  dfMRMC$modalityID <- factor(dfMRMC$modalityID)
+  
   # Check that there is data from one modality only.
   if (nlevels(dfMRMC$modalityID) != 1) {
     desc <- paste("This function only treats data sets with one modality.\n",
@@ -339,11 +341,13 @@ extractPairedComparisonsBRBM <- function(
                     score = "score")
 ) {
 
+  # Establish the key column names
   readerID <- keyColumns$readerID
   caseID <- keyColumns$caseID
   modalityID <- keyColumns$modalityID
   score <- keyColumns$score
 
+  # Create an MRMC data frame
   dfMRMC <- data.frame(
     readerID   = data0[ , readerID],
     caseID     = data0[ , caseID],
@@ -352,28 +356,21 @@ extractPairedComparisonsBRBM <- function(
     stringsAsFactors = TRUE
   )
 
-  # Verify that the key columns exist
-
-  # Pool reader counts into a contingency table ####
-  modality.X <- modalities[1]
-  modality.Y <- modalities[2]
-
-  # Split the data by modalities
-  df.X <- dfMRMC[dfMRMC$modalityID == modality.X,]
-  df.Y <- dfMRMC[dfMRMC$modalityID == modality.Y,]
+  # Split the data by the input modalities
+  df.X <- dfMRMC[dfMRMC$modalityID == modalities[1], ]
+  df.Y <- dfMRMC[dfMRMC$modalityID == modalities[2], ]
 
   # Split the data by readers
   df.XR <- split(df.X, list(df.X$readerID), drop = TRUE)
   nReadersX <- length(df.XR)
   readersX <- names(df.XR)
 
+  # Split the data by readers
   df.YR <- split(df.Y, list(df.Y$readerID), drop = TRUE)
   nReadersY <- length(df.YR)
   readersY <- names(df.YR)
 
-  reader.i <- 1
-  reader.j <- 2
-
+  # For each pair of distinct readers, merge the data
   x <- NULL
   y <- NULL
   for (readerXi in readersX) {

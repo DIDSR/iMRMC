@@ -11,7 +11,7 @@ if (!file.exists(fileName)) {
 
 # Analyze the input file
 result <- tryCatch(
-  result <- doIMRMC(fileName = fileName, stripDatesForTests = TRUE),
+  doIMRMC(fileName = fileName, stripDatesForTests = TRUE),
   warning = function(w) {
     print(w)
     result <- list(error = 1)

@@ -216,7 +216,7 @@ simMRMC <- function(simMRMC.config) {
 #' }
 #'
 #' Note that the first nC.neg + nC.pos rows specify the truth labels for each case.
-#' For these rows, the readerID must be "truth" or "-1"
+#' For these rows, the readerID must be "truth"
 #' and the score must be 0 for negative cases and 1 for postive cases.
 #'
 #' @export
@@ -254,7 +254,7 @@ sim.gRoeMetz <- function(config) {
 
   # Create data frame of truth
   dFrame.truth <- data.frame(
-    readerID = rep("-1", nC.neg + nC.pos),
+    readerID = rep("truth", nC.neg + nC.pos),
     caseID = c(as.character(caseIDs.neg), as.character(caseIDs.pos)),
     modalityID = rep("truth", nC.neg + nC.pos),
     score = c(rep(0, nC.neg), rep(1, nC.pos)),

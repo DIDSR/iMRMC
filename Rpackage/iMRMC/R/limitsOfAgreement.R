@@ -189,13 +189,14 @@ getWRBM <- function(mcsData, modality.X, modality.Y) {
   
 }
 
-#---- getWRBM ----
+#---- getBRBM ----
 #' @title Get between-reader, between-modality paired data from an MRMC data file
 #'
 #' @param mcsData A data frame with the following columns: readerID, caseID, modalityID, score
 #' @param modality.X The name of one modality
-#' @param modality.Y The name of one modality. This should be different from modality.X
+#' @param modality.Y The name of one modality.
 #'
+#' @details If modality.Y = modality.X, then the data would be between-reader, within-modality (BRWM).
 #' @return The result of merging the modality.X and modality.Y subsets of mcsData by caseID
 #'  for every pair of readers
 #' 
