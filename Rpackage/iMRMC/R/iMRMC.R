@@ -29,10 +29,10 @@
 #'
 #' @param data This data.frame contains the following variables:
 #' \itemize{
-#'   \item \code{readerID} [Factor] with levels like "reader1", "reader2", ...
-#'   \item \code{caseID} [Factor] with levels like "case1", "case2", ...
-#'   \item \code{modalityID} [Factor] with levels like "modality1", "modality2", ...
-#'   \item \code{score} [num] reader score
+#'   \item \code{readerID} Factor with levels like "reader1", "reader2", ...
+#'   \item \code{caseID} Factor with levels like "case1", "case2", ...
+#'   \item \code{modalityID} Factor with levels like "modality1", "modality2", ...
+#'   \item \code{score} num reader score
 #' }
 #'                      
 #' Each row of this data frame corresponds to an observation.
@@ -64,16 +64,16 @@
 #'            Here is a quick summary:
 #' \itemize{
 #'   \item {\code{perReader} 
-#'   [data.frame] this data frame contains the performance results for each reader.
+#'   data.frame containing the performance results for each reader.
 #'              Key variables of this data frame are AUCA, AUCB, AUCAminusAUCB and the corresponding
 #'              variances, confidence intervals, degrees of freedom and p-values.}
 #'   \item {\code{Ustat}
-#'   [data.frame] this data frame contains the reader-average performance results.
+#'   data.frame containing the reader-average performance results.
 #'              The analysis results are based on U-statistics and the papers listed above.
 #'              Key variables of this data frame are AUCA, AUCB, AUCAminusAUCB and the corresponding
 #'              variances, confidence intervals, degrees of freedom and p-values.}
 #'   \item {\code{MLEstat}
-#'   [data.frame] this data frame contains the reader-average performance results.
+#'   data.frame containing the reader-average performance results.
 #'              The analysis results are based on V-statistics, which approximates the true distribution with
 #'              the empirical distribution. The empirical distribution equals the nonparametric MLE
 #'              estimate of the true distribution, which is also equivalent to the ideal bootstrap estimate.
@@ -82,7 +82,7 @@
 #'              variances, confidence intervals, degrees of freedom and p-values.
 #'   }
 #'   \item {\code{ROC}
-#'   [list] each object of this list is an object containing an ROC curve.
+#'   list containing ROC curves
 #'              There is an ROC curve for every combination of reader and modality.
 #'              For every modality, there are also four average ROC curves. These are discussed in
 #'                Chen2014_Br-J-Radiol_v87p20140016.
@@ -91,7 +91,7 @@
 #'                The vertical average averages the reader specific ROC curves along x = b for b in (0,1).
 #'                The pooled average ignores readerID and pools all the scores together to create one ROC curve.}
 #'   \item {\code{varDecomp}
-#'   [list] the objects of this list are different decompositions of the total variance.
+#'   list containing different decompositions of the total variance.
 #'              Please refer to Gallas2009_Commun-Stat-A-Theor_v38p2586 (framework paper).
 #'              The different decompositions are BCK, BDG, DBM, MS, OR.
 #'   }
@@ -211,9 +211,12 @@ doIMRMC <- function(
   }
 
   # Retrieve the iMRMC results
-  perReader <- utils::read.csv(file.path(workDir, "imrmcDir", "AUCperReader.csv")) 
-  Ustat <- utils::read.csv(file.path(workDir, "imrmcDir", "statAnalysis.csv"))
-  MLEstat <- utils::read.csv(file.path(workDir, "imrmcDir", "statAnalysisMLE.csv"))
+  perReader <- utils::read.csv(file.path(workDir, "imrmcDir", "AUCperReader.csv"),
+                               stringsAsFactors = TRUE) 
+  Ustat <- utils::read.csv(file.path(workDir, "imrmcDir", "statAnalysis.csv"),
+                           stringsAsFactors = TRUE)
+  MLEstat <- utils::read.csv(file.path(workDir, "imrmcDir", "statAnalysisMLE.csv"),
+                             stringsAsFactors = TRUE)
   ROCraw <- utils::read.csv(file.path(workDir, "imrmcDir", "ROCcurves.csv"),
                      header = FALSE, row.names = NULL, skip = 1)
 
