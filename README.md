@@ -1,5 +1,7 @@
 <h3>README for iMRMC and iRoeMetz</h3>
 
+Here is a high-level overview of the iMRMC software: [LINK](https://github.com/DIDSR/iMRMC/raw/master/iMRMC-ToolOverview.pdf)
+
 Visit the <a href="https://github.com/DIDSR/iMRMC/releases" rel="nofollow">release Page</a> to download the software or access the repository [HERE](https://github.com/DIDSR/iMRMC).
 
 The documentation for both packages can be found <a href="http://didsr.github.io/iMRMC/" rel="nofollow">here.</a>
