@@ -184,9 +184,9 @@ doIMRMC <- function(
       "java",
       args = c(
         "-jar",
-        iMRMCjarFullPath,
-        inputFile,
-        file.path(workDir, "imrmcDir")
+        paste0('"', iMRMCjarFullPath, '"'),
+        paste0('"', inputFile, '"'),
+        paste0('"', file.path(workDir, "imrmcDir"), '"')
       ),
       stdout = TRUE, stderr = TRUE
     ),
