@@ -24,6 +24,6 @@ Encoding: UTF-8
 SystemRequirements: Java JDK 1.7 or higher
 LazyData: true
 Depends: R (>= 3.5.0)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Imports: stats
 Suggests: testthat

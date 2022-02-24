@@ -7,6 +7,11 @@ We are rewriting do_IMRMC to use only R code and not call the iMRMC java app. Th
 
 ...
 
+<h4>iMRMC_1.2.4</h4>
+*2/23/22*
+
+Solve problem when working in a folder with spaces.
+
 <h4>iMRMC_1.2.3</h4>
 *05/05/20*
 
