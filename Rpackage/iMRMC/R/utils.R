@@ -242,7 +242,7 @@ convertDFtoScoreMatrix <- function(dfMRMC, modality = NULL, dropFlag = TRUE) {
   nCases <- nlevels(dfMRMC$caseID)
   nReaders <- nlevels(dfMRMC$readerID)
 
-  scores <- array(-1, c(nCases, nReaders), dimnames = list(caseIDs, readerIDs))
+  scores <- array(NA, c(nCases, nReaders), dimnames = list(caseIDs, readerIDs))
 
   index <- dfMRMC[ , c("caseID","readerID")]
   index <- data.matrix(index)

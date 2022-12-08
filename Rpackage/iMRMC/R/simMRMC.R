@@ -375,6 +375,8 @@ sim.gRoeMetz <- function(config) {
 #' The user can specify three parameters related to experiment size (nR, nC.neg, nC.pos)
 #' and five parameters parameters specifying a linear model that does not
 #' depend on modality or truth (mu.neg, mu.pos, var_r, var_c, var_rc).
+#' The mu.pos is set to 1.0, which yields a reader averaged AUC of
+#' approximately 0.765.
 #'
 #' @details If no arguments, this function returns a default simulation
 #' configuration for sim.gRoeMetz
