@@ -207,6 +207,11 @@ getBRBM <- function(mcsData, modality.X, modality.Y) {
   
   # This data frame will hold all the paired observations
   df <- data.frame()
+
+  # Make sure fields are factors
+  mcsData$readerID <- factor(mcsData$readerID)
+  mcsData$caseID <- factor(mcsData$caseID)
+  mcsData$modalityID <- factor(mcsData$modalityID)
   
   # Split the data by readers
   nReaders <- nlevels(mcsData$readerID)
