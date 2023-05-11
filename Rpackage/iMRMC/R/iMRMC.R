@@ -15,7 +15,7 @@
 #' the local file system, packs the analysis results into a list object, deletes the data and analysis results
 #' from the local file system, and returns the list object.
 #' 
-#' This software requires Java JDK 1.7 or higher.
+#' This software requires Java(>=8).
 #' 
 #' The examples took too long for CRAN to accept. So here is an example: 
 #' \preformatted{
@@ -199,7 +199,7 @@ doIMRMC <- function(
     error = function(e) {
       cat("\ndoIMRMC ERROR\n")
       cat("One possible reason is that you don't have java.\n")
-      cat("This software requires Java JDK 1.7 or higher.\n")
+      cat("This software requires Java(>=8).\n")
       stop(e)
     }
     
