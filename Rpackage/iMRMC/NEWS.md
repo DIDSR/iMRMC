@@ -1,5 +1,5 @@
 # iMRMC 1.2.5
-
+*5/15/23*
 - Updated Java system requirement
 - Added further documentation on functions
 - Submitted updates to CRAN for rerelease
