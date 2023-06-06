@@ -134,7 +134,7 @@ uStat11.jointD <- function(
   keyColumns = c("readerID", "caseID", "modalityID", "score")
   ) {
 
-  if (class(modalitiesToCompare) != "character") {
+  if (!inherits(modalitiesToCompare, "character")) {
     stop(paste(
       "class(modalitiesToCompare) =", class(modalitiesToCompare),
       "... The class should be character.")
@@ -347,7 +347,7 @@ uStat11.conditionalD <- function(
   keyColumns = c("readerID", "caseID", "modalityID", "score")
 ) {
 
-  if (class(modalitiesToCompare) != "character") {
+  if (!inherits(modalitiesToCompare, "character")) {
     stop(paste(
       "class(modalitiesToCompare) =", class(modalitiesToCompare),
       "... The class should be character.")
