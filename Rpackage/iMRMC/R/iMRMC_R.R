@@ -49,10 +49,9 @@
 #'   \item {\code{varDecomp, list}
 #'     list of data frames of the coefficient and components of 
 #'     variance. The analysis includes variance decomposition based off both the 
-#'     BDG and BCK MRMC methods, and 
-#'     Ustat and MLE statistical methods. Each MRMC and statistical 
-#'     method combination is contained 
-#'     within this list of lists.
+#'     BDG and BCK MRMC methods, and Ustat and MLE statistical methods. 
+#'     Each MRMC and statistical method combination is contained within this 
+#'     list of lists. 
 #'   }
 #'   \item {\code{ROC, list}
 #'     each object of this list is an object containing an ROC curve.
@@ -71,6 +70,14 @@
 #'    This returns the same result as \code{\link{doAUCmrmc}}.
 #'  }
 #' }
+#' 
+#' @details
+#' Unlike the legacy \code{\link{doIMRMC_java}}, the `varDecomp` results no 
+#' longer scale the covariance by a factor of 2. This scaling is needed when 
+#' calculating the total variance of the difference in modalities. The user 
+#' must scale this covariance by 2 manually now to achieve the total variance
+#' of the difference in modalities result. 
+#' 
 #' 
 #' @export
 #' 
