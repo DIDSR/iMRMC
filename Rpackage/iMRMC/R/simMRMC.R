@@ -1,7 +1,7 @@
 # Initialize the l'Ecuyer random number generator ####
 #' @title Initialize the l'Ecuyer random number generator
 #'
-#' @description See the documentation for the parallel package.
+#' @description See the documentation for the \code{parallel package}.
 #' If you require backwards compatibility, please run \code{RNGversion("3.5.0")}.
 #'
 #' @param seed This determines the position in each stream
@@ -15,13 +15,13 @@
 #'
 # @examples
 init.lecuyerRNG <- function(seed = 1, stream = 2){
-
+  
   # Set the random number generator
   RNGkind("L'Ecuyer-CMRG")
   
   # Set the seed
   set.seed(seed)
-
+  
   # Set the streamID
   # Skip to the stream corresponding to the taskID
   # Each taskID will have its own stream for parallel implementation
@@ -31,7 +31,7 @@ init.lecuyerRNG <- function(seed = 1, stream = 2){
     .Random.seed <<- nextRNGStream(.Random.seed)
     i <- i + 1
   }
-
+  
 }
 
 # Simulate an MRMC data set ####
@@ -52,13 +52,13 @@ init.lecuyerRNG <- function(seed = 1, stream = 2){
 #'
 #' @param simMRMC.config [list] of simulation parameters:
 #' \itemize{
-#'   \item modalityID [chr] label modalityID
+#'   \item modalityID [character] label modalityID
 #'   \item readerIDs  [factor] the ID of each reader
 #'   \item caseIDs    [factor] the ID of each case
-#'   \item mu         [num] mean
-#'   \item var_r      [num] variance of random reader effect
-#'   \item var_c      [num] variance of random case effect
-#'   \item var_rc     [num] variance of random reader by case effect
+#'   \item mu         [numeric] mean
+#'   \item var_r      [numeric] variance of random reader effect
+#'   \item var_c      [numeric] variance of random case effect
+#'   \item var_rc     [numeric] variance of random reader by case effect
 #' }
 #'
 #' @return  L [data.frame] with nC*nR rows of 4 variables
@@ -66,7 +66,7 @@ init.lecuyerRNG <- function(seed = 1, stream = 2){
 #'   \item L$modalityID   [factor] determined by input modalityID
 #'   \item L$readerID     [factor] determined by input readerIDs
 #'   \item L$caseID       [factor] determined by input caseIDs
-#'   \item L$score        [num]  R.r + C.c + RC.rc
+#'   \item L$score        [numeric]  R.r + C.c + RC.rc
 #'   \itemize{
 #'     \item r = 1,2,...,nR
 #'     \item c = 1,2,...,nC
@@ -87,7 +87,7 @@ init.lecuyerRNG <- function(seed = 1, stream = 2){
 # result <- doIMRMC(dFrame.imrmc)
 
 simMRMC <- function(simMRMC.config) {
-
+  
   modalityID <- simMRMC.config$modalityID
   readerIDs <- simMRMC.config$readerIDs
   caseIDs <- simMRMC.config$caseIDs
@@ -95,19 +95,19 @@ simMRMC <- function(simMRMC.config) {
   var_c <- simMRMC.config$var_c
   var_r <- simMRMC.config$var_r
   var_rc <- simMRMC.config$var_rc
-
+  
   nR <- length(readerIDs)
   nC <- length(caseIDs)
-
+  
   # Initialize data array with mu (fixed effect: grand mean)
   L_mu <- rep(mu, nC * nR)
-
+  
   # Simulate case effects
   L_cases <- stats::rnorm(nC, mean = 0, sd = sqrt(var_c))
   # Replicate random case effects for each reader
   L_cases <- rep(L_cases, nR)
   caseID <- rep(caseIDs, nR)
-
+  
   # Simulate reader effects
   L_readers <- stats::rnorm(nR, mean = 0, sd = sqrt(var_r))
   # Replicate random reader effects for each case
@@ -115,11 +115,11 @@ simMRMC <- function(simMRMC.config) {
   #   is to be replicated nC times.
   L_readers <- rep(L_readers, rep(nC, nR))
   readerID <- rep(readerIDs, rep(nC, nR))
-
+  
   # Simulate reader by case interaction
   L_reader.case <- stats::rnorm(nC*nR, mean = 0, sd = sqrt(var_rc))
   modalityID <- rep(modalityID, nC*nR)
-
+  
   # Put it all together
   L <- data.frame(
     readerID = readerID,
@@ -128,7 +128,7 @@ simMRMC <- function(simMRMC.config) {
     score = L_mu + L_cases + L_readers + L_reader.case,
     stringsAsFactors = TRUE
   )
-
+  
 }
 
 # Simulate an MRMC data set of an ROC experiment comparing two modalities ####
@@ -140,8 +140,7 @@ simMRMC <- function(simMRMC.config) {
 #' Roe1997_Acad-Radiol_v4p298 and Roe1997_Acad-Radiol_v4p587. Specifically, it allows
 #' the variance components to depend on the truth and the modality. For the simpler
 #' Roe and Metz model, you can enter the smaller set of parameters into
-#' sim.gRoeMetz.config and get back the larger set of parameters and then
-#' used with this function.
+#' sim.gRoeMetz.config and it will return a larger set of parameters that can be used with this function. 
 #'
 #' @details
 #' The simulation is a linear model with six fixed effects related to
@@ -163,61 +162,61 @@ simMRMC <- function(simMRMC.config) {
 #' \itemize{
 #'   \item Experiment labels and size
 #'   \itemize{
-#'     \item modalityID.A: [chr] label modality A
-#'     \item modalityID.B: [chr] label modality B
-#'     \item nR: [num] number of readers
-#'     \item nC.neg: [num] number of signal-absent cases
-#'     \item nC.pos: [num] number of signal-present cases
+#'     \item modalityID.A: [character] label modality A
+#'     \item modalityID.B: [character] label modality B
+#'     \item nR: [numeric] number of readers
+#'     \item nC.neg: [numeric] number of signal-absent cases
+#'     \item nC.pos: [numeric] number of signal-present cases
 #'   }
 #'   \item There are six fixed effects:
 #'   \itemize{
-#'     \item mu.neg: [num] signal-absent (neg, global mean)
-#'     \item mu.pos: [num] signal-present (pos, global mean)
-#'     \item mu.Aneg: [num] modality A signal-absent (Aneg, modality effect)
-#'     \item mu.Bneg: [num] modality B signal-absent (Bneg, modality effect)
-#'     \item mu.Apos: [num] modality A signal-present (Apos, modality effect)
-#'     \item mu.Bpos: [num] modality B signal-present (Bpos, modality effect)
+#'     \item mu.neg: [numeric] signal-absent (neg, global mean)
+#'     \item mu.pos: [numeric] signal-present (pos, global mean)
+#'     \item mu.Aneg: [numeric] modality A signal-absent (Aneg, modality effect)
+#'     \item mu.Bneg: [numeric] modality B signal-absent (Bneg, modality effect)
+#'     \item mu.Apos: [numeric] modality A signal-present (Apos, modality effect)
+#'     \item mu.Bpos: [numeric] modality B signal-present (Bpos, modality effect)
 #'   }
 #'   \item There are six random effects that are independent of modality
 #'   \itemize{
-#'     \item var_r.neg: [num] variance of random reader effect
-#'     \item var_c.neg: [num] variance of random case effect
-#'     \item var_rc.neg: [num] variance of random reader by case effect
-#'     \item var_r.pos: [num] variance of random reader effect
-#'     \item var_c.pos: [num] variance of random case effect
-#'     \item var_rc.pos: [num] variance of random reader by case effect
+#'     \item var_r.neg: [numeric] variance of random reader effect
+#'     \item var_c.neg: [numeric] variance of random case effect
+#'     \item var_rc.neg: [numeric] variance of random reader by case effect
+#'     \item var_r.pos: [numeric] variance of random reader effect
+#'     \item var_c.pos: [numeric] variance of random case effect
+#'     \item var_rc.pos: [numeric] variance of random reader by case effect
 #'   }
 #'   \item There are six random effects that are specific to modality A
 #'     \itemize{
-#'       \item var_r.Aneg: [num] variance of random reader effect
-#'       \item var_c.Aneg: [num] variance of random case effect
-#'       \item var_rc.Aneg: [num] variance of random reader by case effect
-#'       \item var_r.Apos: [num] variance of random reader effect
-#'       \item var_c.Apos: [num] variance of random case effect
-#'       \item var_rc.Apos: [num] variance of randome reader by case effect
+#'       \item var_r.Aneg: [numeric] variance of random reader effect
+#'       \item var_c.Aneg: [numeric] variance of random case effect
+#'       \item var_rc.Aneg: [numeric] variance of random reader by case effect
+#'       \item var_r.Apos: [numeric] variance of random reader effect
+#'       \item var_c.Apos: [numeric] variance of random case effect
+#'       \item var_rc.Apos: [numeric] variance of randome reader by case effect
 #'   }
 #'   \item There are six random effects that are specific to modality B
 #'     \itemize{
-#'       \item var_r.Bneg: [num] variance of random reader effect
-#'       \item var_c.Bneg: [num] variance of random case effect
-#'       \item var_rc.Bneg: [num] variance of random reader by case effect
-#'       \item var_r.Bpos: [num] variance of random reader effect
-#'       \item var_c.Bpos: [num] variance of random case effect
-#'       \item var_rc.Bpos: [num] variance of randome reader by case effect
+#'       \item var_r.Bneg: [numeric] variance of random reader effect
+#'       \item var_c.Bneg: [numeric] variance of random case effect
+#'       \item var_rc.Bneg: [numeric] variance of random reader by case effect
+#'       \item var_r.Bpos: [numeric] variance of random reader effect
+#'       \item var_c.Bpos: [numeric] variance of random case effect
+#'       \item var_rc.Bpos: [numeric] variance of randome reader by case effect
 #'   }
 #' }
 #'
 #' @return  dFrame.imrmc   [data.frame] with (nC.neg + nC.pos)*(nR+1) rows including
 #' \itemize{
-#'   \item readerID: [Factor] w/ nR levels "reader1", "reader2", ...
-#'   \item caseID: [Factor] w/ nC levels "case1", "case2", ...
-#'   \item modalityID: [Factor] w/ 1 level config$modalityID
-#'   \item score: [num] reader score
+#'   \item readerID: [factor] w/ nR levels "reader1", "reader2", ...
+#'   \item caseID: [factor] w/ nC levels "case1", "case2", ...
+#'   \item modalityID: [factor] w/ 1 level config$modalityID
+#'   \item score: [numeric] reader score
 #' }
 #'
 #' Note that the first nC.neg + nC.pos rows specify the truth labels for each case.
 #' For these rows, the readerID must be "truth"
-#' and the score must be 0 for negative cases and 1 for postive cases.
+#' and the score must be 0 for negative cases and 1 for positive cases.
 #'
 #' @export
 #'
@@ -230,20 +229,20 @@ simMRMC <- function(simMRMC.config) {
 # result <- doIMRMC(dFrame.imrmc)
 #
 sim.gRoeMetz <- function(config) {
-
+  
   # Unpack modality labels
   modalityID.A <- config$modalityID.A
   modalityID.B <- config$modalityID.B
-
+  
   # Unpack experiment size
   nR <- config$nR
   nC.neg <- config$nC.neg
   nC.pos <- config$nC.pos
-
+  
   # Assign readerIDs
   readerIDs <- paste("reader", 1:nR, sep = "")
   readerIDs <- factor(readerIDs, readerIDs, ordered = TRUE)
-
+  
   # Assign caseIDs
   caseIDs.neg <- paste("negCase", 1:nC.neg, sep = "")
   caseIDs.neg <- factor(caseIDs.neg, caseIDs.neg, ordered = TRUE)
@@ -251,7 +250,7 @@ sim.gRoeMetz <- function(config) {
   caseIDs.pos <- factor(caseIDs.pos, caseIDs.pos, ordered = TRUE)
   caseIDs <- c(as.character(caseIDs.neg), as.character(caseIDs.pos))
   caseIDs <- factor(caseIDs, caseIDs, ordered = TRUE)
-
+  
   # Create data frame of truth
   dFrame.truth <- data.frame(
     readerID = rep("truth", nC.neg + nC.pos),
@@ -260,7 +259,7 @@ sim.gRoeMetz <- function(config) {
     score = c(rep(0, nC.neg), rep(1, nC.pos)),
     stringsAsFactors = TRUE
   )
-
+  
   # Simulate the modality independent random effects, negative cases
   neg.config <- list(
     nR = nR,
@@ -274,7 +273,7 @@ sim.gRoeMetz <- function(config) {
     var_rc = config$var_rc.neg
   )
   dFrame.neg <- simMRMC(neg.config)
-
+  
   # Simulate the modality independent random effects, positive cases
   pos.config <- list(
     nR = nR,
@@ -288,7 +287,7 @@ sim.gRoeMetz <- function(config) {
     var_rc = config$var_rc.pos
   )
   dFrame.pos <- simMRMC(pos.config)
-
+  
   # Simulate modality A random effects, negative cases
   modAneg.config <- list(
     nR = nR,
@@ -302,7 +301,7 @@ sim.gRoeMetz <- function(config) {
     var_rc = config$var_rc.Aneg
   )
   dFrame.modAneg <- simMRMC(modAneg.config)
-
+  
   # Simulate modality A random effects, positive cases
   modApos.config <- list(
     nR = nR,
@@ -316,7 +315,7 @@ sim.gRoeMetz <- function(config) {
     var_rc = config$var_rc.Apos
   )
   dFrame.modApos <- simMRMC(modApos.config)
-
+  
   # Simulate modality B random effects, negative cases
   modBneg.config <- list(
     nR = nR,
@@ -330,7 +329,7 @@ sim.gRoeMetz <- function(config) {
     var_rc = config$var_rc.Bneg
   )
   dFrame.modBneg <- simMRMC(modBneg.config)
-
+  
   # Simulate modality B random effects, positive cases
   modBpos.config <- list(
     nR = nR,
@@ -344,12 +343,12 @@ sim.gRoeMetz <- function(config) {
     var_rc = config$var_rc.Bpos
   )
   dFrame.modBpos <- simMRMC(modBpos.config)
-
+  
   dFrame.modAneg$score <- dFrame.neg$score + dFrame.modAneg$score
   dFrame.modApos$score <- dFrame.pos$score + dFrame.modApos$score
   dFrame.modBneg$score <- dFrame.neg$score + dFrame.modBneg$score
   dFrame.modBpos$score <- dFrame.pos$score + dFrame.modBpos$score
-
+  
   dFrame.imrmc <- rbind(
     dFrame.truth,
     dFrame.modAneg,
@@ -357,11 +356,11 @@ sim.gRoeMetz <- function(config) {
     dFrame.modApos,
     dFrame.modBpos
   )
-
+  
   dFrame.imrmc$caseID <- factor(dFrame.imrmc$caseID, as.character(caseIDs), ordered = TRUE)
-
+  
   return(dFrame.imrmc)
-
+  
 }
 
 # Create a configuration object for the sim.gRoeMetz program ####
@@ -407,26 +406,26 @@ sim.gRoeMetz <- function(config) {
 # # Analyze the MRMC ROC data
 # result <- doIMRMC(dFrame.imrmc)
 sim.gRoeMetz.config <- function(
-  nR = 5,
-  nC.neg = 40,
-  nC.pos = 40,
-  mu.neg = 0.0,
-  mu.pos = 1.0,
-  var_r =  0.03,
-  var_c =  0.30,
-  var_rc = 0.20
+    nR = 5,
+    nC.neg = 40,
+    nC.pos = 40,
+    mu.neg = 0.0,
+    mu.pos = 1.0,
+    var_r =  0.03,
+    var_c =  0.30,
+    var_rc = 0.20
 ) {
-
+  
   config <- list(
     # Modality labels
     modalityID.A = "testA",
     modalityID.B = "testB",
-
+    
     # Experiment size
     nR = nR,
     nC.neg = nC.neg,
     nC.pos = nC.pos,
-
+    
     # Model parameters invariant to modality
     # Signal-absent global mean
     mu.neg = mu.neg,
@@ -440,7 +439,7 @@ sim.gRoeMetz.config <- function(
     var_r.pos =  var_r,
     var_c.pos =  var_c,
     var_rc.pos = var_rc,
-
+    
     # Model parameters for modality A
     # Signal-present modality effect
     mu.Aneg = 0,
@@ -454,7 +453,7 @@ sim.gRoeMetz.config <- function(
     var_r.Apos =  var_r,
     var_c.Apos =  var_c,
     var_rc.Apos = var_rc,
-
+    
     # Model parameters for modality B
     # Signal-present modality effect
     mu.Bneg = 0,
@@ -469,15 +468,15 @@ sim.gRoeMetz.config <- function(
     var_c.Bpos =  var_c,
     var_rc.Bpos = var_rc
   )
-
+  
   return(config)
-
+  
 }
 
 # Simulates a sample MRMC ROC experiment ####
 #' Simulates a sample MRMC ROC experiment
 #'
-#' @return dFrame.imrmc [data.frame] Please refer to the description of the simRoeMetz return variable
+#' @return dFrame.imrmc [data.frame] Please refer to the description of the \code{\link{sim.gRoeMetz}} return variable
 #' @export
 #'
 # @examples
@@ -487,26 +486,26 @@ sim.gRoeMetz.config <- function(
 # result <- doIMRMC(dFrame.imrmc)
 #
 simRoeMetz.example <- function() {
-
+  
   config <- sim.gRoeMetz.config()
-
+  
   # Simulate data
   dFrame.imrmc <- sim.gRoeMetz(config)
-
+  
   tempA <- dFrame.imrmc[dFrame.imrmc$modalityID == "testA", ]
   tempApos <- tempA[grep("pos", tempA$caseID), ]
   tempAneg <- tempA[grep("neg", tempA$caseID), ]
   tempB <- dFrame.imrmc[dFrame.imrmc$modalityID == "testB", ]
   tempBpos <- tempB[grep("pos", tempA$caseID), ]
   tempBneg <- tempB[grep("neg", tempA$caseID), ]
-
+  
   cat("test A pos: mean, var = ", mean(tempApos$score), ",", stats::var(tempApos$score), "\n")
   cat("test B pos: mean, var = ", mean(tempBpos$score), ",", stats::var(tempBpos$score), "\n")
   cat("test A neg: mean, var = ", mean(tempAneg$score), ",", stats::var(tempAneg$score), "\n")
   cat("test B neg: mean, var = ", mean(tempBneg$score), ",", stats::var(tempBneg$score), "\n")
-
+  
   return(dFrame.imrmc)
-
+  
 }
 
 ## roeMetzConfigs ####
@@ -522,47 +521,47 @@ simRoeMetz.example <- function() {
 #' \itemize{
 #'   \item Experiment labels and size
 #'   \itemize{
-#'     \item modalityID.A: [chr] label modality A
-#'     \item modalityID.B: [chr] label modality B
-#'     \item nR: [num] number of readers
-#'     \item nC.neg: [num] number of signal-absent cases
-#'     \item nC.pos: [num] number of signal-present cases
+#'     \item modalityID.A: [character] label modality A
+#'     \item modalityID.B: [character] label modality B
+#'     \item nR: [numeric] number of readers
+#'     \item nC.neg: [numeric] number of signal-absent cases
+#'     \item nC.pos: [numeric] number of signal-present cases
 #'   }
 #'   \item There are six fixed effects:
 #'   \itemize{
-#'     \item mu.neg: [num] signal-absent (neg, global mean)
-#'     \item mu.pos: [num] signal-present (pos, global mean)
-#'     \item mu.Aneg: [num] modality A signal-absent (Aneg, modality effect)
-#'     \item mu.Bneg: [num] modality B signal-absent (Bneg, modality effect)
-#'     \item mu.Apos: [num] modality A signal-present (Apos, modality effect)
-#'     \item mu.Bpos: [num] modality B signal-present (Bpos, modality effect)
+#'     \item mu.neg: [numeric] signal-absent (neg, global mean)
+#'     \item mu.pos: [numeric] signal-present (pos, global mean)
+#'     \item mu.Aneg: [numeric] modality A signal-absent (Aneg, modality effect)
+#'     \item mu.Bneg: [numeric] modality B signal-absent (Bneg, modality effect)
+#'     \item mu.Apos: [numeric] modality A signal-present (Apos, modality effect)
+#'     \item mu.Bpos: [numeric] modality B signal-present (Bpos, modality effect)
 #'   }
 #'   \item There are six random effects that are independent of modality
 #'   \itemize{
-#'     \item var_r.neg: [num] variance of random reader effect
-#'     \item var_c.neg: [num] variance of random case effect
-#'     \item var_rc.neg: [num] variance of random reader by case effect
-#'     \item var_r.pos: [num] variance of random reader effect
-#'     \item var_c.pos: [num] variance of random case effect
-#'     \item var_rc.pos: [num] variance of random reader by case effect
+#'     \item var_r.neg: [numeric] variance of random reader effect
+#'     \item var_c.neg: [numeric] variance of random case effect
+#'     \item var_rc.neg: [numeric] variance of random reader by case effect
+#'     \item var_r.pos: [numeric] variance of random reader effect
+#'     \item var_c.pos: [numeric] variance of random case effect
+#'     \item var_rc.pos: [numeric] variance of random reader by case effect
 #'   }
 #'   \item There are six random effects that are specific to modality A
 #'     \itemize{
-#'       \item var_r.Aneg: [num] variance of random reader effect
-#'       \item var_c.Aneg: [num] variance of random case effect
-#'       \item var_rc.Aneg: [num] variance of random reader by case effect
-#'       \item var_r.Apos: [num] variance of random reader effect
-#'       \item var_c.Apos: [num] variance of random case effect
-#'       \item var_rc.Apos: [num] variance of randome reader by case effect
+#'       \item var_r.Aneg: [numeric] variance of random reader effect
+#'       \item var_c.Aneg: [numeric] variance of random case effect
+#'       \item var_rc.Aneg: [numeric] variance of random reader by case effect
+#'       \item var_r.Apos: [numeric] variance of random reader effect
+#'       \item var_c.Apos: [numeric] variance of random case effect
+#'       \item var_rc.Apos: [numeric] variance of randome reader by case effect
 #'   }
 #'   \item There are six random effects that are specific to modality B
 #'     \itemize{
-#'       \item var_r.Bneg: [num] variance of random reader effect
-#'       \item var_c.Bneg: [num] variance of random case effect
-#'       \item var_rc.Bneg: [num] variance of random reader by case effect
-#'       \item var_r.Bpos: [num] variance of random reader effect
-#'       \item var_c.Bpos: [num] variance of random case effect
-#'       \item var_rc.Bpos: [num] variance of randome reader by case effect
+#'       \item var_r.Bneg: [numeric] variance of random reader effect
+#'       \item var_c.Bneg: [numeric] variance of random case effect
+#'       \item var_rc.Bneg: [numeric] variance of random reader by case effect
+#'       \item var_r.Bpos: [numeric] variance of random reader effect
+#'       \item var_c.Bpos: [numeric] variance of random case effect
+#'       \item var_rc.Bpos: [numeric] variance of randome reader by case effect
 #'   }
 #' }
 #' 
