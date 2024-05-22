@@ -1,881 +1,883 @@
+This is row 1 of front matter
+This is row 2 of front matter
 BEGIN DATA:
--1, negCase1, truth, 0
--1, negCase2, truth, 0
--1, negCase3, truth, 0
--1, negCase4, truth, 0
--1, negCase5, truth, 0
--1, negCase6, truth, 0
--1, negCase7, truth, 0
--1, negCase8, truth, 0
--1, negCase9, truth, 0
--1, negCase10, truth, 0
--1, negCase11, truth, 0
--1, negCase12, truth, 0
--1, negCase13, truth, 0
--1, negCase14, truth, 0
--1, negCase15, truth, 0
--1, negCase16, truth, 0
--1, negCase17, truth, 0
--1, negCase18, truth, 0
--1, negCase19, truth, 0
--1, negCase20, truth, 0
--1, negCase21, truth, 0
--1, negCase22, truth, 0
--1, negCase23, truth, 0
--1, negCase24, truth, 0
--1, negCase25, truth, 0
--1, negCase26, truth, 0
--1, negCase27, truth, 0
--1, negCase28, truth, 0
--1, negCase29, truth, 0
--1, negCase30, truth, 0
--1, negCase31, truth, 0
--1, negCase32, truth, 0
--1, negCase33, truth, 0
--1, negCase34, truth, 0
--1, negCase35, truth, 0
--1, negCase36, truth, 0
--1, negCase37, truth, 0
--1, negCase38, truth, 0
--1, negCase39, truth, 0
--1, negCase40, truth, 0
--1, posCase1, truth, 1
--1, posCase2, truth, 1
--1, posCase3, truth, 1
--1, posCase4, truth, 1
--1, posCase5, truth, 1
--1, posCase6, truth, 1
--1, posCase7, truth, 1
--1, posCase8, truth, 1
--1, posCase9, truth, 1
--1, posCase10, truth, 1
--1, posCase11, truth, 1
--1, posCase12, truth, 1
--1, posCase13, truth, 1
--1, posCase14, truth, 1
--1, posCase15, truth, 1
--1, posCase16, truth, 1
--1, posCase17, truth, 1
--1, posCase18, truth, 1
--1, posCase19, truth, 1
--1, posCase20, truth, 1
--1, posCase21, truth, 1
--1, posCase22, truth, 1
--1, posCase23, truth, 1
--1, posCase24, truth, 1
--1, posCase25, truth, 1
--1, posCase26, truth, 1
--1, posCase27, truth, 1
--1, posCase28, truth, 1
--1, posCase29, truth, 1
--1, posCase30, truth, 1
--1, posCase31, truth, 1
--1, posCase32, truth, 1
--1, posCase33, truth, 1
--1, posCase34, truth, 1
--1, posCase35, truth, 1
--1, posCase36, truth, 1
--1, posCase37, truth, 1
--1, posCase38, truth, 1
--1, posCase39, truth, 1
--1, posCase40, truth, 1
-reader1, negCase1, testA, 0.169553113370738
-reader1, negCase2, testA, -0.756331928990591
-reader1, negCase3, testA, -0.266195880408868
-reader1, negCase4, testA, 0.452298542066245
-reader1, negCase5, testA, 0.471395555093475
-reader1, negCase6, testA, -0.430438094412968
-reader1, negCase7, testA, 0.369099160892318
-reader1, negCase8, testA, -0.172265181898839
-reader1, negCase9, testA, -1.01090274512514
-reader1, negCase10, testA, 0.737551628698068
-reader1, negCase11, testA, 0.520400350324929
-reader1, negCase12, testA, 0.846023782114658
-reader1, negCase13, testA, 1.90339003232839
-reader1, negCase14, testA, 0.866335540142337
-reader1, negCase15, testA, -0.0603433891597651
-reader1, negCase16, testA, 0.342530914717949
-reader1, negCase17, testA, -0.382831119884728
-reader1, negCase18, testA, -1.06384358885434
-reader1, negCase19, testA, -0.0409736084448642
-reader1, negCase20, testA, 0.469192012383219
-reader1, negCase21, testA, -0.401562253381719
-reader1, negCase22, testA, 2.54414983687947
-reader1, negCase23, testA, 0.4837874443287
-reader1, negCase24, testA, 0.228217931440812
-reader1, negCase25, testA, 2.57305268497616
-reader1, negCase26, testA, 0.890391925849522
-reader1, negCase27, testA, -0.800261136941214
-reader1, negCase28, testA, 1.86581361793604
-reader1, negCase29, testA, 1.62946521020067
-reader1, negCase30, testA, 1.35169888002409
-reader1, negCase31, testA, -0.421212882491231
-reader1, negCase32, testA, 1.40747120612664
-reader1, negCase33, testA, 1.28407573355522
-reader1, negCase34, testA, -1.23188548156376
-reader1, negCase35, testA, -0.181480029076118
-reader1, negCase36, testA, 0.52848621637293
-reader1, negCase37, testA, -0.117337680444337
-reader1, negCase38, testA, -0.776246769941104
-reader1, negCase39, testA, 0.284948859128757
-reader1, negCase40, testA, 1.45099487870959
-reader2, negCase1, testA, -1.88458861400531
-reader2, negCase2, testA, -1.34484636833249
-reader2, negCase3, testA, -1.06805338175773
-reader2, negCase4, testA, 0.288055880573048
-reader2, negCase5, testA, -0.964655611677131
-reader2, negCase6, testA, 0.619456283440685
-reader2, negCase7, testA, -0.29023338117984
-reader2, negCase8, testA, 0.0403247984599881
-reader2, negCase9, testA, -0.968178483872062
-reader2, negCase10, testA, 1.47853497434548
-reader2, negCase11, testA, -0.17546111405853
-reader2, negCase12, testA, 0.323813297002012
-reader2, negCase13, testA, 1.82817436535426
-reader2, negCase14, testA, -0.472090709646349
-reader2, negCase15, testA, -1.39461762428209
-reader2, negCase16, testA, -1.62470716408804
-reader2, negCase17, testA, 0.775800805446802
-reader2, negCase18, testA, -1.55844720958449
-reader2, negCase19, testA, 0.127271261429902
-reader2, negCase20, testA, 0.94751515505234
-reader2, negCase21, testA, -2.56439016376044
-reader2, negCase22, testA, 0.218847270258491
-reader2, negCase23, testA, 0.376068595467922
-reader2, negCase24, testA, 0.976020605240787
-reader2, negCase25, testA, -0.803465913878837
-reader2, negCase26, testA, -1.16886054015683
-reader2, negCase27, testA, -0.543458893671142
-reader2, negCase28, testA, 1.10511658542541
-reader2, negCase29, testA, 1.9861910767903
-reader2, negCase30, testA, 0.066903329823334
-reader2, negCase31, testA, -0.335610708759887
-reader2, negCase32, testA, -0.140150178463083
-reader2, negCase33, testA, 1.85286265525218
-reader2, negCase34, testA, -0.858688896525897
-reader2, negCase35, testA, -0.0292256965829826
-reader2, negCase36, testA, -0.763163915736561
-reader2, negCase37, testA, -0.558684787741533
-reader2, negCase38, testA, 0.506079751169063
-reader2, negCase39, testA, -0.589836817457763
-reader2, negCase40, testA, 0.562191495807437
-reader3, negCase1, testA, 0.191125814829031
-reader3, negCase2, testA, 0.0487085581321806
-reader3, negCase3, testA, -0.863381712659271
-reader3, negCase4, testA, 0.392607274809566
-reader3, negCase5, testA, 0.770952206960698
-reader3, negCase6, testA, -1.28132503809863
-reader3, negCase7, testA, -0.466466058189986
-reader3, negCase8, testA, -1.03362018705212
-reader3, negCase9, testA, -0.587943550495239
-reader3, negCase10, testA, 0.348558442444707
-reader3, negCase11, testA, -1.4068222022535
-reader3, negCase12, testA, -0.545732709942679
-reader3, negCase13, testA, 1.50407679377197
-reader3, negCase14, testA, -0.0438050058107489
-reader3, negCase15, testA, -1.49713146224628
-reader3, negCase16, testA, -1.68838647875461
-reader3, negCase17, testA, -0.264248838872988
-reader3, negCase18, testA, -1.17958732234481
-reader3, negCase19, testA, 0.454119091797233
-reader3, negCase20, testA, -0.930066200995857
-reader3, negCase21, testA, -0.867644046789835
-reader3, negCase22, testA, -0.133149789755115
-reader3, negCase23, testA, 0.627096042992842
-reader3, negCase24, testA, -1.41825152123842
-reader3, negCase25, testA, 1.54564652285514
-reader3, negCase26, testA, 0.28721193688364
-reader3, negCase27, testA, -0.538409093052455
-reader3, negCase28, testA, 0.788381400929149
-reader3, negCase29, testA, 1.15553020041548
-reader3, negCase30, testA, 0.0978165020215763
-reader3, negCase31, testA, -1.41854783454419
-reader3, negCase32, testA, 0.736267447022845
-reader3, negCase33, testA, -0.912354332453868
-reader3, negCase34, testA, -1.05289160943848
-reader3, negCase35, testA, -0.76677575556516
-reader3, negCase36, testA, -0.25466406435177
-reader3, negCase37, testA, -1.8921729860311
-reader3, negCase38, testA, -0.00352191296699594
-reader3, negCase39, testA, -0.291007233331202
-reader3, negCase40, testA, -1.13209278419357
-reader4, negCase1, testA, 0.368192802091027
-reader4, negCase2, testA, -0.331594178340642
-reader4, negCase3, testA, 0.511382124422646
-reader4, negCase4, testA, 0.467562890275213
-reader4, negCase5, testA, 1.80601317916864
-reader4, negCase6, testA, 0.824219495764043
-reader4, negCase7, testA, -0.211963454020001
-reader4, negCase8, testA, -0.324623431887701
-reader4, negCase9, testA, 0.203773270162751
-reader4, negCase10, testA, 2.15442341885825
-reader4, negCase11, testA, 0.321949235375468
-reader4, negCase12, testA, 0.684408927574189
-reader4, negCase13, testA, 3.39573153347074
-reader4, negCase14, testA, 0.783048760675352
-reader4, negCase15, testA, -1.17283100270062
-reader4, negCase16, testA, -0.0737049069776219
-reader4, negCase17, testA, -0.97322759135597
-reader4, negCase18, testA, -0.845862598236524
-reader4, negCase19, testA, 0.00357170758252112
-reader4, negCase20, testA, 0.0935084379555559
-reader4, negCase21, testA, -0.634669997650164
-reader4, negCase22, testA, 1.09125110580803
-reader4, negCase23, testA, 1.5705119840322
-reader4, negCase24, testA, 0.380990344696986
-reader4, negCase25, testA, 1.71356352560654
-reader4, negCase26, testA, 0.296170003578839
-reader4, negCase27, testA, 0.847150232253183
-reader4, negCase28, testA, 1.48809065189262
-reader4, negCase29, testA, 2.5209479050999
-reader4, negCase30, testA, -0.441162688350751
-reader4, negCase31, testA, 0.0842323088557202
-reader4, negCase32, testA, 0.210207228822123
-reader4, negCase33, testA, 1.32962882049832
-reader4, negCase34, testA, -0.713317132719741
-reader4, negCase35, testA, 0.275296041262631
-reader4, negCase36, testA, 1.3041650889648
-reader4, negCase37, testA, 0.448361701302089
-reader4, negCase38, testA, 1.5420861597504
-reader4, negCase39, testA, 0.485128168088906
-reader4, negCase40, testA, 0.0898395393533222
-reader5, negCase1, testA, -0.73037493251353
-reader5, negCase2, testA, -0.413985460930234
-reader5, negCase3, testA, -0.343280803843521
-reader5, negCase4, testA, 0.184663126644879
-reader5, negCase5, testA, -0.590484190507997
-reader5, negCase6, testA, -0.911218950553448
-reader5, negCase7, testA, 0.589680281459781
-reader5, negCase8, testA, -0.272920206132658
-reader5, negCase9, testA, -1.15345411118439
-reader5, negCase10, testA, 0.1552665114639
-reader5, negCase11, testA, 0.185293696975283
-reader5, negCase12, testA, -0.0295301886611275
-reader5, negCase13, testA, 2.27090881826036
-reader5, negCase14, testA, -0.714940979596079
-reader5, negCase15, testA, -0.885073267685917
-reader5, negCase16, testA, -0.113525945056487
-reader5, negCase17, testA, -1.61116837042003
-reader5, negCase18, testA, -0.820075263890889
-reader5, negCase19, testA, -0.605858138137629
-reader5, negCase20, testA, 0.198460406889318
-reader5, negCase21, testA, -1.96674906629143
-reader5, negCase22, testA, 0.492384228042181
-reader5, negCase23, testA, 0.533406061264498
-reader5, negCase24, testA, 0.582874131315
-reader5, negCase25, testA, 0.564771029635849
-reader5, negCase26, testA, 1.32294419346195
-reader5, negCase27, testA, -1.01646145128964
-reader5, negCase28, testA, 0.851009453850725
-reader5, negCase29, testA, 0.668232965778754
-reader5, negCase30, testA, 0.115915982166859
-reader5, negCase31, testA, -1.10855556734449
-reader5, negCase32, testA, 0.519633182318276
-reader5, negCase33, testA, 1.4225073447808
-reader5, negCase34, testA, -1.52870715171732
-reader5, negCase35, testA, 0.989061996117898
-reader5, negCase36, testA, 0.350402829659843
-reader5, negCase37, testA, -0.169176372076651
-reader5, negCase38, testA, 1.06610993896175
-reader5, negCase39, testA, -0.113284392386138
-reader5, negCase40, testA, 0.0313631904262668
-reader1, negCase1, testB, -0.652930766607689
-reader1, negCase2, testB, -0.742677528734715
-reader1, negCase3, testB, 0.592335709207756
-reader1, negCase4, testB, 1.98055206537826
-reader1, negCase5, testB, -1.06152092646446
-reader1, negCase6, testB, 0.707707523225476
-reader1, negCase7, testB, 0.00738030366714924
-reader1, negCase8, testB, -1.91801935710127
-reader1, negCase9, testB, -0.667100893908969
-reader1, negCase10, testB, 1.51750040531767
-reader1, negCase11, testB, 0.900620673379594
-reader1, negCase12, testB, 1.06082563124426
-reader1, negCase13, testB, 1.9434967158579
-reader1, negCase14, testB, 0.830096458158889
-reader1, negCase15, testB, -0.462426985099081
-reader1, negCase16, testB, -0.618523893725022
-reader1, negCase17, testB, -1.1794087386479
-reader1, negCase18, testB, 0.179248289854869
-reader1, negCase19, testB, 0.621102021771206
-reader1, negCase20, testB, 0.879639261768421
-reader1, negCase21, testB, -2.15283209596423
-reader1, negCase22, testB, 2.25022637784371
-reader1, negCase23, testB, 0.0627099049063276
-reader1, negCase24, testB, 0.587082459459156
-reader1, negCase25, testB, 0.971272681121231
-reader1, negCase26, testB, 1.09664793081932
-reader1, negCase27, testB, -0.157787674807916
-reader1, negCase28, testB, 0.439989307632785
-reader1, negCase29, testB, 1.18237093600185
-reader1, negCase30, testB, -0.178357189636156
-reader1, negCase31, testB, -1.1951085336611
-reader1, negCase32, testB, 0.694841580144634
-reader1, negCase33, testB, 2.07681195416833
-reader1, negCase34, testB, -1.44907837204079
-reader1, negCase35, testB, -0.4701668722215
-reader1, negCase36, testB, 0.34860209538807
-reader1, negCase37, testB, -0.236598711221078
-reader1, negCase38, testB, -0.442461335979012
-reader1, negCase39, testB, -0.232070189208589
-reader1, negCase40, testB, 0.285453444841999
-reader2, negCase1, testB, -1.65685440124153
-reader2, negCase2, testB, -0.89269705320508
-reader2, negCase3, testB, -2.23335525545995
-reader2, negCase4, testB, 0.438968940881104
-reader2, negCase5, testB, -1.45216052662117
-reader2, negCase6, testB, 0.262851125876236
-reader2, negCase7, testB, -1.40870067603073
-reader2, negCase8, testB, -2.2140990461344
-reader2, negCase9, testB, -1.29471537506669
-reader2, negCase10, testB, 1.4985701726141
-reader2, negCase11, testB, -0.844475544432908
-reader2, negCase12, testB, 0.0516782064272354
-reader2, negCase13, testB, 0.72808202522501
-reader2, negCase14, testB, -0.227678746878625
-reader2, negCase15, testB, -1.3895870961723
-reader2, negCase16, testB, -1.59295696776011
-reader2, negCase17, testB, -0.787955401243282
-reader2, negCase18, testB, -1.20796899183789
-reader2, negCase19, testB, 0.0716584203600349
-reader2, negCase20, testB, -0.356415129891619
-reader2, negCase21, testB, -3.442318929308
-reader2, negCase22, testB, -0.908184318517938
-reader2, negCase23, testB, 0.222538762936259
-reader2, negCase24, testB, -0.595618410760894
-reader2, negCase25, testB, -1.22517790268079
-reader2, negCase26, testB, -1.13302520533229
-reader2, negCase27, testB, -0.316404698121638
-reader2, negCase28, testB, 0.0977266669224094
-reader2, negCase29, testB, 1.08839892430465
-reader2, negCase30, testB, -0.949020912967159
-reader2, negCase31, testB, -1.23474514528725
-reader2, negCase32, testB, -0.786528769862256
-reader2, negCase33, testB, 0.874885036778801
-reader2, negCase34, testB, -1.66958313192229
-reader2, negCase35, testB, -1.0562751559448
-reader2, negCase36, testB, -1.63515110240226
-reader2, negCase37, testB, -0.806438852147072
-reader2, negCase38, testB, 1.26083977708009
-reader2, negCase39, testB, -1.64987967866957
-reader2, negCase40, testB, -0.109004467127017
-reader3, negCase1, testB, -0.394213158683751
-reader3, negCase2, testB, 0.437582374642295
-reader3, negCase3, testB, 0.0909577402058893
-reader3, negCase4, testB, 2.1891390467721
-reader3, negCase5, testB, 0.461466835096905
-reader3, negCase6, testB, -0.0165381134647827
-reader3, negCase7, testB, -0.648691160442574
-reader3, negCase8, testB, -1.67370699733685
-reader3, negCase9, testB, -0.651028413266214
-reader3, negCase10, testB, 1.86907936366875
-reader3, negCase11, testB, 0.319562527174433
-reader3, negCase12, testB, 0.108623634845196
-reader3, negCase13, testB, 0.598441291721082
-reader3, negCase14, testB, -0.969000642400228
-reader3, negCase15, testB, -0.391537370550223
-reader3, negCase16, testB, -0.85686363668216
-reader3, negCase17, testB, -0.561923955302268
-reader3, negCase18, testB, 0.0705165757674375
-reader3, negCase19, testB, 1.44183036869222
-reader3, negCase20, testB, 0.559006483562996
-reader3, negCase21, testB, 0.0264795499786419
-reader3, negCase22, testB, 0.135884893943377
-reader3, negCase23, testB, 0.325633471449518
-reader3, negCase24, testB, -0.84271581211895
-reader3, negCase25, testB, 0.983911512505069
-reader3, negCase26, testB, 0.715973338910951
-reader3, negCase27, testB, -0.723873809175388
-reader3, negCase28, testB, -0.0262505315124969
-reader3, negCase29, testB, 1.73955150707696
-reader3, negCase30, testB, 0.955610297546938
-reader3, negCase31, testB, 0.382732423119813
-reader3, negCase32, testB, 0.0378203849172841
-reader3, negCase33, testB, 0.00314926945913968
-reader3, negCase34, testB, -1.21469407703051
-reader3, negCase35, testB, -0.474040308645556
-reader3, negCase36, testB, -1.13862865550112
-reader3, negCase37, testB, -1.27469463020367
-reader3, negCase38, testB, 0.807234310083563
-reader3, negCase39, testB, -1.51010354496903
-reader3, negCase40, testB, 0.0825665559870853
-reader4, negCase1, testB, -1.03061326384238
-reader4, negCase2, testB, -1.15176171474342
-reader4, negCase3, testB, -1.17192081354671
-reader4, negCase4, testB, 0.253323446818613
-reader4, negCase5, testB, -1.00725844220767
-reader4, negCase6, testB, 1.23012957541367
-reader4, negCase7, testB, -1.48139286501259
-reader4, negCase8, testB, -2.67696552676437
-reader4, negCase9, testB, -1.02164183915197
-reader4, negCase10, testB, 1.96647429974324
-reader4, negCase11, testB, 0.124844553539569
-reader4, negCase12, testB, 0.374407922658778
-reader4, negCase13, testB, 1.84067535048629
-reader4, negCase14, testB, -0.210920550881894
-reader4, negCase15, testB, -2.3882092457467
-reader4, negCase16, testB, -1.26265418429421
-reader4, negCase17, testB, -1.6726336376611
-reader4, negCase18, testB, -0.818774268525108
-reader4, negCase19, testB, 1.17341261973245
-reader4, negCase20, testB, 0.254636646152204
-reader4, negCase21, testB, -1.47661685943226
-reader4, negCase22, testB, 0.125082286594327
-reader4, negCase23, testB, 0.524701509112476
-reader4, negCase24, testB, -0.241210734678965
-reader4, negCase25, testB, 0.408205446649886
-reader4, negCase26, testB, -0.504539888526462
-reader4, negCase27, testB, 0.5803683007822
-reader4, negCase28, testB, 0.273268561792085
-reader4, negCase29, testB, 0.958101016340318
-reader4, negCase30, testB, -1.73450316252659
-reader4, negCase31, testB, -0.873684988239335
-reader4, negCase32, testB, -0.387852517308486
-reader4, negCase33, testB, 0.17538752490386
-reader4, negCase34, testB, -2.88026284902393
-reader4, negCase35, testB, -0.793960815771868
-reader4, negCase36, testB, -1.26224372927756
-reader4, negCase37, testB, -1.4361090534074
-reader4, negCase38, testB, 1.09447801304792
-reader4, negCase39, testB, -0.117746512950507
-reader4, negCase40, testB, -0.35413114221349
-reader5, negCase1, testB, -1.10525886102281
-reader5, negCase2, testB, -0.483403694201823
-reader5, negCase3, testB, 0.681638961424343
-reader5, negCase4, testB, 0.847713556302165
-reader5, negCase5, testB, -0.579024014419431
-reader5, negCase6, testB, 0.504181495500698
-reader5, negCase7, testB, -0.0673142543773647
-reader5, negCase8, testB, -1.42842939338673
-reader5, negCase9, testB, -1.2051179858105
-reader5, negCase10, testB, 1.75746300157665
-reader5, negCase11, testB, 1.20016812948325
-reader5, negCase12, testB, -0.148807896667389
-reader5, negCase13, testB, 0.744982025638009
-reader5, negCase14, testB, 0.228582117638763
-reader5, negCase15, testB, -0.209126048913369
-reader5, negCase16, testB, 0.404972410194587
-reader5, negCase17, testB, -1.14955196132978
-reader5, negCase18, testB, -0.28328486454344
-reader5, negCase19, testB, 1.25365548346118
-reader5, negCase20, testB, 0.184884297547329
-reader5, negCase21, testB, -1.13189184412454
-reader5, negCase22, testB, -0.871174102620794
-reader5, negCase23, testB, 1.37195843864855
-reader5, negCase24, testB, 0.390335033658529
-reader5, negCase25, testB, 0.119312182429662
-reader5, negCase26, testB, 0.516804013226444
-reader5, negCase27, testB, -0.142036404170212
-reader5, negCase28, testB, 0.110761413846417
-reader5, negCase29, testB, 1.42422181824462
-reader5, negCase30, testB, -0.396397213708657
-reader5, negCase31, testB, -1.19651521897458
-reader5, negCase32, testB, 0.0284442996311879
-reader5, negCase33, testB, 1.45490160748198
-reader5, negCase34, testB, -0.49410245139991
-reader5, negCase35, testB, 0.664628875240442
-reader5, negCase36, testB, -1.2425718374328
-reader5, negCase37, testB, -0.469877745834109
-reader5, negCase38, testB, 1.54441158591413
-reader5, negCase39, testB, -0.425404504075724
-reader5, negCase40, testB, -0.705186388112958
-reader1, posCase1, testA, 0.373468689974227
-reader1, posCase2, testA, 1.22376434977463
-reader1, posCase3, testA, 0.888454247770175
-reader1, posCase4, testA, 0.253299072409876
-reader1, posCase5, testA, 0.841192800691883
-reader1, posCase6, testA, 1.26438742800771
-reader1, posCase7, testA, 0.766836647202255
-reader1, posCase8, testA, 0.0467108795364204
-reader1, posCase9, testA, 0.342563570256895
-reader1, posCase10, testA, -1.61778580124484
-reader1, posCase11, testA, 0.836412258763437
-reader1, posCase12, testA, 2.31658105075786
-reader1, posCase13, testA, 2.30187222740244
-reader1, posCase14, testA, 1.32654954042859
-reader1, posCase15, testA, 3.60250528033224
-reader1, posCase16, testA, 2.49098645886165
-reader1, posCase17, testA, 1.29592616150562
-reader1, posCase18, testA, 0.295327967165758
-reader1, posCase19, testA, 1.28355531807428
-reader1, posCase20, testA, -0.960605004125984
-reader1, posCase21, testA, 1.48857635783837
-reader1, posCase22, testA, 0.398273148467935
-reader1, posCase23, testA, 2.20223146339428
-reader1, posCase24, testA, 0.857059024913281
-reader1, posCase25, testA, 0.317371976266879
-reader1, posCase26, testA, 0.609099538831112
-reader1, posCase27, testA, -1.31947254407111
-reader1, posCase28, testA, 1.42681264333584
-reader1, posCase29, testA, 2.07052344967847
-reader1, posCase30, testA, 0.427684981724638
-reader1, posCase31, testA, 2.00702081276965
-reader1, posCase32, testA, 0.335352316785018
-reader1, posCase33, testA, 0.773124372963564
-reader1, posCase34, testA, 1.67094144563009
-reader1, posCase35, testA, -0.306286165164822
-reader1, posCase36, testA, -0.739030564591711
-reader1, posCase37, testA, 0.314572987006092
-reader1, posCase38, testA, 0.584864613381406
-reader1, posCase39, testA, 0.221421585855757
-reader1, posCase40, testA, 0.626355092188647
-reader2, posCase1, testA, 1.46769830302876
-reader2, posCase2, testA, 1.2408304068909
-reader2, posCase3, testA, 1.13362175974871
-reader2, posCase4, testA, 0.99818615798211
-reader2, posCase5, testA, -1.26169246097891
-reader2, posCase6, testA, 0.887040889857422
-reader2, posCase7, testA, 1.59297842644902
-reader2, posCase8, testA, -0.759896101455752
-reader2, posCase9, testA, -0.593972609486287
-reader2, posCase10, testA, -0.844802056037356
-reader2, posCase11, testA, 0.0876583010041611
-reader2, posCase12, testA, 1.36443694549605
-reader2, posCase13, testA, 1.5287568101158
-reader2, posCase14, testA, 1.81178505351361
-reader2, posCase15, testA, 3.03669171108525
-reader2, posCase16, testA, 2.46082888533366
-reader2, posCase17, testA, 0.982647317032736
-reader2, posCase18, testA, 0.639281308097909
-reader2, posCase19, testA, 0.205501919645224
-reader2, posCase20, testA, -0.536180501157504
-reader2, posCase21, testA, 1.44577209434325
-reader2, posCase22, testA, 0.817365017978906
-reader2, posCase23, testA, 2.11465828833965
-reader2, posCase24, testA, 1.54681264180777
-reader2, posCase25, testA, -1.64514196207807
-reader2, posCase26, testA, 0.733075257942412
-reader2, posCase27, testA, 0.604674047389495
-reader2, posCase28, testA, 1.23242707051508
-reader2, posCase29, testA, 1.24519681156637
-reader2, posCase30, testA, 0.486702066914207
-reader2, posCase31, testA, 4.07263490765438
-reader2, posCase32, testA, -0.329303137833901
-reader2, posCase33, testA, 0.330323343999718
-reader2, posCase34, testA, 1.42497543966676
-reader2, posCase35, testA, -1.35995080443632
-reader2, posCase36, testA, 0.629344317395634
-reader2, posCase37, testA, 1.3387752406921
-reader2, posCase38, testA, 1.57188820265603
-reader2, posCase39, testA, -1.42653036254434
-reader2, posCase40, testA, 1.19541479260685
-reader3, posCase1, testA, 2.49936930686796
-reader3, posCase2, testA, 2.08282279074481
-reader3, posCase3, testA, 2.23599088900641
-reader3, posCase4, testA, 1.24476907057086
-reader3, posCase5, testA, -0.0591100172887797
-reader3, posCase6, testA, 2.92872678323544
-reader3, posCase7, testA, 2.01836411288957
-reader3, posCase8, testA, 1.02020355929152
-reader3, posCase9, testA, 1.39670640043291
-reader3, posCase10, testA, -0.484212999470464
-reader3, posCase11, testA, 0.115534942054626
-reader3, posCase12, testA, 2.03387241607818
-reader3, posCase13, testA, 1.5343229346409
-reader3, posCase14, testA, 0.828198202434795
-reader3, posCase15, testA, 3.94065631110144
-reader3, posCase16, testA, 2.62464406716045
-reader3, posCase17, testA, 1.85869212387365
-reader3, posCase18, testA, 2.52758884021813
-reader3, posCase19, testA, 0.559801926971998
-reader3, posCase20, testA, -0.340565987667145
-reader3, posCase21, testA, 2.45899813119378
-reader3, posCase22, testA, 1.47086072472055
-reader3, posCase23, testA, 2.28947043176073
-reader3, posCase24, testA, 2.10425103077704
-reader3, posCase25, testA, 1.13414899126182
-reader3, posCase26, testA, -0.129818509945263
-reader3, posCase27, testA, 0.454248244730993
-reader3, posCase28, testA, 2.36440100578949
-reader3, posCase29, testA, -0.37160575076947
-reader3, posCase30, testA, 1.76365274598259
-reader3, posCase31, testA, 3.10264153196825
-reader3, posCase32, testA, 1.25062407081827
-reader3, posCase33, testA, 1.72390175698828
-reader3, posCase34, testA, 2.20849285167345
-reader3, posCase35, testA, -0.14374174337046
-reader3, posCase36, testA, 1.7488885716706
-reader3, posCase37, testA, 0.367341373378524
-reader3, posCase38, testA, 2.58780708070113
-reader3, posCase39, testA, 0.40260048061049
-reader3, posCase40, testA, 2.44907212577061
-reader4, posCase1, testA, -0.0927113122657435
-reader4, posCase2, testA, 0.150303001450288
-reader4, posCase3, testA, -0.151351199373601
-reader4, posCase4, testA, 0.84880697061756
-reader4, posCase5, testA, -0.134464608336479
-reader4, posCase6, testA, 1.81147237141946
-reader4, posCase7, testA, 0.559217709350238
-reader4, posCase8, testA, -1.60695045555734
-reader4, posCase9, testA, -0.512731641279576
-reader4, posCase10, testA, -1.82320499930669
-reader4, posCase11, testA, -0.49350975808041
-reader4, posCase12, testA, 1.89984004935816
-reader4, posCase13, testA, 0.217010629562312
-reader4, posCase14, testA, 0.588892835344106
-reader4, posCase15, testA, 2.4027558566451
-reader4, posCase16, testA, 0.957585166877429
-reader4, posCase17, testA, 0.979679197489073
-reader4, posCase18, testA, 0.253439027644929
-reader4, posCase19, testA, 0.161928614873263
-reader4, posCase20, testA, -0.570719033088816
-reader4, posCase21, testA, 0.810033996409509
-reader4, posCase22, testA, 0.737909506952241
-reader4, posCase23, testA, 1.18902081990248
-reader4, posCase24, testA, 1.73158461169375
-reader4, posCase25, testA, -0.115266801076159
-reader4, posCase26, testA, 0.44966863552479
-reader4, posCase27, testA, 1.29839281685989
-reader4, posCase28, testA, -0.240929857170008
-reader4, posCase29, testA, 1.07631886949186
-reader4, posCase30, testA, -0.140249601711061
-reader4, posCase31, testA, 1.48066633817737
-reader4, posCase32, testA, 0.914309646754584
-reader4, posCase33, testA, 0.653315547635331
-reader4, posCase34, testA, 0.425743724007989
-reader4, posCase35, testA, 0.368676954508982
-reader4, posCase36, testA, 0.786607409855756
-reader4, posCase37, testA, 0.15798860941863
-reader4, posCase38, testA, 0.0308546072069638
-reader4, posCase39, testA, -0.832623314037035
-reader4, posCase40, testA, 0.268075150757183
-reader5, posCase1, testA, 0.826141574188632
-reader5, posCase2, testA, 0.95279613709205
-reader5, posCase3, testA, 1.11878767222947
-reader5, posCase4, testA, 0.955408365596575
-reader5, posCase5, testA, 0.168791207995149
-reader5, posCase6, testA, 2.31423450654378
-reader5, posCase7, testA, 1.46396424932179
-reader5, posCase8, testA, -0.619710555734752
-reader5, posCase9, testA, -0.408592884892541
-reader5, posCase10, testA, -0.628064580890412
-reader5, posCase11, testA, 0.0361953843584202
-reader5, posCase12, testA, 1.78133201210603
-reader5, posCase13, testA, 1.74966985171047
-reader5, posCase14, testA, 1.39123186171564
-reader5, posCase15, testA, 3.3416534429214
-reader5, posCase16, testA, 2.27003282244493
-reader5, posCase17, testA, 0.505699710058359
-reader5, posCase18, testA, 1.66065789928827
-reader5, posCase19, testA, 1.89228731514958
-reader5, posCase20, testA, 0.465279135421001
-reader5, posCase21, testA, 1.70629971343998
-reader5, posCase22, testA, 0.00233593063743676
-reader5, posCase23, testA, 1.92293614970328
-reader5, posCase24, testA, 0.770481087766547
-reader5, posCase25, testA, 0.0530727231605851
-reader5, posCase26, testA, -0.840447189776854
-reader5, posCase27, testA, 0.181451777232772
-reader5, posCase28, testA, 1.25631863683372
-reader5, posCase29, testA, 1.7957388512291
-reader5, posCase30, testA, 0.061626410284275
-reader5, posCase31, testA, 2.29102773455498
-reader5, posCase32, testA, 1.30125933403725
-reader5, posCase33, testA, 0.481003519317734
-reader5, posCase34, testA, 1.57245072114541
-reader5, posCase35, testA, 0.938056297977986
-reader5, posCase36, testA, 1.88447232931814
-reader5, posCase37, testA, 0.682704312659819
-reader5, posCase38, testA, 2.80371610216344
-reader5, posCase39, testA, -0.101219007930543
-reader5, posCase40, testA, 1.80584306560683
-reader1, posCase1, testB, 1.00689649736843
-reader1, posCase2, testB, 0.17628805341084
-reader1, posCase3, testB, 1.53944814110663
-reader1, posCase4, testB, 0.319350803098725
-reader1, posCase5, testB, 0.572187811345581
-reader1, posCase6, testB, 0.838409910865679
-reader1, posCase7, testB, 0.666109234002891
-reader1, posCase8, testB, 0.642323184614222
-reader1, posCase9, testB, 0.930848746784398
-reader1, posCase10, testB, 0.601873044077417
-reader1, posCase11, testB, 1.59561335200263
-reader1, posCase12, testB, 0.877096844432101
-reader1, posCase13, testB, -0.0073154931644015
-reader1, posCase14, testB, 2.81309668661344
-reader1, posCase15, testB, 2.54149086568518
-reader1, posCase16, testB, 1.65600100318863
-reader1, posCase17, testB, 0.618410135479026
-reader1, posCase18, testB, -0.335686987088883
-reader1, posCase19, testB, -0.200833928063199
-reader1, posCase20, testB, -0.0619756711709824
-reader1, posCase21, testB, 1.37911290245598
-reader1, posCase22, testB, -0.347311677595525
-reader1, posCase23, testB, 1.85124056516706
-reader1, posCase24, testB, 1.07451807779418
-reader1, posCase25, testB, 1.24244618129359
-reader1, posCase26, testB, 1.53266387526121
-reader1, posCase27, testB, -0.10195966175646
-reader1, posCase28, testB, 1.92716437842943
-reader1, posCase29, testB, 1.06207773913953
-reader1, posCase30, testB, -0.167890299283554
-reader1, posCase31, testB, 1.6767898740897
-reader1, posCase32, testB, 0.0981771706681669
-reader1, posCase33, testB, 0.411392612532193
-reader1, posCase34, testB, 2.1828432586575
-reader1, posCase35, testB, -0.504500997194796
-reader1, posCase36, testB, 0.724982260796126
-reader1, posCase37, testB, -0.566284474392629
-reader1, posCase38, testB, 1.52255616444772
-reader1, posCase39, testB, 0.0379590033649773
-reader1, posCase40, testB, 1.67533473520943
-reader2, posCase1, testB, 1.13087949107965
-reader2, posCase2, testB, 0.484552160698008
-reader2, posCase3, testB, 1.12762734104926
-reader2, posCase4, testB, -0.14052908959937
-reader2, posCase5, testB, -0.927029499774509
-reader2, posCase6, testB, 0.163235022952838
-reader2, posCase7, testB, 0.664013677700249
-reader2, posCase8, testB, -0.269197217748449
-reader2, posCase9, testB, -0.419926247893204
-reader2, posCase10, testB, 1.72033824633983
-reader2, posCase11, testB, 0.956727186016904
-reader2, posCase12, testB, 0.288949698846278
-reader2, posCase13, testB, 0.289970884234811
-reader2, posCase14, testB, 4.18629491170064
-reader2, posCase15, testB, 2.34487810374938
-reader2, posCase16, testB, 2.55075318035471
-reader2, posCase17, testB, 1.50777503683164
-reader2, posCase18, testB, -0.417114974679739
-reader2, posCase19, testB, -0.00861106555067459
-reader2, posCase20, testB, 0.0711209251811673
-reader2, posCase21, testB, 0.98984898951307
-reader2, posCase22, testB, 0.509842810761528
-reader2, posCase23, testB, 0.820390675623589
-reader2, posCase24, testB, 1.39069013672483
-reader2, posCase25, testB, 0.696515171551904
-reader2, posCase26, testB, 2.04851880143039
-reader2, posCase27, testB, 2.01949221129907
-reader2, posCase28, testB, 1.98750424883893
-reader2, posCase29, testB, 0.618909649660353
-reader2, posCase30, testB, 0.459730281509808
-reader2, posCase31, testB, 2.4345139887098
-reader2, posCase32, testB, 0.313017769702754
-reader2, posCase33, testB, -1.11918665232846
-reader2, posCase34, testB, 2.78753112678722
-reader2, posCase35, testB, -0.251165762026893
-reader2, posCase36, testB, 1.11665849098968
-reader2, posCase37, testB, -0.319867117509355
-reader2, posCase38, testB, 2.50717171345225
-reader2, posCase39, testB, -1.6552572579545
-reader2, posCase40, testB, 1.90958517355732
-reader3, posCase1, testB, 2.22530012061988
-reader3, posCase2, testB, 1.40818383814944
-reader3, posCase3, testB, 0.756784487416553
-reader3, posCase4, testB, 0.46590012150159
-reader3, posCase5, testB, -0.844061904393348
-reader3, posCase6, testB, 1.86334515895563
-reader3, posCase7, testB, 0.675634961069642
-reader3, posCase8, testB, 1.7103054397975
-reader3, posCase9, testB, 1.12184229893413
-reader3, posCase10, testB, 0.555684071658005
-reader3, posCase11, testB, 1.43546557769602
-reader3, posCase12, testB, 0.453737179201615
-reader3, posCase13, testB, 0.0245914236443182
-reader3, posCase14, testB, 2.56233894269648
-reader3, posCase15, testB, 2.122025189036
-reader3, posCase16, testB, 0.903842092858466
-reader3, posCase17, testB, 0.696503147656664
-reader3, posCase18, testB, 0.57979086060593
-reader3, posCase19, testB, 0.0282748768052269
-reader3, posCase20, testB, 1.22776207725596
-reader3, posCase21, testB, 1.47357162142732
-reader3, posCase22, testB, 0.475163592696341
-reader3, posCase23, testB, -0.184195340999912
-reader3, posCase24, testB, 1.74871476098196
-reader3, posCase25, testB, 1.80037301338415
-reader3, posCase26, testB, 1.30673668756021
-reader3, posCase27, testB, 1.7387165385892
-reader3, posCase28, testB, 2.24154493882434
-reader3, posCase29, testB, -0.023378894583774
-reader3, posCase30, testB, -0.128717911381394
-reader3, posCase31, testB, 1.48269523562879
-reader3, posCase32, testB, 1.35210338161111
-reader3, posCase33, testB, -0.381675264879788
-reader3, posCase34, testB, 1.78674667179364
-reader3, posCase35, testB, -0.0274802646549989
-reader3, posCase36, testB, 0.98460913541624
-reader3, posCase37, testB, -0.894733343543272
-reader3, posCase38, testB, 3.11982157798963
-reader3, posCase39, testB, 0.155951750854915
-reader3, posCase40, testB, 1.95503564110234
-reader4, posCase1, testB, 0.850724306169307
-reader4, posCase2, testB, 0.185440964880597
-reader4, posCase3, testB, 0.19358124198213
-reader4, posCase4, testB, 1.03849098922588
-reader4, posCase5, testB, -1.6394088272582
-reader4, posCase6, testB, 1.69520708011489
-reader4, posCase7, testB, 0.66366998683977
-reader4, posCase8, testB, 0.901955559191493
-reader4, posCase9, testB, -0.226710441832013
-reader4, posCase10, testB, 0.981681810363285
-reader4, posCase11, testB, -0.0739392583360693
-reader4, posCase12, testB, 1.0880187229164
-reader4, posCase13, testB, -0.972275875132245
-reader4, posCase14, testB, 1.3913090791847
-reader4, posCase15, testB, 0.803933744633329
-reader4, posCase16, testB, 0.138925088309923
-reader4, posCase17, testB, 1.21912453498392
-reader4, posCase18, testB, -0.244199853090303
-reader4, posCase19, testB, 0.779600583508175
-reader4, posCase20, testB, 0.933681112897876
-reader4, posCase21, testB, 0.292405024752123
-reader4, posCase22, testB, -0.173895375674703
-reader4, posCase23, testB, -0.861641081504631
-reader4, posCase24, testB, 1.53854922867966
-reader4, posCase25, testB, 0.514361571226013
-reader4, posCase26, testB, -0.0432980398830554
-reader4, posCase27, testB, 2.05310372294926
-reader4, posCase28, testB, 0.231033924784781
-reader4, posCase29, testB, -0.0657607521965615
-reader4, posCase30, testB, 0.551110813567329
-reader4, posCase31, testB, 0.857651517211407
-reader4, posCase32, testB, 0.986640655305948
-reader4, posCase33, testB, -1.18418598252347
-reader4, posCase34, testB, 1.37769639346286
-reader4, posCase35, testB, -0.81427530387021
-reader4, posCase36, testB, 0.728924234269351
-reader4, posCase37, testB, -0.531486654145674
-reader4, posCase38, testB, 0.213349456398058
-reader4, posCase39, testB, 0.245405068621971
-reader4, posCase40, testB, 1.86813949302263
-reader5, posCase1, testB, 0.891009238443959
-reader5, posCase2, testB, 0.0899043455908432
-reader5, posCase3, testB, 1.55239191030362
-reader5, posCase4, testB, 0.478104640551756
-reader5, posCase5, testB, -0.442196274704478
-reader5, posCase6, testB, 3.08663519456566
-reader5, posCase7, testB, 2.56592676889555
-reader5, posCase8, testB, 1.15358186862306
-reader5, posCase9, testB, -0.598013465954985
-reader5, posCase10, testB, 1.38783746963558
-reader5, posCase11, testB, 1.5277850046116
-reader5, posCase12, testB, -0.296334947260253
-reader5, posCase13, testB, 0.010228473591599
-reader5, posCase14, testB, 3.52313474426927
-reader5, posCase15, testB, 1.87987459490404
-reader5, posCase16, testB, 0.753227086132914
-reader5, posCase17, testB, 0.791243036425216
-reader5, posCase18, testB, 1.04025640963229
-reader5, posCase19, testB, 1.97002503385399
-reader5, posCase20, testB, 1.12483229359658
-reader5, posCase21, testB, 0.653017719804881
-reader5, posCase22, testB, 0.859891250711466
-reader5, posCase23, testB, 0.389427003440587
-reader5, posCase24, testB, 1.49543555549219
-reader5, posCase25, testB, 0.990312410781919
-reader5, posCase26, testB, 0.559981120865112
-reader5, posCase27, testB, 2.80911625959991
-reader5, posCase28, testB, 1.33376244687794
-reader5, posCase29, testB, 0.832741484138365
-reader5, posCase30, testB, 1.50473852681116
-reader5, posCase31, testB, 1.9314725782442
-reader5, posCase32, testB, 1.81046786475668
-reader5, posCase33, testB, 0.0904404224933431
-reader5, posCase34, testB, 1.90383651914761
-reader5, posCase35, testB, 0.948817786161121
-reader5, posCase36, testB, 2.08834388748526
-reader5, posCase37, testB, 0.448743624846323
-reader5, posCase38, testB, 3.20785428079258
-reader5, posCase39, testB, -1.25597124876552
-reader5, posCase40, testB, 2.57365886214769
+truth,negCase1,truth,0
+truth,negCase2,truth,0
+truth,negCase3,truth,0
+truth,negCase4,truth,0
+truth,negCase5,truth,0
+truth,negCase6,truth,0
+truth,negCase7,truth,0
+truth,negCase8,truth,0
+truth,negCase9,truth,0
+truth,negCase10,truth,0
+truth,negCase11,truth,0
+truth,negCase12,truth,0
+truth,negCase13,truth,0
+truth,negCase14,truth,0
+truth,negCase15,truth,0
+truth,negCase16,truth,0
+truth,negCase17,truth,0
+truth,negCase18,truth,0
+truth,negCase19,truth,0
+truth,negCase20,truth,0
+truth,negCase21,truth,0
+truth,negCase22,truth,0
+truth,negCase23,truth,0
+truth,negCase24,truth,0
+truth,negCase25,truth,0
+truth,negCase26,truth,0
+truth,negCase27,truth,0
+truth,negCase28,truth,0
+truth,negCase29,truth,0
+truth,negCase30,truth,0
+truth,negCase31,truth,0
+truth,negCase32,truth,0
+truth,negCase33,truth,0
+truth,negCase34,truth,0
+truth,negCase35,truth,0
+truth,negCase36,truth,0
+truth,negCase37,truth,0
+truth,negCase38,truth,0
+truth,negCase39,truth,0
+truth,negCase40,truth,0
+truth,posCase1,truth,1
+truth,posCase2,truth,1
+truth,posCase3,truth,1
+truth,posCase4,truth,1
+truth,posCase5,truth,1
+truth,posCase6,truth,1
+truth,posCase7,truth,1
+truth,posCase8,truth,1
+truth,posCase9,truth,1
+truth,posCase10,truth,1
+truth,posCase11,truth,1
+truth,posCase12,truth,1
+truth,posCase13,truth,1
+truth,posCase14,truth,1
+truth,posCase15,truth,1
+truth,posCase16,truth,1
+truth,posCase17,truth,1
+truth,posCase18,truth,1
+truth,posCase19,truth,1
+truth,posCase20,truth,1
+truth,posCase21,truth,1
+truth,posCase22,truth,1
+truth,posCase23,truth,1
+truth,posCase24,truth,1
+truth,posCase25,truth,1
+truth,posCase26,truth,1
+truth,posCase27,truth,1
+truth,posCase28,truth,1
+truth,posCase29,truth,1
+truth,posCase30,truth,1
+truth,posCase31,truth,1
+truth,posCase32,truth,1
+truth,posCase33,truth,1
+truth,posCase34,truth,1
+truth,posCase35,truth,1
+truth,posCase36,truth,1
+truth,posCase37,truth,1
+truth,posCase38,truth,1
+truth,posCase39,truth,1
+truth,posCase40,truth,1
+reader1,negCase1,testA,0.1696
+reader1,negCase2,testA,-0.7563
+reader1,negCase3,testA,-0.2662
+reader1,negCase4,testA,0.4523
+reader1,negCase5,testA,0.4714
+reader1,negCase6,testA,-0.4304
+reader1,negCase7,testA,0.3691
+reader1,negCase8,testA,-0.1723
+reader1,negCase9,testA,-1.0109
+reader1,negCase10,testA,0.7376
+reader1,negCase11,testA,0.5204
+reader1,negCase12,testA,0.846
+reader1,negCase13,testA,1.9034
+reader1,negCase14,testA,0.8663
+reader1,negCase15,testA,-0.0603
+reader1,negCase16,testA,0.3425
+reader1,negCase17,testA,-0.3828
+reader1,negCase18,testA,-1.0638
+reader1,negCase19,testA,-0.041
+reader1,negCase20,testA,0.4692
+reader1,negCase21,testA,-0.4016
+reader1,negCase22,testA,2.5441
+reader1,negCase23,testA,0.4838
+reader1,negCase24,testA,0.2282
+reader1,negCase25,testA,2.5731
+reader1,negCase26,testA,0.8904
+reader1,negCase27,testA,-0.8003
+reader1,negCase28,testA,1.8658
+reader1,negCase29,testA,1.6295
+reader1,negCase30,testA,1.3517
+reader1,negCase31,testA,-0.4212
+reader1,negCase32,testA,1.4075
+reader1,negCase33,testA,1.2841
+reader1,negCase34,testA,-1.2319
+reader1,negCase35,testA,-0.1815
+reader1,negCase36,testA,0.5285
+reader1,negCase37,testA,-0.1173
+reader1,negCase38,testA,-0.7762
+reader1,negCase39,testA,0.2849
+reader1,negCase40,testA,1.451
+reader2,negCase1,testA,-1.8846
+reader2,negCase2,testA,-1.3448
+reader2,negCase3,testA,-1.0681
+reader2,negCase4,testA,0.2881
+reader2,negCase5,testA,-0.9647
+reader2,negCase6,testA,0.6195
+reader2,negCase7,testA,-0.2902
+reader2,negCase8,testA,0.0403
+reader2,negCase9,testA,-0.9682
+reader2,negCase10,testA,1.4785
+reader2,negCase11,testA,-0.1755
+reader2,negCase12,testA,0.3238
+reader2,negCase13,testA,1.8282
+reader2,negCase14,testA,-0.4721
+reader2,negCase15,testA,-1.3946
+reader2,negCase16,testA,-1.6247
+reader2,negCase17,testA,0.7758
+reader2,negCase18,testA,-1.5584
+reader2,negCase19,testA,0.1273
+reader2,negCase20,testA,0.9475
+reader2,negCase21,testA,-2.5644
+reader2,negCase22,testA,0.2188
+reader2,negCase23,testA,0.3761
+reader2,negCase24,testA,0.976
+reader2,negCase25,testA,-0.8035
+reader2,negCase26,testA,-1.1689
+reader2,negCase27,testA,-0.5435
+reader2,negCase28,testA,1.1051
+reader2,negCase29,testA,1.9862
+reader2,negCase30,testA,0.0669
+reader2,negCase31,testA,-0.3356
+reader2,negCase32,testA,-0.1402
+reader2,negCase33,testA,1.8529
+reader2,negCase34,testA,-0.8587
+reader2,negCase35,testA,-0.0292
+reader2,negCase36,testA,-0.7632
+reader2,negCase37,testA,-0.5587
+reader2,negCase38,testA,0.5061
+reader2,negCase39,testA,-0.5898
+reader2,negCase40,testA,0.5622
+reader3,negCase1,testA,0.1911
+reader3,negCase2,testA,0.0487
+reader3,negCase3,testA,-0.8634
+reader3,negCase4,testA,0.3926
+reader3,negCase5,testA,0.771
+reader3,negCase6,testA,-1.2813
+reader3,negCase7,testA,-0.4665
+reader3,negCase8,testA,-1.0336
+reader3,negCase9,testA,-0.5879
+reader3,negCase10,testA,0.3486
+reader3,negCase11,testA,-1.4068
+reader3,negCase12,testA,-0.5457
+reader3,negCase13,testA,1.5041
+reader3,negCase14,testA,-0.0438
+reader3,negCase15,testA,-1.4971
+reader3,negCase16,testA,-1.6884
+reader3,negCase17,testA,-0.2642
+reader3,negCase18,testA,-1.1796
+reader3,negCase19,testA,0.4541
+reader3,negCase20,testA,-0.9301
+reader3,negCase21,testA,-0.8676
+reader3,negCase22,testA,-0.1331
+reader3,negCase23,testA,0.6271
+reader3,negCase24,testA,-1.4183
+reader3,negCase25,testA,1.5456
+reader3,negCase26,testA,0.2872
+reader3,negCase27,testA,-0.5384
+reader3,negCase28,testA,0.7884
+reader3,negCase29,testA,1.1555
+reader3,negCase30,testA,0.0978
+reader3,negCase31,testA,-1.4185
+reader3,negCase32,testA,0.7363
+reader3,negCase33,testA,-0.9124
+reader3,negCase34,testA,-1.0529
+reader3,negCase35,testA,-0.7668
+reader3,negCase36,testA,-0.2547
+reader3,negCase37,testA,-1.8922
+reader3,negCase38,testA,-0.0035
+reader3,negCase39,testA,-0.291
+reader3,negCase40,testA,-1.1321
+reader4,negCase1,testA,0.3682
+reader4,negCase2,testA,-0.3316
+reader4,negCase3,testA,0.5114
+reader4,negCase4,testA,0.4676
+reader4,negCase5,testA,1.806
+reader4,negCase6,testA,0.8242
+reader4,negCase7,testA,-0.212
+reader4,negCase8,testA,-0.3246
+reader4,negCase9,testA,0.2038
+reader4,negCase10,testA,2.1544
+reader4,negCase11,testA,0.3219
+reader4,negCase12,testA,0.6844
+reader4,negCase13,testA,3.3957
+reader4,negCase14,testA,0.783
+reader4,negCase15,testA,-1.1728
+reader4,negCase16,testA,-0.0737
+reader4,negCase17,testA,-0.9732
+reader4,negCase18,testA,-0.8459
+reader4,negCase19,testA,0.0036
+reader4,negCase20,testA,0.0935
+reader4,negCase21,testA,-0.6347
+reader4,negCase22,testA,1.0913
+reader4,negCase23,testA,1.5705
+reader4,negCase24,testA,0.381
+reader4,negCase25,testA,1.7136
+reader4,negCase26,testA,0.2962
+reader4,negCase27,testA,0.8472
+reader4,negCase28,testA,1.4881
+reader4,negCase29,testA,2.5209
+reader4,negCase30,testA,-0.4412
+reader4,negCase31,testA,0.0842
+reader4,negCase32,testA,0.2102
+reader4,negCase33,testA,1.3296
+reader4,negCase34,testA,-0.7133
+reader4,negCase35,testA,0.2753
+reader4,negCase36,testA,1.3042
+reader4,negCase37,testA,0.4484
+reader4,negCase38,testA,1.5421
+reader4,negCase39,testA,0.4851
+reader4,negCase40,testA,0.0898
+reader5,negCase1,testA,-0.7304
+reader5,negCase2,testA,-0.414
+reader5,negCase3,testA,-0.3433
+reader5,negCase4,testA,0.1847
+reader5,negCase5,testA,-0.5905
+reader5,negCase6,testA,-0.9112
+reader5,negCase7,testA,0.5897
+reader5,negCase8,testA,-0.2729
+reader5,negCase9,testA,-1.1535
+reader5,negCase10,testA,0.1553
+reader5,negCase11,testA,0.1853
+reader5,negCase12,testA,-0.0295
+reader5,negCase13,testA,2.2709
+reader5,negCase14,testA,-0.7149
+reader5,negCase15,testA,-0.8851
+reader5,negCase16,testA,-0.1135
+reader5,negCase17,testA,-1.6112
+reader5,negCase18,testA,-0.8201
+reader5,negCase19,testA,-0.6059
+reader5,negCase20,testA,0.1985
+reader5,negCase21,testA,-1.9667
+reader5,negCase22,testA,0.4924
+reader5,negCase23,testA,0.5334
+reader5,negCase24,testA,0.5829
+reader5,negCase25,testA,0.5648
+reader5,negCase26,testA,1.3229
+reader5,negCase27,testA,-1.0165
+reader5,negCase28,testA,0.851
+reader5,negCase29,testA,0.6682
+reader5,negCase30,testA,0.1159
+reader5,negCase31,testA,-1.1086
+reader5,negCase32,testA,0.5196
+reader5,negCase33,testA,1.4225
+reader5,negCase34,testA,-1.5287
+reader5,negCase35,testA,0.9891
+reader5,negCase36,testA,0.3504
+reader5,negCase37,testA,-0.1692
+reader5,negCase38,testA,1.0661
+reader5,negCase39,testA,-0.1133
+reader5,negCase40,testA,0.0314
+reader1,negCase1,testB,-0.6529
+reader1,negCase2,testB,-0.7427
+reader1,negCase3,testB,0.5923
+reader1,negCase4,testB,1.9806
+reader1,negCase5,testB,-1.0615
+reader1,negCase6,testB,0.7077
+reader1,negCase7,testB,0.0074
+reader1,negCase8,testB,-1.918
+reader1,negCase9,testB,-0.6671
+reader1,negCase10,testB,1.5175
+reader1,negCase11,testB,0.9006
+reader1,negCase12,testB,1.0608
+reader1,negCase13,testB,1.9435
+reader1,negCase14,testB,0.8301
+reader1,negCase15,testB,-0.4624
+reader1,negCase16,testB,-0.6185
+reader1,negCase17,testB,-1.1794
+reader1,negCase18,testB,0.1792
+reader1,negCase19,testB,0.6211
+reader1,negCase20,testB,0.8796
+reader1,negCase21,testB,-2.1528
+reader1,negCase22,testB,2.2502
+reader1,negCase23,testB,0.0627
+reader1,negCase24,testB,0.5871
+reader1,negCase25,testB,0.9713
+reader1,negCase26,testB,1.0966
+reader1,negCase27,testB,-0.1578
+reader1,negCase28,testB,0.44
+reader1,negCase29,testB,1.1824
+reader1,negCase30,testB,-0.1784
+reader1,negCase31,testB,-1.1951
+reader1,negCase32,testB,0.6948
+reader1,negCase33,testB,2.0768
+reader1,negCase34,testB,-1.4491
+reader1,negCase35,testB,-0.4702
+reader1,negCase36,testB,0.3486
+reader1,negCase37,testB,-0.2366
+reader1,negCase38,testB,-0.4425
+reader1,negCase39,testB,-0.2321
+reader1,negCase40,testB,0.2855
+reader2,negCase1,testB,-1.6569
+reader2,negCase2,testB,-0.8927
+reader2,negCase3,testB,-2.2334
+reader2,negCase4,testB,0.439
+reader2,negCase5,testB,-1.4522
+reader2,negCase6,testB,0.2629
+reader2,negCase7,testB,-1.4087
+reader2,negCase8,testB,-2.2141
+reader2,negCase9,testB,-1.2947
+reader2,negCase10,testB,1.4986
+reader2,negCase11,testB,-0.8445
+reader2,negCase12,testB,0.0517
+reader2,negCase13,testB,0.7281
+reader2,negCase14,testB,-0.2277
+reader2,negCase15,testB,-1.3896
+reader2,negCase16,testB,-1.593
+reader2,negCase17,testB,-0.788
+reader2,negCase18,testB,-1.208
+reader2,negCase19,testB,0.0717
+reader2,negCase20,testB,-0.3564
+reader2,negCase21,testB,-3.4423
+reader2,negCase22,testB,-0.9082
+reader2,negCase23,testB,0.2225
+reader2,negCase24,testB,-0.5956
+reader2,negCase25,testB,-1.2252
+reader2,negCase26,testB,-1.133
+reader2,negCase27,testB,-0.3164
+reader2,negCase28,testB,0.0977
+reader2,negCase29,testB,1.0884
+reader2,negCase30,testB,-0.949
+reader2,negCase31,testB,-1.2347
+reader2,negCase32,testB,-0.7865
+reader2,negCase33,testB,0.8749
+reader2,negCase34,testB,-1.6696
+reader2,negCase35,testB,-1.0563
+reader2,negCase36,testB,-1.6352
+reader2,negCase37,testB,-0.8064
+reader2,negCase38,testB,1.2608
+reader2,negCase39,testB,-1.6499
+reader2,negCase40,testB,-0.109
+reader3,negCase1,testB,-0.3942
+reader3,negCase2,testB,0.4376
+reader3,negCase3,testB,0.091
+reader3,negCase4,testB,2.1891
+reader3,negCase5,testB,0.4615
+reader3,negCase6,testB,-0.0165
+reader3,negCase7,testB,-0.6487
+reader3,negCase8,testB,-1.6737
+reader3,negCase9,testB,-0.651
+reader3,negCase10,testB,1.8691
+reader3,negCase11,testB,0.3196
+reader3,negCase12,testB,0.1086
+reader3,negCase13,testB,0.5984
+reader3,negCase14,testB,-0.969
+reader3,negCase15,testB,-0.3915
+reader3,negCase16,testB,-0.8569
+reader3,negCase17,testB,-0.5619
+reader3,negCase18,testB,0.0705
+reader3,negCase19,testB,1.4418
+reader3,negCase20,testB,0.559
+reader3,negCase21,testB,0.0265
+reader3,negCase22,testB,0.1359
+reader3,negCase23,testB,0.3256
+reader3,negCase24,testB,-0.8427
+reader3,negCase25,testB,0.9839
+reader3,negCase26,testB,0.716
+reader3,negCase27,testB,-0.7239
+reader3,negCase28,testB,-0.0263
+reader3,negCase29,testB,1.7396
+reader3,negCase30,testB,0.9556
+reader3,negCase31,testB,0.3827
+reader3,negCase32,testB,0.0378
+reader3,negCase33,testB,0.0031
+reader3,negCase34,testB,-1.2147
+reader3,negCase35,testB,-0.474
+reader3,negCase36,testB,-1.1386
+reader3,negCase37,testB,-1.2747
+reader3,negCase38,testB,0.8072
+reader3,negCase39,testB,-1.5101
+reader3,negCase40,testB,0.0826
+reader4,negCase1,testB,-1.0306
+reader4,negCase2,testB,-1.1518
+reader4,negCase3,testB,-1.1719
+reader4,negCase4,testB,0.2533
+reader4,negCase5,testB,-1.0073
+reader4,negCase6,testB,1.2301
+reader4,negCase7,testB,-1.4814
+reader4,negCase8,testB,-2.677
+reader4,negCase9,testB,-1.0216
+reader4,negCase10,testB,1.9665
+reader4,negCase11,testB,0.1248
+reader4,negCase12,testB,0.3744
+reader4,negCase13,testB,1.8407
+reader4,negCase14,testB,-0.2109
+reader4,negCase15,testB,-2.3882
+reader4,negCase16,testB,-1.2627
+reader4,negCase17,testB,-1.6726
+reader4,negCase18,testB,-0.8188
+reader4,negCase19,testB,1.1734
+reader4,negCase20,testB,0.2546
+reader4,negCase21,testB,-1.4766
+reader4,negCase22,testB,0.1251
+reader4,negCase23,testB,0.5247
+reader4,negCase24,testB,-0.2412
+reader4,negCase25,testB,0.4082
+reader4,negCase26,testB,-0.5045
+reader4,negCase27,testB,0.5804
+reader4,negCase28,testB,0.2733
+reader4,negCase29,testB,0.9581
+reader4,negCase30,testB,-1.7345
+reader4,negCase31,testB,-0.8737
+reader4,negCase32,testB,-0.3879
+reader4,negCase33,testB,0.1754
+reader4,negCase34,testB,-2.8803
+reader4,negCase35,testB,-0.794
+reader4,negCase36,testB,-1.2622
+reader4,negCase37,testB,-1.4361
+reader4,negCase38,testB,1.0945
+reader4,negCase39,testB,-0.1177
+reader4,negCase40,testB,-0.3541
+reader5,negCase1,testB,-1.1053
+reader5,negCase2,testB,-0.4834
+reader5,negCase3,testB,0.6816
+reader5,negCase4,testB,0.8477
+reader5,negCase5,testB,-0.579
+reader5,negCase6,testB,0.5042
+reader5,negCase7,testB,-0.0673
+reader5,negCase8,testB,-1.4284
+reader5,negCase9,testB,-1.2051
+reader5,negCase10,testB,1.7575
+reader5,negCase11,testB,1.2002
+reader5,negCase12,testB,-0.1488
+reader5,negCase13,testB,0.745
+reader5,negCase14,testB,0.2286
+reader5,negCase15,testB,-0.2091
+reader5,negCase16,testB,0.405
+reader5,negCase17,testB,-1.1496
+reader5,negCase18,testB,-0.2833
+reader5,negCase19,testB,1.2537
+reader5,negCase20,testB,0.1849
+reader5,negCase21,testB,-1.1319
+reader5,negCase22,testB,-0.8712
+reader5,negCase23,testB,1.372
+reader5,negCase24,testB,0.3903
+reader5,negCase25,testB,0.1193
+reader5,negCase26,testB,0.5168
+reader5,negCase27,testB,-0.142
+reader5,negCase28,testB,0.1108
+reader5,negCase29,testB,1.4242
+reader5,negCase30,testB,-0.3964
+reader5,negCase31,testB,-1.1965
+reader5,negCase32,testB,0.0284
+reader5,negCase33,testB,1.4549
+reader5,negCase34,testB,-0.4941
+reader5,negCase35,testB,0.6646
+reader5,negCase36,testB,-1.2426
+reader5,negCase37,testB,-0.4699
+reader5,negCase38,testB,1.5444
+reader5,negCase39,testB,-0.4254
+reader5,negCase40,testB,-0.7052
+reader1,posCase1,testA,0.3735
+reader1,posCase2,testA,1.2238
+reader1,posCase3,testA,0.8885
+reader1,posCase4,testA,0.2533
+reader1,posCase5,testA,0.8412
+reader1,posCase6,testA,1.2644
+reader1,posCase7,testA,0.7668
+reader1,posCase8,testA,0.0467
+reader1,posCase9,testA,0.3426
+reader1,posCase10,testA,-1.6178
+reader1,posCase11,testA,0.8364
+reader1,posCase12,testA,2.3166
+reader1,posCase13,testA,2.3019
+reader1,posCase14,testA,1.3265
+reader1,posCase15,testA,3.6025
+reader1,posCase16,testA,2.491
+reader1,posCase17,testA,1.2959
+reader1,posCase18,testA,0.2953
+reader1,posCase19,testA,1.2836
+reader1,posCase20,testA,-0.9606
+reader1,posCase21,testA,1.4886
+reader1,posCase22,testA,0.3983
+reader1,posCase23,testA,2.2022
+reader1,posCase24,testA,0.8571
+reader1,posCase25,testA,0.3174
+reader1,posCase26,testA,0.6091
+reader1,posCase27,testA,-1.3195
+reader1,posCase28,testA,1.4268
+reader1,posCase29,testA,2.0705
+reader1,posCase30,testA,0.4277
+reader1,posCase31,testA,2.007
+reader1,posCase32,testA,0.3354
+reader1,posCase33,testA,0.7731
+reader1,posCase34,testA,1.6709
+reader1,posCase35,testA,-0.3063
+reader1,posCase36,testA,-0.739
+reader1,posCase37,testA,0.3146
+reader1,posCase38,testA,0.5849
+reader1,posCase39,testA,0.2214
+reader1,posCase40,testA,0.6264
+reader2,posCase1,testA,1.4677
+reader2,posCase2,testA,1.2408
+reader2,posCase3,testA,1.1336
+reader2,posCase4,testA,0.9982
+reader2,posCase5,testA,-1.2617
+reader2,posCase6,testA,0.887
+reader2,posCase7,testA,1.593
+reader2,posCase8,testA,-0.7599
+reader2,posCase9,testA,-0.594
+reader2,posCase10,testA,-0.8448
+reader2,posCase11,testA,0.0877
+reader2,posCase12,testA,1.3644
+reader2,posCase13,testA,1.5288
+reader2,posCase14,testA,1.8118
+reader2,posCase15,testA,3.0367
+reader2,posCase16,testA,2.4608
+reader2,posCase17,testA,0.9826
+reader2,posCase18,testA,0.6393
+reader2,posCase19,testA,0.2055
+reader2,posCase20,testA,-0.5362
+reader2,posCase21,testA,1.4458
+reader2,posCase22,testA,0.8174
+reader2,posCase23,testA,2.1147
+reader2,posCase24,testA,1.5468
+reader2,posCase25,testA,-1.6451
+reader2,posCase26,testA,0.7331
+reader2,posCase27,testA,0.6047
+reader2,posCase28,testA,1.2324
+reader2,posCase29,testA,1.2452
+reader2,posCase30,testA,0.4867
+reader2,posCase31,testA,4.0726
+reader2,posCase32,testA,-0.3293
+reader2,posCase33,testA,0.3303
+reader2,posCase34,testA,1.425
+reader2,posCase35,testA,-1.36
+reader2,posCase36,testA,0.6293
+reader2,posCase37,testA,1.3388
+reader2,posCase38,testA,1.5719
+reader2,posCase39,testA,-1.4265
+reader2,posCase40,testA,1.1954
+reader3,posCase1,testA,2.4994
+reader3,posCase2,testA,2.0828
+reader3,posCase3,testA,2.236
+reader3,posCase4,testA,1.2448
+reader3,posCase5,testA,-0.0591
+reader3,posCase6,testA,2.9287
+reader3,posCase7,testA,2.0184
+reader3,posCase8,testA,1.0202
+reader3,posCase9,testA,1.3967
+reader3,posCase10,testA,-0.4842
+reader3,posCase11,testA,0.1155
+reader3,posCase12,testA,2.0339
+reader3,posCase13,testA,1.5343
+reader3,posCase14,testA,0.8282
+reader3,posCase15,testA,3.9407
+reader3,posCase16,testA,2.6246
+reader3,posCase17,testA,1.8587
+reader3,posCase18,testA,2.5276
+reader3,posCase19,testA,0.5598
+reader3,posCase20,testA,-0.3406
+reader3,posCase21,testA,2.459
+reader3,posCase22,testA,1.4709
+reader3,posCase23,testA,2.2895
+reader3,posCase24,testA,2.1043
+reader3,posCase25,testA,1.1341
+reader3,posCase26,testA,-0.1298
+reader3,posCase27,testA,0.4542
+reader3,posCase28,testA,2.3644
+reader3,posCase29,testA,-0.3716
+reader3,posCase30,testA,1.7637
+reader3,posCase31,testA,3.1026
+reader3,posCase32,testA,1.2506
+reader3,posCase33,testA,1.7239
+reader3,posCase34,testA,2.2085
+reader3,posCase35,testA,-0.1437
+reader3,posCase36,testA,1.7489
+reader3,posCase37,testA,0.3673
+reader3,posCase38,testA,2.5878
+reader3,posCase39,testA,0.4026
+reader3,posCase40,testA,2.4491
+reader4,posCase1,testA,-0.0927
+reader4,posCase2,testA,0.1503
+reader4,posCase3,testA,-0.1514
+reader4,posCase4,testA,0.8488
+reader4,posCase5,testA,-0.1345
+reader4,posCase6,testA,1.8115
+reader4,posCase7,testA,0.5592
+reader4,posCase8,testA,-1.607
+reader4,posCase9,testA,-0.5127
+reader4,posCase10,testA,-1.8232
+reader4,posCase11,testA,-0.4935
+reader4,posCase12,testA,1.8998
+reader4,posCase13,testA,0.217
+reader4,posCase14,testA,0.5889
+reader4,posCase15,testA,2.4028
+reader4,posCase16,testA,0.9576
+reader4,posCase17,testA,0.9797
+reader4,posCase18,testA,0.2534
+reader4,posCase19,testA,0.1619
+reader4,posCase20,testA,-0.5707
+reader4,posCase21,testA,0.81
+reader4,posCase22,testA,0.7379
+reader4,posCase23,testA,1.189
+reader4,posCase24,testA,1.7316
+reader4,posCase25,testA,-0.1153
+reader4,posCase26,testA,0.4497
+reader4,posCase27,testA,1.2984
+reader4,posCase28,testA,-0.2409
+reader4,posCase29,testA,1.0763
+reader4,posCase30,testA,-0.1402
+reader4,posCase31,testA,1.4807
+reader4,posCase32,testA,0.9143
+reader4,posCase33,testA,0.6533
+reader4,posCase34,testA,0.4257
+reader4,posCase35,testA,0.3687
+reader4,posCase36,testA,0.7866
+reader4,posCase37,testA,0.158
+reader4,posCase38,testA,0.0309
+reader4,posCase39,testA,-0.8326
+reader4,posCase40,testA,0.2681
+reader5,posCase1,testA,0.8261
+reader5,posCase2,testA,0.9528
+reader5,posCase3,testA,1.1188
+reader5,posCase4,testA,0.9554
+reader5,posCase5,testA,0.1688
+reader5,posCase6,testA,2.3142
+reader5,posCase7,testA,1.464
+reader5,posCase8,testA,-0.6197
+reader5,posCase9,testA,-0.4086
+reader5,posCase10,testA,-0.6281
+reader5,posCase11,testA,0.0362
+reader5,posCase12,testA,1.7813
+reader5,posCase13,testA,1.7497
+reader5,posCase14,testA,1.3912
+reader5,posCase15,testA,3.3417
+reader5,posCase16,testA,2.27
+reader5,posCase17,testA,0.5057
+reader5,posCase18,testA,1.6607
+reader5,posCase19,testA,1.8923
+reader5,posCase20,testA,0.4653
+reader5,posCase21,testA,1.7063
+reader5,posCase22,testA,0.0023
+reader5,posCase23,testA,1.9229
+reader5,posCase24,testA,0.7705
+reader5,posCase25,testA,0.0531
+reader5,posCase26,testA,-0.8404
+reader5,posCase27,testA,0.1815
+reader5,posCase28,testA,1.2563
+reader5,posCase29,testA,1.7957
+reader5,posCase30,testA,0.0616
+reader5,posCase31,testA,2.291
+reader5,posCase32,testA,1.3013
+reader5,posCase33,testA,0.481
+reader5,posCase34,testA,1.5725
+reader5,posCase35,testA,0.9381
+reader5,posCase36,testA,1.8845
+reader5,posCase37,testA,0.6827
+reader5,posCase38,testA,2.8037
+reader5,posCase39,testA,-0.1012
+reader5,posCase40,testA,1.8058
+reader1,posCase1,testB,1.0069
+reader1,posCase2,testB,0.1763
+reader1,posCase3,testB,1.5394
+reader1,posCase4,testB,0.3194
+reader1,posCase5,testB,0.5722
+reader1,posCase6,testB,0.8384
+reader1,posCase7,testB,0.6661
+reader1,posCase8,testB,0.6423
+reader1,posCase9,testB,0.9308
+reader1,posCase10,testB,0.6019
+reader1,posCase11,testB,1.5956
+reader1,posCase12,testB,0.8771
+reader1,posCase13,testB,-0.0073
+reader1,posCase14,testB,2.8131
+reader1,posCase15,testB,2.5415
+reader1,posCase16,testB,1.656
+reader1,posCase17,testB,0.6184
+reader1,posCase18,testB,-0.3357
+reader1,posCase19,testB,-0.2008
+reader1,posCase20,testB,-0.062
+reader1,posCase21,testB,1.3791
+reader1,posCase22,testB,-0.3473
+reader1,posCase23,testB,1.8512
+reader1,posCase24,testB,1.0745
+reader1,posCase25,testB,1.2424
+reader1,posCase26,testB,1.5327
+reader1,posCase27,testB,-0.102
+reader1,posCase28,testB,1.9272
+reader1,posCase29,testB,1.0621
+reader1,posCase30,testB,-0.1679
+reader1,posCase31,testB,1.6768
+reader1,posCase32,testB,0.0982
+reader1,posCase33,testB,0.4114
+reader1,posCase34,testB,2.1828
+reader1,posCase35,testB,-0.5045
+reader1,posCase36,testB,0.725
+reader1,posCase37,testB,-0.5663
+reader1,posCase38,testB,1.5226
+reader1,posCase39,testB,0.038
+reader1,posCase40,testB,1.6753
+reader2,posCase1,testB,1.1309
+reader2,posCase2,testB,0.4846
+reader2,posCase3,testB,1.1276
+reader2,posCase4,testB,-0.1405
+reader2,posCase5,testB,-0.927
+reader2,posCase6,testB,0.1632
+reader2,posCase7,testB,0.664
+reader2,posCase8,testB,-0.2692
+reader2,posCase9,testB,-0.4199
+reader2,posCase10,testB,1.7203
+reader2,posCase11,testB,0.9567
+reader2,posCase12,testB,0.2889
+reader2,posCase13,testB,0.29
+reader2,posCase14,testB,4.1863
+reader2,posCase15,testB,2.3449
+reader2,posCase16,testB,2.5508
+reader2,posCase17,testB,1.5078
+reader2,posCase18,testB,-0.4171
+reader2,posCase19,testB,-0.0086
+reader2,posCase20,testB,0.0711
+reader2,posCase21,testB,0.9898
+reader2,posCase22,testB,0.5098
+reader2,posCase23,testB,0.8204
+reader2,posCase24,testB,1.3907
+reader2,posCase25,testB,0.6965
+reader2,posCase26,testB,2.0485
+reader2,posCase27,testB,2.0195
+reader2,posCase28,testB,1.9875
+reader2,posCase29,testB,0.6189
+reader2,posCase30,testB,0.4597
+reader2,posCase31,testB,2.4345
+reader2,posCase32,testB,0.313
+reader2,posCase33,testB,-1.1192
+reader2,posCase34,testB,2.7875
+reader2,posCase35,testB,-0.2512
+reader2,posCase36,testB,1.1167
+reader2,posCase37,testB,-0.3199
+reader2,posCase38,testB,2.5072
+reader2,posCase39,testB,-1.6553
+reader2,posCase40,testB,1.9096
+reader3,posCase1,testB,2.2253
+reader3,posCase2,testB,1.4082
+reader3,posCase3,testB,0.7568
+reader3,posCase4,testB,0.4659
+reader3,posCase5,testB,-0.8441
+reader3,posCase6,testB,1.8633
+reader3,posCase7,testB,0.6756
+reader3,posCase8,testB,1.7103
+reader3,posCase9,testB,1.1218
+reader3,posCase10,testB,0.5557
+reader3,posCase11,testB,1.4355
+reader3,posCase12,testB,0.4537
+reader3,posCase13,testB,0.0246
+reader3,posCase14,testB,2.5623
+reader3,posCase15,testB,2.122
+reader3,posCase16,testB,0.9038
+reader3,posCase17,testB,0.6965
+reader3,posCase18,testB,0.5798
+reader3,posCase19,testB,0.0283
+reader3,posCase20,testB,1.2278
+reader3,posCase21,testB,1.4736
+reader3,posCase22,testB,0.4752
+reader3,posCase23,testB,-0.1842
+reader3,posCase24,testB,1.7487
+reader3,posCase25,testB,1.8004
+reader3,posCase26,testB,1.3067
+reader3,posCase27,testB,1.7387
+reader3,posCase28,testB,2.2415
+reader3,posCase29,testB,-0.0234
+reader3,posCase30,testB,-0.1287
+reader3,posCase31,testB,1.4827
+reader3,posCase32,testB,1.3521
+reader3,posCase33,testB,-0.3817
+reader3,posCase34,testB,1.7867
+reader3,posCase35,testB,-0.0275
+reader3,posCase36,testB,0.9846
+reader3,posCase37,testB,-0.8947
+reader3,posCase38,testB,3.1198
+reader3,posCase39,testB,0.156
+reader3,posCase40,testB,1.955
+reader4,posCase1,testB,0.8507
+reader4,posCase2,testB,0.1854
+reader4,posCase3,testB,0.1936
+reader4,posCase4,testB,1.0385
+reader4,posCase5,testB,-1.6394
+reader4,posCase6,testB,1.6952
+reader4,posCase7,testB,0.6637
+reader4,posCase8,testB,0.902
+reader4,posCase9,testB,-0.2267
+reader4,posCase10,testB,0.9817
+reader4,posCase11,testB,-0.0739
+reader4,posCase12,testB,1.088
+reader4,posCase13,testB,-0.9723
+reader4,posCase14,testB,1.3913
+reader4,posCase15,testB,0.8039
+reader4,posCase16,testB,0.1389
+reader4,posCase17,testB,1.2191
+reader4,posCase18,testB,-0.2442
+reader4,posCase19,testB,0.7796
+reader4,posCase20,testB,0.9337
+reader4,posCase21,testB,0.2924
+reader4,posCase22,testB,-0.1739
+reader4,posCase23,testB,-0.8616
+reader4,posCase24,testB,1.5385
+reader4,posCase25,testB,0.5144
+reader4,posCase26,testB,-0.0433
+reader4,posCase27,testB,2.0531
+reader4,posCase28,testB,0.231
+reader4,posCase29,testB,-0.0658
+reader4,posCase30,testB,0.5511
+reader4,posCase31,testB,0.8577
+reader4,posCase32,testB,0.9866
+reader4,posCase33,testB,-1.1842
+reader4,posCase34,testB,1.3777
+reader4,posCase35,testB,-0.8143
+reader4,posCase36,testB,0.7289
+reader4,posCase37,testB,-0.5315
+reader4,posCase38,testB,0.2133
+reader4,posCase39,testB,0.2454
+reader4,posCase40,testB,1.8681
+reader5,posCase1,testB,0.891
+reader5,posCase2,testB,0.0899
+reader5,posCase3,testB,1.5524
+reader5,posCase4,testB,0.4781
+reader5,posCase5,testB,-0.4422
+reader5,posCase6,testB,3.0866
+reader5,posCase7,testB,2.5659
+reader5,posCase8,testB,1.1536
+reader5,posCase9,testB,-0.598
+reader5,posCase10,testB,1.3878
+reader5,posCase11,testB,1.5278
+reader5,posCase12,testB,-0.2963
+reader5,posCase13,testB,0.0102
+reader5,posCase14,testB,3.5231
+reader5,posCase15,testB,1.8799
+reader5,posCase16,testB,0.7532
+reader5,posCase17,testB,0.7912
+reader5,posCase18,testB,1.0403
+reader5,posCase19,testB,1.97
+reader5,posCase20,testB,1.1248
+reader5,posCase21,testB,0.653
+reader5,posCase22,testB,0.8599
+reader5,posCase23,testB,0.3894
+reader5,posCase24,testB,1.4954
+reader5,posCase25,testB,0.9903
+reader5,posCase26,testB,0.56
+reader5,posCase27,testB,2.8091
+reader5,posCase28,testB,1.3338
+reader5,posCase29,testB,0.8327
+reader5,posCase30,testB,1.5047
+reader5,posCase31,testB,1.9315
+reader5,posCase32,testB,1.8105
+reader5,posCase33,testB,0.0904
+reader5,posCase34,testB,1.9038
+reader5,posCase35,testB,0.9488
+reader5,posCase36,testB,2.0883
+reader5,posCase37,testB,0.4487
+reader5,posCase38,testB,3.2079
+reader5,posCase39,testB,-1.256
+reader5,posCase40,testB,2.5737

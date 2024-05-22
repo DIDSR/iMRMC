@@ -1,6 +1,11 @@
 <h3>README for iMRMC and iRoeMetz</h3>
 
-Here is a high-level overview of the iMRMC software: [LINK](https://github.com/DIDSR/iMRMC/raw/master/iMRMC-ToolOverview.pdf)
+Here is a high-level overview of the iMRMC software:
+
+* [PDF document](https://zenodo.org/record/8383591)
+* [Entry in FDA/CDRH Regulatory Science Tool Catalog](https://www.fda.gov/medical-devices/science-and-research-medical-devices/imrmc-software-do-multi-reader-multi-case-statistical-analysis-reader-studies)
+
+Examples of specific MRMC analyses and other FAQs are available in the [iMRMC repository's Wiki](https://github.com/DIDSR/iMRMC/wiki).
 
 Visit the <a href="https://github.com/DIDSR/iMRMC/releases" rel="nofollow">release Page</a> to download the software or access the repository [HERE](https://github.com/DIDSR/iMRMC).
 
@@ -40,3 +45,5 @@ Here is one way to cite our work:
 
 [![Github All Releases](https://img.shields.io/github/downloads/DIDSR/iMRMC/total)]()
 
+<h5>Team</h5>
+Please refer to the [NEWS](https://github.com/DIDSR/iMRMC/blob/iMRMC-v1.2.5/Rpackage/iMRMC/NEWS.md) for the complete list of members that have made this project possible.

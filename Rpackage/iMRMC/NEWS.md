@@ -1,8 +1,35 @@
+Please refer to this [README](https://github.com/DIDSR/iMRMC/blob/master/README.md) for more information.
+
+# Team
+A big thank you to all that have worked on this software throughout the years. While the work was varied between this group, the effort would not have been possible without the work of all.
+
+* Brandon Gallas, project lead
+* Amrita Anam &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; •	Hongfei Du  
+* Dillip Emmanuel &emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;&nbsp; •	Emma Gardecki  
+* Qi Gong &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; •	Jessica Handoko  
+*	Xin He &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;&nbsp;&nbsp; •	Tyler Keay  
+*	Yousun Ko &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; •	Rowhan Pathare  
+* Si Wen &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;&nbsp; •	Adam Wunderlich   
+
+# iMRMC 2.0.0
+*04/2024*
+- Add R only functions to analyze MRMC studies, notably `doIMRMC()`  
+- Rename and deprecate previous `doIMRMC()`, now available as `doIMRMC_java()`  
+- Add ROC and AUC calculation support functions   
+- Update documentation throughout package  
+- Add warning for MRMC studies with small sample sizes  
+- Change format of variance decomposition (`varDecomp`) result data frames in `doIMRMC()` function  
+- Add optional per row data of ROC and variance data frames (each reader and modality comparison)  
+- Remove functionality to read and analyze imported input data frame for new `doIMRMC()`.  
+- Submit updates to CRAN for re-release  
+- Future work: Make `doIMRMC_java()` function defunct due to outdated Java requirements.  
+  Please use all-R `doIMRMC()` for all future work.
+
 # iMRMC 1.2.5
 *5/15/23*
-- Updated Java system requirement
-- Added further documentation on functions
-- Submitted updates to CRAN for rerelease
+- Update Java system requirement
+- Add further documentation on functions
+- Submit updates to CRAN for rerelease
 
 # iMRMC 1.2.4
 *2/23/22*
@@ -24,7 +51,6 @@
 - Update limitsOfAgreement.R
 - Add functions getWRBM and getBRBM. These functions get within-reader between-modality or between-reader between-modality paired data from an MRMC data file. Useful for plotting Bland-Altman-like difference plots.
 - Update utils.R
-- Add convertDF to the package. This function converts list-mode data to matrix-mode data.
 - Add html documentation into inst/extra/man for easy reference on GitHub.
 - Update simMRMC.R
 
