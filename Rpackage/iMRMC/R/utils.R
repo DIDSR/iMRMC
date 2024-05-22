@@ -779,6 +779,7 @@ getMRMCdataset <- function(dataset = c("pilotHTT", "viperObs", "viperObs365",
     pilotHTT <- read.csv(link)
     print("Annotation data that is the aggregate of all clean data from the HTT project pilot study.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/HTT")
+    
     return(pilotHTT)
   }
 
@@ -787,6 +788,7 @@ getMRMCdataset <- function(dataset = c("pilotHTT", "viperObs", "viperObs365",
     viperObs <- read.csv(link)
     print("Individual observations of each reader reading each case. Simplified and merged version of data based on `viperObs365` and `viperObs455`.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/viperData")
+    
     return(viperObs)
   }
   
@@ -796,6 +798,7 @@ getMRMCdataset <- function(dataset = c("pilotHTT", "viperObs", "viperObs365",
     viperObs365 <- viperObs365[, -1]
     print("Individual observations of each reader reading each case. Truth labels are based on cancer at 365 days.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/viperData")
+    
     return(viperObs365)
   }
   
@@ -805,6 +808,7 @@ getMRMCdataset <- function(dataset = c("pilotHTT", "viperObs", "viperObs365",
     viperObs455 <- viperObs455[, -1]
     print("Individual observations of each reader reading each case. Truth labels are based on cancer at 455 days.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/viperData")
+    
     return(viperObs455)
   }
 
@@ -813,6 +817,7 @@ getMRMCdataset <- function(dataset = c("pilotHTT", "viperObs", "viperObs365",
     MFcounts_dfClassify <- read.csv(link)
     print("A single data frame of the study data. Each row corresponds to a candidate mitotic figure and modality (155 candidates x 5 modalities = 775 rows). There is a column for each observer and the truth.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/mitoticFigureCounts/tree/master")
+    
     return(MFcounts_dfClassify)
   }
   
@@ -821,6 +826,7 @@ getMRMCdataset <- function(dataset = c("pilotHTT", "viperObs", "viperObs365",
     MFcounts_dfCountROI <- read.csv(link)
     print("A data frame of the mitotic figure counts per ROI and modality (40 ROIs x 5 modalities = 200 rows). There is a column for each observer and the truth.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/mitoticFigureCounts/tree/master")
+    
     return(MFcounts_dfCountROI)
   }
   
@@ -829,6 +835,7 @@ getMRMCdataset <- function(dataset = c("pilotHTT", "viperObs", "viperObs365",
     MFcounts_dfCountWSI <- read.csv(link)
     print("A single data frame of the mitotic figure counts per WSI and modality (4 WSIs x 5 modalities = 20 rows). There is a column for each observer and the truth. ")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/mitoticFigureCounts/tree/master")
+    
     return(MFcounts_dfCountWSI)  
   }
   
@@ -838,6 +845,11 @@ getMRMCdataset <- function(dataset = c("pilotHTT", "viperObs", "viperObs365",
     print("Truth of each case in study. From left to right each column corresponds to case number and truth. 1 is assigned to cases with lesion (positive cases) and 0 to cases without lesion (negative cases).")
     print("You may also want to get the `cardioStudyRawData` dataset.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/colorScaleStudyData")
+    
+    names(cardioStudyTruth) <- c("caseID", "score")
+    cardioStudyTruth$readerID <- "truth"
+    cardioStudyTruth$modalityID <- "truth"
+    
     return(cardioStudyTruth)
   }
   
@@ -847,6 +859,9 @@ getMRMCdataset <- function(dataset = c("pilotHTT", "viperObs", "viperObs365",
     print("Observations of each case in study. From left to right each column corresponds to reader, case number, modality (color scale), confidence score assigned. Grayscale was evaluated using GSDF settings and Rainbow and Hotiron using RGB settings.")
     print("You may also want to get the `cardioStudyTruth` dataset.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/colorScaleStudyData")
+    
+    names(cardioStudyRawData) <- c("readerID", "caseID", "modalityID", "score")
+    
     return(cardioStudyRawData)
   }
   
@@ -856,6 +871,11 @@ getMRMCdataset <- function(dataset = c("pilotHTT", "viperObs", "viperObs365",
     print("Truth of each case in study. From left to right each column corresponds to case number and truth. 1 is assigned to cases with lesion (positive cases) and 0 to cases without lesion (negative cases).")
     print("You may also want to get the `prostateRawData` dataset.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/colorScaleStudyData")
+    
+    names(prostateTruth) <- c("caseID", "score")
+    prostateTruth$readerID <- "truth"
+    prostateTruth$modalityID <- "truth"
+    
     return(prostateTruth)
   }
   
@@ -865,6 +885,8 @@ getMRMCdataset <- function(dataset = c("pilotHTT", "viperObs", "viperObs365",
     print("Observations of each case in the study. From left to right each column corresponds to reader, case number, modality (color scale), confidence score assigned. Unless otherwise stated in the modality name Grayscale was evaluated using GSDF settings and Rainbow and Hotiron using RGB settings.")
     print("You may also want to get the `prostateTruth` dataset.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/colorScaleStudyData")
+    
+    names(prostateRawData) <- c("readerID", "caseID", "modalityID", "score")
     return(prostateRawData)
   }
   
