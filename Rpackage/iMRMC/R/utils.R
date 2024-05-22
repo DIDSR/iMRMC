@@ -1,31 +1,54 @@
 ## convertDF ####
 #' Convert MRMC data frames
 #'
-#' @param inDF An MRMC dataframe with reading study results in \code{inDFtype} format
-#' @param inDFtype A string indicating the format type of the input MRMC data frame
-#' @param outDFtype A string indicating the format type of the output MRMC data frame. 
+#' @param inDF A data frame with reading study results in \code{inDFtype} format. 
+#' This data is expected to be in `matrixMode` (see Details below).
+#' @param inDFtype A string indicating the format type of the input MRMC data frame.
+#' @param outDFtype A string indicating the format type of the output MRMC data frame.
+#' This data is expected to be converted to `listMode` (see Details below).  
 #' @param readers A character array holding the column names (readerIDs) corresponding to the data from different readers
 #'
-#' @return An MRMC dataframe with reading study results in \code{outDFtype} format
+#' @return An MRMC data frame with reading study results in \code{outDFtype} format.
+#' For this data frame to be ready for MRMC analysis (\code{\link{doIMRMC}}), 
+#' truth data must be added where each row contains the truth for one case, 
+#' and the modalityID and readerID are specified as "truth". See 
+#' \link{dfMRMC_example} for an example of MRMC analysis ready data. 
+#' 
 #' @export
+#' 
 #' @details
-#' MRMC data frames contain scores from readers, cases, and sometimes modalities. This packages deals with (currently)
-#' two MRMC data frame formats. These are the formats:
+#' MRMC data frames contain scores from readers, cases, and sometimes modalities. 
+#' This packages deals with (currently) two MRMC data frame formats. 
+#' These are the formats:
 #' \describe{
 #'   \item{matrixMode}{
 #'     For this format, each row contains all the information for a case, 
-#'     including the reader study result for several readers, ground truth and other information as seperate columns.
+#'     including the reader study result for several readers, ground truth 
+#'     and other information as separate columns.
 #'     This mode can only hold data from one modality.
 #'   }
 #'   \item{listMode}{
-#'     For this format, each row contains the data for one observation. The columns 
-#'     specify the readerID, caseID, score, ground truth, and other information if there is any.
+#'     For this format, each row contains the data for one observation. 
+#'     The columns specify the readerID, caseID, score, ground truth, 
+#'     and other information if there is any.
 #'     This mode can hold data from multiple modalities.
 #'   }
 #' }
+#' This function is a work-in-progress. At present, it only converts a data 
+#' frame in `matrixMode` to one in `listMode`. In future releases, we will 
+#' expand this functionality. 
 #' 
 #'
-# @examples
+#' @examples
+#' # Get reading study results data frame
+#' scores <- getMRMCdataset("MFcounts_dfClassify")
+#' # Key columns: modalityID, observer.1 - observer.5, roiID, truth
+#' # Filter data to single modality
+#' scores <- scores[scores$modalityID == "scanner.A", ]
+#' # Get character array of readers
+#' readers <- c("observer.1", "observer.2", "observer.3", "observer.4", "observer.5")
+#' # Convert matrixMode data frame to listMode data frame
+#' mrmcDF <- convertDF(inDF = scores, inDFtype = "matrixMode", outDFtype = "listMode", readers)
 convertDF <- function(inDF, inDFtype, outDFtype, readers){
   
   if (inDFtype == "matrixMode" & outDFtype == "listMode"){
