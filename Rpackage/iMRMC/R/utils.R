@@ -1,83 +1,3 @@
-## convertDF ####
-#' Convert MRMC data frames
-#'
-#' @param inDF A data frame with reading study results in \code{inDFtype} format. 
-#' This data is expected to be in `matrixMode` (see Details below).
-#' @param inDFtype A string indicating the format type of the input MRMC data frame.
-#' @param outDFtype A string indicating the format type of the output MRMC data frame.
-#' This data is expected to be converted to `listMode` (see Details below).  
-#' @param readers A character array holding the column names (readerIDs) corresponding to the data from different readers
-#'
-#' @return An MRMC data frame with reading study results in \code{outDFtype} format.
-#' For this data frame to be ready for MRMC analysis (\code{\link{doIMRMC}}), 
-#' truth data must be added where each row contains the truth for one case, 
-#' and the modalityID and readerID are specified as "truth". See 
-#' \link{dfMRMC_example} for an example of MRMC analysis ready data. 
-#' 
-#' @export
-#' 
-#' @details
-#' MRMC data frames contain scores from readers, cases, and sometimes modalities. 
-#' This packages deals with (currently) two MRMC data frame formats. 
-#' These are the formats:
-#' \describe{
-#'   \item{matrixMode}{
-#'     For this format, each row contains all the information for a case, 
-#'     including the reader study result for several readers, ground truth 
-#'     and other information as separate columns.
-#'     This mode can only hold data from one modality.
-#'   }
-#'   \item{listMode}{
-#'     For this format, each row contains the data for one observation. 
-#'     The columns specify the readerID, caseID, score, ground truth, 
-#'     and other information if there is any.
-#'     This mode can hold data from multiple modalities.
-#'   }
-#' }
-#' This function is a work-in-progress. At present, it only converts a data 
-#' frame in `matrixMode` to one in `listMode`. In future releases, we will 
-#' expand this functionality. 
-#' 
-#'
-#' @examples
-#' # Get reading study results data frame
-#' scores <- getMRMCdataset("MFcounts_dfClassify")
-#' # Key columns: modalityID, observer.1 - observer.5, roiID, truth
-#' # Filter data to single modality
-#' scores <- scores[scores$modalityID == "scanner.A", ]
-#' # Get character array of readers
-#' readers <- c("observer.1", "observer.2", "observer.3", "observer.4", "observer.5")
-#' # Convert matrixMode data frame to listMode data frame
-#' mrmcDF <- convertDF(inDF = scores, inDFtype = "matrixMode", outDFtype = "listMode", readers)
-convertDF <- function(inDF, inDFtype, outDFtype, readers){
-  
-  if (inDFtype == "matrixMode" & outDFtype == "listMode"){
-    
-    # Split the data frame by columns, with and without the readers
-    dfReaders <- inDF[ , (colnames(inDF) %in% readers)]
-    dfNoReaders <- inDF[ , !(colnames(inDF) %in% readers)]
-    
-    # Replicate the data without readers while adding the data for each reader
-    outDF <- data.frame()
-    for (iReader in readers) {
-      
-      # Start with the data frame with no readers
-      tempDF <- dfNoReaders
-      # Add a column "readerID" and assign it the reader name
-      tempDF$readerID <- iReader
-      # Add a column "score" and assign it the scores of the current reader
-      tempDF$score <- dfReaders[ , iReader]
-      # Aggregate the reader data into the output data frame
-      outDF <- rbind(outDF, tempDF)
-      
-    }
-    
-    return(outDF)
-    
-  }
-  
-}
-
 ## createIMRMCdf ####
 #' Convert a data frame with all needed factors to doIMRMC formatted data frame
 #'
@@ -87,7 +7,7 @@ convertDF <- function(inDF, inDFtype, outDFtype, readers){
 #'        list(readerID = "***", caseID = "***", modalityID = "***", score = "***", truth="***")
 #' @param truePositiveFactor The true positive label, such as "cancer" or "1"
 #'
-#' @return output a doIMRMC formatted data frame: rows for truth and rows for data. 
+#' @return output a doIMRMC formatted data frame: rows for truth and rows for data.
 #' The results will be an iMRMC formatted data frame, see \link{dfMRMC_example}
 #'
 #' @export
@@ -98,13 +18,13 @@ createIMRMCdf <- function(
     keyColumns = list(readerID = "readerID", caseID = "caseID", modalityID = "modalityID", score = "score", truth = "truth"),
     truePositiveFactor = "cancer"
 ){
-  
+
   readerID <- keyColumns$readerID
   caseID <- keyColumns$caseID
   modalityID <- keyColumns$modalityID
   score <- keyColumns$score
   truth <- keyColumns$truth
-  
+
   data0 <- dFrame[dFrame[ , truth] != truePositiveFactor, ]
   data0 <- data.frame(
     readerID   = data0[ , readerID],
@@ -137,9 +57,9 @@ createIMRMCdf <- function(
   )
   IMRMCdf <- droplevels(rbind(truth0, truth1, data0, data1))
   IMRMCdf <- IMRMCdf[!is.na(IMRMCdf$score), ]
-  
+
   return(IMRMCdf)
-  
+
 }
 
 ## undoIMRMCdf ####
@@ -162,7 +82,7 @@ createIMRMCdf <- function(
 #'
 # @examples
 undoIMRMCdf <- function(df.MRMC) {
-  
+
   # Separate the data frame into rows corresponding to truth
   # and rows corresping to observations
   df.Truth <- df.MRMC[df.MRMC$readerID == "-1", ]
@@ -172,14 +92,14 @@ undoIMRMCdf <- function(df.MRMC) {
     df.Truth <- df.MRMC[df.MRMC$readerID == "truth", ]
     df.Obs <- df.MRMC[df.MRMC$readerID != "truth", ]
   }
-  
+
   df.Truth <- df.Truth[, c("caseID", "score")]
   names(df.Truth) <- c("caseID", "truth")
-  
+
   df <- droplevels(merge(df.Obs, df.Truth, by = "caseID"))
-  
+
   return(df)
-  
+
 }
 
 # Get a score from an MRMC data frame ####
@@ -240,40 +160,40 @@ getMRMCscore <- function(df, iR, iC, modality) {
 #' @export
 #'
 convertDFtoScoreMatrix <- function(dfMRMC, modality = NULL, dropFlag = TRUE) {
-  
+
   # If modality is specified, subset the data on modalityID == modality
   if (!is.null(modality)) {
     dfMRMC <- dfMRMC[dfMRMC$modalityID == modality, ]
     dfMRMC$modalityID <- factor(dfMRMC$modalityID)
   }
-  
+
   # Check that there is data from one modality only.
   if (nlevels(dfMRMC$modalityID) != 1) {
     desc <- paste("This function only treats data sets with one modality.\n",
                   "nlevels(dfMRMC$modalityID) =", nlevels(dfMRMC$modalityID), "\n")
     stop(desc)
   }
-  
+
   # Dropping levels will remove readers or cases that have no observations
   # Dropping them by default will speed up analyses
   # Leaving the levels is useful if you want to see the entire score or design matrix
   if (dropFlag) {
     dfMRMC <- droplevels(dfMRMC)
   }
-  
+
   caseIDs <- levels(dfMRMC$caseID)
   readerIDs <- levels(dfMRMC$readerID)
   nCases <- nlevels(dfMRMC$caseID)
   nReaders <- nlevels(dfMRMC$readerID)
-  
+
   scores <- array(NA, c(nCases, nReaders), dimnames = list(caseIDs, readerIDs))
-  
+
   index <- dfMRMC[ , c("caseID","readerID")]
   index <- data.matrix(index)
-  
+
   scores[index] <- dfMRMC$score
   return(scores)
-  
+
 }
 
 # Convert an MRMC data frame to a design matrix ####
@@ -297,43 +217,43 @@ convertDFtoScoreMatrix <- function(dfMRMC, modality = NULL, dropFlag = TRUE) {
 #' @export
 #'
 convertDFtoDesignMatrix <- function(dfMRMC, modality = NULL, dropFlag = TRUE) {
-  
+
   # If modality is specified, subset the data on modalityID == modality
   if (!is.null(modality)) {
     dfMRMC <- dfMRMC[dfMRMC$modalityID == modality, ]
   }
-  
+
   # Reduce the modality factor to what is actually contained
   dfMRMC$modalityID <- factor(dfMRMC$modalityID)
-  
+
   # Check that there is data from one modality only.
   if (nlevels(dfMRMC$modalityID) != 1) {
     desc <- paste("This function only treats data sets with one modality.\n",
                   "nlevels(dfMRMC$modalityID) =", nlevels(dfMRMC$modalityID), "\n")
     stop(desc)
   }
-  
+
   # Dropping levels will remove readers or cases that have no observations
   # Dropping them by default will speed up analyses
   # Leaving the levels is useful if you want to see the entire score or design matrix
   if (dropFlag) {
     dfMRMC <- droplevels(dfMRMC)
   }
-  
+
   caseIDs <- levels(dfMRMC$caseID)
   readerIDs <- levels(dfMRMC$readerID)
   nCases <- nlevels(dfMRMC$caseID)
   nReaders <- nlevels(dfMRMC$readerID)
-  
+
   design <- array(0, c(nCases, nReaders), dimnames = list(caseIDs, readerIDs))
-  
+
   index <- dfMRMC[ , c("caseID","readerID")]
   index <- data.matrix(index)
-  
+
   design[index] <- 1
-  
+
   return(design)
-  
+
 }
 
 ## Extract between-reader between-modality pairs of scores ####
@@ -364,13 +284,13 @@ extractPairedComparisonsBRBM <- function(
                       modalityID = "modalityID",
                       score = "score")
 ) {
-  
+
   # Establish the key column names
   readerID <- keyColumns$readerID
   caseID <- keyColumns$caseID
   modalityID <- keyColumns$modalityID
   score <- keyColumns$score
-  
+
   # Create an MRMC data frame
   dfMRMC <- data.frame(
     readerID   = data0[ , readerID],
@@ -379,39 +299,39 @@ extractPairedComparisonsBRBM <- function(
     score      = data0[ , score],
     stringsAsFactors = TRUE
   )
-  
+
   # Split the data by the input modalities
   df.X <- dfMRMC[dfMRMC$modalityID == modalities[1], ]
   df.Y <- dfMRMC[dfMRMC$modalityID == modalities[2], ]
-  
+
   # Split the data by readers
   df.XR <- split(df.X, list(df.X$readerID), drop = TRUE)
   nReadersX <- length(df.XR)
   readersX <- names(df.XR)
-  
+
   # Split the data by readers
   df.YR <- split(df.Y, list(df.Y$readerID), drop = TRUE)
   nReadersY <- length(df.YR)
   readersY <- names(df.YR)
-  
+
   # For each pair of distinct readers, merge the data
   x <- NULL
   y <- NULL
   for (readerXi in readersX) {
     for (readerYj in readersY) {
-      
+
       if (readerXi == readerYj) next()
-      
+
       df.RxR <- merge(df.XR[[readerXi]], df.YR[[readerYj]], by = "caseID")
       x <- c(x, df.RxR$score.x)
       y <- c(y, df.RxR$score.y)
-      
+
     }
-    
+
   }
-  
+
   return(data.frame(x = x, y = y, stringsAsFactors = TRUE))
-  
+
 }
 
 ## Extract within-reader between-modality pairs of scores ####
@@ -442,12 +362,12 @@ extractPairedComparisonsWRBM <- function(
                       modalityID = "modalityID",
                       score = "score")
 ) {
-  
+
   readerID <- keyColumns$readerID
   caseID <- keyColumns$caseID
   modalityID <- keyColumns$modalityID
   score <- keyColumns$score
-  
+
   dfMRMC <- data.frame(
     readerID   = data0[ , readerID],
     caseID     = data0[ , caseID],
@@ -455,44 +375,44 @@ extractPairedComparisonsWRBM <- function(
     score      = data0[ , score],
     stringsAsFactors = TRUE
   )
-  
+
   # Pool reader counts into a contingency table
   modality.X <- modalities[1]
   modality.Y <- modalities[2]
-  
+
   # Split the data by modalities
   df.X <- dfMRMC[dfMRMC$modalityID == modality.X,]
   df.Y <- dfMRMC[dfMRMC$modalityID == modality.Y,]
-  
+
   # Split the data by readers
   df.XR <- split(df.X, df.X$readerID, drop = TRUE)
   nReadersX <- length(df.XR)
   readersX <- names(df.XR)
-  
+
   df.YR <- split(df.Y, df.Y$readerID, drop = TRUE)
   nReadersY <- length(df.YR)
   readersY <- names(df.YR)
-  
+
   reader.i <- 1
   reader.j <- 2
-  
+
   x <- NULL
   y <- NULL
   for (readerXi in readersX) {
     for (readerYj in readersY) {
-      
+
       if (readerXi != readerYj) next()
-      
+
       df.RxR <- merge(df.XR[[readerXi]], df.YR[[readerYj]], by = "caseID")
       x <- c(x, df.RxR$score.x)
       y <- c(y, df.RxR$score.y)
-      
+
     }
-    
+
   }
-  
+
   return(data.frame(x = x, y = y, stringsAsFactors = TRUE))
-  
+
 }
 
 ## createGroups ####
@@ -510,23 +430,23 @@ extractPairedComparisonsWRBM <- function(
 #' print(df)
 #'
 createGroups <- function(items, nG) {
-  
+
   n <- length(items)
-  
+
   # Determine the number of items in each group
   nPerG.base <- floor(n/nG)
   remainder <- n - nPerG.base*nG
   nPerG <- rep(nPerG.base, nG)
   if (remainder) nPerG[1:remainder] <- nPerG[1:remainder] + 1
-  
+
   # Create labels for each reader
   desc <- NULL
   for (i in 1:nG) desc <- c(desc, rep(paste("group", i, sep = ""), nPerG[i]))
-  
+
   readerGroups <- data.frame(items = items, desc = desc, stringsAsFactors = TRUE)
-  
+
   return(readerGroups)
-  
+
 }
 
 ## renameCol ####
@@ -563,22 +483,22 @@ renameCol <- function(df, oldColName, newColName) {
 #' # Simulate an MRMC ROC data set
 #' dFrame.imrmc <- sim.gRoeMetz(config)
 #' # Convert ROC MRMC data to TPF and FPF data frames
-#' result <- roc2binary(dFrame.imrmc, threshold = 0.9) 
+#' result <- roc2binary(dFrame.imrmc, threshold = 0.9)
 #' # Analyze TPF data using doIMRMC
 #' tpf_result <- doIMRMC(result$df.tpf)
 #' # View(tpf_result$perReader)
 #
 roc2binary <- function(df.auc, threshold) {
-  
+
   # Separate truth and reader scores
   df.truth <- df.auc[df.auc$readerID == -1 | df.auc$readerID == "truth", ]
   df.scores <- df.auc[df.auc$readerID != -1 & df.auc$readerID != "truth", ]
-  
+
   # Separate truth negative and truth positive cases
   truth.neg <- droplevels(df.truth[df.truth$score == 0, ])
   cases.neg <- unique(truth.neg$caseID)
-  
-  # if(TRUE) print("check that number of unique cases = number of truth cases. 
+
+  # if(TRUE) print("check that number of unique cases = number of truth cases.
   #              Insert MRMC format data check.")
   ####
   #### Check that each reader reads each case only once per modality
@@ -594,7 +514,7 @@ roc2binary <- function(df.auc, threshold) {
     )
     stop(desc)
   }
-  
+
   ####
   #### Check that the number of unique cases = number of truth cases
   ####
@@ -603,20 +523,20 @@ roc2binary <- function(df.auc, threshold) {
       "\n There is an uneven number of truth cases and unique reader cases.")
     stop(desc)
   }
-  
+
   truth.pos <- droplevels(df.truth[df.truth$score == 1, ])
   cases.pos <- unique(truth.pos$caseID)
-  
+
   # Determine if score is above/equiv./below given threshold
   df.scores$pos <- 0
   df.scores$pos[df.scores$score == threshold] <- 0.5
   df.scores$pos[df.scores$score > threshold] <- 1
-  
+
   # Index positive truth cases and negative truth cases in df.scores (readers)
   index.pos <- as.character(df.scores$caseID) %in% cases.pos
   index.neg <- as.character(df.scores$caseID) %in% cases.neg
-  
-  # Calculate TPF dataframe 
+
+  # Calculate TPF dataframe
   # Use positive truth index and pos (threshold adjusted) column
   # Negative truth rows receive score of 0.5
   df.tpf <- df.scores[ , c("readerID", "caseID", "modalityID", "score", "pos")]
@@ -624,8 +544,8 @@ roc2binary <- function(df.auc, threshold) {
   df.tpf$score[index.neg] <- 0.5
   df.tpf$score[index.pos] <- df.tpf$pos[index.pos]
   df.tpf <- df.tpf[, c("readerID", "caseID", "modalityID", "score")]
-  
-  # Calculate FPF dataframe 
+
+  # Calculate FPF dataframe
   # Use negative truth index and pos (threshold adjusted) column
   # Positive truth rows receive score of 0.5
   df.fpf <- df.scores[ , c("readerID", "caseID", "modalityID", "score", "pos")]
@@ -633,7 +553,7 @@ roc2binary <- function(df.auc, threshold) {
   df.fpf$score[index.pos] <- 0.5
   df.fpf$score[index.neg] <- df.fpf$pos[index.neg]
   df.fpf <- df.fpf[, c("readerID", "caseID", "modalityID", "score")]
-  
+
   # Build dataframes of truth and TPF or FPF
   return(
     list(
@@ -641,7 +561,7 @@ roc2binary <- function(df.auc, threshold) {
       df.fpf = rbind(df.truth, df.fpf)
     )
   )
-  
+
 }
 
 ## successDFtoROCdf ####
@@ -655,7 +575,7 @@ roc2binary <- function(df.auc, threshold) {
 #'
 # @examples
 successDFtoROCdf <- function(df) {
-  
+
   # Successes are signal-present scores
   df.AUC <- data.frame(
     readerID = df$readerID,
@@ -698,32 +618,32 @@ successDFtoROCdf <- function(df) {
     ),
     df.AUC
   )
-  
+
   return(df.AUC)
 }
 
 ## createDFdocumentation ####
 createDFdocumentation <- function(df) {
-  
+
   desc1 <- utils::capture.output(utils::str(df))
   nVar <- length(desc1) - 1
-  
+
   desc2 <- c(
     paste("#\' \\code{", deparse(substitute(df)), "} is a", desc1[1], "\\cr \n"),
     "#\'   \\itemize{ \\cr \n",
     paste("#\'     \\item \\code{", desc1[2:nVar], "} \\cr \n"),
     "#\'   }"
   )
-  
+
   cat(desc2)
-  
+
   return(desc2)
-  
+
 }
 
 
 ## deleteCol ####
-#' Delete a data frame column 
+#' Delete a data frame column
 #'
 #' @param df A data frame
 #'
@@ -759,7 +679,7 @@ deleteCol <- function(df, colName) {
 #' }
 #'
 #' @return desired dataset downloaded from the web as a csv
-#' 
+#'
 #' @import utils
 #' @export
 #'
@@ -768,18 +688,18 @@ deleteCol <- function(df, colName) {
 #' truthData <- getMRMCdataset("prostateTruth")
 #' rawData <- getMRMCdataset("prostateRawData")
 #
-getMRMCdataset <- function(dataset = c("pilotHTT", "viperObs", "viperObs365", 
-                                       "viperObs455", "MFcounts_dfClassify", 
-                                       "MFcounts_dfCountROI", "MFcounts_dfCountWSI", 
-                                       "cardioStudyTruth", "cardioStudyRawData", 
+getMRMCdataset <- function(dataset = c("pilotHTT", "viperObs", "viperObs365",
+                                       "viperObs455", "MFcounts_dfClassify",
+                                       "MFcounts_dfCountROI", "MFcounts_dfCountWSI",
+                                       "cardioStudyTruth", "cardioStudyRawData",
                                        "prostateTruth", "prostateRawData")){
-  
+
   if(dataset == "pilotHTT") {
     link <- "https://raw.githubusercontent.com/DIDSR/HTT/main/inst/extdata/pilotHTT.csv"
     pilotHTT <- read.csv(link)
     print("Annotation data that is the aggregate of all clean data from the HTT project pilot study.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/HTT")
-    
+
     return(pilotHTT)
   }
 
@@ -788,27 +708,27 @@ getMRMCdataset <- function(dataset = c("pilotHTT", "viperObs", "viperObs365",
     viperObs <- read.csv(link)
     print("Individual observations of each reader reading each case. Simplified and merged version of data based on `viperObs365` and `viperObs455`.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/viperData")
-    
+
     return(viperObs)
   }
-  
+
   if(dataset == "viperObs365") {
     link <- "https://raw.githubusercontent.com/DIDSR/viperData/master/inst/data-raw/viperObs365.csv"
     viperObs365 <- read.csv(link)
     viperObs365 <- viperObs365[, -1]
     print("Individual observations of each reader reading each case. Truth labels are based on cancer at 365 days.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/viperData")
-    
+
     return(viperObs365)
   }
-  
+
   if(dataset == "viperObs455") {
     link <- "https://raw.githubusercontent.com/DIDSR/viperData/master/inst/data-raw/viperObs455.csv"
     viperObs455 <- read.csv(link)
     viperObs455 <- viperObs455[, -1]
     print("Individual observations of each reader reading each case. Truth labels are based on cancer at 455 days.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/viperData")
-    
+
     return(viperObs455)
   }
 
@@ -817,80 +737,80 @@ getMRMCdataset <- function(dataset = c("pilotHTT", "viperObs", "viperObs365",
     MFcounts_dfClassify <- read.csv(link)
     print("A single data frame of the study data. Each row corresponds to a candidate mitotic figure and modality (155 candidates x 5 modalities = 775 rows). There is a column for each observer and the truth.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/mitoticFigureCounts/tree/master")
-    
+
     return(MFcounts_dfClassify)
   }
-  
+
   if(dataset == "MFcounts_dfCountROI") {
     link <- "https://raw.githubusercontent.com/DIDSR/mitoticFigureCounts/master/data/dfCountROI20180627.csv"
     MFcounts_dfCountROI <- read.csv(link)
     print("A data frame of the mitotic figure counts per ROI and modality (40 ROIs x 5 modalities = 200 rows). There is a column for each observer and the truth.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/mitoticFigureCounts/tree/master")
-    
+
     return(MFcounts_dfCountROI)
   }
-  
+
   if(dataset == "MFcounts_dfCountWSI") {
     link <- "https://raw.githubusercontent.com/DIDSR/mitoticFigureCounts/master/data/dfCountWSI20180627.csv"
     MFcounts_dfCountWSI <- read.csv(link)
     print("A single data frame of the mitotic figure counts per WSI and modality (4 WSIs x 5 modalities = 20 rows). There is a column for each observer and the truth. ")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/mitoticFigureCounts/tree/master")
-    
-    return(MFcounts_dfCountWSI)  
+
+    return(MFcounts_dfCountWSI)
   }
-  
+
   if(dataset == "cardioStudyTruth") {
     link <- "https://raw.githubusercontent.com/DIDSR/colorScaleStudyData/master/data-raw/Cardio%20Study_truth.csv"
     cardioStudyTruth <- read.csv(link)
     print("Truth of each case in study. From left to right each column corresponds to case number and truth. 1 is assigned to cases with lesion (positive cases) and 0 to cases without lesion (negative cases).")
     print("You may also want to get the `cardioStudyRawData` dataset.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/colorScaleStudyData")
-    
+
     names(cardioStudyTruth) <- c("caseID", "score")
     cardioStudyTruth$readerID <- "truth"
     cardioStudyTruth$modalityID <- "truth"
-    
+
     return(cardioStudyTruth)
   }
-  
+
   if(dataset == "cardioStudyRawData") {
     link <- "https://raw.githubusercontent.com/DIDSR/colorScaleStudyData/master/data-raw/CardioCTstudy_3mod_12obs_210cases_rawdata.csv"
     cardioStudyRawData <- read.csv(link)
     print("Observations of each case in study. From left to right each column corresponds to reader, case number, modality (color scale), confidence score assigned. Grayscale was evaluated using GSDF settings and Rainbow and Hotiron using RGB settings.")
     print("You may also want to get the `cardioStudyTruth` dataset.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/colorScaleStudyData")
-    
+
     names(cardioStudyRawData) <- c("readerID", "caseID", "modalityID", "score")
-    
+
     return(cardioStudyRawData)
   }
-  
+
   if(dataset == "prostateTruth") {
     link <- "https://raw.githubusercontent.com/DIDSR/colorScaleStudyData/master/data-raw/Prostate_Truth.csv"
     prostateTruth <- read.csv(link)
     print("Truth of each case in study. From left to right each column corresponds to case number and truth. 1 is assigned to cases with lesion (positive cases) and 0 to cases without lesion (negative cases).")
     print("You may also want to get the `prostateRawData` dataset.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/colorScaleStudyData")
-    
+
     names(prostateTruth) <- c("caseID", "score")
     prostateTruth$readerID <- "truth"
     prostateTruth$modalityID <- "truth"
-    
+
     return(prostateTruth)
   }
-  
+
   if(dataset == "prostateRawData") {
     link <- "https://raw.githubusercontent.com/DIDSR/colorScaleStudyData/master/data-raw/Prostate_5mod_9obs_165cases_wGSDFrawdata_Allreaders.csv"
     prostateRawData <- read.csv(link)
     print("Observations of each case in the study. From left to right each column corresponds to reader, case number, modality (color scale), confidence score assigned. Unless otherwise stated in the modality name Grayscale was evaluated using GSDF settings and Rainbow and Hotiron using RGB settings.")
     print("You may also want to get the `prostateTruth` dataset.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/colorScaleStudyData")
-    
+
     names(prostateRawData) <- c("readerID", "caseID", "modalityID", "score")
     return(prostateRawData)
   }
-  
-    print("The given data name is not an MRMC data object from 
+
+    print("The given data name is not an MRMC data object from
           https://github.com/DIDSR/iMRMC/wiki/iMRMC-Datasets.")
     print("Please input one of the specified data names.")
 

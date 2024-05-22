@@ -51,7 +51,6 @@ A big thank you to all that have worked on this software throughout the years. W
 - Update limitsOfAgreement.R
 - Add functions getWRBM and getBRBM. These functions get within-reader between-modality or between-reader between-modality paired data from an MRMC data file. Useful for plotting Bland-Altman-like difference plots.
 - Update utils.R
-- Add convertDF to the package. This function converts list-mode data to matrix-mode data.
 - Add html documentation into inst/extra/man for easy reference on GitHub.
 - Update simMRMC.R
 
