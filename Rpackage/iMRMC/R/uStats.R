@@ -36,18 +36,8 @@
 #'
 #' @name uStat11
 #'
-#' @param df.input
-#' Data frame of observations, one per row. Columns identify random effects, fixed effects,
-#' and the observation. Namely,
-#' \itemize{
-#'   \item \code{readerID:} The factor corresponding to the different readers in the study.
-#'     The readerID is treated as a random effect.
-#'   \item \code{caseID:} The factor corresponding to the different cases in the study.
-#'     The caseID is treated as a random effect.
-#'   \item \code{modalityID:} The factor corresponding to the different modalities in the study.
-#'     The modalityID is treated as a fixed effect.
-#'   \item \code{score:} The score given by the reader to the case for the modality indicated.
-#' }
+#' @param df.input an iMRMC formatted data frame, see \link{dfMRMC_example}
+#' 
 #'
 #' @param keyColumns
 #' Identify the factors corresponding to the readerID, caseID, modalityID, and score
@@ -130,10 +120,10 @@
 #' print(result.jointD.identity[1:2])
 
 uStat11.jointD <- function(
-  df.input, modalitiesToCompare, kernelFlag = 1,
-  keyColumns = c("readerID", "caseID", "modalityID", "score")
-  ) {
-
+    df.input, modalitiesToCompare, kernelFlag = 1,
+    keyColumns = c("readerID", "caseID", "modalityID", "score")
+) {
+  
   if (!inherits(modalitiesToCompare, "character")) {
     stop(paste(
       "class(modalitiesToCompare) =", class(modalitiesToCompare),
@@ -142,12 +132,12 @@ uStat11.jointD <- function(
   }
   
   if (kernelFlag == 1) {
-
+    
     if (length(modalitiesToCompare) != 2) {
       print(paste("length(modalitiesToCompare) =", length(modalitiesToCompare)))
       stop("ERROR: modalitiesToCompare should have 2 elements.")
     }
-
+    
     CbyR.identity <- uStat11.identity(
       df.input,
       keyColumns = keyColumns,
@@ -156,17 +146,17 @@ uStat11.jointD <- function(
     design.A = CbyR.identity$design.A
     kernel.B = CbyR.identity$kernel.B
     design.B = CbyR.identity$design.B
-
+    
     desc <- c("A", "B", "AminusB")
-
+    
   } else if (
     kernelFlag == 2) {
-
+    
     if (length(modalitiesToCompare) != 4) {
       print(paste("length(modalitiesToCompare) =", length(modalitiesToCompare)))
       stop("ERROR: modalities to compare should have 4 elements.")
     }
-
+    
     CbyR.diff <- uStat11.diff(
       df.input,
       keyColumns = keyColumns,
@@ -175,23 +165,23 @@ uStat11.jointD <- function(
     design.A = CbyR.diff$design.AB
     kernel.B = CbyR.diff$kernel.CD
     design.B = CbyR.diff$design.CD
-
+    
     desc <- c("AminusB", "CminusD", "AminusB.minus.CminusD")
-
+    
   }
-
+  
   nC <- nrow(design.A)
   nR <- ncol(design.A)
-
+  
   # Estimate the percent correct for each reader and modality
   sumiS.A <- colSums(kernel.A)
   sumiS.B <- colSums(kernel.B)
   sumiD.A <- colSums(design.A)
   sumiD.B <- colSums(design.B)
-
+  
   meanPerR <- data.frame(sumiS.A / sumiD.A, sumiS.B / sumiD.B, stringsAsFactors = TRUE)
   names(meanPerR) <- c(desc[1], desc[2])
-
+  
   # Declare the constituent parts of the variance decomposition
   # Please refer to Gallas2009_Commun-Stat-A-Theor_v38p2586
   numer.biased <- data.frame(
@@ -203,7 +193,7 @@ uStat11.jointD <- function(
     stringsAsFactors = TRUE
   )
   denom.biased <- numer.biased
-
+  
   #### M.c0r0 ####
   # Estimate the biased product moment given
   # 2 independent cases and 2 independent readers
@@ -217,15 +207,15 @@ uStat11.jointD <- function(
   denom.biased$c0r0[2] <- denom.temp.B * denom.temp.B
   numer.biased$c0r0[3] <- numer.temp.A * numer.temp.B
   denom.biased$c0r0[3] <- denom.temp.A * denom.temp.B
-
+  
   # The number of reader-case observations in common across modalities to be compared
   nObs.A <- denom.temp.A
   nObs.B <- denom.temp.B
-
+  
   # The mean of the kernel
   mean.A <- numer.temp.A / nObs.A
   mean.B <- numer.temp.B / nObs.B
-
+  
   #### M.c1r0 ####
   # Estimate the biased product moment given
   # 1 independent case and 2 independent readers
@@ -239,7 +229,7 @@ uStat11.jointD <- function(
   denom.biased$c1r0[2] <- sum(denom.temp.B * denom.temp.B)
   numer.biased$c1r0[3] <- sum(numer.temp.A * numer.temp.B)
   denom.biased$c1r0[3] <- sum(denom.temp.A * denom.temp.B)
-
+  
   #### M.c0r1 ####
   # Estimate the biased product moment given
   # 2 cases and 1 reader
@@ -253,7 +243,7 @@ uStat11.jointD <- function(
   denom.biased$c0r1[2] <- sum(denom.temp.B * denom.temp.B)
   numer.biased$c0r1[3] <- sum(numer.temp.A * numer.temp.B)
   denom.biased$c0r1[3] <- sum(denom.temp.A * denom.temp.B)
-
+  
   #### M.c1r1 ####
   # Estimate the biased product moment given
   # 1 case and 1 reader
@@ -263,7 +253,7 @@ uStat11.jointD <- function(
   denom.biased$c1r1[2] <- sum(design.B * design.B)
   numer.biased$c1r1[3] <- sum(design.A * kernel.A * design.B * kernel.B)
   denom.biased$c1r1[3] <- sum(design.A * design.B)
-
+  
   # Declare and initialize the mapping between biased and unbiased product moments
   bias2unbias <- c(
     1, -1, -1,  1,
@@ -272,11 +262,11 @@ uStat11.jointD <- function(
     0,  0,  0,  1
   )
   dim(bias2unbias) <- c(4, 4)
-
+  
   #### Biased Moments ####
   # Initialize the biased moments
   moments.biased <- numer.biased / denom.biased
-
+  
   #### Unbiased Moments ####
   # Calculate the constituent parts of the unbiased variance estimate
   numer <- as.matrix(numer.biased) %*% bias2unbias
@@ -288,22 +278,22 @@ uStat11.jointD <- function(
   coeff[1, ] <- denom[1, ] / nObs.A / nObs.A
   coeff[2, ] <- denom[2, ] / nObs.B / nObs.B
   coeff[3, ] <- denom[3, ] / nObs.A / nObs.B
-
+  
   # This last operation is equivalent to subtracting the mean squared
   coeff[, 1] <- coeff[, 1] - 1
-
+  
   #### Summary Statistics ####
   # Estimate the variance as a scalar product between the coefficients and the moments
   var.A <- coeff[1, ] %*% moments[1, ]
   var.B <- coeff[2, ] %*% moments[2, ]
   var.AminusB <- var.A + var.B - 2 * coeff[3, ] %*% moments[3, ]
-
+  
   # Turn these matrices into data frames
   moments <- data.frame(moments, stringsAsFactors = TRUE)
   names(moments) <- names(numer.biased)
   coeff <- data.frame(coeff, stringsAsFactors = TRUE)
   names(coeff) <- names(numer.biased)
-
+  
   mean <- c(mean.A, mean.B, mean.A - mean.B)
   names(mean) <- desc
   var <- c(var.A, var.B, var.AminusB)
@@ -313,7 +303,7 @@ uStat11.jointD <- function(
   names(var.1obs) <- desc
   nCperR <- data.frame(sumiD.A, sumiD.B, stringsAsFactors = TRUE)
   names(nCperR) <- desc[1:2]
-
+  
   #### Pack Results ####
   result <- list(
     mean = mean,
@@ -331,9 +321,9 @@ uStat11.jointD <- function(
     kernel.B = kernel.B,
     design.b = design.B
   )
-
+  
   return(result)
-
+  
 }
 
 #---- uStat11.conditionalD ----
@@ -343,10 +333,10 @@ uStat11.jointD <- function(
 #'
 #' @rdname uStat11
 uStat11.conditionalD <- function(
-  df.input, modalitiesToCompare, kernelFlag = 1,
-  keyColumns = c("readerID", "caseID", "modalityID", "score")
+    df.input, modalitiesToCompare, kernelFlag = 1,
+    keyColumns = c("readerID", "caseID", "modalityID", "score")
 ) {
-
+  
   if (!inherits(modalitiesToCompare, "character")) {
     stop(paste(
       "class(modalitiesToCompare) =", class(modalitiesToCompare),
@@ -356,12 +346,12 @@ uStat11.conditionalD <- function(
   
   # Initialize kernel and design matrices ####
   if (kernelFlag == 1) {
-
+    
     if (length(modalitiesToCompare) != 2) {
       print(paste("length(modalitiesToCompare) =", length(modalitiesToCompare)))
       stop("ERROR: modalitiesToCompare should have 2 elements.")
     }
-
+    
     CbyR.identity <- uStat11.identity(
       df.input,
       keyColumns = keyColumns,
@@ -370,17 +360,17 @@ uStat11.conditionalD <- function(
     design.A = CbyR.identity$design.A
     kernel.B = CbyR.identity$kernel.B
     design.B = CbyR.identity$design.B
-
+    
     desc <- c("A", "B", "AminusB")
-
+    
   } else if (
     kernelFlag == 2) {
-
+    
     if (length(modalitiesToCompare) != 4) {
       print(paste("length(modalitiesToCompare) =", length(modalitiesToCompare)))
       stop("ERROR: modalities to compare should have 4 elements.")
     }
-
+    
     CbyR.diff <- uStat11.diff(
       df.input,
       keyColumns = keyColumns,
@@ -389,25 +379,25 @@ uStat11.conditionalD <- function(
     design.A = CbyR.diff$design.AB
     kernel.B = CbyR.diff$kernel.CD
     design.B = CbyR.diff$design.CD
-
+    
     desc <- c("AminusB", "CminusD", "AminusB.minus.CminusD")
-
+    
   }
-
+  
   # Determine the number of cases per reader
   sumiD.A <- colSums(design.A)
   sumiD.B <- colSums(design.B)
-
+  
   nC <- nrow(design.A)
   nR <- ncol(design.A)
-
+  
   # Estimate the percent correct for each reader and modality
   sumiS.A <- colSums(kernel.A)
   sumiS.B <- colSums(kernel.B)
-
+  
   meanPerR <- data.frame(sumiS.A / sumiD.A, sumiS.B / sumiD.B, stringsAsFactors = TRUE)
   names(meanPerR) <- c(desc[1], desc[2])
-
+  
   # Reader weights for the reader-averged point estimate
   # Weigh each reader equally
   w.A <- rep(0, nR)
@@ -419,11 +409,11 @@ uStat11.conditionalD <- function(
   # Weigh each case equally
   w.A <- sumiD.A/sum(sumiD.A)
   w.B <- sumiD.B/sum(sumiD.B)
-
+  
   # Estimate the reader averaged percent correct
   mean.A <- sum(meanPerR[1] * w.A, na.rm = TRUE)
   mean.B <- sum(meanPerR[2] * w.B, na.rm = TRUE)
-
+  
   #### M.c1r1 ####
   # w.c1r1.AA <- diag(sumiDD.AA)
   # w.c1r1.BB <- diag(sumiDD.BB)
@@ -431,38 +421,38 @@ uStat11.conditionalD <- function(
   w.c1r1.AA <- w.A
   w.c1r1.BB <- w.B
   w.c1r1.AB <- sqrt(w.A * w.B)
-
+  
   sumiSS.AA <- t(kernel.A) %*% kernel.A
   sumiSS.BB <- t(kernel.B) %*% kernel.B
   sumiSS.AB <- t(kernel.A) %*% kernel.B
-
+  
   sumiDD.AA <- t(design.A) %*% design.A
   sumiDD.BB <- t(design.B) %*% design.B
   sumiDD.AB <- t(design.A) %*% design.B
-
+  
   sumiDsumiD.AA <- sumiD.A %*% t(sumiD.A)
   sumiDsumiD.BB <- sumiD.B %*% t(sumiD.B)
   sumiDsumiD.AB <- sumiD.A %*% t(sumiD.B)
-
+  
   numer.m.c1r1.AA <- sum(w.c1r1.AA * diag(sumiSS.AA) / diag(sumiDD.AA), na.rm = TRUE)
   numer.m.c1r1.BB <- sum(w.c1r1.BB * diag(sumiSS.BB) / diag(sumiDD.BB), na.rm = TRUE)
   numer.m.c1r1.AB <- sum(w.c1r1.AB * diag(sumiSS.AB) / diag(sumiDD.AB), na.rm = TRUE)
-
+  
   denom.m.c1r1.AA <- sum(w.c1r1.AA)
   denom.m.c1r1.BB <- sum(w.c1r1.BB)
   denom.m.c1r1.AB <- sum(w.c1r1.AB)
-
+  
   m.c1r1.AA <- 0
   m.c1r1.BB <- 0
   m.c1r1.AB <- 0
   if (denom.m.c1r1.AA) m.c1r1.AA <- numer.m.c1r1.AA / denom.m.c1r1.AA
   if (denom.m.c1r1.BB) m.c1r1.BB <- numer.m.c1r1.BB / denom.m.c1r1.BB
   if (denom.m.c1r1.AB) m.c1r1.AB <- numer.m.c1r1.AB / denom.m.c1r1.AB
-
+  
   c.c1r1.AA <- sum(w.A * w.A * diag(sumiDD.AA) / diag(sumiDsumiD.AA), na.rm = TRUE)
   c.c1r1.BB <- sum(w.B * w.B * diag(sumiDD.BB) / diag(sumiDsumiD.BB), na.rm = TRUE)
   c.c1r1.AB <- sum(w.A * w.B * diag(sumiDD.AB) / diag(sumiDsumiD.AB), na.rm = TRUE)
-
+  
   #### M.c0r1 ####
   # w.c0r1.AA <- diag(sumiDsumNOTiD.AA)
   # w.c0r1.BB <- diag(sumiDsumNOTiD.BB)
@@ -470,36 +460,36 @@ uStat11.conditionalD <- function(
   w.c0r1.AA <- w.A
   w.c0r1.BB <- w.B
   w.c0r1.AB <- sqrt(w.A * w.B)
-
+  
   sumi2NOTiS.A <- t(matrix(sumiS.A, nR, nC)) - kernel.A
   sumi2NOTiS.B <- t(matrix(sumiS.B, nR, nC)) - kernel.B
-
+  
   sumi2NOTiD.A <- t(matrix(sumiD.A, nR, nC)) - design.A
   sumi2NOTiD.B <- t(matrix(sumiD.B, nR, nC)) - design.B
-
+  
   sumi.c0r1.AA <- colSums(kernel.A * sumi2NOTiS.A / sumi2NOTiD.A, na.rm = TRUE)
   sumi.c0r1.BB <- colSums(kernel.B * sumi2NOTiS.B / sumi2NOTiD.B, na.rm = TRUE)
   sumi.c0r1.AB <- colSums(kernel.A * sumi2NOTiS.B / sumi2NOTiD.B, na.rm = TRUE)
-
+  
   numer.m.c0r1.AA <- sum(w.c0r1.AA * sumi.c0r1.AA / sumiD.A, na.rm = TRUE)
   numer.m.c0r1.BB <- sum(w.c0r1.BB * sumi.c0r1.BB / sumiD.B, na.rm = TRUE)
   numer.m.c0r1.AB <- sum(w.c0r1.AB * sumi.c0r1.AB / sumiD.A, na.rm = TRUE)
-
+  
   denom.m.c0r1.AA <- sum(w.c0r1.AA)
   denom.m.c0r1.BB <- sum(w.c0r1.BB)
   denom.m.c0r1.AB <- sum(w.c0r1.AB)
-
+  
   m.c0r1.AA <- 0
   m.c0r1.BB <- 0
   m.c0r1.AB <- 0
   if (denom.m.c0r1.AA) m.c0r1.AA <- numer.m.c0r1.AA / denom.m.c0r1.AA
   if (denom.m.c0r1.BB) m.c0r1.BB <- numer.m.c0r1.BB / denom.m.c0r1.BB
   if (denom.m.c0r1.AB) m.c0r1.AB <- numer.m.c0r1.AB / denom.m.c0r1.AB
-
+  
   c.c0r1.AA <- sum(w.A * w.A * (1 - diag(sumiDD.AA) / diag(sumiDsumiD.AA)), na.rm = TRUE)
   c.c0r1.BB <- sum(w.B * w.B * (1 - diag(sumiDD.BB) / diag(sumiDsumiD.BB)), na.rm = TRUE)
   c.c0r1.AB <- sum(w.A * w.B * (1 - diag(sumiDD.AB) / diag(sumiDsumiD.AB)), na.rm = TRUE)
-
+  
   #### M.c1r0 ####
   # w.c1r0.AA <- sumiDD.AA
   # w.c1r0.BB <- sumiDD.BB
@@ -510,34 +500,34 @@ uStat11.conditionalD <- function(
   w.c1r0.AA <- ww.AA
   w.c1r0.BB <- ww.BB
   w.c1r0.AB <- ww.AB
-
+  
   numer.m.c1r0.AA <- w.c1r0.AA * sumiSS.AA / sumiDD.AA
   numer.m.c1r0.BB <- w.c1r0.BB * sumiSS.BB / sumiDD.BB
   numer.m.c1r0.AB <- w.c1r0.AB * sumiSS.AB / sumiDD.AB
-
+  
   numer.m.c1r0.AA <- sum(numer.m.c1r0.AA, na.rm = TRUE) - sum(diag(numer.m.c1r0.AA), na.rm = TRUE)
   numer.m.c1r0.BB <- sum(numer.m.c1r0.BB, na.rm = TRUE) - sum(diag(numer.m.c1r0.BB), na.rm = TRUE)
   numer.m.c1r0.AB <- sum(numer.m.c1r0.AB, na.rm = TRUE) - sum(diag(numer.m.c1r0.AB), na.rm = TRUE)
-
+  
   denom.m.c1r0.AA <- sum(w.c1r0.AA) - sum(diag(w.c1r0.AA))
   denom.m.c1r0.BB <- sum(w.c1r0.BB) - sum(diag(w.c1r0.BB))
   denom.m.c1r0.AB <- sum(w.c1r0.AB) - sum(diag(w.c1r0.AB))
-
+  
   m.c1r0.AA <- 0
   m.c1r0.BB <- 0
   m.c1r0.AB <- 0
   if (denom.m.c1r0.AA) m.c1r0.AA <- numer.m.c1r0.AA / denom.m.c1r0.AA
   if (denom.m.c1r0.BB) m.c1r0.BB <- numer.m.c1r0.BB / denom.m.c1r0.BB
   if (denom.m.c1r0.AB) m.c1r0.AB <- numer.m.c1r0.AB / denom.m.c1r0.AB
-
+  
   c.c1r0.AA <- ww.AA * sumiDD.AA / sumiDsumiD.AA
   c.c1r0.BB <- ww.BB * sumiDD.BB / sumiDsumiD.BB
   c.c1r0.AB <- ww.AB * sumiDD.AB / sumiDsumiD.AB
-
+  
   c.c1r0.AA <- sum(c.c1r0.AA, na.rm = TRUE) - sum(diag(c.c1r0.AA), na.rm = TRUE)
   c.c1r0.BB <- sum(c.c1r0.BB, na.rm = TRUE) - sum(diag(c.c1r0.BB), na.rm = TRUE)
   c.c1r0.AB <- sum(c.c1r0.AB, na.rm = TRUE) - sum(diag(c.c1r0.AB), na.rm = TRUE)
-
+  
   #### M.c0r0 ####
   # w.c0r0.AA <- sumiDsumNOTiD.AA
   # w.c0r0.BB <- sumiDsumNOTiD.BB
@@ -545,38 +535,38 @@ uStat11.conditionalD <- function(
   w.c0r0.AA <- ww.AA
   w.c0r0.BB <- ww.BB
   w.c0r0.AB <- ww.AB
-
+  
   avgRR.c0r0.AA <- t(kernel.A / t(matrix(sumiD.A, nR, nC))) %*% (sumi2NOTiS.A / sumi2NOTiD.A)
   avgRR.c0r0.BB <- t(kernel.B / t(matrix(sumiD.B, nR, nC))) %*% (sumi2NOTiS.B / sumi2NOTiD.B)
   avgRR.c0r0.AB <- t(kernel.A / t(matrix(sumiD.A, nR, nC))) %*% (sumi2NOTiS.B / sumi2NOTiD.B)
-
+  
   numer.m.c0r0.AA <- w.c0r0.AA * avgRR.c0r0.AA
   numer.m.c0r0.BB <- w.c0r0.BB * avgRR.c0r0.BB
   numer.m.c0r0.AB <- w.c0r0.AB * avgRR.c0r0.AB
-
+  
   numer.m.c0r0.AA <- sum(numer.m.c0r0.AA, na.rm = TRUE) - sum(diag(numer.m.c0r0.AA), na.rm = TRUE)
   numer.m.c0r0.BB <- sum(numer.m.c0r0.BB, na.rm = TRUE) - sum(diag(numer.m.c0r0.BB), na.rm = TRUE)
   numer.m.c0r0.AB <- sum(numer.m.c0r0.AB, na.rm = TRUE) - sum(diag(numer.m.c0r0.AB), na.rm = TRUE)
-
+  
   denom.m.c0r0.AA <- sum(w.c0r0.AA) - sum(diag(w.c0r0.AA))
   denom.m.c0r0.BB <- sum(w.c0r0.BB) - sum(diag(w.c0r0.BB))
   denom.m.c0r0.AB <- sum(w.c0r0.AB) - sum(diag(w.c0r0.AB))
-
+  
   m.c0r0.AA <- 0
   m.c0r0.BB <- 0
   m.c0r0.AB <- 0
   if (denom.m.c0r0.AA) m.c0r0.AA <- numer.m.c0r0.AA / denom.m.c0r0.AA
   if (denom.m.c0r0.BB) m.c0r0.BB <- numer.m.c0r0.BB / denom.m.c0r0.BB
   if (denom.m.c0r0.AB) m.c0r0.AB <- numer.m.c0r0.AB / denom.m.c0r0.AB
-
+  
   c.c0r0.AA <- ww.AA * (1 - sumiDD.AA / sumiDsumiD.AA)
   c.c0r0.BB <- ww.BB * (1 - sumiDD.BB / sumiDsumiD.BB)
   c.c0r0.AB <- ww.AB * (1 - sumiDD.AB / sumiDsumiD.AB)
-
+  
   c.c0r0.AA <- sum(c.c0r0.AA, na.rm = TRUE) - sum(diag(c.c0r0.AA), na.rm = TRUE) - 1
   c.c0r0.BB <- sum(c.c0r0.BB, na.rm = TRUE) - sum(diag(c.c0r0.BB), na.rm = TRUE) - 1
   c.c0r0.AB <- sum(c.c0r0.AB, na.rm = TRUE) - sum(diag(c.c0r0.AB), na.rm = TRUE) - 1
-
+  
   #### Summary stats ####
   var.A <-
     c.c1r1.AA * m.c1r1.AA +
@@ -594,9 +584,9 @@ uStat11.conditionalD <- function(
     c.c0r1.AB * m.c0r1.AB +
     c.c0r0.AB * m.c0r0.AB
   var.AminusB <- var.A + var.B - 2 * var.AminusB
-
+  
   #### Pack results ####
-
+  
   moments <- data.frame(
     c0r0 = c(m.c0r0.AA, m.c0r0.BB, m.c0r0.AB),
     c0r1 = c(m.c0r1.AA, m.c0r1.BB, m.c0r1.AB),
@@ -604,7 +594,7 @@ uStat11.conditionalD <- function(
     c1r1 = c(m.c1r1.AA, m.c1r1.BB, m.c1r1.AB),
     stringsAsFactors = TRUE
   )
-
+  
   coeff <- data.frame(
     c0r0 = c(c.c0r0.AA, c.c0r0.BB, c.c0r0.AB),
     c0r1 = c(c.c0r1.AA, c.c0r1.BB, c.c0r1.AB),
@@ -612,7 +602,7 @@ uStat11.conditionalD <- function(
     c1r1 = c(c.c1r1.AA, c.c1r1.BB, c.c1r1.AB),
     stringsAsFactors = TRUE
   )
-
+  
   mean <- c(mean.A, mean.B, mean.A - mean.B)
   names(mean) <- desc
   var <- c(var.A, var.B, var.AminusB)
@@ -622,7 +612,7 @@ uStat11.conditionalD <- function(
   names(var.1obs) <- desc
   nCperR <- data.frame(sumiD.A, sumiD.B, stringsAsFactors = TRUE)
   names(nCperR) <- desc[1:2]
-
+  
   result <- list(
     mean = mean,
     var = var,
@@ -641,9 +631,9 @@ uStat11.conditionalD <- function(
     kernel.B = kernel.B,
     design.b = design.B
   )
-
+  
   return(result)
-
+  
 }
 
 #---- uStat11.identity ----
@@ -659,10 +649,10 @@ uStat11.conditionalD <- function(
 # @export
 #'
 uStat11.identity <- function(
-  df.input, modalitiesToCompare,
-  keyColumns = c("readerID", "caseID", "modalityID", "score")
+    df.input, modalitiesToCompare,
+    keyColumns = c("readerID", "caseID", "modalityID", "score")
 ) {
-
+  
   # Structure the data frame: one row for each observation
   df <- data.frame(readerID = factor(df.input[[keyColumns[1]]]),
                    caseID = factor(df.input[[keyColumns[[2]]]]),
@@ -670,27 +660,27 @@ uStat11.identity <- function(
                    score = df.input[[keyColumns[[4]]]],
                    stringsAsFactors = TRUE
   )
-
+  
   # Parse out data frames for each modality
   df.A <- df[df$modalityID == modalitiesToCompare[1], ]
   df.B <- df[df$modalityID == modalitiesToCompare[2], ]
-
+  
   # Determine readers involved in the comparisons
   readers <- levels(df$readerID)
   nReaders <- nlevels(df$readerID)
-
+  
   # Determine readers involved in the comparisons
   cases <- levels(df$caseID)
   nCases <- nlevels(df$caseID)
-
+  
   # Declare the reader-by-case score arrays for each modality
   scores.A <- array(0, c(nCases, nReaders), dimnames = list(cases, readers))
   scores.B <- array(0, c(nCases, nReaders), dimnames = list(cases, readers))
-
+  
   # Declare the reader-by-case design arrays for each modality
   design.A <- array(0, c(nCases, nReaders), dimnames = list(cases, readers))
   design.B <- array(0, c(nCases, nReaders), dimnames = list(cases, readers))
-
+  
   # Initilize the reader-by-case score and design arrays for each modality
   index <- data.matrix(df.A[ , c("caseID", "readerID")])
   scores.A[index] <- df.A$score
@@ -698,7 +688,7 @@ uStat11.identity <- function(
   index <- data.matrix(df.B[ , c("caseID", "readerID")])
   scores.B[index] <- df.B$score
   design.B[index] <- 1
-
+  
   return(list(
     design.A = design.A,
     design.B = design.B,
@@ -718,10 +708,10 @@ uStat11.identity <- function(
 #' @param modalitiesToCompare The factors identifying the modalities to compare
 #'
 uStat11.diff <- function(
-  df.input, modalitiesToCompare,
-  keyColumns = c("readerID", "caseID", "modalityID", "score")
+    df.input, modalitiesToCompare,
+    keyColumns = c("readerID", "caseID", "modalityID", "score")
 ) {
-
+  
   # Structure the data frame: one row for each observation
   df <- data.frame(readerID = factor(df.input[[keyColumns[1]]]),
                    caseID = factor(df.input[[keyColumns[[2]]]]),
@@ -729,33 +719,33 @@ uStat11.diff <- function(
                    score = df.input[[keyColumns[[4]]]],
                    stringsAsFactors = TRUE
   )
-
+  
   # Parse out data frames for each modality
   df.A <- df[df$modalityID == modalitiesToCompare[1], ]
   df.B <- df[df$modalityID == modalitiesToCompare[2], ]
   df.C <- df[df$modalityID == modalitiesToCompare[3], ]
   df.D <- df[df$modalityID == modalitiesToCompare[4], ]
-
+  
   # Determine readers involved in the comparisons
   readers <- levels(df$readerID)
   nReaders <- nlevels(df$readerID)
-
+  
   # Determine cases involved in the comparisons
   cases <- levels(df$caseID)
   nCases <- nlevels(df$caseID)
-
+  
   # Declare the reader-by-case score arrays for each modality
   scores.A <- array(0, c(nCases, nReaders), dimnames = list(cases, readers))
   scores.B <- array(0, c(nCases, nReaders), dimnames = list(cases, readers))
   scores.C <- array(0, c(nCases, nReaders), dimnames = list(cases, readers))
   scores.D <- array(0, c(nCases, nReaders), dimnames = list(cases, readers))
-
+  
   # Declare the reader-by-case design arrays for each modality
   design.A <- array(0, c(nCases, nReaders), dimnames = list(cases, readers))
   design.B <- array(0, c(nCases, nReaders), dimnames = list(cases, readers))
   design.C <- array(0, c(nCases, nReaders), dimnames = list(cases, readers))
   design.D <- array(0, c(nCases, nReaders), dimnames = list(cases, readers))
-
+  
   # Initilize the reader-by-case score and design arrays for each modality
   index <- data.matrix(df.A[ , c("caseID", "readerID")])
   scores.A[index] <- df.A$score
@@ -769,18 +759,18 @@ uStat11.diff <- function(
   index <- data.matrix(df.D[ , c("caseID", "readerID")])
   scores.D[index] <- df.D$score
   design.D[index] <- 1
-
+  
   # Declare and initialize the kernel results
   design.AB <- design.A * design.B
   design.CD <- design.C * design.D
   kernel.AB <- (scores.A - scores.B) * design.AB
   kernel.CD <- (scores.C - scores.D) * design.CD
-
+  
   return(list(
     kernel.AB = kernel.AB,
     design.AB = design.AB,
     kernel.CD = kernel.CD,
     design.CD = design.CD
   ))
-
+  
 }
