@@ -1,7 +1,10 @@
 <h2>Updates</h2>
 
-<h4>Version Under Development</h4>
-...
+<h4>Java Version Frozen</h4>
+*04/20204*
+
+We are no longer developing the Java version of iMRMC. We are only developing the R package. Please refer to the [NEWS.md](https://github.com/DIDSR/iMRMC/blob/master/Rpackage/iMRMC/NEWS.md) for more information regarding the change. 
+
 
 <h4>iMRMC4.0.3</h4>
 *04/15/19*

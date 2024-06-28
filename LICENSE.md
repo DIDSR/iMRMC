@@ -1,4 +1,6 @@
-CC0 1.0 Universal (CC0 1.0)  
+Except for the terms related to the libraries used in our software summarized [here](https://raw.githubusercontent.com/DIDSR/iMRMC/master/LICENSE-libraries.md), 
+
+Our software is governed by the Creative Commons Zero 1.0 Universal License (CC0 1.0).
 Public Domain Dedication  
 https://creativecommons.org/publicdomain/zero/1.0/
 

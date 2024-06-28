@@ -1,3 +1,9 @@
+# In this test we create a simulated iMRMC data frame and analyze it (result.target).
+# Then we convert the iMRMC format data frame to a different format with the
+# function undoIMRMCdf (truth is added as a new column instead of truth in rows).
+# Then we convert the data frame back to the iMRMC format data frame and 
+# analyze it again (result.current).
+
 library(testthat)
 library(parallel)
 library(iMRMC)
@@ -12,7 +18,8 @@ config.gRoeMetz <- sim.gRoeMetz.config()
 # Simulate data
 df.MRMC <- sim.gRoeMetz(config.gRoeMetz)
 
-df <- undoIMRMCdf(df.MRMC)
+# Convert the data into new format (truth in new column instead of truth in rows)
+df.ALT <- undoIMRMCdf(df.MRMC)
 
 keyColumns <- list(
   readerID = "readerID",
@@ -21,43 +28,25 @@ keyColumns <- list(
   score = "score",
   truth = "truth"
 )
-df.MRMC2 <- createIMRMCdf(df, keyColumns, "1")
 
-# Analyze the input file
-result <- tryCatch(
-  doIMRMC(data = df.MRMC2, stripDatesForTests = TRUE),
-  warning = function(w) {
-    print(w)
-    result <- list(error = 1)
-    return(result)
-  },
-  error = function(w) {
-    print(w)
-    result <- list(error = 1)
-    return(result)
-  }
-) 
+# Convert data back to original iMRMC format
+df.MRMC2 <- createIMRMCdf(df.ALT, keyColumns, "1")
+
+# Sort the data frames by readerID, caseID, modalityID, score
+index <- order(df.MRMC$readerID, df.MRMC$caseID, df.MRMC$modalityID, df.MRMC$score)
+df.MRMC <- df.MRMC[index, ]
+rownames(df.MRMC) <- NULL
+
+index <- order(df.MRMC2$readerID, df.MRMC2$caseID, df.MRMC2$modalityID, df.MRMC2$score)
+df.MRMC2 <- df.MRMC2[index, ]
+rownames(df.MRMC2) <- NULL
+
+
 
 #### TEST ####
 
-# This test is to verify that the results do not change over time
-# If doIMRMC crashes because the CRAN test environment doesn't
-# have java or doesn't have the right version of java,
-# I don't want the test to fail. That error is expected.
-if (!names(result)[1] == "error") {
-  
-  # Recover the expected results
-  # Run "test_doIMRMC.R" with flagSave<-TRUE if it is necessary to recreate the expected results
-  saveResult <- 0
-  fileName <- "test_doIMRMC.Rdata"
-  if (!file.exists(fileName)) {
-    fileName <- file.path("tests", "testthat", fileName)
+test_that(
+  "createIMRMCdf and undoIMRMCdf work as expected", {
+    expect_equal(df.MRMC, df.MRMC2)
   }
-  load(fileName)
-  
-  test_that(
-    "createIMRMCdf and undoIMRMCdf work as expected", {
-      expect_equal(saveResult, result,tolerance=1e-5)
-    }
-  ) 
-}
+) 
