@@ -95,14 +95,14 @@
 #' dFrame <- sim.NormalIG.Hierarchical(config)
 #'
 #' # Compute Limits of Agreement
-#' laWRBM_result <- laWRBM.anova(dFrame)
+#' laWRBM_result <- laWRBM(dFrame)
 #' print(laWRBM_result)
-#' laBRBM_result <- laBRBM.anova(dFrame)
+#' laBRBM_result <- laBRBM(dFrame)
 #' print(laBRBM_result)
 #'
-laWRBM.anova <- function(df, modalitiesToCompare = c("testA","testB"),
-                         keyColumns = c("readerID", "caseID", "modalityID", "score"),
-                         if.aov = TRUE, type = 1, reader.first = TRUE
+laWRBM <- function(df, modalitiesToCompare = c("testA","testB"),
+                   keyColumns = c("readerID", "caseID", "modalityID", "score"),
+                   if.aov = TRUE, type = 1, reader.first = TRUE
 ) {
   
   if(length(modalitiesToCompare) != 2) {
@@ -161,9 +161,9 @@ laWRBM.anova <- function(df, modalitiesToCompare = c("testA","testB"),
 #' @export
 #'
 
-laBRWM.anova <- function(df, modality = c("testA"),
-                         keyColumns = c("readerID", "caseID", "modalityID", "score"),
-                         if.aov = TRUE, type = 1, reader.first = TRUE
+laBRWM <- function(df, modality = c("testA"),
+                   keyColumns = c("readerID", "caseID", "modalityID", "score"),
+                   if.aov = TRUE, type = 1, reader.first = TRUE
 ) {
   
   if(length(modality) != 1) {
@@ -221,9 +221,9 @@ laBRWM.anova <- function(df, modality = c("testA"),
 #' @export
 #'
 
-laWRWM.anova <- function(df, replicatesToCompare = c("testA","testB"),
-                         keyColumns = c("readerID", "caseID", "modalityID", "score"),
-                         if.aov = TRUE, type = 1, reader.first = TRUE
+laWRWM <- function(df, replicatesToCompare = c("testA","testB"),
+                   keyColumns = c("readerID", "caseID", "modalityID", "score"),
+                   if.aov = TRUE, type = 1, reader.first = TRUE
 ) {
   
   if(length(replicatesToCompare) != 2) {
@@ -282,10 +282,10 @@ laWRWM.anova <- function(df, replicatesToCompare = c("testA","testB"),
 #' @export
 #'
 
-laBRBM.anova <- function(df, modalitiesToCompare = c("testA","testB"),
-                         keyColumns = c("readerID", "caseID", "modalityID", "score"),
-                         if.aov = TRUE, type = 1, reader.first = TRUE,
-                         is.sparseQR = T
+laBRBM <- function(df, modalitiesToCompare = c("testA","testB"),
+                   keyColumns = c("readerID", "caseID", "modalityID", "score"),
+                   if.aov = TRUE, type = 1, reader.first = TRUE,
+                   is.sparseQR = T
 ) {
   
   if(length(modalitiesToCompare) != 2) {
