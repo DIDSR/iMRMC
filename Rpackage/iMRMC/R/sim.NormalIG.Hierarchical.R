@@ -37,7 +37,7 @@
 #'   }
 #'   \item Reader-case interaction term
 #'   \itemize{
-#'     \item sigma_C: [num] variance of case factor (if \code{C_dist="normal"})
+#'     \item sigma_C: [num] std of case factor (if \code{C_dist="normal"})
 #'     \item a_C:     [num] alpha for distribution of case (if \code{C_dist="beta"})
 #'     \item b_C:     [num] beta for distribution of case (if \code{C_dist="beta"})
 #'     \item alpha_R: [num] shape parameter for reader
@@ -45,7 +45,7 @@
 #'   }
 #'   \item Modality-reader-case-replicate interaction term for modality A
 #'     \itemize{
-#'     \item sigma_C.A: [num] variance of case factor (if \code{C_dist="normal"})
+#'     \item sigma_C.A: [num] std of case factor (if \code{C_dist="normal"})
 #'     \item a_C.A:     [num] alpha for distribution of case (if \code{C_dist="beta"})
 #'     \item b_C.A:     [num] beta for distribution of case (if \code{C_dist="beta"})
 #'     \item alpha_R.A: [num] shape parameter for reader
@@ -53,7 +53,7 @@
 #'   }
 #'   \item Modality-reader-case-replicate interaction term for modality B
 #'     \itemize{
-#'     \item sigma_C.B: [num] variance of case factor (if \code{C_dist="normal"})
+#'     \item sigma_C.B: [num] std of case factor (if \code{C_dist="normal"})
 #'     \item a_C.B:     [num] alpha for distribution of case (if \code{C_dist="beta"})
 #'     \item b_C.B:     [num] beta for distribution of case (if \code{C_dist="beta"})
 #'     \item alpha_R.B: [num] shape parameter for reader
@@ -200,10 +200,10 @@ sim.NormalIG.Hierarchical = function(config,R = NULL,AR = NULL,BR = NULL,is.with
 #' @param tau_B [num] modality B effect. Default \code{tau_B = 0}
 #' @param alpha_R [num] shape parameter for reader. Default \code{alpha_R = 10}
 #' @param beta_R [num] scale parameter for reader. Default \code{beta = 1}
-#' @param sigma_C [num] variance of case factor (if \code{C_dist="normal"}). Default \code{sigma_C = 1}
+#' @param sigma_C [num] std of case factor (if \code{C_dist="normal"}). Default \code{sigma_C = 1}
 #' @param a_C [num] alpha for distribution of case (if \code{C_dist="beta"}). Default \code{a_C = 0.8}
 #' @param b_C [num] beta for distribution of case (if \code{C_dist="beta"}). Default \code{b_C = 3}
-#' @param sigma_tauC [num] variance of modality-case (if \code{C_dist="normal"}). Default \code{sigma_tauC = 1}
+#' @param sigma_tauC [num] std of modality-case (if \code{C_dist="normal"}). Default \code{sigma_tauC = 1}
 #' @param alpha_tauR [num] shape parameter for modality-reader. Default \code{alpha_tauR = 10}
 #' @param beta_tauR [num] scale parameter for modality-reader. Default \code{beta_tauR = 1}
 #' @param C_scale [num] weight for the case factor. Default \code{C_scale = 1}
