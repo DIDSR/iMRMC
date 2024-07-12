@@ -10,7 +10,6 @@ output:
 ```{r setup, include=FALSE}
 library(knitr)
 library(iMRMC)
-source("../../R/sim.NormalIG.Hierarchical.R")
 knitr::opts_chunk$set(echo = TRUE)
 ```
 

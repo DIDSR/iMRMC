@@ -6,8 +6,6 @@ output: pdf_document
 ```{r setup, include=FALSE}
 library(knitr)
 library(iMRMC)
-source("../../R/la.anova.R")
-source('../../R/sim.NormalIG.Hierarchical.R')
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -75,16 +73,12 @@ set.seed(1)
 data.sim <- sim.NormalIG.Hierarchical(config)
 
 # Using ANOVA to calculate WRBM limits of agreement
-laWRBM.anova_result <- laWRBM.anova(data.sim)
-print(laWRBM.anova_result)
+laWRBM_result <- laWRBM(data.sim)
+print(laWRBM_result)
 ```
 
-The var.1obs in the result is the estimation of variance of WRBM difference, $\hat V_{WR}^{12}$.The limits of agreement is given by [la.bot, la.top]. Since both the ANOVA method and U-statistics method provide unbiased estimation to the variance components, the above result is the same as the one calculated by using U-statistics method. laWRBM is a function in iMRMC package that using U-statistics method to construct WRBM limits of agreement.
+The var.1obs in the result is the estimation of variance of WRBM difference, $\hat V_{WR}^{12}$.The limits of agreement is given by [la.bot, la.top].
 
-```{r laWRBM}
-# Compare the result with laWRBR in iMRMC package
-print(laWRBM(data.sim,modalitiesToCompare = c("testA","testB")))
-```
 
 ## 3. Using three-way mixed effect ANOVA to calculate $V_{WRBM}$
 
@@ -143,15 +137,10 @@ Therefore, the estimation of variance of $Y_{jj'k}$ is
 Following is an example of using function laBRBM.anova to compute the BRBM limits of agreement for the simulated MRMC data
 ```{r laBRBM.anova}
 # Using ANOVA to calculate BRBM limits of agreement
-laBRBM.anova_result <- laBRBM.anova(data.sim)
-print(laBRBM.anova_result)
+laBRBM_result <- laBRBM(data.sim)
+print(laBRBM_result)
 ```
 
-We can compare the above result with the result from laBRBM function in iMRMC package. Again, the ANOVA method and the U-statistics method shows the same result.
-```{r laBRBM}
-# Compare the result with laWRBR in iMRMC package
-print(laBRBM(data.sim,modalitiesToCompare = c("testA","testB")))
-```
 
 ## 4. Relationship between the two-way random effect ANOVA and the three-way mixed effect ANOVA
 

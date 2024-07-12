@@ -47,6 +47,14 @@
 #' @param modalitiesToCompare
 #' The factors identifying the modalities to compare. It should be at length 2. Default
 #' \code{modalitiesToCompare = c("testA","testB")}
+#' 
+#' @param replicatesToCompare
+#' The factors identifying the replicates to compare for laWRWM. It should be at length 2. Default
+#' \code{modalitiesToCompare = c("testA","testB")}
+#' 
+#' @param modality
+#' The factor identifying the modality for laBRWM. It should be at length 1. Default
+#' \code{modality = c("testA")}
 #'
 #' @param keyColumns
 #' Identify the factors corresponding to the readerID, caseID, modalityID, and score
@@ -56,6 +64,10 @@
 #' @param if.aov
 #' Boolean value to determine whether using aov function to do ANOVA for the fully cross study only. 
 #' Default \code{if.aov = TRUE}
+#' 
+#' @param is.sparseQR 
+#' Boolean value to determine whether using sparseQR function to do QR decomposition when the study is not fully crossed. 
+#' Default \code{is.sparseQR = TRUE}
 #' 
 #' @param type
 #' Identify which type of SS is computed in ANOVA. The possible values are c(1,2,3) 
@@ -84,8 +96,8 @@
 #' sum of squares, and variance component estimates for different sources of variation
 #'
 #'
-#' @importFrom stats aov var qnorm
-#' @importFrom iMRMC convertDFtoScoreMatrix
+#' @importFrom stats aov var qnorm model.matrix
+#' @importFrom methods as
 #' @import Matrix
 #' @export
 #'
@@ -505,7 +517,6 @@ RSS_2w <- function(X, Y, Xr=NULL, Xc=NULL, Xe=diag(length(Y))){
   return(list(rss=t(residual)%*%residual, coef_var= c(coef_r, coef_c, length(Y)-k),
               df=length(Y)-k))
 }
-
 
 anova.3way <- function(df.A, df.B, if.aov = TRUE, type = 1, reader.first = TRUE,
                        is.sparseQR = T
