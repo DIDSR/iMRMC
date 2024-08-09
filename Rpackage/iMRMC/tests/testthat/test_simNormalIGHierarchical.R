@@ -19,7 +19,7 @@ str(result)
 #### TEST ####
 
 # Save the result to a file for future comparisons
-fileName <- "test_simNormalIGHierarchical.Rdata"
+fileName <- "test_simNormalIGHierarchical.rda"
 if (flagSave) {
   saveResult <- result
   save(saveResult, file = file.path("tests", "testthat", fileName))
