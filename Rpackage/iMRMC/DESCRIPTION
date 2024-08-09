@@ -11,5 +11,5 @@ Encoding: UTF-8
 LazyData: true
 Depends: R (>= 3.5.0)
 RoxygenNote: 7.3.2
-Imports: stats, Matrix, methods
+Imports: stats, Matrix
 Suggests: testthat

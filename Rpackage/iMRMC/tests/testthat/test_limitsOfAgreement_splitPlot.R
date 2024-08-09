@@ -9,31 +9,57 @@ context("limitsOfAgreement")
 init.lecuyerRNG(stream = 1)
 
 # Create a sample configuration file
-config <- sim.NormalIG.Hierarchical.config(modalityID = c("testA","testB"))
+config <- sim.NormalIG.Hierarchical.config(nR=9, nC=99, 
+                                           modalityID = c("testA","testB"))
 
 # Simulate an MRMC agreement data set
 dFrame.imrmc <- sim.NormalIG.Hierarchical(config)
+
+# Create a split-plot data set ################################################
+nG <- 3
+
+# Determine reader groups
+readerGroups <- createGroups(levels(dFrame.imrmc$readerID), nG)
+names(readerGroups) <- c("readerID", "readerGroup")
+df <- merge(dFrame.imrmc, readerGroups)
+
+# Determine case groups
+caseGroups <- createGroups(levels(factor(dFrame.imrmc$caseID)), nG)
+names(caseGroups) <- c("caseID", "caseGroup")
+df <- merge(df, caseGroups)
+
+# Create split-plot data
+df <- df[df$caseGroup == df$readerGroup, ]
+df$caseID <- factor(df$caseID)
+
+# Visualize the design matrix of each modality
+dA <- convertDFtoDesignMatrix(df, modality = "testA", dropFlag = FALSE)
+dB <- convertDFtoDesignMatrix(df, modality = "testB", dropFlag = FALSE)
+
+image(dA)
+image(dB)
+
 
 
 # Do the analysis ##############################################################
 
 # Do the within-reader between-modality limits of ageement analysis
-result_laWRBM <- laWRBM(dFrame.imrmc)
+result_laWRBM <- laWRBM(df)
 
 # Do the between-reader between-modality limits of agreement analysis
-result_laBRBM <- laBRBM(dFrame.imrmc)
+result_laBRBM <- laBRBM(df)
 
 # Do the between-reader within-modality limits of agreement analysis
-result_laBRWM <- laBRWM(dFrame.imrmc)
+result_laBRWM <- laBRWM(df)
 
 # Do the within-reader within-modality limits of agreement analysis
-result_laWRWM <- laWRWM(dFrame.imrmc)
+result_laWRWM <- laWRWM(df)
 
 
 # Test #########################################################################
 
 saveData <- FALSE
-fileName <-"test_limitsOfAgreement.rda"
+fileName <-"test_limitsOfAgreement_splitPlot.rda"
 
 if(saveData){
   #  Save the result to a file for future comparisons
@@ -44,7 +70,7 @@ if(saveData){
   
   save(target_laWRBM, target_laBRBM, target_laBRWM, target_laWRWM,
        file = file.path("tests", "testthat", fileName))
-
+  
 }else{
   
   # Recover the expected results

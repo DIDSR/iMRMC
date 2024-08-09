@@ -97,8 +97,7 @@
 #'
 #'
 #' @importFrom stats aov var qnorm model.matrix
-#' @importFrom methods as
-#' @import Matrix
+#' @importFrom Matrix Matrix tcrossprod
 #' @export
 #'
 #' @examples
@@ -625,7 +624,7 @@ anova3 <- function(df.A, df.B, if.aov = TRUE, type = 1, reader.first = TRUE,
     ## Compute SS and coefficient for the variance components
     R.full <- RSS(X,Y,output.q = T,is.sparseQR = is.sparseQR)
     if(is.sparseQR){
-      sparseX <- as(X[,R.full$ind],"sparseMatrix")
+      sparseX <- Matrix(X[,R.full$ind],sparse = TRUE)
     }else{
       sparseX <- NULL
     }
@@ -702,7 +701,7 @@ anova3 <- function(df.A, df.B, if.aov = TRUE, type = 1, reader.first = TRUE,
         if(is.sparseQR){
           X<-model.matrix(~ readerID + caseID + modalityID + readerID:modalityID + caseID:modalityID, 
                           data = df_2Modality)
-          sparseX<-as(X[,R.no_RC$ind],"sparseMatrix")
+          sparseX<-Matrix(X[,R.no_RC$ind],sparse=TRUE)
         }
         R.RM_C <- RSS(seq(1,nR*nM+nC-1),Y,R.no_RC$q, R.no_RC$ind,is.sparseQR,sparseX, Xrc = X_rc, Xcm = X_cm)
         
@@ -768,7 +767,7 @@ RSS <- function(X, Y, q=NULL,ind=NULL, is.sparseQR=F, sparseX=NULL,
     ind <- decom$pivot[1:k]
     
     if(is.sparseQR){
-      decom2<- qr(as(X[,ind],"sparseMatrix"))
+      decom2<- qr(Matrix(X[,ind],sparse=TRUE))
       q <- qr.Q(decom2)
     }else{
       q <- qr.Q(decom)[,1:k]
@@ -801,7 +800,7 @@ RSS <- function(X, Y, q=NULL,ind=NULL, is.sparseQR=F, sparseX=NULL,
   X_res <- list(Xr, Xc, Xrc, Xrm, Xcm)
   
   
-  coef_var <- unlist(lapply(X_res, function(X) if(!is.null(X)) sum(diag(M %*%  tcrossprod(as(X,"sparseMatrix")))) else 0))
+  coef_var <- unlist(lapply(X_res, function(X) if(!is.null(X)) sum(diag(as.matrix(M %*%  tcrossprod(Matrix(X,sparse=TRUE))))) else 0))
   if((!output.q) | is.sparseQR){
     q=NULL
   }
