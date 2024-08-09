@@ -138,7 +138,7 @@ laWRBM <- function(df, modalitiesToCompare = c("testA","testB"),
   diff.df <- droplevels(subset(diff.df.all, select = c("readerID","caseID","score")))
   
   # Two-way ANOVA model
-  fit <- anova.2way(diff.df, if.aov = if.aov, type = type, reader.first = reader.first)
+  fit <- anova2(diff.df, if.aov = if.aov, type = type, reader.first = reader.first)
   
   # size of study
   N <- nrow(diff.df)
@@ -193,7 +193,7 @@ laBRWM <- function(df, modality = c("testA"),
   df <- droplevels(df[df$modalityID == modality[1], ])
   
   # Two-way ANOVA model
-  fit <- anova.2way(df, if.aov = if.aov, type = type, reader.first = reader.first)
+  fit <- anova2(df, if.aov = if.aov, type = type, reader.first = reader.first)
   
   # size of study
   nRperC <- array(table(df$caseID))
@@ -259,7 +259,7 @@ laWRWM <- function(df, replicatesToCompare = c("testA","testB"),
   diff.df <- droplevels(subset(diff.df.all, select = c("readerID","caseID","score")))
   
   # Two-way ANOVA model
-  fit <- anova.2way(diff.df, if.aov = if.aov, type = type, reader.first = reader.first)
+  fit <- anova2(diff.df, if.aov = if.aov, type = type, reader.first = reader.first)
   
   # size of study
   N <- nrow(diff.df)
@@ -316,7 +316,7 @@ laBRBM <- function(df, modalitiesToCompare = c("testA","testB"),
   df.B <- df[df$modalityID == modalitiesToCompare[2], ]
   df_2Modality <- droplevels(rbind(df.A, df.B))
   
-  fit <- anova.3way(df.A, df.B, if.aov = if.aov, type = type, reader.first = reader.first,
+  fit <- anova3(df.A, df.B, if.aov = if.aov, type = type, reader.first = reader.first,
                     is.sparseQR = is.sparseQR)
   
   # Limit of agreement result
@@ -360,7 +360,7 @@ laBRBM <- function(df, modalitiesToCompare = c("testA","testB"),
 }
 
 
-anova.2way <- function(df, if.aov = TRUE, type = 1, reader.first = TRUE
+anova2 <- function(df, if.aov = TRUE, type = 1, reader.first = TRUE
 ){
   df <- droplevels(df)
   is.incomplete <- F # whether the computation is completed
@@ -518,7 +518,7 @@ RSS_2w <- function(X, Y, Xr=NULL, Xc=NULL, Xe=diag(length(Y))){
               df=length(Y)-k))
 }
 
-anova.3way <- function(df.A, df.B, if.aov = TRUE, type = 1, reader.first = TRUE,
+anova3 <- function(df.A, df.B, if.aov = TRUE, type = 1, reader.first = TRUE,
                        is.sparseQR = T
 ){
   is.incomplete <- F # whether the computation is completed
