@@ -76,15 +76,22 @@
 #' Default = \code{c("readerID", "caseID", "modalityID", "score")}
 #'
 #' @param if.aov
-#' Boolean value to determine whether using aov function to do ANOVA for the fully cross study only. 
+#' Boolean value to determine whether to use the `stats::aov` function or to
+#' calculate the ANOVA statistics explicitly. `stats::aov` is only appropriate
+#' for fully-crossed study only. This flag permits head-to-head comparisons of
+#' the output from `stats::aov` and the explicit calculations.
 #' Default = \code{TRUE}
 #' 
 #' @param is.sparseQR 
-#' Boolean value to determine whether using sparseQR function to do QR decomposition when the study is not fully crossed. 
+#' Boolean value to determine whether the `base::qr` function assumes the input
+#' data is sparse or not. 
 #' Default = \code{TRUE}
 #' 
 #' @param type
-#' Identify which type of SS is computed in ANOVA. The possible values are c(1,2,3) 
+#' Identify how SS are computed in ANOVA for unbalanced study designs.
+#' The possible values are c(1,2,3), corresponding to the approaches
+#' introduced in the SAS package(Langsrud2003_Stat-Comput_v13p163).
+#' 
 #' Default \code{type= 1}
 #' 
 #' @param reader.first
@@ -99,7 +106,7 @@
 #' \describe{
 #'   \item{meanDiff}{The mean difference score.}
 #'   \item{var.MeanDiff}{The variance of the mean difference score.}
-#'   \item{var.1obs}{The variance of a single WRBM/BRBM difference score.}
+#'   \item{var.1obs}{The variance of the difference score.}
 #'   \item{ci95meanDiff.bot}{Lower bound of 95\% CI for the mean difference score. \code{meanDiff+
 #'   1.96*sqrt(var.MeanDiff)}}
 #'   \item{ci95meanDiff.top}{Upper bound of 95\% CI for the mean difference score. \code{meanDiff-

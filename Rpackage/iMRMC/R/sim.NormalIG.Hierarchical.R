@@ -77,10 +77,27 @@
 #'       \item \code{tauRCE_scale}: [num] weight for the modality-reader-case-replicate interaction term
 #'   }
 #' }
-#' @param \code{R} [vector] fix the reader factor across different simulation. Default \code{R = NULL}  
-#' @param \code{AR} [vector] fix the modality-reader interaction. Default \code{AR = NULL}
-#' @param \code{BR} [vector] fix the modality-reader interaction. Default \code{BR = NULL}
-#' @param \code{is.within} [bol] whether the data are within-modality (AR==BR). Default \code{is.within=FALSE}
+#' @param R [vector] of size \code{nR} of reader factors pre-generated from
+#'   a gamma(\code{alpha_R}, \code{beta_R}) distribution 
+#'   to allow the reader factor to be fixed across multiple simulations.
+#'   Default \code{= NULL}  
+#' 
+#' @param AR [vector] of size \code{nR} of modality-reader interaction terms
+#'   pre-generated from a gamma(\code{alpha_R.A}, \code{beta_R.A}) distribution 
+#'   to allow the modality-reader interaction terms to be
+#'   fixed across multiple simulations the modality-reader interaction.
+#'   Default \code{= NULL}
+#' 
+#' @param BR [vector] of size \code{nR} of modality-reader interaction terms
+#'   pre-generated from a gamma(\code{alpha_R.B}, \code{beta_R.B}) distribution 
+#'   to allow the modality-reader interaction terms to be
+#'   fixed across multiple simulations the modality-reader interaction.
+#'   Default \code{= NULL}
+#' 
+#' @param is.within [bol] whether the data are within-modality (A==B).
+#'   In this case the modality-reader and modality-case interaction terms 
+#'   will be the same.
+#'   Default \code{= FALSE}
 #'
 #' @return df   [data.frame] with nR x nC x 2 rows including
 #' \itemize{
