@@ -9,7 +9,7 @@ library(iMRMC)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Here we demonstrate how ...
+Here we demonstrate how to run the limits of agreement functions (`laWRBM` and `laBRBM`), and we show the output.
 
 ## 1. Definition
 
@@ -25,13 +25,13 @@ If $j\neq j'$, the difference score $D_{jj'k}^{12}$ denotes the between-reader b
 \overline{D_{BR}^{12}}\pm2\sqrt{V_{BR}^{12}}.
 \]
 
-To construct the WRBM and BRBM limits of agreement, we need to estimate $\overline{D_{WR}^{12}}$, $V_{WR}^{12}$, $\overline{D_{BR}^{12}}$, and $V_{BR}^{12}$. The two mean differences are easy to estimate.
+To construct the WRBM and BRBM limits of agreement, we need to estimate $\overline{D_{WR}^{12}}$, $V_{WR}^{12}$, $\overline{D_{BR}^{12}}$, and $V_{BR}^{12}$. The two mean differences are easy to estimate:
 \[
 \hat{\overline{D_{WR}^{12}}}=\frac{1}{JK}\sum_j\sum_kD_{jj,k}^{12}=\frac{1}{JK}\sum_j\sum_k(X_{1jk}-X_{2jk})=\overline{X_1..}-\overline{X_2..},
 \]
 where sums are over all samples implied by the index unless otherwise described. Also, $\overline{X_i..}=\frac{1}{JK}\sum_j\sum_kX_{ijk}$ for $i=1,2$ denotes the average score across all the readers and cases for a single modality. Similarly,
 \[
-\hat{\overline{D_{BR}^{12}}}=\frac{1}{J(J-1)K}\sum_j\sum_{j\neq j'}\sum_kD_{jj'k}^{12}=\frac{1}{J(J-1)K}\sum_j\sum_{j\neq j'}\sum_k(X_{1jk}-X_{2j'k})=\overline{X_1..}-\overline{X_2..}
+\hat{\overline{D_{BR}^{12}}}=\frac{1}{J(J-1)K}\sum_j\sum_{j\neq j'}\sum_kD_{jj'k}^{12}=\frac{1}{J(J-1)K}\sum_j\sum_{j\neq j'}\sum_k(X_{1jk}-X_{2j'k})=\overline{X_1..}-\overline{X_2..}.
 \]
 Therefore, $\hat{\overline{D_{WR}^{12}}}=\hat{\overline{D_{BR}^{12}}}=\overline{X_1..}-\overline{X_2..}$. The WRBM and BRBM limits of agreement will be different only by the variances $V_{WR}^{12}$ and $V_{BR}^{12}$. In the following two sections, we will discuss how to use two-way random effect ANOVA to estimate $V_{WR}^{12}$ and three-way mixed effect ANOVA to estimate $V_{BR}^{12}$.
 
@@ -70,9 +70,9 @@ Putting it all together, the estimate of the variance of $Y_{jk}$,
 \hat V_{WR}^{12}=\hat Var[Y_{jk}]=\hat\sigma_R^2+\hat\sigma_C^2+\hat\sigma_\varepsilon^2=\frac{1}{JK}(J*MSR+K*MSC+(JK-J-K)*MSE)
 \]
 
-The following is an example demonstrating the use of the function `laWRBM.anova` to compute the WRBM limits of agreement for simulated MRMC agreement data. The example starts by simulating MRMC agreement data with the function `sim.NormalIG.Hierarchical` and finishes by printing the output.
+The following is an example demonstrating the use of the function `laWRBM` to compute the WRBM limits of agreement for simulated MRMC agreement data. The example starts by simulating MRMC agreement data with the function `sim.NormalIG.Hierarchical` and finishes by printing the output.
 
-```{r simulation & laWRBM.anova}
+```{r simulation & laWRBM}
 # Simulate MRMC data
 config <- sim.NormalIG.Hierarchical.config(modalityID = c("testA","testB"))
 set.seed(1)
@@ -83,7 +83,7 @@ laWRBM_result <- laWRBM(data.sim)
 print(laWRBM_result)
 ```
 
-The output is a list of two objects. The first object in the list is a data frame with key summary statistics. In order, they are the mean difference, the variance of the mean difference, the variance of WRBM differences $\hat V_{WR}^{12}$ (1 observation), the confidence interval of the mean difference, and the limits of agreement. 
+The output is a list of two objects. The first object in the list is a data frame with key summary statistics. In order, the key summary statstics are the mean difference, the variance of the mean difference, the variance of WRBM differences $\hat V_{WR}^{12}$ (1 observation), the confidence interval of the mean difference, and the limits of agreement. 
 
 The second object in the list is a data frame containing the typical ANOVA table.
 
@@ -96,7 +96,8 @@ X_{ijk} = \mu+m_i+R_j+C_k+RC_{jk}+mR_{ij}+mC_{ik}+\varepsilon_{ijk},
 \]
 where $m_i$ denotes the fixed effect for modality, $\sum_im_i=0$, and the other variables are independently normally distributed: $R_j\sim N(0,\sigma_R^2)$, $C_k\sim N(0,\sigma_C^2)$, $RC_{jk}\sim N(0,\sigma_{RC}^2)$, $mR_{ij}\sim N(0,\sigma_{mR}^2)$, $mC_{ik}\sim N(0,\sigma_{mC}^2)$, and $\varepsilon_{ijk}\sim N(0,\sigma_\varepsilon^2)$. 
 
-The mixed effect model we applied is the unrestricted mixed model. Compared to the restricted model, the interaction term of the mixed effect and random effect in the unrestricted model will not be correlated at the same random level. This makes the model easier to work with.
+The mixed effect model we applied is the unrestricted mixed model. Unlike the restricted model, we do not force the sum over modalities of the modality-reader
+terms to equal zero, and we do not force the sum over modalities of the modality-case terms to equal zero. This makes the model easier to work with.
 
 Under this model, the BRBM difference $D_{jj'k}^{12}$ can be expressed as 
 \[
@@ -142,9 +143,9 @@ Putting it all together, the estimate of the variance BRBM differences is
 \end{aligned}
 \]
 
-The following is an example demonstrating the use of the function `laBRBM.anova` to compute the BRBM limits of agreement for simulated MRMC agreement data. The example uses the previously simulated MRMC agreement data. The output is a list of the same two objects as for `laWRBM`.
+The following is an example demonstrating the use of the function `laBRBM` to compute the BRBM limits of agreement for simulated MRMC agreement data. The example uses the previously simulated MRMC agreement data. The output is a list of the same two objects as for `laWRBM`.
 
-```{r laBRBM.anova}
+```{r laBRBM}
 # Using ANOVA to calculate BRBM limits of agreement
 laBRBM_result <- laBRBM(data.sim)
 print(laBRBM_result)
@@ -161,7 +162,7 @@ Then, the variance of $Y_{jk}$ is
 \[
 V_{WR}^{12}=Var[Y_{jk}]=2\sigma_{mR}^2+2\sigma_{mC}^2+2\sigma_\varepsilon^2.
 \]
-Now, if we insert in the unbiased estimate of the variance components, we get the estimate of $V_{WRBM}$
+Now, if we insert the unbiased estimates of the variance components, we get the estimate of $V_{WRBM}$
 \[
 \hat V_{WR}^{12}=2\hat\sigma_{mR}^2+2\hat\sigma_{mC}^2+2\hat\sigma_\varepsilon^2
 =\frac{2}{JK}(J*MSMR+K*MSMC+(JK-J-K)*MSE)
@@ -196,7 +197,7 @@ SST_{3w}&=\sum_i\sum_j\sum_k(X_{ijk}-\overline{X_{...}})^2\\
 &=\sum_i\sum_j\sum_k(X_{ijk}-\overline{X_{i..}}-\overline{X_{.jk}}+\overline{X_{...}})^2+SSM_{3w}+I\sum_j\sum_k(\overline{X_{.jk}}-\overline{X_{...}})^2
 \end{aligned}
 \]
-The last term on the right-hand-side of the fomula above can be decomposed as
+The last term on the right-hand-side of the formula above can be decomposed as
 \[
 \begin{aligned}
 &\ \ \ \ \ I\sum_j\sum_k(\overline{X_{.jk}}-\overline{X_{...}})^2\\
@@ -208,7 +209,7 @@ Thus,
 \[
 \begin{aligned}
 SSE_{2w} &= SST_{2w}-SSR_{2w}-SSC_{2w}\\
-&=2(SST_{3w}-SSM_{3w}-SSR_{3w}-SSC_{3w}-SSRC_{3w})-2SSMR_{3w}-2SSMC_{3w}=2SSE_{3w}
+&=2(SST_{3w}-SSM_{3w}-SSR_{3w}-SSC_{3w}-SSRC_{3w})-2SSMR_{3w}-2SSMC_{3w}\\&=2SSE_{3w}
 \end{aligned}
 \]
 
