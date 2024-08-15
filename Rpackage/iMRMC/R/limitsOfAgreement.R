@@ -1,32 +1,46 @@
+# limitsOfAgreement ##########
 #' @title MRMC Analysis of Limits of Agreement using ANOVA
 #' @description
-#' These four functions calculate four types of Limits of Agreement using ANOVA: Within-Reader Between-Modality(WRBM), 
-#' Between-Reader Within-Modality(BRWM), Within-Reader Within-Modality(WRWM) and Between-Reader Between-Modality(BRBM). 
+#' These four functions calculate four types of Limits of Agreement using ANOVA: 
+#' Within-Reader Within-Modality(WRWM), Between-Reader Within-Modality(BRWM),
+#' Within-Reader Between-Modality(WRBM), and Between-Reader Between-Modality(BRBM). 
 #' The 95\% confidence interval of the mean difference is also provided. If the study is fully crossed, the ANOVA 
-#' method are realized either by applying stats::aov or by matrix multiplication. Otherwise, the SS in ANOVA is 
-#' computed as the residual sum of squares of linear models. See more details below about the model structure.
+#' methods are realized either by applying \code{stats::aov} or by matrix multiplication. Otherwise, the SS in ANOVA are
+#' computed as residual sums of squares of linear models. See details below about the model structure
+#' and these references.
+#' 
+#' \itemize{
+#'   \item S. Wen and B. D. Gallas,
+#'     “Three-Way Mixed Effect ANOVA to Estimate MRMC Limits of Agreement,”
+#'     \emph{Statistics in Biopharmaceutical Research}, \strong{14}, pp. 532–541, 2022,
+#'     \url{https://www.doi.org/10.1080/19466315.2022.2063169}.
+#'   \item S. Wen and B. D. Gallas,
+#'     “Expanding to Arbitrary Study Designs: ANOVA to Estimate Limits of Agreement for MRMC Studies,”
+#'     \emph{arXiv}, 2023, \url{https://www.doi.org/10.48550/ARXIV.2312.16097}.
+#' }
 #'
 #' @details
-#' Suppose the score from reader j for case k under modality i is\eqn{X_{ijk}}, then the difference score from the
-#' same reader for the same cases under two different modalities is \eqn{Y_{jk} = X_{1jk} - X_{2jk}}.
+#' Suppose the score from a reader j for case k under modality \eqn{i} is\eqn{X_{ijk}}, then the difference score from the
+#' same reader for the same case under two different modalities is \eqn{Y_{jk} = X_{1jk} - X_{2jk}}.
 #' \itemize{
 #'   \item\code{laWRBM} use two-way random effect ANOVA to analyze the difference scores \eqn{Y_{jk}}. The model
 #'   is \eqn{Y_{jk}=\mu + R_j + C_k + \epsilon_{jk}}, where \eqn{R_j} and \eqn{C_k} are random effects for readers
-#'   and cases. The variance of mean and individual observation is expressed as the linear combination of the MS
+#'   and cases. The variances of mean and individual observations are expressed as linear combinations of the MS
 #'   given by ANOVA.
-#'   \item\code{laBRWM} use two-way random effect ANOVA to analyze the scores \eqn{X_{ijk}} for a single modality i. 
+#'   \item\code{laBRWM} use two-way random effect ANOVA to analyze the scores \eqn{X_{jk}} for a single modality. 
 #'   The model is \eqn{X_{jk}=\mu + R_j + C_k + \epsilon_{jk}}, where \eqn{R_j} and \eqn{C_k} are random effects 
-#'   for readers and cases. The variance of mean and individual observation is expressed as the linear combination 
+#'   for readers and cases. The variances of mean and individual observations are expressed as linear combinations 
 #'   of the MS given by ANOVA.
 #'   \item\code{laWRWM} use two-way random effect ANOVA to analyze the difference scores \eqn{Y_{jk}} from the same 
-#'   reader for the same cases under the same modality with different replicates \eqn{Y_{jk} = X_{ijk1} - X_{ijk2}}. 
+#'   reader for the same cases under the same modality with different replicates \eqn{Y_{jk} = X_{jk1} - X_{jk2}}. 
 #'   The model is \eqn{Y_{jk}=\mu + R_j + C_k + \epsilon_{jk}}, where \eqn{R_j} and \eqn{C_k} are random effects for 
-#'   readers and cases. The variance of mean and individual observation is expressed as the linear combination of 
+#'   readers and cases. The variances of mean and individual observations are expressed as  linear combinations of 
 #'   the MS given by ANOVA.
 #'   \item\code{laBRBM} use three-way mixed effect ANOVA to analyze the scores \eqn{X_{ijk}}. The model is given by
 #'   \eqn{X_{ijk}=\mu + R_j + C_k + m_i + RC_{jk} + mR_{ij} + mC_{ik} + \epsilon_{ijk}}, where \eqn{R_j} and
-#'   \eqn{C_k} are random effects for readers and cases and \eqn{m_i} is a fixed effect for modality. The variance
-#'   of mean and individual observation is expressed as the linear combination of the MS given by ANOVA.
+#'   \eqn{C_k} are random effects for readers and cases, \eqn{m_i} is a fixed effect for modality, and the other terms
+#'   are interaction terms. The variances of mean and individual observations are expressed as linear combinations
+#'   of the MS given by ANOVA.
 #' }
 #'
 #' @name limitsOfAgreement
@@ -41,33 +55,33 @@
 #'     The caseID is treated as a random effect.}
 #'   \item{modalityID}{The factor corresponding to the different modalities in the study.
 #'     The modalityID is treated as a fixed effect.}
-#'   \item{score}{The score given by the reader to the case for the modality indicated.}
+#'   \item{score}{The number (observation) given by the reader to the case for the modality indicated.}
 #' }
 #'
 #' @param modalitiesToCompare
-#' The factors identifying the modalities to compare. It should be at length 2. Default
-#' \code{modalitiesToCompare = c("testA","testB")}
+#' The factors identifying the modalities to compare. It should be length 2.
+#' Default = \code{c("testA","testB")}
 #' 
 #' @param replicatesToCompare
-#' The factors identifying the replicates to compare for laWRWM. It should be at length 2. Default
-#' \code{modalitiesToCompare = c("testA","testB")}
+#' The factors identifying the replicates to compare for \code{laWRWM}. It should be length 2.
+#' Default = \code{c("testA","testB")}
 #' 
 #' @param modality
-#' The factor identifying the modality for laBRWM. It should be at length 1. Default
-#' \code{modality = c("testA")}
+#' The factor identifying the modality for laBRWM. It should be length 1.
+#' Default = \code{modality = c("testA")}
 #'
 #' @param keyColumns
-#' Identify the factors corresponding to the readerID, caseID, modalityID, and score
-#' (or alternative random and fixed effects). Default \code{keyColumns = c("readerID", "caseID",
-#' "modalityID", "score")}
+#' Identify the factors corresponding to the readerID (random effect), caseID (random effect),
+#' modalityID (fixed effect), and score (observation).
+#' Default = \code{c("readerID", "caseID", "modalityID", "score")}
 #'
 #' @param if.aov
 #' Boolean value to determine whether using aov function to do ANOVA for the fully cross study only. 
-#' Default \code{if.aov = TRUE}
+#' Default = \code{TRUE}
 #' 
 #' @param is.sparseQR 
 #' Boolean value to determine whether using sparseQR function to do QR decomposition when the study is not fully crossed. 
-#' Default \code{is.sparseQR = TRUE}
+#' Default = \code{TRUE}
 #' 
 #' @param type
 #' Identify which type of SS is computed in ANOVA. The possible values are c(1,2,3) 
@@ -79,21 +93,23 @@
 #' 
 #'
 #' @return
-#' A list of two dataframes 
-#' The first dataframe is \code{limits.of.agreement} with one row. Each column is as following:
+#' A list of two dataframes.
+#' 
+#' The first dataframe is \code{limits.of.agreement}. It has one row. Each column is as follows:
 #' \describe{
-#'   \item{meanDiff}{The mean of difference score.}
-#'   \item{var.MeanDiff}{The variance of mean difference score}
-#'   \item{var.1obs}{The variance of a single WRBM/BRBM difference score}
+#'   \item{meanDiff}{The mean difference score.}
+#'   \item{var.MeanDiff}{The variance of the mean difference score.}
+#'   \item{var.1obs}{The variance of a single WRBM/BRBM difference score.}
 #'   \item{ci95meanDiff.bot}{Lower bound of 95\% CI for the mean difference score. \code{meanDiff+
 #'   1.96*sqrt(var.MeanDiff)}}
 #'   \item{ci95meanDiff.top}{Upper bound of 95\% CI for the mean difference score. \code{meanDiff-
 #'   1.96*sqrt(var.MeanDiff)}}
-#'   \item{la.bot}{Lower bound of WRBM/BRBM Limits of Agreement. \code{meanDiff+1.96*sqrt(var.1obs)}}
-#'   \item{la.top}{Upper bound of WRBM/BRBM Limits of Agreement. \code{meanDiff-1.96*sqrt(var.1obs)}}
+#'   \item{la.bot}{Lower Limit of Agreement for the difference score. \code{meanDiff+1.96*sqrt(var.1obs)}}
+#'   \item{la.top}{Upper Limit of Agreement for the difference score. \code{meanDiff-1.96*sqrt(var.1obs)}}
 #' }
-#' The second dataframe is \code{two.way.ANOVA} or \code{three.way.ANOVA} showing the degree of freedom, 
-#' sum of squares, and variance component estimates for different sources of variation
+#' 
+#' The second dataframe is \code{two.way.ANOVA} or \code{three.way.ANOVA} shows the degrees of freedom, 
+#' sums of squares, and estimates of variance components for each source of variation
 #'
 #'
 #' @importFrom stats aov var qnorm model.matrix
@@ -101,7 +117,12 @@
 #' @export
 #'
 #' @examples
+#' # Initialize the simulation configuration parameters
 #' config <- sim.NormalIG.Hierarchical.config(modalityID = c("testA", "testB"))
+#' 
+#' # Initizlize the seed and stream of the random number generator
+#' init.lecuyerRNG()
+#' 
 #' # Simulate an MRMC ROC data set
 #' dFrame <- sim.NormalIG.Hierarchical(config)
 #'

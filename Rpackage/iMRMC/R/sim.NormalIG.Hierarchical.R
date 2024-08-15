@@ -1,21 +1,31 @@
 #' Simulate an MRMC data set comparing two modalities by a hierarchical model
 #' 
 #' @description
-#' This procedure simulates an MRMC data set for a MRMC agreement study comparing two 
-#' modalities.It is a hierarchical model consists of two interaction terms: reader-case
-#' interaction and modality-reader-case-replicate interaction. Both the interaction
-#' terms are conditional normal distributed, with the case(-related) factor contributing 
+#' This procedure simulates an MRMC data set for an MRMC agreement study comparing two 
+#' modalities. It is a hierarchical model that consists of two interaction terms: reader-case
+#' interaction and modality-reader-case-replicate interaction. Both interaction
+#' terms are conditionally normally distributed, with the case(-related) factor contributing 
 #' to the conditional mean and the reader(-related) factor contributing to the conditional 
-#' variance.
+#' variance. The case effect is normally distributed, while the reader effect is
+#' an inverse-gamma.
 #' 
+#' The Hierarchical Inverse-Gamma model is described in this paper:
+#' 
+#' \itemize{
+#'   \item S. Wen and B. D. Gallas,
+#'     “Three-Way Mixed Effect ANOVA to Estimate MRMC Limits of Agreement,”
+#'     \emph{Statistics in Biopharmaceutical Research}, \strong{14}, pp. 532–541, 2022,
+#'     \url{https://www.doi.org/10.1080/19466315.2022.2063169}
+#' }
+#'
 #' @details 
-#' The model is as the following structure:
+#' The model has the following structure:
 #' X.ijkl = mu + m.i + RC.jk + mRCE.ijkl
 #' \itemize{
 #'   \item mu = grand mean
 #'   \item m.i = modalities (levels: A and B)
-#'   \item RC.jk|R.j,C.k ~ N(C.k, R.j) reader-case interaction term
-#'   \item mRCE.ijkl|mR.ij,mC.ik ~ N(mC.ik, mR.ij) modality-reader-case-replicate term
+#'   \item RC.jk given R.j,C.k ~ N(C.k, R.j) reader-case interaction term
+#'   \item mRCE.ijkl given mR.ij,mC.ik ~ N(mC.ik, mR.ij) modality-reader-case-replicate term
 #'   \item C.k and mC.ik are Normal/beta distributed
 #'   \item R.j and mR.ij are Inverse-Gamma distributed
 #' }
@@ -24,59 +34,59 @@
 #' \itemize{
 #'   \item Experiment labels and size
 #'   \itemize{
-#'     \item modalityID: [vector] label modality A and B.
-#'     \item nR: [num] number of readers
-#'     \item nC: [num] number of cases
-#'     \item C_dist: [chr] distribution of the case. Default \code{C_dist="normal"}
+#'     \item \code{modalityID}: [vector] label modality A and B.
+#'     \item \code{nR}: [num] number of readers
+#'     \item \code{nC}: [num] number of cases
+#'     \item \code{C_dist}: [chr] distribution of the case. Default \code{C_dist="normal"}
 #'   }
 #'   \item Mean and fixed effects:
 #'   \itemize{
-#'     \item mu: [num] grand mean
-#'     \item tau_A: [num] modality A
-#'     \item tau_B: [num] modality B
+#'     \item \code{mu}: [num] grand mean
+#'     \item \code{tau_A}: [num] modality A
+#'     \item \code{tau_B}: [num] modality B
 #'   }
 #'   \item Reader-case interaction term
 #'   \itemize{
-#'     \item sigma_C: [num] std of case factor (if \code{C_dist="normal"})
-#'     \item a_C:     [num] alpha for distribution of case (if \code{C_dist="beta"})
-#'     \item b_C:     [num] beta for distribution of case (if \code{C_dist="beta"})
-#'     \item alpha_R: [num] shape parameter for reader
-#'     \item beta_R:  [num] scale parameter for reader
+#'     \item \code{sigma_C}: [num] std of case factor (if \code{C_dist="normal"})
+#'     \item \code{a_C}:     [num] alpha for distribution of case (if \code{C_dist="beta"})
+#'     \item \code{b_C}:     [num] beta for distribution of case (if \code{C_dist="beta"})
+#'     \item \code{alpha_R}: [num] shape parameter for reader
+#'     \item \code{beta_R}:  [num] scale parameter for reader
 #'   }
 #'   \item Modality-reader-case-replicate interaction term for modality A
 #'     \itemize{
-#'     \item sigma_C.A: [num] std of case factor (if \code{C_dist="normal"})
-#'     \item a_C.A:     [num] alpha for distribution of case (if \code{C_dist="beta"})
-#'     \item b_C.A:     [num] beta for distribution of case (if \code{C_dist="beta"})
-#'     \item alpha_R.A: [num] shape parameter for reader
-#'     \item beta_R.A:  [num] scale parameter for reader
+#'     \item \code{sigma_C.A}: [num] std of case factor (if \code{C_dist="normal"})
+#'     \item \code{a_C.A}:     [num] alpha for distribution of case (if \code{C_dist="beta"})
+#'     \item \code{b_C.A}:     [num] beta for distribution of case (if \code{C_dist="beta"})
+#'     \item \code{alpha_R.A}: [num] shape parameter for reader
+#'     \item \code{beta_R.A}:  [num] scale parameter for reader
 #'   }
 #'   \item Modality-reader-case-replicate interaction term for modality B
 #'     \itemize{
-#'     \item sigma_C.B: [num] std of case factor (if \code{C_dist="normal"})
-#'     \item a_C.B:     [num] alpha for distribution of case (if \code{C_dist="beta"})
-#'     \item b_C.B:     [num] beta for distribution of case (if \code{C_dist="beta"})
-#'     \item alpha_R.B: [num] shape parameter for reader
-#'     \item beta_R.B:  [num] scale parameter for reader
+#'     \item \code{sigma_C.B}: [num] std of case factor (if \code{C_dist="normal"})
+#'     \item \code{a_C.B}:     [num] alpha for distribution of case (if \code{C_dist="beta"})
+#'     \item \code{b_C.B}:     [num] beta for distribution of case (if \code{C_dist="beta"})
+#'     \item \code{alpha_R.B}: [num] shape parameter for reader
+#'     \item \code{beta_R.B}:  [num] scale parameter for reader
 #'   }
 #'   \item Scales for the case related terms and interaction terms
 #'     \itemize{
-#'       \item C_scale:      [num] weight for the case factor
-#'       \item RC_scale:     [num] weight for the reader-case interaction term
-#'       \item tauC_scale:   [num] weight for the modality-case term
-#'       \item tauRCE_scale: [num] weight for the modality-reader-case-replicate interaction term
+#'       \item \code{C_scale}:      [num] weight for the case factor
+#'       \item \code{RC_scale}:     [num] weight for the reader-case interaction term
+#'       \item \code{tauC_scale}:   [num] weight for the modality-case term
+#'       \item \code{tauRCE_scale}: [num] weight for the modality-reader-case-replicate interaction term
 #'   }
 #' }
-#' @param R [vector] fix the reader factor across different simulation. Default \code{R = NULL}  
-#' @param AR [vector] fix the modality-reader interaction. Default \code{AR = NULL}
-#' @param BR [vector] fix the modality-reader interaction. Default \code{BR = NULL}
-#' @param is.within [bol] whether the data are within-modality (AR==BR). Default \code{is.within=FALSE}
+#' @param \code{R} [vector] fix the reader factor across different simulation. Default \code{R = NULL}  
+#' @param \code{AR} [vector] fix the modality-reader interaction. Default \code{AR = NULL}
+#' @param \code{BR} [vector] fix the modality-reader interaction. Default \code{BR = NULL}
+#' @param \code{is.within} [bol] whether the data are within-modality (AR==BR). Default \code{is.within=FALSE}
 #'
 #' @return df   [data.frame] with nR x nC x 2 rows including
 #' \itemize{
 #'   \item readerID: [Factor] w/ nR levels "reader1", "reader2", ...
 #'   \item caseID: [Factor] w/ nC levels "case1", "case2", ...
-#'   \item modalityID: [Factor] w/ 1 level config$modalityID
+#'   \item modalityID: [Factor] w/ 2 levels "testA" and "testB"
 #'   \item score: [num] reader score
 #' }
 #' 
@@ -182,14 +192,15 @@ sim.NormalIG.Hierarchical = function(config,R = NULL,AR = NULL,BR = NULL,is.with
   return(df)
 }
 
-#' Create a configuration object for the sim.NormalIG.Hierarchical program
+#' Create a configuration object for the sim.NormalIG.Hierarchical function
 #'
-#'#' @description
-#' This function creates a configuration object for the Hierarchical
-#' simulation model to be used as input for the sim.NormalIG.Hierarchical program.
-#'
+#' @description
+#' This function creates a configuration object that sets the parameters
+#' for the Hierarchical Inverse-Gamma simulation model. The configuration
+#' object is an to the \code{\link{sim.NormalIG.Hierarchical}} function.
+#' 
 #' @details If no arguments, this function returns a default simulation
-#' configuration for sim.NormalIG.Hierarchical
+#' configuration for the \code{\link{sim.NormalIG.Hierarchical}} function.
 #'
 #' @param nR [num] Number of readers. Default \code{nR = 5}
 #' @param nC [num] Number of cases. Default \code{nC = 100}
@@ -211,7 +222,8 @@ sim.NormalIG.Hierarchical = function(config,R = NULL,AR = NULL,BR = NULL,is.with
 #' @param tauC_scale [num] weight for the modality-case term. Default \code{tauC_scale = 1}
 #' @param tauRCE_scale [num] weight for the modality-reader-case-replicate interaction term. Default \code{tauRCE_scale = 1}
 #'
-#' @return config [list] Refer to the sim.NormalIG.Hierarchical input variable
+#' @return config [list] of input parameters for \code{\link{sim.NormalIG.Hierarchical}}.
+#' 
 #' @export
 #'
 
