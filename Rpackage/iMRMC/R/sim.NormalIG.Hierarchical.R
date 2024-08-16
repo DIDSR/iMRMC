@@ -148,15 +148,26 @@ sim.NormalIG.Hierarchical = function(config,R = NULL,AR = NULL,BR = NULL,is.with
   if(C_dist == 'normal'){
     
     C = matrix(rep(rnorm(nC,0,config$sigma_C),nR),nR,nC,byrow =TRUE)
+    ## Mod A/ first replicate
     tauC.A = matrix(rep(rnorm(nC,0,config$sigma_C.A),nR),nR,nC,byrow =TRUE)
-    tauC.B = matrix(rep(rnorm(nC,0,config$sigma_C.B),nR),nR,nC,byrow =TRUE)
-    
+    ## Mod B/ second replicate 
+    if(is.within){
+      tauC.B = tauC.A
+    }else{
+      tauC.B = matrix(rep(rnorm(nC,0,config$sigma_C.B),nR),nR,nC,byrow =TRUE)
+    }
+        
   }else if(C_dist == 'beta'){
     
     C = matrix(rep(rbeta(nC,config$a_C,config$b_C),nR),nR,nC,byrow =TRUE)
+    ## Mod A/ first replicate
     tauC.A = matrix(rep(rbeta(nC,config$a_C.A,config$b_C.A),nR),nR,nC,byrow =TRUE)
-    tauC.B = matrix(rep(rbeta(nC,config$a_C.B,config$b_C.B),nR),nR,nC,byrow =TRUE)
-    
+    ## Mod B/ second replicate 
+    if(is.within){
+      tauC.B = tauC.A
+    }else{
+      tauC.B = matrix(rep(rbeta(nC,config$a_C.B,config$b_C.B),nR),nR,nC,byrow =TRUE)
+    }
   }
   
   # RC
