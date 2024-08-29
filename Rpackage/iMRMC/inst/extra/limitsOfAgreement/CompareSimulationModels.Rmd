@@ -1,0 +1,115 @@
+---
+title: "Simulate MRMC Data"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+
+```{r setup, include=FALSE}
+library(knitr)
+library(iMRMC)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Here we demonstrate how to simulate Multi-reader Multi-case (MRMC) data using functions in the iMRMC package.
+
+
+
+`sim.NormalIG.Hierarchical` is a function that simulates MRMC **agreement** data (no binary truth state returned). The model for the `sim.NormalIG.Hierarchical` function is described here:
+
+* S. Wen and B. D. Gallas, “Three-Way Mixed Effect ANOVA to Estimate MRMC Limits of Agreement,” *Statistics in Biopharmaceutical Research*}*, **14**, pp. 532–541, 2022, https://www.doi.org/10.1080/19466315.2022.2063169.
+
+
+
+`sim.gRoeMetz` is a function that simulates MRMC **ROC** data. We note here that the model for `sim.gRoeMetz` does not yield readers with different average/expected levels of agreement with one another. This limitation was the reason for developing the model for the `sim.NormalIG.Hierarchical` simulation. The model for the `sim.gRoeMetz` function is described here:
+
+* B. D. Gallas and S. L. Hillis, “Generalized Roe and Metz ROC model: analytic link between simulated decision scores and empirical AUC variances and covariances,” *J Med Img*, **1**, no. 3, p. 031006, 2014, https://www.doi.org/10.1117/1.JMI.1.3.031006.
+
+
+
+## 1. Using the new hierachical model to simulate the MRMC agreement data
+
+The following is how to use the `sim.NormalIG.Hierachcial` function to simulate MRMC agreement data (with no truth state). First, we initialize a list of simulation parameters using the `sim.NormalIG.Hierarchical.config` function. There are many simulation parameters. All have default values that can be changed in the function call. There are some parameters returned by the function that are equal for convenience and might need to be changed before simulating the data. Below, we demonstrate specifying non-default numbers of readers and cases.
+
+```{r}
+
+# configuration
+nR = 5       #number of readers
+nC = 100     #number of cases
+
+config <- sim.NormalIG.Hierarchical.config(nR=nR, nC=nC, modalityID = c("testA","testB")) 
+
+```
+Here are all the simulation parameters:
+
+```{r}
+
+print(names(config))
+
+```
+
+Next, we set the random seed for reproducible simulations (if needed) and simulate the MRMC agreement data based on the `config` list of parameters. The data frame for 5 readers and 100 cases for 2 modalities has 1000 rows (5x100x2). The 4 columns specify the reader ID, the case ID, the modality ID, and the score, or observation.
+
+```{r}
+
+# simulate MRMC study
+set.seed(1, kind = "L'Ecuyer-CMRG")
+dFrame.newH <- sim.NormalIG.Hierarchical(config)
+
+# check the first and last few lines of the simulated dataframe
+print(dFrame.newH[1:6, ])
+print(dFrame.newH[(nrow(dFrame.newH) - 5):nrow(dFrame.newH), ])
+
+```
+
+
+## 2. Using sim.gRoeMetz in iMRMC package to simulate MRMC ROC data
+
+The following demonstrates how to use the `sim.gRoeMetz` function to simulate MRMC ROC data (with truth state). Again, the process starts by creating a `config` list of default simulation parameters that can be changed in the function call.
+
+```{r}
+
+# configuration
+nR = 5       #number of readers
+nC.neg = 50  #number of positive cases
+nC.pos = 50  #number of negative cases
+
+config <- sim.gRoeMetz.config(nR = nR, nC.neg = nC.neg, nC.pos = nC.neg)
+
+```
+
+Here are the simulation parameters for the `sim.gRoeMetz` simulation function. Note that there are some parameters that are set equal for convenience and might need to be changed before simulating the data. 
+
+```{r}
+
+print(names(config))
+
+```
+
+We again set the seed for reproducible simulations (if needed) before we simulate the data. As we see below, the simulated data starts with truth state of each case. This is followed by the reading scores from each of the readers. Since we simulate 50 positive cases and 50 negative cases, there are 100 rows for the truth and 100x5x2 = 1000 rows for the scores from 5 readers for 2 modalities. Therefore, the data frame has 1100 rows total.
+
+```{r}
+# simulate MRMC study
+set.seed(1, kind = "L'Ecuyer-CMRG")
+dFrame.gRM <- sim.gRoeMetz(config)
+
+# check the first and last few lines of the simulated dataframe
+print(dFrame.gRM[1:6, ])
+print(dFrame.gRM[(nrow(dFrame.gRM) - 5):nrow(dFrame.gRM), ])
+
+```
+
+
+
+To combine the truth data and the reader scores and change the data to a dataframe with 5 columns (readerID, caseID, modalityID, score, truth) we can use the function `undoIMRMCdf` in iMRMC pacakge.
+
+```{r}
+dFrame.gRM.2 <- undoIMRMCdf(dFrame.gRM)
+
+# check the first and last few lines of the simulated dataframe
+print(dFrame.gRM.2[1:6, ])
+print(dFrame.gRM.2[(nrow(dFrame.gRM.2) - 5):nrow(dFrame.gRM.2), ])
+
+```
