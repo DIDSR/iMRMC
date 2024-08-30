@@ -622,25 +622,6 @@ successDFtoROCdf <- function(df) {
   return(df.AUC)
 }
 
-## createDFdocumentation ####
-createDFdocumentation <- function(df) {
-
-  desc1 <- utils::capture.output(utils::str(df))
-  nVar <- length(desc1) - 1
-
-  desc2 <- c(
-    paste("#\' \\code{", deparse(substitute(df)), "} is a", desc1[1], "\\cr \n"),
-    "#\'   \\itemize{ \\cr \n",
-    paste("#\'     \\item \\code{", desc1[2:nVar], "} \\cr \n"),
-    "#\'   }"
-  )
-
-  cat(desc2)
-
-  return(desc2)
-
-}
-
 
 ## deleteCol ####
 #' Delete a data frame column
@@ -680,7 +661,8 @@ deleteCol <- function(df, colName) {
 #'
 #' @return desired dataset downloaded from the web as a csv
 #'
-#' @import utils
+#' @importFrom utils read.csv
+#' 
 #' @export
 #'
 #' @examples
@@ -688,33 +670,40 @@ deleteCol <- function(df, colName) {
 #' truthData <- getMRMCdataset("prostateTruth")
 #' rawData <- getMRMCdataset("prostateRawData")
 #
-getMRMCdataset <- function(dataset = c("pilotHTT", "viperObs", "viperObs365",
-                                       "viperObs455", "MFcounts_dfClassify",
-                                       "MFcounts_dfCountROI", "MFcounts_dfCountWSI",
-                                       "cardioStudyTruth", "cardioStudyRawData",
-                                       "prostateTruth", "prostateRawData")){
-
-  if(dataset == "pilotHTT") {
+getMRMCdataset <- function(dataset = "viperObs"){
+  
+  if (length(dataset) != 1) {
+    desc <- paste(
+      "Input paramter dataset is",
+      paste("\"", dataset, "\"", sep = "", collapse = " "),
+      "\nIt should have one and only one character string."
+    )
+    stop(desc)
+  }
+  
+  cat(paste("dataset is", dataset, "\n"))
+  
+  if (dataset == "pilotHTT") {
     link <- "https://raw.githubusercontent.com/DIDSR/HTT/main/inst/extdata/pilotHTT.csv"
-    pilotHTT <- read.csv(link)
+    pilotHTT <- utils::read.csv(link)
     print("Annotation data that is the aggregate of all clean data from the HTT project pilot study.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/HTT")
 
     return(pilotHTT)
   }
 
-  if(dataset == "viperObs") {
+  if (dataset == "viperObs") {
     link <- "https://raw.githubusercontent.com/DIDSR/viperData/master/inst/data-raw/viperObs.csv"
-    viperObs <- read.csv(link)
+    viperObs <- utils::read.csv(link)
     print("Individual observations of each reader reading each case. Simplified and merged version of data based on `viperObs365` and `viperObs455`.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/viperData")
 
     return(viperObs)
   }
 
-  if(dataset == "viperObs365") {
+  if (dataset == "viperObs365") {
     link <- "https://raw.githubusercontent.com/DIDSR/viperData/master/inst/data-raw/viperObs365.csv"
-    viperObs365 <- read.csv(link)
+    viperObs365 <- utils::read.csv(link)
     viperObs365 <- viperObs365[, -1]
     print("Individual observations of each reader reading each case. Truth labels are based on cancer at 365 days.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/viperData")
@@ -722,9 +711,9 @@ getMRMCdataset <- function(dataset = c("pilotHTT", "viperObs", "viperObs365",
     return(viperObs365)
   }
 
-  if(dataset == "viperObs455") {
+  if (dataset == "viperObs455") {
     link <- "https://raw.githubusercontent.com/DIDSR/viperData/master/inst/data-raw/viperObs455.csv"
-    viperObs455 <- read.csv(link)
+    viperObs455 <- utils::read.csv(link)
     viperObs455 <- viperObs455[, -1]
     print("Individual observations of each reader reading each case. Truth labels are based on cancer at 455 days.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/viperData")
@@ -732,36 +721,36 @@ getMRMCdataset <- function(dataset = c("pilotHTT", "viperObs", "viperObs365",
     return(viperObs455)
   }
 
-  if(dataset == "MFcounts_dfClassify") {
+  if (dataset == "MFcounts_dfClassify") {
     link <- "https://raw.githubusercontent.com/DIDSR/mitoticFigureCounts/master/data/dfClassify20180627.csv"
-    MFcounts_dfClassify <- read.csv(link)
+    MFcounts_dfClassify <- utils::read.csv(link)
     print("A single data frame of the study data. Each row corresponds to a candidate mitotic figure and modality (155 candidates x 5 modalities = 775 rows). There is a column for each observer and the truth.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/mitoticFigureCounts/tree/master")
 
     return(MFcounts_dfClassify)
   }
 
-  if(dataset == "MFcounts_dfCountROI") {
+  if (dataset == "MFcounts_dfCountROI") {
     link <- "https://raw.githubusercontent.com/DIDSR/mitoticFigureCounts/master/data/dfCountROI20180627.csv"
-    MFcounts_dfCountROI <- read.csv(link)
+    MFcounts_dfCountROI <- utils::read.csv(link)
     print("A data frame of the mitotic figure counts per ROI and modality (40 ROIs x 5 modalities = 200 rows). There is a column for each observer and the truth.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/mitoticFigureCounts/tree/master")
 
     return(MFcounts_dfCountROI)
   }
 
-  if(dataset == "MFcounts_dfCountWSI") {
+  if (dataset == "MFcounts_dfCountWSI") {
     link <- "https://raw.githubusercontent.com/DIDSR/mitoticFigureCounts/master/data/dfCountWSI20180627.csv"
-    MFcounts_dfCountWSI <- read.csv(link)
+    MFcounts_dfCountWSI <- utils::read.csv(link)
     print("A single data frame of the mitotic figure counts per WSI and modality (4 WSIs x 5 modalities = 20 rows). There is a column for each observer and the truth. ")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/mitoticFigureCounts/tree/master")
 
     return(MFcounts_dfCountWSI)
   }
 
-  if(dataset == "cardioStudyTruth") {
+  if (dataset == "cardioStudyTruth") {
     link <- "https://raw.githubusercontent.com/DIDSR/colorScaleStudyData/master/data-raw/Cardio%20Study_truth.csv"
-    cardioStudyTruth <- read.csv(link)
+    cardioStudyTruth <- utils::read.csv(link)
     print("Truth of each case in study. From left to right each column corresponds to case number and truth. 1 is assigned to cases with lesion (positive cases) and 0 to cases without lesion (negative cases).")
     print("You may also want to get the `cardioStudyRawData` dataset.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/colorScaleStudyData")
@@ -773,9 +762,9 @@ getMRMCdataset <- function(dataset = c("pilotHTT", "viperObs", "viperObs365",
     return(cardioStudyTruth)
   }
 
-  if(dataset == "cardioStudyRawData") {
+  if (dataset == "cardioStudyRawData") {
     link <- "https://raw.githubusercontent.com/DIDSR/colorScaleStudyData/master/data-raw/CardioCTstudy_3mod_12obs_210cases_rawdata.csv"
-    cardioStudyRawData <- read.csv(link)
+    cardioStudyRawData <- utils::read.csv(link)
     print("Observations of each case in study. From left to right each column corresponds to reader, case number, modality (color scale), confidence score assigned. Grayscale was evaluated using GSDF settings and Rainbow and Hotiron using RGB settings.")
     print("You may also want to get the `cardioStudyTruth` dataset.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/colorScaleStudyData")
@@ -785,9 +774,9 @@ getMRMCdataset <- function(dataset = c("pilotHTT", "viperObs", "viperObs365",
     return(cardioStudyRawData)
   }
 
-  if(dataset == "prostateTruth") {
+  if (dataset == "prostateTruth") {
     link <- "https://raw.githubusercontent.com/DIDSR/colorScaleStudyData/master/data-raw/Prostate_Truth.csv"
-    prostateTruth <- read.csv(link)
+    prostateTruth <- utils::read.csv(link)
     print("Truth of each case in study. From left to right each column corresponds to case number and truth. 1 is assigned to cases with lesion (positive cases) and 0 to cases without lesion (negative cases).")
     print("You may also want to get the `prostateRawData` dataset.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/colorScaleStudyData")
@@ -799,19 +788,23 @@ getMRMCdataset <- function(dataset = c("pilotHTT", "viperObs", "viperObs365",
     return(prostateTruth)
   }
 
-  if(dataset == "prostateRawData") {
+  if (dataset == "prostateRawData") {
     link <- "https://raw.githubusercontent.com/DIDSR/colorScaleStudyData/master/data-raw/Prostate_5mod_9obs_165cases_wGSDFrawdata_Allreaders.csv"
-    prostateRawData <- read.csv(link)
+    prostateRawData <- utils::read.csv(link)
     print("Observations of each case in the study. From left to right each column corresponds to reader, case number, modality (color scale), confidence score assigned. Unless otherwise stated in the modality name Grayscale was evaluated using GSDF settings and Rainbow and Hotiron using RGB settings.")
     print("You may also want to get the `prostateTruth` dataset.")
     print("Repository where you can find more information about the data: https://github.com/DIDSR/colorScaleStudyData")
 
     names(prostateRawData) <- c("readerID", "caseID", "modalityID", "score")
+    
     return(prostateRawData)
   }
 
-    print("The given data name is not an MRMC data object from
-          https://github.com/DIDSR/iMRMC/wiki/iMRMC-Datasets.")
-    print("Please input one of the specified data names.")
-
+  # If here, throw an error
+  desc <- paste(
+    "Input parameter", dataset, "is not valid.",
+    "\nCheck documentation for a valid input parameter."
+  )
+  stop(desc)
+  
 }
