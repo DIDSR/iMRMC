@@ -86,6 +86,7 @@
 #'   }
 #' }
 #'
+#' @importFrom utils write.table read.csv
 #'
 #' @export
 #'
@@ -106,8 +107,12 @@ doIMRMC_java <- function(
     stripDatesForTests = FALSE){
   
   # Signals that the function is going to be removed from pkg eventually
-  .Deprecated(new = "doIMRMC", msg = "This function uses Java and will be eventually defunct. 
-              The suggested `doIMRMC` function uses all R code.")
+  msg <- paste(
+    "This function uses Java and will be deprecated.",
+    "    The suggested `doIMRMC` function uses all R code.",
+    sep = "\n"
+  )
+  .Deprecated(new = "doIMRMC", msg = msg)
   
   # If workDir is not specified, it will be the R temp directory.
   # If workDir is specified, create it.
