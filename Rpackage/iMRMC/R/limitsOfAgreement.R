@@ -121,6 +121,8 @@
 #'
 #' @importFrom stats aov var qnorm model.matrix
 #' @importFrom Matrix Matrix tcrossprod
+#' @importFrom utils combn
+#'
 #' @export
 #'
 #' @examples
@@ -196,7 +198,7 @@ laWRBM <- function(df, modalitiesToCompare = c("testA","testB"),
 }
 
 #' @rdname limitsOfAgreement
-#'
+#' 
 #' @export
 #'
 
@@ -227,7 +229,9 @@ laBRWM <- function(df, modality = c("testA"),
   N <- sum(nRperC*(nRperC-1)) # total number of BRWM diff
   
   df.perR <- lapply(split(df,df$readerID),droplevels)
-  nCperpairedR <-  unlist(lapply(combn(levels(df$readerID),2, simplify = F), function(x){
+  nCperpairedR <-  unlist(lapply(
+    utils::combn(levels(df$readerID),2, simplify = F), 
+    function(x){
     length(intersect(levels(df.perR[[x[1]]]$caseID),levels(df.perR[[x[2]]]$caseID)))
   }))
   nCperpairedR <- c(nCperpairedR,nCperpairedR) # total number of BRWM diff for each pair of readers
