@@ -13,12 +13,15 @@ A big thank you to all that have worked on this software throughout the years. W
 
 # iMRMC 2.1.0
 *08/2024*
-- Add functions and tests to do MRMC analysis of limits of agreement `laWRWM`, `laWRBM`, `laBRWM`, `laBRBM`
-- Add function and test to simulate MRMC agreement data: `sim.NormalIG.Hierarchical`
-- Add scripts to demonstrate new simulation and analysis of MRMC agreement data in the `Rpackage/iMRMC/inst/extra/limitsOfAgreement` folder
+
+* Add functions and tests to do MRMC analysis of limits of agreement `laWRWM`, `laWRBM`, `laBRWM`, `laBRBM`
+* Add function and test to simulate MRMC agreement data: `sim.NormalIG.Hierarchical`
+* Add scripts to demonstrate new simulation and analysis of MRMC agreement data in the `Rpackage/iMRMC/inst/extra/limitsOfAgreement` folder
+* Rename utils.R to utilityFunctions.R to avoid confusion with the utils R package
 
 # iMRMC 2.0.0
 *04/2024*
+
 - Add R only functions to analyze MRMC studies, notably `doIMRMC()`  
 - Rename and deprecate previous `doIMRMC()`, now available as `doIMRMC_java()`  
 - Add ROC and AUC calculation support functions   
