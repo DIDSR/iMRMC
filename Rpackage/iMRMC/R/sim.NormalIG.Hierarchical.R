@@ -15,7 +15,7 @@
 #'   \item S. Wen and B. D. Gallas,
 #'     “Three-Way Mixed Effect ANOVA to Estimate MRMC Limits of Agreement,”
 #'     \emph{Statistics in Biopharmaceutical Research}, \strong{14}, pp. 532–541, 2022,
-#'     \url{https://www.doi.org/10.1080/19466315.2022.2063169}
+#'     \doi{10.1080/19466315.2022.2063169}
 #' }
 #'
 #' @details 
