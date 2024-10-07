@@ -54,8 +54,10 @@ Next, we set the random seed for reproducible simulations (if needed) and simula
 
 ```{r}
 
+# Set the simulation kind (L'Ecuyer), seed (=1), and stream (=2)
+init.lecuyerRNG()
+
 # simulate MRMC study
-set.seed(1, kind = "L'Ecuyer-CMRG")
 dFrame.newH <- sim.NormalIG.Hierarchical(config)
 
 # check the first and last few lines of the simulated dataframe

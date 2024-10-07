@@ -73,9 +73,14 @@ Putting it all together, the estimate of the variance of $Y_{jk}$,
 The following is an example demonstrating the use of the function `laWRBM` to compute the WRBM limits of agreement for simulated MRMC agreement data. The example starts by simulating MRMC agreement data with the function `sim.NormalIG.Hierarchical` and finishes by printing the output.
 
 ```{r simulation & laWRBM}
-# Simulate MRMC data
+
+# Set the parameters of the simulation model
 config <- sim.NormalIG.Hierarchical.config(modalityID = c("testA","testB"))
-set.seed(1)
+
+# Set the simulation kind (L'Ecuyer), seed (=1), and stream (=2)
+init.lecuyerRNG()
+
+# Simulate MRMC data
 data.sim <- sim.NormalIG.Hierarchical(config)
 
 # Using ANOVA to calculate WRBM limits of agreement
