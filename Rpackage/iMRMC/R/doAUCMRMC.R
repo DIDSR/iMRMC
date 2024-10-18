@@ -8,7 +8,7 @@
 #' images (cases). An overview of this software, including references presenting
 #' details on the methods, can be found \href{https://zenodo.org/record/8383591}{HERE}
 #' or as an entry in the FDA/CDRH Regulatory Science Tool Catalog
-#' \href{https://www.fda.gov/medical-devices/science-and-research-medical-devices/imrmc-software-do-multi-reader-multi-case-statistical-analysis-reader-studies}{HERE}.
+#' \href{https://cdrh-rst.fda.gov/imrmc-software-do-multi-reader-multi-case-statistical-analysis-reader-studies}{HERE}.
 #'
 #'
 #'

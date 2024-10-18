@@ -3,7 +3,7 @@
 Here is a high-level overview of the iMRMC software:
 
 * [PDF document](https://zenodo.org/record/8383591)
-* [Entry in FDA/CDRH Regulatory Science Tool Catalog](https://www.fda.gov/medical-devices/science-and-research-medical-devices/imrmc-software-do-multi-reader-multi-case-statistical-analysis-reader-studies)
+* [Entry in FDA/CDRH Regulatory Science Tool Catalog](https://cdrh-rst.fda.gov/imrmc-software-do-multi-reader-multi-case-statistical-analysis-reader-studies)
 
 Examples of specific MRMC analyses and other FAQs are available in the [iMRMC repository's Wiki](https://github.com/DIDSR/iMRMC/wiki).
 
