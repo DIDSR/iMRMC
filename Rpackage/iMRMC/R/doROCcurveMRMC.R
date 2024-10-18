@@ -56,8 +56,10 @@ doROCxy <- function(sa, sp) {
 
 
 
-## doROCxyMRMC - not exported ################################################
-#' Create empirical ROC curve from an MRMC formatted data frame
+## doROCxyMRMC ################################################
+#' Create one empirical ROC curve (one modality and one reader)
+#' using an alternate version of an MRMC formatted data frame
+#' that include the column "truthLabel"
 #'
 #' @param mrmcAlternate data frame
 #' \itemize{
@@ -77,14 +79,52 @@ doROCxy <- function(sa, sp) {
 #'   \item{\code{threshold} Threshold corresponding to each fpf, tpf}
 #' }
 #' 
-#'
-# @examples
+#' @export
+#' 
+#' @examples
+#' # Create a sample configuration file
+#' library(iMRMC)
+#' config <- sim.gRoeMetz.config()
+#' # Simulate an MRMC ROC data set
+#' dFrame.imrmc <- sim.gRoeMetz(config)
+#' 
+#' # Split MRMC data based on rows for truth and rows for observations
+#' index <- dFrame.imrmc$readerID == "truth"
+#' truth.imrmc <- dFrame.imrmc[index, ]
+#' obs.imrmc <- dFrame.imrmc[index, ]
+#' 
+#' # Extract MRMC data based on one reader and one modality
+#' index <- obs.imrmc$readerID == "reader1"
+#' obs.imrmc <- dFrame.imrmc[index, ]
+#' index <- obs.imrmc$readerID == "testA"
+#' obs.imrmc <- obs.imrmc[index, ]
+#' 
+#' # Rename "score" column to "truth"
+#' truth.imrmc <- renameCol(truth.imrmc, "score", "truthLabel")
+#' 
+#' # Add truth column to observation data
+#' mrmcAlternate <- merge(
+#'   obs.imrmc,
+#'   truth.imrmc[, c("caseID", "truthLabel")],
+#'   by.x = "caseID",
+#'   by.y = "caseID"
+#' )
+#' 
+#' # Calculate ROC curve
+#' rocCurve <- doROCxyMRMC(mrmcAlternate)
+#' 
+#' # Plot ROC curve modality = testA, readerID = reader1
+#' plot(rocCurvesMRMC$testA.reader1$fpf, rocCurvesMRMC$testA.reader1$tpf)
+#' 
+#' 
+#' 
 doROCxyMRMC <- function(mrmcAlternate) {
 
   # We want the list of negative and positive truth case scores from a reader
   s0 <- mrmcAlternate[mrmcAlternate$truthLabel == 0, "score"]
   s1 <- mrmcAlternate[mrmcAlternate$truthLabel == 1, "score"]
 
+  # Check if adequate data exists
   if (length(s0) < 2) {
     ROC <- NULL
     return(ROC)
@@ -93,12 +133,14 @@ doROCxyMRMC <- function(mrmcAlternate) {
     return(ROC)
   }
   
-  
+  # Record the modality and reader IDs
   modalityID <- mrmcAlternate$modalityID[1]
   readerID <- mrmcAlternate$readerID[1]
   
+  # Calculate the ROC curve operating points from the cases
   rocXY <- doROCxy(s0, s1)
   
+  # Pack the data for return
   ROC <- list(
     modalityID = modalityID,
     readerID = readerID,
@@ -229,7 +271,7 @@ doROCavg <- function(ROC, direction="SeSp") {
 
 
 
-## doROCcurveMRMC - not exported ############################################################
+## doROCcurveMRMC ############################################################
 #' Create a standard set of ROC curves from an MRMC data frame
 #'
 #' @param mrmcAlternate data frame
@@ -247,16 +289,39 @@ doROCavg <- function(ROC, direction="SeSp") {
 #' all modalities with the per-reader ROC curves, horizontally, diagonally, 
 #' and vertically averaged. 
 #' 
+#' @export
 #'
-# @examples
-# # Create a sample configuration file
-# config <- sim.gRoeMetz.config()
-# # Simulate an MRMC ROC data set
-# dFrame.imrmc <- sim.gRoeMetz(config)
-# # Analyze the MRMC ROC data
-# result <- doIMRMC(dFrame.imrmc)
-# # Create standard ROC curves from MRMC data
-# result_ROCcurves <- doROCcurveMRMC(result)
+#' @examples
+#' # Create a sample configuration file
+#' library(iMRMC)
+#' config <- sim.gRoeMetz.config()
+#' # Simulate an MRMC ROC data set
+#' dFrame.imrmc <- sim.gRoeMetz(config)
+#' 
+#' # Split MRMC data based on rows for truth and rows for observations
+#' index <- dFrame.imrmc$readerID == "truth"
+#' truth.imrmc <- dFrame.imrmc[index, ]
+#' obs.imrmc <- dFrame.imrmc[!index, ]
+#' 
+#' # Rename "score" column to "truth"
+#' truth.imrmc <- renameCol(truth.imrmc, "score", "truthLabel")
+#' 
+#' # Add truth column to observation data
+#' mrmcAlternate <- merge(
+#'   obs.imrmc,
+#'   truth.imrmc[, c("caseID", "truthLabel")],
+#'   by.x = "caseID",
+#'   by.y = "caseID"
+#' )
+#' 
+#' # Calculate ROC curves
+#' rocCurvesMRMC <- doROCcurveMRMC(mrmcAlternate)
+#' 
+#' # Plot ROC curve modality = testA, readerID = reader1
+#' plot(rocCurvesMRMC$testA.reader1$fpf, rocCurvesMRMC$testA.reader1$tpf)
+#' 
+#' # Plot ROC curve modality = testA, reader average along diagonal lines
+#' plot(rocCurvesMRMC$testA.diagonalAvg$fpf, rocCurvesMRMC$testA.diagonalAvg$tpf)
 #' 
 #' 
 doROCcurveMRMC <- function(mrmcAlternate) {
