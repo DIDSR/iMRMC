@@ -15,6 +15,8 @@ Here are summaries of updates to the now frozen java apps:  [iMRMC](https://gith
 
 Please check out a statement of the licenses related to our software [here](LICENSE.md).
 
+**[Issues](https://github.com/DIDSR/iMRMC/issues)**: You may find it useful to post an issue or search the issues posted by other users. We don't have dedicated time to respond to the issues, but we try our best to help. Receiving issues from GitHub allows us to document support efforts to management, helps manage email load, and allows others to benefit from the questions and answers. We also ask that your GitHub account profile include your name and affiliation and keep your questions to fixing bugs, understanding the inputs and outputs, and possibly what the software can do. Engaging via the GitHub issues also protects us from spam and malicious files.
+
 ## iMRMC
 
 Desc: The primary objective of the iMRMC application is to assist investigators with analyzing and sizing multi-reader multi-case (MRMC) reader studies that compare the difference in the area under Receiver Operating Characteristic curves (AUCs) from two modalities. The core elements of this application include the ability to perform MRMC variance analysis and the ability to size an MRMC trial.
