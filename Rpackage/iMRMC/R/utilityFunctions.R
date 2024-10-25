@@ -1,3 +1,62 @@
+## convertDF ####
+#' Convert MRMC data frames
+#'
+#' @param inDF An MRMC dataframe with reading study results in \code{inDFtype} format
+#' @param inDFtype A string indicating the format type of the input MRMC data frame
+#' @param outDFtype A string indicating the format type of the output MRMC data frame.
+#' @param readers A character array holding the column names (readerIDs) corresponding to the data from different readers
+#'
+#' @return An MRMC dataframe with reading study results in \code{outDFtype} format
+#' @export
+#' @details
+#' MRMC data frames contain scores from readers, cases, and sometimes modalities. This packages deals with (currently)
+#' two MRMC data frame formats. These are the formats:
+#' \describe{
+#'   \item{matrixMode}{
+#'     For this format, each row contains all the information for a case,
+#'     including the reader study result for several readers, ground truth and other information as seperate columns.
+#'     This mode can only hold data from one modality.
+#'   }
+#'   \item{listMode}{
+#'     For this format, each row contains the data for one observation. The columns
+#'     specify the readerID, caseID, score, ground truth, and other information if there is any.
+#'     This mode can hold data from multiple modalities.
+#'   }
+#' }
+#'
+#'
+#' @export
+#' 
+# @examples
+convertDF <- function(inDF, inDFtype, outDFtype, readers){
+  
+  if (inDFtype == "matrixMode" & outDFtype == "listMode") {
+    
+    # Split the data frame by columns, with and without the readers
+    dfReaders <- inDF[ , (colnames(inDF) %in% readers)]
+    dfNoReaders <- inDF[ , !(colnames(inDF) %in% readers)]
+    
+    # Replicate the data without readers while adding the data for each reader
+    outDF <- data.frame()
+    for (iReader in readers) {
+      
+      # Start with the data frame with no readers
+      tempDF <- dfNoReaders
+      # Add a column "readerID" and assign it the reader name
+      tempDF$readerID <- iReader
+      # Add a column "score" and assign it the scores of the current reader
+      tempDF$score <- dfReaders[ , iReader]
+      # Aggregate the reader data into the output data frame
+      outDF <- rbind(outDF, tempDF)
+      
+    }
+    
+    return(outDF)
+    
+  }
+  
+}
+
 ## createIMRMCdf ####
 #' Convert a data frame with all needed factors to doIMRMC formatted data frame
 #'
