@@ -1,7 +1,7 @@
 Package: iMRMC
 Type: Package
 Title: Multi-Reader, Multi-Case Analysis Methods (ROC, Agreement, and Other Metrics)
-Version: 2.1.1
+Version: 2.1.2
 Authors@R: person(given = "Brandon",
                     family = "Gallas",
                     role = c("aut", "cre"),
