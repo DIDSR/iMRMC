@@ -118,12 +118,20 @@
 # dFrame <- sim.NormalIG.Hierarchical(config)
 
 
-sim.NormalIG.Hierarchical = function(config,R = NULL,AR = NULL,BR = NULL,is.within=FALSE) {
+sim.NormalIG.Hierarchical = function(
+    config, R = NULL, AR = NULL, BR = NULL, is.within=FALSE) {
   
   # Initialize ----
+  
+  # If modality ID is set, use it. Otherwise, set it to a default.
+  if (exists("config$modalityID")) {
+    modalityID = config$modalityID
+  } else {
+    modalityID <- c("testA", "testB") 
+  }
+  
   nR = config$nR
   nC = config$nC
-  modalityID = config$modalityID
   C_dist = config$C_dist
   
   mu = config$mu
@@ -145,76 +153,79 @@ sim.NormalIG.Hierarchical = function(config,R = NULL,AR = NULL,BR = NULL,is.with
   
   
   # C and tauC, different case distribution 
-  if(C_dist == 'normal'){
+  if (C_dist == 'normal') {
     
-    C = matrix(rep(rnorm(nC,0,config$sigma_C),nR),nR,nC,byrow =TRUE)
+    C = matrix(rep(rnorm(nC,0,config$sigma_C),nR),nR,nC,byrow = TRUE)
     ## Mod A/ first replicate
-    tauC.A = matrix(rep(rnorm(nC,0,config$sigma_C.A),nR),nR,nC,byrow =TRUE)
+    tauC.A = matrix(rep(rnorm(nC,0,config$sigma_C.A),nR),nR,nC,byrow = TRUE)
     ## Mod B/ second replicate 
-    if(is.within){
+    if (is.within) {
       tauC.B = tauC.A
     }else{
-      tauC.B = matrix(rep(rnorm(nC,0,config$sigma_C.B),nR),nR,nC,byrow =TRUE)
+      tauC.B = matrix(rep(rnorm(nC,0,config$sigma_C.B),nR),nR,nC,byrow = TRUE)
     }
-        
-  }else if(C_dist == 'beta'){
     
-    C = matrix(rep(rbeta(nC,config$a_C,config$b_C),nR),nR,nC,byrow =TRUE)
+  }else if (C_dist == 'beta') {
+    
+    C = matrix(rep(rbeta(nC,config$a_C,config$b_C),nR),nR,nC,byrow = TRUE)
     ## Mod A/ first replicate
-    tauC.A = matrix(rep(rbeta(nC,config$a_C.A,config$b_C.A),nR),nR,nC,byrow =TRUE)
+    tauC.A = matrix(rep(rbeta(nC,config$a_C.A,config$b_C.A),nR),nR,nC,byrow = TRUE)
     ## Mod B/ second replicate 
-    if(is.within){
+    if (is.within) {
       tauC.B = tauC.A
-    }else{
-      tauC.B = matrix(rep(rbeta(nC,config$a_C.B,config$b_C.B),nR),nR,nC,byrow =TRUE)
+    } else {
+      tauC.B = matrix(rep(rbeta(nC,config$a_C.B,config$b_C.B),nR),nR,nC,byrow = TRUE)
     }
   }
   
   # RC
-  if(is.null(R)){
+  if (is.null(R)) {
     R = rgamma(nR, alpha_R, rate = beta_R)
   }
   var_RC = matrix(rep(R, nC), nR, nC)
   
-  RC = apply(1/sqrt(var_RC), c(1,2), rnorm, n=1, mean=0) # Normal variable with mean 0 and variance inv-Gamma distributed
+  RC = apply(1/sqrt(var_RC), c(1,2), rnorm, n = 1, mean = 0) # Normal variable with mean 0 and variance inv-Gamma distributed
   
   
   # tauRCE
   ## Mod A/ first replicate
-  if(is.null(AR)){
+  if (is.null(AR)) {
     AR = rgamma(nR, alpha_R.A, rate = beta_R.A)
   }
   var_tauRCE.A = matrix(rep(AR, nC), nR, nC)
   
-  tauRCE.A = apply(1/sqrt(var_tauRCE.A), c(1,2), rnorm, n= 1, mean= 0)
+  tauRCE.A = apply(1/sqrt(var_tauRCE.A), c(1,2), rnorm, n = 1, mean = 0)
   
   ## Mod B/ second replicate 
-  if(is.within){
+  if (is.within) {
     BR = AR
   }else{
-    if(is.null(BR)){
+    if (is.null(BR)) {
       BR = rgamma(nR, alpha_R.B, rate = beta_R.B)
     }
   }
-
+  
   var_tauRCE.B = matrix(rep(BR, nC), nR, nC)
   
-  tauRCE.B = apply(1/sqrt(var_tauRCE.B), c(1,2), rnorm, n= 1, mean= 0)
+  tauRCE.B = apply(1/sqrt(var_tauRCE.B), c(1,2), rnorm, n = 1, mean = 0)
   
   # Aggregate ----
   
-  modA = mu + tau_A + C * C_scale + RC * RC_scale + tauC.A * tauC_scale + tauRCE.A * tauRCE_scale
-  modB = mu + tau_B + C * C_scale + RC * RC_scale + tauC.B * tauC_scale + tauRCE.B * tauRCE_scale
+  modA = mu + tau_A + C * C_scale + RC * RC_scale +
+    tauC.A * tauC_scale + tauRCE.A * tauRCE_scale
+  
+  modB = mu + tau_B + C * C_scale + RC * RC_scale +
+    tauC.B * tauC_scale + tauRCE.B * tauRCE_scale
   
   # Five column format ----
   
-  df = as.data.frame(matrix(0,nrow=nR*nC*2,ncol=4))
+  df = as.data.frame(matrix(0,nrow = nR*nC*2,ncol = 4))
   colnames(df) = c("caseID","readerID","modalityID","score")
   
   df$score = c(as.vector(t(modA)),as.vector(t(modB)))
-  df$caseID = paste0("Case",rep(1:nC,nR*2))
-  df$readerID = as.factor(paste0("reader",rep(rep(1:nR,each=nC),2)))
-  df$modalityID = as.factor(rep(c(modalityID[1],modalityID[2]),each=nR*nC))
+  df$caseID = as.factor(paste0("case",rep(1:nC,nR*2)))
+  df$readerID = as.factor(paste0("reader",rep(rep(1:nR,each = nC),2)))
+  df$modalityID = as.factor(rep(c(modalityID[1],modalityID[2]),each = nR*nC))
   
   
   return(df)
@@ -232,7 +243,7 @@ sim.NormalIG.Hierarchical = function(config,R = NULL,AR = NULL,BR = NULL,is.with
 #'
 #' @param nR [num] Number of readers. Default \code{nR = 5}
 #' @param nC [num] Number of cases. Default \code{nC = 100}
-#' @param modalityID [vector] List of modalityID. Default \code{modalityID = c("testA", "testA*")} 
+#' @param modalityID [vector] List of modalityID. Default \code{modalityID = c("testA", "testB")} 
 #' @param C_dist [chr] Distribution of the case. Default \code{C_dist="normal"}
 #' @param mu [num] grand mean. Default \code{mu = 0}
 #' @param tau_A [num] modality A effect. Default \code{tau_A = 0}
@@ -255,29 +266,36 @@ sim.NormalIG.Hierarchical = function(config,R = NULL,AR = NULL,BR = NULL,is.with
 #' @export
 #'
 
-sim.NormalIG.Hierarchical.config = function (nR = 5, nC = 100, modalityID = c("testA", "testA*"), C_dist = 'normal', 
-                                        mu = 0, tau_A = 0, tau_B = 0, alpha_R = 10, beta_R = 1,
-                                        sigma_C = 1, a_C = 0.8, b_C = 3, sigma_tauC = 1,
-                                        alpha_tauR = 10, beta_tauR = 1,
-                                        C_scale = 1, RC_scale = 1,tauC_scale = 1, tauRCE_scale = 1) 
+sim.NormalIG.Hierarchical.config = function(
+    nR = 5, nC = 100, modalityID = c("testA", "testB"), C_dist = 'normal', 
+    mu = 0, tau_A = 0, tau_B = 0, alpha_R = 10, beta_R = 1,
+    sigma_C = 1, a_C = 0.8, b_C = 3, sigma_tauC = 1,
+    alpha_tauR = 10, beta_tauR = 1,
+    C_scale = 1, RC_scale = 1, tauC_scale = 1, tauRCE_scale = 1
+) 
 {
-  if (C_dist == 'normal'){
-    config <- list(modalityID = modalityID, nR = nR, nC = nC,                           # sample size
-                   C_dist = C_dist, mu = mu, tau_A = tau_A, tau_B = tau_B,                # distribution and mean
-                   sigma_C = sigma_C, alpha_R = alpha_R, beta_R = beta_R,                 # parameter for [RC]
-                   sigma_C.A = sigma_tauC, alpha_R.A = alpha_tauR, beta_R.A = beta_tauR,  # parameter for [tauRCE].A
-                   sigma_C.B = sigma_tauC, alpha_R.B = alpha_tauR, beta_R.B = beta_tauR,  # parameter for [tauRCE].B
-                   C_scale = C_scale, RC_scale = RC_scale,                                # scale for [RC]
-                   tauC_scale = tauC_scale, tauRCE_scale = tauRCE_scale)                  # scale for [tauRCE]
+  if (C_dist == 'normal') {
+    config <- list(
+      modalityID = modalityID, nR = nR, nC = nC,                           # sample size
+      C_dist = C_dist, mu = mu, tau_A = tau_A, tau_B = tau_B,                # distribution and mean
+      sigma_C = sigma_C, alpha_R = alpha_R, beta_R = beta_R,                 # parameter for [RC]
+      sigma_C.A = sigma_tauC, alpha_R.A = alpha_tauR, beta_R.A = beta_tauR,  # parameter for [tauRCE].A
+      sigma_C.B = sigma_tauC, alpha_R.B = alpha_tauR, beta_R.B = beta_tauR,  # parameter for [tauRCE].B
+      C_scale = C_scale, RC_scale = RC_scale,                                # scale for [RC]
+      tauC_scale = tauC_scale, tauRCE_scale = tauRCE_scale                  # scale for [tauRCE]
+    )
     
-  }else if(C_dist == 'beta'){
-    config <- list(modalityID = modalityID, nR = nR, nC = nC,                             # sample size
-                   C_dist = C_dist, mu = mu, tau_A = tau_A, tau_B = tau_B,                # distribution and mean
-                   a_C = a_C, b_C = b_C, alpha_R = alpha_R, beta_R = beta_R,              # parameter for [RC]
-                   a_C.A = a_C, b_C.A = b_C, alpha_R.A = alpha_tauR, beta_R.A = beta_tauR,# parameter for [tauRCE].A
-                   a_C.B = a_C, b_C.B = b_C, alpha_R.B = alpha_tauR, beta_R.B = beta_tauR,# parameter for [tauRCE].B
-                   C_scale = C_scale, RC_scale = RC_scale,                                # scale for [RC]
-                   tauC_scale = tauC_scale, tauRCE_scale = tauRCE_scale)                  # scale for [tauRCE])
+  } else if (C_dist == 'beta') {
+    config <- list(
+      modalityID = modalityID, nR = nR, nC = nC,                             # sample size
+      C_dist = C_dist, mu = mu, tau_A = tau_A, tau_B = tau_B,                # distribution and mean
+      a_C = a_C, b_C = b_C, alpha_R = alpha_R, beta_R = beta_R,              # parameter for [RC]
+      a_C.A = a_C, b_C.A = b_C, alpha_R.A = alpha_tauR, beta_R.A = beta_tauR,# parameter for [tauRCE].A
+      a_C.B = a_C, b_C.B = b_C, alpha_R.B = alpha_tauR, beta_R.B = beta_tauR,# parameter for [tauRCE].B
+      C_scale = C_scale, RC_scale = RC_scale,                                # scale for [RC]
+      tauC_scale = tauC_scale, tauRCE_scale = tauRCE_scale                  # scale for [tauRCE])
+    )
+    
   }else{
     print(paste0("C_dist = ", C_dist))
     stop("ERROR: C_dist should be either normal or beta.")
