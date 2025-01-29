@@ -6,13 +6,13 @@ bibliography: references.bib
 nocite: |
   @iMRMCgithub
 ---
-
+  
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Issue recap
-In response to a question posed in the "How do I do a non-inferiority study?" issue on the package's Github repository (https://github.com/DIDSR/iMRMC/issues/31#issuecomment-1368940679), we have developed an example guide using the R package that demonstrates using the iMRMC software to help future users. 
+In response to a question posed in the "How do I do a non-inferiority study?" issue on the package's Github repository (https://github.com/DIDSR/iMRMC/issues/31#issuecomment-1368940679), we have developed an example guide using the R package that demonstrates using the iMRMC software to help future users. This wiki page is based on an R markdown file that contains the R code for reproducing the results: [LINK to R markdown file](https://github.com/DIDSR/iMRMC/blob/master/Rpackage/iMRMC/inst/extra/000-non-inferiority-by-iMRMC/Non-inferiority-by-iMRMC.rmd). 
 
 The issue asked how to find the p-value of a noninferiority study comparing split-plot radiologist reads against an AI reading all cases. The work of @chen2012 addresses this issue, but the method they present uses the OR model (@obuchowski1995) and assumes the data are fully crossed (all readers read all cases). The iMRMC software can produce the OR variance components only when the data is fully crossed, so the issue is asking for a solution that makes use of the iMRMC software for alternate study designs, and the split-plot study in particular (@obuchowski2012). 
 
@@ -25,14 +25,14 @@ To answer this question, we will use the ViperObservation data from the ViperDat
 # Viper Example - Hypotheses
 
 For noninferiority testing, the null and alternative hypotheses have been described in @chen2012 (https://doi.org/10.1016/j.acra.2012.04.011) and are copied here:
-
-
-$$H_0: \theta_e - \theta_c = -\delta \text{ or } H_0: \theta_e - \theta_c + \delta = 0$$
-
-$$H_1: \theta_e - \theta_c > -\delta \text{ or } H_1: \theta_e - \theta_c + \delta > 0$$
-
-
-where $\theta_e$ is the diagnostic accuracy of experimental modality, or the AUC of AI in the current example. Similarly, $\theta_c$, or the diagnostic accuracy of the conventional modality, represents the AUC of SFM in the current example. @chen2012 describe this set of hypotheses as testing that "the performance of the new modality is no worse than $\delta$ below that of the conventional modality". 
+  
+  
+  $$H_0: \theta_e - \theta_c = -\delta \text{ or } H_0: \theta_e - \theta_c + \delta = 0$$
+  
+  $$H_1: \theta_e - \theta_c > -\delta \text{ or } H_1: \theta_e - \theta_c + \delta > 0$$
+  
+  
+  where $\theta_e$ is the diagnostic accuracy of experimental modality, or the AUC of AI in the current example. Similarly, $\theta_c$, or the diagnostic accuracy of the conventional modality, represents the AUC of SFM in the current example. @chen2012 describe this set of hypotheses as testing that "the performance of the new modality is no worse than $\delta$ below that of the conventional modality". 
 
 Therefore, if we can reject $H_0$, then we have shown that that the experimental modality (ie. AI) is not inferior to the conventional modality (ie. SFM).  If we fail to reject $H_0$, then the experimental modality may be inferior to the conventional modality. 
 
@@ -99,7 +99,7 @@ dfMRMC_AImod$modalityID <- "AI"
 dfMRMC_AImod$readerID <- "AI.1"
 ```
 
-For the purpose of the software, we need to duplicate those results for a second reader which we will call "AI.2".  This process and reasoning is covered on the iMRMC repository wiki here: https://github.com/DIDSR/iMRMC/wiki/Single-reader-analysis. By duplicating these scores on the same cases, there is no reader variability for the AI "readers".
+For the purpose of the software, which expects multiple reader data, we need to duplicate those results for a second reader that we will call "AI.2".  This process and reasoning is covered on the iMRMC repository wiki here: https://github.com/DIDSR/iMRMC/wiki/Single-reader-analysis. By duplicating these scores on the same cases, there is no reader variability for the AI "readers".
 ```{r}
 #Duplicate those cases and rename with readerID "AI.2" 
 dfMRMC_AImod2 <- dfMRMC_AImod
@@ -118,8 +118,8 @@ dfMRMC_AI <- rbind(dfMRMC_onlyTruth, dfMRMC_onlySFM, dfMRMC_AImod)
 # Viper Example - Run iMRMC
 
 Once the dataframe is shaped into iMRMC's expected format, we run the `doIMRMC` function which provides 5 results. These include:
-
-1. `perReader`: per-reader AUC results
+  
+  1. `perReader`: per-reader AUC results
 
 2. `Ustat`: reader-averaged AUC results using U-statistics
 
@@ -139,10 +139,10 @@ results <- doIMRMC(dfMRMC_AI)
 
 As @chen2012 describe, the p-value for a noninferiority test is 
 $$P = 2(1-F(t;{df}_0|H_0)),$$ 
-where $F(t; {df}_0|H_0)$ is the cumulative distribution function of the test statistic under the null hypothesis. The test statistic is 
+  where $F(t; {df}_0|H_0)$ is the cumulative distribution function of the test statistic under the null hypothesis. The test statistic is 
 $$t = \frac{\hat\theta_e - \hat\theta_c + \delta}{\hat{sd}},$$ 
-
-where $\hat{sd}$ is the standard deviation of the difference between the diagnostic accuracy of each modality and the hats indicate estimates of population parameters. The accuracies of each modality ($\theta_e \text{ and } \theta_c$ or `modA` and `modB`, respectively) are reader-averaged. The iMRMC function provides these reader-averaged estimates in the object `uStat`. Here we show how to calculate the test statistic.  
+  
+  where $\hat{sd}$ is the standard deviation of the difference between the diagnostic accuracy of each modality and the hats indicate estimates of population parameters. The accuracies of each modality ($\theta_e \text{ and } \theta_c$ or `modA` and `modB`, respectively) are reader-averaged. The iMRMC function provides these reader-averaged estimates in the object `uStat`. Here we show how to calculate the test statistic.  
 
 ```{r}
 #Isolate data frame of reader-averaged U-stats based performance results
@@ -157,11 +157,11 @@ varAUCAminusAUCB <- uStat[3, 'varAUCAminusAUCB']
 
 #Define all variables used in the t-statistic calculation 
 marginParam = 0.05
-aucA = uStat[3, 'AUCA'] 
-aucB = uStat[3, 'AUCB'] 
+auc.SFM = uStat[3, 'AUCA'] 
+auc.AI = uStat[3, 'AUCB'] 
 sd = sqrt(varAUCAminusAUCB)
 #Calculate t statistic
-tStat <- (aucA - aucB + marginParam) / sd
+tStat <- (auc.AI - auc.SFM + marginParam) / sd
 
 #Calculate p-value from tStat 
 pValue <- 2*(1 - pt(tStat, df = dfBDG))
@@ -169,8 +169,8 @@ pValue <- 2*(1 - pt(tStat, df = dfBDG))
 
 ```{r, echo = FALSE, message = FALSE}
 signifLvl <- 0.05
-pCalcTable <- t(data.frame(c(aucA, aucB, marginParam, sd, tStat, pValue, signifLvl)))
-colnames(pCalcTable) <- c("aucA", "aucB", "marginParameter", "sd", "tStat", "pValue", "alpha")
+pCalcTable <- t(data.frame(c(auc.AI, auc.SFM, marginParam, sd, tStat, pValue, signifLvl)))
+colnames(pCalcTable) <- c("auc.AI", "auc.SFM", "marginParameter", "sd", "tStat", "pValue", "alpha")
 row.names(pCalcTable) <- NULL
 
 knitr::kable(format(pCalcTable, digits = 3), digits = 4, align = 'c',
@@ -188,9 +188,9 @@ While the total variance of the difference is provided by the doIMRMC function i
 In the BDG variance decomposition, the total variance of the difference between modalities is split into 8 second-order U-statistic moments and their respective coefficients. The total variance is then the linear combinations of these coefficients and component terms. 
 
 Here is the one-shot total variance estimate where the coefficients $c_1-c_8$ have already been adjusted by the number of readers ($R$):
-
-$$\hat V= c_1\hat M_1 + c_2\hat M_2 + c_3\hat M_3 + c_4\hat M_4 + c_5\hat M_5 +c_6\hat M_6 + c_7\hat M_7 + (c_8-1)\hat M_8$$
-[@gallas2006] (https://doi.org/10.1016/j.acra.2005.11.030).  
+  
+  $$\hat V= c_1\hat M_1 + c_2\hat M_2 + c_3\hat M_3 + c_4\hat M_4 + c_5\hat M_5 +c_6\hat M_6 + c_7\hat M_7 + (c_8-1)\hat M_8$$
+  [@gallas2006] (https://doi.org/10.1016/j.acra.2005.11.030).  
 
 Further reading of that paper will provide a more detailed description of how the coefficients are calculated based on number of readers, non-diseased cases, and diseased cases when the data is fully crossed (every reader reads every case in all modalities). If the study design is not fully crossed, as it is in the split-plot Viper study, the coefficients are more complicated and can be calculated with the iMRMC software [@chen2018]. @gallas2008 offer explanations on these non-fully-crossed coefficients. 
 
@@ -201,50 +201,56 @@ Here we compose two data frames of the BDG coefficients `BDG_AI.SFM_coeff` and c
 listVarDecomp <- results[['varDecomp']] 
 
 #Isolate BDG variance decomposition coefficients and component data frames from list
-BDG_AI.SFM_coeff <- listVarDecomp[["BDG"]]$Ustat$coeff$AI.SFM
-BDG_AI.SFM_comp <- listVarDecomp[["BDG"]]$Ustat$comp$AI.SFM
+# BDG_AI.SFM_coeff <- listVarDecomp[["BDG"]]$Ustat$coeff$AI.SFM
+# BDG_AI.SFM_comp <- listVarDecomp[["BDG"]]$Ustat$comp$AI.SFM
+BDG_AI.SFM_coeff <- listVarDecomp[["BDG"]]$Ustat$coeff
+BDG_AI.SFM_comp <- listVarDecomp[["BDG"]]$Ustat$comp
 ```
 
-These data frames (printed as Table 1 and Table 2, respectively) each provide 3 rows corresponding to the variance of each modality (labeled `AI` and `SFM`) and the covariance of the difference between the two modalities (labeled `AI.SFM`). Values in these tables have been rounded for conciseness. 
+These data frames (printed below as Table 1 and Table 2, respectively) each provide 3 rows. The first two rows correspond to the single-modality variance of each modality (labeled `AI` and `SFM`) and the covariance of the difference between the two modalities (labeled `AI.SFM`). Values in these tables have been rounded for conciseness. 
 
 Briefly, the coefficients are scale factors determined by the number of readers, non-diseased, and diseased cases within the data-collection study design. The coefficients for the covariance between the two modalities (row 3, `AI.SFM`) have already been multiplied by 2, as is needed for calculating the total variance of the difference in modalities. Since there is no reader overlap across modalities, $M_1 \text{ through } M_4$ of the covariance row for both the coefficients and components are identically 0. This phenomena is further explained in @gallas2008.
 
 ```{r, echo = FALSE, message = FALSE}
-BDG_coeff_table <- BDG_AI.SFM_coeff
-row.names(BDG_coeff_table) <- c("AI", "SFM", "2*(AI.SFM)")
-knitr::kable(format(BDG_coeff_table, digits = 3, scientific = TRUE, zero.print = "0"), digits = 4, align = 'c',
-             col.names = c("$c_1$", "$c_2$", "$c_3$", "$c_4$", "$c_5$", "$c_6$", "$c_7$", "$(1-c_8)$"),
+
+knitr::kable(format(BDG_AI.SFM_coeff, digits = 3, scientific = TRUE, zero.print = "0"), digits = 10, align = 'c',
+             col.names = c("modalityA", "modalityB", "$c_1$", "$c_2$", "$c_3$", "$c_4$", "$c_5$", "$c_6$", "$c_7$", "$(1-c_8)$"),
              escape = FALSE, longtable = TRUE,
-             caption = "Coefficients of the moments based on numbers of reader and cases")
+             caption = "Table 1: Coefficients of the moments based on numbers of reader and cases")
+
 ```
 
 The components are the U-statistic moment estimates.  $M_1 - M_7$ are the success moments, or "naturally-occurring second moments" of the score for the random effects of readers, non-diseased cases, and diseased cases as given in Table 1 of @gallas2009 (https://doi.org/10.1080/03610920802610084). $M_8$ is the mean squared, which will be subtracted from the success moments to calculate the covariances. Notice that in the AI modality $M_5 \text { through }M_8$ are identical to $M_1 \text { through } M_4$ because the readers are perfectly duplicated. 
 
 ```{r, echo = FALSE, message = FALSE}
-BDG_comp_table <- BDG_AI.SFM_comp
-# row.names(BDG_comp_table) <- 
-knitr::kable(format(BDG_AI.SFM_comp, digits = 3, scientific = TRUE, zero.print = "0"), digits = 4, align = 'c',
-             col.names = c("$M_1$", "$M_2$", "$M_3$", "$M_4$", "$M_5$", "$M_6$", "$M_7$", "$M_8$"),
+
+knitr::kable(format(BDG_AI.SFM_comp, digits = 3, scientific = TRUE, zero.print = "0"), digits = 10, align = 'c',
+             col.names = c("modalityA", "modalityB", "$M_1$", "$M_2$", "$M_3$", "$M_4$", "$M_5$", "$M_6$", "$M_7$", "$M_8$"),
              escape = TRUE, longtable = TRUE,
-             caption = "Components of second-order U-statistic moment estimates")
+             caption = "Table 2: Components of second-order U-statistic moment estimates")
+
 ```
 
 The code below will execute the linear combination and summation to arrive at the total variance of the difference.
 
 ```{r}
+
 #Create a new data frame of linear combination of coefficient and component moments
-contributionsToVariance <- BDG_AI.SFM_coeff * BDG_AI.SFM_comp
+contributionsToVariance <- BDG_AI.SFM_coeff[, 3:10] * BDG_AI.SFM_comp[, 3:10]
+rownames(contributionsToVariance) <- paste(
+  "cov(", BDG_AI.SFM_coeff$modalityID.1, ", ", BDG_AI.SFM_coeff$modalityID.2, ")", sep = ""
+)
 
 #Sum moments to get the total Var contributions for each modality and interaction
-varianceSums <- as.data.frame(rowSums(contributionsToVariance))
+covariances <- as.data.frame(rowSums(contributionsToVariance))
 
 #Sum variance of each modality and subtract the 2*covariance term
-totalVarianceofDiff <- as.numeric(varianceSums[1,1] + varianceSums[2, 1] - varianceSums[3,1])
+totalVarianceofDiff <- as.numeric(covariances[1,1] + covariances[2, 1] - 2 * covariances[3,1])
 ```
 
 ```{r, echo=FALSE, message = FALSE}
-varianceSums_total <- rbind(as.data.frame(varianceSums), totalVarianceofDiff)
-row.names(varianceSums_total) <- c("var(AUC_AI)", "var(AUC_SFM)", "2*cov(AUC_AI, AUC_SFM)", 
+varianceSums_total <- rbind(as.data.frame(covariances), totalVarianceofDiff)
+row.names(varianceSums_total) <- c("var(AUC_AI)", "var(AUC_SFM)", "cov(AUC_AI, AUC_SFM)", 
                                    "var(AUC_AI - AUC_SFM)")
 
 knitr::kable(format(varianceSums_total, digits = 3, scientific = TRUE, zero.print = "0"), digits = 6, align = 'c', 
@@ -256,8 +262,7 @@ The total variance of the difference is `r format(totalVarianceofDiff, digits =4
 
 # Authors 
 $\text{Gardecki, Emma}^1 \text{ and } \text{Gallas, Brandon D.}^1$
-
-$^1$ FDA/CDRH/OSEL/Division of Imaging, Diagnostics, and Software Reliability, Silver Spring, Maryland, United States
+  
+  $^1$ FDA/CDRH/OSEL/Division of Imaging, Diagnostics, and Software Reliability, Silver Spring, Maryland, United States
 
 # References
-

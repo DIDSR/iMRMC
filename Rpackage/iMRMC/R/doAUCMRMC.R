@@ -254,6 +254,16 @@ doAUCmrmc = function(data, flagROC = FALSE){
     
     
     ####
+    #### Isolate the number of readers, negative cases, and positive cases
+    #### 
+    studySize <- data.frame(
+      NR = summaryMRMC.1$nR,
+      N0 = summaryMRMC.1$nC.neg,
+      N1 = summaryMRMC.1$nC.pos)
+    
+    
+    
+    ####
     #### Per-reader analysis for each modality
     #### 
     perReaderPair.1 <- doAUCperReader(mrmcDF.modality.1, mrmcDF.modality.1)
@@ -263,7 +273,7 @@ doAUCmrmc = function(data, flagROC = FALSE){
     #### 
     #### Ustat MRMC analysis for each modality
     #### 
-    Ustat.pair <- doAUCmrmcCov(perReaderPair.1)
+    Ustat.pair <- doAUCmrmcCov(studySize, perReaderPair.1)
     
     
     
@@ -314,19 +324,9 @@ doAUCmrmc = function(data, flagROC = FALSE){
     
     
     ####
-    #### Add study information to Ustat.pair
-    #### 
-    desc <- data.frame(
-      NR = summaryMRMC.1$nR,
-      N0 = summaryMRMC.1$nC.neg,
-      N1 = summaryMRMC.1$nC.pos)
-    
-    
-    
-    ####
     #### Aggregate Ustat.pair results
     #### 
-    Ustat.pair <- cbind(desc, Ustat.pair,
+    Ustat.pair <- cbind(studySize, Ustat.pair,
                         unbiased.H0.normal, unbiased.H0.t,
                         biased.H0.normal, biased.H0.t)
     
@@ -369,6 +369,15 @@ doAUCmrmc = function(data, flagROC = FALSE){
       
       
       ####
+      #### Isolate the number of readers, negative cases, and positive cases
+      #### 
+      studySize <- data.frame(
+        NR = summaryMRMC.1$nR,
+        N0 = summaryMRMC.1$nC.neg,
+        N1 = summaryMRMC.1$nC.pos)
+      
+      
+      ####
       #### Per-reader analysis for modality 1 =/= modality 2
       #### 
       perReaderPair.12 <- doAUCperReader(mrmcDF.modality.1, mrmcDF.modality.2)
@@ -378,14 +387,14 @@ doAUCmrmc = function(data, flagROC = FALSE){
       #### 
       #### Ustat MRMC analysis for modality 1 =/= modality 2
       #### 
-      Ustat.pair <- doAUCmrmcCov(perReaderPair.12)
+      Ustat.pair <- doAUCmrmcCov(studySize, perReaderPair.12)
 
       
       ####
       #### Revise the degrees of freedom for AUC differences 
       #### This is only necessary for two modalities.
       #### 
-      Ustat.pair <- doDFdifference(Ustat.pair, Ustat.full)
+      Ustat.pair <- doDFdifference(studySize, Ustat.pair, Ustat.full)
       
       
       
@@ -436,19 +445,9 @@ doAUCmrmc = function(data, flagROC = FALSE){
       
       
       ####
-      #### Add study information to Ustat
-      #### 
-      desc <- data.frame(
-        NR = summaryMRMC.1$nR,
-        N0 = summaryMRMC.1$nC.neg,
-        N1 = summaryMRMC.1$nC.pos)
-      
-      
-      
-      ####
       #### Aggregate Ustat.pair results
       #### 
-      Ustat.pair <- cbind(desc, Ustat.pair,
+      Ustat.pair <- cbind(studySize, Ustat.pair,
                           unbiased.H0.normal, unbiased.H0.t,
                           biased.H0.normal, biased.H0.t)
       
@@ -783,7 +782,7 @@ doAUCperReader <- function(mrmcDF.modality.1, mrmcDF.modality.2) {
 
 
 
-doAUCmrmcCov <- function(perReaderPair.1) {
+doAUCmrmcCov <- function(studySize, perReaderPair.1) {
   
   modalityID.1 <- perReaderPair.1$modalityID.1[1]
   modalityID.2 <- perReaderPair.1$modalityID.2[1]
@@ -963,13 +962,20 @@ doAUCmrmcCov <- function(perReaderPair.1) {
   
   
   
+  browser()
+  
   ####
   #### Degrees of freedom
+  ####
+  # REFER TO
+  # https://github.com/DIDSR/iMRMC/blob/4cb4f112db86cc13ca4d242df8dcf19ee5d31d07/src/mrmc/core/StatTest.java
+  # Line 581
+  # Saved to iMRMC/Rpackage/iMRMC/inst/extra/000-non-inferiority-by-iMRMC
   #### 
   dfN <- round((1/BCK.coeff$BCK.N.coeff - 1))
   dfD <- round((1/BCK.coeff$BCK.D.coeff - 1))
   dfR <- round((1/BCK.coeff$BCK.R.coeff - 1))
-  
+
   dfBDG.min <- min(dfN, dfD, dfR)
   
   sb.N <- BCK.biased$BCK.N.b^2 / dfN^3
@@ -1049,7 +1055,7 @@ doAUCmrmcCov <- function(perReaderPair.1) {
 
 
 
-doDFdifference <- function(Ustat.pair, Ustat.full) {
+doDFdifference <- function(studySize, Ustat.pair, Ustat.full) {
   
   ####
   #### Calculate the difference: AUC modality 1 - AUC modality 2
@@ -1086,9 +1092,12 @@ doDFdifference <- function(Ustat.pair, Ustat.full) {
   ####
   #### Calculate dfBDG for AUC1minusAUC2 
   #### 
-  dfN = min(Ustat.1$dfN, Ustat.2$dfN)
-  dfD = min(Ustat.1$dfD, Ustat.2$dfD)
-  dfR = min(Ustat.1$dfR, Ustat.2$dfR)
+  # dfN = min(Ustat.1$dfN, Ustat.2$dfN)
+  # dfD = min(Ustat.1$dfD, Ustat.2$dfD)
+  # dfR = min(Ustat.1$dfR, Ustat.2$dfR)
+  dfN = round(studySize$N0 - 1)
+  dfD = round(studySize$N1 - 1)
+  dfR = round(studySize$NR - 1)
   
   dfBDG.min <- min(dfN, dfD, dfR)
   
