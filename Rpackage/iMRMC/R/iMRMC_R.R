@@ -172,23 +172,27 @@ origPerReader <- function(result_AUC_MRMC) {
   
   # When the modalities are different, fill them appropriately
   index.TF <- current$modalityA != current$modalityB
-  current.12 <- current[index.TF, ]
-  if (nM > 1) {
-    for (i in 1:sum(index.TF)) {
-      current.i <- current[
-        (current$readerID == current.12$readerID[i]) &
-          (current$modalityA == current.12$modalityA[i]) &
-          (current$modalityB == current.12$modalityA[i]), 
-      ]
-      current.12$varAUCA[i] <- current.i$varAUCA
-      current.i <- current[
-        (current$readerID == current.12$readerID[i]) &
-          (current$modalityA == current.12$modalityB[i]) &
-          (current$modalityB == current.12$modalityB[i]), 
-      ]
-      current.12$varAUCB[i] <- current.i$varAUCB
+  if (sum(index.TF) > 0) {
+    
+    current.12 <- current[index.TF, ]
+    if (nM > 1) {
+      for (i in 1:sum(index.TF)) {
+        current.i <- current[
+          (current$readerID == current.12$readerID[i]) &
+            (current$modalityA == current.12$modalityA[i]) &
+            (current$modalityB == current.12$modalityA[i]), 
+        ]
+        current.12$varAUCA[i] <- current.i$varAUCA
+        current.i <- current[
+          (current$readerID == current.12$readerID[i]) &
+            (current$modalityA == current.12$modalityB[i]) &
+            (current$modalityB == current.12$modalityB[i]), 
+        ]
+        current.12$varAUCB[i] <- current.i$varAUCB
+      }
+      current[index.TF, c("varAUCA", "varAUCB")] <- current.12[, c("varAUCA", "varAUCB")]
     }
-    current[index.TF, c("varAUCA", "varAUCB")] <- current.12[, c("varAUCA", "varAUCB")]
+    
   }
   
   # Add columns for AUCAminusAUCB and varAUCAminusAUCB

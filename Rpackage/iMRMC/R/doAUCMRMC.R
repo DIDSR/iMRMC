@@ -825,9 +825,11 @@ doAUCmrmcCov <- function(perReaderPair.1) {
   ####
   #### Biased moments
   #### 
-  m.biased <- numer / denom
+  index.TF <- denom != 0
+  m.biased <- numer
+  m.biased[index.TF] <- m.biased[index.TF] / denom[index.TF]
   
-  
+
   
   ####
   #### Transformation: map biased sums to unbiased sums
@@ -856,7 +858,9 @@ doAUCmrmcCov <- function(perReaderPair.1) {
   ####
   #### Unbiased moments
   #### 
-  m <- numer.U / denom.U
+  index.TF <- denom.U != 0
+  m <- numer.U
+  m[index.TF] <- m[index.TF] / denom.U[index.TF]
   
   
   
@@ -949,6 +953,14 @@ doAUCmrmcCov <- function(perReaderPair.1) {
   BCK.coeff <- data.frame(t(BCK.coeff))
   names(BCK.coeff) <- c("BCK.N.coeff", "BCK.D.coeff", "BCK.ND.coeff", "BCK.R.coeff",
                         "BCK.NR.coeff", "BCK.DR.coeff", "BCK.RND.coeff")
+  
+  
+  
+  # Manage studies that do not pair readers or cases across modalities
+  index <- BCK.coeff[1, ] == 0
+  BCK[1, index] <- 0
+  BCK.biased[1, index] <- 0
+  
   
   
   ####
