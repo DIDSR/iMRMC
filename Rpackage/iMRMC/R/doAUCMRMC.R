@@ -962,14 +962,12 @@ doAUCmrmcCov <- function(studySize, perReaderPair.1) {
   
   
   
-  browser()
-  
   ####
   #### Degrees of freedom
   ####
   # REFER TO
   # https://github.com/DIDSR/iMRMC/blob/4cb4f112db86cc13ca4d242df8dcf19ee5d31d07/src/mrmc/core/StatTest.java
-  # Line 581
+  # Starting on Line 581
   # Saved to iMRMC/Rpackage/iMRMC/inst/extra/000-non-inferiority-by-iMRMC
   #### 
   dfN <- round((1/BCK.coeff$BCK.N.coeff - 1))
@@ -1089,21 +1087,50 @@ doDFdifference <- function(studySize, Ustat.pair, Ustat.full) {
   varAUC1minusAUC2.biased <- (
     varAUC.1.biased + varAUC.2.biased - 2 * covAUC.12.biased)
   
+
+  
   ####
-  #### Calculate dfBDG for AUC1minusAUC2 
+  #### Calculate dfBDG for AUC1minusAUC2
+  # REFER TO
+  # https://github.com/DIDSR/iMRMC/blob/4cb4f112db86cc13ca4d242df8dcf19ee5d31d07/src/mrmc/core/StatTest.java
+  # Starting on Line 581
+  # Saved to iMRMC/Rpackage/iMRMC/inst/extra/000-non-inferiority-by-iMRMC
   #### 
-  # dfN = min(Ustat.1$dfN, Ustat.2$dfN)
-  # dfD = min(Ustat.1$dfD, Ustat.2$dfD)
-  # dfR = min(Ustat.1$dfR, Ustat.2$dfR)
-  dfN = round(studySize$N0 - 1)
-  dfD = round(studySize$N1 - 1)
-  dfR = round(studySize$NR - 1)
-  
+  dfN = min(Ustat.1$dfN, Ustat.2$dfN)
+  dfD = min(Ustat.1$dfD, Ustat.2$dfD)
+  dfR = min(Ustat.1$dfR, Ustat.2$dfR)
+
   dfBDG.min <- min(dfN, dfD, dfR)
+
+  # Method depends on whether normal cases are paired across modalities
+  if (Ustat.pair$BCK.N.coeff > 0) {
+    sb.N <- (Ustat.1$BCK.N.b + Ustat.2$BCK.N.b - 2 * Ustat.pair$BCK.N.b)^2/(dfN)^3
+  } else {
+    sb.N <- sum(c(
+      (Ustat.1$BCK.N.b / Ustat.1$dfN)^2 / Ustat.1$dfN,
+      (Ustat.2$BCK.N.b / Ustat.2$dfN)^2 / Ustat.2$dfN
+    ))
+  }
   
-  sb.N <- (Ustat.1$BCK.N.b + Ustat.2$BCK.N.b - 2 * Ustat.pair$BCK.N.b)^2/(dfN)^3
-  sb.D <- (Ustat.1$BCK.D.b + Ustat.2$BCK.D.b - 2 * Ustat.pair$BCK.D.b)^2/(dfD)^3
-  sb.R <- (Ustat.1$BCK.R.b + Ustat.2$BCK.R.b - 2 * Ustat.pair$BCK.R.b)^2/(dfR)^3
+  # Method depends on whether disease cases are paired across modalities
+  if (Ustat.pair$BCK.D.coeff > 0) {
+    sb.D <- (Ustat.1$BCK.D.b + Ustat.2$BCK.D.b - 2 * Ustat.pair$BCK.D.b)^2/(dfD)^3
+  } else {
+    sb.D <- sum(c(
+      (Ustat.1$BCK.D.b / Ustat.1$dfD)^2 / Ustat.1$dfD
+      (Ustat.2$BCK.D.b / Ustat.2$dfD)^2 / Ustat.2$dfD
+    ))
+  }
+  
+  # Method depends on whether readers are paired across modalities
+  if (Ustat.pair$BCK.R.coeff > 0) {
+    sb.R <- (Ustat.1$BCK.R.b + Ustat.2$BCK.R.b - 2 * Ustat.pair$BCK.R.b)^2/(dfR)^3
+  } else {
+    sb.R <- sum(c(
+      (Ustat.1$BCK.R.b / Ustat.1$dfR)^2 / Ustat.1$dfR,
+      (Ustat.2$BCK.R.b / Ustat.2$dfR)^2 / Ustat.2$dfR
+    ))
+  }
   
   ####
   #### Check for negative variances. Return NA for dfBDG and dfBDG.biased
