@@ -85,8 +85,8 @@ doAUCmrmc = function(data, flagROC = FALSE){
     
     # This file is expected to be .imrmc format
     data <- utils::read.csv(data, header = FALSE, skip = skipIndex,
-                     col.names = c("readerID", "caseID", "modalityID", "score"),
-                     colClasses = c("factor", "factor", "factor", "numeric"))
+                            col.names = c("readerID", "caseID", "modalityID", "score"),
+                            colClasses = c("factor", "factor", "factor", "numeric"))
     
   }
   
@@ -188,7 +188,7 @@ doAUCmrmc = function(data, flagROC = FALSE){
   }
   
   
-
+  
   ####
   #### Initialize case and counts
   ####
@@ -221,10 +221,10 @@ doAUCmrmc = function(data, flagROC = FALSE){
     cases.neg = cases.neg,
     cases.pos = cases.pos
   )
-
+  
   
   # ROC #####################################################################
-
+  
   if (flagROC) ROC <- doROCcurveMRMC(mrmcDF)
   
   
@@ -383,12 +383,12 @@ doAUCmrmc = function(data, flagROC = FALSE){
       perReaderPair.12 <- doAUCperReader(mrmcDF.modality.1, mrmcDF.modality.2)
       
       
-
+      
       #### 
       #### Ustat MRMC analysis for modality 1 =/= modality 2
       #### 
       Ustat.pair <- doAUCmrmcCov(studySize, perReaderPair.12)
-
+      
       
       ####
       #### Revise the degrees of freedom for AUC differences 
@@ -828,7 +828,7 @@ doAUCmrmcCov <- function(studySize, perReaderPair.1) {
   m.biased <- numer
   m.biased[index.TF] <- m.biased[index.TF] / denom[index.TF]
   
-
+  
   
   ####
   #### Transformation: map biased sums to unbiased sums
@@ -973,7 +973,7 @@ doAUCmrmcCov <- function(studySize, perReaderPair.1) {
   dfN <- round((1/BCK.coeff$BCK.N.coeff - 1))
   dfD <- round((1/BCK.coeff$BCK.D.coeff - 1))
   dfR <- round((1/BCK.coeff$BCK.R.coeff - 1))
-
+  
   dfBDG.min <- min(dfN, dfD, dfR)
   
   sb.N <- BCK.biased$BCK.N.b^2 / dfN^3
@@ -1003,7 +1003,7 @@ doAUCmrmcCov <- function(studySize, perReaderPair.1) {
     dfBDG.biased <- NA
   } else {
     dfBDG.biased <- covAUC.biased^2 / (sb.N + sb.D + sb.R)
-
+    
     # Check if dfBDG is below a minimum.
     # If true, replace with minimum.
     # This follows Gaylor1969_Technometrics_v4p691
@@ -1087,7 +1087,7 @@ doDFdifference <- function(studySize, Ustat.pair, Ustat.full) {
   varAUC1minusAUC2.biased <- (
     varAUC.1.biased + varAUC.2.biased - 2 * covAUC.12.biased)
   
-
+  
   
   ####
   #### Calculate dfBDG for AUC1minusAUC2
@@ -1099,9 +1099,9 @@ doDFdifference <- function(studySize, Ustat.pair, Ustat.full) {
   dfN = min(Ustat.1$dfN, Ustat.2$dfN)
   dfD = min(Ustat.1$dfD, Ustat.2$dfD)
   dfR = min(Ustat.1$dfR, Ustat.2$dfR)
-
+  
   dfBDG.min <- min(dfN, dfD, dfR)
-
+  
   # Method depends on whether normal cases are paired across modalities
   if (Ustat.pair$BCK.N.coeff > 0) {
     sb.N <- (Ustat.1$BCK.N.b + Ustat.2$BCK.N.b - 2 * Ustat.pair$BCK.N.b)^2/(dfN)^3
@@ -1139,28 +1139,28 @@ doDFdifference <- function(studySize, Ustat.pair, Ustat.full) {
     dfBDG <- NA
   } else {
     dfBDG <- varAUC1minusAUC2^2 / (sb.N + sb.D + sb.R)
-
+    
     # Check if dfBDG is below a minimum.
     # If true, replace with minimum.
     # This follows Gaylor1969_Technometrics_v4p691
     if (dfBDG < dfBDG.min) {
       dfBDG <- dfBDG.min
     }
-
+    
   }
-
+  
   if (varAUC1minusAUC2.biased < 0) {
     dfBDG.biased <- NA
   } else {
     dfBDG.biased <- varAUC1minusAUC2.biased^2 / (sb.N + sb.D + sb.R)
-
+    
     # Check if dfBDG is below a minimum.
     # If true, replace with minimum.
     # This follows Gaylor1969_Technometrics_v4p691
     if (dfBDG.biased < dfBDG.min) {
       dfBDG.biased <- dfBDG.min
     }
-
+    
   }
   
   
