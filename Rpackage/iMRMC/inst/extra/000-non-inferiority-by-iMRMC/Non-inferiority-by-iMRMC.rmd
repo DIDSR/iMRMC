@@ -20,11 +20,11 @@ The measure of diagnostic accuracy used is AUC, where the experimental modality 
 
 
 # Viper Example - Set up
-To answer this question, we will use the ViperObservation data from the ViperData package (https://github.com/DIDSR/viperData). This data assesses radiologists' diagnostic performance using screen film mammography (SFM) and full field digital mammography (FFDM) under varying study designs, which is outlined by @gallas2019 (http://dx.doi.org/10.1117/1.JMI.6.1.015501). Similar to the issue posed, the diagnostic accuracy of each modality is measured by AUC from a split-plot study. In this manuscript, the experimental modality being tested is AI simulated from the FFDM data, compared to the conventional modality of SFM.  We will use a margin parameter of $\delta = 0.05$ and a significance level of $\alpha = 0.05$. To address the question of comparing an AI reading all cases to radiologists' split-plot reads, we will simulate an AI modality based on FFDM data and assess its scores against the SFM scores. 
+To answer this question, we will use the ViperObservation data from the ViperData package (https://github.com/DIDSR/viperData). This data assesses radiologists' diagnostic performance using screen film mammography (SFM) and full field digital mammography (FFDM) under varying study designs, which is outlined by @gallas2019. Similar to the issue posed, the diagnostic accuracy of each modality is measured by AUC from a split-plot study. In this manuscript, the experimental modality being tested is AI simulated from the FFDM data, compared to the conventional modality of SFM.  We will use a margin parameter of $\delta = 0.05$ and a significance level of $\alpha = 0.05$. To address the question of comparing an AI reading all cases to radiologists' split-plot reads, we will simulate an AI modality based on FFDM data and assess its scores against the SFM scores. 
 
 # Viper Example - Hypotheses
 
-For noninferiority testing, the null and alternative hypotheses have been described in @chen2012 (https://doi.org/10.1016/j.acra.2012.04.011) and are copied here:
+For noninferiority testing, the null and alternative hypotheses have been described in @chen2012 and are copied here:
   
   
   $$H_0: \theta_e - \theta_c = -\delta \text{ or } H_0: \theta_e - \theta_c + \delta = 0$$
@@ -142,7 +142,7 @@ $$P = 2(1-F(t;{df}_0|H_0)),$$
   where $F(t; {df}_0|H_0)$ is the cumulative distribution function of the test statistic under the null hypothesis. The test statistic is 
 $$t = \frac{\hat\theta_e - \hat\theta_c + \delta}{\hat{sd}},$$ 
   
-  where $\hat{sd}$ is the standard deviation of the difference between the diagnostic accuracy of each modality and the hats indicate estimates of population parameters. The accuracies of each modality ($\theta_e \text{ and } \theta_c$ or `modA` and `modB`, respectively) are reader-averaged. The iMRMC function provides these reader-averaged estimates in the object `uStat`. Here we show how to calculate the test statistic.  
+  where $\hat{sd}$ is the standard deviation of the difference between the diagnostic accuracy of each modality and the hats indicate estimates of population parameters. The accuracies of each modality ($\theta_e \text{ and } \theta_c$ or `modA` and `modB`, respectively) are reader-averaged. The iMRMC function provides these reader-averaged estimates in the object `uStat`. Here we show how to calculate the test statistic, and we present the results for the simulation in *Table 1*.
 
 ```{r}
 #Isolate data frame of reader-averaged U-stats based performance results
@@ -159,9 +159,9 @@ varAUCAminusAUCB <- uStat[3, 'varAUCAminusAUCB']
 marginParam = 0.05
 auc.SFM = uStat[3, 'AUCA'] 
 auc.AI = uStat[3, 'AUCB'] 
-sd = sqrt(varAUCAminusAUCB)
+se = sqrt(varAUCAminusAUCB)
 #Calculate t statistic
-tStat <- (auc.AI - auc.SFM + marginParam) / sd
+tStat <- (auc.AI - auc.SFM + marginParam) / se
 
 #Calculate p-value from tStat 
 pValue <- 2*(1 - pt(tStat, df = dfBDG))
@@ -169,28 +169,42 @@ pValue <- 2*(1 - pt(tStat, df = dfBDG))
 
 ```{r, echo = FALSE, message = FALSE}
 signifLvl <- 0.05
-pCalcTable <- t(data.frame(c(auc.AI, auc.SFM, marginParam, sd, tStat, pValue, signifLvl)))
-colnames(pCalcTable) <- c("auc.AI", "auc.SFM", "marginParameter", "sd", "tStat", "pValue", "alpha")
+pCalcTable <- t(data.frame(c(auc.AI, auc.SFM, marginParam, se, tStat, pValue, signifLvl)))
+colnames(pCalcTable) <- c("auc.AI", "auc.SFM", "marginParameter", "stdErr", "tStat", "pValue", "alpha")
 row.names(pCalcTable) <- NULL
 
 knitr::kable(format(pCalcTable, digits = 3), digits = 4, align = 'c',
-             caption = "Calculation components of p-value")
+             caption = "*Table 1: Non-inferiority statistical analysis results.*")
 ```
 
-
-The p value of `r round(pValue,4)` is less than our significance level of 0.05, indicating that we reject $H_0$ and the simulated AI is not inferior to SFM.
-
+ The p value of `r round(pValue,4)` is less than our significance level of 0.05, indicating that we reject $H_0$ and the simulated AI is not inferior to SFM.
+ 
+ 
 
 # Viper Example - BDG variance decomposition
 
 While the total variance of the difference is provided by the doIMRMC function in the `Ustat` dataframe as `varAUCAminusAUCB`, we will also use the `varDecomp` results from the same function to find this variance for the BDG variance components separately to demonstrate the relationship. Understanding this relationship between coefficients and components allows us to explore different study designs. 
 
-In the BDG variance decomposition, the total variance of the difference between modalities is split into 8 second-order U-statistic moments and their respective coefficients. The total variance is then the linear combinations of these coefficients and component terms. 
-
-Here is the one-shot total variance estimate where the coefficients $c_1-c_8$ have already been adjusted by the number of readers ($R$):
+In the BDG variance decomposition, the total variance of the difference between modalities is split into 8 second-order U-statistic moments and their respective coefficients. The total variance is then the linear combinations of these coefficients and component terms [@gallas2006]:
   
-  $$\hat V= c_1\hat M_1 + c_2\hat M_2 + c_3\hat M_3 + c_4\hat M_4 + c_5\hat M_5 +c_6\hat M_6 + c_7\hat M_7 + (c_8-1)\hat M_8$$
-  [@gallas2006] (https://doi.org/10.1016/j.acra.2005.11.030).  
+$$
+\begin{equation}
+\begin{split}
+\hat V & =
+  \frac{1}{R}
+  \left(
+      c_1 \hat{M_1} + c_2 \hat{M_2} + c_3 \hat{M_3} + c_4 \hat{M_4}
+  \right)
+  \\ & +
+  \frac{R-1}{R}
+  \left(
+      c_5 \hat{M_5} + c_6 \hat{M_6} + c_7 \hat{M_7} + c_8 \hat{M_8}
+  \right)
+  \\ & -
+  \hat{M_8}.
+\end{split}
+\end{equation}
+$$
 
 Further reading of that paper will provide a more detailed description of how the coefficients are calculated based on number of readers, non-diseased cases, and diseased cases when the data is fully crossed (every reader reads every case in all modalities). If the study design is not fully crossed, as it is in the split-plot Viper study, the coefficients are more complicated and can be calculated with the iMRMC software [@chen2018]. @gallas2008 offer explanations on these non-fully-crossed coefficients. 
 
@@ -207,28 +221,26 @@ BDG_AI.SFM_coeff <- listVarDecomp[["BDG"]]$Ustat$coeff
 BDG_AI.SFM_comp <- listVarDecomp[["BDG"]]$Ustat$comp
 ```
 
-These data frames (printed below as Table 1 and Table 2, respectively) each provide 3 rows. The first two rows correspond to the single-modality variance of each modality (labeled `AI` and `SFM`) and the covariance of the difference between the two modalities (labeled `AI.SFM`). Values in these tables have been rounded for conciseness. 
+These data frames (printed below as *Table 2* and *Table 3*, respectively) each provide 3 rows. The first two rows correspond to the single-modality variance of each modality and the covariance of the difference between the two modalities. Values in these tables have been rounded for conciseness. 
 
-Briefly, the coefficients are scale factors determined by the number of readers, non-diseased, and diseased cases within the data-collection study design. The coefficients for the covariance between the two modalities (row 3, `AI.SFM`) have already been multiplied by 2, as is needed for calculating the total variance of the difference in modalities. Since there is no reader overlap across modalities, $M_1 \text{ through } M_4$ of the covariance row for both the coefficients and components are identically 0. This phenomena is further explained in @gallas2008.
+Briefly, the coefficients are scale factors determined by the number of readers, non-diseased, and diseased cases within the data-collection study design. Since there is no reader overlap across modalities, the coefficients and moments corresponding to the same reader are identically 0. This phenomena is further explained in @gallas2008.
 
 ```{r, echo = FALSE, message = FALSE}
 
 knitr::kable(format(BDG_AI.SFM_coeff, digits = 3, scientific = TRUE, zero.print = "0"), digits = 10, align = 'c',
              col.names = c("modalityA", "modalityB", "$c_1$", "$c_2$", "$c_3$", "$c_4$", "$c_5$", "$c_6$", "$c_7$", "$(1-c_8)$"),
              escape = FALSE, longtable = TRUE,
-             caption = "Table 1: Coefficients of the moments based on numbers of reader and cases")
-
+             caption = "*Table 2: Coefficients of the moments based on numbers of reader and cases.*")
 ```
 
-The components are the U-statistic moment estimates.  $M_1 - M_7$ are the success moments, or "naturally-occurring second moments" of the score for the random effects of readers, non-diseased cases, and diseased cases as given in Table 1 of @gallas2009 (https://doi.org/10.1080/03610920802610084). $M_8$ is the mean squared, which will be subtracted from the success moments to calculate the covariances. Notice that in the AI modality $M_5 \text { through }M_8$ are identical to $M_1 \text { through } M_4$ because the readers are perfectly duplicated. 
+The components are the U-statistic moment estimates.  $M_1 - M_7$ are the success moments, or "naturally-occurring second moments" of the score for the random effects of readers, non-diseased cases, and diseased cases as given in **Table 1** of @gallas2009. $M_8$ is the mean squared, which will be subtracted from the success moments to calculate the covariances. Notice that in the AI modality $M_5 \text { through }M_8$ are identical to $M_1 \text { through } M_4$ because the readers are perfectly duplicated. 
 
 ```{r, echo = FALSE, message = FALSE}
 
 knitr::kable(format(BDG_AI.SFM_comp, digits = 3, scientific = TRUE, zero.print = "0"), digits = 10, align = 'c',
              col.names = c("modalityA", "modalityB", "$M_1$", "$M_2$", "$M_3$", "$M_4$", "$M_5$", "$M_6$", "$M_7$", "$M_8$"),
              escape = TRUE, longtable = TRUE,
-             caption = "Table 2: Components of second-order U-statistic moment estimates")
-
+             caption = "*Table 3: Components of second-order U-statistic moment estimates.*")
 ```
 
 The code below will execute the linear combination and summation to arrive at the total variance of the difference.
@@ -255,10 +267,12 @@ row.names(varianceSums_total) <- c("var(AUC_AI)", "var(AUC_SFM)", "cov(AUC_AI, A
 
 knitr::kable(format(varianceSums_total, digits = 3, scientific = TRUE, zero.print = "0"), digits = 6, align = 'c', 
              col.names = "",
-             caption = "Total variance for each modality and interaction")
+             caption = "*Table 4: Total variance for each modality and interaction.*")
+
+
 ```
 
-The total variance of the difference is `r format(totalVarianceofDiff, digits =4, scientific = FALSE)`. 
+The standard error of the difference is `r format(sqrt(totalVarianceofDiff), digits = 3, scientific = FALSE)`, which is the same as given in *Table 1*.
 
 # Authors 
 $\text{Gardecki, Emma}^1 \text{ and } \text{Gallas, Brandon D.}^1$
