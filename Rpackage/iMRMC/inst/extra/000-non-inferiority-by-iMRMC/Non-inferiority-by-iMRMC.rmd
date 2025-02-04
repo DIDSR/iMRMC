@@ -186,9 +186,10 @@ knitr::kable(format(pCalcTable, digits = 3), digits = 4, align = 'c',
 While the total variance of the difference is provided by the doIMRMC function in the `Ustat` dataframe as `varAUCAminusAUCB`, we will also use the `varDecomp` results from the same function to find this variance for the BDG variance components separately to demonstrate the relationship. Understanding this relationship between coefficients and components allows us to explore different study designs. 
 
 In the BDG variance decomposition, the total variance of the difference between modalities is split into 8 second-order U-statistic moments and their respective coefficients. The total variance is then the linear combinations of these coefficients and component terms [@gallas2006]:
-  
+
+<!-- Comment: When output is a pdf document, delete the $$ at the beginning and end. -->
 $$
-\begin{equation}
+\begin{equation*}
 \begin{split}
 \hat V & =
   \frac{1}{R}
@@ -199,11 +200,9 @@ $$
   \frac{R-1}{R}
   \left(
       c_5 \hat{M_5} + c_6 \hat{M_6} + c_7 \hat{M_7} + c_8 \hat{M_8}
-  \right)
-  \\ & -
-  \hat{M_8}.
+  \right) - \hat{M_8}.
 \end{split}
-\end{equation}
+\end{equation*}
 $$
 
 Further reading of that paper will provide a more detailed description of how the coefficients are calculated based on number of readers, non-diseased cases, and diseased cases when the data is fully crossed (every reader reads every case in all modalities). If the study design is not fully crossed, as it is in the split-plot Viper study, the coefficients are more complicated and can be calculated with the iMRMC software [@chen2018]. @gallas2008 offer explanations on these non-fully-crossed coefficients. 
