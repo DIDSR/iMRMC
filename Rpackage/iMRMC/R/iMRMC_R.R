@@ -487,38 +487,19 @@ varDecomp.BDG.MLE <- function(Ustat.full, summaryMRMC) {
   
   nM <- summaryMRMC$nM
   modalities <- summaryMRMC$modalities
-  
-  # This is the base of the component data frame
-  comp.1 <- data.frame(
-    modalityID.1 = Ustat.full$modalityID.1,
-    modalityID.2 = Ustat.full$modalityID.2
-  )
-  
 
-  
-  # The MLE components are functions of these components of Ustat.full
-  desc.numer.BDG <- c(
-    "numer1", "numer2", "numer3", "numer4",
-    "numer5", "numer6", "numer7", "numer8")
-  
-  desc.denom.BDG <- c(
-    "denom1", "denom2", "denom3", "denom4",
-    "denom5", "denom6", "denom7", "denom8")
-  
-  numer <- Ustat.full[, desc.numer.BDG]
-  denom <- Ustat.full[, desc.denom.BDG]
-  
-  comp.2 <- numer / denom
-
-  
-    
-  # Aggregate the MLE components with the base
-  comp <- cbind(comp.1, comp.2)
-  
-  names(comp) <- c(
+  # The BDG components are extracted from these components of Ustat.full
+  desc.comp.BDG <- c(
     "modalityID.1", "modalityID.2",
-    "M1", "M2", "M3", "M4",
-    "M5", "M6", "M7", "M8")
+    "M1.b", "M2.b", "M3.b", "M4.b",
+    "M5.b", "M6.b", "M7.b", "M8.b")
+  
+  comp <- Ustat.full[, desc.comp.BDG]
+  comp$modalityID.1 <- factor(comp$modalityID.1)
+  comp$modalityID.2 <- factor(comp$modalityID.2)
+  
+  # Remove the ".b" from the column names
+  colnames(comp) <- gsub(".b", "", colnames(comp))
   
   
   
@@ -529,21 +510,19 @@ varDecomp.BDG.MLE <- function(Ustat.full, summaryMRMC) {
     "M5.coeff", "M6.coeff", "M7.coeff", "M8.coeff")
   
   coeff <- Ustat.full[, desc.coeff.BDG]
-  names(coeff) <- c(
-    "modalityID.1", "modalityID.2",
-    "M1", "M2", "M3", "M4",
-    "M5", "M6", "M7", "M8")
-  
   coeff$modalityID.1 <- factor(coeff$modalityID.1)
   coeff$modalityID.2 <- factor(coeff$modalityID.2)
 
-  
+  # Remove the ".coeff" from the column names
+  colnames(coeff) <- gsub(".coeff", "", colnames(coeff))
+
+
   
   # Pack the components and coefficients for return
   result <- list(comp = comp, coeff = coeff)
   
   return(result)
-
+  
 }
 
 varDecomp.BCK.Ustat <- function(Ustat.full, summaryMRMC) {
