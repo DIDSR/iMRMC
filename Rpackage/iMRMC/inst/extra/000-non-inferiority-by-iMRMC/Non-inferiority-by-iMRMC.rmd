@@ -221,7 +221,7 @@ BDG_AI.SFM_coeff <- listVarDecomp[["BDG"]]$Ustat$coeff
 BDG_AI.SFM_comp <- listVarDecomp[["BDG"]]$Ustat$comp
 ```
 
-These data frames (printed below as *Table 2* and *Table 3*, respectively) each provide 3 rows. The first two rows correspond to the single-modality variance of each modality and the covariance of the difference between the two modalities. Values in these tables have been rounded for conciseness. 
+These data frames (printed below as *Table 2* and *Table 3*) each provide 3 rows. The first two rows correspond to the single-modality variance of each modality and the covariance of the difference between the two modalities. Values in these tables have been rounded for conciseness. 
 
 Briefly, the coefficients are scale factors determined by the number of readers, non-diseased, and diseased cases within the data-collection study design. Since there is no reader overlap across modalities, the coefficients and moments corresponding to the same reader are identically 0. This phenomena is further explained in @gallas2008.
 
