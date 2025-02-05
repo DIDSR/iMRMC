@@ -257,8 +257,10 @@ between modalities is split into 8 second-order U-statistic moments and
 their respective coefficients. The total variance is then the linear
 combinations of these coefficients and component terms (Gallas 2006):
 
+<!-- Comment: When output is a pdf document, delete the $$ at the beginning and end. -->
+
 $$
-\begin{equation}
+\begin{equation*}
 \begin{split}
 \hat V & =
   \frac{1}{R}
@@ -269,11 +271,9 @@ $$
   \frac{R-1}{R}
   \left(
       c_5 \hat{M_5} + c_6 \hat{M_6} + c_7 \hat{M_7} + c_8 \hat{M_8}
-  \right)
-  \\ & -
-  \hat{M_8}.
+  \right) - \hat{M_8}.
 \end{split}
-\end{equation}
+\end{equation*}
 $$
 
 Further reading of that paper will provide a more detailed description
