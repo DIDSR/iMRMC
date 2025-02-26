@@ -33,23 +33,10 @@
 #'     confidence intervals, degrees of freedom, and p-values.
 #'     When the modalities differ, the variance is understood to be the covariance between the modalities.
 #'   }
-#'   \item {\code{MLEstat, data.frame}
-#'     Reader-average performance results for each pair of modalities.
-#'     The analysis results are based on V-statistics, which 
-#'     approximates the true distribution with
-#'     the empirical distribution. The empirical distribution equals 
-#'     the nonparametric MLE
-#'     estimate of the true distribution, which is also equivalent 
-#'     to the ideal bootstrap estimate.
-#'     Key variables of this data frame are AUCA, AUCB, 
-#'     AUCAminusAUCB and the corresponding
-#'     variances, confidence intervals, degrees of freedom, and p-values.
-#'     When the modalities differ, the variance is understood to be the covariance between the modalities.
-#'   }
 #'   \item {\code{varDecomp, list}
 #'     list of data frames of the coefficient and components of 
 #'     variance. The analysis includes variance decomposition based off both the 
-#'     BDG and BCK MRMC methods, and Ustat and MLE statistical methods. 
+#'     BDG and BCK MRMC methods, and Ustat statistical methods. 
 #'     Each MRMC and statistical method combination is contained within this 
 #'     list of lists. 
 #'   }
@@ -99,9 +86,6 @@ doIMRMC = function(data){
   # Make a Ustat object almost look like version 1.2.5 and earlier
   Ustat <- origUstat(result_AUC_MRMC)
   
-  # Make an MLEstat object almost look like version 1.2.5 and earlier
-  MLEstat <- origMLEstat(result_AUC_MRMC)
-  
   # Make a varDecomp object a simpler version of like version 1.2.5 and earlier
   varComp <- varDecomp(result_AUC_MRMC)
   
@@ -112,7 +96,6 @@ doIMRMC = function(data){
   return(list(
     perReader = perReader,
     Ustat = Ustat,
-    MLEstat = MLEstat,
     varDecomp = varComp,
     ROC = ROC,
     full = result_AUC_MRMC
@@ -229,9 +212,6 @@ origUstat <- function(result_AUC_MRMC) {
   current <- renameCol(current, "modalityID.1", "modalityA")
   current <- renameCol(current, "modalityID.2", "modalityB")
   
-  # Create a Ustat column  
-  current$UstatOrMLE <- factor("Ustat")
-  
   # Rename the AUC.1 and AUC.2 columns to AUCA and AUCB
   current <- renameCol(current, "AUC.1", "AUCA")
   current <- renameCol(current, "AUC.2", "AUCB")
@@ -283,7 +263,6 @@ origUstat <- function(result_AUC_MRMC) {
   current <- current[, c(
     "NR", "N0", "N1",
     "modalityA", "modalityB",
-    "UstatOrMLE",
     "AUCA", "varAUCA",
     "AUCB", "varAUCB",
     "AUCAminusAUCB", "varAUCAminusAUCB",
@@ -312,103 +291,7 @@ origUstat <- function(result_AUC_MRMC) {
   
 }
 
-origMLEstat <- function(result_AUC_MRMC) {
-  
-  current <- result_AUC_MRMC$Ustat.full
-  nM <- result_AUC_MRMC$summaryMRMC$nM
-  
-  # Rename the modalityID columns
-  current <- renameCol(current, "modalityID.1", "modalityA")
-  current <- renameCol(current, "modalityID.2", "modalityB")
-  
-  # Create a Ustat column  
-  current$UstatOrMLE <- factor("MLE")
-  
-  # Rename the AUC.1 and AUC.2 columns to AUCA and AUCB
-  current <- renameCol(current, "AUC.1", "AUCA")
-  current <- renameCol(current, "AUC.2", "AUCB")
-  
-  # Create new columns for varAUCA and varAUCB and fill them appropriately
-  current$varAUCA <- NA
-  current$varAUCB <- NA
-  
-  # When the modalities are the same, varAUCA = varAUCB = covAUC
-  index.TF <- current$modalityA == current$modalityB
-  current$varAUCA[index.TF] <- current$covAUC.biased[index.TF]
-  current$varAUCB[index.TF] <- current$covAUC.biased[index.TF]
 
-  # Set dfBDG to be the biased versions
-  current$dfBDG <- current$dfBDG.biased
-  
-  ####
-  #### When the modalities are different, fill them appropriately
-  #### 
-  
-  # Select the rows of corresponding to different modalities
-  index.TF <- current$modalityA != current$modalityB
-  current.12 <- current[index.TF, ]
-  
-  # For each row that has different modalities,
-  # Fill in varAUCA, varAUCB 
-  if (nM > 1) {
-    
-    for (i in 1:sum(index.TF)) {
-      current.i <- current[
-        (current$modalityA == current.12$modalityA[i]) &
-          (current$modalityB == current.12$modalityA[i]), ]
-      current.12$varAUCA[i] <- current.i$covAUC.biased
-      
-      current.i <- current[
-        (current$modalityA == current.12$modalityB[i]) &
-          (current$modalityB == current.12$modalityB[i]), ]
-      current.12$varAUCB[i] <- current.i$covAUC.biased
-    }
-    current[index.TF, c("varAUCA", "varAUCB", "dfBDG")] <- 
-      current.12[, c("varAUCA", "varAUCB", "dfBDG.biased.diff")]
-    
-  }
-  
-  # Add columns for AUCAminusAUCB and varAUCAminusAUCB
-  current <- renameCol(current, "AUC1minusAUC2", "AUCAminusAUCB")
-  current <- renameCol(current, "varAUC1minusAUC2.biased", "varAUCAminusAUCB")
-  
-  # Replace unbiased hypothesis test results with biased results
-  current$pValueNormal <- current$pValueNormal.biased
-  current$botCInormal <- current$botCInormal.biased
-  current$topCInormal <- current$topCInormal.biased
-  current$rejectNormal <- current$rejectNormal.biased
-  current$pValueBDG <- current$pValueBDG.biased
-  current$botCIBDG <- current$botCIBDG.biased
-  current$topCIBDG <- current$topCIBDG.biased
-  current$rejectBDG <- current$rejectBDG.biased
-  
-  # Keep and reorder only what we need
-  current <- current[, c(
-    "NR", "N0", "N1",
-    "modalityA", "modalityB",
-    "UstatOrMLE",
-    "AUCA", "varAUCA",
-    "AUCB", "varAUCB",
-    "AUCAminusAUCB", "varAUCAminusAUCB",
-    "pValueNormal",
-    "botCInormal", "topCInormal",
-    "rejectNormal",
-    "dfBDG",
-    "pValueBDG",
-    "botCIBDG", "topCIBDG",
-    "rejectBDG"
-  )]
-  
-  # Special edits to perfectly match original output
-  index.TF <- current$modalityA == current$modalityB
-  current$modalityB <- as.character(current$modalityB)
-  current$modalityB[index.TF] <- "NO_MOD"
-  current$modalityB <- factor(current$modalityB)
-  current[index.TF, c("AUCB", "varAUCB", "AUCAminusAUCB", "varAUCAminusAUCB")] <- NA
-  
-  return(current)
-  
-}
 
 varDecomp <- function(result_AUC_MRMC) {
   
@@ -420,20 +303,12 @@ varDecomp <- function(result_AUC_MRMC) {
   varComp.BDG.Ustat <- varDecomp.BDG.Ustat(Ustat.full, summaryMRMC)
   
   # Make the varDecomp object look like version 1.2.5 and earlier
-  varComp.BDG.MLE <- varDecomp.BDG.MLE(Ustat.full, summaryMRMC)
-  
-  # Make the varDecomp object look like version 1.2.5 and earlier
   varComp.BCK.Ustat <- varDecomp.BCK.Ustat(Ustat.full, summaryMRMC)
   
-  # Make the varDecomp object look like version 1.2.5 and earlier
-  varComp.BCK.MLE <- varDecomp.BCK.MLE(Ustat.full, summaryMRMC)
-  
   varComp.BCK <- list(
-    MLE = varComp.BCK.MLE,
     Ustat = varComp.BCK.Ustat)
   
   varComp.BDG <- list(
-    MLE = varComp.BDG.MLE,
     Ustat = varComp.BDG.Ustat)
   
   varComp <- list(BCK = varComp.BCK, BDG = varComp.BDG)
@@ -483,47 +358,7 @@ varDecomp.BDG.Ustat <- function(Ustat.full, summaryMRMC) {
 
 }
 
-varDecomp.BDG.MLE <- function(Ustat.full, summaryMRMC) {
-  
-  nM <- summaryMRMC$nM
-  modalities <- summaryMRMC$modalities
 
-  # The BDG components are extracted from these components of Ustat.full
-  desc.comp.BDG <- c(
-    "modalityID.1", "modalityID.2",
-    "M1.b", "M2.b", "M3.b", "M4.b",
-    "M5.b", "M6.b", "M7.b", "M8.b")
-  
-  comp <- Ustat.full[, desc.comp.BDG]
-  comp$modalityID.1 <- factor(comp$modalityID.1)
-  comp$modalityID.2 <- factor(comp$modalityID.2)
-  
-  # Remove the ".b" from the column names
-  colnames(comp) <- gsub(".b", "", colnames(comp))
-  
-  
-  
-  # The BDG coefficients are extracted from these components of Ustat.full
-  desc.coeff.BDG <- c(
-    "modalityID.1", "modalityID.2",
-    "M1.coeff", "M2.coeff", "M3.coeff", "M4.coeff",
-    "M5.coeff", "M6.coeff", "M7.coeff", "M8.coeff")
-  
-  coeff <- Ustat.full[, desc.coeff.BDG]
-  coeff$modalityID.1 <- factor(coeff$modalityID.1)
-  coeff$modalityID.2 <- factor(coeff$modalityID.2)
-
-  # Remove the ".coeff" from the column names
-  colnames(coeff) <- gsub(".coeff", "", colnames(coeff))
-
-
-  
-  # Pack the components and coefficients for return
-  result <- list(comp = comp, coeff = coeff)
-  
-  return(result)
-  
-}
 
 varDecomp.BCK.Ustat <- function(Ustat.full, summaryMRMC) {
   
@@ -562,49 +397,12 @@ varDecomp.BCK.Ustat <- function(Ustat.full, summaryMRMC) {
   
 }
 
-varDecomp.BCK.MLE <- function(Ustat.full, summaryMRMC) {
-  
-  nM <- summaryMRMC$nM
-  modalities <- summaryMRMC$modalities
-  
-  # The BCK components are extracted from these components of Ustat.full
-  desc.comp.BCK <- c(
-    "modalityID.1", "modalityID.2",
-    "BCK.N.b", "BCK.D.b", "BCK.ND.b", "BCK.R.b", "BCK.NR.b", "BCK.DR.b", "BCK.RND.b")
-  
-  comp_BCK <- Ustat.full[, desc.comp.BCK]
-  names(comp_BCK) <- c("modalityID.1", "modalityID.2",
-                       "N", "D", "ND",
-                       "R", "NR", "DR", "RND")
-  
-
-  
-  # The BCK coefficients are extracted from these components of Ustat.full
-  desc.coeff.BCK <- c(
-    "modalityID.1", "modalityID.2",
-    "BCK.N.coeff", "BCK.D.coeff", "BCK.ND.coeff",
-    "BCK.R.coeff", "BCK.NR.coeff", "BCK.DR.coeff", "BCK.RND.coeff")
-  
-  coeff_BCK <- Ustat.full[, desc.coeff.BCK]
-  names(coeff_BCK) <- c("modalityID.1", "modalityID.2",
-                        "N", "D", "ND",
-                        "R", "NR", "DR", "RND")
-  
-
-  
-  # Pack the components and coefficients for return
-  result <- list(comp = comp_BCK, coeff = coeff_BCK)
-  
-  return(result)
-  
-  
-}
-
-
-
 
 
 # Legacy formatting ##########
+
+
+
 origVarDecomp <- function(result_AUC_MRMC) {
   
   Ustat.full <- result_AUC_MRMC$Ustat.full
@@ -628,6 +426,8 @@ origVarDecomp <- function(result_AUC_MRMC) {
   return(varDecomp)
   
 }
+
+
 
 origVarDecomp.BDG.Ustat <- function(Ustat.full, summaryMRMC) {
   
@@ -730,6 +530,8 @@ origVarDecomp.BDG.Ustat <- function(Ustat.full, summaryMRMC) {
   
   
 }
+
+
 
 origVarDecomp.BCK.Ustat <- function(Ustat.full, summaryMRMC) {
   

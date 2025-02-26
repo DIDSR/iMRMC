@@ -117,17 +117,15 @@ dfMRMC_AI <- rbind(dfMRMC_onlyTruth, dfMRMC_onlySFM, dfMRMC_AImod)
 
 # Viper Example - Run iMRMC
 
-Once the dataframe is shaped into iMRMC's expected format, we run the `doIMRMC` function which provides 5 results. These include:
+Once the dataframe is shaped into iMRMC's expected format, we run the `doIMRMC` function which provides these results:
   
-  1. `perReader`: per-reader AUC results
+1. `perReader`: per-reader AUC results
 
-2. `Ustat`: reader-averaged AUC results using U-statistics
+1. `Ustat`: reader-averaged AUC results using U-statistics
 
-3. `MLEstat`: reader-averaged AUC results using maximum likelihood estimation
+1. `ROC`: modality-specific ROC curves, and 
 
-4. `ROC`: modality-specific ROC curves, and 
-
-5. `varDecomp`: 5 variance decompositions for the reader-averaged AUCs.
+1. `varDecomp`: 5 variance decompositions for the reader-averaged AUCs.
 
 ```{r}
 #Run iMRMC analysis function

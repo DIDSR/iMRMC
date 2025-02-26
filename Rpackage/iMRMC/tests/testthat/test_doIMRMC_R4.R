@@ -158,20 +158,13 @@ testthat::test_that(
 target = result_doIMRMC_target$Ustat[,4:24]
 current = result_doIMRMC_current$Ustat
 
+# Remove column when deprecating MLE elements
+names(target)
+names(current)
+target$UstatOrMLE <- NULL
+
 testthat::test_that(
   "doIMRMC Ustat output does not change", {
-    testthat::expect_equal(target, current)
-  }
-)
-
-
-
-# MLEstat output ###############
-target = result_doIMRMC_target$MLEstat[,4:24]
-current = result_doIMRMC_current$MLEstat
-
-testthat::test_that(
-  "doIMRMC MLEstat output does not change", {
     testthat::expect_equal(target, current)
   }
 )
@@ -182,16 +175,21 @@ testthat::test_that(
 target <- result_doIMRMC_target$varDecomp$BDG
 current <- result_doIMRMC_current$varDecomp$BDG
 
+
+
+# Remove list item when deprecating MLE elements
+names(target)
+names(current)
+target$MLE <- NULL
+
+
+
 # Current has new simpler format
 # Reduce target to this format
 target$Ustat$comp <- target$Ustat$comp$testA.testB
 rownames(target$Ustat$comp) <- NULL
 target$Ustat$coeff <- target$Ustat$coeff$testA.testB
 rownames(target$Ustat$coeff) <- NULL
-target$MLE$comp <- target$MLE$comp$testA.testB
-rownames(target$MLE$comp) <- NULL
-target$MLE$coeff <- target$MLE$coeff$testA.testB
-rownames(target$MLE$coeff) <- NULL
 
 
 
@@ -200,17 +198,12 @@ current$Ustat$comp <- deleteCol(current$Ustat$comp, "modalityID.1")
 current$Ustat$comp <- deleteCol(current$Ustat$comp, "modalityID.2")
 current$Ustat$coeff <- deleteCol(current$Ustat$coeff, "modalityID.1")
 current$Ustat$coeff <- deleteCol(current$Ustat$coeff, "modalityID.2")
-current$MLE$comp <- deleteCol(current$MLE$comp, "modalityID.1")
-current$MLE$comp <- deleteCol(current$MLE$comp, "modalityID.2")
-current$MLE$coeff <- deleteCol(current$MLE$coeff, "modalityID.1")
-current$MLE$coeff <- deleteCol(current$MLE$coeff, "modalityID.2")
 
 
 
 # Current coefficients yield the covariance.
 # Target coefficients yield 2*covariance.
 current$Ustat$coeff[3, ] <- 2 * current$Ustat$coeff[3, ]
-current$MLE$coeff[3, ] <- 2 * current$MLE$coeff[3, ]
 
 
 
@@ -231,16 +224,19 @@ current <- result_doIMRMC_current$varDecomp$BCK
 
 
 
+# Remove list item when deprecating MLE elements
+names(target)
+names(current)
+target$MLE <- NULL
+
+
+
 # Current has new simpler format
 # Reduce target to this format
 target$Ustat$comp <- target$Ustat$comp$testA.testB
 rownames(target$Ustat$comp) <- NULL
 target$Ustat$coeff <- target$Ustat$coeff$testA.testB
 rownames(target$Ustat$coeff) <- NULL
-target$MLE$comp <- target$MLE$comp$testA.testB
-rownames(target$MLE$comp) <- NULL
-target$MLE$coeff <- target$MLE$coeff$testA.testB
-rownames(target$MLE$coeff) <- NULL
 
 
 
@@ -249,17 +245,12 @@ current$Ustat$comp <- deleteCol(current$Ustat$comp, "modalityID.1")
 current$Ustat$comp <- deleteCol(current$Ustat$comp, "modalityID.2")
 current$Ustat$coeff <- deleteCol(current$Ustat$coeff, "modalityID.1")
 current$Ustat$coeff <- deleteCol(current$Ustat$coeff, "modalityID.2")
-current$MLE$comp <- deleteCol(current$MLE$comp, "modalityID.1")
-current$MLE$comp <- deleteCol(current$MLE$comp, "modalityID.2")
-current$MLE$coeff <- deleteCol(current$MLE$coeff, "modalityID.1")
-current$MLE$coeff <- deleteCol(current$MLE$coeff, "modalityID.2")
 
 
 
 # Current coefficients yield the covariance.
 # Target coefficients yield 2*covariance.
 current$Ustat$coeff[3, ] <- 2 * current$Ustat$coeff[3, ]
-current$MLE$coeff[3, ] <- 2 * current$MLE$coeff[3, ]
 
 
 

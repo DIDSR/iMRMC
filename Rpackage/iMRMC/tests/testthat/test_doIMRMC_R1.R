@@ -152,23 +152,10 @@ target$varAUCB <- as.numeric(target$varAUCB)
 
 current = result_doIMRMC_current$Ustat
 
-testthat::test_that(
-  "doIMRMC Ustat output does not change", {
-    testthat::expect_equal(target, current)
-  }
-)
-
-
-
-# MLEstat output ###############
-target = result_doIMRMC_target$MLEstat[,4:24]
-# When there is only one modality, 
-# we have to change the data type of these columns to achieve agreement
-# (This is not necessary when nM = 2)
-target$AUCB <- as.numeric(target$AUCB)
-target$varAUCB <- as.numeric(target$varAUCB)
-
-current = result_doIMRMC_current$MLEstat
+# Remove column when deprecating MLE elements
+names(target)
+names(current)
+target$UstatOrMLE <- NULL
 
 testthat::test_that(
   "doIMRMC Ustat output does not change", {
@@ -184,16 +171,19 @@ current <- result_doIMRMC_current$varDecomp$BDG
 
 
 
+# Remove list item when deprecating MLE elements
+names(target)
+names(current)
+target$MLE <- NULL
+
+
+
 # Current has new simpler format
 # Reduce target to this format
 target$Ustat$comp <- target$Ustat$comp$testA.NO_MOD[1, ]
 rownames(target$Ustat$comp) <- NULL
 target$Ustat$coeff <- target$Ustat$coeff$testA.NO_MOD[1, ]
 rownames(target$Ustat$coeff) <- NULL
-target$MLE$comp <- target$MLE$comp$testA.NO_MOD[1, ]
-rownames(target$MLE$comp) <- NULL
-target$MLE$coeff <- target$MLE$coeff$testA.NO_MOD[1, ]
-rownames(target$MLE$coeff) <- NULL
 
 
 
@@ -202,10 +192,6 @@ current$Ustat$comp <- deleteCol(current$Ustat$comp, "modalityID.1")
 current$Ustat$comp <- deleteCol(current$Ustat$comp, "modalityID.2")
 current$Ustat$coeff <- deleteCol(current$Ustat$coeff, "modalityID.1")
 current$Ustat$coeff <- deleteCol(current$Ustat$coeff, "modalityID.2")
-current$MLE$comp <- deleteCol(current$MLE$comp, "modalityID.1")
-current$MLE$comp <- deleteCol(current$MLE$comp, "modalityID.2")
-current$MLE$coeff <- deleteCol(current$MLE$coeff, "modalityID.1")
-current$MLE$coeff <- deleteCol(current$MLE$coeff, "modalityID.2")
 
 
 
@@ -218,11 +204,16 @@ testthat::test_that(
   }
 )
 
-
-
 # varDecomp$BCK #############################################################
 target <- result_doIMRMC_target$varDecomp$BCK
 current <- result_doIMRMC_current$varDecomp$BCK
+
+
+
+# Remove list item when deprecating MLE elements
+names(target)
+names(current)
+target$MLE <- NULL
 
 
 
@@ -232,10 +223,6 @@ target$Ustat$comp <- target$Ustat$comp$testA.NO_MOD[1, ]
 rownames(target$Ustat$comp) <- NULL
 target$Ustat$coeff <- target$Ustat$coeff$testA.NO_MOD[1, ]
 rownames(target$Ustat$coeff) <- NULL
-target$MLE$comp <- target$MLE$comp$testA.NO_MOD[1, ]
-rownames(target$MLE$comp) <- NULL
-target$MLE$coeff <- target$MLE$coeff$testA.NO_MOD[1, ]
-rownames(target$MLE$coeff) <- NULL
 
 
 
@@ -244,10 +231,6 @@ current$Ustat$comp <- deleteCol(current$Ustat$comp, "modalityID.1")
 current$Ustat$comp <- deleteCol(current$Ustat$comp, "modalityID.2")
 current$Ustat$coeff <- deleteCol(current$Ustat$coeff, "modalityID.1")
 current$Ustat$coeff <- deleteCol(current$Ustat$coeff, "modalityID.2")
-current$MLE$comp <- deleteCol(current$MLE$comp, "modalityID.1")
-current$MLE$comp <- deleteCol(current$MLE$comp, "modalityID.2")
-current$MLE$coeff <- deleteCol(current$MLE$coeff, "modalityID.1")
-current$MLE$coeff <- deleteCol(current$MLE$coeff, "modalityID.2")
 
 
 
