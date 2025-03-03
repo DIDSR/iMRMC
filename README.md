@@ -41,3 +41,5 @@ Here is one way to cite our work:
 
 <h5>Team</h5>
 Please refer to the [NEWS](https://github.com/DIDSR/iMRMC/blob/iMRMC-v1.2.5/Rpackage/iMRMC/NEWS.md) for the complete list of members that have made this project possible.
+
+End
