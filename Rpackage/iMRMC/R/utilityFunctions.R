@@ -324,13 +324,12 @@ convertDFtoDesignMatrix <- function(dfMRMC, modality = NULL, dropFlag = TRUE) {
 #'
 #' @param keyColumns This list identifies the column names
 #' of the data frame to be used for the analysis.
-#'        list(readerID = "***", caseID = "***",
-#'             modalityID = "***", score = "***", truth="***")
+#'    list(readerID = "***", caseID = "***",
+#'         modalityID = "***", score = "***", truth="***")
 #'
 #' @return A data frame of all paired observations.
 #'   Each observation comes from a pair of readers evaluating a case in two modalities.
-#'   The first column corresponds to one reader evaluating the case in testA.
-#'   The second column corresonds to the other reader evaluating the case in testB.
+#'   Columns: readerID_x, readerID_y, caseID, modalityID_x, modalityID_y, score_x, score_y
 #'
 #' @export
 #'
@@ -338,59 +337,58 @@ convertDFtoDesignMatrix <- function(dfMRMC, modality = NULL, dropFlag = TRUE) {
 extractPairedComparisonsBRBM <- function(
     data0,
     modalities = c("testA", "testB"),
-    keyColumns = list(readerID = "readerID",
-                      caseID = "caseID",
-                      modalityID = "modalityID",
-                      score = "score")
+    keyColumns = list(
+      readerID = "readerID",
+      caseID = "caseID",
+      modalityID = "modalityID",
+      score = "score")
 ) {
-
+  
   # Establish the key column names
   readerID <- keyColumns$readerID
   caseID <- keyColumns$caseID
   modalityID <- keyColumns$modalityID
   score <- keyColumns$score
-
+  
   # Create an MRMC data frame
   dfMRMC <- data.frame(
-    readerID   = data0[ , readerID],
-    caseID     = data0[ , caseID],
+    readerID  = data0[ , readerID],
+    caseID    = data0[ , caseID],
     modalityID = data0[ , modalityID],
-    score      = data0[ , score],
+    score     = data0[ , score],
     stringsAsFactors = TRUE
   )
-
+  
   # Split the data by the input modalities
-  df.X <- dfMRMC[dfMRMC$modalityID == modalities[1], ]
-  df.Y <- dfMRMC[dfMRMC$modalityID == modalities[2], ]
-
+  df_x <- dfMRMC[dfMRMC$modalityID == modalities[1], ]
+  df_y <- dfMRMC[dfMRMC$modalityID == modalities[2], ]
+  
   # Split the data by readers
-  df.XR <- split(df.X, list(df.X$readerID), drop = TRUE)
-  nReadersX <- length(df.XR)
-  readersX <- names(df.XR)
-
+  df_xR <- split(df_x, list(df_x$readerID), drop = TRUE)
+  nReadersX <- length(df_xR)
+  readersX <- names(df_xR)
+  
   # Split the data by readers
-  df.YR <- split(df.Y, list(df.Y$readerID), drop = TRUE)
-  nReadersY <- length(df.YR)
-  readersY <- names(df.YR)
-
+  df_yR <- split(df_y, list(df_y$readerID), drop = TRUE)
+  nReadersY <- length(df_yR)
+  readersY <- names(df_yR)
+  
   # For each pair of distinct readers, merge the data
-  x <- NULL
-  y <- NULL
+  result <- data.frame()
   for (readerXi in readersX) {
     for (readerYj in readersY) {
-
+      
       if (readerXi == readerYj) next()
-
-      df.RxR <- merge(df.XR[[readerXi]], df.YR[[readerYj]], by = "caseID")
-      x <- c(x, df.RxR$score.x)
-      y <- c(y, df.RxR$score.y)
-
+      
+      df.RxR <- merge(df_xR[[readerXi]], df_yR[[readerYj]], by = "caseID", suffixes = c("_x", "_y"))
+      result <- rbind(result, df.RxR)
+      
     }
-
+    
   }
-
-  return(data.frame(x = x, y = y, stringsAsFactors = TRUE))
-
+  
+  return(result)
+  
 }
 
 ## Extract within-reader between-modality pairs of scores ####
@@ -402,76 +400,71 @@ extractPairedComparisonsBRBM <- function(
 #'
 #' @param keyColumns This list identifies the column names
 #' of the data frame to be used for the analysis.
-#'        list(readerID = "***", caseID = "***",
-#'             modalityID = "***", score = "***", truth="***")
+#'    list(readerID = "***", caseID = "***",
+#'         modalityID = "***", score = "***", truth="***")
 #'
 #' @return A data frame of all paired observations.
 #'   Each observation comes from a one reader evaluating a case in two modalities
-#'   The first column corresponds to one reader evaluating the case in "testA".
-#'   The second column corresonds to the same reader evaluating the case in "testB".
+#'   Columns: readerID, caseID, modalityID_x, modalityID_y, score_x, score_y
 #'
 #' @export
 #'
 # @examples
 extractPairedComparisonsWRBM <- function(
     data0,
-    modalities = "testA",
-    keyColumns = list(readerID = "readerID",
-                      caseID = "caseID",
-                      modalityID = "modalityID",
-                      score = "score")
+    modalities = c("testA", "testB"),
+    keyColumns = list(
+      readerID = "readerID",
+      caseID = "caseID",
+      modalityID = "modalityID",
+      score = "score")
 ) {
-
+  
   readerID <- keyColumns$readerID
   caseID <- keyColumns$caseID
   modalityID <- keyColumns$modalityID
   score <- keyColumns$score
-
+  
   dfMRMC <- data.frame(
-    readerID   = data0[ , readerID],
-    caseID     = data0[ , caseID],
+    readerID  = data0[ , readerID],
+    caseID    = data0[ , caseID],
     modalityID = data0[ , modalityID],
-    score      = data0[ , score],
+    score     = data0[ , score],
     stringsAsFactors = TRUE
   )
-
+  
   # Pool reader counts into a contingency table
   modality.X <- modalities[1]
   modality.Y <- modalities[2]
-
+  
   # Split the data by modalities
-  df.X <- dfMRMC[dfMRMC$modalityID == modality.X,]
-  df.Y <- dfMRMC[dfMRMC$modalityID == modality.Y,]
-
+  df_x <- dfMRMC[dfMRMC$modalityID == modality.X,]
+  df_y <- dfMRMC[dfMRMC$modalityID == modality.Y,]
+  
   # Split the data by readers
-  df.XR <- split(df.X, df.X$readerID, drop = TRUE)
-  nReadersX <- length(df.XR)
-  readersX <- names(df.XR)
-
-  df.YR <- split(df.Y, df.Y$readerID, drop = TRUE)
-  nReadersY <- length(df.YR)
-  readersY <- names(df.YR)
-
-  reader.i <- 1
-  reader.j <- 2
-
-  x <- NULL
-  y <- NULL
+  df_xR <- split(df_x, df_x$readerID, drop = TRUE)
+  nReadersX <- length(df_xR)
+  readersX <- names(df_xR)
+  
+  df_yR <- split(df_y, df_y$readerID, drop = TRUE)
+  nReadersY <- length(df_yR)
+  readersY <- names(df_yR)
+  
+  result <- data.frame()
   for (readerXi in readersX) {
     for (readerYj in readersY) {
-
+      
       if (readerXi != readerYj) next()
-
-      df.RxR <- merge(df.XR[[readerXi]], df.YR[[readerYj]], by = "caseID")
-      x <- c(x, df.RxR$score.x)
-      y <- c(y, df.RxR$score.y)
-
+      
+      df.RxR <- merge(df_xR[[readerXi]], df_yR[[readerYj]], by = "caseID", suffixes = c("_x", "_y"))
+      result <- rbind(result, df.RxR)
+      
     }
-
+    
   }
-
-  return(data.frame(x = x, y = y, stringsAsFactors = TRUE))
-
+  
+  return(result)
+  
 }
 
 ## createGroups ####
