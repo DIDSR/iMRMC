@@ -315,25 +315,49 @@ convertDFtoDesignMatrix <- function(dfMRMC, modality = NULL, dropFlag = TRUE) {
 
 }
 
-## Extract between-reader between-modality pairs of scores ####
+
+
+# extractPairedComparisonsBRBM ##########
 #' Extract between-reader between-modality pairs of scores
 #'
-#' @param data0 This data frame includes columns for readerID, caseID, modalityID, score.
+#' @param data0 This data frame includes columns for readerID, caseID,
+#'   modalityID, score.
 #'
-#' @param modalities The modalities (testA, testB) for the scores to be paired
+#' @param modalities The modalities (testA, testB) for the scores to be
+#'   paired. Both elements may be set to the same modality to perform a
+#'   between-reader, within-modality pairing (e.g.,
+#'   \code{modalities = c("testA", "testA")}). In that case \code{df_x}
+#'   and \code{df_y} are identical subsets and the merge produces all
+#'   ordered between-reader pairs on that single modality.
 #'
 #' @param keyColumns This list identifies the column names
-#' of the data frame to be used for the analysis.
-#'    list(readerID = "***", caseID = "***",
-#'         modalityID = "***", score = "***", truth="***")
+#'   of the data frame to be used for the analysis.
+#'   list(readerID = "***", caseID = "***",
+#'        modalityID = "***", score = "***", truth="***")
 #'
 #' @return A data frame of all paired observations.
-#'   Each observation comes from a pair of readers evaluating a case in two modalities.
-#'   Columns: readerID_x, readerID_y, caseID, modalityID_x, modalityID_y, score_x, score_y
+#'   Each observation comes from a pair of readers evaluating a case.
+#'   When \code{modalities[1] != modalities[2]}, each pair spans two
+#'   modalities (between-reader between-modality). When
+#'   \code{modalities[1] == modalities[2]}, each pair spans one modality
+#'   (between-reader within-modality).
+#'   **Note: Each unique reader pair (i,j) appears in BOTH orders:
+#'   (i,j) and (j,i).**
+#'   For n readers, this returns n*(n-1) reader-pair combinations.
+#'   Columns: readerID_x, readerID_y, caseID, modalityID_x, modalityID_y,
+#'   score_x, score_y
+#'
+#' @note
+#' When called with \code{modalities = c("testA", "testA")} (or any
+#' repeated modality), this function intentionally performs a
+#' **between-reader within-modality** pairing. This usage is valid and
+#' is used internally by \code{paired_reader_agreement()} to build the
+#' 2x2 contingency table of binary scores for a single modality.
+#' The "between-modality" in the function name refers to the general
+#' design capability; the repeated-modality case is a supported
+#' degenerate form.
 #'
 #' @export
-#'
-# @examples
 extractPairedComparisonsBRBM <- function(
     data0,
     modalities = c("testA", "testB"),
@@ -343,13 +367,13 @@ extractPairedComparisonsBRBM <- function(
       modalityID = "modalityID",
       score = "score")
 ) {
-  
+
   # Establish the key column names
   readerID <- keyColumns$readerID
   caseID <- keyColumns$caseID
   modalityID <- keyColumns$modalityID
   score <- keyColumns$score
-  
+
   # Create an MRMC data frame
   dfMRMC <- data.frame(
     readerID  = data0[ , readerID],
@@ -358,40 +382,42 @@ extractPairedComparisonsBRBM <- function(
     score     = data0[ , score],
     stringsAsFactors = TRUE
   )
-  
+
   # Split the data by the input modalities
   df_x <- dfMRMC[dfMRMC$modalityID == modalities[1], ]
   df_y <- dfMRMC[dfMRMC$modalityID == modalities[2], ]
-  
+
   # Split the data by readers
   df_xR <- split(df_x, list(df_x$readerID), drop = TRUE)
   nReadersX <- length(df_xR)
   readersX <- names(df_xR)
-  
+
   # Split the data by readers
   df_yR <- split(df_y, list(df_y$readerID), drop = TRUE)
   nReadersY <- length(df_yR)
   readersY <- names(df_yR)
-  
+
   # For each pair of distinct readers, merge the data
   result <- data.frame()
   for (readerXi in readersX) {
     for (readerYj in readersY) {
-      
-      if (readerXi == readerYj) next()
-      
+
+      if (readerXi == readerYj) next
+
       df.RxR <- merge(df_xR[[readerXi]], df_yR[[readerYj]], by = "caseID", suffixes = c("_x", "_y"))
       result <- rbind(result, df.RxR)
-      
+
     }
-    
+
   }
-  
+
   return(result)
-  
+
 }
 
-## Extract within-reader between-modality pairs of scores ####
+
+
+# extractPairedComparisonsWRBM ##########
 #' Extract within-reader between-modality pairs of scores
 #'
 #' @param data0 This data frame includes columns for readerID, caseID, modalityID, score.
@@ -400,12 +426,25 @@ extractPairedComparisonsBRBM <- function(
 #'
 #' @param keyColumns This list identifies the column names
 #' of the data frame to be used for the analysis.
-#'    list(readerID = "***", caseID = "***",
-#'         modalityID = "***", score = "***", truth="***")
+#'   list(readerID = "***", caseID = "***",
+#'        modalityID = "***", score = "***", truth="***")
 #'
 #' @return A data frame of all paired observations.
-#'   Each observation comes from a one reader evaluating a case in two modalities
+#'   Each observation comes from one reader evaluating a case in two modalities.
+#'   **Note: Each reader appears exactly once, comparing their scores between the two modalities.**
+#'   For n readers, this returns n reader combinations (one per reader).
+#'   The _x suffix corresponds to modalities[1] and _y to modalities[2].
 #'   Columns: readerID, caseID, modalityID_x, modalityID_y, score_x, score_y
+#'
+#' @note
+#' Unlike \code{extractPairedComparisonsBRBM}, this function does not
+#' support a between-reader mode. The within-reader constraint
+#' (\code{readerXi == readerYj}) is always enforced, so passing the
+#' same modality twice would yield within-reader within-modality pairs
+#' (i.e., a reader compared against themselves), which is not a useful
+#' operation. For between-reader within-modality pairing, use
+#' \code{extractPairedComparisonsBRBM} with
+#' \code{modalities = c("testA", "testA")}.
 #'
 #' @export
 #'
@@ -419,12 +458,12 @@ extractPairedComparisonsWRBM <- function(
       modalityID = "modalityID",
       score = "score")
 ) {
-  
+
   readerID <- keyColumns$readerID
   caseID <- keyColumns$caseID
   modalityID <- keyColumns$modalityID
   score <- keyColumns$score
-  
+
   dfMRMC <- data.frame(
     readerID  = data0[ , readerID],
     caseID    = data0[ , caseID],
@@ -432,40 +471,42 @@ extractPairedComparisonsWRBM <- function(
     score     = data0[ , score],
     stringsAsFactors = TRUE
   )
-  
+
   # Pool reader counts into a contingency table
   modality.X <- modalities[1]
   modality.Y <- modalities[2]
-  
+
   # Split the data by modalities
   df_x <- dfMRMC[dfMRMC$modalityID == modality.X,]
   df_y <- dfMRMC[dfMRMC$modalityID == modality.Y,]
-  
+
   # Split the data by readers
   df_xR <- split(df_x, df_x$readerID, drop = TRUE)
   nReadersX <- length(df_xR)
   readersX <- names(df_xR)
-  
+
   df_yR <- split(df_y, df_y$readerID, drop = TRUE)
   nReadersY <- length(df_yR)
   readersY <- names(df_yR)
-  
+
   result <- data.frame()
   for (readerXi in readersX) {
     for (readerYj in readersY) {
-      
-      if (readerXi != readerYj) next()
-      
+
+      if (readerXi != readerYj) next
+
       df.RxR <- merge(df_xR[[readerXi]], df_yR[[readerYj]], by = "caseID", suffixes = c("_x", "_y"))
       result <- rbind(result, df.RxR)
-      
+
     }
-    
+
   }
-  
+
   return(result)
-  
+
 }
+
+
 
 ## createGroups ####
 #' Assign a group label to items in a vector
